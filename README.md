@@ -1,2 +1,2 @@
-# Midnight-luna-wallet
+# luna-wallet
 All relevant Luna development
