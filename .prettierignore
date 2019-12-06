@@ -1,0 +1,13 @@
+# project specific
+docs
+build
+storybook-static
+.*
+
+# general
+*.json
+
+# whitelist
+!/.eslintrc.js
+!/.prettierrc.js
+!.storybook
