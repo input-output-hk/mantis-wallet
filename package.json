@@ -43,7 +43,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx)\""
+      "pre-commit": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx)\" && yarn lint"
     }
   },
   "browserslist": {
