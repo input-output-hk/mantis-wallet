@@ -1,9 +1,75 @@
 .Sidebar {
-  width: 200px;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  width: 574px;
   height: 100vh;
-  background-color: #fafafa;
-}
+  background-color: #000;
 
-.Sidebar h1 {
-  margin: 0;
+  .logo {
+    margin: 40px 0 0 13px;
+  }
+
+  .title {
+    h1 {
+      width: 280px;
+      height: 150px;
+      margin: 0 0 0 155px;
+      color: #04b7e0;
+      font-size: 54px;
+      font-weight: bold;
+      letter-spacing: -1px;
+    }
+  }
+
+  .navigation {
+    
+    ul {
+      padding: 0;
+      list-style-type: none;
+    }
+
+    a {
+      display: block;
+      outline: 0;
+      color: #f7f7f7;
+      font-size: 30px;
+      letter-spacing: 1px;
+      line-height: 66px;
+      text-decoration: none;
+
+      &.active {
+        font-weight: bold;
+      }
+
+      &:hover {
+        color: #fff;
+      }
+    }
+
+    .prefix {
+      display: inline-block;
+      width: 116px;
+    }
+
+    .active .prefix {
+      width: 113px;
+      border-left: 3px solid #f7f7f7;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 39px;
+    }
+
+    .icon img {
+      vertical-align: middle;
+    }
+  }
+
+  .footer {
+    margin: 0 0 30px 155px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
 }
