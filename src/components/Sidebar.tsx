@@ -1,5 +1,6 @@
 import React from 'react'
 import {NavLink} from 'react-router-dom'
+import SVG from 'react-inlinesvg'
 import {ROUTES} from '../routes-config'
 import './Sidebar.scss'
 
@@ -21,7 +22,7 @@ const Sidebar = (): JSX.Element => {
                   <span className="prefix">&nbsp;</span>
                   <span className="icon">
                     &nbsp;
-                    <img src={`/icons/${route.icon}`} alt={route.title} />
+                    <SVG src={`/icons/${route.icon}`} />
                   </span>
                   <span>{route.title}</span>
                 </NavLink>

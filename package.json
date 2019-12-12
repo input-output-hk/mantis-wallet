@@ -35,6 +35,7 @@
     "prop-types": "^15.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-inlinesvg": "^1.2.0",
     "react-polymorph": "^0.9.0-rc.24",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
