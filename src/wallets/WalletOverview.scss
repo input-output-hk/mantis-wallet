@@ -1,0 +1,140 @@
+.WalletOverview {
+  display: grid;
+  grid-template-areas:
+    'title title title refresh'
+    'graph total total .'
+    'graph confidental transparent .';
+  grid-template-columns: auto 1fr 1fr auto;
+  grid-template-rows: 124px auto auto;
+  height: 400px;
+  margin: 0 36px 100px 36px;
+
+  .svg {
+    stroke: #f7f7f7;
+  }
+
+  .title {
+    grid-area: title;
+    margin: 0;
+    font-size: 16px;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.46px;
+    line-height: 124px;
+  }
+
+  .refresh {
+    grid-area: refresh;
+    line-height: 124px;
+  }
+
+  .graph {
+    grid-area: graph;
+    margin: 20px 70px 0 0;
+
+    .graph-svg {
+      width: 249px;
+      height: 249px;
+    }
+
+    .graph-confidential {
+      stroke: #04b7e0;
+    }
+
+    .graph-transparent {
+      stroke: #9ae2f1;
+    }
+
+    .graph-pending {
+      stroke: #252525;
+    }
+  }
+
+  .total {
+    grid-area: total;
+    height: 115px;
+    margin: 20px 30px 0 0;
+    padding: 0 18px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .confidental {
+    grid-area: confidental;
+    min-width: 205px;
+    height: 80px;
+    margin-right: 30px;
+    padding: 18px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .transparent {
+    grid-area: transparent;
+    min-width: 205px;
+    height: 65px;
+    margin-right: 30px;
+    padding: 24px 18px 24px 15px;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: #0c0c0c;
+    white-space: nowrap;
+  }
+
+  .box-text {
+    padding-left: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1.95px;
+    line-height: 20px;
+    text-transform: uppercase;
+  }
+
+  .box-icon {
+    display: inline-block;
+    position: relative;
+    width: 20px;
+
+    .svg {
+      position: absolute;
+      top: 50%;
+      bottom: 50%;
+      transform: translate(-50%, -60%);
+    }
+  }
+
+  .box-info {
+    width: 20px;
+    height: 20px;
+    float: right;
+    border-radius: 50%;
+    background-color: #6b6b6b;
+    color: #ffffff;
+    font-family: Georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: bold;
+    line-height: 20px;
+    text-align: center;
+    text-transform: lowercase;
+  }
+
+  .box-amount {
+    padding-top: 13px;
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 0.69px;
+    line-height: 44px;
+  }
+
+  .box-amount-big {
+    padding: 4px 0 7px 0;
+    font-size: 45px;
+    letter-spacing: 1.04px;
+    line-height: 44px;
+  }
+
+  .dust {
+    float: left;
+  }
+}

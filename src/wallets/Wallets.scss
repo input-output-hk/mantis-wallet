@@ -1,0 +1,50 @@
+.Wallets {
+  display: grid;
+  grid-template-columns: auto 1fr;
+
+  .list {
+    width: 234px;
+    height: 100vh;
+    overflow: auto;
+    border-right: 1px solid #e8e8e8;
+
+    .wallet-links {
+      margin: 0 0 16px 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    .wallet-link {
+      opacity: 0.57;
+      color: #e8e8e8;
+      font-size: 13px;
+      font-weight: bold;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      line-height: 124px;
+      text-align: center;
+
+      &:after {
+        content: '';
+        display: block;
+        width: 66%;
+        margin: 0 auto;
+        border-bottom: 1px solid #707070;
+      }
+    }
+
+    .wallet-link-first {
+      opacity: 1;
+    }
+  }
+
+  .content {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+
+    .details {
+      overflow: auto;
+    }
+  }
+}
