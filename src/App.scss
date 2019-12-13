@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Work+Sans&display=swap');
+
 .App {
   display: grid;
   grid-template-columns: auto 1fr;
   background-color: #292929;
   color: #f7f7f7;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: 'Helvetica Neue', 'Work Sans', sans-serif;
 }
