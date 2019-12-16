@@ -17,7 +17,7 @@ const Wallets = (): JSX.Element => {
 
   return (
     <div className="Wallets">
-      <div className="list">
+      <div className="list invisible-scrollbar">
         <ul className="wallet-links">
           {wallets.map((wallet) => (
             <li key={wallet.id}>
@@ -32,7 +32,7 @@ const Wallets = (): JSX.Element => {
           ))}
         </ul>
       </div>
-      <div className="content">
+      <div className="content invisible-scrollbar">
         <WalletOverview pending={3815.62} confidental={15262.46} transparent={6359.36} />
         <div className="details"></div>
       </div>
