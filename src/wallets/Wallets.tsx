@@ -1,30 +1,40 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {WalletOverview} from './WalletOverview'
 import './Wallets.scss'
+import {NavLink} from 'react-router-dom'
+import {ROUTES} from '../routes-config'
+
+interface Wallet {
+  id: string
+  name: string
+}
 
 const Wallets = (): JSX.Element => {
+  const dummyWallets = [...Array(10).keys()]
+    .slice(1)
+    .map((n): Wallet => ({id: `${n}`, name: `WALLET ${n}`}))
+  const [wallets] = useState<Wallet[]>(dummyWallets)
+
   return (
     <div className="Wallets">
       <div className="list">
         <ul className="wallet-links">
-          {[...Array(10).keys()].slice(1).map((n) => (
-            <li key={n} className={`wallet-link${n === 1 ? ' wallet-link-first' : ''}`}>
-              WALLET {n}
+          {wallets.map((wallet) => (
+            <li key={wallet.id}>
+              <NavLink
+                to={`${ROUTES.WALLETS.path}/${wallet.id}`}
+                className="wallet-link"
+                activeClassName="wallet-link-first"
+              >
+                {wallet.name}
+              </NavLink>
             </li>
           ))}
         </ul>
       </div>
       <div className="content">
         <WalletOverview pending={3815.62} confidental={15262.46} transparent={6359.36} />
-        <div className="details">
-          <ul>
-            {[...Array(10).keys()].slice(1).map((n) => (
-              <li key={n} className="wallet-link" style={{lineHeight: '60px'}}>
-                Transaction {n}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="details"></div>
       </div>
     </div>
   )
