@@ -22,6 +22,11 @@
     "electron": "electron .",
     "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ."
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx|scss)\" && yarn lint"
+    }
+  },
   "dependencies": {
     "@types/jest": "24.0.23",
     "@types/lodash": "^4.14.149",
@@ -42,28 +47,11 @@
     "redux": "^4.0.4",
     "typescript": "3.7.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx)\" && yarn lint"
-    }
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@storybook/addon-actions": "^5.2.8",
     "@storybook/addon-info": "^5.2.8",
-    "@storybook/addon-knobs": "5.1.9",
+    "@storybook/addon-knobs": "^5.2.8",
     "@storybook/addon-links": "^5.2.8",
     "@storybook/addon-notes": "5.1.9",
     "@storybook/addons": "^5.2.8",
@@ -91,5 +79,17 @@
     "stylelint-config-recommended-scss": "^4.1.0",
     "stylelint-config-standard": "^19.0.0",
     "stylelint-scss": "^3.13.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

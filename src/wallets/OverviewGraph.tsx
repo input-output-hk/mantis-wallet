@@ -2,9 +2,9 @@ import React from 'react'
 import './OverviewGraph.scss'
 
 interface OverviewGraphProps {
-  pending: number
   confidental: number
   transparent: number
+  pending: number
 }
 
 interface Point {
@@ -22,13 +22,12 @@ function polarToCartesian(center: Point, radius: number, angleInRatio: number): 
   }
 }
 
-// todo: this doesn't work when only one variable is set
-// because svg arc is not drawn when it comes to a full circle
 export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
   const c = {x: 50, y: 50}
   const r = 45
-  const {pending, confidental, transparent} = props
-  const total = pending + confidental + transparent
+  const {confidental, transparent, pending} = props
+  const realTotal = confidental + transparent + pending
+  const total = realTotal * 1.00001 // without this, it won't work when only one variable is set
 
   // compute the ratio to full circle of each piece in the graph
   const confRatio = confidental / total
@@ -40,7 +39,7 @@ export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
   const start = polarToCartesian(c, r, 0)
   const confEnd = polarToCartesian(c, r, confRatio)
   const tranEnd = polarToCartesian(c, r, tranRatio + confRatio)
-  const pendEnd = polarToCartesian(c, r, 1)
+  const pendEnd = polarToCartesian(c, r, 0.99999)
 
   // these flags inidicate which arc should be drawn (larger / smaller)
   const confLargeArcFlag = confRatio <= 0.5 ? '0' : '1'
@@ -50,24 +49,28 @@ export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
   return (
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="graph-svg">
       <circle cx={c.x} cy={c.y} r={r + 4.5} />
-      <path
-        fill="none"
-        className="graph-confidential"
-        strokeWidth="10"
-        d={`M ${confEnd.x} ${confEnd.y} A ${r} ${r} 0 ${confLargeArcFlag} 0 ${start.x} ${start.y}`}
-      />
-      <path
-        fill="none"
-        className="graph-transparent"
-        strokeWidth="10"
-        d={`M ${tranEnd.x} ${tranEnd.y} A ${r} ${r} 0 ${tranLargeArcFlag} 0 ${confEnd.x} ${confEnd.y}`}
-      />
-      <path
-        fill="none"
-        className="graph-pending"
-        strokeWidth="10"
-        d={`M ${pendEnd.x} ${pendEnd.y} A ${r} ${r} 0 ${pendLargeArcFlag} 0 ${tranEnd.x} ${tranEnd.y}`}
-      />
+      {total > 0 && (
+        <>
+          <path
+            fill="none"
+            className="graph-confidential"
+            strokeWidth="10"
+            d={`M ${confEnd.x} ${confEnd.y} A ${r} ${r} 0 ${confLargeArcFlag} 0 ${start.x} ${start.y}`}
+          />
+          <path
+            fill="none"
+            className="graph-transparent"
+            strokeWidth="10"
+            d={`M ${tranEnd.x} ${tranEnd.y} A ${r} ${r} 0 ${tranLargeArcFlag} 0 ${confEnd.x} ${confEnd.y}`}
+          />
+          <path
+            fill="none"
+            className="graph-pending"
+            strokeWidth="10"
+            d={`M ${pendEnd.x} ${pendEnd.y} A ${r} ${r} 0 ${pendLargeArcFlag} 0 ${tranEnd.x} ${tranEnd.y}`}
+          />
+        </>
+      )}
     </svg>
   )
 }
