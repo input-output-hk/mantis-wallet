@@ -31,23 +31,6 @@
   .graph {
     grid-area: graph;
     margin: 20px 70px 0 0;
-
-    .graph-svg {
-      width: 249px;
-      height: 249px;
-    }
-
-    .graph-confidential {
-      stroke: #04b7e0;
-    }
-
-    .graph-transparent {
-      stroke: #9ae2f1;
-    }
-
-    .graph-pending {
-      stroke: #252525;
-    }
   }
 
   .total {

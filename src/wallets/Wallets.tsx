@@ -1,5 +1,5 @@
 import React from 'react'
-import WalletOverview from './WalletOverview'
+import {WalletOverview} from './WalletOverview'
 import './Wallets.scss'
 
 const Wallets = (): JSX.Element => {

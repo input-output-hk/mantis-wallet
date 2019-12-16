@@ -17,7 +17,7 @@
     "stylelint": "stylelint '**/*.scss'",
     "prettier-check": "prettier --no-editorconfig --check \"**/*.{js,ts,tsx,scss}\"",
     "prettier": "prettier --no-editorconfig --write \"**/*.{js,ts,tsx,scss}\"",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -s ./public -p 6006",
     "build-storybook": "build-storybook",
     "electron": "electron .",
     "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ."
