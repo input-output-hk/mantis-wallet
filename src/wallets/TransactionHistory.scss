@@ -1,0 +1,142 @@
+.TransactionHistory {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  margin: 0 36px 100px 36px;
+
+  .svg {
+    fill: #f7f7f7;
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    line-height: 30px;
+
+    .title {
+      margin: 0;
+      overflow: hidden;
+      font-size: 16px;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 0.46px;
+    }
+
+    .line {
+      content: '';
+      display: inline-block;
+      height: 1px;
+      margin: 15px 15px 0;
+      opacity: 0.57;
+      background-color: #e8e8e8;
+      line-height: 1px;
+      vertical-align: middle;
+    }
+
+    .sort-by {
+      display: inline-block;
+      color: #f7f7f7;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.15px;
+      text-align: left;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+
+    .action {
+      display: inline-block;
+      width: 126px;
+      height: 30px;
+      margin-left: 19px;
+      background-color: #04b7e0;
+      color: #f7f7f7;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+  }
+
+  .no-transactions {
+    position: relative;
+
+    .no-transactions-text {
+      position: absolute;
+      top: 50%;
+      bottom: 50%;
+      width: 100%;
+      opacity: 0.16;
+      color: #f7f7f7;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+  }
+
+  .transactions-container {
+    margin-top: 30px;
+
+    .transactions {
+      width: 100%;
+      border-collapse: collapse;
+
+      .header {
+        position: sticky;
+        top: 0;
+        padding-left: 12px;
+        background-color: #292929;
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 1.95px;
+        line-height: 40px;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .line {
+        height: 80px;
+        padding-top: 24px;
+        border-bottom: 1px solid rgba($color: #707070, $alpha: 0.57);
+        font-size: 13px;
+        letter-spacing: 0.3px;
+        line-height: 44px;
+        vertical-align: middle;
+
+        .type-icon {
+          display: inline-block;
+          position: relative;
+          width: 20px;
+          padding-left: 12px;
+
+          .svg {
+            position: absolute;
+            top: 50%;
+            bottom: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        .check {
+          fill: #5add92;
+        }
+
+        .dust {
+          float: left;
+        }
+
+        .amount {
+          display: inline-block;
+          padding: 0 10px;
+          background-color: #000;
+          font-weight: bold;
+          line-height: 32px;
+        }
+      }
+    }
+  }
+}
