@@ -10,19 +10,19 @@ const Sidebar = (): JSX.Element => {
       <div className="logo">
         <img src="/logo.svg" alt="logo" />
       </div>
-      <div className="title">
-        <h1>Luna</h1>
+      <div>
+        <h1 className="title">Luna</h1>
       </div>
-      <div className="navigation">
+      <div>
         <nav>
-          <ul>
+          <ul className="navigation">
             {Object.values(ROUTES).map((route) => (
               <li key={route.path}>
-                <NavLink to={route.path}>
+                <NavLink to={route.path} className="link">
                   <span className="prefix">&nbsp;</span>
                   <span className="icon">
                     &nbsp;
-                    <SVG src={`/icons/${route.icon}`} />
+                    <SVG className="svg" src={`/icons/${route.icon}`} />
                   </span>
                   <span>{route.title}</span>
                 </NavLink>

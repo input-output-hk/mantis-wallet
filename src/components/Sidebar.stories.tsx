@@ -1,12 +1,12 @@
 import React from 'react'
 import {BrowserRouter} from 'react-router-dom'
-import Sidebar from '../src/components/Sidebar'
+import Sidebar from './Sidebar'
 
 export default {
   title: 'Sidebar',
 }
 
-export const sidebar = (props: object) => (
+export const sidebar = (): JSX.Element => (
   <BrowserRouter>
     <Sidebar />
   </BrowserRouter>

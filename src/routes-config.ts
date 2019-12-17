@@ -1,4 +1,5 @@
 import Unimplemented from './components/Unimplemented'
+import Wallets from './wallets/Wallets'
 
 interface Routes {
   [key: string]: Route
@@ -22,7 +23,7 @@ export const ROUTES: Routes = {
     title: 'Wallets',
     path: '/wallets',
     icon: 'menu-wallets.svg',
-    component: Unimplemented,
+    component: Wallets,
   },
   PROOF_OF_BURN: {
     title: 'Proof of Burn',
