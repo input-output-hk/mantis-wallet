@@ -1,6 +1,7 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
 import {OverviewGraph} from './OverviewGraph'
+import {formatAmount} from '../common/formatters'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
@@ -8,8 +9,6 @@ interface WalletOverviewProps {
   confidental: number
   transparent: number
 }
-
-const formatAmount = (n: number): string => new Intl.NumberFormat('en-US').format(n)
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
   const {pending, confidental, transparent} = props
