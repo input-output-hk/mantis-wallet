@@ -1,5 +1,6 @@
 const {override, fixBabelImports, addWebpackPlugin} = require('customize-cra')
 const AntdScssThemePlugin = require('antd-scss-theme-plugin')
+const WorkerPlugin = require('worker-plugin')
 
 const addLessLoader = () => (config) => {
   const loaders = config.module.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf
@@ -21,6 +22,8 @@ const addLessLoader = () => (config) => {
       }),
     ],
   })
+
+  config.plugins.push(new WorkerPlugin())
 
   return config
 }

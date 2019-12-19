@@ -1,6 +1,13 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  extends: ['plugin:react/recommended', 'plugin:@typescript-eslint/recommended'],
+  extends: [
+    'plugin:prettier/recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'prettier/@typescript-eslint',
+    'prettier/react',
+  ],
   plugins: ['fp', 'prettier'],
   root: true,
   reportUnusedDisableDirectives: true,
@@ -53,23 +60,8 @@ module.exports = {
     'curly': 0,
     // prettier
     'prettier/prettier': 'error',
-    // ts
-    '@typescript-eslint/member-delimiter-style': [
-      'warn',
-      {
-        multiline: {
-          delimiter: 'none',
-          requireLast: false,
-        },
-        singleline: {
-          delimiter: 'comma',
-          requireLast: true,
-        },
-      },
-    ],
     // fp
     'fp/no-arguments': 'error',
-    'fp/no-class': 'error',
     'fp/no-delete': 'error',
     'fp/no-events': 'error',
     'fp/no-get-set': 'error',
@@ -79,9 +71,11 @@ module.exports = {
     'fp/no-mutating-methods': 'error',
     'fp/no-mutation': 'error',
     'fp/no-proxy': 'error',
-    'fp/no-this': 'error',
-    'fp/no-throw': 'error',
     'fp/no-valueof-field': 'error',
+    'fp/no-throw': 'error',
+    'fp/no-rest-parameters': 0,
+    'fp/no-this': 0,
+    'fp/no-class': 0,
     'fp/no-nil': 0,
     'fp/no-unused-expression': 0,
   },

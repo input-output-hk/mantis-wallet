@@ -1,5 +1,6 @@
 import {Unimplemented} from './components/Unimplemented'
 import {WalletSetup} from './wallets/WalletSetup'
+import {ApiTest} from './components/ApiTest'
 
 interface Routes {
   [key: string]: Route
@@ -35,7 +36,7 @@ export const ROUTES: Routes = {
     title: 'Glacier Drop',
     path: '/glacier-drop',
     icon: 'menu-glacier.svg',
-    component: Unimplemented,
+    component: ApiTest,
   },
   SETTINGS: {
     title: 'Settings',
