@@ -1,0 +1,47 @@
+@import '../theme.scss';
+
+.WalletActionBox {
+  display: inline-grid;
+  align-content: end;
+  width: 307px;
+  height: 367px;
+  margin: 84px;
+  border: 1px solid $tertiary-background;
+  cursor: pointer;
+
+  .svg {
+    margin: auto;
+    fill: $text-color;
+  }
+
+  .title {
+    padding: 36px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.17px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .note {
+    height: 92px;
+    padding: 0 13px;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.17px;
+    text-align: center;
+  }
+
+  .footer {
+    padding: 0 46px;
+    background-color: $btn-default-bg;
+    color: $btn-default-color;
+    font-family: Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 2.7px;
+    line-height: 64px;
+    text-align: right;
+    text-transform: uppercase;
+  }
+}

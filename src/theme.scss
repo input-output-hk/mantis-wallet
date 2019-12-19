@@ -8,12 +8,15 @@ $text-color: #f7f7f7;
 $link-color: $text-color;
 $font-family: 'Helvetica Neue', 'Work Sans', sans-serif;
 
+$secondary-background: #000;
+$tertiary-background: #707070;
+$tertiary-color: #252525;
+$secondary-opacity: 0.57;
+
 $border-color-base: $text-color;
 $border-radius-base: 0;
 
 $btn-border-width: 0;
 
-$secondary-background: #000;
-$tertiary-background: #707070;
-$tertiary-color: #252525;
-$secondary-opacity: 0.57;
+$btn-default-bg: $text-color;
+$btn-default-color: $secondary-background;
