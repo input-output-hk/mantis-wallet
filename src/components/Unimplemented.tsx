@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Unimplemented = (props: object): JSX.Element => {
+export const Unimplemented = (props: object): JSX.Element => {
   return (
     <div>
       <h1>Unimplemented</h1>
@@ -8,5 +8,3 @@ const Unimplemented = (props: object): JSX.Element => {
     </div>
   )
 }
-
-export default Unimplemented

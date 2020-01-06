@@ -1,5 +1,5 @@
-import Unimplemented from './components/Unimplemented'
-import Wallets from './wallets/Wallets'
+import {Unimplemented} from './components/Unimplemented'
+import {Wallets} from './wallets/Wallets'
 
 interface Routes {
   [key: string]: Route
