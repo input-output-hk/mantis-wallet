@@ -17,7 +17,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
     <div className="WalletOverview">
       <h2 className="title">Overview Wallet</h2>
       <div className="refresh">
-        <SVG src="/icons/refresh.svg" className="svg" />
+        <SVG src="./icons/refresh.svg" className="svg" />
       </div>
       <div className="graph">
         <OverviewGraph {...props} />
@@ -25,13 +25,13 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
       <div className="total">
         <div className="box-text">Total Balance</div>
         <div className="box-amount-big">
-          <img src="/dust_logo.png" alt="dust" className="dust" />
+          <img src="./dust_logo.png" alt="dust" className="dust" />
           {formatAmount(total)}
         </div>
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
-            <SVG src="/icons/clock.svg" className="svg" />
+            <SVG src="./icons/clock.svg" className="svg" />
           </span>
           Pending Amount · {formatAmount(pending)}
         </div>
@@ -40,12 +40,12 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
-            <SVG src="/icons/confidental.svg" className="svg" />
+            <SVG src="./icons/confidental.svg" className="svg" />
           </span>
           Confidental
         </div>
         <div className="box-amount">
-          <img src="/dust_logo.png" alt="dust" className="dust" />
+          <img src="./dust_logo.png" alt="dust" className="dust" />
           {formatAmount(confidental)}
         </div>
       </div>
@@ -54,12 +54,12 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
           <div className="box-info">i</div>
           <span className="box-icon">
             &nbsp;
-            <SVG src="/icons/transparent.svg" className="svg" />
+            <SVG src="./icons/transparent.svg" className="svg" />
           </span>
           Transparent
         </div>
         <div className="box-amount">
-          <img src="/dust_logo.png" alt="dust" className="dust" />
+          <img src="./dust_logo.png" alt="dust" className="dust" />
           {formatAmount(transparent)}
         </div>
       </div>

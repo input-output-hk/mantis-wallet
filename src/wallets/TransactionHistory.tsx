@@ -44,20 +44,20 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <span className="type-icon">
                     &nbsp;
                     {transaction.type === 'public' && (
-                      <SVG src="/icons/transparent.svg" className="svg" />
+                      <SVG src="./icons/transparent.svg" className="svg" />
                     )}
                     {transaction.type === 'private' && (
-                      <SVG src="/icons/confidental.svg" className="svg" />
+                      <SVG src="./icons/confidental.svg" className="svg" />
                     )}
                   </span>
                 </td>
                 <td className="line">
-                  <img src="/dust_logo.png" alt="dust" className="dust" />
+                  <img src="./dust_logo.png" alt="dust" className="dust" />
                   <span>DUST</span>
                 </td>
                 <td className="line">
                   <span className="amount">
-                    <SVG src="/icons/incoming.svg" className="svg" />
+                    <SVG src="./icons/incoming.svg" className="svg" />
                     &nbsp;
                     {formatAmount(transaction.amount)}
                   </span>
@@ -66,14 +66,14 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                 <td className="line">
                   {transaction.status === 'Confirmed' && (
                     <>
-                      <SVG src="/icons/check.svg" className="check" />
+                      <SVG src="./icons/check.svg" className="check" />
                       &nbsp;
                     </>
                   )}
                   {transaction.status}
                 </td>
                 <td className="line">
-                  <SVG src="/icons/arrow-down.svg" className="svg" />
+                  <SVG src="./icons/arrow-down.svg" className="svg" />
                 </td>
               </tr>
             ))}

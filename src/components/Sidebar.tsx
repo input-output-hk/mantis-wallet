@@ -8,7 +8,7 @@ const Sidebar = (): JSX.Element => {
   return (
     <div className="Sidebar">
       <div className="logo">
-        <img src="/logo.svg" alt="logo" />
+        <img src="./logo.svg" alt="logo" />
       </div>
       <div>
         <h1 className="title">Luna</h1>
@@ -22,7 +22,7 @@ const Sidebar = (): JSX.Element => {
                   <span className="prefix">&nbsp;</span>
                   <span className="icon">
                     &nbsp;
-                    <SVG className="svg" src={`/icons/${route.icon}`} />
+                    <SVG className="svg" src={`./icons/${route.icon}`} />
                   </span>
                   <span>{route.title}</span>
                 </NavLink>
