@@ -15,7 +15,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
   const total = pending + confidental + transparent
   return (
     <div className="WalletOverview">
-      <h2 className="title">Overview Wallet</h2>
+      <div className="title">Overview Wallet</div>
       <div className="refresh">
         <SVG src="./icons/refresh.svg" className="svg" />
       </div>

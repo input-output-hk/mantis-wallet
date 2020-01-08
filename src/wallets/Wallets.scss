@@ -1,3 +1,5 @@
+@import '../theme.scss';
+
 .Wallets {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -16,11 +18,9 @@
     .wallet-link {
       display: block;
       outline: 0;
-      opacity: 0.57;
-      color: #e8e8e8;
+      opacity: $secondary-opacity;
       font-size: 13px;
       font-weight: bold;
-      font-weight: 700;
       letter-spacing: 0.15em;
       line-height: 124px;
       text-align: center;
@@ -31,7 +31,8 @@
         display: block;
         width: 66%;
         margin: 0 auto;
-        border-bottom: 1px solid #707070;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
       }
     }
 

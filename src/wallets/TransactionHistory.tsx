@@ -1,5 +1,6 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
+import {Button} from 'antd'
 import {formatAmount, formatDate} from '../common/formatters'
 import {Transaction} from './Wallets'
 import './TransactionHistory.scss'
@@ -14,12 +15,16 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
-        <h2 className="title">Transaction History</h2>
+        <div className="title">Transaction History</div>
         <div className="line"></div>
         <div>
           <span className="sort-by">Sort by ▼</span>
-          <span className="action">Send</span>
-          <span className="action">Receive</span>
+          <Button type="primary" className="action">
+            Send
+          </Button>
+          <Button type="primary" className="action">
+            Receive
+          </Button>
         </div>
       </div>
       {transactions.length === 0 && (
