@@ -1,0 +1,48 @@
+@import '../../theme.scss';
+
+.WalletDialogSecurity {
+  margin-bottom: 20px;
+
+  .ant-tabs-bar {
+    margin: 0;
+    border-bottom-width: 0;
+  }
+
+  .ant-tabs-ink-bar {
+    display: none !important;
+  }
+
+  .ant-tabs-tab {
+    margin: 10px 0;
+    padding: 0 10px;
+    border-left: 1px solid rgba($color: $text-color, $alpha: $secondary-opacity);
+    color: rgba($color: $text-color, $alpha: $secondary-opacity);
+    font-size: 10px;
+    text-transform: uppercase;
+
+    &:hover,
+    &:active {
+      opacity: 1;
+      color: $text-color;
+    }
+
+    &:first-of-type {
+      padding-left: 0;
+      border-left-width: 0;
+    }
+  }
+
+  .ant-tabs-tab-active {
+    color: $text-color;
+  }
+
+  .label {
+    height: 25px;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .input {
+    height: 47px;
+  }
+}
