@@ -1,5 +1,6 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
+import {Button} from 'antd'
 import {formatAmount, formatDate} from '../common/formatters'
 import {Transaction} from './Wallets'
 import './TransactionHistory.scss'
@@ -14,12 +15,16 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
-        <h2 className="title">Transaction History</h2>
+        <div className="title">Transaction History</div>
         <div className="line"></div>
         <div>
           <span className="sort-by">Sort by ▼</span>
-          <span className="action">Send</span>
-          <span className="action">Receive</span>
+          <Button type="primary" className="action">
+            Send
+          </Button>
+          <Button type="primary" className="action">
+            Receive
+          </Button>
         </div>
       </div>
       {transactions.length === 0 && (
@@ -44,20 +49,20 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <span className="type-icon">
                     &nbsp;
                     {transaction.type === 'public' && (
-                      <SVG src="/icons/transparent.svg" className="svg" />
+                      <SVG src="./icons/transparent.svg" className="svg" />
                     )}
                     {transaction.type === 'private' && (
-                      <SVG src="/icons/confidental.svg" className="svg" />
+                      <SVG src="./icons/confidental.svg" className="svg" />
                     )}
                   </span>
                 </td>
                 <td className="line">
-                  <img src="/dust_logo.png" alt="dust" className="dust" />
+                  <img src="./dust_logo.png" alt="dust" className="dust" />
                   <span>DUST</span>
                 </td>
                 <td className="line">
                   <span className="amount">
-                    <SVG src="/icons/incoming.svg" className="svg" />
+                    <SVG src="./icons/incoming.svg" className="svg" />
                     &nbsp;
                     {formatAmount(transaction.amount)}
                   </span>
@@ -66,14 +71,14 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                 <td className="line">
                   {transaction.status === 'Confirmed' && (
                     <>
-                      <SVG src="/icons/check.svg" className="check" />
+                      <SVG src="./icons/check.svg" className="check" />
                       &nbsp;
                     </>
                   )}
                   {transaction.status}
                 </td>
                 <td className="line">
-                  <SVG src="/icons/arrow-down.svg" className="svg" />
+                  <SVG src="./icons/arrow-down.svg" className="svg" />
                 </td>
               </tr>
             ))}

@@ -1,10 +1,12 @@
+@import '../theme.scss';
+
 .TransactionHistory {
   display: grid;
   grid-template-rows: auto 1fr;
   margin: 0 36px 100px 36px;
 
   .svg {
-    fill: #f7f7f7;
+    fill: $text-color;
   }
 
   .toolbar {
@@ -15,7 +17,6 @@
     .title {
       margin: 0;
       overflow: hidden;
-      font-size: 16px;
       font-size: 20px;
       font-weight: bold;
       letter-spacing: 0.46px;
@@ -26,15 +27,14 @@
       display: inline-block;
       height: 1px;
       margin: 15px 15px 0;
-      opacity: 0.57;
-      background-color: #e8e8e8;
+      opacity: $secondary-opacity;
+      background-color: $border-color-base;
       line-height: 1px;
       vertical-align: middle;
     }
 
     .sort-by {
       display: inline-block;
-      color: #f7f7f7;
       font-size: 12px;
       font-weight: bold;
       letter-spacing: 0.15px;
@@ -48,8 +48,6 @@
       width: 126px;
       height: 30px;
       margin-left: 19px;
-      background-color: #04b7e0;
-      color: #f7f7f7;
       font-size: 12px;
       font-weight: bold;
       letter-spacing: 1.8px;
@@ -68,7 +66,6 @@
       bottom: 50%;
       width: 100%;
       opacity: 0.16;
-      color: #f7f7f7;
       font-size: 12px;
       font-weight: bold;
       letter-spacing: 1.8px;
@@ -89,7 +86,6 @@
         position: sticky;
         top: 0;
         padding-left: 12px;
-        background-color: #292929;
         font-size: 13px;
         font-weight: bold;
         letter-spacing: 1.95px;
@@ -99,9 +95,9 @@
       }
 
       .line {
-        height: 80px;
+        height: 106px;
         padding-top: 24px;
-        border-bottom: 1px solid rgba($color: #707070, $alpha: 0.57);
+        border-bottom: 1px solid rgba($color: $tertiary-background, $alpha: $secondary-opacity);
         font-size: 13px;
         letter-spacing: 0.3px;
         line-height: 44px;
@@ -122,7 +118,7 @@
         }
 
         .check {
-          fill: #5add92;
+          fill: $success-color;
         }
 
         .dust {
@@ -132,7 +128,7 @@
         .amount {
           display: inline-block;
           padding: 0 10px;
-          background-color: #000;
+          background-color: $secondary-background;
           font-weight: bold;
           line-height: 32px;
         }

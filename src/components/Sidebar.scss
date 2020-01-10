@@ -1,9 +1,11 @@
+@import '../theme.scss';
+
 .Sidebar {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   width: 450px;
   height: 100vh;
-  background-color: #000;
+  background-color: $secondary-background;
 
   .logo {
     margin: 37px 0 0 10px;
@@ -13,7 +15,7 @@
     width: 280px;
     height: 100px;
     margin: 0 0 0 152px;
-    color: #04b7e0;
+    color: $primary-color;
     font-size: 54px;
     font-weight: bold;
     letter-spacing: -0.81px;
@@ -26,7 +28,6 @@
     .link {
       display: block;
       outline: 0;
-      color: #f7f7f7;
       font-size: 30px;
       font-weight: 300;
       letter-spacing: 0.96px;
@@ -43,7 +44,7 @@
 
         .prefix {
           width: 113px;
-          border-left: 3px solid #f7f7f7;
+          border-left: 3px solid $border-color-base;
         }
       }
 
@@ -57,13 +58,9 @@
           top: 50%;
           bottom: 50%;
           transform: translate(-50%, -50%);
-          stroke: #f7f7f7;
-          fill: #f7f7f7;
+          stroke: $text-color;
+          fill: $text-color;
         }
-      }
-
-      &:hover {
-        color: #fff;
       }
     }
   }

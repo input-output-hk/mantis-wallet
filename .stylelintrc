@@ -3,5 +3,8 @@
     "stylelint-config-recommended",
     "stylelint-config-recommended-scss",
     "stylelint-config-property-sort-order-smacss",
-  ]
+  ],
+  "rules": {
+    "declaration-block-no-duplicate-properties": true
+  }
 }

@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Work+Sans&display=swap');
+@import './theme.scss';
 
 .App {
   display: grid;
   grid-template-columns: auto 1fr;
   overflow: hidden;
-  background-color: #292929;
-  color: #f7f7f7;
-  font-family: 'Helvetica Neue', 'Work Sans', sans-serif;
+  background-color: $component-background;
+  color: $text-color;
+  font-family: $font-family;
 }
