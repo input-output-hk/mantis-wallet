@@ -1,0 +1,26 @@
+.WalletDialog {
+  width: 508px;
+
+  .title {
+    height: 50px;
+    margin: 0;
+    overflow: hidden;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.46px;
+  }
+
+  .actions {
+    display: grid;
+    grid-column-gap: 8px;
+    grid-template-columns: 1fr 1fr;
+
+    .button {
+      height: 49px;
+      font-weight: bold;
+      letter-spacing: 1.44px;
+      text-align: right;
+      text-transform: uppercase;
+    }
+  }
+}

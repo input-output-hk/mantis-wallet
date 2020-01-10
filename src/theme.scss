@@ -1,6 +1,7 @@
 $primary-color: #04b7e0;
 $secondary-color: #9ae2f1;
 $success-color: #5add92;
+$normal-color: #414141;
 
 $component-background: #292929;
 
@@ -20,3 +21,10 @@ $btn-border-width: 0;
 
 $btn-default-bg: $text-color;
 $btn-default-color: $secondary-background;
+
+$switch-bg: $text-color;
+$switch-height: 22px;
+
+$input-bg: $normal-color;
+
+$checkbox-size: 20px;

@@ -19,7 +19,7 @@ const getContent = (
         />
       )
     case 'CREATE':
-      return <WalletCreate />
+      return <WalletCreate cancel={(): void => setStep('PATH_CHOOSER')} />
     case 'RESTORE':
       return <WalletRestore />
   }

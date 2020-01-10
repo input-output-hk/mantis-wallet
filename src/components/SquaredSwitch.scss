@@ -1,0 +1,22 @@
+@import '../theme.scss';
+
+.SquaredSwitch {
+  border-radius: 0;
+  background-color: $normal-color;
+
+  &.ant-switch-checked {
+    background-color: $primary-color;
+
+    &::after {
+      margin-left: 0;
+    }
+  }
+
+  &::after {
+    top: 0px;
+    width: $switch-height - 2px;
+    height: $switch-height - 2px;
+    border-radius: 0;
+    background-color: $text-color;
+  }
+}
