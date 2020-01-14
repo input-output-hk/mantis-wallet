@@ -1,9 +1,9 @@
 import React from 'react'
-import {BorderlessInputPassword} from '../../components/BorderlessInputPassword'
-import './WalletDialogPassword.scss'
+import {BorderlessInputPassword} from '../BorderlessInputPassword'
+import './DialogPassword.scss'
 
-export const WalletDialogPassword: React.FunctionComponent<{}> = () => (
-  <div className="WalletDialogPassword">
+export const DialogPassword: React.FunctionComponent<{}> = () => (
+  <div className="DialogPassword">
     <div className="label">Enter Password</div>
     <div className="inputs">
       <BorderlessInputPassword className="input" visibilityToggle={false} />

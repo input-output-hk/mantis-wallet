@@ -1,19 +1,19 @@
 import React from 'react'
 import {Tabs} from 'antd'
-import {BorderlessInput} from '../../components/BorderlessInput'
-import './WalletDialogSecurity.scss'
+import {BorderlessInput} from '../BorderlessInput'
+import './DialogTabbedInput.scss'
 
 const {TabPane} = Tabs
 
-interface WalletDialogSecurityProps {
+interface DialogTabbedInputProps {
   labels: Array<string>
 }
 
-export const WalletDialogSecurity: React.FunctionComponent<WalletDialogSecurityProps> = ({
+export const DialogTabbedInput: React.FunctionComponent<DialogTabbedInputProps> = ({
   labels,
-}: WalletDialogSecurityProps) => {
+}: DialogTabbedInputProps) => {
   return (
-    <div className="WalletDialogSecurity">
+    <div className="DialogTabbedInput">
       <Tabs>
         {labels.map((label) => (
           <TabPane key={label} tab={label}>

@@ -1,8 +1,8 @@
 import React from 'react'
 import {Button} from 'antd'
-import './WalletDialog.scss'
+import './Dialog.scss'
 
-interface WalletDialogProps {
+interface DialogProps {
   title: string
   prevButtonLabel?: string
   prevButtonAction: () => void
@@ -11,7 +11,7 @@ interface WalletDialogProps {
   nextButtonDisabled?: boolean
 }
 
-export const WalletDialog: React.FunctionComponent<WalletDialogProps> = ({
+export const Dialog: React.FunctionComponent<DialogProps> = ({
   title,
   prevButtonLabel = 'Cancel',
   nextButtonLabel = 'Next →',
@@ -19,8 +19,8 @@ export const WalletDialog: React.FunctionComponent<WalletDialogProps> = ({
   nextButtonAction,
   nextButtonDisabled = false,
   children,
-}: React.PropsWithChildren<WalletDialogProps>) => (
-  <div className="WalletDialog">
+}: React.PropsWithChildren<DialogProps>) => (
+  <div className="Dialog">
     <div className="title">{title}</div>
     <div>{children}</div>
     <div className="actions">

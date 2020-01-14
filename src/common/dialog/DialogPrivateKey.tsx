@@ -2,16 +2,16 @@ import React from 'react'
 import {Button} from 'antd'
 import QRCode from 'qrcode.react'
 import fileDownload from 'js-file-download'
-import './WalletDialogPrivateKey.scss'
+import './DialogPrivateKey.scss'
 
-interface WalletDialogPrivateKeyProps {
+interface DialogPrivateKeyProps {
   privateKey: string
 }
 
-export const WalletDialogPrivateKey: React.FunctionComponent<WalletDialogPrivateKeyProps> = ({
+export const DialogPrivateKey: React.FunctionComponent<DialogPrivateKeyProps> = ({
   privateKey,
-}: WalletDialogPrivateKeyProps) => (
-  <div className="WalletDialogPrivateKey">
+}: DialogPrivateKeyProps) => (
+  <div className="DialogPrivateKey">
     <div className="display">
       <div className="qr-code">
         <QRCode value={privateKey} />

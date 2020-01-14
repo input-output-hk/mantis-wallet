@@ -1,7 +1,7 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
 import {Button} from 'antd'
-import {formatAmount, formatDate} from '../common/formatters'
+import {formatAmount, formatDate} from '../util/formatters'
 import {Transaction} from './Wallets'
 import './TransactionHistory.scss'
 

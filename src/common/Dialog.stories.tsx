@@ -1,20 +1,19 @@
-import React from 'react'
+import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {withKnobs, text, boolean, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import {WalletDialog} from './WalletDialog'
-import {WalletDialogApproval} from './dialog/WalletDialogApproval'
-import {WalletDialogInput} from './dialog/WalletDialogInput'
-import {WalletDialogMessage} from './dialog/WalletDialogMessage'
-import {WalletDialogPassword} from './dialog/WalletDialogPassword'
-import {WalletDialogPrivateKey} from './dialog/WalletDialogPrivateKey'
-import {WalletDialogRecoveryPhrase} from './dialog/WalletDialogRecoveryPhrase'
-import {WalletDialogSecurity} from './dialog/WalletDialogSecurity'
-import {WalletDialogSwitch} from './dialog/WalletDialogSwitch'
-import {useState} from '@storybook/addons'
+import {Dialog} from './Dialog'
+import {DialogApproval} from './dialog/DialogApproval'
+import {DialogInput} from './dialog/DialogInput'
+import {DialogMessage} from './dialog/DialogMessage'
+import {DialogPassword} from './dialog/DialogPassword'
+import {DialogPrivateKey} from './dialog/DialogPrivateKey'
+import {DialogRecoveryPhrase} from './dialog/DialogRecoveryPhrase'
+import {DialogTabbedInput} from './dialog/DialogTabbedInput'
+import {DialogSwitch} from './dialog/DialogSwitch'
 
 export default {
-  title: 'Wallet Dialog',
+  title: 'Dialog',
   decorators: [withKnobs],
 }
 
@@ -23,7 +22,7 @@ export const AllTheFields: React.FunctionComponent<{}> = () => {
   const [switched, setSwitched] = useState(false)
 
   return (
-    <WalletDialog
+    <Dialog
       title="All The Fields"
       prevButtonLabel={text('Cancel button label', 'Cancel')}
       prevButtonAction={action('prev-button-click')}
@@ -31,7 +30,7 @@ export const AllTheFields: React.FunctionComponent<{}> = () => {
       nextButtonAction={action('next-button-click')}
       nextButtonDisabled={boolean('Disable Next button', true)}
     >
-      <WalletDialogApproval
+      <DialogApproval
         description={text('Approval field text', 'Are you sure?')}
         checked={approved}
         onChange={(checked): void => {
@@ -39,13 +38,13 @@ export const AllTheFields: React.FunctionComponent<{}> = () => {
           alert(checked ? 'Is approved' : 'Is not approved')
         }}
       />
-      <WalletDialogInput label={text('Input field label', 'write your input here')} />
-      <WalletDialogMessage description={text('Message field text', 'A message in the dialog')} />
-      <WalletDialogPassword />
-      <WalletDialogPrivateKey
+      <DialogInput label={text('Input field label', 'write your input here')} />
+      <DialogMessage description={text('Message field text', 'A message in the dialog')} />
+      <DialogPassword />
+      <DialogPrivateKey
         privateKey={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
       />
-      <WalletDialogRecoveryPhrase
+      <DialogRecoveryPhrase
         recoveryPhraseShuffled={['Third', 'First', 'Fourth', 'Second']}
         recoveryPhraseValidation={(enteredPhrase): boolean =>
           _.isEqual(enteredPhrase, ['First', 'Second', 'Third', 'Fourth'])
@@ -54,15 +53,13 @@ export const AllTheFields: React.FunctionComponent<{}> = () => {
           if (valid) action('recovery-phrase-valid')()
         }}
       />
-      <WalletDialogSecurity
-        labels={array('Security Dialog', ['First security', 'Second security'])}
-      />
-      <WalletDialogSwitch
+      <DialogTabbedInput labels={array('Security Dialog', ['First security', 'Second security'])} />
+      <DialogSwitch
         label={text('Switch field label', 'Switch this')}
         description={text('Switch field text', '..becuase of this')}
         onChange={(checked): void => setSwitched(checked)}
         checked={switched}
       />
-    </WalletDialog>
+    </Dialog>
   )
 }

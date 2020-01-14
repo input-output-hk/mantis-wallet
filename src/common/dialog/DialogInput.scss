@@ -1,4 +1,4 @@
-.WalletDialogSwitch {
+.DialogInput {
   margin-bottom: 20px;
 
   .label {
@@ -7,9 +7,7 @@
     text-transform: uppercase;
   }
 
-  .switch {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    font-size: 13px;
+  .input {
+    height: 47px;
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
 import {OverviewGraph} from './OverviewGraph'
-import {formatAmount} from '../common/formatters'
+import {formatAmount} from '../util/formatters'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
