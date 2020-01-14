@@ -1,3 +1,5 @@
+@import '../../theme.scss';
+
 .DialogInput {
   margin-bottom: 20px;
 
@@ -10,4 +12,9 @@
   .input {
     height: 47px;
   }
+}
+
+.Dialog.dark .DialogInput .input {
+  background-color: $quaternary-background;
+  color: $secondary-text-color;
 }

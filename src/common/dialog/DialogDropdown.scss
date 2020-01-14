@@ -1,0 +1,31 @@
+@import '../../theme.scss';
+
+.DialogDropdown {
+  margin-bottom: 20px;
+
+  .active-option {
+    width: 508px;
+    padding: 10px 0;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .label {
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
+.DialogDropdownOverlay {
+  .ant-dropdown-menu-item {
+    width: 508px;
+    overflow: hidden;
+
+    &:hover {
+      background-color: $primary-color;
+    }
+  }
+}

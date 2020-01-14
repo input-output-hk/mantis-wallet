@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import {Button} from 'antd'
 import {formatAmount, formatDate} from '../util/formatters'
 import {Transaction} from './Wallets'
+import {SendTransaction} from './modals/SendTransaction'
 import './TransactionHistory.scss'
 
 interface TransactionHistoryProps {
@@ -11,6 +12,12 @@ interface TransactionHistoryProps {
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
   const {transactions} = props
+  const [showSendModal, setShowSendModal] = useState(false)
+
+  const accounts = [
+    'longprivatekey',
+    'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
+  ]
 
   return (
     <div className="TransactionHistory">
@@ -19,12 +26,17 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
         <div className="line"></div>
         <div>
           <span className="sort-by">Sort by ▼</span>
-          <Button type="primary" className="action">
+          <Button type="primary" className="action" onClick={(): void => setShowSendModal(true)}>
             Send
           </Button>
           <Button type="primary" className="action">
             Receive
           </Button>
+          <SendTransaction
+            visible={showSendModal}
+            accounts={accounts}
+            onCancel={(): void => setShowSendModal(false)}
+          />
         </div>
       </div>
       {transactions.length === 0 && (

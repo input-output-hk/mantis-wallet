@@ -1,0 +1,14 @@
+@import '../theme.scss';
+
+.LunaModal {
+  .ant-modal-content {
+    background-color: $secondary-background;
+  }
+
+  .ant-modal-close-x {
+    width: 40px;
+    height: 40px;
+    margin: 24px 18px 0 0;
+    color: $text-color;
+  }
+}

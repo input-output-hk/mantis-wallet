@@ -11,6 +11,8 @@ import {DialogPrivateKey} from './dialog/DialogPrivateKey'
 import {DialogRecoveryPhrase} from './dialog/DialogRecoveryPhrase'
 import {DialogTabbedInput} from './dialog/DialogTabbedInput'
 import {DialogSwitch} from './dialog/DialogSwitch'
+import {DialogDropdown} from './dialog/DialogDropdown'
+import {DialogColumns} from './dialog/DialogColumns'
 
 export default {
   title: 'Dialog',
@@ -64,6 +66,14 @@ export const AllTheFields: React.FunctionComponent<{}> = () => {
         onChange={(checked): void => setSwitched(checked)}
         checked={switched}
       />
+      <DialogDropdown
+        label={text('Dropdown label', 'Hover me')}
+        options={array('Dropdown options', ['first', 'second', 'third'])}
+      ></DialogDropdown>
+      <DialogColumns>
+        <DialogMessage description={text('First column', 'First column')} />
+        <DialogMessage description={text('Second column', 'Second column')} />
+      </DialogColumns>
     </Dialog>
   )
 }

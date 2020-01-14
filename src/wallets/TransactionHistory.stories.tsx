@@ -1,8 +1,10 @@
 import React from 'react'
-import {withKnobs, object} from '@storybook/addon-knobs'
+import {withKnobs, object, array} from '@storybook/addon-knobs'
 import {Transaction} from './Wallets'
 import {TransactionHistory} from './TransactionHistory'
+import {SendTransaction} from './modals/SendTransaction'
 import './TransactionHistory.scss'
+import {action} from '@storybook/addon-actions'
 
 export default {
   title: 'Transaction History',
@@ -54,3 +56,14 @@ export const interactive = (): JSX.Element => {
     />
   )
 }
+
+export const sendTransactionModal = (): JSX.Element => (
+  <SendTransaction
+    accounts={array('Accounts', [
+      'longprivatekey',
+      'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
+    ])}
+    onCancel={action('send-transaction-cancelled')}
+    visible
+  />
+)
