@@ -11,4 +11,11 @@
     margin: 24px 18px 0 0;
     color: $text-color;
   }
+
+  .ant-modal-footer {
+    padding: 0 64px;
+    border-top-width: 0;
+    background-color: $quinary-background;
+    color: $secondary-text-color;
+  }
 }

@@ -9,6 +9,7 @@ interface DialogProps {
   type?: 'normal' | 'dark'
   prevButtonProps?: ButtonProps
   nextButtonProps?: ButtonProps
+  footer?: React.ReactNode
 }
 
 export const Dialog: React.FunctionComponent<DialogProps> = ({
@@ -17,6 +18,7 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
   nextButtonProps = {},
   prevButtonProps = {},
   children,
+  footer,
 }: React.PropsWithChildren<DialogProps>) => {
   const prevButtonPropsToUse: ButtonProps = {
     size: 'large',
@@ -39,6 +41,7 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
         <Button {...prevButtonPropsToUse} />
         <Button {...nextButtonPropsToUse} />
       </div>
+      {footer && <div className="footer">{footer}</div>}
     </div>
   )
 }

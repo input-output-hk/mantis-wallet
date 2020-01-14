@@ -80,7 +80,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
             checked={usePrivateKey}
             onChange={setUsePrivateKey}
           />
-          {usePrivateKey && <DialogPrivateKey privateKey={privateKey} />}
+          {usePrivateKey && <DialogPrivateKey privateKey={privateKey} enableDownload />}
         </Dialog>
       )
     case 'DISPLAY_RECOVERY':

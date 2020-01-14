@@ -6,10 +6,12 @@ import './DialogPrivateKey.scss'
 
 interface DialogPrivateKeyProps {
   privateKey: string
+  enableDownload?: boolean
 }
 
 export const DialogPrivateKey: React.FunctionComponent<DialogPrivateKeyProps> = ({
   privateKey,
+  enableDownload = false,
 }: DialogPrivateKeyProps) => (
   <div className="DialogPrivateKey">
     <div className="display">
@@ -18,12 +20,14 @@ export const DialogPrivateKey: React.FunctionComponent<DialogPrivateKeyProps> = 
       </div>
       <div className="private-key">{privateKey}</div>
     </div>
-    <Button
-      className="download"
-      type="primary"
-      onClick={(): void => fileDownload(privateKey, 'Download.txt')}
-    >
-      Download.txt
-    </Button>
+    {enableDownload && (
+      <Button
+        className="download"
+        type="primary"
+        onClick={(): void => fileDownload(privateKey, 'Download.txt')}
+      >
+        Download.txt
+      </Button>
+    )}
   </div>
 )
