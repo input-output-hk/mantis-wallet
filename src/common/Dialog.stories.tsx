@@ -24,11 +24,15 @@ export const AllTheFields: React.FunctionComponent<{}> = () => {
   return (
     <Dialog
       title="All The Fields"
-      prevButtonLabel={text('Cancel button label', 'Cancel')}
-      prevButtonAction={action('prev-button-click')}
-      nextButtonLabel={text('Next button label', 'Next →')}
-      nextButtonAction={action('next-button-click')}
-      nextButtonDisabled={boolean('Disable Next button', true)}
+      prevButtonProps={{
+        children: text('Cancel button label', 'Cancel'),
+        onClick: action('prev-button-click'),
+      }}
+      nextButtonProps={{
+        children: text('Next button label', 'Next'),
+        onClick: action('next-button-click'),
+        disabled: boolean('Disable Next button', true),
+      }}
     >
       <DialogApproval
         description={text('Approval field text', 'Are you sure?')}

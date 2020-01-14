@@ -48,8 +48,8 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
       return (
         <Dialog
           title="Create wallet"
-          prevButtonAction={cancel}
-          nextButtonAction={(): void => setStep('SECURITY')}
+          prevButtonProps={{onClick: cancel}}
+          nextButtonProps={{onClick: (): void => setStep('SECURITY')}}
         >
           <DialogInput label="Wallet name" />
           <DialogSwitch
@@ -66,9 +66,8 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
       return (
         <Dialog
           title="Security"
-          prevButtonLabel="Back"
-          prevButtonAction={(): void => setStep('DEFINE')}
-          nextButtonAction={(): void => setStep('DISPLAY_RECOVERY')}
+          prevButtonProps={{onClick: (): void => setStep('DEFINE'), children: 'Back'}}
+          nextButtonProps={{onClick: (): void => setStep('DISPLAY_RECOVERY')}}
         >
           <DialogMessage
             label="Recovery Phrase"
@@ -88,10 +87,14 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
       return (
         <Dialog
           title="Recovery Phrase"
-          prevButtonLabel="Back"
-          prevButtonAction={(): void => setStep('SECURITY')}
-          nextButtonAction={(): void => setStep('VERIFY_RECOVERY')}
-          nextButtonDisabled={!isRecoveryPhraseWritten}
+          prevButtonProps={{
+            onClick: (): void => setStep('SECURITY'),
+            children: 'Back',
+          }}
+          nextButtonProps={{
+            onClick: (): void => setStep('VERIFY_RECOVERY'),
+            disabled: !isRecoveryPhraseWritten,
+          }}
         >
           <DialogMessage description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna" />
           <DialogApproval
@@ -105,11 +108,14 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
       return (
         <Dialog
           title="Recovery Phrase"
-          prevButtonLabel="Back"
-          prevButtonAction={(): void => setStep('DISPLAY_RECOVERY')}
-          nextButtonLabel="Finish"
-          nextButtonAction={(): void => alert('finihed')}
-          nextButtonDisabled={!isCondition1 || !isCondition2 || !isRecoveryPhraseValidated}
+          prevButtonProps={{
+            onClick: (): void => setStep('DISPLAY_RECOVERY'),
+            children: 'Back',
+          }}
+          nextButtonProps={{
+            disabled: !isCondition1 || !isCondition2 || !isRecoveryPhraseValidated,
+            children: 'Finish',
+          }}
         >
           <DialogRecoveryPhrase
             recoveryPhraseValidation={(enteredPhrase): boolean =>

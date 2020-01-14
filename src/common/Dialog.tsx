@@ -1,41 +1,44 @@
 import React from 'react'
+import classnames from 'classnames'
 import {Button} from 'antd'
+import {ButtonProps} from 'antd/lib/button'
 import './Dialog.scss'
 
 interface DialogProps {
-  title: string
-  prevButtonLabel?: string
-  prevButtonAction: () => void
-  nextButtonLabel?: string
-  nextButtonAction: () => void
-  nextButtonDisabled?: boolean
+  title?: string
+  type?: 'normal' | 'dark'
+  prevButtonProps?: ButtonProps
+  nextButtonProps?: ButtonProps
 }
 
 export const Dialog: React.FunctionComponent<DialogProps> = ({
   title,
-  prevButtonLabel = 'Cancel',
-  nextButtonLabel = 'Next →',
-  prevButtonAction,
-  nextButtonAction,
-  nextButtonDisabled = false,
+  type = 'normal',
+  nextButtonProps = {},
+  prevButtonProps = {},
   children,
-}: React.PropsWithChildren<DialogProps>) => (
-  <div className="Dialog">
-    <div className="title">{title}</div>
-    <div>{children}</div>
-    <div className="actions">
-      <Button className="button" size="large" onClick={prevButtonAction}>
-        {prevButtonLabel}
-      </Button>
-      <Button
-        type="primary"
-        className="button"
-        size="large"
-        onClick={nextButtonAction}
-        disabled={nextButtonDisabled}
-      >
-        {nextButtonLabel}
-      </Button>
+}: React.PropsWithChildren<DialogProps>) => {
+  const prevButtonPropsToUse: ButtonProps = {
+    size: 'large',
+    children: 'Cancel',
+    ...prevButtonProps,
+  }
+
+  const nextButtonPropsToUse: ButtonProps = {
+    type: 'primary',
+    size: 'large',
+    children: 'Next →',
+    ...nextButtonProps,
+  }
+
+  return (
+    <div className={classnames('Dialog', type)}>
+      {title && <div className="title">{title}</div>}
+      <div>{children}</div>
+      <div className="actions">
+        <Button {...prevButtonPropsToUse} />
+        <Button {...nextButtonPropsToUse} />
+      </div>
     </div>
-  </div>
-)
+  )
+}

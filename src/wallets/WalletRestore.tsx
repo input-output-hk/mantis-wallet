@@ -15,11 +15,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   const [usePassword, setUsePassword] = useState(false)
 
   return (
-    <Dialog
-      title="Restore wallet"
-      prevButtonAction={cancel}
-      nextButtonAction={(): void => alert('restored')}
-    >
+    <Dialog title="Restore wallet" prevButtonProps={{onClick: cancel}}>
       <DialogInput label="Wallet name" />
       <DialogTabbedInput labels={['Private key', 'Recovery phrase']} />
       <DialogSwitch
