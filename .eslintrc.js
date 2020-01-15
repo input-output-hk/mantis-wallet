@@ -79,7 +79,6 @@ module.exports = {
     'fp/no-mutating-methods': 'error',
     'fp/no-mutation': 'error',
     'fp/no-proxy': 'error',
-    'fp/no-rest-parameters': 'error',
     'fp/no-this': 'error',
     'fp/no-throw': 'error',
     'fp/no-valueof-field': 'error',

@@ -1,5 +1,6 @@
 import React from 'react'
 import {configure, addDecorator} from '@storybook/react'
+import 'antd/dist/antd.less'
 import '../src/App.scss'
 import '../src/index.scss'
 

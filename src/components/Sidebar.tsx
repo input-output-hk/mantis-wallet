@@ -4,7 +4,7 @@ import SVG from 'react-inlinesvg'
 import {ROUTES} from '../routes-config'
 import './Sidebar.scss'
 
-const Sidebar = (): JSX.Element => {
+export const Sidebar = (): JSX.Element => {
   return (
     <div className="Sidebar">
       <div className="logo">
@@ -35,5 +35,3 @@ const Sidebar = (): JSX.Element => {
     </div>
   )
 }
-
-export default Sidebar

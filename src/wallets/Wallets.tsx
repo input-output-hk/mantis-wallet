@@ -18,7 +18,7 @@ export interface Transaction {
   status: 'Confirmed' | 'Pending'
 }
 
-const Wallets = (): JSX.Element => {
+export const Wallets = (): JSX.Element => {
   const dummyWallets = [...Array(2).keys()]
     .slice(1)
     .map((n): Wallet => ({id: `${n}`, name: `WALLET ${n}`}))
@@ -58,5 +58,3 @@ const Wallets = (): JSX.Element => {
     </div>
   )
 }
-
-export default Wallets
