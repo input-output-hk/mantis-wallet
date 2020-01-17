@@ -1,13 +1,23 @@
 @import '../theme.scss';
 
 .BorderlessInput {
-  border: 0;
+  position: relative;
 
-  &:hover {
+  .ant-input {
     border: 0;
+
+    &:hover {
+      border: 0;
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
   }
 
-  &:focus {
-    box-shadow: none;
+  &.invalid {
+    .ant-input {
+      border: 1px solid $error-color;
+    }
   }
 }

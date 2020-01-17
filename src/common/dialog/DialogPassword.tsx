@@ -1,7 +1,7 @@
 import React from 'react'
-import {BorderlessInputPassword} from '../BorderlessInputPassword'
-import './DialogPassword.scss'
+import {BorderlessInputPassword} from '../BorderlessInput'
 import {DialogColumns} from './DialogColumns'
+import './DialogPassword.scss'
 
 export const DialogPassword: React.FunctionComponent<{}> = () => (
   <div className="DialogPassword">
