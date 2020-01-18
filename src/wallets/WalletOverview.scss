@@ -5,7 +5,7 @@
   grid-template-areas:
     'title title title refresh'
     'graph total total .'
-    'graph confidental transparent .';
+    'graph confidential transparent .';
   grid-template-columns: auto 1fr 1fr auto;
   grid-template-rows: 124px auto auto;
   height: 400px;
@@ -43,8 +43,8 @@
     white-space: nowrap;
   }
 
-  .confidental {
-    grid-area: confidental;
+  .confidential {
+    grid-area: confidential;
     min-width: 205px;
     height: 115px;
     margin-right: 30px;

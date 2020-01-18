@@ -9,13 +9,13 @@ export default {
 }
 
 export const withZeroBalance = (): JSX.Element => (
-  <WalletOverview pending={0} transparent={0} confidental={0} />
+  <WalletOverview pending={0} transparent={0} confidential={0} />
 )
 
 export const interactive = (): JSX.Element => {
   return (
     <WalletOverview
-      confidental={number('Confidental', 15262.46)}
+      confidential={number('Confidential', 15262.46)}
       transparent={number('Transparent', 6359.36)}
       pending={number('Pending', 3815.62)}
     />
