@@ -1,5 +1,7 @@
 import React from 'react'
 import {withKnobs, number} from '@storybook/addon-knobs'
+import Big from 'big.js'
+import {WalletState} from '../common/wallet-state'
 import {WalletOverview} from './WalletOverview'
 import './WalletOverview.scss'
 
@@ -9,15 +11,19 @@ export default {
 }
 
 export const withZeroBalance = (): JSX.Element => (
-  <WalletOverview pending={0} transparent={0} confidential={0} />
+  <WalletState.Provider>
+    <WalletOverview pending={Big(0)} transparent={Big(0)} confidential={Big(0)} />
+  </WalletState.Provider>
 )
 
 export const interactive = (): JSX.Element => {
   return (
-    <WalletOverview
-      confidential={number('Confidential', 15262.46)}
-      transparent={number('Transparent', 6359.36)}
-      pending={number('Pending', 3815.62)}
-    />
+    <WalletState.Provider>
+      <WalletOverview
+        confidential={Big(number('Confidential', 15262.46))}
+        transparent={Big(number('Transparent', 6359.36))}
+        pending={Big(number('Pending', 3815.62))}
+      />
+    </WalletState.Provider>
   )
 }
