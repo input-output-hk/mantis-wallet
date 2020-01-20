@@ -13,6 +13,7 @@ import {DialogTabs} from './dialog/DialogTabs'
 import {DialogSwitch} from './dialog/DialogSwitch'
 import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
+import {DialogError} from './dialog/DialogError'
 
 export default {
   title: 'Dialog',
@@ -70,6 +71,15 @@ export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
       label={text('Dropdown label', 'Hover me')}
       options={array('Dropdown options', ['first', 'second', 'third'])}
     />
+  </Dialog>
+)
+
+export const InteractiveError: React.FunctionComponent<{}> = () => (
+  <Dialog
+    title="Dialog Error"
+    footer={<DialogError>{text('Error in footer', 'Error in the footer')}</DialogError>}
+  >
+    <DialogError>{text('Error in content', 'Error in the dialog')}</DialogError>
   </Dialog>
 )
 
