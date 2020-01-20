@@ -15,9 +15,9 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
 }: WalletCreateProps) => {
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
 
-  const privateKey =
+  const spendingKey =
     '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5'
-  const recoveryPhrase = [
+  const seedPhrase = [
     'vengeful',
     'legs',
     'cute',
@@ -40,7 +40,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
         <WalletCreateSecurityStep
           back={(): void => setStep('DEFINE')}
           next={(): void => setStep('DISPLAY_RECOVERY')}
-          privateKey={privateKey}
+          spendingKey={spendingKey}
         />
       )
     case 'DISPLAY_RECOVERY':
@@ -48,6 +48,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
         <WalletCreateDisplayRecoveryStep
           back={(): void => setStep('SECURITY')}
           next={(): void => setStep('VERIFY_RECOVERY')}
+          seedPhrase={seedPhrase}
         />
       )
     case 'VERIFY_RECOVERY':
@@ -55,7 +56,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
         <WalletCreateVerifyRecoveryStep
           back={(): void => setStep('SECURITY')}
           finish={(): void => console.log('finished')}
-          recoveryPhrase={recoveryPhrase}
+          seedPhrase={seedPhrase}
         />
       )
   }

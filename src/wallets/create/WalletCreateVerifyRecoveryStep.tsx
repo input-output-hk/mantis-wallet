@@ -7,15 +7,15 @@ import {DialogApproval} from '../../common/dialog/DialogApproval'
 interface WalletCreateVerifyRecoveryStepProps {
   back: () => void
   finish: () => void
-  recoveryPhrase: string[]
+  seedPhrase: string[]
 }
 
 export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreateVerifyRecoveryStepProps> = ({
   back,
   finish,
-  recoveryPhrase,
+  seedPhrase,
 }: WalletCreateVerifyRecoveryStepProps) => {
-  const [isRecoveryPhraseValidated, setRecoveryPhraseValidated] = useState(false)
+  const [isSeedPhraseValidated, setSeedPhraseValidated] = useState(false)
   const [isCondition1, setCondition1] = useState(false)
   const [isCondition2, setCondition2] = useState(false)
 
@@ -27,17 +27,15 @@ export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreat
         children: 'Back',
       }}
       nextButtonProps={{
-        disabled: !isCondition1 || !isCondition2 || !isRecoveryPhraseValidated,
+        disabled: !isCondition1 || !isCondition2 || !isSeedPhraseValidated,
         children: 'Finish',
         onClick: finish,
       }}
     >
       <DialogRecoveryPhrase
-        recoveryPhraseValidation={(enteredPhrase): boolean =>
-          _.isEqual(enteredPhrase, recoveryPhrase)
-        }
-        setRecoveryPhraseValidated={setRecoveryPhraseValidated}
-        recoveryPhraseShuffled={_.shuffle(recoveryPhrase)}
+        recoveryPhraseValidation={(enteredPhrase): boolean => _.isEqual(enteredPhrase, seedPhrase)}
+        setRecoveryPhraseValidated={setSeedPhraseValidated}
+        recoveryPhraseShuffled={_.shuffle(seedPhrase)}
       />
       <DialogApproval
         description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"

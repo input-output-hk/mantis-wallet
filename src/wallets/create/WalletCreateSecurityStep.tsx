@@ -7,15 +7,15 @@ import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
 interface WalletCreateSecurityStepProps {
   back: () => void
   next: () => void
-  privateKey: string
+  spendingKey: string
 }
 
 export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecurityStepProps> = ({
   back,
   next,
-  privateKey,
+  spendingKey,
 }: WalletCreateSecurityStepProps) => {
-  const [usePrivateKey, setUsePrivateKey] = useState(false)
+  const [useSpendingKey, setUseSpendingKey] = useState(false)
 
   return (
     <Dialog
@@ -31,10 +31,10 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
         key="private-key-switch"
         label="Private key"
         description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
-        checked={usePrivateKey}
-        onChange={setUsePrivateKey}
+        checked={useSpendingKey}
+        onChange={setUseSpendingKey}
       />
-      {usePrivateKey && <DialogPrivateKey privateKey={privateKey} enableDownload />}
+      {useSpendingKey && <DialogPrivateKey privateKey={spendingKey} enableDownload />}
     </Dialog>
   )
 }

@@ -66,7 +66,7 @@ export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> 
       <div className="instructions">Re-input seed phrase by selecting words from selection</div>
       <InlineError
         className="input"
-        errorMessage={showValidationError ? 'Seed phrase is incorrect' : ''}
+        errorMessage={showValidationError ? 'The phrase is incorrect' : ''}
       >
         {enteredPhrase.join(' ')}
       </InlineError>

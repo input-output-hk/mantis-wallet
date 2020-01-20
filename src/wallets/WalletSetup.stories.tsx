@@ -37,7 +37,7 @@ export const showWalletCreateSecurityStep = (): JSX.Element => (
   <WalletCreateSecurityStep
     back={action('on-back')}
     next={action('on-next')}
-    privateKey={text(
+    spendingKey={text(
       'Private key',
       '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
     )}
@@ -45,14 +45,31 @@ export const showWalletCreateSecurityStep = (): JSX.Element => (
 )
 
 export const showWalletCreateDisplaySeedStep = (): JSX.Element => (
-  <WalletCreateDisplayRecoveryStep back={action('on-back')} next={action('on-next')} />
+  <WalletCreateDisplayRecoveryStep
+    back={action('on-back')}
+    next={action('on-next')}
+    seedPhrase={array('Recovery Phrase', [
+      'vengeful',
+      'legs',
+      'cute',
+      'rifle',
+      'bite',
+      'spell',
+      'ambiguous',
+      'impossible',
+      'fabulous',
+      'observe',
+      'offer',
+      'baseball',
+    ])}
+  />
 )
 
 export const showWalletCreateVerifyRecoveryStep = (): JSX.Element => (
   <WalletCreateVerifyRecoveryStep
     back={action('on-back')}
     finish={action('on-finish')}
-    recoveryPhrase={array('Recovery Phrase', [
+    seedPhrase={array('Recovery Phrase', [
       'vengeful',
       'legs',
       'cute',
