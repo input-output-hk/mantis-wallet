@@ -6,12 +6,14 @@ import {DialogPassword} from '../../common/dialog/DialogPassword'
 
 interface WalletCreateDefineStepProps {
   cancel: () => void
-  next: (walletName: string, passphrase: string) => void
+  next: (walletName: string, passphrase: string) => Promise<void>
+  errors?: React.ReactNode
 }
 
 export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineStepProps> = ({
   cancel,
   next,
+  errors,
 }: WalletCreateDefineStepProps) => {
   const [walletName, setWalletName] = useState('')
   const [usePassphrase, setUsePassphrase] = useState(false)
@@ -23,9 +25,10 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
       title="Create wallet"
       prevButtonProps={{onClick: cancel}}
       nextButtonProps={{
-        onClick: (): void => next(walletName, usePassphrase ? passphrase : ''),
+        onClick: async (): Promise<void> => next(walletName, passphrase),
         disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
       }}
+      footer={errors}
     >
       <DialogInput
         label="Wallet name"

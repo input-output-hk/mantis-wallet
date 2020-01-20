@@ -30,7 +30,12 @@ export const showWalletCreate = (): JSX.Element => (
 )
 
 export const showWalletCreateDefineStep = (): JSX.Element => (
-  <WalletCreateDefineStep cancel={action('on-cancel')} next={action('on-next')} />
+  <WalletCreateDefineStep
+    cancel={action('on-cancel')}
+    next={async (walletName, seedPhrase): Promise<void> =>
+      action('on-next')({walletName, seedPhrase})
+    }
+  />
 )
 
 export const showWalletCreateSecurityStep = (): JSX.Element => (

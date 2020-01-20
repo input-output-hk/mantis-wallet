@@ -3,6 +3,8 @@ import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
+import {wallet} from '../wallet'
+import {DialogError} from '../common/dialog/DialogError'
 
 interface WalletCreateProps {
   cancel: () => void
@@ -15,8 +17,13 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
 }: WalletCreateProps) => {
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
 
-  const spendingKey =
-    '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5'
+  const [walletCreateError, setWalletCreateError] = useState('')
+  const createErrors = walletCreateError ? <DialogError>{walletCreateError}</DialogError> : null
+
+  const [walletName, setWalletName] = useState('')
+  const [passphrase, setPassphrase] = useState('')
+  const [spendingKey, setSpendingKey] = useState('')
+
   const seedPhrase = [
     'vengeful',
     'legs',
@@ -34,7 +41,24 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
 
   switch (step) {
     case 'DEFINE':
-      return <WalletCreateDefineStep cancel={cancel} next={(): void => setStep('SECURITY')} />
+      return (
+        <WalletCreateDefineStep
+          cancel={cancel}
+          next={async (walletName, passphrase): Promise<void> => {
+            setWalletCreateError('')
+            try {
+              const newSpendingKey = await wallet.create({passphrase})
+              setWalletName(walletName)
+              setPassphrase(passphrase)
+              setSpendingKey(newSpendingKey)
+              setStep('SECURITY')
+            } catch (e) {
+              setWalletCreateError(e.message)
+            }
+          }}
+          errors={createErrors}
+        />
+      )
     case 'SECURITY':
       return (
         <WalletCreateSecurityStep
