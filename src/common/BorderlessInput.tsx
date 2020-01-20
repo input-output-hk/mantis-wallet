@@ -1,27 +1,25 @@
 import React from 'react'
 import {Input} from 'antd'
 import {InputProps, PasswordProps} from 'antd/lib/input'
-import {InlineError} from './InlineError'
+import {InlineError, InlineErrorProps} from './InlineError'
 import './BorderlessInput.scss'
 
-export interface InputErrorProps {
-  errorMessage?: string
-}
-
-export const BorderlessInput: React.FunctionComponent<InputErrorProps & InputProps> = ({
+export const BorderlessInput: React.FunctionComponent<InlineErrorProps & InputProps> = ({
   errorMessage,
+  forceInvalid,
   ...props
-}: InputErrorProps & InputProps) => (
-  <InlineError className="BorderlessInput" errorMessage={errorMessage}>
+}: InlineErrorProps & InputProps) => (
+  <InlineError className="BorderlessInput" errorMessage={errorMessage} forceInvalid={forceInvalid}>
     <Input {...props} />
   </InlineError>
 )
 
-export const BorderlessInputPassword: React.FunctionComponent<InputErrorProps & PasswordProps> = ({
+export const BorderlessInputPassword: React.FunctionComponent<InlineErrorProps & PasswordProps> = ({
   errorMessage,
+  forceInvalid,
   ...props
-}: InputErrorProps & PasswordProps) => (
-  <InlineError className="BorderlessInput" errorMessage={errorMessage}>
+}: InlineErrorProps & PasswordProps) => (
+  <InlineError className="BorderlessInput" errorMessage={errorMessage} forceInvalid={forceInvalid}>
     <Input.Password {...props} />
   </InlineError>
 )

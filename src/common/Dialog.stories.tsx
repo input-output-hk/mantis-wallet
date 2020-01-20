@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
+import {Option, none, some} from 'fp-ts/lib/Option'
 import {withKnobs, text, boolean, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {Dialog} from './Dialog'
@@ -103,7 +104,16 @@ export const InteractiveMessage: React.FunctionComponent<{}> = () => (
 
 export const InteractivePassword: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Password">
-    <DialogPassword />
+    <DialogPassword
+      criteriaMessage={text('Password criteria', 'Password should be at least 4 characters')}
+      setValid={action('set-valid-password')}
+      onChange={action('on-change-password')}
+      getValidationError={(value: string): Option<string> => {
+        return value.length < 4
+          ? some(text('Inline error', 'Password should be at least 4 characters'))
+          : none
+      }}
+    />
   </Dialog>
 )
 
