@@ -9,7 +9,7 @@ import {DialogMessage} from './dialog/DialogMessage'
 import {DialogPassword} from './dialog/DialogPassword'
 import {DialogPrivateKey} from './dialog/DialogPrivateKey'
 import {DialogRecoveryPhrase} from './dialog/DialogRecoveryPhrase'
-import {DialogTabbedInput} from './dialog/DialogTabbedInput'
+import {DialogTabs} from './dialog/DialogTabs'
 import {DialogSwitch} from './dialog/DialogSwitch'
 import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
@@ -138,8 +138,19 @@ export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveTabbedInput: React.FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Security">
-    <DialogTabbedInput labels={array('Security Dialog', ['First security', 'Second security'])} />
+export const InteractiveTabs: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Tabs">
+    <DialogTabs
+      tabs={[
+        {
+          label: text('First tab', 'First tab'),
+          content: text('First tab content', 'First tab content'),
+        },
+        {
+          label: text('Second tab', 'Second tab'),
+          content: text('Second tab content', 'Second tab content'),
+        },
+      ]}
+    />
   </Dialog>
 )

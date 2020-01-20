@@ -3,7 +3,7 @@ import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogSwitch} from '../common/dialog/DialogSwitch'
 import {DialogInput} from '../common/dialog/DialogInput'
-import {DialogTabbedInput} from '../common/dialog/DialogTabbedInput'
+import {DialogTabs} from '../common/dialog/DialogTabs'
 
 interface WalletRestoreProps {
   cancel: () => void
@@ -17,7 +17,18 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   return (
     <Dialog title="Restore wallet" prevButtonProps={{onClick: cancel}}>
       <DialogInput label="Wallet name" />
-      <DialogTabbedInput labels={['Private key', 'Recovery phrase']} />
+      <DialogTabs
+        tabs={[
+          {
+            label: 'Private key',
+            content: <DialogInput />,
+          },
+          {
+            label: 'Recovery phrase',
+            content: <DialogInput />,
+          },
+        ]}
+      />
       <DialogSwitch
         key="use-password-switch"
         label="Spending password"
