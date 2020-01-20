@@ -19,61 +19,127 @@ export default {
   decorators: [withKnobs],
 }
 
-export const AllTheFields: React.FunctionComponent<{}> = () => {
+export const InteractiveDialog: React.FunctionComponent<{}> = () => (
+  <Dialog
+    title={text('Dialog title', 'Dialog title')}
+    prevButtonProps={{
+      children: text('Cancel button label', 'Cancel'),
+      onClick: action('prev-button-click'),
+      disabled: boolean('Disable Prev button', false),
+    }}
+    nextButtonProps={{
+      children: text('Next button label', 'Next'),
+      onClick: action('next-button-click'),
+      disabled: boolean('Disable Next button', true),
+    }}
+    footer={text('Footer', 'footer text')}
+  >
+    {text('Dialog content', 'Dialog content')}
+  </Dialog>
+)
+
+export const InteractiveApproval: React.FunctionComponent<{}> = () => {
   const [approved, setApproved] = useState(false)
-  const [switched, setSwitched] = useState(false)
 
   return (
-    <Dialog
-      title="All The Fields"
-      prevButtonProps={{
-        children: text('Cancel button label', 'Cancel'),
-        onClick: action('prev-button-click'),
-      }}
-      nextButtonProps={{
-        children: text('Next button label', 'Next'),
-        onClick: action('next-button-click'),
-        disabled: boolean('Disable Next button', true),
-      }}
-    >
+    <Dialog title="Dialog Approval">
       <DialogApproval
         description={text('Approval field text', 'Are you sure?')}
         checked={approved}
         onChange={(checked): void => {
           setApproved(checked)
-          alert(checked ? 'Is approved' : 'Is not approved')
+          action(checked ? 'Is approved' : 'Is not approved')()
         }}
       />
-      <DialogInput label={text('Input field label', 'write your input here')} />
-      <DialogMessage description={text('Message field text', 'A message in the dialog')} />
-      <DialogPassword />
-      <DialogPrivateKey
-        privateKey={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
-      />
-      <DialogRecoveryPhrase
-        recoveryPhraseShuffled={['Third', 'First', 'Fourth', 'Second']}
-        recoveryPhraseValidation={(enteredPhrase): boolean =>
-          _.isEqual(enteredPhrase, ['First', 'Second', 'Third', 'Fourth'])
-        }
-        setRecoveryPhraseValidated={(valid): void => {
-          if (valid) action('recovery-phrase-valid')()
-        }}
-      />
-      <DialogTabbedInput labels={array('Security Dialog', ['First security', 'Second security'])} />
-      <DialogSwitch
-        label={text('Switch field label', 'Switch this')}
-        description={text('Switch field text', '..becuase of this')}
-        onChange={(checked): void => setSwitched(checked)}
-        checked={switched}
-      />
-      <DialogDropdown
-        label={text('Dropdown label', 'Hover me')}
-        options={array('Dropdown options', ['first', 'second', 'third'])}
-      ></DialogDropdown>
-      <DialogColumns>
-        <DialogMessage description={text('First column', 'First column')} />
-        <DialogMessage description={text('Second column', 'Second column')} />
-      </DialogColumns>
     </Dialog>
   )
 }
+
+export const InteractiveColumns: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Columns">
+    <DialogColumns>
+      <DialogMessage description={text('First column', 'First column')} />
+      <DialogMessage description={text('Second column', 'Second column')} />
+    </DialogColumns>
+  </Dialog>
+)
+
+export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Dropdown">
+    <DialogDropdown
+      label={text('Dropdown label', 'Hover me')}
+      options={array('Dropdown options', ['first', 'second', 'third'])}
+    />
+  </Dialog>
+)
+
+export const InteractiveInput: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Input">
+    <DialogInput label={text('Input label', 'Input label')} />
+  </Dialog>
+)
+
+export const InteractiveDarkInput: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Input dark" type="dark">
+    <DialogInput label={text('Input label', 'Input label')} />
+  </Dialog>
+)
+
+export const InteractiveMessage: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Message">
+    <DialogMessage description={text('Message text', 'This is a message in a dialog')} />
+  </Dialog>
+)
+
+export const InteractivePassword: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Password">
+    <DialogPassword />
+  </Dialog>
+)
+
+export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Private Key">
+    <DialogPrivateKey
+      privateKey={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
+      enableDownload={boolean('Enable download', true)}
+    />
+  </Dialog>
+)
+
+export const InteractiveRecoveryPhrase: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Recovery Phrase">
+    <DialogRecoveryPhrase
+      recoveryPhraseShuffled={['Third', 'First', 'Fourth', 'Second']}
+      recoveryPhraseValidation={(enteredPhrase): boolean =>
+        _.isEqual(enteredPhrase, ['First', 'Second', 'Third', 'Fourth'])
+      }
+      setRecoveryPhraseValidated={(valid): void => {
+        if (valid) action('recovery-phrase-valid')()
+      }}
+    />
+  </Dialog>
+)
+
+export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
+  const [switched, setSwitched] = useState(false)
+
+  return (
+    <Dialog title="Dialog Switch">
+      <DialogSwitch
+        label={text('Switch field label', 'Switch this')}
+        description={text('Switch field text', '..becuase of this')}
+        onChange={(checked): void => {
+          setSwitched(checked)
+          action(checked ? 'Is switched' : 'Is not switched')()
+        }}
+        checked={switched}
+      />
+    </Dialog>
+  )
+}
+
+export const InteractiveTabbedInput: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Security">
+    <DialogTabbedInput labels={array('Security Dialog', ['First security', 'Second security'])} />
+  </Dialog>
+)
