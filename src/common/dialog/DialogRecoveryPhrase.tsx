@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import './DialogRecoveryPhrase.scss'
+import {InlineError} from '../InlineError'
 
 interface DialogRecoveryProps {
   recoveryPhraseShuffled: string[]
@@ -56,10 +57,19 @@ export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> 
     setShuffledWords(shuffledWords.map(({word}) => ({word, used: false})))
   }
 
+  const showValidationError =
+    enteredPhrase.length === recoveryPhraseShuffled.length &&
+    !recoveryPhraseValidation(enteredPhrase)
+
   return (
     <div className="DialogRecoveryPhrase">
       <div className="instructions">Re-input seed phrase by selecting words from selection</div>
-      <div className="input">{enteredPhrase.join(' ')}</div>
+      <InlineError
+        className="input"
+        errorMessage={showValidationError ? 'Seed phrase is incorrect' : ''}
+      >
+        {enteredPhrase.join(' ')}
+      </InlineError>
       <div className="clear-container">
         <span className="clear" onClick={clear}>
           Clear
