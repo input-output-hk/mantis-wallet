@@ -3,6 +3,11 @@ import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './components/ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
+import menuPortfolioIcon from './assets/icons/menu-portfolio.svg'
+import menuPobIcon from './assets/icons/menu-pob.svg'
+import menuWalletsIcon from './assets/icons/menu-wallets.svg'
+import menuGlacierIcon from './assets/icons/menu-glacier.svg'
+import menuSettingsIcon from './assets/icons/menu-settings.svg'
 
 interface Routes {
   [key: string]: Route
@@ -20,45 +25,45 @@ export const ROUTES: Routes = {
   PORTFOLIO: {
     title: 'Portfolio',
     path: '/portfolio',
-    icon: 'menu-portfolio.svg',
+    icon: menuPortfolioIcon,
     component: Unimplemented,
   },
   WALLETS: {
     title: 'Wallets',
     path: '/wallets',
-    icon: 'menu-wallets.svg',
+    icon: menuWalletsIcon,
     component: Wallets,
   },
   WALLET_SETUP: {
     title: 'Wallet Setup',
     path: '/wallets-setup',
-    icon: 'menu-wallets.svg',
+    icon: menuWalletsIcon,
     component: WalletSetup,
     hidden: true,
   },
   WALLET_UNLOCK: {
     title: 'Unlock Wallet',
     path: '/wallets-unlock',
-    icon: 'menu-wallets.svg',
+    icon: menuWalletsIcon,
     component: WalletUnlock,
     hidden: true,
   },
   PROOF_OF_BURN: {
     title: 'Proof of Burn',
     path: '/proof-of-burn',
-    icon: 'menu-pob.svg',
+    icon: menuPobIcon,
     component: Unimplemented,
   },
   GLACIER_DROP: {
     title: 'Glacier Drop',
     path: '/glacier-drop',
-    icon: 'menu-glacier.svg',
+    icon: menuGlacierIcon,
     component: Unimplemented,
   },
   SETTINGS: {
     title: 'Settings',
     path: '/settings',
-    icon: 'menu-settings.svg',
+    icon: menuSettingsIcon,
     component: ApiTest,
   },
 }
