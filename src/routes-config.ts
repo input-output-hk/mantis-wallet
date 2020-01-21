@@ -1,4 +1,4 @@
-import {Unimplemented} from './components/Unimplemented'
+import {Unimplemented} from './common/Unimplemented'
 import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './components/ApiTest'
 

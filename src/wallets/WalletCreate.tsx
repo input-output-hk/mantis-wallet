@@ -1,13 +1,13 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
-import {WalletDialog} from './WalletDialog'
-import {WalletDialogInput} from './dialog/WalletDialogInput'
-import {WalletDialogSwitch} from './dialog/WalletDialogSwitch'
-import {WalletDialogPassword} from './dialog/WalletDialogPassword'
-import {WalletDialogMessage} from './dialog/WalletDialogMessage'
-import {WalletDialogPrivateKey} from './dialog/WalletDialogPrivateKey'
-import {WalletDialogApproval} from './dialog/WalletDialogApproval'
-import {WalletDialogRecoveryPhrase} from './dialog/WalletDialogRecoveryPhrase'
+import {Dialog} from '../common/Dialog'
+import {DialogInput} from '../common/dialog/DialogInput'
+import {DialogSwitch} from '../common/dialog/DialogSwitch'
+import {DialogPassword} from '../common/dialog/DialogPassword'
+import {DialogMessage} from '../common/dialog/DialogMessage'
+import {DialogPrivateKey} from '../common/dialog/DialogPrivateKey'
+import {DialogApproval} from '../common/dialog/DialogApproval'
+import {DialogRecoveryPhrase} from '../common/dialog/DialogRecoveryPhrase'
 
 interface WalletCreateProps {
   cancel: () => void
@@ -46,89 +46,95 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   switch (step) {
     case 'DEFINE':
       return (
-        <WalletDialog
+        <Dialog
           title="Create wallet"
-          prevButtonAction={cancel}
-          nextButtonAction={(): void => setStep('SECURITY')}
+          prevButtonProps={{onClick: cancel}}
+          nextButtonProps={{onClick: (): void => setStep('SECURITY')}}
         >
-          <WalletDialogInput label="Wallet name" />
-          <WalletDialogSwitch
+          <DialogInput label="Wallet name" />
+          <DialogSwitch
             key="use-password-switch"
             label="Spending password"
             description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
             checked={usePassword}
             onChange={setUsePassword}
           />
-          {usePassword && <WalletDialogPassword />}
-        </WalletDialog>
+          {usePassword && <DialogPassword />}
+        </Dialog>
       )
     case 'SECURITY':
       return (
-        <WalletDialog
+        <Dialog
           title="Security"
-          prevButtonLabel="Back"
-          prevButtonAction={(): void => setStep('DEFINE')}
-          nextButtonAction={(): void => setStep('DISPLAY_RECOVERY')}
+          prevButtonProps={{onClick: (): void => setStep('DEFINE'), children: 'Back'}}
+          nextButtonProps={{onClick: (): void => setStep('DISPLAY_RECOVERY')}}
         >
-          <WalletDialogMessage
+          <DialogMessage
             label="Recovery Phrase"
             description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
           />
-          <WalletDialogSwitch
+          <DialogSwitch
             key="private-key-switch"
             label="Private key"
             description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
             checked={usePrivateKey}
             onChange={setUsePrivateKey}
           />
-          {usePrivateKey && <WalletDialogPrivateKey privateKey={privateKey} />}
-        </WalletDialog>
+          {usePrivateKey && <DialogPrivateKey privateKey={privateKey} enableDownload />}
+        </Dialog>
       )
     case 'DISPLAY_RECOVERY':
       return (
-        <WalletDialog
+        <Dialog
           title="Recovery Phrase"
-          prevButtonLabel="Back"
-          prevButtonAction={(): void => setStep('SECURITY')}
-          nextButtonAction={(): void => setStep('VERIFY_RECOVERY')}
-          nextButtonDisabled={!isRecoveryPhraseWritten}
+          prevButtonProps={{
+            onClick: (): void => setStep('SECURITY'),
+            children: 'Back',
+          }}
+          nextButtonProps={{
+            onClick: (): void => setStep('VERIFY_RECOVERY'),
+            disabled: !isRecoveryPhraseWritten,
+          }}
         >
-          <WalletDialogMessage description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna" />
-          <WalletDialogApproval
+          <DialogMessage description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna" />
+          <DialogApproval
             description="Yes, I have written it down."
             checked={isRecoveryPhraseWritten}
             onChange={setRecoveryPhraseWritten}
           />
-        </WalletDialog>
+        </Dialog>
       )
     case 'VERIFY_RECOVERY':
       return (
-        <WalletDialog
+        <Dialog
           title="Recovery Phrase"
-          prevButtonLabel="Back"
-          prevButtonAction={(): void => setStep('DISPLAY_RECOVERY')}
-          nextButtonLabel="Finish"
-          nextButtonAction={(): void => alert('finihed')}
-          nextButtonDisabled={!isCondition1 || !isCondition2 || !isRecoveryPhraseValidated}
+          prevButtonProps={{
+            onClick: (): void => setStep('DISPLAY_RECOVERY'),
+            children: 'Back',
+          }}
+          nextButtonProps={{
+            disabled: !isCondition1 || !isCondition2 || !isRecoveryPhraseValidated,
+            children: 'Finish',
+          }}
         >
-          <WalletDialogRecoveryPhrase
+          <DialogRecoveryPhrase
             recoveryPhraseValidation={(enteredPhrase): boolean =>
               _.isEqual(enteredPhrase, recoveryPhrase)
             }
             setRecoveryPhraseValidated={setRecoveryPhraseValidated}
             recoveryPhraseShuffled={_.shuffle(recoveryPhrase)}
           />
-          <WalletDialogApproval
+          <DialogApproval
             description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
             checked={isCondition1}
             onChange={setCondition1}
           />
-          <WalletDialogApproval
+          <DialogApproval
             description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
             checked={isCondition2}
             onChange={setCondition2}
           />
-        </WalletDialog>
+        </Dialog>
       )
   }
 }

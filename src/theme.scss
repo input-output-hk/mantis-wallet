@@ -9,10 +9,19 @@ $text-color: #f7f7f7;
 $link-color: $text-color;
 $font-family: 'Helvetica Neue', 'Work Sans', sans-serif;
 
+// secondary and tertiary backgrounds are used on components
+// put over the primary background
 $secondary-background: #000;
 $tertiary-background: #707070;
+
 $tertiary-color: #252525;
+
+// quaternary and quinary backgrounds are used on modals
+$quaternary-background: #202020;
+$quinary-background: #1e1e1e;
+
 $secondary-opacity: 0.57;
+$secondary-text-color: #808080;
 
 $border-color-base: $text-color;
 $border-radius-base: 0;
@@ -28,3 +37,8 @@ $switch-height: 22px;
 $input-bg: $normal-color;
 
 $checkbox-size: 20px;
+
+$modal-content-bg: $secondary-background;
+$modal-header-bg: $secondary-background;
+$modal-body-padding: 42px 64px 53px;
+$modal-mask-bg: 0;

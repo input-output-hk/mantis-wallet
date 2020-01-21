@@ -1,0 +1,20 @@
+@import '../../theme.scss';
+
+.DialogInput {
+  margin-bottom: 20px;
+
+  .label {
+    height: 25px;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .input {
+    height: 47px;
+  }
+}
+
+.Dialog.dark .DialogInput .input {
+  background-color: $quaternary-background;
+  color: $secondary-text-color;
+}

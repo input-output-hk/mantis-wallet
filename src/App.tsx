@@ -1,7 +1,7 @@
 import React from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
 import {ROUTES} from './routes-config'
-import {Sidebar} from './components/Sidebar'
+import {Sidebar} from './layout/Sidebar'
 import './App.scss'
 
 const App: React.FC = () => {

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import {Button} from 'antd'
-import {formatAmount, formatDate} from '../common/formatters'
+import {formatAmount, formatDate} from '../util/formatters'
 import {Transaction} from './Wallets'
+import {SendTransaction} from './modals/SendTransaction'
+import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import './TransactionHistory.scss'
 
 interface TransactionHistoryProps {
@@ -11,6 +13,13 @@ interface TransactionHistoryProps {
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
   const {transactions} = props
+  const [showSendModal, setShowSendModal] = useState(false)
+  const [showReceiveModal, setShowReceiveModal] = useState(false)
+
+  const accounts = [
+    'longprivatekey',
+    'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
+  ]
 
   return (
     <div className="TransactionHistory">
@@ -19,12 +28,27 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
         <div className="line"></div>
         <div>
           <span className="sort-by">Sort by ▼</span>
-          <Button type="primary" className="action">
+          <Button type="primary" className="action" onClick={(): void => setShowSendModal(true)}>
             Send
           </Button>
-          <Button type="primary" className="action">
+          <Button type="primary" className="action" onClick={(): void => setShowReceiveModal(true)}>
             Receive
           </Button>
+          <SendTransaction
+            visible={showSendModal}
+            accounts={accounts}
+            onCancel={(): void => setShowSendModal(false)}
+          />
+          <ReceiveTransaction
+            visible={showReceiveModal}
+            receiveAccount="Receive Account 01"
+            receiveAddress="75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5"
+            usedAddresses={[
+              '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
+              '85cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
+            ]}
+            onCancel={(): void => setShowReceiveModal(false)}
+          />
         </div>
       </div>
       {transactions.length === 0 && (

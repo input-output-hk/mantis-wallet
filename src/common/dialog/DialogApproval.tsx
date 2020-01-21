@@ -1,19 +1,19 @@
 import React from 'react'
 import {Checkbox} from 'antd'
-import './WalletDialogApproval.scss'
+import './DialogApproval.scss'
 
-interface WalletDialogApprovalProps {
+interface DialogApprovalProps {
   description: string
   onChange: (checked: boolean) => void
   checked: boolean
 }
 
-export const WalletDialogApproval: React.FunctionComponent<WalletDialogApprovalProps> = ({
+export const DialogApproval: React.FunctionComponent<DialogApprovalProps> = ({
   description,
   onChange,
   checked,
-}: WalletDialogApprovalProps) => (
-  <div className="WalletDialogApproval">
+}: DialogApprovalProps) => (
+  <div className="DialogApproval">
     <Checkbox
       className="checkbox"
       checked={checked}

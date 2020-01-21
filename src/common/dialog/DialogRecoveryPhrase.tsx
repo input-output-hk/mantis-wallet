@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
-import './WalletDialogRecoveryPhrase.scss'
+import './DialogRecoveryPhrase.scss'
 
-interface WalletDialogRecoveryProps {
-  recoveryPhraseShuffled: Array<string>
-  recoveryPhraseValidation: (enteredPhrase: Array<string>) => boolean
+interface DialogRecoveryProps {
+  recoveryPhraseShuffled: string[]
+  recoveryPhraseValidation: (enteredPhrase: string[]) => boolean
   setRecoveryPhraseValidated: (valid: boolean) => void
 }
 
@@ -30,12 +30,12 @@ const RecoveryWord: React.FunctionComponent<RecoveryWordProps> = ({
   )
 }
 
-export const WalletDialogRecoveryPhrase: React.FunctionComponent<WalletDialogRecoveryProps> = ({
+export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> = ({
   recoveryPhraseShuffled,
   recoveryPhraseValidation,
   setRecoveryPhraseValidated,
-}: WalletDialogRecoveryProps) => {
-  const [enteredPhrase, setEnteredPhrase] = useState<Array<string>>([])
+}: DialogRecoveryProps) => {
+  const [enteredPhrase, setEnteredPhrase] = useState<string[]>([])
   const [shuffledWords, setShuffledWords] = useState(
     recoveryPhraseShuffled.map((word) => ({word, used: false})),
   )
@@ -57,7 +57,7 @@ export const WalletDialogRecoveryPhrase: React.FunctionComponent<WalletDialogRec
   }
 
   return (
-    <div className="WalletDialogRecoveryPhrase">
+    <div className="DialogRecoveryPhrase">
       <div className="instructions">Re-input seed phrase by selecting words from selection</div>
       <div className="input">{enteredPhrase.join(' ')}</div>
       <div className="clear-container">

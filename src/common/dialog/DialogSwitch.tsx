@@ -1,21 +1,21 @@
 import React from 'react'
-import {SquareSwitch} from '../../components/SquaredSwitch'
-import './WalletDialogSwitch.scss'
+import {SquareSwitch} from '../SquaredSwitch'
+import './DialogSwitch.scss'
 
-interface WalletDialogCheckProps {
+interface DialogCheckProps {
   label: string
   description: string
   onChange: (checked: boolean) => void
   checked: boolean
 }
 
-export const WalletDialogSwitch: React.FunctionComponent<WalletDialogCheckProps> = ({
+export const DialogSwitch: React.FunctionComponent<DialogCheckProps> = ({
   label,
   description,
   onChange,
   checked,
-}: WalletDialogCheckProps) => (
-  <div className="WalletDialogSwitch">
+}: DialogCheckProps) => (
+  <div className="DialogSwitch">
     <div className="label">{label}</div>
     <div className="switch">
       <div>{description}</div>
