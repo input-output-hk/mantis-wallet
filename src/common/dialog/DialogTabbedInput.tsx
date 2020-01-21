@@ -6,7 +6,7 @@ import './DialogTabbedInput.scss'
 const {TabPane} = Tabs
 
 interface DialogTabbedInputProps {
-  labels: Array<string>
+  labels: string[]
 }
 
 export const DialogTabbedInput: React.FunctionComponent<DialogTabbedInputProps> = ({

@@ -7,7 +7,7 @@ import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
 interface ReceiveTransactionProps {
   receiveAccount: string
   receiveAddress: string
-  usedAddresses: Array<string>
+  usedAddresses: string[]
 }
 
 export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps & ModalProps> = ({

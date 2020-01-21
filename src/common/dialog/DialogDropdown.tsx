@@ -4,7 +4,7 @@ import './DialogDropdown.scss'
 
 interface DialogDropdownProps {
   label: string
-  options: Array<string>
+  options: string[]
 }
 
 export const DialogDropdown: React.FunctionComponent<DialogDropdownProps> = ({

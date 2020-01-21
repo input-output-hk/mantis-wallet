@@ -8,7 +8,7 @@ import {DialogColumns} from '../../common/dialog/DialogColumns'
 import './SendTransaction.scss'
 
 interface SendTransactionProps {
-  accounts: Array<string>
+  accounts: string[]
 }
 
 export const SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({

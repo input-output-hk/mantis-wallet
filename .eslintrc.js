@@ -8,7 +8,7 @@ module.exports = {
     'prettier/@typescript-eslint',
     'prettier/react',
   ],
-  plugins: ['fp', 'prettier'],
+  plugins: ['fp', 'prettier', '@typescript-eslint'],
   root: true,
   reportUnusedDisableDirectives: true,
   env: {
@@ -78,5 +78,7 @@ module.exports = {
     'fp/no-class': 0,
     'fp/no-nil': 0,
     'fp/no-unused-expression': 0,
+    // typescript rules
+    '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
   },
 }

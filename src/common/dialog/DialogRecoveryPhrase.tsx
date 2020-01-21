@@ -3,8 +3,8 @@ import SVG from 'react-inlinesvg'
 import './DialogRecoveryPhrase.scss'
 
 interface DialogRecoveryProps {
-  recoveryPhraseShuffled: Array<string>
-  recoveryPhraseValidation: (enteredPhrase: Array<string>) => boolean
+  recoveryPhraseShuffled: string[]
+  recoveryPhraseValidation: (enteredPhrase: string[]) => boolean
   setRecoveryPhraseValidated: (valid: boolean) => void
 }
 
@@ -35,7 +35,7 @@ export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> 
   recoveryPhraseValidation,
   setRecoveryPhraseValidated,
 }: DialogRecoveryProps) => {
-  const [enteredPhrase, setEnteredPhrase] = useState<Array<string>>([])
+  const [enteredPhrase, setEnteredPhrase] = useState<string[]>([])
   const [shuffledWords, setShuffledWords] = useState(
     recoveryPhraseShuffled.map((word) => ({word, used: false})),
   )
