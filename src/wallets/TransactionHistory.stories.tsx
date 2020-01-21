@@ -1,6 +1,6 @@
 import React from 'react'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, object, array, text} from '@storybook/addon-knobs'
+import {withKnobs, object, text} from '@storybook/addon-knobs'
 import {Transaction} from '../web3'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
@@ -13,7 +13,7 @@ export default {
 }
 
 export const withNoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={[]} transparentAddresses={[]} />
+  <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={[]} />
 )
 
 const dummyTransactions = [...Array(10).keys()].slice(1).map(
@@ -31,7 +31,7 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
 )
 
 export const withDemoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} />
+  <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} accounts={[]} />
 )
 
 export const interactive = (): JSX.Element => {
@@ -82,17 +82,40 @@ export const interactive = (): JSX.Element => {
           index: 1,
         },
       ]}
+      accounts={[
+        {
+          wallet: 'wallet 1',
+          address: text('First address', 'first-address'),
+          locked: false,
+        },
+        {
+          wallet: 'wallet 2',
+          address: text('Second address', 'second-address'),
+          locked: false,
+        },
+      ]}
     />
   )
 }
 
 export const sendTransactionModal = (): JSX.Element => (
   <SendTransaction
-    accounts={array('Accounts', [
-      'longprivatekey',
-      'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
-    ])}
+    accounts={[
+      {
+        wallet: 'wallet 1',
+        address: text('First address', 'first-address'),
+        locked: false,
+      },
+      {
+        wallet: 'wallet 2',
+        address: text('Second address', 'second-address'),
+        locked: false,
+      },
+    ]}
     onCancel={action('send-transaction-cancelled')}
+    onSend={async (recipient, amount, fee): Promise<void> =>
+      action('generate-new')(recipient, amount, fee)
+    }
     visible
   />
 )

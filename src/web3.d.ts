@@ -31,11 +31,19 @@ interface PassphraseSecrets {
   passphrase: string
 }
 
+interface Account {
+  wallet: string
+  address: string
+  locked: boolean
+}
+
 export interface WalletAPI {
   getBalance(): Balance
   getTransparentWalletBalance(address: string): Balance
   getTransactionHistory(count: number, drop: number): Transaction[]
   listTransparentAddresses(count: number, drop: number): TransparentAddress[]
+  listAccounts(): Account[]
+  sendTransaction(recipient: string, amount: number, fee: number): string
   // FIXME: lock/unlock -> union (true | false) return type breaks downstream promise code
   // https://github.com/microsoft/TypeScript/issues/14669
   lock(secrets: PassphraseSecrets): boolean

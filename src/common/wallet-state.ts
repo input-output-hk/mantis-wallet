@@ -2,7 +2,7 @@ import {useState} from 'react'
 import Big from 'big.js'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {TransparentAddress, Balance, Transaction} from '../web3'
+import {TransparentAddress, Balance, Transaction, Account} from '../web3'
 import {WALLET_IS_OFFLINE} from '../common/errors'
 import {deserializeBigNumber} from '../common/util'
 import {wallet} from '../wallet'
@@ -15,6 +15,7 @@ interface OverviewProps {
   availableBalance: Big
   pendingBalance: Big
   transparentAddresses: TransparentAddress[]
+  accounts: Account[]
 }
 
 interface InitialState {
@@ -61,6 +62,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const [transparentAddressesOption, setTransparentAddresses] = useState<
     Option<TransparentAddress[]>
   >(none)
+  const [accountsOption, setAccounts] = useState<Option<Account[]>>(none)
 
   const getOverviewProps = (): OverviewProps => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
@@ -72,6 +74,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     const transparentAddresses = getOrElse((): TransparentAddress[] => [])(
       transparentAddressesOption,
     )
+    const accounts = getOrElse((): Account[] => [])(accountsOption)
 
     return {
       transactions,
@@ -79,6 +82,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
       availableBalance,
       pendingBalance,
       transparentAddresses,
+      accounts,
     }
   }
 
@@ -87,7 +91,8 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     isSome(availableBalanceOption) &&
     isSome(transactionsOption) &&
     isSome(transparentBalanceOption) &&
-    isSome(transparentAddressesOption)
+    isSome(transparentAddressesOption) &&
+    isSome(accountsOption)
 
   const walletStatus = walletStatus_ === 'LOADING' && isLoaded() ? 'LOADED' : walletStatus_
 
@@ -100,6 +105,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setIsOffline(false)
     setError(none)
     setTransparentAddresses(none)
+    setAccounts(none)
   }
 
   const handleError = (e: Error): void => {
@@ -157,6 +163,11 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
         if (e.message === WALLET_IS_OFFLINE) return setIsOffline(true)
         handleError(e)
       })
+
+    wallet
+      .listAccounts()
+      .then((accounts: Account[]) => setAccounts(some(accounts)))
+      .catch(handleError)
   }
 
   const generateNewAddress = async (): Promise<void> => {

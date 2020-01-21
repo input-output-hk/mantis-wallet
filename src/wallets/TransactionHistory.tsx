@@ -4,7 +4,7 @@ import Big from 'big.js'
 import {Button} from 'antd'
 import _ from 'lodash'
 import {ShortNumber} from '../common/ShortNumber'
-import {Transaction, TransparentAddress} from '../web3'
+import {Transaction, TransparentAddress, Account} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import dustLogo from '../assets/dust_logo.png'
@@ -15,23 +15,20 @@ import checkIcon from '../assets/icons/check.svg'
 import arrowDownIcon from '../assets/icons/arrow-down.svg'
 import './TransactionHistory.scss'
 import {WalletState} from '../common/wallet-state'
+import {wallet} from '../wallet'
 
 interface TransactionHistoryProps {
   transactions: Transaction[]
   transparentAddresses: TransparentAddress[]
+  accounts: Account[]
 }
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
-  const {transactions, transparentAddresses} = props
+  const {transactions, transparentAddresses, accounts} = props
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
 
   const walletState = WalletState.useContainer()
-
-  const accounts = [
-    'longprivatekey',
-    'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
-  ]
 
   return (
     <div className="TransactionHistory">
@@ -50,6 +47,10 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             visible={showSendModal}
             accounts={accounts}
             onCancel={(): void => setShowSendModal(false)}
+            onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
+              await wallet.sendTransaction(recipient, amount, fee)
+              setShowSendModal(false)
+            }}
           />
           <ReceiveTransaction
             visible={showReceiveModal}
