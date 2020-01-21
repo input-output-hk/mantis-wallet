@@ -1,0 +1,15 @@
+@import '../theme.scss';
+
+.InlineError {
+  position: relative;
+
+  .error-message {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    height: 20px;
+    color: $error-color;
+    font-size: 10px;
+    text-align: right;
+  }
+}

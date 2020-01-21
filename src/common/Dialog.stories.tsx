@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
+import {Option, none, some} from 'fp-ts/lib/Option'
 import {withKnobs, text, boolean, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {Dialog} from './Dialog'
@@ -9,10 +10,11 @@ import {DialogMessage} from './dialog/DialogMessage'
 import {DialogPassword} from './dialog/DialogPassword'
 import {DialogPrivateKey} from './dialog/DialogPrivateKey'
 import {DialogRecoveryPhrase} from './dialog/DialogRecoveryPhrase'
-import {DialogTabbedInput} from './dialog/DialogTabbedInput'
+import {DialogTabs} from './dialog/DialogTabs'
 import {DialogSwitch} from './dialog/DialogSwitch'
 import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
+import {DialogError} from './dialog/DialogError'
 
 export default {
   title: 'Dialog',
@@ -73,6 +75,15 @@ export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
+export const InteractiveError: React.FunctionComponent<{}> = () => (
+  <Dialog
+    title="Dialog Error"
+    footer={<DialogError>{text('Error in footer', 'Error in the footer')}</DialogError>}
+  >
+    <DialogError>{text('Error in content', 'Error in the dialog')}</DialogError>
+  </Dialog>
+)
+
 export const InteractiveInput: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Input">
     <DialogInput label={text('Input label', 'Input label')} />
@@ -93,7 +104,16 @@ export const InteractiveMessage: React.FunctionComponent<{}> = () => (
 
 export const InteractivePassword: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Password">
-    <DialogPassword />
+    <DialogPassword
+      criteriaMessage={text('Password criteria', 'Password should be at least 4 characters')}
+      setValid={action('set-valid-password')}
+      onChange={action('on-change-password')}
+      getValidationError={(value: string): Option<string> => {
+        return value.length < 4
+          ? some(text('Inline error', 'Password should be at least 4 characters'))
+          : none
+      }}
+    />
   </Dialog>
 )
 
@@ -138,8 +158,19 @@ export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveTabbedInput: React.FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Security">
-    <DialogTabbedInput labels={array('Security Dialog', ['First security', 'Second security'])} />
+export const InteractiveTabs: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Tabs">
+    <DialogTabs
+      tabs={[
+        {
+          label: text('First tab', 'First tab'),
+          content: text('First tab content', 'First tab content'),
+        },
+        {
+          label: text('Second tab', 'Second tab'),
+          content: text('Second tab content', 'Second tab content'),
+        },
+      ]}
+    />
   </Dialog>
 )

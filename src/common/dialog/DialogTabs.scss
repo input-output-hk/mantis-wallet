@@ -1,6 +1,6 @@
 @import '../../theme.scss';
 
-.DialogTabbedInput {
+.DialogTabs {
   margin-bottom: 20px;
 
   .ant-tabs-bar {
@@ -40,9 +40,5 @@
     height: 25px;
     font-size: 10px;
     text-transform: uppercase;
-  }
-
-  .input {
-    height: 47px;
   }
 }
