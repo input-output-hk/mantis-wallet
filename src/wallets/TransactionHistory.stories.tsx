@@ -12,7 +12,9 @@ export default {
   decorators: [withKnobs],
 }
 
-export const withNoTransactions = (): JSX.Element => <TransactionHistory transactions={[]} />
+export const withNoTransactions = (): JSX.Element => (
+  <TransactionHistory transactions={[]} transparentAddresses={[]} />
+)
 
 const dummyTransactions = [...Array(10).keys()].slice(1).map(
   (n): Transaction => ({
@@ -29,7 +31,7 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
 )
 
 export const withDemoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={dummyTransactions} />
+  <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} />
 )
 
 export const interactive = (): JSX.Element => {
@@ -70,6 +72,16 @@ export const interactive = (): JSX.Element => {
           },
         }),
       ]}
+      transparentAddresses={[
+        {
+          address: text('Old address', 'old-address'),
+          index: 0,
+        },
+        {
+          address: text('New address', 'new-address'),
+          index: 1,
+        },
+      ]}
     />
   )
 }
@@ -87,16 +99,27 @@ export const sendTransactionModal = (): JSX.Element => (
 
 export const receiveTransactionModal = (): JSX.Element => (
   <ReceiveTransaction
-    receiveAccount={text('Receive Account', 'Receive Account 01')}
-    receiveAddress={text(
-      'Receive Address',
-      '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-    )}
-    usedAddresses={array('Used Addresses', [
-      '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-      '85cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-    ])}
+    transparentAddresses={[
+      {
+        address: text('Old address', 'old-address'),
+        index: 0,
+      },
+      {
+        address: text('New address', 'new-address'),
+        index: 1,
+      },
+    ]}
     onCancel={action('receive-transaction-cancelled')}
+    onGenerateNew={async (): Promise<void> => action('generate-new')()}
+    visible
+  />
+)
+
+export const emptyTransactionModal = (): JSX.Element => (
+  <ReceiveTransaction
+    transparentAddresses={[]}
+    onCancel={action('receive-transaction-cancelled')}
+    onGenerateNew={async (): Promise<void> => action('generate-new')()}
     visible
   />
 )

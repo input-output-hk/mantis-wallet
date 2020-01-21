@@ -9,7 +9,7 @@ export interface Balance {
   totalBalance: BigNumberJSON
 }
 
-export interface TransparentAddressResult {
+export interface TransparentAddress {
   address: string
   index: number
 }
@@ -35,7 +35,7 @@ export interface WalletAPI {
   getBalance(): Balance
   getTransparentWalletBalance(address: string): Balance
   getTransactionHistory(count: number, drop: number): Transaction[]
-  listTransparentAddresses(count: number, drop: number): TransparentAddressResult[]
+  listTransparentAddresses(count: number, drop: number): TransparentAddress[]
   // FIXME: lock/unlock -> union (true | false) return type breaks downstream promise code
   // https://github.com/microsoft/TypeScript/issues/14669
   lock(secrets: PassphraseSecrets): boolean

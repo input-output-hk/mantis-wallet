@@ -4,7 +4,7 @@ import Big from 'big.js'
 import {Button} from 'antd'
 import _ from 'lodash'
 import {ShortNumber} from '../common/ShortNumber'
-import {Transaction} from '../web3'
+import {Transaction, TransparentAddress} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import dustLogo from '../assets/dust_logo.png'
@@ -14,15 +14,19 @@ import confidentialIcon from '../assets/icons/confidential.svg'
 import checkIcon from '../assets/icons/check.svg'
 import arrowDownIcon from '../assets/icons/arrow-down.svg'
 import './TransactionHistory.scss'
+import {WalletState} from '../common/wallet-state'
 
 interface TransactionHistoryProps {
   transactions: Transaction[]
+  transparentAddresses: TransparentAddress[]
 }
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
-  const {transactions} = props
+  const {transactions, transparentAddresses} = props
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
+
+  const walletState = WalletState.useContainer()
 
   const accounts = [
     'longprivatekey',
@@ -49,13 +53,13 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
           />
           <ReceiveTransaction
             visible={showReceiveModal}
-            receiveAccount="Receive Account 01"
-            receiveAddress="75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5"
-            usedAddresses={[
-              '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-              '85cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-            ]}
+            transparentAddresses={transparentAddresses}
             onCancel={(): void => setShowReceiveModal(false)}
+            onGenerateNew={async (): Promise<void> => {
+              if (walletState.walletStatus === 'LOADED') {
+                await walletState.generateNewAddress()
+              }
+            }}
           />
         </div>
       </div>
