@@ -16,18 +16,20 @@ export const Sidebar = (): JSX.Element => {
       <div>
         <nav>
           <ul className="navigation">
-            {Object.values(ROUTES).map((route) => (
-              <li key={route.path}>
-                <NavLink to={route.path} className="link">
-                  <span className="prefix">&nbsp;</span>
-                  <span className="icon">
-                    &nbsp;
-                    <SVG className="svg" src={`./icons/${route.icon}`} />
-                  </span>
-                  <span>{route.title}</span>
-                </NavLink>
-              </li>
-            ))}
+            {Object.values(ROUTES)
+              .filter((route) => !route.hidden)
+              .map((route) => (
+                <li key={route.path}>
+                  <NavLink to={route.path} className="link">
+                    <span className="prefix">&nbsp;</span>
+                    <span className="icon">
+                      &nbsp;
+                      <SVG className="svg" src={`./icons/${route.icon}`} />
+                    </span>
+                    <span>{route.title}</span>
+                  </NavLink>
+                </li>
+              ))}
           </ul>
         </nav>
       </div>

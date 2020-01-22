@@ -1,52 +1,62 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
+import Big from 'big.js'
+import _ from 'lodash'
+import {WalletState} from '../common/wallet-state'
+import {ShortNumber} from '../common/ShortNumber'
+import {bigToNumber} from '../common/util'
 import {OverviewGraph} from './OverviewGraph'
-import {formatAmount} from '../util/formatters'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
-  pending: number
-  confidental: number
-  transparent: number
+  pending: Big
+  confidential: Big
+  transparent: Big
 }
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
-  const {pending, confidental, transparent} = props
-  const total = pending + confidental + transparent
+  const walletState = WalletState.useContainer()
+
+  const refresh = (): void => {
+    if (walletState.walletStatus === 'LOADED') walletState.reset()
+  }
+
+  const {pending, confidential, transparent} = props
+  const total = pending.plus(confidential).plus(transparent)
   return (
     <div className="WalletOverview">
       <div className="title">Overview Wallet</div>
       <div className="refresh">
-        <SVG src="./icons/refresh.svg" className="svg" />
+        <SVG src="./icons/refresh.svg" className="svg" onClick={refresh} />
       </div>
       <div className="graph">
-        <OverviewGraph {...props} />
+        <OverviewGraph {..._.mapValues(props, bigToNumber)} />
       </div>
       <div className="total">
         <div className="box-text">Total Balance</div>
         <div className="box-amount-big">
           <img src="./dust_logo.png" alt="dust" className="dust" />
-          {formatAmount(total)}
+          <ShortNumber big={total} />
         </div>
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
             <SVG src="./icons/clock.svg" className="svg" />
           </span>
-          Pending Amount · {formatAmount(pending)}
+          Pending Amount · <ShortNumber big={pending} />
         </div>
       </div>
-      <div className="confidental">
+      <div className="confidential">
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
-            <SVG src="./icons/confidental.svg" className="svg" />
+            <SVG src="./icons/confidential.svg" className="svg" />
           </span>
-          Confidental
+          Confidential
         </div>
         <div className="box-amount">
           <img src="./dust_logo.png" alt="dust" className="dust" />
-          {formatAmount(confidental)}
+          <ShortNumber big={confidential} />
         </div>
       </div>
       <div className="transparent">
@@ -60,7 +70,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         </div>
         <div className="box-amount">
           <img src="./dust_logo.png" alt="dust" className="dust" />
-          {formatAmount(transparent)}
+          <ShortNumber big={transparent} />
         </div>
       </div>
     </div>

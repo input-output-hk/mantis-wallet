@@ -1,8 +1,10 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
+import Big from 'big.js'
 import {Button} from 'antd'
-import {formatAmount, formatDate} from '../util/formatters'
-import {Transaction} from './Wallets'
+import _ from 'lodash'
+import {ShortNumber} from '../common/ShortNumber'
+import {Transaction} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import './TransactionHistory.scss'
@@ -53,59 +55,71 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
       </div>
       {transactions.length === 0 && (
         <div className="no-transactions">
-          <div className="no-transactions-text">You have no last transactions</div>
+          <div className="no-transactions-text">You haven&apos;t made a transaction</div>
         </div>
       )}
       {transactions.length > 0 && (
         <div className="transactions-container">
           <table className="transactions">
-            <tr className="header">
-              <th></th>
-              <th>Asset</th>
-              <th>Amount</th>
-              <th>Time</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-            {transactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td className="line">
-                  <span className="type-icon">
-                    &nbsp;
-                    {transaction.type === 'public' && (
-                      <SVG src="./icons/transparent.svg" className="svg" />
-                    )}
-                    {transaction.type === 'private' && (
-                      <SVG src="./icons/confidental.svg" className="svg" />
-                    )}
-                  </span>
-                </td>
-                <td className="line">
-                  <img src="./dust_logo.png" alt="dust" className="dust" />
-                  <span>DUST</span>
-                </td>
-                <td className="line">
-                  <span className="amount">
-                    <SVG src="./icons/incoming.svg" className="svg" />
-                    &nbsp;
-                    {formatAmount(transaction.amount)}
-                  </span>
-                </td>
-                <td className="line">{formatDate(transaction.time)}</td>
-                <td className="line">
-                  {transaction.status === 'Confirmed' && (
-                    <>
-                      <SVG src="./icons/check.svg" className="check" />
-                      &nbsp;
-                    </>
-                  )}
-                  {transaction.status}
-                </td>
-                <td className="line">
-                  <SVG src="./icons/arrow-down.svg" className="svg" />
-                </td>
+            <thead>
+              <tr className="header">
+                <th></th>
+                <th>Asset</th>
+                <th>Amount</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th></th>
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {transactions.map((transaction) => (
+                <tr key={transaction.hash}>
+                  <td className="line">
+                    <span className="type-icon">
+                      &nbsp;
+                      {/* FIXME: determine transaction type */}
+                      <SVG src="./icons/confidential.svg" className="svg" />
+                      {/* {transaction.type === 'public' && (
+                        <SVG src="/icons/transparent.svg" className="svg" />
+                      )}
+                      {transaction.type === 'private' && (
+                        <SVG src="/icons/confidential.svg" className="svg" />
+                      )} */}
+                    </span>
+                  </td>
+                  <td className="line">
+                    <img src="./dust_logo.png" alt="dust" className="dust" />
+                    <span>DUST</span>
+                  </td>
+                  <td className="line">
+                    <span className="amount">
+                      {transaction.txDirection === 'incoming' && (
+                        <SVG src="./icons/incoming.svg" className="svg" />
+                      )}
+                      {transaction.txDirection === 'outgoing' && (
+                        <SVG src="./icons/outgoing.svg" className="svg" />
+                      )}
+                      &nbsp;
+                      <ShortNumber big={Big(parseInt(transaction.txValue))} />
+                    </span>
+                  </td>
+                  {/* FIXME: get proper date from transaction */}
+                  <td className="line">{transaction.txStatus.atBlock}</td>
+                  <td className="line">
+                    {transaction.txStatus.status === 'confirmed' && (
+                      <>
+                        <SVG src="./icons/check.svg" className="check" />
+                        &nbsp;
+                      </>
+                    )}
+                    {_.capitalize(transaction.txStatus.status)}
+                  </td>
+                  <td className="line">
+                    <SVG src="./icons/arrow-down.svg" className="svg" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       )}
