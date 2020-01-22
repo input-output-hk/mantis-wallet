@@ -3,7 +3,7 @@ import {wallet} from '../wallet'
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
-  const passphrase = 'Foobar12345678'
+  const passphrase = 'Foobar1234'
   const spendingKey = 'm-test-shl-sk1fj335eanpmupaj9vx5879t7ljfnh7xct486rqgwxw8evwp2qkaksmcqu88'
 
   const call = (fn: CallableFunction) => (): void => {

@@ -31,18 +31,6 @@ module.exports = {
     },
   },
   rules: {
-    'max-len': [
-      'error',
-      {
-        comments: 100,
-        code: 100,
-        tabWidth: 2,
-        ignoreUrls: true,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-        ignoreRegExpLiterals: true,
-      },
-    ],
     'camelcase': ['error', {properties: 'never', ignoreDestructuring: true, ignoreImports: false}],
     'quotes': ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
     'no-constant-condition': ['error', {checkLoops: false}],
@@ -53,6 +41,7 @@ module.exports = {
     'space-infix-ops': 'error',
     'prefer-template': 'error',
     'no-useless-concat': 'error',
+    'max-len': 0,
     'no-console': 0,
     'comma-dangle': 0,
     'guard-for-in': 0,

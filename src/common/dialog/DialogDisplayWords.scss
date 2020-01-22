@@ -1,0 +1,17 @@
+@import '../../theme.scss';
+
+.DialogDisplayWords {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin-bottom: 20px;
+
+  .word {
+    height: 30px;
+    background-color: $secondary-background;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
+  }
+}

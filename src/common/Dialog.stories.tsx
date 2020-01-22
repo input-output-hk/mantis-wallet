@@ -15,6 +15,7 @@ import {DialogSwitch} from './dialog/DialogSwitch'
 import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
 import {DialogError} from './dialog/DialogError'
+import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 
 export default {
   title: 'Dialog',
@@ -63,6 +64,12 @@ export const InteractiveColumns: React.FunctionComponent<{}> = () => (
       <DialogMessage description={text('First column', 'First column')} />
       <DialogMessage description={text('Second column', 'Second column')} />
     </DialogColumns>
+  </Dialog>
+)
+
+export const InteractiveDisplayWords: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Display Words">
+    <DialogDisplayWords words={array('Displayed words', ['First', 'Second', 'Third', 'Fourth'])} />
   </Dialog>
 )
 

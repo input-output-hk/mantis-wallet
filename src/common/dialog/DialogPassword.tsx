@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Option, none, getOrElse, isNone} from 'fp-ts/lib/Option'
+import {Option, none, some, getOrElse, isNone} from 'fp-ts/lib/Option'
 import {BorderlessInputPassword} from '../BorderlessInput'
 import {DialogColumns} from './DialogColumns'
 import './DialogPassword.scss'
@@ -14,8 +14,9 @@ interface DialogPasswordProps {
 export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
   onChange,
   setValid,
-  getValidationError = (): Option<string> => none,
-  criteriaMessage,
+  getValidationError = (value: string): Option<string> =>
+    value.length < 8 ? some('Password needs to have at least 8 characters') : none,
+  criteriaMessage = 'Password needs to have at least 8 characters',
 }: DialogPasswordProps) => {
   const [password, setPassword] = useState('')
   const [repassword, setRepassword] = useState('')
