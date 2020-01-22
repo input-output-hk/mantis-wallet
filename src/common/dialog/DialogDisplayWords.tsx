@@ -9,8 +9,8 @@ export const DialogDisplayWords: React.FunctionComponent<DialogDisplayWordsProps
   words,
 }: DialogDisplayWordsProps) => (
   <div className="DialogDisplayWords">
-    {words.map((word) => (
-      <div key={word} className="word">
+    {words.map((word, i) => (
+      <div key={i} className="word">
         {word}
       </div>
     ))}

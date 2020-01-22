@@ -31,14 +31,14 @@ export const ROUTES: Routes = {
   },
   WALLET_SETUP: {
     title: 'Wallet Setup',
-    path: '/wallets/setup',
+    path: '/wallets-setup',
     icon: 'menu-wallets.svg',
     component: WalletSetup,
     hidden: true,
   },
   WALLET_UNLOCK: {
     title: 'Unlock Wallet',
-    path: '/wallets/unlock',
+    path: '/wallets-unlock',
     icon: 'menu-wallets.svg',
     component: WalletUnlock,
     hidden: true,

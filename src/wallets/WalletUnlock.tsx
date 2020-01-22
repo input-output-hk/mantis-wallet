@@ -10,7 +10,7 @@ export const WalletUnlock = (): JSX.Element => {
   const walletState = WalletState.useContainer()
   const [unlockStatus, setUnlockStatus] = useState<UnlockStatus>('LOCKED')
 
-  const passphrase = 'Foobar12345678'
+  const passphrase = 'Foobar1234'
 
   const unlock = (): void => {
     setUnlockStatus('LOADING')

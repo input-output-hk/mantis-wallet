@@ -1,19 +1,21 @@
 import React, {useState} from 'react'
+import {wallet} from '../wallet'
+import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
-import {wallet} from '../wallet'
-import {DialogError} from '../common/dialog/DialogError'
 
 interface WalletCreateProps {
   cancel: () => void
+  finish: () => void
 }
 
 type WalletCreateSteps = 'DEFINE' | 'SECURITY' | 'DISPLAY_RECOVERY' | 'VERIFY_RECOVERY'
 
 export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   cancel,
+  finish,
 }: WalletCreateProps) => {
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
 
@@ -79,7 +81,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
       return (
         <WalletCreateVerifyRecoveryStep
           back={(): void => setStep('SECURITY')}
-          finish={(): void => console.log('finished')}
+          finish={finish}
           seedPhrase={seedPhrase}
         />
       )

@@ -22,11 +22,11 @@ export const showPathChooser = (): JSX.Element => (
 )
 
 export const showWalletRestore = (): JSX.Element => (
-  <WalletRestore cancel={action('Cancel Restore')} />
+  <WalletRestore cancel={action('Cancel Restore')} finish={action('Finished Restore')} />
 )
 
 export const showWalletCreate = (): JSX.Element => (
-  <WalletCreate cancel={action('Cancel Restore')} />
+  <WalletCreate cancel={action('Cancel Create')} finish={action('Finished Create')} />
 )
 
 export const showWalletCreateDefineStep = (): JSX.Element => (

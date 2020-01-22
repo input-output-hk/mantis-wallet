@@ -9,10 +9,12 @@ import {wallet} from '../wallet'
 
 interface WalletRestoreProps {
   cancel: () => void
+  finish: () => void
 }
 
 export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   cancel,
+  finish,
 }: WalletRestoreProps) => {
   const [walletName, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
@@ -34,6 +36,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
           setWalletRestoreError('')
           try {
             await wallet.restore({passphrase, spendingKey})
+            finish()
           } catch (e) {
             setWalletRestoreError(e.message)
           }

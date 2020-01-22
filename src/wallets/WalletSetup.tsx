@@ -1,15 +1,25 @@
 import React, {useState} from 'react'
+import {Redirect} from 'react-router-dom'
+import {WalletState} from '../common/wallet-state'
+import {ROUTES} from '../routes-config'
 import {WalletPathChooser} from './WalletPathChooser'
-import './WalletSetup.scss'
 import {WalletCreate} from './WalletCreate'
 import {WalletRestore} from './WalletRestore'
+import './WalletSetup.scss'
 
-type StepType = 'PATH_CHOOSER' | 'CREATE' | 'RESTORE'
+type StepType = 'PATH_CHOOSER' | 'CREATE' | 'RESTORE' | 'FINISHED'
 
 const getContent = (
   step: StepType,
   setStep: React.Dispatch<React.SetStateAction<StepType>>,
 ): JSX.Element => {
+  const state = WalletState.useContainer()
+
+  const finish = (): void => {
+    if (state.walletStatus === 'ERROR') state.reset()
+    setStep('FINISHED')
+  }
+
   switch (step) {
     case 'PATH_CHOOSER':
       return (
@@ -19,9 +29,16 @@ const getContent = (
         />
       )
     case 'CREATE':
-      return <WalletCreate cancel={(): void => setStep('PATH_CHOOSER')} />
+      return <WalletCreate cancel={(): void => setStep('PATH_CHOOSER')} finish={finish} />
     case 'RESTORE':
-      return <WalletRestore cancel={(): void => setStep('PATH_CHOOSER')} />
+      return <WalletRestore cancel={(): void => setStep('PATH_CHOOSER')} finish={finish} />
+    case 'FINISHED':
+      return (
+        <>
+          HELLO
+          <Redirect to={ROUTES.WALLETS.path} />
+        </>
+      )
   }
 }
 
