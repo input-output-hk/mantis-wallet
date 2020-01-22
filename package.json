@@ -9,7 +9,8 @@
   "homepage": "./",
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "CI=false react-app-rewired build",
+    "build-renderer": "CI=false react-app-rewired build",
+    "build-main": "tsc -p ./tsconfig.main.json",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "yarn prettier-check && yarn eslint && yarn stylelint",
@@ -19,8 +20,8 @@
     "prettier": "prettier --no-editorconfig --write \"**/*.{js,ts,tsx,scss}\"",
     "storybook": "start-storybook -s ./public -p 6006",
     "build-storybook": "build-storybook",
-    "electron": "electron .",
-    "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ."
+    "electron": "electron ./build/main/main.js",
+    "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ./build/main/main.js"
   },
   "husky": {
     "hooks": {
@@ -43,11 +44,13 @@
     "classnames": "^2.2.6",
     "comlink": "^4.2.0",
     "customize-cra": "^0.9.1",
+    "fp-ts": "^2.4.1",
     "js-file-download": "^0.4.9",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.0.0",
+    "ps-list": "^6.3.0",
     "qrcode.react": "^1.0.0",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
@@ -57,6 +60,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "redux": "^4.0.4",
+    "rxjs": "^6.5.4",
     "typescript": "3.7.3",
     "web3": "git+ssh://git@github.com:input-output-hk/midnight-web3.git#develop"
   },
