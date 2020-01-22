@@ -6,9 +6,13 @@ All relevant Luna development
 
 In the project directory, you can run:
 
+### `yarn build-main`
+
+Builds the main process code. It's required to be run before running `electron-dev` or `electron`
+
 ### `yarn start`
 
-Runs the app in the development mode.<br />
+Runs the renderer in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### `yarn test`
