@@ -1,24 +1,28 @@
 /* eslint-disable fp/no-let, fp/no-mutation */
-// Modules to control application life and create native browser window
-import {fold, none, Option, some} from 'fp-ts/lib/Option'
+import * as option from 'fp-ts/lib/Option'
+import {Option} from 'fp-ts/lib/Option'
 import {app, BrowserWindow} from 'electron'
 import path from 'path'
 import url from 'url'
 import {spawn} from 'child_process'
-import {merge, Subscription} from 'rxjs'
+import {asapScheduler} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {take} from 'rxjs/operators'
+import * as rxop from 'rxjs/operators'
+import * as record from 'fp-ts/lib/Record'
+import * as array from 'fp-ts/lib/Array'
+import * as _ from 'lodash/fp'
 
-import {config} from './config'
+import {ClientName, config} from './config'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
+import {scheduleArray} from 'rxjs/internal/scheduled/scheduleArray'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: BrowserWindow | null
+let mainWindowHandle: Option<BrowserWindow>
 
 function createWindow(): void {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
   })
@@ -40,7 +44,7 @@ function createWindow(): void {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    mainWindowHandle = option.none
   })
 }
 
@@ -59,46 +63,70 @@ app.on('window-all-closed', function() {
 app.on('activate', function() {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow()
+  if (option.isNone(mainWindowHandle)) createWindow()
 })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
 if (config.runClients) {
-  const walletProcessSpawner = MidnightProcess(spawn)(config.wallet)
-  const nodeProcessSpawner = MidnightProcess(spawn)(config.node)
+  const spawners = pipe(
+    config.clientConfigs,
+    record.toArray,
+    array.map(([name, config]) => MidnightProcess(spawn)(name, config)),
+  )
 
-  let runningClients: Option<{
-    runningWallet: SpawnedMidnightProcess
-    runningNode: SpawnedMidnightProcess
-  }> = none
+  let runningClients: Option<SpawnedMidnightProcess[]> = option.none
+
+  function logClients(clients: SpawnedMidnightProcess[]): void {
+    const maxNameLength = pipe(
+      clients,
+      array.map((client) => client.name.length),
+      _.max,
+      option.fromNullable,
+      option.getOrElse(() => 0),
+    )
+    const buildPrefix = (name: ClientName): string => `${name.padEnd(maxNameLength)} | `
+
+    pipe(
+      clients,
+      array.map((client) => {
+        const prefix = buildPrefix(client.name)
+        return client.log$.pipe(rxop.map((line) => `${prefix}${line}`))
+      }),
+      (logs) => scheduleArray(logs, asapScheduler),
+    ).subscribe(console.log)
+  }
 
   function spawnClients(): void {
-    const runningWallet = walletProcessSpawner.spawn()
-    const runningNode = nodeProcessSpawner.spawn()
+    const clients = pipe(
+      spawners,
+      array.map((spawner) => spawner.spawn()),
+    )
 
-    runningWallet.log$.subscribe((log) => console.log('wallet | ', log))
-    runningNode.log$.subscribe((log) => console.log('node   | ', log))
+    logClients(Object.values(clients))
 
-    merge(runningWallet.close$, runningNode.close$)
-      .pipe(take(1))
-      .subscribe(() => restartClients())
+    pipe(
+      clients,
+      array.map(_.prop('close$')),
+      (closeEvents) => scheduleArray(closeEvents, asapScheduler),
+      rxop.take(1),
+    ).subscribe(() => restartClients())
 
-    runningClients = some({runningNode, runningWallet})
+    runningClients = option.some(clients)
   }
 
   const killClients = async (): Promise<void> =>
     pipe(
       runningClients,
-      fold(Promise.resolve, ({runningWallet, runningNode}) =>
-        Promise.all([runningWallet.kill(), runningNode.kill()]).then(() => {
-          runningClients = none
+      option.fold(Promise.resolve, (clients) =>
+        Promise.all(clients.map((client) => client.kill())).then(() => {
+          runningClients = option.none
         }),
       ),
     )
 
-  async function restartClients() {
+  async function restartClients(): Promise<void> {
     return killClients().then(spawnClients)
   }
 

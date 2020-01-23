@@ -7,10 +7,10 @@ import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import {readableToObservable} from './streamUtils'
-import {ProcessConfig} from './config'
+import {ClientName, ProcessConfig} from './config'
 
 export class SpawnedMidnightProcess {
-  constructor(private childProcess: childProcess.ChildProcess) {}
+  constructor(public name: ClientName, private childProcess: childProcess.ChildProcess) {}
 
   log$: Observable<string> = pipe(
     [this.childProcess.stdout, this.childProcess.stderr],
@@ -39,6 +39,7 @@ export class SpawnedMidnightProcess {
 }
 
 export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
+  name: ClientName,
   processConfig: ProcessConfig,
 ) => {
   const executablePath = resolve(
@@ -53,6 +54,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   return {
     spawn: () =>
       new SpawnedMidnightProcess(
+        name,
         spawn(executablePath, settingsAsArguments, {cwd: processConfig.packageDirectory}),
       ),
   }
