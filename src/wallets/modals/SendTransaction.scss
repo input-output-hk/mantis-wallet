@@ -1,0 +1,14 @@
+@import '../../theme.scss';
+
+.SendTransaction {
+  .info-bar {
+    margin-bottom: 20px;
+    opacity: 0.3;
+    color: $text-color;
+    font-size: 10px;
+
+    &.right {
+      text-align: right;
+    }
+  }
+}

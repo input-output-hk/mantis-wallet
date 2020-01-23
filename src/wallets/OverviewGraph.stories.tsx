@@ -8,29 +8,29 @@ export default {
 }
 
 export const withZeroBalance = (): JSX.Element => (
-  <OverviewGraph pending={0} transparent={0} confidental={0} />
+  <OverviewGraph pending={0} transparent={0} confidential={0} />
 )
 
 export const withNoPending = (): JSX.Element => (
-  <OverviewGraph pending={0} confidental={1} transparent={2} />
+  <OverviewGraph pending={0} confidential={1} transparent={2} />
 )
 
 export const withJustPending = (): JSX.Element => (
-  <OverviewGraph pending={1} confidental={0} transparent={0} />
+  <OverviewGraph pending={1} confidential={0} transparent={0} />
 )
 
-export const withJustConfidental = (): JSX.Element => (
-  <OverviewGraph pending={0} confidental={1} transparent={0} />
+export const withJustConfidential = (): JSX.Element => (
+  <OverviewGraph pending={0} confidential={1} transparent={0} />
 )
 
 export const withJustTransparent = (): JSX.Element => (
-  <OverviewGraph pending={0} confidental={0} transparent={1} />
+  <OverviewGraph pending={0} confidential={0} transparent={1} />
 )
 
 export const interactive = (): JSX.Element => {
   return (
     <OverviewGraph
-      confidental={number('Confidental', 1)}
+      confidential={number('Confidential', 1)}
       transparent={number('Transparent', 2)}
       pending={number('Pending', 3)}
     />

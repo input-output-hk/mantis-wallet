@@ -2,7 +2,7 @@ import React from 'react'
 import './OverviewGraph.scss'
 
 interface OverviewGraphProps {
-  confidental: number
+  confidential: number
   transparent: number
   pending: number
 }
@@ -25,12 +25,12 @@ function polarToCartesian(center: Point, radius: number, angleInRatio: number): 
 export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
   const c = {x: 50, y: 50}
   const r = 45
-  const {confidental, transparent, pending} = props
-  const realTotal = confidental + transparent + pending
+  const {confidential, transparent, pending} = props
+  const realTotal = confidential + transparent + pending
   const total = realTotal * 1.00001 // without this, it won't work when only one variable is set
 
   // compute the ratio to full circle of each piece in the graph
-  const confRatio = confidental / total
+  const confRatio = confidential / total
   const tranRatio = transparent / total
   const pendRatio = pending / total
 

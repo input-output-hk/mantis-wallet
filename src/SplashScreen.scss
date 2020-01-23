@@ -1,0 +1,32 @@
+@import './theme.scss';
+
+.SplashScreen {
+  min-height: 100vh;
+  padding-top: 96px;
+  background-color: $secondary-background;
+
+  .logo {
+    display: block;
+    margin: auto;
+  }
+
+  .title {
+    color: $primary-color;
+    font-size: 120px;
+    font-weight: bold;
+    letter-spacing: -1.8px;
+    text-align: center;
+  }
+
+  .spinner {
+    text-align: center;
+  }
+
+  .loading {
+    color: $text-color;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+  }
+}

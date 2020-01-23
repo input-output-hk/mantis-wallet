@@ -8,7 +8,7 @@ module.exports = {
     'prettier/@typescript-eslint',
     'prettier/react',
   ],
-  plugins: ['fp', 'prettier'],
+  plugins: ['fp', 'prettier', '@typescript-eslint'],
   root: true,
   reportUnusedDisableDirectives: true,
   env: {
@@ -31,18 +31,6 @@ module.exports = {
     },
   },
   rules: {
-    'max-len': [
-      'error',
-      {
-        comments: 100,
-        code: 100,
-        tabWidth: 2,
-        ignoreUrls: true,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-        ignoreRegExpLiterals: true,
-      },
-    ],
     'camelcase': ['error', {properties: 'never', ignoreDestructuring: true, ignoreImports: false}],
     'quotes': ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
     'no-constant-condition': ['error', {checkLoops: false}],
@@ -54,6 +42,7 @@ module.exports = {
     'prefer-template': 'error',
     'no-useless-concat': 'error',
     'no-use-before-define': 0,
+    'max-len': 0,
     'no-console': 0,
     'comma-dangle': 0,
     'guard-for-in': 0,
@@ -81,5 +70,7 @@ module.exports = {
     'fp/no-class': 0,
     'fp/no-nil': 0,
     'fp/no-unused-expression': 0,
+    // typescript rules
+    '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
   },
 }

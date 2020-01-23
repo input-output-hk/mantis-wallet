@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink'
 import {MockWorker} from './stubs'
+import {WalletAPI} from './web3'
 
 // for testing: ReactDOM doesn't know about workers
 if (window.Worker === undefined) {
@@ -8,4 +9,6 @@ if (window.Worker === undefined) {
 }
 
 const worker = new Worker('./web3.worker.js', {type: 'module'})
-export const wallet: any = Comlink.wrap(worker)
+// FIXME: remove any, see WalletAPI for details
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const wallet: any = Comlink.wrap<WalletAPI>(worker)

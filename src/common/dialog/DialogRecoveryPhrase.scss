@@ -1,0 +1,63 @@
+@import '../../theme.scss';
+
+.DialogRecoveryPhrase {
+  margin-bottom: 20px;
+
+  .instructions {
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  .input {
+    height: 80px;
+    padding: 20px 13px;
+    background-color: $normal-color;
+    font-size: 13px;
+    font-weight: bold;
+
+    &.invalid {
+      border: 1px solid $error-color;
+    }
+  }
+
+  .clear-container {
+    margin-bottom: 20px;
+    text-align: right;
+
+    .clear {
+      opacity: $secondary-opacity;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  .words {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+    .word {
+      height: 30px;
+      background-color: $secondary-background;
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 30px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .used-word {
+      height: 30px;
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 30px;
+      text-align: center;
+    }
+
+    .check {
+      fill: $success-color;
+    }
+  }
+}

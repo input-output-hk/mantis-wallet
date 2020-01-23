@@ -1,1 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><g><g><path fill="none" stroke="#f7f7f7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="50" d="M4.116 8.704v0H2.44a.837.837 0 0 1-.838-.838V2.004c0-.463.375-.838.838-.838h1.675v0"/></g><g><path fill="none" stroke="#f7f7f7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="50" d="M7.047 7.029v0L9.14 4.935v0L7.047 2.841v0"/></g><g><path fill="none" stroke="#f7f7f7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="50" d="M9.14 4.935H4.116"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg24"
+   version="1.1"
+   viewBox="0 0 10 10"
+   height="10"
+   width="10">
+  <metadata
+     id="metadata30">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs28" />
+  <g
+     id="g51">
+    <g
+       id="g12">
+      <path
+         id="path10"
+         d="m 4.116,8.704 v 0 H 2.44 A 0.837,0.837 0 0 1 1.602,7.866 V 2.004 c 0,-0.463 0.375,-0.838 0.838,-0.838 h 1.675 v 0"
+         stroke-miterlimit="50"
+         stroke-linejoin="round"
+         stroke-linecap="round"
+         stroke="#f7f7f7"
+         fill="none" />
+    </g>
+    <g
+       id="g42"
+       transform="matrix(-1,0,0,1,13.256,0)">
+      <g
+         id="g16">
+        <path
+           fill="none"
+           stroke="#f7f7f7"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           stroke-miterlimit="50"
+           d="m 7.047,7.029 v 0 L 9.14,4.935 v 0 L 7.047,2.841 v 0"
+           id="path14" />
+      </g>
+      <g
+         id="g20">
+        <path
+           fill="none"
+           stroke="#f7f7f7"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           stroke-miterlimit="50"
+           d="M 9.14,4.935 H 4.116"
+           id="path18" />
+      </g>
+    </g>
+  </g>
+</svg>
