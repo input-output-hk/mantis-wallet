@@ -88,14 +88,12 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <td className="line">
                     <span className="type-icon">
                       &nbsp;
-                      {/* FIXME: determine transaction type */}
-                      <SVG src={confidentialIcon} className="svg" />
-                      {/* {transaction.type === 'public' && (
+                      {transaction.txDetails.txType === 'call' && (
                         <SVG src={transparentIcon} className="svg" />
                       )}
-                      {transaction.type === 'private' && (
+                      {transaction.txDetails.txType !== 'call' && (
                         <SVG src={confidentialIcon} className="svg" />
-                      )} */}
+                      )}
                     </span>
                   </td>
                   <td className="line">
