@@ -2,13 +2,14 @@ import React from 'react'
 import {NavLink} from 'react-router-dom'
 import SVG from 'react-inlinesvg'
 import {ROUTES} from '../routes-config'
+import lunaLogo from '../assets/luna-small.svg'
 import './Sidebar.scss'
 
 export const Sidebar = (): JSX.Element => {
   return (
     <div className="Sidebar">
       <div className="logo">
-        <img src="./logo.svg" alt="logo" />
+        <SVG src={lunaLogo} alt="logo" />
       </div>
       <div>
         <h1 className="title">Luna</h1>
@@ -24,7 +25,7 @@ export const Sidebar = (): JSX.Element => {
                     <span className="prefix">&nbsp;</span>
                     <span className="icon">
                       &nbsp;
-                      <SVG className="svg" src={`./icons/${route.icon}`} />
+                      <SVG className="svg" src={route.icon} />
                     </span>
                     <span>{route.title}</span>
                   </NavLink>

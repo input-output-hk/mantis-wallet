@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import './DialogRecoveryPhrase.scss'
 import {InlineError} from '../InlineError'
+import checkIcon from '../../assets/icons/check.svg'
 
 interface DialogRecoveryProps {
   recoveryPhraseShuffled: string[]
@@ -22,7 +23,7 @@ const RecoveryWord: React.FunctionComponent<RecoveryWordProps> = ({
 }: RecoveryWordProps) => {
   return used ? (
     <div className="used-word">
-      <SVG src="./icons/check.svg" className="check" />
+      <SVG src={checkIcon} className="check" />
     </div>
   ) : (
     <div className="word" onClick={onClick}>

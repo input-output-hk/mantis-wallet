@@ -23,6 +23,11 @@ const addLessLoader = () => (config) => {
     ],
   })
 
+  loaders.splice(loaders.length - 1, 0, {
+    test: /\.svg$/,
+    use: ['raw-loader'],
+  })
+
   config.plugins.push(new WorkerPlugin())
 
   return config

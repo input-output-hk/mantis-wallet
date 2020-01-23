@@ -1,11 +1,12 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
+import loadingIcon from '../assets/icons/loading.svg'
 import './Loading.scss'
 
 export const Loading = (): JSX.Element => {
   return (
     <div className="Loading">
-      <SVG src="/icons/loading.svg" className="svg" />
+      <SVG src={loadingIcon} className="svg" />
     </div>
   )
 }
