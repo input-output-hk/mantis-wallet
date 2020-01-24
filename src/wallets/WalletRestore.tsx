@@ -7,6 +7,8 @@ import {DialogTabs} from '../common/dialog/DialogTabs'
 import {DialogError} from '../common/dialog/DialogError'
 import {wallet} from '../wallet'
 
+type RecoveryMethodType = 'Private key' | 'Recovery phrase'
+
 interface WalletRestoreProps {
   cancel: () => void
   finish: () => void
@@ -18,13 +20,24 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
 }: WalletRestoreProps) => {
   const [walletName, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
-  const [seedPhrase, setSeedPhrase] = useState('')
+  const [seedPhraseString, setSeedPhrase] = useState('')
   const [passphrase, setPassphrase] = useState('')
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethodType>('Private key')
   const [usePassphrase, setUsePassphrase] = useState(false)
   const [isPassphraseValid, setPassphraseValid] = useState(true)
 
   const [walletRestoreError, setWalletRestoreError] = useState('')
   const footer = walletRestoreError ? <DialogError>{walletRestoreError}</DialogError> : null
+
+  const restore = async (): Promise<boolean> => {
+    switch (recoveryMethod) {
+      case 'Private key':
+        return wallet.restore({passphrase, spendingKey})
+      case 'Recovery phrase':
+        const seedPhrase = seedPhraseString.split(' ')
+        return wallet.restore({passphrase, seedPhrase})
+    }
+  }
 
   return (
     <Dialog
@@ -35,8 +48,12 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
         onClick: async (): Promise<void> => {
           setWalletRestoreError('')
           try {
-            await wallet.restore({passphrase, spendingKey})
-            finish()
+            const isRestored = await restore()
+            if (isRestored) {
+              finish()
+            } else {
+              setWalletRestoreError("Couldn't restore wallet with the provided information")
+            }
           } catch (e) {
             setWalletRestoreError(e.message)
           }
@@ -60,6 +77,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
             content: <DialogInput onChange={(e): void => setSeedPhrase(e.target.value)} />,
           },
         ]}
+        onTabClick={(key: RecoveryMethodType): void => setRecoveryMethod(key)}
       />
       <DialogSwitch
         key="use-password-switch"

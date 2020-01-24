@@ -178,6 +178,7 @@ export const InteractiveTabs: React.FunctionComponent<{}> = () => (
           content: text('Second tab content', 'Second tab content'),
         },
       ]}
+      onTabClick={action('on-tab-click')}
     />
   </Dialog>
 )
