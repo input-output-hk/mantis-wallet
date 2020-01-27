@@ -5,7 +5,7 @@ import {app, BrowserWindow} from 'electron'
 import path from 'path'
 import url from 'url'
 import {spawn} from 'child_process'
-import {asapScheduler} from 'rxjs'
+import {asapScheduler, merge, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
@@ -15,6 +15,7 @@ import * as _ from 'lodash/fp'
 import {ClientName, config} from './config'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
 import {scheduleArray} from 'rxjs/internal/scheduled/scheduleArray'
+import {mergeAll} from 'rxjs/operators'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -68,6 +69,7 @@ app.on('activate', function() {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+console.log('config', JSON.stringify(config, null, 4))
 
 if (config.runClients) {
   const spawners = pipe(
@@ -94,7 +96,8 @@ if (config.runClients) {
         const prefix = buildPrefix(client.name)
         return client.log$.pipe(rxop.map((line) => `${prefix}${line}`))
       }),
-      (logs) => scheduleArray(logs, asapScheduler),
+      (logs) => scheduled(logs, asapScheduler),
+      mergeAll(),
     ).subscribe(console.log)
   }
 
@@ -108,8 +111,9 @@ if (config.runClients) {
 
     pipe(
       clients,
-      array.map(_.prop('close$')),
-      (closeEvents) => scheduleArray(closeEvents, asapScheduler),
+      array.map((client) => client.close$),
+      (closeEvents) => scheduled(closeEvents, asapScheduler),
+      mergeAll(),
       rxop.take(1),
     ).subscribe(() => restartClients())
 
@@ -127,6 +131,7 @@ if (config.runClients) {
     )
 
   async function restartClients(): Promise<void> {
+    console.log('restarting clients')
     return killClients().then(spawnClients)
   }
 

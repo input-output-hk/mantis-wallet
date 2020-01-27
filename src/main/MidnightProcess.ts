@@ -10,7 +10,10 @@ import {readableToObservable} from './streamUtils'
 import {ClientName, ProcessConfig} from './config'
 
 export class SpawnedMidnightProcess {
-  constructor(public name: ClientName, private childProcess: childProcess.ChildProcess) {}
+  constructor(public name: ClientName, private childProcess: childProcess.ChildProcess) {
+    childProcess.on('close', (code) => console.log('exited with', code))
+    childProcess.on('error', (err) => console.error(err))
+  }
 
   log$: Observable<string> = pipe(
     [this.childProcess.stdout, this.childProcess.stderr],
@@ -27,7 +30,8 @@ export class SpawnedMidnightProcess {
       (processes) => processes.find((proc) => proc.pid === this.childProcess.pid) != null,
     )
 
-  kill = async () =>
+  kill = async () => {
+    console.log(`killing ${this.name}`)
     interval(100)
       .pipe(
         rxop.concatMap(() => new Promise((resolve) => resolve(this.childProcess.kill()))),
@@ -36,6 +40,7 @@ export class SpawnedMidnightProcess {
         rxop.take(1),
       )
       .toPromise()
+  }
 }
 
 export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
@@ -52,10 +57,14 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   )
 
   return {
-    spawn: () =>
-      new SpawnedMidnightProcess(
+    spawn: () => {
+      console.log(
+        `spawning ${name} (from ${processConfig.packageDirectory}): ${executablePath} ${settingsAsArguments}`,
+      )
+      return new SpawnedMidnightProcess(
         name,
         spawn(executablePath, settingsAsArguments, {cwd: processConfig.packageDirectory}),
-      ),
+      )
+    },
   }
 }
