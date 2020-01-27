@@ -38,12 +38,12 @@ export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreat
         recoveryPhraseShuffled={_.shuffle(seedPhrase)}
       />
       <DialogApproval
-        description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+        description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam."
         checked={isCondition1}
         onChange={setCondition1}
       />
       <DialogApproval
-        description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+        description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr."
         checked={isCondition2}
         onChange={setCondition2}
       />

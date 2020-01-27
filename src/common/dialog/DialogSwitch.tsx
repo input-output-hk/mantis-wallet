@@ -19,7 +19,7 @@ export const DialogSwitch: React.FunctionComponent<DialogCheckProps> = ({
     <div className="label">{label}</div>
     <div className="switch">
       <div>{description}</div>
-      <SquareSwitch onChange={onChange} checked={checked} />
+      <SquareSwitch title={label} onChange={onChange} checked={checked} />
     </div>
   </div>
 )

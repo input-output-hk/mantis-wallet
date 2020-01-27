@@ -46,6 +46,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
     >
       <DialogInput
         label="Wallet name"
+        id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
         errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
       />
@@ -53,11 +54,21 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
         tabs={[
           {
             label: 'Private key',
-            content: <DialogInput onChange={(e): void => setSpendingKey(e.target.value)} />,
+            content: (
+              <DialogInput
+                data-testid="private-key"
+                onChange={(e): void => setSpendingKey(e.target.value)}
+              />
+            ),
           },
           {
             label: 'Recovery phrase',
-            content: <DialogInput onChange={(e): void => setSeedPhrase(e.target.value)} />,
+            content: (
+              <DialogInput
+                data-testid="recovery-phrase"
+                onChange={(e): void => setSeedPhrase(e.target.value)}
+              />
+            ),
           },
         ]}
       />
