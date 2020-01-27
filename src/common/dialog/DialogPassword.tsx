@@ -34,6 +34,7 @@ export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
       <DialogColumns>
         <BorderlessInputPassword
           className="input"
+          data-testid="password"
           forceInvalid={!!errorMessage}
           visibilityToggle={false}
           onChange={(e): void => {
@@ -49,6 +50,7 @@ export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
         />
         <BorderlessInputPassword
           className="input"
+          data-testid="rePassword"
           errorMessage={errorMessage}
           visibilityToggle={false}
           onChange={(e): void => {

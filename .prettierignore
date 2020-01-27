@@ -1,6 +1,7 @@
 # project specific
 docs
 build
+coverage
 storybook-static
 .*
 

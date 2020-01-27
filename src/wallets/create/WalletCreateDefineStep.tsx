@@ -32,6 +32,7 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
     >
       <DialogInput
         label="Wallet name"
+        id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
         errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
       />

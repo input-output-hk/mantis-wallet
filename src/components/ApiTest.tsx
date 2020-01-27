@@ -1,12 +1,15 @@
 import React from 'react'
 import {wallet} from '../wallet'
+import {WalletState} from '../common/wallet-state'
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
+  const state = WalletState.useContainer()
   const passphrase = 'Foobar1234'
   const spendingKey = 'm-test-shl-sk1fj335eanpmupaj9vx5879t7ljfnh7xct486rqgwxw8evwp2qkaksmcqu88'
 
   const call = (fn: CallableFunction) => (): void => {
+    if (state.walletStatus === 'LOADED') state.reset()
     fn()
       .then((result: unknown) => console.log(result))
       .catch((e: Error) => console.error(e.message))

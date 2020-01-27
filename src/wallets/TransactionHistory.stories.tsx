@@ -23,6 +23,7 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
     txValue: (Math.random() * 100000000).toString(16),
     txStatus: {
       status: Math.random() < 0.5 ? 'confirmed' : 'pending',
+      // atBlock: (Math.random() * 100000000).toString(16),
     },
     txDetails: {
       txType: 'transfer',
@@ -44,6 +45,7 @@ export const interactive = (): JSX.Element => {
           txValue: (1000.0).toString(16),
           txStatus: {
             status: 'confirmed',
+            atBlock: '0x1',
           },
           txDetails: {
             txType: 'transfer',
@@ -55,6 +57,7 @@ export const interactive = (): JSX.Element => {
           txValue: (1000.0).toString(16),
           txStatus: {
             status: 'confirmed',
+            atBlock: '0x1',
           },
           txDetails: {
             txType: 'transfer',
@@ -66,6 +69,7 @@ export const interactive = (): JSX.Element => {
           txValue: (1000.0).toString(16),
           txStatus: {
             status: 'pending',
+            atBlock: '0x1',
           },
           txDetails: {
             txType: 'transfer',

@@ -10,6 +10,7 @@ import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import dustLogo from '../assets/dust_logo.png'
 import incomingIcon from '../assets/icons/incoming.svg'
 import outgoingIcon from '../assets/icons/outgoing.svg'
+import transparentIcon from '../assets/icons/transparent.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import checkIcon from '../assets/icons/check.svg'
 import arrowDownIcon from '../assets/icons/arrow-down.svg'
@@ -37,10 +38,20 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
         <div className="line"></div>
         <div>
           <span className="sort-by">Sort by ▼</span>
-          <Button type="primary" className="action" onClick={(): void => setShowSendModal(true)}>
+          <Button
+            data-testid="send-button"
+            type="primary"
+            className="action"
+            onClick={(): void => setShowSendModal(true)}
+          >
             Send
           </Button>
-          <Button type="primary" className="action" onClick={(): void => setShowReceiveModal(true)}>
+          <Button
+            data-testid="receive-button"
+            type="primary"
+            className="action"
+            onClick={(): void => setShowReceiveModal(true)}
+          >
             Receive
           </Button>
           <SendTransaction
@@ -88,14 +99,12 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <td className="line">
                     <span className="type-icon">
                       &nbsp;
-                      {/* FIXME: determine transaction type */}
-                      <SVG src={confidentialIcon} className="svg" />
-                      {/* {transaction.type === 'public' && (
-                        <SVG src={transparentIcon} className="svg" />
+                      {transaction.txDetails.txType === 'call' && (
+                        <SVG src={transparentIcon} className="svg" title="Transparent" />
                       )}
-                      {transaction.type === 'private' && (
-                        <SVG src={confidentialIcon} className="svg" />
-                      )} */}
+                      {transaction.txDetails.txType !== 'call' && (
+                        <SVG src={confidentialIcon} className="svg" title="Confidential" />
+                      )}
                     </span>
                   </td>
                   <td className="line">
@@ -105,10 +114,10 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <td className="line">
                     <span className="amount">
                       {transaction.txDirection === 'incoming' && (
-                        <SVG src={incomingIcon} className="svg" />
+                        <SVG src={incomingIcon} className="svg" title="Incoming" />
                       )}
                       {transaction.txDirection === 'outgoing' && (
-                        <SVG src={outgoingIcon} className="svg" />
+                        <SVG src={outgoingIcon} className="svg" title="Outgoing" />
                       )}
                       &nbsp;
                       <ShortNumber big={Big(parseInt(transaction.txValue))} />
@@ -119,7 +128,7 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <td className="line">
                     {transaction.txStatus.status === 'confirmed' && (
                       <>
-                        <SVG src={checkIcon} className="check" />
+                        <SVG src={checkIcon} className="check" title="Confirmed" />
                         &nbsp;
                       </>
                     )}
