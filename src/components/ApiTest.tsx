@@ -40,6 +40,7 @@ export const ApiTest = (): JSX.Element => {
         <TestButton onClick={(): void => wallet.restore({passphrase, spendingKey})}>
           Restore
         </TestButton>
+        <TestButton onClick={(): void => wallet.listAccounts()}>Accounts</TestButton>
       </div>
     </div>
   )
