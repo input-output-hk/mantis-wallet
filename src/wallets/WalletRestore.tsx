@@ -53,7 +53,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
       <DialogTabs
         tabs={[
           {
-            label: 'Private key',
+            label: 'Private Key',
             content: (
               <DialogInput
                 data-testid="private-key"
@@ -62,7 +62,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
             ),
           },
           {
-            label: 'Recovery phrase',
+            label: 'Recovery Phrase',
             content: (
               <DialogInput
                 data-testid="recovery-phrase"
@@ -75,7 +75,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
       <DialogSwitch
         key="use-password-switch"
         label="Spending password"
-        description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+        description="Keep your private keys encrypted by adding a spending password"
         checked={usePassphrase}
         onChange={setUsePassphrase}
       />

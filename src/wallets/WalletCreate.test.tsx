@@ -163,8 +163,12 @@ test('WalletCreate `Verify Recovery` step', () => {
   expect(back).toHaveBeenCalled()
 
   // Accept conditions
-  const label1 = getByText('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.')
-  const label2 = getByText('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+  const label1 = getByText(
+    'I understand that my wallet and tokens are held securely on this device only and not on any servers',
+  )
+  const label2 = getByText(
+    'I understand that if this application is moved to another device or is deleted, my wallet can only be recovered with the backup phrase I have written down and stored securely',
+  )
   expect(label1).toBeInTheDocument()
   expect(label2).toBeInTheDocument()
   userEvent.click(label1)

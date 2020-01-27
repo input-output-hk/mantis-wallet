@@ -29,7 +29,8 @@ export const WalletCreateDisplayRecoveryStep: React.FunctionComponent<WalletCrea
         disabled: !isRecoveryPhraseWritten,
       }}
     >
-      <DialogMessage description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna" />
+      <DialogMessage description="This is your wallet backup phrase. It can be entered into any version of Luna Wallet in order to restore your wallet" />
+      <DialogMessage description="The phrase is case sensitive. Please make sure you write down and save your recovery phrase. You will need this phrase to use and restore your wallet" />
       <DialogDisplayWords words={seedPhrase} />
       <DialogApproval
         description="Yes, I have written it down."
