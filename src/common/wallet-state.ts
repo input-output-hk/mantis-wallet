@@ -9,7 +9,7 @@ import {wallet} from '../wallet'
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
 
-interface OverviewProps {
+interface Overview {
   transactions: Transaction[]
   transparentBalance: Big
   availableBalance: Big
@@ -30,7 +30,7 @@ interface LoadingState {
 interface LoadedState {
   walletStatus: 'LOADED'
   isOffline: boolean
-  getOverviewProps: () => OverviewProps
+  getOverviewProps: () => Overview
   reset: () => void
   generateNewAddress: () => Promise<void>
 }
@@ -64,7 +64,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   >(none)
   const [accountsOption, setAccounts] = useState<Option<Account[]>>(none)
 
-  const getOverviewProps = (): OverviewProps => {
+  const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
     const transparentBalance = getOrElse((): Big => Big(0))(transparentBalanceOption)
     const totalBalance = getOrElse((): Big => Big(0))(totalBalanceOption)

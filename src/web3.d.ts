@@ -18,7 +18,7 @@ export interface Transaction {
   hash: string // Hash of transaction
   txDirection: 'incoming' | 'outgoing'
   txStatus: {
-    status: 'confirmed' | 'pending'
+    status: 'confirmed' | 'pending' | 'persisted'
     atBlock?: string // hexadecimal value representing block at which transaction took place
   }
   txValue: string
