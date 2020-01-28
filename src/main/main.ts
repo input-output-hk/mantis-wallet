@@ -12,7 +12,7 @@ import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 
-import {ClientName, config} from './config'
+import {ClientName, config} from '../config'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
 import {scheduleArray} from 'rxjs/internal/scheduled/scheduleArray'
 import {mergeAll} from 'rxjs/operators'

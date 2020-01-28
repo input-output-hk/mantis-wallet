@@ -7,7 +7,7 @@ import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import {readableToObservable} from './streamUtils'
-import {ClientName, ProcessConfig} from './config'
+import {ClientName, ProcessConfig} from '../config'
 
 export class SpawnedMidnightProcess {
   constructor(public name: ClientName, private childProcess: childProcess.ChildProcess) {

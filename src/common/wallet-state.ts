@@ -2,10 +2,10 @@ import {useState} from 'react'
 import Big from 'big.js'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {TransparentAddressResult, Balance, Transaction} from '../web3'
+import {TransparentAddressResult, Balance, Transaction, WalletAPI} from '../web3'
 import {WALLET_IS_OFFLINE} from '../common/errors'
 import {deserializeBigNumber} from '../common/util'
-import {wallet} from '../wallet'
+import {walletPromise} from '../wallet'
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
 
@@ -40,12 +40,11 @@ interface ErrorState {
 
 type WalletState = InitialState | LoadingState | LoadedState | ErrorState
 
-function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletState {
+export const useWalletState = (wallet: WalletAPI) => (initialWalletStatus: WalletStatus = 'INITIAL'): WalletState => {
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
   const [errorOption, setError] = useState<Option<string>>(none)
   const [isOffline, setIsOffline] = useState<boolean>(false)
-  // const []
 
   // balance
   const [totalBalanceOption, setTotalBalance] = useState<Option<Big>>(none)
@@ -93,13 +92,13 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const loadTransparentBalance = async (): Promise<Big> => {
     // get every transparent address
-    const addresses: TransparentAddressResult[] = await wallet.listTransparentAddresses(100, 0)
+    const addresses: TransparentAddressResult[] = await wallet.then(actualWallet => actualWallet.listTransparentAddresses(100, 0))
 
     // get balance for every transparent address
     const balances: Balance[] = await Promise.all(
       addresses.map(
         async (address: TransparentAddressResult): Promise<Balance> =>
-          wallet.getTransparentWalletBalance(address.address),
+            (await wallet).getTransparentWalletBalance(address.address),
       ),
     )
     return balances
@@ -112,7 +111,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setWalletStatus('LOADING')
 
     // load transaction history
-    wallet
+     wallet
       .getTransactionHistory(10, 0)
       .then((transactions: Transaction[]) => setTransactions(some(transactions)))
       .catch(handleError)
@@ -148,4 +147,4 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   }
 }
 
-export const WalletState = createContainer(useWalletState)
+export const WalletState = (wallet: WalletAPI) => createContainer(useWalletState(wallet))

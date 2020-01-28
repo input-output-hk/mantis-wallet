@@ -3,7 +3,7 @@
   "compilerOptions": {
     "noEmit": false,
     "module": "CommonJS",
-    "outDir": "./build/main"
+    "outDir": "./build"
   },
   "include": [
     "src/main/**/*"

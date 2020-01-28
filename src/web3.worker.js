@@ -1,8 +1,18 @@
 import Web3 from 'web3'
 import * as Comlink from 'comlink'
 
-const web3 = new Web3()
-web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:8342/'))
-const {wallet} = web3.midnight
+class Web3Wrapper {
+    constructor() {
+        this.web3 = new Web3();
+    }
 
-Comlink.expose(wallet)
+    configure(rpcAddress) {
+        this.web3.setProvider(new this.web3.providers.HttpProvider(rpcAddress))
+    }
+
+    getWallet() {
+        return this.web3.midnight.wallet;
+    }
+}
+
+Comlink.expose(new Web3Wrapper())

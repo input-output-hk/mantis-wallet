@@ -32,12 +32,12 @@ interface PassphraseSecrets {
 }
 
 export interface WalletAPI {
-  getBalance(): Balance
-  getTransparentWalletBalance(address: string): Balance
-  getTransactionHistory(count: number, drop: number): Transaction[]
-  listTransparentAddresses(count: number, drop: number): TransparentAddressResult[]
+  getBalance(): Promise<Balance>
+  getTransparentWalletBalance(address: string): Promise<Balance>
+  getTransactionHistory(count: number, drop: number): Promise<Transaction[]>
+  listTransparentAddresses(count: number, drop: number): Promise<TransparentAddressResult[]>
   // FIXME: lock/unlock -> union (true | false) return type breaks downstream promise code
   // https://github.com/microsoft/TypeScript/issues/14669
-  lock(secrets: PassphraseSecrets): boolean
-  unlock(secrets: PassphraseSecrets): boolean
+  lock(secrets: PassphraseSecrets): Promise<boolean>
+  unlock(secrets: PassphraseSecrets): Promise<boolean>
 }

@@ -24,7 +24,9 @@
     "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ./build/main/main.js",
     "build-all": "yarn build-renderer && yarn build-main",
     "package": "node ./bin/package.js",
-    "build-dist": "yarn build-all && yarn package"
+    "package-win": "node ./bin/package-win.js",
+    "build-dist": "yarn build-all && yarn package",
+    "build-dist-win": "yarn build-all && yarn package-win"
   },
   "husky": {
     "hooks": {

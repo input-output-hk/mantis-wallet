@@ -1,4 +1,4 @@
-/* eslint-disable fp/no-throw */
+/* aeslint-disable fp/no-throw */
 import path from 'path'
 import fs from 'fs'
 import {homedir} from 'os'
@@ -16,6 +16,7 @@ export interface ProcessConfig {
 export type ClientName = 'node' | 'wallet'
 
 export interface Config {
+  rpcAddress: string
   dataDir: string
   distPackagesDir: string
   runClients: boolean
@@ -95,6 +96,13 @@ const clientConfig = (
 })
 
 const configGetter = convict({
+  rpcAddress: {
+    default: 'http://127.0.0.1:8342/',
+    format: 'url',
+    arg: 'rpc-address',
+    env: 'LUNA_RPC_ADDRESS',
+    doc: "Address where is available Wallet Backend's RPC",
+  },
   dataDir: {
     default: defaultDataDir,
     arg: 'data-dir',
@@ -133,8 +141,11 @@ const configGetter = convict({
   },
 })
 ;[
-  {name: 'platform-specific', path: path.resolve(__dirname, 'platform-config.json5')},
-  {name: 'app config', path: path.resolve(__dirname, 'config.json5')},
+  {
+    name: 'platform-specific configuration',
+    path: path.resolve(__dirname, '..', '..', 'platform-config.json5'),
+  },
+  {name: 'user configuration', path: path.resolve(__dirname, '..', '..', 'config.json5')},
   {name: 'environment variable LUNA_CONFIG_FILE', path: process.env.LUNA_CONFIG_FILE || ''},
 ]
   .map((configSource) => ({

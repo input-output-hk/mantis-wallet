@@ -36,4 +36,5 @@ module.exports = override(
     style: true,
   }),
   addLessLoader(),
+  (config) => ({...config, target: 'electron-renderer'}),
 )
