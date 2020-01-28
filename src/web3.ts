@@ -77,6 +77,9 @@ interface Web3API {
   midnight: {
     wallet: WalletAPI
   }
+  version: {
+    ethereum: string
+  }
 }
 
 // for testing: ReactDOM doesn't know about workers

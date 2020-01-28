@@ -1,17 +1,31 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
 import {WalletState} from './common/wallet-state'
 import {ROUTES} from './routes-config'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
+import {web3} from './web3'
 import './App.scss'
 
 const App: React.FC = () => {
-  const [loaded, setLoaded] = useState(false)
+  const [isBackendRunning, setBackendRunning] = useState(false)
 
-  setTimeout(() => setLoaded(true), 1500)
+  useEffect(() => {
+    const checkBackend = async (): Promise<void> => {
+      try {
+        await Promise.all([web3.midnight.wallet.listAccounts(), web3.version.ethereum])
+        setBackendRunning(true)
+      } catch (e) {
+        setBackendRunning(false)
+      } finally {
+        setTimeout(checkBackend, 1000)
+      }
+    }
 
-  return loaded ? (
+    checkBackend()
+  }, [])
+
+  return isBackendRunning ? (
     <div className="App">
       <BrowserRouter>
         <header className="App-header">
