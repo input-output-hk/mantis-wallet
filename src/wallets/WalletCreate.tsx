@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {wallet} from '../wallet'
+import {web3} from '../web3'
 import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
@@ -35,7 +35,10 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
           next={async (walletName, passphrase): Promise<void> => {
             setWalletCreateError('')
             try {
-              const {spendingKey: newSpendingKey, seedPhrase: newSeedPhrase} = await wallet.create({
+              const {
+                spendingKey: newSpendingKey,
+                seedPhrase: newSeedPhrase,
+              } = await web3.midnight.wallet.create({
                 passphrase,
               })
               setWalletName(walletName)

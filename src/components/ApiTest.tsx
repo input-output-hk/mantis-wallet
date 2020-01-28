@@ -1,6 +1,8 @@
 import React from 'react'
-import {wallet} from '../wallet'
+import {web3, SpendingKey, SeedPhrase, TransparentAddress, Account} from '../web3'
 import {WalletState} from '../common/wallet-state'
+
+const wallet = web3.midnight.wallet
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
@@ -33,17 +35,25 @@ export const ApiTest = (): JSX.Element => {
 
       <div>
         {/* You can call any wallet function as usual, but the calls will be async */}
-        <TestButton onClick={(): void => wallet.create({passphrase})}>Create</TestButton>
-        <TestButton onClick={(): void => wallet.remove({passphrase})}>Remove</TestButton>
-        <TestButton onClick={(): void => wallet.lock({passphrase})}>Lock</TestButton>
-        <TestButton onClick={(): void => wallet.unlock({passphrase})}>Unlock</TestButton>
-        <TestButton onClick={(): void => wallet.generateTransparentAddress()}>
+        <TestButton onClick={(): Promise<SpendingKey & SeedPhrase> => wallet.create({passphrase})}>
+          Create
+        </TestButton>
+        <TestButton onClick={(): Promise<boolean> => wallet.remove({passphrase})}>
+          Remove
+        </TestButton>
+        <TestButton onClick={(): Promise<boolean> => wallet.lock({passphrase})}>Lock</TestButton>
+        <TestButton onClick={(): Promise<boolean> => wallet.unlock({passphrase})}>
+          Unlock
+        </TestButton>
+        <TestButton
+          onClick={(): Promise<TransparentAddress> => wallet.generateTransparentAddress()}
+        >
           Generate Transparent Address
         </TestButton>
-        <TestButton onClick={(): void => wallet.restore({passphrase, spendingKey})}>
+        <TestButton onClick={(): Promise<boolean> => wallet.restore({passphrase, spendingKey})}>
           Restore
         </TestButton>
-        <TestButton onClick={(): void => wallet.listAccounts()}>Accounts</TestButton>
+        <TestButton onClick={(): Promise<Account[]> => wallet.listAccounts()}>Accounts</TestButton>
       </div>
     </div>
   )

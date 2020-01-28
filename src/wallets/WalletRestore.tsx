@@ -5,7 +5,7 @@ import {DialogSwitch} from '../common/dialog/DialogSwitch'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogTabs} from '../common/dialog/DialogTabs'
 import {DialogError} from '../common/dialog/DialogError'
-import {wallet} from '../wallet'
+import {web3} from '../web3'
 
 enum RecoveryMethod {
   SpendingKey = 'Private key',
@@ -35,10 +35,10 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   const restore = async (): Promise<boolean> => {
     switch (recoveryMethod) {
       case RecoveryMethod.SpendingKey:
-        return wallet.restore({passphrase, spendingKey})
+        return web3.midnight.wallet.restore({passphrase, spendingKey})
       case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
-        return wallet.restore({passphrase, seedPhrase})
+        return web3.midnight.wallet.restore({passphrase, seedPhrase})
     }
   }
 
