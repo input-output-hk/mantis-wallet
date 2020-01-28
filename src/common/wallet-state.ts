@@ -4,7 +4,7 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {TransparentAddress, Balance, Transaction, Account} from '../web3'
 import {WALLET_IS_OFFLINE} from '../common/errors'
-import {deserializeBigNumber} from '../common/util'
+import {deserializeBigNumber, loadAll} from '../common/util'
 import {wallet} from '../wallet'
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
@@ -48,7 +48,6 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
   const [errorOption, setError] = useState<Option<string>>(none)
   const [isOffline, setIsOffline] = useState<boolean>(false)
-  // const []
 
   // balance
   const [totalBalanceOption, setTotalBalance] = useState<Option<Big>>(none)
@@ -118,7 +117,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const loadTransparentBalance = async (): Promise<Big> => {
     // get every transparent address
-    const transparentAddresses: TransparentAddress[] = await wallet.listTransparentAddresses(100, 0)
+    const transparentAddresses: TransparentAddress[] = await loadAll(
+      wallet.listTransparentAddresses,
+    )
 
     setTransparentAddresses(some(transparentAddresses))
 
@@ -139,8 +140,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setWalletStatus('LOADING')
 
     // load transaction history
-    wallet
-      .getTransactionHistory(10, 0)
+    loadAll<Transaction>(wallet.getTransactionHistory)
       .then((transactions: Transaction[]) => setTransactions(some(transactions)))
       .catch(handleError)
 
@@ -173,7 +173,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const generateNewAddress = async (): Promise<void> => {
     await wallet.generateTransparentAddress()
 
-    const transparentAddresses: TransparentAddress[] = await wallet.listTransparentAddresses(100, 0)
+    const transparentAddresses: TransparentAddress[] = await loadAll(
+      wallet.listTransparentAddresses,
+    )
 
     setTransparentAddresses(some(transparentAddresses))
   }

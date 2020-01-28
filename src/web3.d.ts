@@ -45,11 +45,13 @@ interface Account {
   locked: boolean
 }
 
+type PaginatedCallable<T> = (count: number, drop: number) => T[]
+
 export interface WalletAPI {
   getBalance(): Balance
   getTransparentWalletBalance(address: string): Balance
-  getTransactionHistory(count: number, drop: number): Transaction[]
-  listTransparentAddresses(count: number, drop: number): TransparentAddress[]
+  getTransactionHistory: PaginatedCallable<Transaction>
+  listTransparentAddresses: PaginatedCallable<TransparentAddress>
   listAccounts(): Account[]
   sendTransaction(recipient: string, amount: number, fee: number): string
   create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase
