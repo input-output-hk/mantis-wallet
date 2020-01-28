@@ -44,7 +44,7 @@ test('WalletRestore', () => {
   userEvent.type(privateKeyInput, privateKey)
 
   // Switch to recovery phrase restore
-  const recoverySwitch = getByText('Recovery phrase')
+  const recoverySwitch = getByText('Recovery Phrase')
   expect(recoverySwitch).toBeInTheDocument()
   userEvent.click(recoverySwitch)
 

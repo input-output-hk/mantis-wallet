@@ -16,14 +16,14 @@ export const WalletPathChooser = ({
     <WalletActionBox
       icon={walletIcon}
       title="Create New Wallet"
-      description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+      description="Create a New Wallet"
       buttonLabel="Create"
       onClick={goToCreate}
     />
     <WalletActionBox
       icon={walletRestoreIcon}
       title="Restore Wallet"
-      description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+      description={'Restore wallet using Backup\u00a0Recovery\u00a0Phrase or Private\u00a0Key'}
       buttonLabel="Restore"
       onClick={goToRestore}
     />
