@@ -15862,7 +15862,7 @@ wbuf@^1.1.0, wbuf@^1.7.3:
 
 "web3@git+ssh://git@github.com:input-output-hk/midnight-web3.git#develop":
   version "0.20.6"
-  resolved "git+ssh://git@github.com:input-output-hk/midnight-web3.git#bcf8db65dffbc82dfe6668e22ae4864ba32b9507"
+  resolved "git+ssh://git@github.com:input-output-hk/midnight-web3.git#51f874ff137b397025a383dd0ac953c25027211f"
   dependencies:
     bignumber.js "4.1.0"
     crypto-js "3.1.4"

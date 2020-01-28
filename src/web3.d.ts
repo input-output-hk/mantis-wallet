@@ -31,6 +31,14 @@ interface PassphraseSecrets {
   passphrase: string
 }
 
+interface SpendingKey {
+  spendingKey: string
+}
+
+interface SeedPhrase {
+  seedPhrase: string[]
+}
+
 interface Account {
   wallet: string
   address: string
@@ -44,6 +52,8 @@ export interface WalletAPI {
   listTransparentAddresses(count: number, drop: number): TransparentAddress[]
   listAccounts(): Account[]
   sendTransaction(recipient: string, amount: number, fee: number): string
+  create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase
+  restore(secrets: (SpendingKey | SeedPhrase) & PassphraseSecrets): boolean
   // FIXME: lock/unlock -> union (true | false) return type breaks downstream promise code
   // https://github.com/microsoft/TypeScript/issues/14669
   lock(secrets: PassphraseSecrets): boolean
