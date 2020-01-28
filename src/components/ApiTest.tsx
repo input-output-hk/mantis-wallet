@@ -1,7 +1,8 @@
 import React from 'react'
-import {wallet} from '../wallet'
-import {SpendingKey, SeedPhrase, TransparentAddress, Account} from '../web3'
+import {web3, SpendingKey, SeedPhrase, TransparentAddress, Account} from '../web3'
 import {WalletState} from '../common/wallet-state'
+
+const wallet = web3.midnight.wallet
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {

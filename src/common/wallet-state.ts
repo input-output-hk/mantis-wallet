@@ -5,7 +5,9 @@ import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {TransparentAddress, Balance, Transaction, Account} from '../web3'
 import {WALLET_IS_OFFLINE} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
-import {wallet} from '../wallet'
+import {web3} from '../web3'
+
+const wallet = web3.midnight.wallet
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
 

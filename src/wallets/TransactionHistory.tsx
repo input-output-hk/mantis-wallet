@@ -16,7 +16,7 @@ import checkIcon from '../assets/icons/check.svg'
 import arrowDownIcon from '../assets/icons/arrow-down.svg'
 import './TransactionHistory.scss'
 import {WalletState} from '../common/wallet-state'
-import {wallet} from '../wallet'
+import {web3} from '../web3'
 
 interface TransactionHistoryProps {
   transactions: Transaction[]
@@ -59,7 +59,7 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             accounts={accounts}
             onCancel={(): void => setShowSendModal(false)}
             onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
-              await wallet.sendTransaction(recipient, amount, fee)
+              await web3.midnight.wallet.sendTransaction(recipient, amount, fee)
               setShowSendModal(false)
             }}
           />

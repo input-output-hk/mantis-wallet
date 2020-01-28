@@ -3,7 +3,7 @@ import {Redirect} from 'react-router-dom'
 import {Button} from 'antd'
 import {WalletState} from '../common/wallet-state'
 import {BorderlessInputPassword} from '../common/BorderlessInput'
-import {wallet} from '../wallet'
+import {web3} from '../web3'
 import {ROUTES} from '../routes-config'
 import './WalletUnlock.scss'
 
@@ -18,7 +18,7 @@ export const WalletUnlock = (): JSX.Element => {
   const unlock = async (): Promise<void> => {
     setUnlockStatus('LOADING')
     try {
-      const isUnlocked = await wallet.unlock({passphrase})
+      const isUnlocked = await web3.midnight.wallet.unlock({passphrase})
       setUnlockStatus(isUnlocked ? 'UNLOCKED' : 'LOCKED')
     } catch (e) {
       setUnlockStatus('LOCKED')

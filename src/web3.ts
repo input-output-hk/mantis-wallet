@@ -1,3 +1,6 @@
+import * as Comlink from 'comlink'
+import {MockWorker} from './stubs'
+
 export interface BigNumberJSON {
   s: number
   e: number
@@ -69,3 +72,19 @@ export interface WalletAPI {
 
   listAccounts(): Account[]
 }
+
+interface Web3API {
+  midnight: {
+    wallet: WalletAPI
+  }
+}
+
+// for testing: ReactDOM doesn't know about workers
+if (window.Worker === undefined) {
+  // eslint-disable-next-line
+  window.Worker = MockWorker
+}
+
+const worker = new Worker('./web3.worker.js', {type: 'module'})
+
+export const web3 = Comlink.wrap<Web3API>(worker)
