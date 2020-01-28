@@ -9,6 +9,4 @@ if (window.Worker === undefined) {
 }
 
 const worker = new Worker('./web3.worker.js', {type: 'module'})
-// FIXME: remove any, see WalletAPI for details
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const wallet: any = Comlink.wrap<WalletAPI>(worker)
+export const wallet = Comlink.wrap<WalletAPI>(worker)

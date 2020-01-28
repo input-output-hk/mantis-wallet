@@ -31,33 +31,41 @@ interface PassphraseSecrets {
   passphrase: string
 }
 
-interface SpendingKey {
+export interface SpendingKey {
   spendingKey: string
 }
 
-interface SeedPhrase {
+export interface SeedPhrase {
   seedPhrase: string[]
 }
 
-interface Account {
+export interface Account {
   wallet: string
   address: string
   locked: boolean
 }
 
-type PaginatedCallable<T> = (count: number, drop: number) => T[]
+export type PaginatedCallable<T> = (count: number, drop: number) => T[]
 
 export interface WalletAPI {
+  // wallet basic actions
+  create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase
+  unlock(secrets: PassphraseSecrets): boolean
+  lock(secrets: PassphraseSecrets): boolean
+  restore(secrets: (SpendingKey | SeedPhrase) & PassphraseSecrets): boolean
+  remove(secrets: PassphraseSecrets): boolean
+
+  // balances
   getBalance(): Balance
   getTransparentWalletBalance(address: string): Balance
-  getTransactionHistory: PaginatedCallable<Transaction>
-  listTransparentAddresses: PaginatedCallable<TransparentAddress>
-  listAccounts(): Account[]
+
+  // transactions
   sendTransaction(recipient: string, amount: number, fee: number): string
-  create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase
-  restore(secrets: (SpendingKey | SeedPhrase) & PassphraseSecrets): boolean
-  // FIXME: lock/unlock -> union (true | false) return type breaks downstream promise code
-  // https://github.com/microsoft/TypeScript/issues/14669
-  lock(secrets: PassphraseSecrets): boolean
-  unlock(secrets: PassphraseSecrets): boolean
+  getTransactionHistory: PaginatedCallable<Transaction>
+
+  // transparent addresses
+  listTransparentAddresses: PaginatedCallable<TransparentAddress>
+  generateTransparentAddress(): TransparentAddress
+
+  listAccounts(): Account[]
 }
