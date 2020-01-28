@@ -7,7 +7,10 @@ import {DialogTabs} from '../common/dialog/DialogTabs'
 import {DialogError} from '../common/dialog/DialogError'
 import {wallet} from '../wallet'
 
-type RecoveryMethodType = 'Private key' | 'Recovery phrase'
+enum RecoveryMethod {
+  SpendingKey = 'Private key',
+  SeedPhrase = 'Recovery Phrase',
+}
 
 interface WalletRestoreProps {
   cancel: () => void
@@ -22,7 +25,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
   const [passphrase, setPassphrase] = useState('')
-  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethodType>('Private key')
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>(RecoveryMethod.SpendingKey)
   const [usePassphrase, setUsePassphrase] = useState(false)
   const [isPassphraseValid, setPassphraseValid] = useState(true)
 
@@ -31,9 +34,9 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
 
   const restore = async (): Promise<boolean> => {
     switch (recoveryMethod) {
-      case 'Private key':
+      case RecoveryMethod.SpendingKey:
         return wallet.restore({passphrase, spendingKey})
-      case 'Recovery phrase':
+      case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
         return wallet.restore({passphrase, seedPhrase})
     }
@@ -70,7 +73,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
       <DialogTabs
         tabs={[
           {
-            label: 'Private Key',
+            label: RecoveryMethod.SpendingKey,
             content: (
               <DialogInput
                 data-testid="private-key"
@@ -79,7 +82,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
             ),
           },
           {
-            label: 'Recovery Phrase',
+            label: RecoveryMethod.SeedPhrase,
             content: (
               <DialogInput
                 data-testid="recovery-phrase"
@@ -88,7 +91,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
             ),
           },
         ]}
-        onTabClick={(key: RecoveryMethodType): void => setRecoveryMethod(key)}
+        onTabClick={(key: RecoveryMethod): void => setRecoveryMethod(key)}
       />
       <DialogSwitch
         key="use-password-switch"
