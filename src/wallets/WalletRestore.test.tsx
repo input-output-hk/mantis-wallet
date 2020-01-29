@@ -4,6 +4,8 @@ import {render} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletRestore} from './WalletRestore'
 
+jest.mock('../config/renderer.ts')
+
 const seedPhrase = [
   'vengeful',
   'legs',

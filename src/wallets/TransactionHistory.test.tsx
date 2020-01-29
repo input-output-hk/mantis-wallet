@@ -15,6 +15,7 @@ jest.mock('react-inlinesvg', () => {
     )
   }
 })
+jest.mock('../config/renderer.ts')
 
 const tx1: Transaction = {
   hash: '1',

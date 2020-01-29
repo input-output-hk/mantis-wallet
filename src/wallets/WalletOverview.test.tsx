@@ -7,6 +7,8 @@ import {WalletState} from '../common/wallet-state'
 import {abbreviateNumber} from '../common/formatters'
 import {bigToNumber} from '../common/util'
 
+jest.mock('../config/renderer.ts')
+
 test('WalletOverview shows properly formatted balance', () => {
   const confidential = Big(12345)
   const transparent = Big(98765)
