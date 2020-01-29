@@ -1,8 +1,12 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import Big from 'big.js'
-import {Button} from 'antd'
+import {Button, Dropdown, Menu, Icon} from 'antd'
 import _ from 'lodash'
+import * as record from 'fp-ts/lib/Record'
+import {sort} from 'fp-ts/lib/Array'
+import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
+import {pipe} from 'fp-ts/lib/pipeable'
 import {ShortNumber} from '../common/ShortNumber'
 import {Transaction, TransparentAddress, Account} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
@@ -24,12 +28,93 @@ interface TransactionHistoryProps {
   accounts: Account[]
 }
 
+type Property = 'type' | 'amount' | 'time' | 'status' | 'direction'
+type Direction = 'asc' | 'desc'
+
+interface SortBy {
+  property: Property
+  direction: Direction
+}
+
+interface PropertyConfig {
+  label: string
+  order: Ord<Transaction>
+}
+
+const sortableProperties: Record<Property, PropertyConfig> = {
+  type: {
+    label: 'Type',
+    order: ord.contramap(ordString, ({txDetails}: Transaction) => txDetails.txType),
+  },
+  direction: {
+    label: 'Direction',
+    order: ord.contramap(ordString, ({txDirection}: Transaction) => txDirection),
+  },
+  amount: {
+    label: 'Amount',
+    order: ord.contramap(ordNumber, ({txValue}: Transaction) =>
+      parseInt(typeof txValue === 'string' ? txValue : txValue.value),
+    ),
+  },
+  time: {
+    label: 'Time',
+    order: ord.contramap(ordString, ({txStatus}: Transaction) =>
+      txStatus === 'pending' || !txStatus.atBlock ? '' : txStatus.atBlock,
+    ),
+  },
+  status: {
+    label: 'Status',
+    order: ord.contramap(ordString, ({txStatus}: Transaction) =>
+      typeof txStatus === 'string' ? txStatus : txStatus.status,
+    ),
+  },
+}
+
+const updateSorting = (currentSortBy: SortBy, nextProperty: Property): SortBy => {
+  if (currentSortBy.property === nextProperty) {
+    // when it is clicked on the same property by which the list is ordered by
+    // then the direction of ordering is changed
+    const direction = currentSortBy.direction === 'asc' ? 'desc' : 'asc'
+    return {property: nextProperty, direction}
+  } else {
+    // otherwise the list is ordered in ascending order by the new property
+    return {property: nextProperty, direction: 'asc'}
+  }
+}
+
+const getOrd = (sortBy: SortBy): Ord<Transaction> =>
+  sortBy.direction === 'asc'
+    ? sortableProperties[sortBy.property].order
+    : getDualOrd(sortableProperties[sortBy.property].order)
+
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
   const {transactions, transparentAddresses, accounts} = props
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
 
+  const [sortBy, setSortBy] = useState<SortBy>({
+    property: 'time',
+    direction: 'asc',
+  })
+
   const walletState = WalletState.useContainer()
+
+  const changeOrder = (property: Property) => (): void => setSortBy(updateSorting(sortBy, property))
+
+  const sortByMenu = (
+    <Menu>
+      {record.toArray(sortableProperties).map(([name, config]) => {
+        return (
+          <Menu.Item key={name} onClick={changeOrder(name)}>
+            {sortBy.property === name && (
+              <Icon type={sortBy.direction === 'asc' ? 'caret-up' : 'caret-down'} />
+            )}
+            {config.label}
+          </Menu.Item>
+        )
+      })}
+    </Menu>
+  )
 
   return (
     <div className="TransactionHistory">
@@ -37,7 +122,9 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
         <div className="title">Transaction History</div>
         <div className="line"></div>
         <div>
-          <span className="sort-by">Sort by ▼</span>
+          <Dropdown overlay={sortByMenu} overlayClassName="SortByDropdown">
+            <span className="sort-by">Sort by ▼ </span>
+          </Dropdown>
           <Button
             data-testid="send-button"
             type="primary"
@@ -94,56 +181,58 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
               </tr>
             </thead>
             <tbody>
-              {transactions.map(({hash, txDetails, txDirection, txStatus, txValue}) => {
-                const value = typeof txValue === 'string' ? txValue : txValue.value
-                const status = typeof txStatus === 'string' ? txStatus : txStatus.status
-                const atBlock = txStatus === 'pending' ? '' : txStatus.atBlock
-                return (
-                  <tr key={hash}>
-                    <td className="line">
-                      <span className="type-icon">
-                        &nbsp;
-                        {txDetails.txType === 'call' && (
-                          <SVG src={transparentIcon} className="svg" title="Transparent" />
-                        )}
-                        {txDetails.txType !== 'call' && (
-                          <SVG src={confidentialIcon} className="svg" title="Confidential" />
-                        )}
-                      </span>
-                    </td>
-                    <td className="line">
-                      <img src={dustLogo} alt="dust" className="dust" />
-                      <span>DUST</span>
-                    </td>
-                    <td className="line">
-                      <span className="amount">
-                        {txDirection === 'incoming' && (
-                          <SVG src={incomingIcon} className="svg" title="Incoming" />
-                        )}
-                        {txDirection === 'outgoing' && (
-                          <SVG src={outgoingIcon} className="svg" title="Outgoing" />
-                        )}
-                        &nbsp;
-                        <ShortNumber big={Big(parseInt(value))} />
-                      </span>
-                    </td>
-                    {/* FIXME: get proper date from transaction */}
-                    <td className="line">{atBlock}</td>
-                    <td className="line">
-                      {status === 'confirmed' && (
-                        <>
-                          <SVG src={checkIcon} className="check" title="Confirmed" />
+              {pipe(transactions, sort(getOrd(sortBy))).map(
+                ({hash, txDetails, txDirection, txStatus, txValue}) => {
+                  const value = typeof txValue === 'string' ? txValue : txValue.value
+                  const status = typeof txStatus === 'string' ? txStatus : txStatus.status
+                  const atBlock = txStatus === 'pending' ? '' : txStatus.atBlock
+                  return (
+                    <tr key={hash}>
+                      <td className="line">
+                        <span className="type-icon">
                           &nbsp;
-                        </>
-                      )}
-                      {_.capitalize(status)}
-                    </td>
-                    <td className="line">
-                      <SVG src={arrowDownIcon} className="svg" />
-                    </td>
-                  </tr>
-                )
-              })}
+                          {txDetails.txType === 'call' && (
+                            <SVG src={transparentIcon} className="svg" title="Transparent" />
+                          )}
+                          {txDetails.txType !== 'call' && (
+                            <SVG src={confidentialIcon} className="svg" title="Confidential" />
+                          )}
+                        </span>
+                      </td>
+                      <td className="line">
+                        <img src={dustLogo} alt="dust" className="dust" />
+                        <span>DUST</span>
+                      </td>
+                      <td className="line">
+                        <span className="amount">
+                          {txDirection === 'incoming' && (
+                            <SVG src={incomingIcon} className="svg" title="Incoming" />
+                          )}
+                          {txDirection === 'outgoing' && (
+                            <SVG src={outgoingIcon} className="svg" title="Outgoing" />
+                          )}
+                          &nbsp;
+                          <ShortNumber big={Big(parseInt(value))} />
+                        </span>
+                      </td>
+                      {/* FIXME: get proper date from transaction */}
+                      <td className="line">{atBlock}</td>
+                      <td className="line">
+                        {status === 'confirmed' && (
+                          <>
+                            <SVG src={checkIcon} className="check" title="Confirmed" />
+                            &nbsp;
+                          </>
+                        )}
+                        {_.capitalize(status)}
+                      </td>
+                      <td className="line">
+                        <SVG src={arrowDownIcon} className="svg" />
+                      </td>
+                    </tr>
+                  )
+                },
+              )}
             </tbody>
           </table>
         </div>

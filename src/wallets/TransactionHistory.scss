@@ -61,6 +61,7 @@
       text-align: left;
       text-transform: uppercase;
       vertical-align: middle;
+      cursor: pointer;
     }
 
     .action {
@@ -153,6 +154,14 @@
           line-height: 32px;
         }
       }
+    }
+  }
+}
+
+.SortByDropdown {
+  .ant-dropdown-menu-item {
+    &:hover {
+      background-color: $primary-color;
     }
   }
 }
