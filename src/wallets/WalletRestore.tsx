@@ -5,6 +5,7 @@ import {DialogSwitch} from '../common/dialog/DialogSwitch'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogTabs} from '../common/dialog/DialogTabs'
 import {DialogError} from '../common/dialog/DialogError'
+import {DialogSeedPhrase} from '../common/dialog/DialogSeedPhrase'
 import {web3} from '../web3'
 
 enum RecoveryMethod {
@@ -83,12 +84,7 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
           },
           {
             label: RecoveryMethod.SeedPhrase,
-            content: (
-              <DialogInput
-                data-testid="recovery-phrase"
-                onChange={(e): void => setSeedPhrase(e.target.value)}
-              />
-            ),
+            content: <DialogSeedPhrase onChange={setSeedPhrase} />,
           },
         ]}
         onTabClick={(key: RecoveryMethod): void => setRecoveryMethod(key)}

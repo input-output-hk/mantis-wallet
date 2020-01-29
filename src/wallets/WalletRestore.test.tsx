@@ -49,7 +49,7 @@ test('WalletRestore', () => {
   userEvent.click(recoverySwitch)
 
   // Enter recovery phrase
-  const recoverPhraseInput = getByTestId('recovery-phrase')
+  const recoverPhraseInput = document.getElementsByClassName('ant-select-search__field')[0]
   expect(recoverPhraseInput).toBeInTheDocument()
   userEvent.type(recoverPhraseInput, recoveryPhrase)
 
