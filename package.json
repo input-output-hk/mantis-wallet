@@ -8,10 +8,10 @@
   "main": "build/main/main.js",
   "homepage": "./",
   "scripts": {
-    "start": "react-app-rewired start",
-    "build-renderer": "react-app-rewired build",
+    "start": "EXTEND_ESLINT=true react-app-rewired start",
+    "build-renderer": "EXTEND_ESLINT=true react-app-rewired build",
     "build-main": "tsc -p ./tsconfig.main.json",
-    "test": "react-app-rewired test",
+    "test": "EXTEND_ESLINT=true react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "yarn prettier-check && yarn eslint && yarn stylelint",
     "eslint": "eslint src --ext .js,.ts,.tsx",
@@ -23,8 +23,8 @@
     "electron": "electron ./build/main/main.js",
     "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ./build/main/main.js",
     "build-all": "yarn build-renderer && yarn build-main",
-    "package": "node ./bin/package.js",
-    "package-win": "node ./bin/package-win.js",
+    "package": "ts-node --project tsconfig.bin.json ./bin/package.ts",
+    "package-win": "ts-node --project ./tsconfig.bin.json ./bin/package-win.ts",
     "build-dist": "yarn build-all && yarn package",
     "build-dist-win": "yarn build-all && yarn package-win"
   },
@@ -59,7 +59,6 @@
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.0.0",
-    "ps-list": "^6.3.0",
     "qrcode.react": "^1.0.0",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
@@ -114,6 +113,7 @@
     "stylelint-config-recommended-scss": "^4.1.0",
     "stylelint-config-standard": "^19.0.0",
     "stylelint-scss": "^3.13.0",
+    "ts-node": "^8.6.2",
     "worker-plugin": "^3.2.0"
   },
   "browserslist": {

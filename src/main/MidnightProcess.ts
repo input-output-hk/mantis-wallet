@@ -1,13 +1,14 @@
-import {EMPTY, fromEvent, interval, merge, Observable} from 'rxjs'
+import {EMPTY, fromEvent, generate, merge, Observable} from 'rxjs'
 import * as rxop from 'rxjs/operators'
-import psList from 'ps-list'
+import * as path from 'path'
 import {resolve} from 'path'
 import * as childProcess from 'child_process'
 import * as option from 'fp-ts/lib/Option'
+import * as record from 'fp-ts/lib/Record'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import {readableToObservable} from './streamUtils'
-import {ClientName, ProcessConfig} from '../config'
+import {ClientName, ProcessConfig} from '../config/type'
 
 export class SpawnedMidnightProcess {
   constructor(public name: ClientName, private childProcess: childProcess.ChildProcess) {
@@ -25,26 +26,24 @@ export class SpawnedMidnightProcess {
 
   close$ = merge(fromEvent(this.childProcess, 'close'), fromEvent(this.childProcess, 'exit'))
 
-  isAlive = async () =>
-    psList().then(
-      (processes) => processes.find((proc) => proc.pid === this.childProcess.pid) != null,
-    )
-
-  kill = async () => {
-    console.log(`killing ${this.name}`)
-    interval(100)
+  kill = async (): Promise<void> =>
+    generate({
+      initialState: 0,
+      iterate: (nr) => nr + 1,
+    })
       .pipe(
-        rxop.concatMap(() => new Promise((resolve) => resolve(this.childProcess.kill()))),
-        rxop.concatMap(() => this.isAlive()),
-        rxop.filter((isAlive) => !isAlive),
-        rxop.take(1),
+        rxop.takeWhile(() => !this.childProcess.killed),
+        rxop.tap(() => {
+          this.childProcess.kill()
+        }),
+        rxop.map(() => void 0),
       )
       .toPromise()
-  }
 }
 
 export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   name: ClientName,
+  dataDir: string,
   processConfig: ProcessConfig,
 ) => {
   const executablePath = resolve(
@@ -52,8 +51,14 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
     'bin',
     processConfig.executableName,
   )
-  const settingsAsArguments = Array.from(processConfig.additionalSettings.entries()).map(
-    ([key, value]) => `-D${key}=${value}`,
+  const settingsAsArguments = pipe(
+    processConfig.additionalSettings,
+    record.insertAt(
+      processConfig.dataDir.settingName,
+      path.resolve(dataDir, processConfig.dataDir.directoryName),
+    ),
+    Object.entries,
+    array.map(([key, value]) => `-D${key}=${value}`),
   )
 
   return {
@@ -63,7 +68,10 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
       )
       return new SpawnedMidnightProcess(
         name,
-        spawn(executablePath, settingsAsArguments, {cwd: processConfig.packageDirectory}),
+        spawn(executablePath, settingsAsArguments, {
+          cwd: processConfig.packageDirectory,
+          detached: true,
+        }),
       )
     },
   }

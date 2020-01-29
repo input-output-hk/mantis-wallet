@@ -1,18 +1,13 @@
+/* eslint-disable */
 import Web3 from 'web3'
 import * as Comlink from 'comlink'
 
-class Web3Wrapper {
-    constructor() {
-        this.web3 = new Web3();
-    }
+const web3 = new Web3()
 
-    configure(rpcAddress) {
-        this.web3.setProvider(new this.web3.providers.HttpProvider(rpcAddress))
-    }
-
-    getWallet() {
-        return this.web3.midnight.wallet;
-    }
+onmessage = (message) => {
+  if (message.data[0] === 'configure') {
+    web3.setProvider(new web3.providers.HttpProvider(message.data[1]))
+  }
 }
 
-Comlink.expose(new Web3Wrapper())
+Comlink.expose(web3.midnight.wallet)

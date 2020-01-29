@@ -12,10 +12,10 @@ export const WalletUnlock = (): JSX.Element => {
 
   const passphrase = 'Foobar1234'
 
-  const unlock = (): void => {
+  const unlock = async (): Promise<void> => {
     setUnlockStatus('LOADING')
 
-    wallet
+    return wallet
       .unlock({passphrase})
       .then((result: boolean) => setUnlockStatus(result ? 'UNLOCKED' : 'LOCKED'))
       .catch((e: Error) => {

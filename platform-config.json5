@@ -1,0 +1,5 @@
+{
+  //Development configuration overrides
+  "openDevTools": true,
+  "dataDir": "~/.luna-dev",
+}

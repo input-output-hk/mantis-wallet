@@ -5,3 +5,4 @@ storybook-static
 docs
 
 bin/
+src/web3.worker.js

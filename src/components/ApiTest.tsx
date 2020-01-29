@@ -30,16 +30,14 @@ export const ApiTest = (): JSX.Element => {
 
       <div>
         {/* You can call any wallet function as usual, but the calls will be async */}
-        <TestButton onClick={(): void => wallet.create({passphrase})}>Create</TestButton>
-        <TestButton onClick={(): void => wallet.remove({passphrase})}>Remove</TestButton>
-        <TestButton onClick={(): void => wallet.lock({passphrase})}>Lock</TestButton>
-        <TestButton onClick={(): void => wallet.unlock({passphrase})}>Unlock</TestButton>
-        <TestButton onClick={(): void => wallet.generateTransparentAddress()}>
+        <TestButton onClick={() => wallet.create({passphrase})}>Create</TestButton>
+        <TestButton onClick={() => wallet.remove({passphrase})}>Remove</TestButton>
+        <TestButton onClick={() => wallet.lock({passphrase})}>Lock</TestButton>
+        <TestButton onClick={() => wallet.unlock({passphrase})}>Unlock</TestButton>
+        <TestButton onClick={() => wallet.generateTransparentAddress()}>
           Generate Transparent Address
         </TestButton>
-        <TestButton onClick={(): void => wallet.restore({passphrase, spendingKey})}>
-          Restore
-        </TestButton>
+        <TestButton onClick={() => wallet.restore({passphrase, spendingKey})}>Restore</TestButton>
       </div>
     </div>
   )

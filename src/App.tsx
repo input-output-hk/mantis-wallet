@@ -1,15 +1,17 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
 import {WalletState} from './common/wallet-state'
 import {ROUTES} from './routes-config'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
 import './App.scss'
+import {wallet} from './wallet'
 
 const App: React.FC = () => {
   const [loaded, setLoaded] = useState(false)
-
-  setTimeout(() => setLoaded(true), 1500)
+  useEffect(() => {
+    setTimeout(() => setLoaded(true), 1500)
+  }, [])
 
   return loaded ? (
     <div className="App">
@@ -18,7 +20,7 @@ const App: React.FC = () => {
           <Sidebar />
         </header>
         <main>
-          <WalletState.Provider>
+          <WalletState.Provider initialState={wallet}>
             {Object.values(ROUTES).map((route) => (
               <Route key={route.path} path={route.path} component={route.component} />
             ))}

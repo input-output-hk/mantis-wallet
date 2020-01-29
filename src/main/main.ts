@@ -1,25 +1,25 @@
+// This file is an entry point to whole application, it simply doesn't make sense to keep it 100% pure
 /* eslint-disable fp/no-let, fp/no-mutation */
-import * as option from 'fp-ts/lib/Option'
-import {Option} from 'fp-ts/lib/Option'
 import {app, BrowserWindow} from 'electron'
 import path from 'path'
 import url from 'url'
 import {spawn} from 'child_process'
-import {asapScheduler, merge, scheduled} from 'rxjs'
+import {asapScheduler, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
+import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 
-import {ClientName, config} from '../config'
+import {config} from '../config/main'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
-import {scheduleArray} from 'rxjs/internal/scheduled/scheduleArray'
-import {mergeAll} from 'rxjs/operators'
+import {ClientName} from '../config/type'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindowHandle: Option<BrowserWindow>
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let mainWindowHandle: BrowserWindow | null = null
 
 function createWindow(): void {
   // Create the browser window.
@@ -37,16 +37,19 @@ function createWindow(): void {
     })
   mainWindow.loadURL(startUrl)
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  if (config.openDevTools) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools()
+  }
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindowHandle = option.none
+    mainWindowHandle = null
   })
+  mainWindowHandle = mainWindow
 }
 
 // This method will be called when Electron has finished
@@ -54,39 +57,32 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function() {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') app.quit()
+// Make configuration available for renderer process
+app.on('remote-get-global', (event, webContents, name) => {
+  if (name === 'lunaConfig') {
+    event.preventDefault()
+    event.returnValue = config
+  }
 })
 
-app.on('activate', function() {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (option.isNone(mainWindowHandle)) createWindow()
-})
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-console.log('config', JSON.stringify(config, null, 4))
-
+// Handle client child processes
 if (config.runClients) {
   const spawners = pipe(
     config.clientConfigs,
     record.toArray,
-    array.map(([name, config]) => MidnightProcess(spawn)(name, config)),
+    array.map(([name, processConfig]) =>
+      MidnightProcess(spawn)(name, config.dataDir, processConfig),
+    ),
   )
 
-  let runningClients: Option<SpawnedMidnightProcess[]> = option.none
+  let runningClients: SpawnedMidnightProcess[] | null = null
 
   function logClients(clients: SpawnedMidnightProcess[]): void {
     const maxNameLength = pipe(
       clients,
       array.map((client) => client.name.length),
       _.max,
-      option.fromNullable,
-      option.getOrElse(() => 0),
+      (maybeValue) => maybeValue || 0,
     )
     const buildPrefix = (name: ClientName): string => `${name.padEnd(maxNameLength)} | `
 
@@ -117,24 +113,31 @@ if (config.runClients) {
       rxop.take(1),
     ).subscribe(() => restartClients())
 
-    runningClients = option.some(clients)
+    runningClients = clients
   }
 
-  const killClients = async (): Promise<void> =>
-    pipe(
-      runningClients,
-      option.fold(Promise.resolve, (clients) =>
-        Promise.all(clients.map((client) => client.kill())).then(() => {
-          runningClients = option.none
-        }),
-      ),
-    )
+  const killClients = async (): Promise<void> => {
+    return runningClients
+      ? Promise.all(runningClients.map((client) => client.kill())).then(() => {
+          runningClients = null
+        })
+      : Promise.resolve()
+  }
 
   async function restartClients(): Promise<void> {
     console.log('restarting clients')
     return killClients().then(spawnClients)
   }
 
+  function killAndQuit(event: Event): void {
+    if (runningClients) {
+      event.preventDefault()
+      killClients().then(() => app.quit())
+    }
+  }
+
   spawnClients()
-  app.on('before-quit', killClients)
+  app.on('before-quit', killAndQuit)
+  app.on('will-quit', killAndQuit)
+  app.on('window-all-closed', killAndQuit)
 }

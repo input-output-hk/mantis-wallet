@@ -1,11 +1,10 @@
 import {useState} from 'react'
 import Big from 'big.js'
 import {createContainer} from 'unstated-next'
-import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {TransparentAddressResult, Balance, Transaction, WalletAPI} from '../web3'
-import {WALLET_IS_OFFLINE} from '../common/errors'
-import {deserializeBigNumber} from '../common/util'
-import {walletPromise} from '../wallet'
+import {getOrElse, isSome, none, Option, some} from 'fp-ts/lib/Option'
+import {Balance, Transaction, TransparentAddressResult, WalletAPI} from '../web3'
+import {WALLET_IS_OFFLINE} from './errors'
+import {deserializeBigNumber} from './util'
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
 
@@ -40,9 +39,15 @@ interface ErrorState {
 
 type WalletState = InitialState | LoadingState | LoadedState | ErrorState
 
-export const useWalletState = (wallet: WalletAPI) => (initialWalletStatus: WalletStatus = 'INITIAL'): WalletState => {
+export const useWalletState = (wallet?: WalletAPI): WalletState => {
+  if (!wallet) {
+    // TODO: incorporate unstated-next code in our codebase and improve typings to get rid of this check
+    // eslint-disable-next-line fp/no-throw
+    throw new Error('WalletAPI client is required')
+  }
+
   // wallet status
-  const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
+  const [walletStatus_, setWalletStatus] = useState<WalletStatus>('INITIAL')
   const [errorOption, setError] = useState<Option<string>>(none)
   const [isOffline, setIsOffline] = useState<boolean>(false)
 
@@ -92,13 +97,13 @@ export const useWalletState = (wallet: WalletAPI) => (initialWalletStatus: Walle
 
   const loadTransparentBalance = async (): Promise<Big> => {
     // get every transparent address
-    const addresses: TransparentAddressResult[] = await wallet.then(actualWallet => actualWallet.listTransparentAddresses(100, 0))
+    const addresses: TransparentAddressResult[] = await wallet.listTransparentAddresses(100, 0)
 
     // get balance for every transparent address
     const balances: Balance[] = await Promise.all(
       addresses.map(
         async (address: TransparentAddressResult): Promise<Balance> =>
-            (await wallet).getTransparentWalletBalance(address.address),
+          wallet.getTransparentWalletBalance(address.address),
       ),
     )
     return balances
@@ -111,7 +116,7 @@ export const useWalletState = (wallet: WalletAPI) => (initialWalletStatus: Walle
     setWalletStatus('LOADING')
 
     // load transaction history
-     wallet
+    wallet
       .getTransactionHistory(10, 0)
       .then((transactions: Transaction[]) => setTransactions(some(transactions)))
       .catch(handleError)
@@ -147,4 +152,4 @@ export const useWalletState = (wallet: WalletAPI) => (initialWalletStatus: Walle
   }
 }
 
-export const WalletState = (wallet: WalletAPI) => createContainer(useWalletState(wallet))
+export const WalletState = createContainer(useWalletState)
