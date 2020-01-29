@@ -16,6 +16,7 @@ import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
 import {DialogError} from './dialog/DialogError'
 import {DialogDisplayWords} from './dialog/DialogDisplayWords'
+import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 
 export default {
   title: 'Dialog',
@@ -121,6 +122,12 @@ export const InteractivePassword: React.FunctionComponent<{}> = () => (
           : none
       }}
     />
+  </Dialog>
+)
+
+export const InteractiveRestoreSeedPhrase: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Restore Seed Phrase">
+    <DialogSeedPhrase onChange={action('onChange')} />
   </Dialog>
 )
 

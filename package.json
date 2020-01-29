@@ -35,7 +35,9 @@
       "!src/**/*.stories.tsx",
       "!ApiTest.tsx"
     ],
-    "setupFiles": ["jest-canvas-mock"]
+    "setupFiles": [
+      "jest-canvas-mock"
+    ]
   },
   "dependencies": {
     "@types/big.js": "^4.0.5",
@@ -52,6 +54,7 @@
     "antd-scss-theme-plugin": "^1.0.8",
     "babel-plugin-import": "^1.13.0",
     "big.js": "^5.2.2",
+    "bip39": "^3.0.2",
     "classnames": "^2.2.6",
     "comlink": "^4.2.0",
     "customize-cra": "^0.9.1",
