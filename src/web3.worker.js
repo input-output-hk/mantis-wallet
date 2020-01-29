@@ -10,4 +10,4 @@ onmessage = (message) => {
   }
 }
 
-Comlink.expose(web3.midnight.wallet)
+Comlink.expose(web3)

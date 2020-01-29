@@ -1,5 +1,7 @@
 import React from 'react'
 import {WalletActionBox} from './WalletActionBox'
+import walletIcon from '../assets/icons/wallet.svg'
+import walletRestoreIcon from '../assets/icons/wallet-restore.svg'
 
 interface WalletPathChooserProps {
   goToCreate: () => void
@@ -12,16 +14,16 @@ export const WalletPathChooser = ({
 }: WalletPathChooserProps): JSX.Element => (
   <>
     <WalletActionBox
-      icon="/icons/wallet.svg"
+      icon={walletIcon}
       title="Create New Wallet"
-      description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+      description="Create a New Wallet"
       buttonLabel="Create"
       onClick={goToCreate}
     />
     <WalletActionBox
-      icon="/icons/wallet-restore.svg"
+      icon={walletRestoreIcon}
       title="Restore Wallet"
-      description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+      description={'Restore wallet using Backup\u00a0Recovery\u00a0Phrase or Private\u00a0Key'}
       buttonLabel="Restore"
       onClick={goToRestore}
     />

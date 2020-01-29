@@ -32,13 +32,14 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
     >
       <DialogInput
         label="Wallet name"
+        id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
         errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
       />
       <DialogSwitch
         key="use-password-switch"
         label="Spending password"
-        description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna"
+        description="Keep your private keys encrypted by adding a spending password"
         checked={usePassphrase}
         onChange={setUsePassphrase}
       />

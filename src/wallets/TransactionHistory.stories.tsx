@@ -1,6 +1,6 @@
 import React from 'react'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, object, array, text} from '@storybook/addon-knobs'
+import {withKnobs, object, text} from '@storybook/addon-knobs'
 import {Transaction} from '../web3'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
@@ -12,7 +12,9 @@ export default {
   decorators: [withKnobs],
 }
 
-export const withNoTransactions = (): JSX.Element => <TransactionHistory transactions={[]} />
+export const withNoTransactions = (): JSX.Element => (
+  <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={[]} />
+)
 
 const dummyTransactions = [...Array(10).keys()].slice(1).map(
   (n): Transaction => ({
@@ -21,6 +23,7 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
     txValue: (Math.random() * 100000000).toString(16),
     txStatus: {
       status: Math.random() < 0.5 ? 'confirmed' : 'pending',
+      // atBlock: (Math.random() * 100000000).toString(16),
     },
     txDetails: {
       txType: 'transfer',
@@ -29,7 +32,7 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
 )
 
 export const withDemoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={dummyTransactions} />
+  <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} accounts={[]} />
 )
 
 export const interactive = (): JSX.Element => {
@@ -42,6 +45,7 @@ export const interactive = (): JSX.Element => {
           txValue: (1000.0).toString(16),
           txStatus: {
             status: 'confirmed',
+            atBlock: '0x1',
           },
           txDetails: {
             txType: 'transfer',
@@ -53,6 +57,7 @@ export const interactive = (): JSX.Element => {
           txValue: (1000.0).toString(16),
           txStatus: {
             status: 'confirmed',
+            atBlock: '0x1',
           },
           txDetails: {
             txType: 'transfer',
@@ -64,11 +69,34 @@ export const interactive = (): JSX.Element => {
           txValue: (1000.0).toString(16),
           txStatus: {
             status: 'pending',
+            atBlock: '0x1',
           },
           txDetails: {
             txType: 'transfer',
           },
         }),
+      ]}
+      transparentAddresses={[
+        {
+          address: text('Old address', 'old-address'),
+          index: 0,
+        },
+        {
+          address: text('New address', 'new-address'),
+          index: 1,
+        },
+      ]}
+      accounts={[
+        {
+          wallet: 'wallet 1',
+          address: text('First address', 'first-address'),
+          locked: false,
+        },
+        {
+          wallet: 'wallet 2',
+          address: text('Second address', 'second-address'),
+          locked: false,
+        },
       ]}
     />
   )
@@ -76,27 +104,49 @@ export const interactive = (): JSX.Element => {
 
 export const sendTransactionModal = (): JSX.Element => (
   <SendTransaction
-    accounts={array('Accounts', [
-      'longprivatekey',
-      'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
-    ])}
+    accounts={[
+      {
+        wallet: 'wallet 1',
+        address: text('First address', 'first-address'),
+        locked: false,
+      },
+      {
+        wallet: 'wallet 2',
+        address: text('Second address', 'second-address'),
+        locked: false,
+      },
+    ]}
     onCancel={action('send-transaction-cancelled')}
+    onSend={async (recipient, amount, fee): Promise<void> =>
+      action('generate-new')(recipient, amount, fee)
+    }
     visible
   />
 )
 
 export const receiveTransactionModal = (): JSX.Element => (
   <ReceiveTransaction
-    receiveAccount={text('Receive Account', 'Receive Account 01')}
-    receiveAddress={text(
-      'Receive Address',
-      '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-    )}
-    usedAddresses={array('Used Addresses', [
-      '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-      '85cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-    ])}
+    transparentAddresses={[
+      {
+        address: text('Old address', 'old-address'),
+        index: 0,
+      },
+      {
+        address: text('New address', 'new-address'),
+        index: 1,
+      },
+    ]}
     onCancel={action('receive-transaction-cancelled')}
+    onGenerateNew={async (): Promise<void> => action('generate-new')()}
+    visible
+  />
+)
+
+export const emptyTransactionModal = (): JSX.Element => (
+  <ReceiveTransaction
+    transparentAddresses={[]}
+    onCancel={action('receive-transaction-cancelled')}
+    onGenerateNew={async (): Promise<void> => action('generate-new')()}
     visible
   />
 )

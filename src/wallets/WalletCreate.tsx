@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {wallet} from '../wallet'
+import {web3} from '../web3'
 import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
@@ -25,21 +25,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   const [walletName, setWalletName] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
-
-  const seedPhrase = [
-    'vengeful',
-    'legs',
-    'cute',
-    'rifle',
-    'bite',
-    'spell',
-    'ambiguous',
-    'impossible',
-    'fabulous',
-    'observe',
-    'offer',
-    'baseball',
-  ]
+  const [seedPhrase, setSeedPhrase] = useState<string[]>([])
 
   switch (step) {
     case 'DEFINE':
@@ -49,10 +35,16 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
           next={async (walletName, passphrase): Promise<void> => {
             setWalletCreateError('')
             try {
-              const newSpendingKey = await wallet.create({passphrase})
+              const {
+                spendingKey: newSpendingKey,
+                seedPhrase: newSeedPhrase,
+              } = await web3.midnight.wallet.create({
+                passphrase,
+              })
               setWalletName(walletName)
               setPassphrase(passphrase)
               setSpendingKey(newSpendingKey)
+              setSeedPhrase(newSeedPhrase)
               setStep('SECURITY')
             } catch (e) {
               setWalletCreateError(e.message)

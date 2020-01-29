@@ -50,6 +50,8 @@ export const Wallets = (): JSX.Element => {
         transparentBalance,
         availableBalance,
         pendingBalance,
+        transparentAddresses,
+        accounts,
       } = state.getOverviewProps()
 
       return (
@@ -75,7 +77,11 @@ export const Wallets = (): JSX.Element => {
               confidential={availableBalance}
               transparent={transparentBalance}
             />
-            <TransactionHistory transactions={transactions} />
+            <TransactionHistory
+              transactions={transactions}
+              transparentAddresses={transparentAddresses}
+              accounts={accounts}
+            />
           </div>
         </div>
       )

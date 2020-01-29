@@ -1,11 +1,11 @@
-// Stubs for testing
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-useless-constructor */
 /* eslint-disable no-empty-function */
+
+// Stubs for testing
 class MockWorker {
   constructor(url: any, options: any) {}
   dispatchEvent() {
@@ -18,6 +18,5 @@ class MockWorker {
   removeEventListener() {}
   terminate() {}
 }
-/* eslint-enable */
 
 export {MockWorker}

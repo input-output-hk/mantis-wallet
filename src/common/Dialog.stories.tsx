@@ -16,6 +16,7 @@ import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
 import {DialogError} from './dialog/DialogError'
 import {DialogDisplayWords} from './dialog/DialogDisplayWords'
+import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 
 export default {
   title: 'Dialog',
@@ -124,6 +125,12 @@ export const InteractivePassword: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
+export const InteractiveRestoreSeedPhrase: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Restore Seed Phrase">
+    <DialogSeedPhrase onChange={action('onChange')} />
+  </Dialog>
+)
+
 export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Private Key">
     <DialogPrivateKey
@@ -178,6 +185,7 @@ export const InteractiveTabs: React.FunctionComponent<{}> = () => (
           content: text('Second tab content', 'Second tab content'),
         },
       ]}
+      onTabClick={action('on-tab-click')}
     />
   </Dialog>
 )

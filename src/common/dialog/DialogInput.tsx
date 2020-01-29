@@ -12,7 +12,11 @@ export const DialogInput: React.FunctionComponent<InlineErrorProps &
   InputProps &
   DialogInputProps> = ({label, ...props}: InlineErrorProps & InputProps & DialogInputProps) => (
   <div className="DialogInput">
-    {label && <div className="label">{label}</div>}
+    {label && (
+      <label className="label" htmlFor={props.id}>
+        {label}
+      </label>
+    )}
     <BorderlessInput className="input" {...props} />
   </div>
 )

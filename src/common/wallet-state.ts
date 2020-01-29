@@ -1,18 +1,23 @@
 import {useState} from 'react'
 import Big from 'big.js'
 import {createContainer} from 'unstated-next'
-import {getOrElse, isSome, none, Option, some} from 'fp-ts/lib/Option'
-import {Balance, Transaction, TransparentAddressResult, WalletAPI} from '../web3'
-import {WALLET_IS_OFFLINE} from './errors'
-import {deserializeBigNumber} from './util'
+import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
+import {TransparentAddress, Balance, Transaction, Account} from '../web3'
+import {WALLET_IS_OFFLINE} from '../common/errors'
+import {deserializeBigNumber, loadAll} from '../common/util'
+import {web3} from '../web3'
+
+const wallet = web3.midnight.wallet
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
 
-interface OverviewProps {
+interface Overview {
   transactions: Transaction[]
   transparentBalance: Big
   availableBalance: Big
   pendingBalance: Big
+  transparentAddresses: TransparentAddress[]
+  accounts: Account[]
 }
 
 interface InitialState {
@@ -27,8 +32,9 @@ interface LoadingState {
 interface LoadedState {
   walletStatus: 'LOADED'
   isOffline: boolean
-  getOverviewProps: () => OverviewProps
+  getOverviewProps: () => Overview
   reset: () => void
+  generateNewAddress: () => Promise<void>
 }
 
 interface ErrorState {
@@ -39,15 +45,9 @@ interface ErrorState {
 
 type WalletState = InitialState | LoadingState | LoadedState | ErrorState
 
-export const useWalletState = (wallet?: WalletAPI): WalletState => {
-  if (!wallet) {
-    // TODO: incorporate unstated-next code in our codebase and improve typings to get rid of this check
-    // eslint-disable-next-line fp/no-throw
-    throw new Error('WalletAPI client is required')
-  }
-
+function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletState {
   // wallet status
-  const [walletStatus_, setWalletStatus] = useState<WalletStatus>('INITIAL')
+  const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
   const [errorOption, setError] = useState<Option<string>>(none)
   const [isOffline, setIsOffline] = useState<boolean>(false)
 
@@ -59,21 +59,41 @@ export const useWalletState = (wallet?: WalletAPI): WalletState => {
   // transactions
   const [transactionsOption, setTransactions] = useState<Option<Transaction[]>>(none)
 
-  const getOverviewProps = (): OverviewProps => {
+  // addresses
+  const [transparentAddressesOption, setTransparentAddresses] = useState<
+    Option<TransparentAddress[]>
+  >(none)
+  const [accountsOption, setAccounts] = useState<Option<Account[]>>(none)
+
+  const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
     const transparentBalance = getOrElse((): Big => Big(0))(transparentBalanceOption)
     const totalBalance = getOrElse((): Big => Big(0))(totalBalanceOption)
     const availableBalance = getOrElse((): Big => Big(0))(availableBalanceOption)
     const pendingBalance = totalBalance.minus(availableBalance)
 
-    return {transactions, transparentBalance, availableBalance, pendingBalance}
+    const transparentAddresses = getOrElse((): TransparentAddress[] => [])(
+      transparentAddressesOption,
+    )
+    const accounts = getOrElse((): Account[] => [])(accountsOption)
+
+    return {
+      transactions,
+      transparentBalance,
+      availableBalance,
+      pendingBalance,
+      transparentAddresses,
+      accounts,
+    }
   }
 
   const isLoaded = (): boolean =>
     isSome(totalBalanceOption) &&
     isSome(availableBalanceOption) &&
     isSome(transactionsOption) &&
-    isSome(transparentBalanceOption)
+    isSome(transparentBalanceOption) &&
+    isSome(transparentAddressesOption) &&
+    isSome(accountsOption)
 
   const walletStatus = walletStatus_ === 'LOADING' && isLoaded() ? 'LOADED' : walletStatus_
 
@@ -85,6 +105,8 @@ export const useWalletState = (wallet?: WalletAPI): WalletState => {
     setTransactions(none)
     setIsOffline(false)
     setError(none)
+    setTransparentAddresses(none)
+    setAccounts(none)
   }
 
   const handleError = (e: Error): void => {
@@ -97,12 +119,16 @@ export const useWalletState = (wallet?: WalletAPI): WalletState => {
 
   const loadTransparentBalance = async (): Promise<Big> => {
     // get every transparent address
-    const addresses: TransparentAddressResult[] = await wallet.listTransparentAddresses(100, 0)
+    const transparentAddresses: TransparentAddress[] = await loadAll(
+      wallet.listTransparentAddresses,
+    )
+
+    setTransparentAddresses(some(transparentAddresses))
 
     // get balance for every transparent address
     const balances: Balance[] = await Promise.all(
-      addresses.map(
-        async (address: TransparentAddressResult): Promise<Balance> =>
+      transparentAddresses.map(
+        async (address: TransparentAddress): Promise<Balance> =>
           wallet.getTransparentWalletBalance(address.address),
       ),
     )
@@ -116,8 +142,7 @@ export const useWalletState = (wallet?: WalletAPI): WalletState => {
     setWalletStatus('LOADING')
 
     // load transaction history
-    wallet
-      .getTransactionHistory(10, 0)
+    loadAll<Transaction>(wallet.getTransactionHistory)
       .then((transactions: Transaction[]) => setTransactions(some(transactions)))
       .catch(handleError)
 
@@ -140,6 +165,21 @@ export const useWalletState = (wallet?: WalletAPI): WalletState => {
         if (e.message === WALLET_IS_OFFLINE) return setIsOffline(true)
         handleError(e)
       })
+
+    wallet
+      .listAccounts()
+      .then((accounts: Account[]) => setAccounts(some(accounts)))
+      .catch(handleError)
+  }
+
+  const generateNewAddress = async (): Promise<void> => {
+    await wallet.generateTransparentAddress()
+
+    const transparentAddresses: TransparentAddress[] = await loadAll(
+      wallet.listTransparentAddresses,
+    )
+
+    setTransparentAddresses(some(transparentAddresses))
   }
 
   return {
@@ -149,6 +189,7 @@ export const useWalletState = (wallet?: WalletAPI): WalletState => {
     getOverviewProps,
     reset,
     load,
+    generateNewAddress,
   }
 }
 

@@ -12,6 +12,7 @@
     "build-renderer": "EXTEND_ESLINT=true react-app-rewired build",
     "build-main": "tsc -p ./tsconfig.main.json",
     "test": "EXTEND_ESLINT=true react-app-rewired test",
+    "test:coverage": "react-app-rewired test --coverage",
     "eject": "react-scripts eject",
     "lint": "yarn prettier-check && yarn eslint && yarn stylelint",
     "eslint": "eslint src --ext .js,.ts,.tsx",
@@ -33,6 +34,17 @@
       "pre-commit": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx|scss)\" && yarn lint"
     }
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!<rootDir>/node_modules/",
+      "!src/**/*.stories.tsx",
+      "!ApiTest.tsx"
+    ],
+    "setupFiles": [
+      "jest-canvas-mock"
+    ]
+  },
   "dependencies": {
     "@types/big.js": "^4.0.5",
     "@types/classnames": "^2.2.9",
@@ -49,6 +61,7 @@
     "antd-scss-theme-plugin": "^1.0.8",
     "babel-plugin-import": "^1.13.0",
     "big.js": "^5.2.2",
+    "bip39": "^3.0.2",
     "classnames": "^2.2.6",
     "comlink": "^4.2.0",
     "convict": "^5.2.0",
@@ -87,6 +100,9 @@
     "@storybook/addon-notes": "5.1.9",
     "@storybook/addons": "^5.2.8",
     "@storybook/react": "^5.2.8",
+    "@testing-library/jest-dom": "^5.0.2",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^8.0.4",
     "@types/chai": "^4.2.7",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
@@ -103,6 +119,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.17.0",
     "husky": "^3.1.0",
+    "jest-canvas-mock": "^2.2.0",
     "node-sass": "^4.13.0",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",

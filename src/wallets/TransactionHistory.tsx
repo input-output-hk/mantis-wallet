@@ -4,24 +4,32 @@ import Big from 'big.js'
 import {Button} from 'antd'
 import _ from 'lodash'
 import {ShortNumber} from '../common/ShortNumber'
-import {Transaction} from '../web3'
+import {Transaction, TransparentAddress, Account} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
+import dustLogo from '../assets/dust_logo.png'
+import incomingIcon from '../assets/icons/incoming.svg'
+import outgoingIcon from '../assets/icons/outgoing.svg'
+import transparentIcon from '../assets/icons/transparent.svg'
+import confidentialIcon from '../assets/icons/confidential.svg'
+import checkIcon from '../assets/icons/check.svg'
+import arrowDownIcon from '../assets/icons/arrow-down.svg'
 import './TransactionHistory.scss'
+import {WalletState} from '../common/wallet-state'
+import {web3} from '../web3'
 
 interface TransactionHistoryProps {
   transactions: Transaction[]
+  transparentAddresses: TransparentAddress[]
+  accounts: Account[]
 }
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
-  const {transactions} = props
+  const {transactions, transparentAddresses, accounts} = props
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
 
-  const accounts = [
-    'longprivatekey',
-    'llllllllloooooooooooooonnnnnnnnnnnnggeeeeeeeeeeeeeeeeeeeeeeeeeeerrpprriivvaatteekkeeyy',
-  ]
+  const walletState = WalletState.useContainer()
 
   return (
     <div className="TransactionHistory">
@@ -30,26 +38,40 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
         <div className="line"></div>
         <div>
           <span className="sort-by">Sort by ▼</span>
-          <Button type="primary" className="action" onClick={(): void => setShowSendModal(true)}>
+          <Button
+            data-testid="send-button"
+            type="primary"
+            className="action"
+            onClick={(): void => setShowSendModal(true)}
+          >
             Send
           </Button>
-          <Button type="primary" className="action" onClick={(): void => setShowReceiveModal(true)}>
+          <Button
+            data-testid="receive-button"
+            type="primary"
+            className="action"
+            onClick={(): void => setShowReceiveModal(true)}
+          >
             Receive
           </Button>
           <SendTransaction
             visible={showSendModal}
             accounts={accounts}
             onCancel={(): void => setShowSendModal(false)}
+            onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
+              await web3.midnight.wallet.sendTransaction(recipient, amount, fee)
+              setShowSendModal(false)
+            }}
           />
           <ReceiveTransaction
             visible={showReceiveModal}
-            receiveAccount="Receive Account 01"
-            receiveAddress="75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5"
-            usedAddresses={[
-              '75cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-              '85cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb59f43e95244fe83f301d9f2375cc353f301d9f23a3a3c936d9b306af8fbb59f43e95244fe84ff3f301d9f23a3a3c936d9b306af8fbb5',
-            ]}
+            transparentAddresses={transparentAddresses}
             onCancel={(): void => setShowReceiveModal(false)}
+            onGenerateNew={async (): Promise<void> => {
+              if (walletState.walletStatus === 'LOADED') {
+                await walletState.generateNewAddress()
+              }
+            }}
           />
         </div>
       </div>
@@ -77,27 +99,25 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <td className="line">
                     <span className="type-icon">
                       &nbsp;
-                      {/* FIXME: determine transaction type */}
-                      <SVG src="./icons/confidential.svg" className="svg" />
-                      {/* {transaction.type === 'public' && (
-                        <SVG src="/icons/transparent.svg" className="svg" />
+                      {transaction.txDetails.txType === 'call' && (
+                        <SVG src={transparentIcon} className="svg" title="Transparent" />
                       )}
-                      {transaction.type === 'private' && (
-                        <SVG src="/icons/confidential.svg" className="svg" />
-                      )} */}
+                      {transaction.txDetails.txType !== 'call' && (
+                        <SVG src={confidentialIcon} className="svg" title="Confidential" />
+                      )}
                     </span>
                   </td>
                   <td className="line">
-                    <img src="./dust_logo.png" alt="dust" className="dust" />
+                    <img src={dustLogo} alt="dust" className="dust" />
                     <span>DUST</span>
                   </td>
                   <td className="line">
                     <span className="amount">
                       {transaction.txDirection === 'incoming' && (
-                        <SVG src="./icons/incoming.svg" className="svg" />
+                        <SVG src={incomingIcon} className="svg" title="Incoming" />
                       )}
                       {transaction.txDirection === 'outgoing' && (
-                        <SVG src="./icons/outgoing.svg" className="svg" />
+                        <SVG src={outgoingIcon} className="svg" title="Outgoing" />
                       )}
                       &nbsp;
                       <ShortNumber big={Big(parseInt(transaction.txValue))} />
@@ -108,14 +128,14 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
                   <td className="line">
                     {transaction.txStatus.status === 'confirmed' && (
                       <>
-                        <SVG src="./icons/check.svg" className="check" />
+                        <SVG src={checkIcon} className="check" title="Confirmed" />
                         &nbsp;
                       </>
                     )}
                     {_.capitalize(transaction.txStatus.status)}
                   </td>
                   <td className="line">
-                    <SVG src="./icons/arrow-down.svg" className="svg" />
+                    <SVG src={arrowDownIcon} className="svg" />
                   </td>
                 </tr>
               ))}

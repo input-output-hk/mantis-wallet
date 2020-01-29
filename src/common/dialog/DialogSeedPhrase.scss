@@ -1,0 +1,40 @@
+@import '../../theme.scss';
+
+.DialogSeedPhrase {
+  margin-bottom: 20px;
+
+  .ant-select {
+    width: 100%;
+  }
+
+  .ant-select-auto-complete.ant-select .ant-input {
+    height: 47px;
+    border: 0;
+    background-color: $normal-color;
+    font-size: 14px;
+
+    &:hover {
+      border: 0;
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
+  background-color: $secondary-background;
+}
+
+.ant-select-dropdown-menu-item-active {
+  background-color: $secondary-background;
+
+  &:not(.ant-select-dropdown-menu-item-disabled) {
+    background-color: $secondary-background;
+
+    &:hover {
+      background-color: $secondary-background;
+    }
+  }
+}

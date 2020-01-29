@@ -4,19 +4,23 @@ import './DialogTabs.scss'
 
 const {TabPane} = Tabs
 
-interface DialogTabProps {
-  label: string
+interface DialogTabProps<T extends string> {
+  label: T
   content: React.ReactNode
 }
 
-interface DialogTabsProps {
-  tabs: DialogTabProps[]
+interface DialogTabsProps<T extends string> {
+  tabs: Array<DialogTabProps<T>>
+  onTabClick?: (key: T) => void
 }
 
-export const DialogTabs: React.FunctionComponent<DialogTabsProps> = ({tabs}: DialogTabsProps) => {
+export const DialogTabs = <T extends string>({
+  tabs,
+  onTabClick,
+}: DialogTabsProps<T>): JSX.Element => {
   return (
     <div className="DialogTabs">
-      <Tabs>
+      <Tabs onTabClick={onTabClick}>
         {tabs.map(({label, content}) => (
           <TabPane key={label} tab={label}>
             {content}
