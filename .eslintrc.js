@@ -1,27 +1,16 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
   extends: [
     'plugin:prettier/recommended',
     'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
     'prettier',
-    'prettier/@typescript-eslint',
     'prettier/react',
   ],
-  plugins: ['fp', 'prettier', '@typescript-eslint'],
+  plugins: ['fp', 'prettier'],
   root: true,
   reportUnusedDisableDirectives: true,
   env: {
     browser: true,
     node: true,
-  },
-  parserOptions: {
-    ecmaVersion: 2019,
-    sourceType: 'module',
-    project: './tsconfig.json',
-    ecmaFeatures: {
-      jsx: true,
-    },
   },
   settings: {
     react: {
@@ -48,8 +37,6 @@ module.exports = {
     'guard-for-in': 0,
     'indent': 0,
     'curly': 0,
-    // TS
-    '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
     // prettier
     'prettier/prettier': 'error',
     // fp
@@ -70,7 +57,35 @@ module.exports = {
     'fp/no-class': 0,
     'fp/no-nil': 0,
     'fp/no-unused-expression': 0,
-    // typescript rules
-    '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
   },
+  overrides: [
+    {
+      //TS-only
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 2019,
+        sourceType: 'module',
+        project: './tsconfig.json',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      files: ['**/*.ts?(x)'],
+      plugins: ['@typescript-eslint'],
+      extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint'],
+      rules: {
+        // TS
+        '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
+        '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
+        '@typescript-eslint/explicit-function-return-type': [
+          'error',
+          {
+            allowExpressions: true,
+            allowTypedFunctionExpressions: true,
+            allowHigherOrderFunctions: true,
+          },
+        ],
+      },
+    },
+  ],
 }

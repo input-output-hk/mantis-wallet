@@ -7,6 +7,8 @@ import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
 
+jest.mock('../config/renderer.ts')
+
 const seedPhrase = [
   'vengeful',
   'legs',

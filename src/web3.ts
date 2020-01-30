@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink'
 import {MockWorker} from './stubs'
+import {config} from './config/renderer'
 
 export interface BigNumberJSON {
   s: number
@@ -89,5 +90,6 @@ if (window.Worker === undefined) {
 }
 
 const worker = new Worker('./web3.worker.js', {type: 'module'})
+worker.postMessage(['configure', config.rpcAddress])
 
 export const web3 = Comlink.wrap<Web3API>(worker)
