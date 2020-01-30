@@ -22,8 +22,8 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   const [walletCreateError, setWalletCreateError] = useState('')
   const createErrors = walletCreateError ? <DialogError>{walletCreateError}</DialogError> : null
 
-  const [walletName, setWalletName] = useState('')
-  const [passphrase, setPassphrase] = useState('')
+  const [, setWalletName] = useState('')
+  const [, setPassphrase] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhrase, setSeedPhrase] = useState<string[]>([])
 
