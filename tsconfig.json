@@ -8,6 +8,7 @@
     ],
     "jsx": "react",
     "allowJs": false,
+    "alwaysStrict": true,
     "skipLibCheck": false,
     "sourceMap": true,
     "esModuleInterop": true,

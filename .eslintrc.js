@@ -36,17 +36,20 @@ module.exports = {
     'no-constant-condition': ['error', {checkLoops: false}],
     'no-eval': 'error',
     'no-loop-func': 'error',
-    'no-empty-function': 'error',
+    'no-empty-function': ['error', {allow: ['constructors']}],
     'prefer-const': 'error',
     'space-infix-ops': 'error',
     'prefer-template': 'error',
     'no-useless-concat': 'error',
+    'no-use-before-define': 0,
     'max-len': 0,
     'no-console': 0,
     'comma-dangle': 0,
     'guard-for-in': 0,
     'indent': 0,
     'curly': 0,
+    // TS
+    '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
     // prettier
     'prettier/prettier': 'error',
     // fp

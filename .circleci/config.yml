@@ -34,5 +34,8 @@ jobs:
           name: Run tests
           command: yarn test
       - run:
-          name: Build
-          command: yarn build
+          name: Build Renderer
+          command: yarn build-renderer
+      - run:
+          name: Build Main
+          command: yarn build-main
