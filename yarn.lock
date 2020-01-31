@@ -6121,6 +6121,13 @@ create-react-ref@0.1.0:
   dependencies:
     fbjs "^0.8.16"
 
+cross-env@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-7.0.0.tgz#5a3b2ddce51ec713ea58f2fb79ce22e65b4f5479"
+  integrity sha512-rV6M9ldNgmwP7bx5u6rZsTbYidzwvrwIYZnT08hSGLcQCcggofgFW+sNe7IhA1SRauPS0QuLbbX+wdNtpqE5CQ==
+  dependencies:
+    cross-spawn "^7.0.1"
+
 cross-spawn-promise@^0.10.1:
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/cross-spawn-promise/-/cross-spawn-promise-0.10.1.tgz#db9cb4c50c60b72a15be049b78122ce382d87b10"
@@ -6156,7 +6163,7 @@ cross-spawn@^5.0.1, cross-spawn@^5.1.0:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@^7.0.0:
+cross-spawn@^7.0.0, cross-spawn@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.1.tgz#0ab56286e0f7c24e153d04cc2aa027e43a9a5d14"
   integrity sha512-u7v4o84SwFpD32Z8IIcPZ6z1/ie24O6RU3RbtL5Y316l3KuHVPx9ItBgWQ6VlfAFnRnTtMUrsQ9MUUTuEZjogg==
