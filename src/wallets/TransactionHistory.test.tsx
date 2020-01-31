@@ -33,10 +33,7 @@ const tx1: Transaction = {
 const tx2: Transaction = {
   hash: '2',
   txDirection: 'outgoing',
-  txStatus: {
-    status: 'pending',
-    atBlock: '0x1',
-  },
+  txStatus: 'pending',
   txValue: '123456789',
   txDetails: {
     txType: 'call',

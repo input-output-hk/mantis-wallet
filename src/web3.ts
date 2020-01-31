@@ -18,14 +18,17 @@ export interface TransparentAddress {
   index: number
 }
 
+// FIXME: Separate different tx types
 export interface Transaction {
   hash: string // Hash of transaction
   txDirection: 'incoming' | 'outgoing'
-  txStatus: {
-    status: 'confirmed' | 'pending' | 'persisted'
-    atBlock?: string // hexadecimal value representing block at which transaction took place
-  }
-  txValue: string
+  txStatus:
+    | 'pending'
+    | {
+        status: 'confirmed' | 'persisted'
+        atBlock?: string // hexadecimal value representing block at which transaction took place
+      }
+  txValue: string | {value: string; fee: string}
   txDetails: {
     txType: 'transfer' | 'coinbase' | 'redeem' | 'call'
   }

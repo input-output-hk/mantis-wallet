@@ -94,51 +94,56 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction) => (
-                <tr key={transaction.hash}>
-                  <td className="line">
-                    <span className="type-icon">
-                      &nbsp;
-                      {transaction.txDetails.txType === 'call' && (
-                        <SVG src={transparentIcon} className="svg" title="Transparent" />
-                      )}
-                      {transaction.txDetails.txType !== 'call' && (
-                        <SVG src={confidentialIcon} className="svg" title="Confidential" />
-                      )}
-                    </span>
-                  </td>
-                  <td className="line">
-                    <img src={dustLogo} alt="dust" className="dust" />
-                    <span>DUST</span>
-                  </td>
-                  <td className="line">
-                    <span className="amount">
-                      {transaction.txDirection === 'incoming' && (
-                        <SVG src={incomingIcon} className="svg" title="Incoming" />
-                      )}
-                      {transaction.txDirection === 'outgoing' && (
-                        <SVG src={outgoingIcon} className="svg" title="Outgoing" />
-                      )}
-                      &nbsp;
-                      <ShortNumber big={Big(parseInt(transaction.txValue))} />
-                    </span>
-                  </td>
-                  {/* FIXME: get proper date from transaction */}
-                  <td className="line">{transaction.txStatus.atBlock}</td>
-                  <td className="line">
-                    {transaction.txStatus.status === 'confirmed' && (
-                      <>
-                        <SVG src={checkIcon} className="check" title="Confirmed" />
+              {transactions.map(({hash, txDetails, txDirection, txStatus, txValue}) => {
+                const value = typeof txValue === 'string' ? txValue : txValue.value
+                const status = typeof txStatus === 'string' ? txStatus : txStatus.status
+                const atBlock = txStatus === 'pending' ? '' : txStatus.atBlock
+                return (
+                  <tr key={hash}>
+                    <td className="line">
+                      <span className="type-icon">
                         &nbsp;
-                      </>
-                    )}
-                    {_.capitalize(transaction.txStatus.status)}
-                  </td>
-                  <td className="line">
-                    <SVG src={arrowDownIcon} className="svg" />
-                  </td>
-                </tr>
-              ))}
+                        {txDetails.txType === 'call' && (
+                          <SVG src={transparentIcon} className="svg" title="Transparent" />
+                        )}
+                        {txDetails.txType !== 'call' && (
+                          <SVG src={confidentialIcon} className="svg" title="Confidential" />
+                        )}
+                      </span>
+                    </td>
+                    <td className="line">
+                      <img src={dustLogo} alt="dust" className="dust" />
+                      <span>DUST</span>
+                    </td>
+                    <td className="line">
+                      <span className="amount">
+                        {txDirection === 'incoming' && (
+                          <SVG src={incomingIcon} className="svg" title="Incoming" />
+                        )}
+                        {txDirection === 'outgoing' && (
+                          <SVG src={outgoingIcon} className="svg" title="Outgoing" />
+                        )}
+                        &nbsp;
+                        <ShortNumber big={Big(parseInt(value))} />
+                      </span>
+                    </td>
+                    {/* FIXME: get proper date from transaction */}
+                    <td className="line">{atBlock}</td>
+                    <td className="line">
+                      {status === 'confirmed' && (
+                        <>
+                          <SVG src={checkIcon} className="check" title="Confirmed" />
+                          &nbsp;
+                        </>
+                      )}
+                      {_.capitalize(status)}
+                    </td>
+                    <td className="line">
+                      <SVG src={arrowDownIcon} className="svg" />
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

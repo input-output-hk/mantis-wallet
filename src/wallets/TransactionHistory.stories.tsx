@@ -21,10 +21,13 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
     hash: n.toString(),
     txDirection: Math.random() < 0.5 ? 'incoming' : 'outgoing',
     txValue: (Math.random() * 100000000).toString(16),
-    txStatus: {
-      status: Math.random() < 0.5 ? 'confirmed' : 'pending',
-      // atBlock: (Math.random() * 100000000).toString(16),
-    },
+    txStatus:
+      Math.random() < 0.5
+        ? 'pending'
+        : {
+            status: 'confirmed',
+            atBlock: (Math.random() * 100000000).toString(16),
+          },
     txDetails: {
       txType: 'transfer',
     },
@@ -67,10 +70,7 @@ export const interactive = (): JSX.Element => {
           hash: '3',
           txDirection: 'incoming',
           txValue: (1000.0).toString(16),
-          txStatus: {
-            status: 'pending',
-            atBlock: '0x1',
-          },
+          txStatus: 'pending',
           txDetails: {
             txType: 'transfer',
           },
