@@ -56,7 +56,8 @@ export interface WalletAPI {
   create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase
   unlock(secrets: PassphraseSecrets): boolean
   lock(secrets: PassphraseSecrets): boolean
-  restore(secrets: (SpendingKey | SeedPhrase) & PassphraseSecrets): boolean
+  restoreFromSeedPhrase(secrets: SeedPhrase & PassphraseSecrets): boolean
+  restoreFromSpendingKey(secrets: SpendingKey & PassphraseSecrets): boolean
   remove(secrets: PassphraseSecrets): boolean
 
   // balances

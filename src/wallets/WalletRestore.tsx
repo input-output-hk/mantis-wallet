@@ -36,10 +36,10 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   const restore = async (): Promise<boolean> => {
     switch (recoveryMethod) {
       case RecoveryMethod.SpendingKey:
-        return web3.midnight.wallet.restore({passphrase, spendingKey})
+        return web3.midnight.wallet.restoreFromSpendingKey({passphrase, spendingKey})
       case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
-        return web3.midnight.wallet.restore({passphrase, seedPhrase})
+        return web3.midnight.wallet.restoreFromSeedPhrase({passphrase, seedPhrase})
     }
   }
 

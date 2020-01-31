@@ -40,6 +40,7 @@ export const DialogSeedPhrase: React.FunctionComponent<DialogSeedPhraseProps> = 
   const handleSelect = (selection: SelectValue): void => {
     const words = phrase.split(' ').filter((e) => e !== '')
     const newPhrase = [..._.take(words, words.length - 1), selection.toString()].join(' ')
+    onChange(newPhrase)
     setPhrase(`${newPhrase} `)
   }
 
