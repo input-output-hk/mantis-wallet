@@ -1,5 +1,12 @@
 import React, {useState} from 'react'
-import {web3, SpendingKey, SeedPhrase, TransparentAddress, Account} from '../web3'
+import {
+  web3,
+  SpendingKey,
+  SeedPhrase,
+  TransparentAddress,
+  Account,
+  SynchronizationStatus,
+} from '../web3'
 import {WalletState} from '../common/wallet-state'
 import {DialogInput} from '../common/dialog/DialogInput'
 
@@ -85,6 +92,11 @@ export const ApiTest = (): JSX.Element => {
           Restore from Seed Phrase
         </TestButton>
         <TestButton onClick={(): Promise<Account[]> => wallet.listAccounts()}>Accounts</TestButton>
+        <TestButton
+          onClick={(): Promise<SynchronizationStatus> => wallet.getSynchronizationStatus()}
+        >
+          Sync Status
+        </TestButton>
       </div>
     </div>
   )

@@ -2,7 +2,7 @@ import {useState} from 'react'
 import Big from 'big.js'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {TransparentAddress, Balance, Transaction, Account} from '../web3'
+import {TransparentAddress, Balance, Transaction, Account, SynchronizationStatus} from '../web3'
 import {WALLET_IS_OFFLINE} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
 import {web3} from '../web3'
@@ -31,10 +31,11 @@ interface LoadingState {
 
 interface LoadedState {
   walletStatus: 'LOADED'
-  isOffline: boolean
+  syncStatus: SynchronizationStatus
   getOverviewProps: () => Overview
-  reset: () => void
   generateNewAddress: () => Promise<void>
+  refreshSyncStatus: () => Promise<void>
+  reset: () => void
 }
 
 interface ErrorState {
@@ -49,7 +50,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
   const [errorOption, setError] = useState<Option<string>>(none)
-  const [isOffline, setIsOffline] = useState<boolean>(false)
+  const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(none)
 
   // balance
   const [totalBalanceOption, setTotalBalance] = useState<Option<Big>>(none)
@@ -93,9 +94,19 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     isSome(transactionsOption) &&
     isSome(transparentBalanceOption) &&
     isSome(transparentAddressesOption) &&
-    isSome(accountsOption)
+    isSome(accountsOption) &&
+    isSome(syncStatusOption)
 
   const walletStatus = walletStatus_ === 'LOADING' && isLoaded() ? 'LOADED' : walletStatus_
+
+  const error = getOrElse((): string => 'Unknown error')(errorOption)
+
+  const syncStatus = getOrElse(
+    (): SynchronizationStatus => ({
+      mode: 'offline',
+      currentBlock: '0x0',
+    }),
+  )(syncStatusOption)
 
   const reset = (): void => {
     setWalletStatus('INITIAL')
@@ -103,10 +114,10 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setAvailableBalance(none)
     setTransparentBalance(none)
     setTransactions(none)
-    setIsOffline(false)
     setError(none)
     setTransparentAddresses(none)
     setAccounts(none)
+    setSyncStatus(none)
   }
 
   const handleError = (e: Error): void => {
@@ -114,8 +125,6 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setError(some(e.message))
     setWalletStatus('ERROR')
   }
-
-  const error = getOrElse((): string => 'Unknown error')(errorOption)
 
   const loadTransparentBalance = async (): Promise<Big> => {
     // get every transparent address
@@ -137,9 +146,21 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
       .reduce((prev: Big, current: Big) => prev.plus(current), Big(0))
   }
 
+  const refreshSyncStatus = async (): Promise<void> => {
+    try {
+      const response = await web3.midnight.wallet.getSynchronizationStatus()
+      setSyncStatus(some(response))
+    } catch (e) {
+      handleError(e)
+    }
+  }
+
   const load = (): void => {
     // set loading status
     setWalletStatus('LOADING')
+
+    // get initial synchronization status
+    refreshSyncStatus()
 
     // load transaction history
     loadAll<Transaction>(wallet.getTransactionHistory)
@@ -159,10 +180,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     loadTransparentBalance()
       .then((availableTransparentBalance) => {
         setTransparentBalance(some(availableTransparentBalance))
-        setIsOffline(false)
       })
       .catch((e: Error) => {
-        if (e.message === WALLET_IS_OFFLINE) return setIsOffline(true)
+        if (e.message === WALLET_IS_OFFLINE) return
         handleError(e)
       })
 
@@ -184,12 +204,13 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   return {
     walletStatus,
-    isOffline,
     error,
+    syncStatus,
     getOverviewProps,
     reset,
     load,
     generateNewAddress,
+    refreshSyncStatus,
   }
 }
 
