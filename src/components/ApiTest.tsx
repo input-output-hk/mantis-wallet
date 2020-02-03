@@ -25,7 +25,13 @@ export const ApiTest = (): JSX.Element => {
   )
 
   const call = (fn: CallableFunction) => (): void => {
-    if (state.walletStatus === 'LOADED' || state.walletStatus === 'ERROR') state.reset()
+    if (
+      state.walletStatus === 'LOADED' ||
+      state.walletStatus === 'ERROR' ||
+      state.walletStatus === 'LOCKED' ||
+      state.walletStatus === 'NO_WALLET'
+    )
+      state.reset()
     fn()
       .then((result: unknown) => console.log(result))
       .catch((e: Error) => console.error(e.message))

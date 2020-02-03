@@ -3,6 +3,7 @@ import React from 'react'
 import {render, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletRestore} from './WalletRestore'
+import {WalletState} from '../common/wallet-state'
 
 jest.mock('../config/renderer.ts')
 
@@ -31,7 +32,9 @@ test('WalletRestore', () => {
   const finish = jest.fn()
 
   const {getByLabelText, getByText, getByRole, getByTestId} = render(
-    <WalletRestore cancel={cancel} finish={finish} />,
+    <WalletState.Provider>
+      <WalletRestore cancel={cancel} finish={finish} />
+    </WalletState.Provider>,
   )
 
   // Enter wallet name

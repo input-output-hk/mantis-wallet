@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Redirect} from 'react-router-dom'
-import {WalletState} from '../common/wallet-state'
 import {ROUTES} from '../routes-config'
+import {WalletState} from '../common/wallet-state'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletCreate} from './WalletCreate'
 import {WalletRestore} from './WalletRestore'
@@ -16,7 +16,7 @@ const getContent = (
   const state = WalletState.useContainer()
 
   const finish = (): void => {
-    if (state.walletStatus === 'ERROR') state.reset()
+    if (state.walletStatus === 'NO_WALLET') state.reset()
     setStep('FINISHED')
   }
 

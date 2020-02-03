@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
-import {web3} from '../web3'
 import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
+import {WalletState} from '../common/wallet-state'
 
 interface WalletCreateProps {
   cancel: () => void
@@ -17,6 +17,8 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   cancel,
   finish,
 }: WalletCreateProps) => {
+  const state = WalletState.useContainer()
+
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
 
   const [walletCreateError, setWalletCreateError] = useState('')
@@ -33,12 +35,12 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
         <WalletCreateDefineStep
           cancel={cancel}
           next={async (walletName, passphrase): Promise<void> => {
+            if (state.walletStatus !== 'NO_WALLET') {
+              return setWalletCreateError('Wallet already exists')
+            }
             setWalletCreateError('')
             try {
-              const {
-                spendingKey: newSpendingKey,
-                seedPhrase: newSeedPhrase,
-              } = await web3.midnight.wallet.create({
+              const {spendingKey: newSpendingKey, seedPhrase: newSeedPhrase} = await state.create({
                 passphrase,
               })
               setWalletName(walletName)
