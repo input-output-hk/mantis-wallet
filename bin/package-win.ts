@@ -5,6 +5,7 @@ import * as fs from 'fs'
 
 packageLuna({
   platform: 'win32',
+  extraResource: undefined,
   afterCopy: [
     (buildPath, electronVersion, platform, arch, cb) => {
       const targetPlatformConfigPath = path.resolve(buildPath, 'platform-config.json5')

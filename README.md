@@ -39,3 +39,7 @@ Starts debug storybook.
 ### `yarn build-storybook`
 
 Creates a static storybook build in the `storybook-static` directory.
+
+## Windows
+
+Remember to clone the repo with `autocrlf` disabled in git. 
