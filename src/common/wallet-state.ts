@@ -22,7 +22,7 @@ interface Overview {
 
 interface InitialState {
   walletStatus: 'INITIAL'
-  load: () => void
+  refreshSyncStatus: () => Promise<void>
 }
 
 interface LoadingState {
@@ -146,21 +146,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
       .reduce((prev: Big, current: Big) => prev.plus(current), Big(0))
   }
 
-  const refreshSyncStatus = async (): Promise<void> => {
-    try {
-      const response = await web3.midnight.wallet.getSynchronizationStatus()
-      setSyncStatus(some(response))
-    } catch (e) {
-      handleError(e)
-    }
-  }
-
   const load = (): void => {
     // set loading status
     setWalletStatus('LOADING')
-
-    // get initial synchronization status
-    refreshSyncStatus()
 
     // load transaction history
     loadAll<Transaction>(wallet.getTransactionHistory)
@@ -192,6 +180,18 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
       .catch(handleError)
   }
 
+  const refreshSyncStatus = async (): Promise<void> => {
+    try {
+      const response = await web3.midnight.wallet.getSynchronizationStatus()
+      if (response.currentBlock !== syncStatus.currentBlock) {
+        load()
+      }
+      setSyncStatus(some(response))
+    } catch (e) {
+      handleError(e)
+    }
+  }
+
   const generateNewAddress = async (): Promise<void> => {
     await wallet.generateTransparentAddress()
 
@@ -208,7 +208,6 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     syncStatus,
     getOverviewProps,
     reset,
-    load,
     generateNewAddress,
     refreshSyncStatus,
   }

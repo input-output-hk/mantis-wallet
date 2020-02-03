@@ -1,6 +1,6 @@
 import React from 'react'
 import {WalletState} from './wallet-state'
-import {useInterval} from './custom-hooks'
+import {useInterval} from './hook-utils'
 import {SynchronizationStatus} from '../web3'
 import './SyncStatus.scss'
 
@@ -25,7 +25,7 @@ export const SyncStatus = (): JSX.Element => {
 
   useInterval(() => {
     if (state.walletStatus === 'LOADED') state.refreshSyncStatus()
-  }, 1000)
+  }, 2000)
 
   if (state.walletStatus !== 'LOADED') {
     return <></>
