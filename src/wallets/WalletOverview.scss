@@ -27,6 +27,10 @@
   .refresh {
     grid-area: refresh;
     line-height: 124px;
+
+    .svg {
+      cursor: pointer;
+    }
   }
 
   .graph {

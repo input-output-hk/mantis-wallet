@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
-import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
@@ -42,11 +41,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
   )
 
   return (
-    <LunaModal
-      footer={usedAddresses}
-      {...props}
-      className={classnames({ReceiveTransactionError: !!errorMessage})}
-    >
+    <LunaModal footer={usedAddresses} {...props}>
       <Dialog
         title={title}
         prevButtonProps={{
