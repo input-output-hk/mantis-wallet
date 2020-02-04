@@ -25,7 +25,7 @@ export const Wallets = (): JSX.Element => {
 
   switch (state.walletStatus) {
     case 'INITIAL': {
-      state.load()
+      state.refreshSyncStatus()
       return <Loading />
     }
     case 'LOADING': {

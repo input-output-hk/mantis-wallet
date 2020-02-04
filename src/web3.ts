@@ -52,6 +52,20 @@ export interface Account {
   locked: boolean
 }
 
+export interface SynchronizationStatusOffline {
+  mode: 'offline'
+  currentBlock: string
+}
+
+export interface SynchronizationStatusOnline {
+  mode: 'online'
+  currentBlock: string
+  highestKnownBlock: string
+  percentage: number
+}
+
+export type SynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
+
 export type PaginatedCallable<T> = (count: number, drop: number) => T[]
 
 export interface WalletAPI {
@@ -76,6 +90,7 @@ export interface WalletAPI {
   generateTransparentAddress(): TransparentAddress
 
   listAccounts(): Account[]
+  getSynchronizationStatus(): SynchronizationStatus
 }
 
 interface Web3API {

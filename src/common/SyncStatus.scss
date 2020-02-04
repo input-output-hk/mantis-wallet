@@ -1,0 +1,9 @@
+@import '../theme.scss';
+
+.SyncStatus {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 1rem;
+  background-color: $secondary-background;
+}

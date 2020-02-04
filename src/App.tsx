@@ -4,6 +4,7 @@ import {WalletState} from './common/wallet-state'
 import {ROUTES} from './routes-config'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
+import {SyncStatus} from './common/SyncStatus'
 import {web3} from './web3'
 import './App.scss'
 
@@ -33,6 +34,7 @@ const App: React.FC = () => {
         </header>
         <main>
           <WalletState.Provider>
+            <SyncStatus />
             {Object.values(ROUTES).map((route) => (
               <Route key={route.path} path={route.path} component={route.component} />
             ))}
