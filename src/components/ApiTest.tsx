@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import {Button} from 'antd'
 import {
   web3,
   SpendingKey,
@@ -16,6 +17,8 @@ const wallet = web3.midnight.wallet
 export const ApiTest = (): JSX.Element => {
   const state = WalletState.useContainer()
 
+  const [message, setMessage] = useState<string>('')
+
   const [passphrase, setPassphrase] = useState<string>('Foobar1234')
   const [spendingKey, setSpendingKey] = useState<string>(
     'm-test-shl-sk1fj335eanpmupaj9vx5879t7ljfnh7xct486rqgwxw8evwp2qkaksmcqu88',
@@ -30,30 +33,43 @@ export const ApiTest = (): JSX.Element => {
       state.walletStatus === 'ERROR' ||
       state.walletStatus === 'LOCKED' ||
       state.walletStatus === 'NO_WALLET'
-    )
+    ) {
       state.reset()
+    }
+
+    setMessage('Loading...')
+
     fn()
-      .then((result: unknown) => console.log(result))
-      .catch((e: Error) => console.error(e.message))
+      .then((result: unknown) => {
+        console.log(result)
+        setMessage(JSON.stringify(result, null, 2))
+      })
+      .catch((e: Error) => {
+        console.error(e.message)
+        setMessage(e.message)
+      })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const TestButton = (props: any): JSX.Element => {
     return (
-      <button style={{color: 'black', display: 'block'}} onClick={call(props.onClick)}>
+      <Button
+        className="download"
+        type="primary"
+        style={{display: 'block', marginBottom: '0.5rem'}}
+        onClick={call(props.onClick)}
+      >
         {props.children}
-      </button>
+      </Button>
     )
   }
 
   return (
-    <div style={{color: 'white'}}>
-      <div>
-        <h1 style={{color: 'white'}}>Api Test Interface</h1>
-        See results in console.
-      </div>
+    <div style={{color: 'white', margin: '4rem'}}>
+      <h1>Api Test Interface</h1>
 
-      <div>
+      <div style={{marginBottom: '1rem'}}>
+        <h2>Settings</h2>
         <DialogInput
           label="Passphrase"
           value={passphrase}
@@ -70,6 +86,7 @@ export const ApiTest = (): JSX.Element => {
           onChange={(e): void => setSeedPhrase(e.target.value)}
         />
 
+        <h2>Actions</h2>
         <TestButton onClick={(): Promise<SpendingKey & SeedPhrase> => wallet.create({passphrase})}>
           Create
         </TestButton>
@@ -103,6 +120,11 @@ export const ApiTest = (): JSX.Element => {
         >
           Sync Status
         </TestButton>
+      </div>
+
+      <div>
+        <h2>Response</h2>
+        <pre>{message}</pre>
       </div>
     </div>
   )
