@@ -25,7 +25,7 @@ export const SyncStatus = (): JSX.Element => {
 
   useInterval(() => {
     if (state.walletStatus === 'LOADED') state.refreshSyncStatus()
-  }, 2000)
+  }, 3000)
 
   if (state.walletStatus !== 'LOADED') {
     return <></>

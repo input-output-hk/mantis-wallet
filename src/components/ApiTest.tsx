@@ -45,7 +45,7 @@ export const ApiTest = (): JSX.Element => {
         setMessage(JSON.stringify(result, null, 2))
       })
       .catch((e: Error) => {
-        console.error(e.message)
+        console.error(e)
         setMessage(e.message)
       })
   }

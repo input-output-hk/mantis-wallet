@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import {NavLink, Redirect} from 'react-router-dom'
 import {WalletState} from '../common/wallet-state'
 import {Loading} from '../common/Loading'
@@ -19,8 +19,6 @@ const dummyWallets: Wallet[] = [...Array(1).keys()].map(
 
 export const Wallets = (): JSX.Element => {
   const state = WalletState.useContainer()
-
-  const [wallets] = useState<Wallet[]>(dummyWallets)
 
   useEffect(() => {
     if (state.walletStatus === 'INITIAL') {
@@ -85,10 +83,6 @@ export const Wallets = (): JSX.Element => {
     }
     case 'ERROR': {
       return <b>{state.errorMsg}</b>
-    }
-    default: {
-      const wrongState: never = state
-      return <>{JSON.stringify(wrongState)}</>
     }
   }
 }

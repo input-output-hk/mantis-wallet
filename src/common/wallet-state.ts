@@ -154,7 +154,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     } else if (e.message === WALLET_DOES_NOT_EXIST) {
       setWalletStatus('NO_WALLET')
     } else {
-      console.error(e.message)
+      console.error(e)
       setErrorMsg(some(e.message))
       setWalletStatus('ERROR')
     }
@@ -247,7 +247,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const restoreFromSpendingKey = async (
     secrets: SpendingKey & PassphraseSecrets,
   ): Promise<boolean> => {
-    return await wallet.restoreFromSpendingKey(secrets)
+    return wallet.restoreFromSpendingKey(secrets)
   }
 
   const restoreFromSeedPhrase = async (
