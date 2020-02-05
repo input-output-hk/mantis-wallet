@@ -6,6 +6,7 @@ import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import './TransactionHistory.scss'
+import {WalletState} from '../common/wallet-state'
 
 export default {
   title: 'Transaction History',
@@ -13,7 +14,9 @@ export default {
 }
 
 export const withNoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={[]} />
+  <WalletState.Provider>
+    <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={[]} />
+  </WalletState.Provider>
 )
 
 const dummyTransactions = [...Array(10).keys()].slice(1).map(
@@ -35,70 +38,74 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
 )
 
 export const withDemoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} accounts={[]} />
+  <WalletState.Provider>
+    <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} accounts={[]} />
+  </WalletState.Provider>
 )
 
 export const interactive = (): JSX.Element => {
   return (
-    <TransactionHistory
-      transactions={[
-        object<Transaction>('Transaction 1', {
-          hash: '1',
-          txDirection: 'outgoing',
-          txValue: (1000.0).toString(16),
-          txStatus: {
-            status: 'confirmed',
-            atBlock: '0x1',
+    <WalletState.Provider>
+      <TransactionHistory
+        transactions={[
+          object<Transaction>('Transaction 1', {
+            hash: '1',
+            txDirection: 'outgoing',
+            txValue: (1000.0).toString(16),
+            txStatus: {
+              status: 'confirmed',
+              atBlock: '0x1',
+            },
+            txDetails: {
+              txType: 'transfer',
+            },
+          }),
+          object<Transaction>('Transaction 2', {
+            hash: '2',
+            txDirection: 'incoming',
+            txValue: (1000.0).toString(16),
+            txStatus: {
+              status: 'confirmed',
+              atBlock: '0x1',
+            },
+            txDetails: {
+              txType: 'transfer',
+            },
+          }),
+          object<Transaction>('Transaction 3', {
+            hash: '3',
+            txDirection: 'incoming',
+            txValue: (1000.0).toString(16),
+            txStatus: 'pending',
+            txDetails: {
+              txType: 'transfer',
+            },
+          }),
+        ]}
+        transparentAddresses={[
+          {
+            address: text('Old address', 'old-address'),
+            index: 0,
           },
-          txDetails: {
-            txType: 'transfer',
+          {
+            address: text('New address', 'new-address'),
+            index: 1,
           },
-        }),
-        object<Transaction>('Transaction 2', {
-          hash: '2',
-          txDirection: 'incoming',
-          txValue: (1000.0).toString(16),
-          txStatus: {
-            status: 'confirmed',
-            atBlock: '0x1',
+        ]}
+        accounts={[
+          {
+            wallet: 'wallet 1',
+            address: text('First address', 'first-address'),
+            locked: false,
           },
-          txDetails: {
-            txType: 'transfer',
+          {
+            wallet: 'wallet 2',
+            address: text('Second address', 'second-address'),
+            locked: false,
           },
-        }),
-        object<Transaction>('Transaction 3', {
-          hash: '3',
-          txDirection: 'incoming',
-          txValue: (1000.0).toString(16),
-          txStatus: 'pending',
-          txDetails: {
-            txType: 'transfer',
-          },
-        }),
-      ]}
-      transparentAddresses={[
-        {
-          address: text('Old address', 'old-address'),
-          index: 0,
-        },
-        {
-          address: text('New address', 'new-address'),
-          index: 1,
-        },
-      ]}
-      accounts={[
-        {
-          wallet: 'wallet 1',
-          address: text('First address', 'first-address'),
-          locked: false,
-        },
-        {
-          wallet: 'wallet 2',
-          address: text('Second address', 'second-address'),
-          locked: false,
-        },
-      ]}
-    />
+        ]}
+      />
+    </WalletState.Provider>
   )
 }
 
