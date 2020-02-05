@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import Big from 'big.js'
+import _ from 'lodash'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {TransparentAddress, Balance, Transaction, Account, SynchronizationStatus} from '../web3'
@@ -104,7 +105,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const syncStatus = getOrElse(
     (): SynchronizationStatus => ({
       mode: 'offline',
-      currentBlock: '0x0',
+      currentBlock: '-1',
     }),
   )(syncStatusOption)
 
@@ -183,10 +184,8 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const refreshSyncStatus = async (): Promise<void> => {
     try {
       const response = await web3.midnight.wallet.getSynchronizationStatus()
-      if (response.currentBlock !== syncStatus.currentBlock) {
-        load()
-      }
-      setSyncStatus(some(response))
+      if (response.currentBlock !== syncStatus.currentBlock) load()
+      if (!_.isEqual(response, syncStatus)) setSyncStatus(some(response))
     } catch (e) {
       handleError(e)
     }

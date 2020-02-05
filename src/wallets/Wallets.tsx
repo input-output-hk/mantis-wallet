@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {NavLink, Redirect} from 'react-router-dom'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED} from '../common/errors'
 import {WalletState} from '../common/wallet-state'
@@ -23,9 +23,14 @@ export const Wallets = (): JSX.Element => {
 
   const [wallets] = useState<Wallet[]>(dummyWallets)
 
+  useEffect(() => {
+    if (state.walletStatus === 'INITIAL') {
+      state.refreshSyncStatus()
+    }
+  }, [state.walletStatus])
+
   switch (state.walletStatus) {
     case 'INITIAL': {
-      state.refreshSyncStatus()
       return <Loading />
     }
     case 'LOADING': {
