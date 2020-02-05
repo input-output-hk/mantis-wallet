@@ -1,7 +1,15 @@
 const AntdScssThemePlugin = require('antd-scss-theme-plugin')
+const webpack = require('webpack')
+const path = require('path')
 
 module.exports = ({config}) => {
   config.plugins.push(new AntdScssThemePlugin('./src/theme.scss'))
+  config.plugins.push(
+    new webpack.NormalModuleReplacementPlugin(
+      /electron$/,
+      path.resolve(__dirname, 'electron.mock.js'),
+    ),
+  )
 
   config.module.rules.push(
     {
