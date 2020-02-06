@@ -135,7 +135,7 @@ export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Private Key">
     <DialogPrivateKey
       privateKey={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
-      enableDownload={boolean('Enable download', true)}
+      downloadFileName={text('Download file name', 'your-private-key')}
     />
   </Dialog>
 )

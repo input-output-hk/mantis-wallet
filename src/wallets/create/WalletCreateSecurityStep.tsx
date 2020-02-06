@@ -34,7 +34,9 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
         checked={useSpendingKey}
         onChange={setUseSpendingKey}
       />
-      {useSpendingKey && <DialogPrivateKey privateKey={spendingKey} enableDownload />}
+      {useSpendingKey && (
+        <DialogPrivateKey privateKey={spendingKey} downloadFileName="Luna-wallet-spending-key" />
+      )}
     </Dialog>
   )
 }
