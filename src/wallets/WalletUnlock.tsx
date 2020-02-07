@@ -3,31 +3,30 @@ import {Redirect} from 'react-router-dom'
 import {Button} from 'antd'
 import {WalletState} from '../common/wallet-state'
 import {BorderlessInputPassword} from '../common/BorderlessInput'
-import {web3} from '../web3'
 import {ROUTES} from '../routes-config'
 import './WalletUnlock.scss'
 
-type UnlockStatus = 'LOCKED' | 'UNLOCKED' | 'LOADING'
-
 export const WalletUnlock = (): JSX.Element => {
-  const walletState = WalletState.useContainer()
-  const [unlockStatus, setUnlockStatus] = useState<UnlockStatus>('LOCKED')
+  const state = WalletState.useContainer()
+  const isLocked = state.walletStatus === 'LOCKED'
+
+  const [isLoading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [passphrase, setPassphrase] = useState<string>('')
 
   const unlock = async (): Promise<void> => {
-    setUnlockStatus('LOADING')
+    if (state.walletStatus !== 'LOCKED' || isLoading) return
+
+    setLoading(true)
     try {
-      const isUnlocked = await web3.midnight.wallet.unlock({passphrase})
-      setUnlockStatus(isUnlocked ? 'UNLOCKED' : 'LOCKED')
+      await state.unlock({passphrase})
     } catch (e) {
-      setUnlockStatus('LOCKED')
       setErrorMessage(e.message)
+      setLoading(false)
     }
   }
 
-  if (unlockStatus === 'UNLOCKED') {
-    if (walletState.walletStatus === 'ERROR') walletState.reset()
+  if (!isLocked) {
     return <Redirect to={ROUTES.WALLETS.path} />
   } else {
     return (
@@ -44,7 +43,7 @@ export const WalletUnlock = (): JSX.Element => {
               if (e.key === 'Enter') unlock()
             }}
           />
-          <Button type="primary" disabled={unlockStatus === 'LOADING'} onClick={unlock}>
+          <Button type="primary" disabled={isLoading} onClick={unlock}>
             Unlock
           </Button>
         </div>

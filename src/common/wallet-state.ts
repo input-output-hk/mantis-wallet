@@ -3,23 +3,21 @@ import Big from 'big.js'
 import _ from 'lodash'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {TransparentAddress, Balance, Transaction, Account, SynchronizationStatus} from '../web3'
-import {WALLET_IS_OFFLINE} from '../common/errors'
+import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
-import {web3} from '../web3'
+import {
+  web3,
+  TransparentAddress,
+  Balance,
+  Transaction,
+  Account,
+  SpendingKey,
+  SeedPhrase,
+  PassphraseSecrets,
+  SynchronizationStatus,
+} from '../web3'
 
 const wallet = web3.midnight.wallet
-
-export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'ERROR'
-
-interface Overview {
-  transactions: Transaction[]
-  transparentBalance: Big
-  availableBalance: Big
-  pendingBalance: Big
-  transparentAddresses: TransparentAddress[]
-  accounts: Account[]
-}
 
 interface InitialState {
   walletStatus: 'INITIAL'
@@ -34,23 +32,54 @@ interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
   getOverviewProps: () => Overview
+  reset: () => void
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
+  sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
+}
+
+interface LockedState {
+  walletStatus: 'LOCKED'
   reset: () => void
+  unlock: (secrets: PassphraseSecrets) => Promise<boolean>
+}
+
+interface NoWalletState {
+  walletStatus: 'NO_WALLET'
+  reset: () => void
+  create: (secrets: PassphraseSecrets) => Promise<SpendingKey & SeedPhrase>
+  restoreFromSeedPhrase: (secrets: SeedPhrase & PassphraseSecrets) => Promise<boolean>
+  restoreFromSpendingKey: (secrets: SpendingKey & PassphraseSecrets) => Promise<boolean>
 }
 
 interface ErrorState {
   walletStatus: 'ERROR'
-  error: string
+  errorMsg: string
   reset: () => void
 }
 
-type WalletState = InitialState | LoadingState | LoadedState | ErrorState
+export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'LOCKED' | 'NO_WALLET' | 'ERROR'
+type WalletState =
+  | InitialState
+  | LoadingState
+  | LoadedState
+  | LockedState
+  | NoWalletState
+  | ErrorState
+
+interface Overview {
+  transactions: Transaction[]
+  transparentBalance: Big
+  availableBalance: Big
+  pendingBalance: Big
+  transparentAddresses: TransparentAddress[]
+  accounts: Account[]
+}
 
 function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletState {
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
-  const [errorOption, setError] = useState<Option<string>>(none)
+  const [errorMsgOption, setErrorMsg] = useState<Option<string>>(none)
   const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(none)
 
   // balance
@@ -100,8 +129,6 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const walletStatus = walletStatus_ === 'LOADING' && isLoaded() ? 'LOADED' : walletStatus_
 
-  const error = getOrElse((): string => 'Unknown error')(errorOption)
-
   const syncStatus = getOrElse(
     (): SynchronizationStatus => ({
       mode: 'offline',
@@ -115,17 +142,25 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setAvailableBalance(none)
     setTransparentBalance(none)
     setTransactions(none)
-    setError(none)
+    setErrorMsg(none)
     setTransparentAddresses(none)
     setAccounts(none)
     setSyncStatus(none)
   }
 
   const handleError = (e: Error): void => {
-    console.error(e.message)
-    setError(some(e.message))
-    setWalletStatus('ERROR')
+    if (e.message === WALLET_IS_LOCKED) {
+      setWalletStatus('LOCKED')
+    } else if (e.message === WALLET_DOES_NOT_EXIST) {
+      setWalletStatus('NO_WALLET')
+    } else {
+      console.error(e)
+      setErrorMsg(some(e.message))
+      setWalletStatus('ERROR')
+    }
   }
+
+  const errorMsg = getOrElse((): string => 'Unknown error')(errorMsgOption)
 
   const loadTransparentBalance = async (): Promise<Big> => {
     // get every transparent address
@@ -183,7 +218,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const refreshSyncStatus = async (): Promise<void> => {
     try {
-      const response = await web3.midnight.wallet.getSynchronizationStatus()
+      const response = await wallet.getSynchronizationStatus()
       if (response.currentBlock !== syncStatus.currentBlock) load()
       if (!_.isEqual(response, syncStatus)) setSyncStatus(some(response))
     } catch (e) {
@@ -201,14 +236,49 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     setTransparentAddresses(some(transparentAddresses))
   }
 
+  const sendTransaction = async (
+    recipient: string,
+    amount: number,
+    fee: number,
+  ): Promise<string> => {
+    return wallet.sendTransaction(recipient, amount, fee)
+  }
+
+  const restoreFromSpendingKey = async (
+    secrets: SpendingKey & PassphraseSecrets,
+  ): Promise<boolean> => {
+    return wallet.restoreFromSpendingKey(secrets)
+  }
+
+  const restoreFromSeedPhrase = async (
+    secrets: SeedPhrase & PassphraseSecrets,
+  ): Promise<boolean> => {
+    return wallet.restoreFromSeedPhrase(secrets)
+  }
+
+  const create = async (secrets: PassphraseSecrets): Promise<SpendingKey & SeedPhrase> => {
+    return wallet.create(secrets)
+  }
+
+  const unlock = async (secrets: PassphraseSecrets): Promise<boolean> => {
+    const response = await wallet.unlock(secrets)
+    if (response) reset()
+    return response
+  }
+
   return {
     walletStatus,
-    error,
+    errorMsg,
     syncStatus,
     getOverviewProps,
     reset,
     generateNewAddress,
     refreshSyncStatus,
+    sendTransaction,
+    create,
+    unlock,
+    restoreFromSpendingKey,
+    restoreFromSeedPhrase,
   }
 }
 

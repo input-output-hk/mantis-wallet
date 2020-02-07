@@ -20,10 +20,10 @@ interface WalletOverviewProps {
 }
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
-  const walletState = WalletState.useContainer()
+  const state = WalletState.useContainer()
 
   const refresh = (): void => {
-    if (walletState.walletStatus === 'LOADED') walletState.reset()
+    if (state.walletStatus === 'LOADED') state.reset()
   }
 
   const {pending, confidential, transparent} = props

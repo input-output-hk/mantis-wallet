@@ -6,7 +6,7 @@ import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogTabs} from '../common/dialog/DialogTabs'
 import {DialogError} from '../common/dialog/DialogError'
 import {DialogSeedPhrase} from '../common/dialog/DialogSeedPhrase'
-import {web3} from '../web3'
+import {WalletState} from '../common/wallet-state'
 
 enum RecoveryMethod {
   SpendingKey = 'Private key',
@@ -22,6 +22,8 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   cancel,
   finish,
 }: WalletRestoreProps) => {
+  const state = WalletState.useContainer()
+
   const [walletName, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
@@ -34,12 +36,16 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   const footer = walletRestoreError ? <DialogError>{walletRestoreError}</DialogError> : null
 
   const restore = async (): Promise<boolean> => {
+    if (state.walletStatus !== 'NO_WALLET') {
+      return false
+    }
+
     switch (recoveryMethod) {
       case RecoveryMethod.SpendingKey:
-        return web3.midnight.wallet.restoreFromSpendingKey({passphrase, spendingKey})
+        return state.restoreFromSpendingKey({passphrase, spendingKey})
       case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
-        return web3.midnight.wallet.restoreFromSeedPhrase({passphrase, seedPhrase})
+        return state.restoreFromSeedPhrase({passphrase, seedPhrase})
     }
   }
 
@@ -50,6 +56,10 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
       nextButtonProps={{
         disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
         onClick: async (): Promise<void> => {
+          if (state.walletStatus !== 'NO_WALLET') {
+            return setWalletRestoreError('Wallet already exists')
+          }
+
           setWalletRestoreError('')
           try {
             const isRestored = await restore()

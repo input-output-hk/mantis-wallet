@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import {NavLink, Redirect} from 'react-router-dom'
-import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED} from '../common/errors'
 import {WalletState} from '../common/wallet-state'
 import {Loading} from '../common/Loading'
 import {ROUTES} from '../routes-config'
@@ -14,14 +13,12 @@ interface Wallet {
 }
 
 // FIXME: when multiple wallets can be managed
-const dummyWallets = [...Array(1).keys()].map(
+const dummyWallets: Wallet[] = [...Array(1).keys()].map(
   (n): Wallet => ({id: `${n}`, name: `WALLET ${n + 1}`}),
 )
 
 export const Wallets = (): JSX.Element => {
   const state = WalletState.useContainer()
-
-  const [wallets] = useState<Wallet[]>(dummyWallets)
 
   useEffect(() => {
     if (state.walletStatus === 'INITIAL') {
@@ -35,19 +32,6 @@ export const Wallets = (): JSX.Element => {
     }
     case 'LOADING': {
       return <Loading />
-    }
-    case 'ERROR': {
-      switch (state.error) {
-        case WALLET_DOES_NOT_EXIST: {
-          return <Redirect to={ROUTES.WALLET_SETUP.path} />
-        }
-        case WALLET_IS_LOCKED: {
-          return <Redirect to={ROUTES.WALLET_UNLOCK.path} />
-        }
-        default: {
-          return <b>{state.error}</b>
-        }
-      }
     }
     case 'LOADED': {
       const {
@@ -63,7 +47,7 @@ export const Wallets = (): JSX.Element => {
         <div className="Wallets">
           <div className="list invisible-scrollbar">
             <ul className="wallet-links">
-              {wallets.map((wallet) => (
+              {dummyWallets.map((wallet) => (
                 <li key={wallet.id}>
                   <NavLink
                     to={`${ROUTES.WALLETS.path}/${wallet.id}`}
@@ -90,6 +74,15 @@ export const Wallets = (): JSX.Element => {
           </div>
         </div>
       )
+    }
+    case 'LOCKED': {
+      return <Redirect to={ROUTES.WALLET_UNLOCK.path} />
+    }
+    case 'NO_WALLET': {
+      return <Redirect to={ROUTES.WALLET_SETUP.path} />
+    }
+    case 'ERROR': {
+      return <b>{state.errorMsg}</b>
     }
   }
 }

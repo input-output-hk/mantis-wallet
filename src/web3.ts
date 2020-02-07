@@ -34,7 +34,7 @@ export interface Transaction {
   }
 }
 
-interface PassphraseSecrets {
+export interface PassphraseSecrets {
   passphrase: string
 }
 

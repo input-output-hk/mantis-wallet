@@ -7,8 +7,9 @@ import * as record from 'fp-ts/lib/Record'
 import {sort} from 'fp-ts/lib/Array'
 import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {ShortNumber} from '../common/ShortNumber'
 import {Transaction, TransparentAddress, Account} from '../web3'
+import {WalletState} from '../common/wallet-state'
+import {ShortNumber} from '../common/ShortNumber'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import dustLogo from '../assets/dust_logo.png'
@@ -19,8 +20,6 @@ import confidentialIcon from '../assets/icons/confidential.svg'
 import checkIcon from '../assets/icons/check.svg'
 import arrowDownIcon from '../assets/icons/arrow-down.svg'
 import './TransactionHistory.scss'
-import {WalletState} from '../common/wallet-state'
-import {web3} from '../web3'
 
 interface TransactionHistoryProps {
   transactions: Transaction[]
@@ -89,6 +88,9 @@ const getOrd = (sortBy: SortBy): Ord<Transaction> =>
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
   const {transactions, transparentAddresses, accounts} = props
+
+  const state = WalletState.useContainer()
+
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
 
@@ -96,8 +98,6 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
     property: 'time',
     direction: 'asc',
   })
-
-  const walletState = WalletState.useContainer()
 
   const changeOrder = (property: Property) => (): void => setSortBy(updateSorting(sortBy, property))
 
@@ -146,8 +146,10 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             accounts={accounts}
             onCancel={(): void => setShowSendModal(false)}
             onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
-              await web3.midnight.wallet.sendTransaction(recipient, amount, fee)
-              setShowSendModal(false)
+              if (state.walletStatus === 'LOADED') {
+                await state.sendTransaction(recipient, amount, fee)
+                setShowSendModal(false)
+              }
             }}
           />
           <ReceiveTransaction
@@ -155,8 +157,8 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             transparentAddresses={transparentAddresses}
             onCancel={(): void => setShowReceiveModal(false)}
             onGenerateNew={async (): Promise<void> => {
-              if (walletState.walletStatus === 'LOADED') {
-                await walletState.generateNewAddress()
+              if (state.walletStatus === 'LOADED') {
+                await state.generateNewAddress()
               }
             }}
           />

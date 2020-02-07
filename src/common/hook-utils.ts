@@ -29,7 +29,9 @@ export function useInterval(callback: Callback, delay: number): void {
     function tick(): void {
       if (savedCallback.current) savedCallback.current()
     }
-    const id = setInterval(tick, delay)
-    return (): void => clearInterval(id)
+    if (delay !== null) {
+      const id = setInterval(tick, delay)
+      return (): void => clearInterval(id)
+    }
   }, [delay])
 }
