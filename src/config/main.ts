@@ -128,7 +128,7 @@ const configGetter = convict({
   },
   clientConfigs: {
     node: clientConfig('node', {
-      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-node-1.0'),
+      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-node-moth-pupa-v0.8.0'),
       executableName: 'midnight-node',
       dataDir: {
         settingName: 'midnight.datadir',
@@ -137,7 +137,7 @@ const configGetter = convict({
       additionalSettings: {},
     }),
     wallet: clientConfig('wallet', {
-      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-wallet-1.0'),
+      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-wallet-moth-pupa-v0.8.0'),
       executableName: 'midnight-wallet',
       dataDir: {
         settingName: 'wallet.datadir',

@@ -1,9 +1,9 @@
 // This file is an entry point to whole application, it simply doesn't make sense to keep it 100% pure
 /* eslint-disable fp/no-let, fp/no-mutation */
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, dialog} from 'electron'
 import path from 'path'
 import url from 'url'
-import {spawn} from 'child_process'
+import {spawn, exec} from 'child_process'
 import {asapScheduler, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
@@ -11,6 +11,7 @@ import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
+import {promisify} from 'util'
 
 import {config} from '../config/main'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
@@ -77,6 +78,21 @@ if (config.runClients) {
 
   let runningClients: SpawnedMidnightProcess[] | null = null
 
+  async function fetchParams(): Promise<void> {
+    console.log('Fetching zkSNARK parameters')
+    const fetchParamsPath = path.resolve(config.distPackagesDir, 'fetch-params.sh')
+    return promisify(exec)(fetchParamsPath)
+      .then(({stdout, stderr}) => {
+        console.log(stdout)
+        console.error(stderr)
+      })
+      .catch((error) => {
+        console.error(error)
+        dialog.showErrorBox('Luna startup error', 'Failed to fetch zkSNARK parameters')
+        app.exit(1)
+      })
+  }
+
   function logClients(clients: SpawnedMidnightProcess[]): void {
     const maxNameLength = pipe(
       clients,
@@ -136,7 +152,7 @@ if (config.runClients) {
     }
   }
 
-  spawnClients()
+  fetchParams().then(() => spawnClients())
   app.on('before-quit', killAndQuit)
   app.on('will-quit', killAndQuit)
   app.on('window-all-closed', killAndQuit)
