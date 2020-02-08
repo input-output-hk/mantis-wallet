@@ -4,11 +4,15 @@ import {Button} from 'antd'
 import {ButtonProps} from 'antd/lib/button'
 import './Dialog.scss'
 
+interface DialogButtonProps {
+  doNotRender?: boolean
+}
+
 interface DialogProps {
   title?: string
   type?: 'normal' | 'dark'
-  prevButtonProps?: ButtonProps
-  nextButtonProps?: ButtonProps
+  prevButtonProps?: ButtonProps & DialogButtonProps
+  nextButtonProps?: ButtonProps & DialogButtonProps
   footer?: React.ReactNode
 }
 
@@ -38,8 +42,8 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
       {title && <div className="title">{title}</div>}
       <div>{children}</div>
       <div className="actions">
-        <Button {...prevButtonPropsToUse} />
-        <Button {...nextButtonPropsToUse} />
+        {!prevButtonProps.doNotRender && <Button {...prevButtonPropsToUse} />}
+        {!nextButtonProps.doNotRender && <Button {...nextButtonPropsToUse} />}
       </div>
       {footer && <div className="footer">{footer}</div>}
     </div>

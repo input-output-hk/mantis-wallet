@@ -11,7 +11,7 @@ import {Transaction, TransparentAddress, Account} from '../web3'
 import {WalletState} from '../common/wallet-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {SendTransaction} from './modals/SendTransaction'
-import {ReceiveTransaction} from './modals/ReceiveTransaction'
+import {ReceiveTransactionPrivate} from './modals/ReceiveTransactionPrivate'
 import dustLogo from '../assets/dust_logo.png'
 import incomingIcon from '../assets/icons/incoming.svg'
 import outgoingIcon from '../assets/icons/outgoing.svg'
@@ -87,7 +87,7 @@ const getOrd = (sortBy: SortBy): Ord<Transaction> =>
     : getDualOrd(sortableProperties[sortBy.property].order)
 
 export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
-  const {transactions, transparentAddresses, accounts} = props
+  const {transactions, accounts} = props
 
   const state = WalletState.useContainer()
 
@@ -152,15 +152,10 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
               }
             }}
           />
-          <ReceiveTransaction
+          <ReceiveTransactionPrivate
             visible={showReceiveModal}
-            transparentAddresses={transparentAddresses}
+            privateAddress={accounts[0].address}
             onCancel={(): void => setShowReceiveModal(false)}
-            onGenerateNew={async (): Promise<void> => {
-              if (state.walletStatus === 'LOADED') {
-                await state.generateNewAddress()
-              }
-            }}
           />
         </div>
       </div>
