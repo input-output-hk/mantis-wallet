@@ -16,9 +16,9 @@ const App: React.FC = () => {
       try {
         await Promise.all([web3.midnight.wallet.listAccounts(), web3.version.ethereum])
         setBackendRunning(true)
+        setTimeout(checkBackend, 5000)
       } catch (e) {
         setBackendRunning(false)
-      } finally {
         setTimeout(checkBackend, 1000)
       }
     }
