@@ -1,4 +1,6 @@
 import React from 'react'
+import {Popover} from 'antd'
+import {formatPercentage} from '../common/formatters'
 import './OverviewGraph.scss'
 
 interface OverviewGraphProps {
@@ -46,31 +48,43 @@ export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
   const tranLargeArcFlag = tranRatio <= 0.5 ? '0' : '1'
   const pendLargeArcFlag = pendRatio <= 0.5 ? '0' : '1'
 
+  const popoverText = (
+    <>
+      {formatPercentage(confRatio)}% Confidential
+      <br />
+      {formatPercentage(tranRatio)}% Transparent
+      <br />
+      {formatPercentage(pendRatio)}% Pending
+    </>
+  )
+
   return (
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="graph-svg">
-      <circle cx={c.x} cy={c.y} r={r + 4.5} />
-      {total > 0 && (
-        <>
-          <path
-            fill="none"
-            className="graph-confidential"
-            strokeWidth="10"
-            d={`M ${confEnd.x} ${confEnd.y} A ${r} ${r} 0 ${confLargeArcFlag} 0 ${start.x} ${start.y}`}
-          />
-          <path
-            fill="none"
-            className="graph-transparent"
-            strokeWidth="10"
-            d={`M ${tranEnd.x} ${tranEnd.y} A ${r} ${r} 0 ${tranLargeArcFlag} 0 ${confEnd.x} ${confEnd.y}`}
-          />
-          <path
-            fill="none"
-            className="graph-pending"
-            strokeWidth="10"
-            d={`M ${pendEnd.x} ${pendEnd.y} A ${r} ${r} 0 ${pendLargeArcFlag} 0 ${tranEnd.x} ${tranEnd.y}`}
-          />
-        </>
-      )}
-    </svg>
+    <Popover content={popoverText} placement="bottom">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="graph-svg">
+        <circle cx={c.x} cy={c.y} r={r + 4.5} />
+        {total > 0 && (
+          <>
+            <path
+              fill="none"
+              className="graph-confidential"
+              strokeWidth="10"
+              d={`M ${confEnd.x} ${confEnd.y} A ${r} ${r} 0 ${confLargeArcFlag} 0 ${start.x} ${start.y}`}
+            />
+            <path
+              fill="none"
+              className="graph-transparent"
+              strokeWidth="10"
+              d={`M ${tranEnd.x} ${tranEnd.y} A ${r} ${r} 0 ${tranLargeArcFlag} 0 ${confEnd.x} ${confEnd.y}`}
+            />
+            <path
+              fill="none"
+              className="graph-pending"
+              strokeWidth="10"
+              d={`M ${pendEnd.x} ${pendEnd.y} A ${r} ${r} 0 ${pendLargeArcFlag} 0 ${tranEnd.x} ${tranEnd.y}`}
+            />
+          </>
+        )}
+      </svg>
+    </Popover>
   )
 }

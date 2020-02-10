@@ -9,6 +9,9 @@ const dateTimeFormatSettings = {
 
 export const formatAmount = (n: number): string => new Intl.NumberFormat('en-US').format(n)
 
+export const formatPercentage = (ratio: number): string =>
+  formatAmount(Math.round(ratio * 10000) / 100)
+
 export const formatDate = (d: Date): string =>
   new Intl.DateTimeFormat('en-US', dateTimeFormatSettings).format(d)
 
