@@ -1,15 +1,25 @@
-import {abbreviateNumber, formatPercentage} from './formatters'
+import {abbreviateAmount, formatPercentage, formatAmount} from './formatters'
 import {assert} from 'chai'
+import BigNumber from 'bignumber.js'
 
 it('abbreviates numbers correctly', () => {
-  assert.equal(abbreviateNumber(12.5), '12.5')
-  assert.equal(abbreviateNumber(100), '100')
-  assert.equal(abbreviateNumber(1001), '1001')
-  assert.equal(abbreviateNumber(10001), '10001')
-  assert.equal(abbreviateNumber(100001), '100001')
-  assert.equal(abbreviateNumber(1000 * 1000), '1M')
-  assert.equal(abbreviateNumber(1000 * 1000 * 1000), '1G')
-  assert.equal(abbreviateNumber(1000 * 1000 * 1000 * 1000), '1T')
+  assert.equal(abbreviateAmount(new BigNumber(12.5)), '12.5')
+  assert.equal(abbreviateAmount(new BigNumber(100)), '100')
+  assert.equal(abbreviateAmount(new BigNumber(1001)), '1,001')
+  assert.equal(abbreviateAmount(new BigNumber(10001)), '10,001')
+  assert.equal(abbreviateAmount(new BigNumber(100001)), '100,001')
+  assert.equal(abbreviateAmount(new BigNumber(1000 * 1000)), '1M')
+  assert.equal(abbreviateAmount(new BigNumber(1000 * 1000 * 1000)), '1G')
+  assert.equal(abbreviateAmount(new BigNumber(1000 * 1000 * 1000 * 1000)), '1T')
+  assert.equal(abbreviateAmount(new BigNumber(0.1)), '0.1')
+  assert.equal(abbreviateAmount(new BigNumber(0.001)), '1m')
+  assert.equal(abbreviateAmount(new BigNumber(0.008)), '0.008')
+  assert.equal(abbreviateAmount(new BigNumber(1 / 1000 / 1000)), '1μ')
+})
+
+it('formats amount correctly', () => {
+  assert.equal(formatAmount(new BigNumber(1.234567)), '1.234567')
+  assert.equal(formatAmount(new BigNumber(1.234567), 3), '1.235')
 })
 
 it('formats percentage correctly', () => {

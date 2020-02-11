@@ -45,14 +45,14 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         <div className="box-text">Total Balance</div>
         <div className="box-amount-big">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={total} />
+          <ShortNumber big={total} dp={2} />
         </div>
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
             <SVG src={clockIcon} className="svg" />
           </span>
-          Pending Amount · <ShortNumber big={pending} />
+          Pending Amount · <ShortNumber big={pending} dp={2} />
         </div>
       </div>
       <div className="confidential">
@@ -65,7 +65,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         </div>
         <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={confidential} />
+          <ShortNumber big={confidential} dp={2} />
         </div>
       </div>
       <div className="transparent">
@@ -79,7 +79,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         </div>
         <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={transparent} />
+          <ShortNumber big={transparent} dp={2} />
         </div>
       </div>
     </div>
