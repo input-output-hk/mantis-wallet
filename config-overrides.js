@@ -2,8 +2,15 @@ const {override, fixBabelImports, addWebpackPlugin} = require('customize-cra')
 const AntdScssThemePlugin = require('antd-scss-theme-plugin')
 const WorkerPlugin = require('worker-plugin')
 
+//
+// This method returns the loaders from create-react-app's webpack config
+//
+// Refer to for correct structure of the config object:
+// https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/config/webpack.config.js
+const getLoaders = (config) => config.module.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf
+
 const addLessLoader = () => (config) => {
-  const loaders = config.module.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf
+  const loaders = getLoaders(config)
 
   loaders.splice(loaders.length - 1, 0, {
     test: /\.less$/,
@@ -23,23 +30,34 @@ const addLessLoader = () => (config) => {
     ],
   })
 
-  loaders.splice(loaders.length - 1, 0, {
-    test: /\.svg$/,
+  return config
+}
+
+const addRawImages = () => (config) => {
+  const loaders = getLoaders(config)
+
+  loaders.splice(0, 0, {
+    test: /\.svg$/i,
     use: ['raw-loader'],
   })
 
-  config.plugins.push(new WorkerPlugin())
+  loaders.splice(0, 0, {
+    test: /\.(png|jpe?g|gif)$/i,
+    use: ['url-loader'],
+  })
 
   return config
 }
 
 module.exports = override(
   addWebpackPlugin(new AntdScssThemePlugin('./src/theme.scss')),
+  addWebpackPlugin(new WorkerPlugin()),
   fixBabelImports('import', {
     libraryName: 'antd',
     libraryDirectory: 'es',
     style: true,
   }),
   addLessLoader(),
+  addRawImages(),
   (config) => ({...config, target: 'electron-renderer'}),
 )
