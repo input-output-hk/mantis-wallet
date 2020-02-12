@@ -32,6 +32,7 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
 
   const nextButtonPropsToUse: ButtonProps = {
     type: 'primary',
+    htmlType: 'submit',
     size: 'large',
     children: 'Next →',
     ...nextButtonProps,
@@ -40,11 +41,13 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
   return (
     <div className={classnames('Dialog', type)}>
       {title && <div className="title">{title}</div>}
-      <div>{children}</div>
-      <div className="actions">
-        {!prevButtonProps.doNotRender && <Button {...prevButtonPropsToUse} />}
-        {!nextButtonProps.doNotRender && <Button {...nextButtonPropsToUse} />}
-      </div>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <div>{children}</div>
+        <div className="actions">
+          {!prevButtonProps.doNotRender && <Button {...prevButtonPropsToUse} />}
+          {!nextButtonProps.doNotRender && <Button {...nextButtonPropsToUse} />}
+        </div>
+      </form>
       {footer && <div className="footer">{footer}</div>}
     </div>
   )
