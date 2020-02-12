@@ -23,6 +23,7 @@ module.exports = {
     'camelcase': ['error', {properties: 'never', ignoreDestructuring: true, ignoreImports: false}],
     'quotes': ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
     'no-constant-condition': ['error', {checkLoops: false}],
+    'no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
     'no-eval': 'error',
     'no-loop-func': 'error',
     'no-empty-function': ['error', {allow: ['constructors']}],
@@ -75,6 +76,7 @@ module.exports = {
       extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint'],
       rules: {
         // TS
+        '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
         '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
         '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
         '@typescript-eslint/explicit-function-return-type': [

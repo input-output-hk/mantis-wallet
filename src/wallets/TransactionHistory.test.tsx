@@ -34,9 +34,14 @@ const tx2: Transaction = {
   hash: '2',
   txDirection: 'outgoing',
   txStatus: 'pending',
-  txValue: '123456789',
+  txValue: {
+    value: '123456789',
+    fee: '100',
+  },
   txDetails: {
     txType: 'call',
+    usedTransparentAccountIndex: 0,
+    transparentTransactionHash: '',
   },
 }
 

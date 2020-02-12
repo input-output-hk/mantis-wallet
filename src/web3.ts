@@ -13,26 +13,73 @@ export interface Balance {
   totalBalance: BigNumberJSON
 }
 
+export interface Account {
+  wallet: string
+  address: string
+  locked: boolean
+}
+
 export interface TransparentAddress {
   address: string
   index: number
 }
 
-// FIXME: Separate different tx types
-export interface Transaction {
-  hash: string // Hash of transaction
-  txDirection: 'incoming' | 'outgoing'
-  txStatus:
-    | 'pending'
-    | {
-        status: 'confirmed' | 'persisted'
-        atBlock?: string // hexadecimal value representing block at which transaction took place
-      }
-  txValue: string | {value: string; fee: string}
-  txDetails: {
-    txType: 'transfer' | 'coinbase' | 'redeem' | 'call'
-  }
+// Transaction
+
+interface ConfirmedTxStatus {
+  status: 'confirmed'
+  atBlock: string
 }
+interface PersistedTxStatus {
+  status: 'persisted'
+  atBlock: string
+}
+
+export type TxStatus = 'pending' | 'failed' | ConfirmedTxStatus | PersistedTxStatus
+
+interface RedeemTxDetails {
+  txType: 'redeem'
+  usedTransparentAccountIndex: number
+}
+
+interface CallTxDetails {
+  txType: 'call'
+  usedTransparentAccountIndex: number
+  transparentTransactionHash: string
+}
+
+interface TransferTxDetails {
+  txType: 'transfer'
+}
+
+interface CoinbaseTxDetails {
+  txType: 'coinbase'
+}
+
+// These can be either 'incoming' or 'outgoing'
+// Coinbase type is only 'incoming'
+export type TxDetailsIncAndOut = RedeemTxDetails | CallTxDetails | TransferTxDetails
+
+interface BaseTransaction {
+  hash: string
+  txStatus: TxStatus
+}
+
+interface IncomingTransaction extends BaseTransaction {
+  txDirection: 'incoming'
+  txValue: string
+  txDetails: CoinbaseTxDetails | TxDetailsIncAndOut
+}
+
+interface OutgoingTransaction extends BaseTransaction {
+  txDirection: 'outgoing'
+  txValue: {value: string; fee: string}
+  txDetails: TxDetailsIncAndOut
+}
+
+export type Transaction = IncomingTransaction | OutgoingTransaction
+
+// Secrets
 
 export interface PassphraseSecrets {
   passphrase: string
@@ -46,11 +93,7 @@ export interface SeedPhrase {
   seedPhrase: string[]
 }
 
-export interface Account {
-  wallet: string
-  address: string
-  locked: boolean
-}
+// SynchronizationStatus
 
 export interface SynchronizationStatusOffline {
   mode: 'offline'

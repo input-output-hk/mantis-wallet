@@ -1,12 +1,12 @@
 import React from 'react'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, object, text} from '@storybook/addon-knobs'
-import {Transaction} from '../web3'
+import {Transaction, TxStatus, TxDetailsIncAndOut} from '../web3'
+import {WalletState} from '../common/wallet-state'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import './TransactionHistory.scss'
-import {WalletState} from '../common/wallet-state'
 
 export default {
   title: 'Transaction History',
@@ -20,21 +20,34 @@ export const withNoTransactions = (): JSX.Element => (
 )
 
 const dummyTransactions = [...Array(10).keys()].slice(1).map(
-  (n): Transaction => ({
-    hash: n.toString(),
-    txDirection: Math.random() < 0.5 ? 'incoming' : 'outgoing',
-    txValue: (Math.random() * 100000000).toString(16),
-    txStatus:
-      Math.random() < 0.5
-        ? 'pending'
-        : {
-            status: 'confirmed',
-            atBlock: (Math.random() * 100000000).toString(16),
-          },
-    txDetails: {
-      txType: 'transfer',
-    },
-  }),
+  (n): Transaction => {
+    const isIncoming = Math.random() < 0.5
+    const value = (Math.random() * 100000000).toString(16)
+
+    const baseTx = {
+      hash: n.toString(),
+      txStatus:
+        Math.random() < 0.5
+          ? 'pending'
+          : ({
+              status: 'confirmed',
+              atBlock: (Math.random() * 100000000).toString(16),
+            } as TxStatus),
+      txDetails: {
+        txType: 'transfer',
+      } as TxDetailsIncAndOut,
+    }
+
+    if (isIncoming) {
+      return {...baseTx, txDirection: 'incoming', txValue: value}
+    } else {
+      return {
+        ...baseTx,
+        txDirection: 'outgoing',
+        txValue: {value, fee: (Math.random() * 100000000).toString(16)},
+      }
+    }
+  },
 )
 
 export const withDemoTransactions = (): JSX.Element => (
@@ -51,7 +64,10 @@ export const interactive = (): JSX.Element => {
           object<Transaction>('Transaction 1', {
             hash: '1',
             txDirection: 'outgoing',
-            txValue: (1000.0).toString(16),
+            txValue: {
+              value: (1000.0).toString(16),
+              fee: (1000.0).toString(16),
+            },
             txStatus: {
               status: 'confirmed',
               atBlock: '0x1',
