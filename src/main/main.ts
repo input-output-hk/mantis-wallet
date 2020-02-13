@@ -1,6 +1,6 @@
 // This file is an entry point to whole application, it simply doesn't make sense to keep it 100% pure
 /* eslint-disable fp/no-let, fp/no-mutation */
-import {app, BrowserWindow, dialog} from 'electron'
+import {app, BrowserWindow, dialog, globalShortcut, screen} from 'electron'
 import path from 'path'
 import url from 'url'
 import {spawn, exec} from 'child_process'
@@ -12,7 +12,6 @@ import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {promisify} from 'util'
-
 import {config} from '../config/main'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
 import {ClientName} from '../config/type'
@@ -23,11 +22,16 @@ import {ClientName} from '../config/type'
 let mainWindowHandle: BrowserWindow | null = null
 
 function createWindow(): void {
+  // Debug logs
+  const toLog = {
+    versions: process.versions,
+    config,
+  }
+  console.dir(toLog, {depth: 4})
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-  })
+  const {width, height} = screen.getPrimaryDisplay().workAreaSize
+  const mainWindow = new BrowserWindow({width, height})
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
@@ -43,13 +47,19 @@ function createWindow(): void {
     mainWindow.webContents.openDevTools()
   }
 
+  // Register Ctrl+D to open DevTools
+  globalShortcut.register('CommandOrControl+D', () => {
+    mainWindow.webContents.openDevTools()
+  })
+
   // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindowHandle = null
   })
+
   mainWindowHandle = mainWindow
 }
 
