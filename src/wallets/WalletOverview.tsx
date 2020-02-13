@@ -30,7 +30,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
   const total = pending.plus(confidential).plus(transparent)
   return (
     <div className="WalletOverview">
-      <div className="title">Overview Wallet</div>
+      <div className="title">Wallet Overview</div>
       <div className="refresh">
         <SVG src={refreshIcon} className="svg" onClick={refresh} />
       </div>
