@@ -4,4 +4,4 @@ import {Config} from './type'
 export const config: Config = remote.getGlobal('lunaConfig')
 
 // Set default zoom factor
-webFrame.setZoomFactor(0.8)
+if (webFrame) webFrame.setZoomFactor(0.8)
