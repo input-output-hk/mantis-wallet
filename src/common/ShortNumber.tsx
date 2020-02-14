@@ -1,11 +1,11 @@
 import React from 'react'
 import {Popover} from 'antd'
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import {abbreviateNumber, formatAmount} from './formatters'
 import {bigToNumber} from './util'
 
 interface ShortNumberProps {
-  big: Big
+  big: BigNumber
 }
 
 export const ShortNumber = (props: ShortNumberProps): JSX.Element => {

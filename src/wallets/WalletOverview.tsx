@@ -1,6 +1,6 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {WalletState} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
@@ -16,9 +16,9 @@ import transparentIcon from '../assets/icons/transparent.svg'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
-  pending: Big
-  confidential: Big
-  transparent: Big
+  pending: BigNumber
+  confidential: BigNumber
+  transparent: BigNumber
 }
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {

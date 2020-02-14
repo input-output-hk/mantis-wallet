@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
@@ -79,9 +79,9 @@ type WalletState =
 
 interface Overview {
   transactions: Transaction[]
-  transparentBalance: Big
-  availableBalance: Big
-  pendingBalance: Big
+  transparentBalance: BigNumber
+  availableBalance: BigNumber
+  pendingBalance: BigNumber
   transparentAddresses: TransparentAddress[]
   accounts: Account[]
 }
@@ -100,9 +100,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(none)
 
   // balance
-  const [totalBalanceOption, setTotalBalance] = useState<Option<Big>>(none)
-  const [availableBalanceOption, setAvailableBalance] = useState<Option<Big>>(none)
-  const [transparentBalanceOption, setTransparentBalance] = useState<Option<Big>>(none)
+  const [totalBalanceOption, setTotalBalance] = useState<Option<BigNumber>>(none)
+  const [availableBalanceOption, setAvailableBalance] = useState<Option<BigNumber>>(none)
+  const [transparentBalanceOption, setTransparentBalance] = useState<Option<BigNumber>>(none)
 
   // transactions
   const [transactionsOption, setTransactions] = useState<Option<Transaction[]>>(none)
@@ -116,9 +116,11 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
-    const transparentBalance = getOrElse((): Big => Big(0))(transparentBalanceOption)
-    const totalBalance = getOrElse((): Big => Big(0))(totalBalanceOption)
-    const availableBalance = getOrElse((): Big => Big(0))(availableBalanceOption)
+    const transparentBalance = getOrElse((): BigNumber => new BigNumber(0))(
+      transparentBalanceOption,
+    )
+    const totalBalance = getOrElse((): BigNumber => new BigNumber(0))(totalBalanceOption)
+    const availableBalance = getOrElse((): BigNumber => new BigNumber(0))(availableBalanceOption)
     const pendingBalance = totalBalance.minus(availableBalance)
 
     const accounts = getOrElse((): Account[] => [])(accountsOption)
@@ -177,7 +179,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const errorMsg = getOrElse((): string => 'Unknown error')(errorMsgOption)
 
-  const loadTransparentBalance = async (): Promise<Big> => {
+  const loadTransparentBalance = async (): Promise<BigNumber> => {
     // get every transparent address
     const transparentAddresses: TransparentAddress[] = await loadAll(
       wallet.listTransparentAddresses,
@@ -194,7 +196,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     )
     return balances
       .map((balance) => deserializeBigNumber(balance.availableBalance))
-      .reduce((prev: Big, current: Big) => prev.plus(current), Big(0))
+      .reduce((prev: BigNumber, current: BigNumber) => prev.plus(current), new BigNumber(0))
   }
 
   const load = (): void => {
