@@ -36,7 +36,7 @@ const App: React.FC = () => {
           <WalletState.Provider>
             <SyncStatus />
             {Object.values(ROUTES).map((route) => (
-              <Route key={route.path} path={route.path} component={route.component} />
+              <Route exact key={route.path} path={route.path} component={route.component} />
             ))}
           </WalletState.Provider>
         </main>
