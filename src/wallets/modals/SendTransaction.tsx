@@ -11,6 +11,7 @@ import {Account} from '../../web3'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useIsMounted} from '../../common/hook-utils'
 import './SendTransaction.scss'
+import {hasMaxDecimalPlaces} from '../../common/util'
 
 interface SendTransactionProps {
   accounts: Account[]
@@ -19,11 +20,14 @@ interface SendTransactionProps {
 
 const validateAmount = (v: string): string => {
   const n = new BigNumber(v)
-  return !n.isFinite() || !n.isGreaterThan(new BigNumber(0))
-    ? 'Must be a number greater than 0'
-    : n.modulo('0.000001').isZero()
-    ? ''
-    : 'At most 6 decimal places are permitted'
+
+  if (!n.isFinite() || !n.isGreaterThan(new BigNumber(0))) {
+    return 'Must be a number greater than 0'
+  } else if (!hasMaxDecimalPlaces(n, 6)) {
+    return 'At most 6 decimal places are permitted'
+  } else {
+    return ''
+  }
 }
 
 export const SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({

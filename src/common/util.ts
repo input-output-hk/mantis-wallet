@@ -10,6 +10,11 @@ export function bigToNumber(bigNumber: BigNumber): number {
   return parseFloat(bigNumber.toFixed(10))
 }
 
+export function hasMaxDecimalPlaces(bigNumber: BigNumber, decimalPlaces: number): boolean {
+  const mod = new BigNumber(`0.${''.padStart(decimalPlaces - 1, '0')}1`)
+  return bigNumber.modulo(mod).isZero()
+}
+
 export const loadAll = async <T>(
   fn: Comlink.Remote<PaginatedCallable<T>>,
   drop = 0,

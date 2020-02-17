@@ -13,7 +13,7 @@ export const ShortNumber = ({big, dp = 6}: ShortNumberProps): JSX.Element => {
   const dust = fromWei(big)
 
   return (
-    <Popover content={formatAmount(dust)} placement="bottom">
+    <Popover content={formatAmount(dust, dp, 'relaxed')} placement="bottom">
       {abbreviateAmount(dust, dp)}
     </Popover>
   )
