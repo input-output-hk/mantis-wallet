@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {BrowserRouter, Route} from 'react-router-dom'
+import {BrowserRouter, Route, Redirect} from 'react-router-dom'
 import {WalletState} from './common/wallet-state'
 import {ROUTES} from './routes-config'
 import {Sidebar} from './layout/Sidebar'
@@ -29,17 +29,18 @@ const App: React.FC = () => {
   return isBackendRunning ? (
     <div className="App">
       <BrowserRouter>
-        <header className="App-header">
-          <Sidebar />
-        </header>
-        <main>
-          <WalletState.Provider>
+        <Redirect exact from="/" to={ROUTES.WALLETS.path} />
+        <WalletState.Provider>
+          <header className="App-header">
+            <Sidebar />
+          </header>
+          <main>
             <SyncStatus />
             {Object.values(ROUTES).map((route) => (
               <Route exact key={route.path} path={route.path} component={route.component} />
             ))}
-          </WalletState.Provider>
-        </main>
+          </main>
+        </WalletState.Provider>
       </BrowserRouter>
     </div>
   ) : (

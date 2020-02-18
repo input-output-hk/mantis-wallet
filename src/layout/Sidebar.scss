@@ -71,5 +71,22 @@
     font-weight: bold;
     letter-spacing: 1.8px;
     text-transform: uppercase;
+
+    .link {
+      cursor: pointer;
+
+      &:hover {
+        color: $primary-color;
+      }
+
+      &.disabled {
+        opacity: 0.3;
+        cursor: default;
+
+        &:hover {
+          color: $text-color;
+        }
+      }
+    }
   }
 }

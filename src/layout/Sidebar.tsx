@@ -1,11 +1,26 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {NavLink} from 'react-router-dom'
 import SVG from 'react-inlinesvg'
+import classnames from 'classnames'
+import {WalletState, canRemoveWallet} from '../common/wallet-state'
 import {ROUTES} from '../routes-config'
+import {LogOutModal} from '../wallets/modals/LogOutModal'
 import lunaLogo from '../assets/luna-small.svg'
 import './Sidebar.scss'
 
 export const Sidebar = (): JSX.Element => {
+  const [showLogOutModal, setShowLogOutModal] = useState(false)
+
+  const walletState = WalletState.useContainer()
+
+  const logOut = canRemoveWallet(walletState) ? (
+    <span className="link" onClick={() => setShowLogOutModal(true)}>
+      Log Out
+    </span>
+  ) : (
+    <span className={classnames('link', 'disabled')}>Log Out</span>
+  )
+
   return (
     <div className="Sidebar">
       <div className="logo">
@@ -34,7 +49,18 @@ export const Sidebar = (): JSX.Element => {
           </ul>
         </nav>
       </div>
-      <div className="footer">Support | Log Out</div>
+      <div className="footer">Support | {logOut}</div>
+      {canRemoveWallet(walletState) && (
+        <LogOutModal
+          visible={showLogOutModal}
+          onLogOut={async (passphrase: string): Promise<boolean> => {
+            const removed = await walletState.remove({passphrase})
+            if (removed) setShowLogOutModal(false)
+            return removed
+          }}
+          onCancel={() => setShowLogOutModal(false)}
+        />
+      )}
     </div>
   )
 }

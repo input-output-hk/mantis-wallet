@@ -33,6 +33,7 @@ interface LoadedState {
   syncStatus: SynchronizationStatus
   getOverviewProps: () => Overview
   reset: () => void
+  remove: (secrets: PassphraseSecrets) => Promise<boolean>
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
@@ -41,6 +42,7 @@ interface LoadedState {
 interface LockedState {
   walletStatus: 'LOCKED'
   reset: () => void
+  remove: (secrets: PassphraseSecrets) => Promise<boolean>
   unlock: (secrets: PassphraseSecrets) => Promise<boolean>
 }
 
@@ -56,6 +58,7 @@ interface ErrorState {
   walletStatus: 'ERROR'
   errorMsg: string
   reset: () => void
+  remove: (secrets: PassphraseSecrets) => Promise<boolean>
 }
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'LOCKED' | 'NO_WALLET' | 'ERROR'
@@ -75,6 +78,13 @@ interface Overview {
   transparentAddresses: TransparentAddress[]
   accounts: Account[]
 }
+
+export const canRemoveWallet = (
+  walletState: WalletState,
+): walletState is LoadedState | LockedState | ErrorState =>
+  walletState.walletStatus === 'LOADED' ||
+  walletState.walletStatus === 'LOCKED' ||
+  walletState.walletStatus === 'ERROR'
 
 function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletState {
   // wallet status
@@ -266,6 +276,12 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     return response
   }
 
+  const remove = async (secrets: PassphraseSecrets): Promise<boolean> => {
+    const removed = await wallet.remove(secrets)
+    if (removed) reset()
+    return removed
+  }
+
   return {
     walletStatus,
     errorMsg,
@@ -279,6 +295,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     unlock,
     restoreFromSpendingKey,
     restoreFromSeedPhrase,
+    remove,
   }
 }
 
