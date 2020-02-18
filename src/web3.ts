@@ -134,6 +134,7 @@ export interface WalletAPI {
 
   listAccounts(): Account[]
   getSynchronizationStatus(): SynchronizationStatus
+  getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
 }
 
 interface Web3API {

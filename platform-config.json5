@@ -2,4 +2,8 @@
   //Development configuration overrides
   "openDevTools": true,
   "dataDir": "~/.luna-dev",
+  "provers": [{
+    "name": "Prover 1",
+    "address": "http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com:5047",
+  }]
 }

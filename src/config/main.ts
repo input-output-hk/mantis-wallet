@@ -8,7 +8,20 @@ import convict from 'convict'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
-import {ClientName, Config, ProcessConfig} from './type'
+import {ClientName, Config, ProcessConfig, ProverConfig} from './type'
+
+const proverConfig: convict.Schema<ProverConfig> = {
+  name: {
+    default: '',
+    doc: `Name of the prover`,
+    format: 'url',
+  },
+  address: {
+    default: '',
+    doc: `Address of the prover`,
+    format: 'url',
+  },
+}
 
 convict.addFormats({
   ['existing-directory']: {
@@ -49,6 +62,25 @@ convict.addFormats({
       } else {
         throw new Error(`Couldn't parse ${JSON.stringify(val)} to settings map`)
       }
+    },
+  },
+  ['list-of-provers']: {
+    validate(val: unknown): void {
+      if (!_.isArray(val)) {
+        throw new Error('Must be of type Array')
+      }
+
+      val.forEach((possibleProver) => {
+        convict(proverConfig)
+          .load(possibleProver)
+          .validate()
+        if (!possibleProver.address) {
+          throw new Error("Address shouldn't be empty for prover")
+        }
+        if (!possibleProver.name) {
+          throw new Error("Name shouldn't be empty for prover")
+        }
+      })
     },
   },
 })
@@ -100,6 +132,13 @@ const configGetter = convict({
     arg: 'rpc-address',
     env: 'LUNA_RPC_ADDRESS',
     doc: "Address where is available Wallet Backend's RPC",
+  },
+  provers: {
+    default: [],
+    format: 'list-of-provers',
+    arg: 'provers',
+    env: 'LUNA_PROVERS',
+    doc: 'A list of provers.',
   },
   openDevTools: {
     default: false,

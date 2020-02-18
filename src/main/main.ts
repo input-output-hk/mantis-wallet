@@ -31,7 +31,10 @@ function createWindow(): void {
 
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
-  const mainWindow = new BrowserWindow({width, height})
+  const mainWindow = new BrowserWindow({
+    width,
+    height,
+  })
 
   const startUrl =
     process.env.ELECTRON_START_URL ||

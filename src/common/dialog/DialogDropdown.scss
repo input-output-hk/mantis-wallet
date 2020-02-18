@@ -10,6 +10,10 @@
     font-size: 13px;
     font-weight: bold;
     white-space: nowrap;
+
+    &.no-option {
+      opacity: $secondary-opacity;
+    }
   }
 
   .label {

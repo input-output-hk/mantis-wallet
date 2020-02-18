@@ -1,0 +1,28 @@
+@import '../theme.scss';
+
+.ProofOfBurn {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  padding: 36px;
+
+  .title {
+    margin: 0;
+    overflow: hidden;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.46px;
+  }
+
+  .burn-watcher {
+    margin-top: 15px;
+  }
+
+  .burn-address {
+    margin: 0;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.46px;
+  }
+}

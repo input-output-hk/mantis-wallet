@@ -1,22 +1,40 @@
 import React, {useState} from 'react'
+import _ from 'lodash/fp'
 import {Dropdown, Menu} from 'antd'
 import './DialogDropdown.scss'
 
+interface DialogDropdownOption {
+  key: string
+  label: string
+}
+
 interface DialogDropdownProps {
   label: string
-  options: string[]
+  options: Array<DialogDropdownOption | string>
+  onChange?: (option: string) => void
 }
 
 export const DialogDropdown: React.FunctionComponent<DialogDropdownProps> = ({
   label,
   options,
+  onChange,
 }: DialogDropdownProps) => {
-  const [activeOption, setActiveOption] = useState(options[0])
+  const trueOptions: DialogDropdownOption[] = options.map((option) =>
+    _.isString(option) ? {key: option, label: option} : option,
+  )
+  const [activeOption, setActiveOption] = useState(trueOptions[0])
+
+  const handleClick = (option: DialogDropdownOption) => () => {
+    setActiveOption(option)
+    if (onChange) onChange(option.key)
+  }
 
   const menu = (
-    <Menu onClick={({key}): void => setActiveOption(key)}>
-      {options.map((option) => (
-        <Menu.Item key={option}>{option}</Menu.Item>
+    <Menu>
+      {trueOptions.map(({key, label}) => (
+        <Menu.Item key={key} onClick={handleClick({key, label})}>
+          {label}
+        </Menu.Item>
       ))}
     </Menu>
   )
@@ -26,7 +44,11 @@ export const DialogDropdown: React.FunctionComponent<DialogDropdownProps> = ({
       <Dropdown overlay={menu} overlayClassName="DialogDropdownOverlay">
         <span className="label">{label} ▼ </span>
       </Dropdown>
-      <div className="active-option">{activeOption}</div>
+      {activeOption ? (
+        <div className="active-option">{activeOption.label}</div>
+      ) : (
+        <div className="active-option no-option">Choose from list...</div>
+      )}
     </div>
   )
 }

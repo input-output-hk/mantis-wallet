@@ -31,12 +31,19 @@ interface LoadingState {
 interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
+  transparentAddresses: TransparentAddress[]
   getOverviewProps: () => Overview
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
+  getBurnAddress: (
+    address: string,
+    chainId: number,
+    reward: number,
+    autoConversion: boolean,
+  ) => Promise<string>
 }
 
 interface LockedState {
@@ -104,6 +111,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   const [transparentAddressesOption, setTransparentAddresses] = useState<
     Option<TransparentAddress[]>
   >(none)
+  const transparentAddresses = getOrElse((): TransparentAddress[] => [])(transparentAddressesOption)
   const [accountsOption, setAccounts] = useState<Option<Account[]>>(none)
 
   const getOverviewProps = (): Overview => {
@@ -113,9 +121,6 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     const availableBalance = getOrElse((): Big => Big(0))(availableBalanceOption)
     const pendingBalance = totalBalance.minus(availableBalance)
 
-    const transparentAddresses = getOrElse((): TransparentAddress[] => [])(
-      transparentAddressesOption,
-    )
     const accounts = getOrElse((): Account[] => [])(accountsOption)
 
     return {
@@ -282,6 +287,13 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     return removed
   }
 
+  const getBurnAddress = async (
+    address: string,
+    chainId: number,
+    reward: number,
+    autoConversion: boolean,
+  ): Promise<string> => wallet.getBurnAddress(address, chainId, reward, autoConversion)
+
   return {
     walletStatus,
     errorMsg,
@@ -296,6 +308,8 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     restoreFromSpendingKey,
     restoreFromSeedPhrase,
     remove,
+    getBurnAddress,
+    transparentAddresses,
   }
 }
 

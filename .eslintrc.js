@@ -20,7 +20,6 @@ module.exports = {
     },
   },
   rules: {
-    'camelcase': ['error', {properties: 'never', ignoreDestructuring: true, ignoreImports: false}],
     'quotes': ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
     'no-constant-condition': ['error', {checkLoops: false}],
     'no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
@@ -31,6 +30,7 @@ module.exports = {
     'space-infix-ops': 'error',
     'prefer-template': 'error',
     'no-useless-concat': 'error',
+    'camelcase': 0,
     'no-use-before-define': 0,
     'max-len': 0,
     'no-console': 0,
@@ -79,6 +79,10 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
         '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
         '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
+        '@typescript-eslint/camelcase': [
+          'error',
+          {properties: 'never', ignoreDestructuring: true, ignoreImports: false},
+        ],
         '@typescript-eslint/explicit-function-return-type': [
           'error',
           {

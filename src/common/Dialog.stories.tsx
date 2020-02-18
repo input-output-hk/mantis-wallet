@@ -78,7 +78,18 @@ export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Dropdown">
     <DialogDropdown
       label={text('Dropdown label', 'Hover me')}
-      options={array('Dropdown options', ['first', 'second', 'third'])}
+      options={[
+        {
+          key: text('First key', 'First key'),
+          label: text('First label', 'First label'),
+        },
+        {
+          key: text('Second key', 'Second key'),
+          label: text('Second label', 'Second label'),
+        },
+        text('Simple string option', 'Simple string option'),
+      ]}
+      onChange={action('on-change')}
     />
   </Dialog>
 )

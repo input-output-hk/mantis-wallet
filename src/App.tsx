@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {BrowserRouter, Route, Redirect} from 'react-router-dom'
 import {WalletState} from './common/wallet-state'
+import {ProofOfBurnState} from './pob/pob-state'
 import {ROUTES} from './routes-config'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
@@ -35,10 +36,12 @@ const App: React.FC = () => {
             <Sidebar />
           </header>
           <main>
-            <SyncStatus />
-            {Object.values(ROUTES).map((route) => (
-              <Route exact key={route.path} path={route.path} component={route.component} />
-            ))}
+            <ProofOfBurnState.Provider>
+              <SyncStatus />
+              {Object.values(ROUTES).map((route) => (
+                <Route exact key={route.path} path={route.path} component={route.component} />
+              ))}
+            </ProofOfBurnState.Provider>
           </main>
         </WalletState.Provider>
       </BrowserRouter>

@@ -8,6 +8,7 @@ import menuPobIcon from './assets/icons/menu-pob.svg'
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuGlacierIcon from './assets/icons/menu-glacier.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
+import {ProofOfBurn} from './pob/ProofOfBurn'
 
 interface Routes {
   [key: string]: Route
@@ -52,7 +53,7 @@ export const ROUTES: Routes = {
     title: 'Proof of Burn',
     path: '/proof-of-burn',
     icon: menuPobIcon,
-    component: Unimplemented,
+    component: ProofOfBurn,
   },
   GLACIER_DROP: {
     title: 'Glacier Drop',
