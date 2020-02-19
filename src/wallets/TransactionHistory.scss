@@ -1,4 +1,4 @@
-@import '../theme.scss';
+@import '../themify', '../vars';
 
 .ReceiveModalFooter {
   padding: 24px 0;
@@ -26,7 +26,10 @@
   margin: 0 36px 100px 36px;
 
   .svg {
-    fill: $text-color;
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
   }
 
   .toolbar {
@@ -48,9 +51,12 @@
       height: 1px;
       margin: 15px 15px 0;
       opacity: $secondary-opacity;
-      background-color: $border-color-base;
       line-height: 1px;
       vertical-align: middle;
+
+      @include themify($themes) {
+        background-color: themed('border-color-base');
+      }
     }
 
     .sort-by {
@@ -118,11 +124,15 @@
       .line {
         height: 106px;
         padding-top: 24px;
-        border-bottom: 1px solid rgba($color: $tertiary-background, $alpha: $secondary-opacity);
         font-size: 13px;
         letter-spacing: 0.3px;
         line-height: 44px;
         vertical-align: middle;
+
+        @include themify($themes) {
+          border-bottom: 1px solid
+            rgba($color: themed('tertiary-background'), $alpha: $secondary-opacity);
+        }
 
         .type-icon {
           display: inline-block;
@@ -139,7 +149,9 @@
         }
 
         .check {
-          fill: $success-color;
+          @include themify($themes) {
+            fill: themed('success-color');
+          }
         }
 
         .dust {
@@ -149,9 +161,12 @@
         .amount {
           display: inline-block;
           padding: 0 10px;
-          background-color: $secondary-background;
           font-weight: bold;
           line-height: 32px;
+
+          @include themify($themes) {
+            background-color: themed('secondary-background');
+          }
         }
       }
     }
@@ -161,7 +176,9 @@
 .SortByDropdown {
   .ant-dropdown-menu-item {
     &:hover {
-      background-color: $primary-color;
+      @include themify($themes) {
+        background-color: themed('primary-color');
+      }
     }
   }
 }

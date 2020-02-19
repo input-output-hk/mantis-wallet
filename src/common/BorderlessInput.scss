@@ -1,10 +1,15 @@
-@import '../theme.scss';
+@import '../themify';
 
 .BorderlessInput {
   position: relative;
 
   .ant-input {
     border: 0;
+
+    @include themify($themes) {
+      background-color: themed('normal-color');
+      color: themed('text-color');
+    }
 
     &:hover {
       border: 0;
@@ -17,7 +22,9 @@
 
   &.invalid {
     .ant-input {
-      border: 1px solid $error-color;
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+      }
     }
   }
 }

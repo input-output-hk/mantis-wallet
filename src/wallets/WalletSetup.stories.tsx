@@ -4,15 +4,16 @@ import {action} from '@storybook/addon-actions'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletRestore} from './WalletRestore'
 import {WalletCreate} from './WalletCreate'
+import {withTheme} from '../storybook-util/theme-switcher'
+import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
-import {WalletState} from '../common/wallet-state'
 
 export default {
   title: 'Wallet Setup',
-  decorators: [withKnobs],
+  decorators: [withWalletState, withTheme, withKnobs],
 }
 
 export const showPathChooser = (): JSX.Element => (
@@ -23,15 +24,11 @@ export const showPathChooser = (): JSX.Element => (
 )
 
 export const showWalletRestore = (): JSX.Element => (
-  <WalletState.Provider>
-    <WalletRestore cancel={action('Cancel Restore')} finish={action('Finished Restore')} />
-  </WalletState.Provider>
+  <WalletRestore cancel={action('Cancel Restore')} finish={action('Finished Restore')} />
 )
 
 export const showWalletCreate = (): JSX.Element => (
-  <WalletState.Provider>
-    <WalletCreate cancel={action('Cancel Create')} finish={action('Finished Create')} />
-  </WalletState.Provider>
+  <WalletCreate cancel={action('Cancel Create')} finish={action('Finished Create')} />
 )
 
 export const showWalletCreateDefineStep = (): JSX.Element => (

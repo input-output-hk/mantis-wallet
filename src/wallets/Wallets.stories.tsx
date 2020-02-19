@@ -1,11 +1,12 @@
 import React from 'react'
 import {withKnobs, text} from '@storybook/addon-knobs'
 import {BrowserRouter} from 'react-router-dom'
+import {withTheme} from '../storybook-util/theme-switcher'
 import {WalletListSidebar} from './WalletListSidebar'
 
 export default {
   title: 'Wallets',
-  decorators: [withKnobs],
+  decorators: [withTheme, withKnobs],
 }
 
 export const walletList = (): JSX.Element => (

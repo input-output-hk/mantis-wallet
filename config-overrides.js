@@ -50,7 +50,7 @@ const addRawImages = () => (config) => {
 }
 
 module.exports = override(
-  addWebpackPlugin(new AntdScssThemePlugin('./src/theme.scss')),
+  addWebpackPlugin(new AntdScssThemePlugin('./src/vars.scss')),
   addWebpackPlugin(new WorkerPlugin()),
   fixBabelImports('import', {
     libraryName: 'antd',

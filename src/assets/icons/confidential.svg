@@ -1,1 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16"><g><g><path fill="none" stroke="#f7f7f7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="50" stroke-width="2" d="M2.513 7.256h9.176c.724 0 1.311.587 1.311 1.31v4.589a1.31 1.31 0 0 1-1.31 1.31H2.512a1.31 1.31 0 0 1-1.311-1.31V8.567c0-.724.587-1.311 1.31-1.311z"/></g><g><path fill="none" stroke="#f7f7f7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="50" stroke-width="2" d="M3.824 7.256v0-2.622a3.277 3.277 0 0 1 6.554 0v2.622"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg20"
+   version="1.1"
+   viewBox="0 0 14 16"
+   height="16"
+   width="14">
+  <metadata
+     id="metadata26">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs24" />
+  <g
+     id="g18"
+     >
+      <g
+         id="g12"
+         style="stroke-opacity:1;fill:none;fill-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
+        <path
+           fill="none"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           stroke-miterlimit="50"
+           stroke-width="2"
+           d="M2.513 7.256h9.176c.724 0 1.311.587 1.311 1.31v4.589a1.31 1.31 0 0 1-1.31 1.31H2.512a1.31 1.31 0 0 1-1.311-1.31V8.567c0-.724.587-1.311 1.31-1.311z"
+           id="path10"
+           style="stroke-opacity:1;fill:none;fill-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none" />
+      </g>
+      <g
+         id="g16"
+         style="stroke-opacity:1;fill:none;fill-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
+        <path
+           fill="none"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           stroke-miterlimit="50"
+           stroke-width="2"
+           d="M3.824 7.256v0-2.622a3.277 3.277 0 0 1 6.554 0v2.622"
+           id="path14"
+           style="stroke-opacity:1;fill:none;fill-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none" />
+      </g>
+  </g>
+</svg>

@@ -3,8 +3,10 @@ import SVG from 'react-inlinesvg'
 import Big from 'big.js'
 import _ from 'lodash'
 import {Transaction} from '../web3'
+import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
-import dustLogo from '../assets/dust_logo.png'
+import dustIconDark from '../assets/dark/dust.png'
+import dustIconLight from '../assets/light/dust.png'
 import incomingIcon from '../assets/icons/incoming.svg'
 import outgoingIcon from '../assets/icons/outgoing.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
@@ -14,6 +16,9 @@ import arrowDownIcon from '../assets/icons/arrow-down.svg'
 
 export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element => {
   const {txDetails, txDirection, txStatus, txValue} = transaction
+
+  const themeState = ThemeState.useContainer()
+  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
 
   const value = typeof txValue === 'string' ? txValue : txValue.value
   const status = typeof txStatus === 'string' ? txStatus : txStatus.status
@@ -33,7 +38,7 @@ export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.E
         </span>
       </td>
       <td className="line">
-        <img src={dustLogo} alt="dust" className="dust" />
+        <img src={dustIcon} alt="dust" className="dust" />
         <span>DUST</span>
       </td>
       <td className="line">

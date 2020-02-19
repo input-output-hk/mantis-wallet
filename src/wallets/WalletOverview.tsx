@@ -3,10 +3,12 @@ import SVG from 'react-inlinesvg'
 import Big from 'big.js'
 import _ from 'lodash'
 import {WalletState} from '../common/wallet-state'
+import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {bigToNumber} from '../common/util'
 import {OverviewGraph} from './OverviewGraph'
-import dustLogo from '../assets/dust_logo.png'
+import dustIconDark from '../assets/dark/dust.png'
+import dustIconLight from '../assets/light/dust.png'
 import refreshIcon from '../assets/icons/refresh.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
@@ -21,6 +23,8 @@ interface WalletOverviewProps {
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
   const state = WalletState.useContainer()
+  const themeState = ThemeState.useContainer()
+  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
 
   const refresh = (): void => {
     if (state.walletStatus === 'LOADED') state.reset()
@@ -40,7 +44,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
       <div className="total">
         <div className="box-text">Total Balance</div>
         <div className="box-amount-big">
-          <img src={dustLogo} alt="dust" className="dust" />
+          <img src={dustIcon} alt="dust" className="dust" />
           <ShortNumber big={total} />
         </div>
         <div className="box-text">
@@ -60,7 +64,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
           Confidential
         </div>
         <div className="box-amount">
-          <img src={dustLogo} alt="dust" className="dust" />
+          <img src={dustIcon} alt="dust" className="dust" />
           <ShortNumber big={confidential} />
         </div>
       </div>
@@ -74,7 +78,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
           Transparent
         </div>
         <div className="box-amount">
-          <img src={dustLogo} alt="dust" className="dust" />
+          <img src={dustIcon} alt="dust" className="dust" />
           <ShortNumber big={transparent} />
         </div>
       </div>

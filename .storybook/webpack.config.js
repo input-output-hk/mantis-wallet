@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const path = require('path')
 
 module.exports = ({config}) => {
-  config.plugins.push(new AntdScssThemePlugin('./src/theme.scss'))
+  config.plugins.push(new AntdScssThemePlugin('./src/vars.scss'))
   config.plugins.push(
     new webpack.NormalModuleReplacementPlugin(
       /electron$/,

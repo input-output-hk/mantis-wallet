@@ -8,6 +8,7 @@ import {
   Account,
   SynchronizationStatus,
 } from '../web3'
+import {ThemeState} from '../theme-state'
 import {WalletState} from '../common/wallet-state'
 import {DialogInput} from '../common/dialog/DialogInput'
 
@@ -16,6 +17,7 @@ const wallet = web3.midnight.wallet
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
   const state = WalletState.useContainer()
+  const themeState = ThemeState.useContainer()
 
   const [message, setMessage] = useState<string>('')
 
@@ -54,7 +56,6 @@ export const ApiTest = (): JSX.Element => {
   const TestButton = (props: any): JSX.Element => {
     return (
       <Button
-        className="download"
         type="primary"
         style={{display: 'block', marginBottom: '0.5rem'}}
         onClick={call(props.onClick)}
@@ -65,7 +66,7 @@ export const ApiTest = (): JSX.Element => {
   }
 
   return (
-    <div style={{color: 'white', margin: '4rem'}}>
+    <div style={{margin: '4rem'}}>
       <h1>Api Test Interface</h1>
 
       <div style={{marginBottom: '1rem'}}>
@@ -120,6 +121,13 @@ export const ApiTest = (): JSX.Element => {
         >
           Sync Status
         </TestButton>
+        <Button
+          type="primary"
+          style={{display: 'block', marginBottom: '0.5rem'}}
+          onClick={() => themeState.switchTheme(themeState.theme === 'dark' ? 'light' : 'dark')}
+        >
+          Switch Theme
+        </Button>
       </div>
 
       <div>

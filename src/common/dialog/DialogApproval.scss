@@ -1,16 +1,22 @@
-@import '../../theme.scss';
+@import '../../themify', '../../vars';
 
 .DialogApproval {
   margin-bottom: 20px;
   padding: 20px 13px;
-  background-color: $normal-color;
+
+  @include themify($themes) {
+    background-color: themed('normal-color');
+  }
 
   .checkbox {
     display: grid;
     grid-column-gap: 5px;
     grid-template-columns: auto 1fr;
-    color: rgba($color: $text-color, $alpha: $secondary-opacity);
     font-size: 13px;
+
+    @include themify($themes) {
+      color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+    }
 
     .ant-checkbox {
       align-self: center;

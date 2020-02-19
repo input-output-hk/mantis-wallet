@@ -1,4 +1,4 @@
-@import '../theme.scss';
+@import '../themify';
 
 .SyncStatus {
   position: absolute;
@@ -6,5 +6,8 @@
   right: 0;
   bottom: 0;
   padding: 1rem;
-  background-color: $secondary-background;
+
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+  }
 }

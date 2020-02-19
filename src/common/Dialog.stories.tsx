@@ -3,6 +3,7 @@ import _ from 'lodash/fp'
 import {Option, none, some} from 'fp-ts/lib/Option'
 import {withKnobs, text, boolean, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
+import {withTheme} from '../storybook-util/theme-switcher'
 import {Dialog} from './Dialog'
 import {DialogApproval} from './dialog/DialogApproval'
 import {DialogInput} from './dialog/DialogInput'
@@ -20,7 +21,7 @@ import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 
 export default {
   title: 'Dialog',
-  decorators: [withKnobs],
+  decorators: [withTheme, withKnobs],
 }
 
 export const InteractiveDialog: React.FunctionComponent<{}> = () => (

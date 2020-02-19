@@ -4,6 +4,7 @@ import Big from 'big.js'
 import {render} from '@testing-library/react'
 import {WalletOverview} from './WalletOverview'
 import {WalletState} from '../common/wallet-state'
+import {ThemeState} from '../theme-state'
 import {abbreviateNumber} from '../common/formatters'
 import {bigToNumber} from '../common/util'
 
@@ -22,9 +23,11 @@ test('WalletOverview shows properly formatted balance', () => {
   }
 
   const {getByText} = render(
-    <WalletState.Provider>
-      <WalletOverview {...balance} />
-    </WalletState.Provider>,
+    <ThemeState.Provider>
+      <WalletState.Provider>
+        <WalletOverview {...balance} />
+      </WalletState.Provider>
+    </ThemeState.Provider>,
   )
 
   const numbers = Object.values({...balance, total}).map((big) => bigToNumber(big))

@@ -1,4 +1,4 @@
-@import '../../theme.scss';
+@import '../../themify', '../../vars';
 
 .DialogRecoveryPhrase {
   margin-bottom: 20px;
@@ -11,12 +11,17 @@
   .input {
     height: 80px;
     padding: 20px 13px;
-    background-color: $normal-color;
     font-size: 13px;
     font-weight: bold;
 
+    @include themify($themes) {
+      background-color: themed('normal-color');
+    }
+
     &.invalid {
-      border: 1px solid $error-color;
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+      }
     }
   }
 
@@ -40,12 +45,15 @@
 
     .word {
       height: 30px;
-      background-color: $secondary-background;
       font-size: 13px;
       font-weight: bold;
       line-height: 30px;
       text-align: center;
       cursor: pointer;
+
+      @include themify($themes) {
+        background-color: themed('secondary-background');
+      }
     }
 
     .used-word {
@@ -57,7 +65,9 @@
     }
 
     .check {
-      fill: $success-color;
+      @include themify($themes) {
+        fill: themed('success-color');
+      }
     }
   }
 }

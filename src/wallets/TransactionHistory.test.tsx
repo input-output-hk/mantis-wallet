@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import {TransactionHistory} from './TransactionHistory'
 import {Transaction, Account} from '../web3'
 import {WalletState} from '../common/wallet-state'
+import {ThemeState} from '../theme-state'
 
 jest.mock('react-inlinesvg', () => {
   return function SVG(props: {title: string}): JSX.Element {
@@ -54,7 +55,11 @@ const accounts: Account[] = [
 ]
 
 const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNode}) => {
-  return <WalletState.Provider>{children}</WalletState.Provider>
+  return (
+    <ThemeState.Provider>
+      <WalletState.Provider>{children}</WalletState.Provider>
+    </ThemeState.Provider>
+  )
 }
 
 const wrappedRender = (ui: React.ReactElement): RenderResult => render(ui, {wrapper: WithProviders})

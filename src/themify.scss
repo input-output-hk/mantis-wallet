@@ -1,0 +1,35 @@
+@import 'themes';
+
+@mixin themify($themes: $themes) {
+  // iterate over every defined theme
+  @each $theme, $map in $themes {
+    .theme-#{$theme} & {
+      // create global $theme-map to use in the scope of themed()
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), '#{$key}');
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+
+      // output themed content
+      @content;
+
+      // unset $theme-map to make it inaccessible in outer styles
+      $theme-map: null !global;
+    }
+  }
+}
+
+@function themed($key) {
+  // throw error if $key is not defined in the theme
+  @if not map-has-key($theme-map, $key) {
+    @error "Unknown theme key " + $key;
+  }
+
+  @return map-get($theme-map, $key);
+}

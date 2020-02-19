@@ -34,7 +34,6 @@
          stroke-miterlimit="50"
          stroke-linejoin="round"
          stroke-linecap="round"
-         stroke="#f7f7f7"
          fill="none" />
     </g>
     <g
@@ -44,7 +43,6 @@
          id="g16">
         <path
            fill="none"
-           stroke="#f7f7f7"
            stroke-linecap="round"
            stroke-linejoin="round"
            stroke-miterlimit="50"
@@ -55,7 +53,6 @@
          id="g20">
         <path
            fill="none"
-           stroke="#f7f7f7"
            stroke-linecap="round"
            stroke-linejoin="round"
            stroke-miterlimit="50"

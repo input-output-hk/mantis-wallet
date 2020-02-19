@@ -1,4 +1,4 @@
-@import './theme.scss';
+@import './themify', './vars';
 
 *,
 ::before,
@@ -7,7 +7,15 @@
 }
 
 a {
-  color: $link-color;
+  @include themify($themes) {
+    color: themed('link-color');
+  }
+
+  &:hover {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
 }
 
 body {
@@ -17,7 +25,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
+code,
+pre {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
@@ -26,12 +35,16 @@ div#root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: $secondary-background;
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+  }
 }
 
 ::-webkit-scrollbar-track {
   margin: 10px;
-  background-color: $border-color-base;
+  @include themify($themes) {
+    background-color: themed('border-color-base');
+  }
 }
 
 ::-webkit-scrollbar {
@@ -39,22 +52,45 @@ div#root {
   height: 5px;
 }
 
+//
 // antd overwrites
-.App {
+//
+
+// only for theming
+.ant-btn {
+  @include themify($themes) {
+    background-color: themed('background-button');
+    color: themed('secondary-background');
+  }
+
+  &:hover {
+    @include themify($themes) {
+      background-color: lighten(themed('background-button'), 5);
+    }
+  }
+}
+
+// only for theming
+.ant-btn-primary {
+  @include themify($themes) {
+    background-color: themed('primary-color');
+    color: #fff;
+  }
+
+  &:hover {
+    @include themify($themes) {
+      background-color: lighten(themed('primary-color'), 5);
+    }
+  }
+}
+
+// general antd overwrite
+.Luna {
   .ant-btn {
     height: 49px;
     font-weight: bold;
     letter-spacing: 1.44px;
     text-align: right;
     text-transform: uppercase;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: $text-color;
   }
 }

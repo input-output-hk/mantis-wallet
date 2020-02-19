@@ -2,16 +2,21 @@ import React, {useState} from 'react'
 import {NavLink} from 'react-router-dom'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
+import {ThemeState} from '../theme-state'
 import {WalletState, canRemoveWallet} from '../common/wallet-state'
 import {ROUTES} from '../routes-config'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
-import lunaLogo from '../assets/luna-small.svg'
+import lightLogo from '../assets/light/logo.png'
+import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
 export const Sidebar = (): JSX.Element => {
+  const themeState = ThemeState.useContainer()
+  const walletState = WalletState.useContainer()
+
   const [showLogOutModal, setShowLogOutModal] = useState(false)
 
-  const walletState = WalletState.useContainer()
+  const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
 
   const logOut = canRemoveWallet(walletState) ? (
     <span className="link" onClick={() => setShowLogOutModal(true)}>
@@ -24,7 +29,7 @@ export const Sidebar = (): JSX.Element => {
   return (
     <div className="Sidebar">
       <div className="logo">
-        <SVG src={lunaLogo} alt="logo" />
+        <img src={logo} alt="logo" />
       </div>
       <div>
         <h1 className="title">Luna</h1>

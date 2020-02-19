@@ -1,4 +1,4 @@
-@import '../../theme.scss';
+@import '../../themify';
 
 .DialogSeedPhrase {
   margin-bottom: 20px;
@@ -10,8 +10,12 @@
   .ant-select-auto-complete.ant-select .ant-input {
     height: 47px;
     border: 0;
-    background-color: $normal-color;
     font-size: 14px;
+
+    @include themify($themes) {
+      background-color: themed('normal-color');
+      color: themed('text-color');
+    }
 
     &:hover {
       border: 0;
@@ -24,17 +28,29 @@
 }
 
 .ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
-  background-color: $secondary-background;
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+    color: themed('text-color');
+  }
 }
 
 .ant-select-dropdown-menu-item-active {
-  background-color: $secondary-background;
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+    color: themed('text-color');
+  }
 
   &:not(.ant-select-dropdown-menu-item-disabled) {
-    background-color: $secondary-background;
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+      color: themed('text-color');
+    }
 
     &:hover {
-      background-color: $secondary-background;
+      @include themify($themes) {
+        background-color: themed('secondary-background');
+        color: themed('text-color');
+      }
     }
   }
 }

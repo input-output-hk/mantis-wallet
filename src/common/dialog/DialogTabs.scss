@@ -1,7 +1,13 @@
-@import '../../theme.scss';
+@import '../../themify', '../../vars';
 
 .DialogTabs {
   margin-bottom: 20px;
+
+  .ant-tabs {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
 
   .ant-tabs-bar {
     margin: 0;
@@ -12,18 +18,24 @@
     display: none !important;
   }
 
-  .ant-tabs-tab {
+  .ant-tabs-nav .ant-tabs-tab {
     margin: 10px 0;
     padding: 0 10px;
-    border-left: 1px solid rgba($color: $text-color, $alpha: $secondary-opacity);
-    color: rgba($color: $text-color, $alpha: $secondary-opacity);
     font-size: 10px;
     text-transform: uppercase;
+
+    @include themify($themes) {
+      border-left: 1px solid rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+      color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+    }
 
     &:hover,
     &:active {
       opacity: 1;
-      color: $text-color;
+
+      @include themify($themes) {
+        color: themed('text-color');
+      }
     }
 
     &:first-of-type {
@@ -33,7 +45,9 @@
   }
 
   .ant-tabs-tab-active {
-    color: $text-color;
+    @include themify($themes) {
+      color: themed('text-color');
+    }
   }
 
   .label {

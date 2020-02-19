@@ -1,4 +1,4 @@
-@import '../../theme.scss';
+@import '../../themify', '../../vars';
 
 .DialogDropdown {
   margin-bottom: 20px;
@@ -29,7 +29,9 @@
     overflow: hidden;
 
     &:hover {
-      background-color: $primary-color;
+      @include themify($themes) {
+        background-color: themed('primary-color');
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {BrowserRouter, Route, Redirect} from 'react-router-dom'
 import {WalletState} from './common/wallet-state'
+import {ThemeState} from './theme-state'
 import {ProofOfBurnState} from './pob/pob-state'
 import {ROUTES} from './routes-config'
 import {Sidebar} from './layout/Sidebar'
@@ -27,27 +28,31 @@ const App: React.FC = () => {
     checkBackend()
   }, [])
 
-  return isBackendRunning ? (
-    <div className="App">
-      <BrowserRouter>
-        <Redirect exact from="/" to={ROUTES.WALLETS.path} />
-        <WalletState.Provider>
-          <header className="App-header">
-            <Sidebar />
-          </header>
-          <main>
-            <ProofOfBurnState.Provider>
-              <SyncStatus />
-              {Object.values(ROUTES).map((route) => (
-                <Route exact key={route.path} path={route.path} component={route.component} />
-              ))}
-            </ProofOfBurnState.Provider>
-          </main>
-        </WalletState.Provider>
-      </BrowserRouter>
-    </div>
-  ) : (
-    <SplashScreen />
+  return (
+    <ThemeState.Provider>
+      {isBackendRunning ? (
+        <div className="App">
+          <BrowserRouter>
+            <Redirect exact from="/" to={ROUTES.WALLETS.path} />
+            <WalletState.Provider>
+              <header className="App-header">
+                <Sidebar />
+              </header>
+              <main>
+                <ProofOfBurnState.Provider>
+                  <SyncStatus />
+                  {Object.values(ROUTES).map((route) => (
+                    <Route exact key={route.path} path={route.path} component={route.component} />
+                  ))}
+                </ProofOfBurnState.Provider>
+              </main>
+            </WalletState.Provider>
+          </BrowserRouter>
+        </div>
+      ) : (
+        <SplashScreen />
+      )}
+    </ThemeState.Provider>
   )
 }
 

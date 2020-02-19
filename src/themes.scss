@@ -1,0 +1,68 @@
+@import 'vars';
+
+$dark-text-color: #f7f7f7;
+$dark-normal-color: #414141;
+$dark-secondary-background: #000;
+
+$light-text-color: #000000;
+$light-normal-color: #fafafa;
+$light-secondary-background: #fafafa;
+
+// secondary and tertiary backgrounds are used on components
+// put over the primary background
+// quaternary and quinary backgrounds are used on modals
+
+$themes: (
+  dark: (
+    text-color: $dark-text-color,
+    normal-color: $dark-normal-color,
+    secondary-background: $dark-secondary-background,
+    primary-color: $primary-color,
+    secondary-color: $secondary-color,
+    success-color: $success-color,
+    error-color: $error-color,
+    component-background: #292929,
+    modal-background: $dark-secondary-background,
+    link-color: $dark-text-color,
+    tertiary-background: #707070,
+    pending-color: #202020,
+    quaternary-background: #202020,
+    quinary-background: #1e1e1e,
+    secondary-text-color: #808080,
+    error-background-color: #fcbbbb,
+    border-color-base: $dark-text-color,
+    btn-default-bg: $dark-text-color,
+    btn-default-color: $dark-secondary-background,
+    switch-bg: $dark-text-color,
+    input-bg: $dark-normal-color,
+    modal-content-bg: $dark-secondary-background,
+    modal-header-bg: $dark-secondary-background,
+    background-button: #f0f0f0,
+  ),
+  light: (
+    text-color: $light-text-color,
+    normal-color: $light-normal-color,
+    secondary-background: $light-secondary-background,
+    primary-color: $primary-color,
+    secondary-color: $secondary-color,
+    success-color: $success-color,
+    error-color: $error-color,
+    component-background: #ffffff,
+    modal-background: #ffffff,
+    link-color: $light-text-color,
+    tertiary-background: #6b6b6b,
+    pending-color: #e1f6fb,
+    quaternary-background: #fafafa,
+    quinary-background: #ccc,
+    secondary-text-color: #808080,
+    error-background-color: #fcbbbb,
+    border-color-base: $light-text-color,
+    btn-default-bg: $light-text-color,
+    btn-default-color: $light-secondary-background,
+    switch-bg: $light-text-color,
+    input-bg: $light-normal-color,
+    modal-content-bg: $light-secondary-background,
+    modal-header-bg: $light-secondary-background,
+    background-button: #a2a2a2,
+  ),
+);

@@ -1,4 +1,4 @@
-@import '../theme.scss';
+@import '../themify';
 
 .InlineError {
   position: relative;
@@ -8,8 +8,11 @@
     top: -20px;
     right: 0;
     height: 20px;
-    color: $error-color;
     font-size: 10px;
     text-align: right;
+
+    @include themify($themes) {
+      color: themed('error-color');
+    }
   }
 }

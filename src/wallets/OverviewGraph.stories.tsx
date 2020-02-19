@@ -1,10 +1,11 @@
 import React from 'react'
 import {withKnobs, number} from '@storybook/addon-knobs'
+import {withTheme} from '../storybook-util/theme-switcher'
 import {OverviewGraph} from './OverviewGraph'
 
 export default {
   title: 'Overview Graph',
-  decorators: [withKnobs],
+  decorators: [withTheme, withKnobs],
 }
 
 export const withZeroBalance = (): JSX.Element => (

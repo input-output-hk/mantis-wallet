@@ -1,6 +1,7 @@
 import React from 'react'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, text, array} from '@storybook/addon-knobs'
+import {withTheme} from '../storybook-util/theme-switcher'
 import {WalletState} from '../common/wallet-state'
 import {ProofOfBurn} from './ProofOfBurn'
 import {ProofOfBurnState} from './pob-state'
@@ -9,7 +10,7 @@ import {WatchBurnModal} from './modals/WatchBurnModal'
 
 export default {
   title: 'Proof of Burn',
-  decorators: [withKnobs],
+  decorators: [withTheme, withKnobs],
 }
 
 export const proofOfBurn = (): JSX.Element => (

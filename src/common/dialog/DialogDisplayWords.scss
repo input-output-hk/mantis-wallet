@@ -1,4 +1,4 @@
-@import '../../theme.scss';
+@import '../../themify';
 
 .DialogDisplayWords {
   display: grid;
@@ -8,10 +8,13 @@
 
   .word {
     height: 30px;
-    background-color: $secondary-background;
     font-size: 13px;
     font-weight: bold;
     line-height: 30px;
     text-align: center;
+
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+    }
   }
 }

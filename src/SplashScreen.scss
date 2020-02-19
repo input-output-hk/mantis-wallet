@@ -1,9 +1,12 @@
-@import './theme.scss';
+@import './themify';
 
 .SplashScreen {
   min-height: 100vh;
   padding-top: 96px;
-  background-color: $secondary-background;
+
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+  }
 
   .logo {
     display: block;
@@ -11,22 +14,32 @@
   }
 
   .title {
-    color: $primary-color;
     font-size: 120px;
     font-weight: bold;
     letter-spacing: -1.8px;
     text-align: center;
+
+    @include themify($themes) {
+      color: themed('primary-color');
+    }
   }
 
   .spinner {
     text-align: center;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
   }
 
   .loading {
-    color: $text-color;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
     text-transform: uppercase;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
   }
 }

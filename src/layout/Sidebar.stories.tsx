@@ -2,20 +2,19 @@ import React from 'react'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, boolean} from '@storybook/addon-knobs'
 import {BrowserRouter} from 'react-router-dom'
+import {withTheme} from '../storybook-util/theme-switcher'
+import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {Sidebar} from './Sidebar'
-import {WalletState} from '../common/wallet-state'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 
 export default {
   title: 'Sidebar',
-  decorators: [withKnobs],
+  decorators: [withWalletState, withTheme, withKnobs],
 }
 
 export const sidebar = (): JSX.Element => (
   <BrowserRouter>
-    <WalletState.Provider>
-      <Sidebar />
-    </WalletState.Provider>
+    <Sidebar />
   </BrowserRouter>
 )
 

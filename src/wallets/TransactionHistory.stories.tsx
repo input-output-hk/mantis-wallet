@@ -1,8 +1,9 @@
 import React from 'react'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, object, text} from '@storybook/addon-knobs'
-import {Transaction, TxStatus, TxDetailsIncAndOut} from '../web3'
-import {WalletState} from '../common/wallet-state'
+import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withTheme} from '../storybook-util/theme-switcher'
+import {Transaction, Account, TxStatus, TxDetailsIncAndOut} from '../web3'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
@@ -10,19 +11,27 @@ import './TransactionHistory.scss'
 
 export default {
   title: 'Transaction History',
-  decorators: [withKnobs],
+  decorators: [withWalletState, withTheme, withKnobs],
 }
 
+const accounts: Account[] = [
+  {
+    wallet: 'Wallet',
+    address: 'Foobar',
+    locked: false,
+  },
+]
+
+const toHex = (n: number): string => `0x${n.toString(16)}`
+
 export const withNoTransactions = (): JSX.Element => (
-  <WalletState.Provider>
-    <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={[]} />
-  </WalletState.Provider>
+  <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={accounts} />
 )
 
 const dummyTransactions = [...Array(10).keys()].slice(1).map(
   (n): Transaction => {
     const isIncoming = Math.random() < 0.5
-    const value = (Math.random() * 100000000).toString(16)
+    const value = toHex(Math.random() * 100000000)
 
     const baseTx = {
       hash: n.toString(),
@@ -31,7 +40,7 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
           ? 'pending'
           : ({
               status: 'confirmed',
-              atBlock: (Math.random() * 100000000).toString(16),
+              atBlock: toHex(Math.random() * 100000000),
             } as TxStatus),
       txDetails: {
         txType: 'transfer',
@@ -44,84 +53,84 @@ const dummyTransactions = [...Array(10).keys()].slice(1).map(
       return {
         ...baseTx,
         txDirection: 'outgoing',
-        txValue: {value, fee: (Math.random() * 100000000).toString(16)},
+        txValue: {value, fee: toHex(Math.random() * 100000000)},
       }
     }
   },
 )
 
 export const withDemoTransactions = (): JSX.Element => (
-  <WalletState.Provider>
-    <TransactionHistory transactions={dummyTransactions} transparentAddresses={[]} accounts={[]} />
-  </WalletState.Provider>
+  <TransactionHistory
+    transactions={dummyTransactions}
+    transparentAddresses={[]}
+    accounts={accounts}
+  />
 )
 
 export const interactive = (): JSX.Element => {
   return (
-    <WalletState.Provider>
-      <TransactionHistory
-        transactions={[
-          object<Transaction>('Transaction 1', {
-            hash: '1',
-            txDirection: 'outgoing',
-            txValue: {
-              value: (1000.0).toString(16),
-              fee: (1000.0).toString(16),
-            },
-            txStatus: {
-              status: 'confirmed',
-              atBlock: '0x1',
-            },
-            txDetails: {
-              txType: 'transfer',
-            },
-          }),
-          object<Transaction>('Transaction 2', {
-            hash: '2',
-            txDirection: 'incoming',
-            txValue: (1000.0).toString(16),
-            txStatus: {
-              status: 'confirmed',
-              atBlock: '0x1',
-            },
-            txDetails: {
-              txType: 'transfer',
-            },
-          }),
-          object<Transaction>('Transaction 3', {
-            hash: '3',
-            txDirection: 'incoming',
-            txValue: (1000.0).toString(16),
-            txStatus: 'pending',
-            txDetails: {
-              txType: 'transfer',
-            },
-          }),
-        ]}
-        transparentAddresses={[
-          {
-            address: text('Old address', 'old-address'),
-            index: 0,
+    <TransactionHistory
+      transactions={[
+        object<Transaction>('Transaction 1', {
+          hash: '1',
+          txDirection: 'outgoing',
+          txValue: {
+            value: toHex(1000.0),
+            fee: toHex(1000.0),
           },
-          {
-            address: text('New address', 'new-address'),
-            index: 1,
+          txStatus: {
+            status: 'confirmed',
+            atBlock: '0x1',
           },
-        ]}
-        accounts={[
-          {
-            wallet: 'wallet 1',
-            address: text('First address', 'first-address'),
-            locked: false,
+          txDetails: {
+            txType: 'transfer',
           },
-          {
-            wallet: 'wallet 2',
-            address: text('Second address', 'second-address'),
-            locked: false,
+        }),
+        object<Transaction>('Transaction 2', {
+          hash: '2',
+          txDirection: 'incoming',
+          txValue: toHex(1000.0),
+          txStatus: {
+            status: 'confirmed',
+            atBlock: '0x1',
           },
-        ]}
-      />
-    </WalletState.Provider>
+          txDetails: {
+            txType: 'transfer',
+          },
+        }),
+        object<Transaction>('Transaction 3', {
+          hash: '3',
+          txDirection: 'incoming',
+          txValue: toHex(1000.0),
+          txStatus: 'pending',
+          txDetails: {
+            txType: 'transfer',
+          },
+        }),
+      ]}
+      transparentAddresses={[
+        {
+          address: text('Old address', 'old-address'),
+          index: 0,
+        },
+        {
+          address: text('New address', 'new-address'),
+          index: 1,
+        },
+      ]}
+      accounts={[
+        {
+          wallet: 'wallet 1',
+          address: text('First address', 'first-address'),
+          locked: false,
+        },
+        {
+          wallet: 'wallet 2',
+          address: text('Second address', 'second-address'),
+          locked: false,
+        },
+      ]}
+    />
   )
 }
 

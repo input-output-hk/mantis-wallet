@@ -1,11 +1,16 @@
-@import '../theme.scss';
+@import '../themify', '../vars';
 
 .SquaredSwitch.ant-switch {
   border-radius: 0;
-  background-color: $normal-color;
+
+  @include themify($themes) {
+    background-color: themed('normal-color');
+  }
 
   &.ant-switch-checked {
-    background-color: $primary-color;
+    @include themify($themes) {
+      background-color: themed('primary-color');
+    }
 
     &::after {
       margin-left: 0;
@@ -17,6 +22,9 @@
     width: $switch-height - 2px;
     height: $switch-height - 2px;
     border-radius: 0;
-    background-color: $text-color;
+
+    @include themify($themes) {
+      background-color: themed('text-color');
+    }
   }
 }

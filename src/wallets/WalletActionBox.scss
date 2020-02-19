@@ -1,4 +1,4 @@
-@import '../theme.scss';
+@import '../themify';
 
 .WalletActionBox {
   display: inline-grid;
@@ -6,12 +6,18 @@
   width: 307px;
   height: 367px;
   margin: 84px;
-  border: 1px solid $tertiary-background;
   cursor: pointer;
+
+  @include themify($themes) {
+    border: 1px solid themed('tertiary-background');
+  }
 
   .svg {
     margin: auto;
-    fill: $text-color;
+
+    @include themify($themes) {
+      fill: themed('text-color');
+    }
   }
 
   .title {
@@ -34,8 +40,6 @@
 
   .footer {
     padding: 0 46px;
-    background-color: $btn-default-bg;
-    color: $btn-default-color;
     font-family: Helvetica, sans-serif;
     font-size: 18px;
     font-weight: bold;
@@ -43,5 +47,10 @@
     line-height: 64px;
     text-align: right;
     text-transform: uppercase;
+
+    @include themify($themes) {
+      background-color: themed('btn-default-bg');
+      color: themed('btn-default-color');
+    }
   }
 }

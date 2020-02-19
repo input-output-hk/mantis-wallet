@@ -1,4 +1,4 @@
-@import '../theme.scss';
+@import '../themify';
 
 .WalletUnlock {
   position: relative;
@@ -13,7 +13,9 @@
     margin-left: -250px;
 
     h1 {
-      color: $text-color;
+      @include themify($themes) {
+        color: themed('text-color');
+      }
     }
 
     .input {

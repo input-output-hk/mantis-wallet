@@ -1,11 +1,14 @@
-@import '../theme.scss';
+@import '../themify', '../vars';
 
 .Sidebar {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   width: 450px;
   height: 100vh;
-  background-color: $secondary-background;
+
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+  }
 
   .logo {
     margin: 37px 0 0 10px;
@@ -15,10 +18,13 @@
     width: 280px;
     height: 100px;
     margin: 0 0 0 152px;
-    color: $primary-color;
     font-size: 54px;
     font-weight: bold;
     letter-spacing: -0.81px;
+
+    @include themify($themes) {
+      color: themed('primary-color');
+    }
   }
 
   .navigation {
@@ -44,7 +50,9 @@
 
         .prefix {
           width: 113px;
-          border-left: 3px solid $border-color-base;
+          @include themify($themes) {
+            border-left: 3px solid themed('border-color-base');
+          }
         }
       }
 
@@ -58,8 +66,11 @@
           top: 50%;
           bottom: 50%;
           transform: translate(-50%, -50%);
-          stroke: $text-color;
-          fill: $text-color;
+
+          @include themify($themes) {
+            stroke: themed('text-color');
+            fill: themed('text-color');
+          }
         }
       }
     }
@@ -76,7 +87,9 @@
       cursor: pointer;
 
       &:hover {
-        color: $primary-color;
+        @include themify($themes) {
+          color: themed('primary-color');
+        }
       }
 
       &.disabled {
@@ -84,7 +97,9 @@
         cursor: default;
 
         &:hover {
-          color: $text-color;
+          @include themify($themes) {
+            color: themed('text-color');
+          }
         }
       }
     }

@@ -1,19 +1,28 @@
-@import '../theme.scss';
+@import '../themify';
 
 .graph-svg {
   width: 249px;
   height: 249px;
-  fill: $secondary-background;
+
+  @include themify($themes) {
+    fill: themed('secondary-background');
+  }
 }
 
 .graph-confidential {
-  stroke: $primary-color;
+  @include themify($themes) {
+    stroke: themed('primary-color');
+  }
 }
 
 .graph-transparent {
-  stroke: $secondary-color;
+  @include themify($themes) {
+    stroke: themed('secondary-color');
+  }
 }
 
 .graph-pending {
-  stroke: $tertiary-color;
+  @include themify($themes) {
+    stroke: themed('pending-color');
+  }
 }

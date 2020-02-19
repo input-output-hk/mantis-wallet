@@ -1,4 +1,4 @@
-@import '../theme.scss';
+@import '../themify';
 
 .WalletOverview {
   display: grid;
@@ -12,7 +12,10 @@
   margin: 0 36px 100px 36px;
 
   .svg {
-    stroke: $text-color;
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
   }
 
   .title {
@@ -65,8 +68,11 @@
     padding: 24px 18px 24px 15px;
     overflow: hidden;
     border-radius: 20px;
-    background-color: $secondary-background;
     white-space: nowrap;
+
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+    }
   }
 
   .box-text {
@@ -96,8 +102,6 @@
     height: 20px;
     float: right;
     border-radius: 50%;
-    background-color: $tertiary-background;
-    color: $text-color;
     font-family: Georgia, serif;
     font-size: 12px;
     font-style: italic;
@@ -105,6 +109,11 @@
     line-height: 20px;
     text-align: center;
     text-transform: lowercase;
+
+    @include themify($themes) {
+      background-color: themed('tertiary-background');
+      color: #fff;
+    }
   }
 
   .box-amount {

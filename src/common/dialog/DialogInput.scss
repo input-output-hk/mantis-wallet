@@ -1,4 +1,4 @@
-@import '../../theme.scss';
+@import '../../themify';
 
 .DialogInput {
   margin-bottom: 20px;
@@ -16,6 +16,8 @@
 }
 
 .Dialog.dark .DialogInput .input {
-  background-color: $quaternary-background;
-  color: $secondary-text-color;
+  @include themify($themes) {
+    background-color: themed('quaternary-background');
+    color: themed('secondary-text-color');
+  }
 }
