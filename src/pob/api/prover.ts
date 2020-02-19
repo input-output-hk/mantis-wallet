@@ -1,9 +1,12 @@
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
 
-export interface BurnApiStatus {
+export interface NoBurnObserved {
+  status: 'No burn transactions observed.'
+}
+
+export interface BurnProgress {
   status:
-    | 'No burn transactions observed.'
     | 'BURN_OBSERVED'
     | 'PROOF_READY'
     | 'COMMITMENT_APPEARED'
@@ -22,14 +25,26 @@ export interface BurnApiStatus {
   last_tag_height: number
 }
 
+export type BurnApiStatus = NoBurnObserved | BurnProgress
+
+export type ChainName = 'BTC_MAINNET' | 'BTC_TESTNET' | 'ETH_MAINNET' | 'ETH_TESTNET'
+
+type RequestMode = 'observe' | 'prove'
+
+const REQUEST_MODE_PORT: Record<RequestMode, number> = {
+  observe: 5000,
+  prove: 5047,
+}
+
 const httpRequest = async (
   proverConfig: ProverConfig,
+  mode: RequestMode,
   path: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
-  const url = `${proverConfig.address}${path}`
+  const url = `${proverConfig.address}:${REQUEST_MODE_PORT[mode]}${path}`
   return (
     await fetch(url, {
       method: 'POST',
@@ -42,8 +57,24 @@ const httpRequest = async (
 }
 
 export const getStatus = async ({burnAddress, prover}: BurnWatcher): Promise<BurnApiStatus> => {
-  const [apiStatus] = await httpRequest(prover, '/api/v1/status', {
+  const [apiStatus] = await httpRequest(prover, 'prove', '/api/v1/status', {
     burn_address: burnAddress,
   })
   return apiStatus as BurnApiStatus
+}
+
+export const createBurn = async (
+  prover: ProverConfig,
+  address: string,
+  chainName: ChainName,
+  reward: number,
+  autoConversion: boolean,
+): Promise<string> => {
+  const response = await httpRequest(prover, 'observe', '/api/v1/observe', {
+    auto_dust_conversion: autoConversion,
+    chain_name: chainName,
+    midnight_address: address,
+    reward,
+  })
+  return response.burn_address
 }

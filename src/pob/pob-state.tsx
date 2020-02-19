@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import * as prover from './api/prover'
+import {getStatus, createBurn, BurnApiStatus, ChainName} from './api/prover'
 import {ProverConfig} from '../config/type'
 
 export interface BurnWatcher {
@@ -10,10 +10,17 @@ export interface BurnWatcher {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BurnStatus = prover.BurnApiStatus | any
+type BurnStatus = BurnApiStatus | any
 
 interface ProofOfBurnState {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
+  getBurnAddress: (
+    prover: ProverConfig,
+    address: string,
+    chainName: ChainName,
+    reward: number,
+    autoConversion: boolean,
+  ) => Promise<string>
   burnStatuses: Array<[BurnWatcher, BurnStatus]>
   refreshBurnStatus: () => Promise<void>
 }
@@ -34,8 +41,7 @@ function useProofOfBurnState(): ProofOfBurnState {
   const refreshBurnStatus = async (): Promise<void> => {
     const burnStatuses = await Promise.all(
       burnWatchers.map((burnWatcher) =>
-        prover
-          .getStatus(burnWatcher)
+        getStatus(burnWatcher)
           .then((status): [BurnWatcher, BurnStatus] => [burnWatcher, status])
           .catch((error): [BurnWatcher, BurnStatus] => [burnWatcher, error]),
       ),
@@ -43,10 +49,13 @@ function useProofOfBurnState(): ProofOfBurnState {
     setBurnStatuses(burnStatuses)
   }
 
+  const getBurnAddress = createBurn
+
   return {
     addBurnWatcher,
     burnStatuses,
     refreshBurnStatus,
+    getBurnAddress,
   }
 }
 

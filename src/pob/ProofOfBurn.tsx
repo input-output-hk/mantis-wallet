@@ -6,10 +6,13 @@ import {ProofOfBurnState} from './pob-state'
 import {WalletState} from '../common/wallet-state'
 import {CreateBurnModal} from './modals/CreateBurnModal'
 import {WatchBurnModal} from './modals/WatchBurnModal'
+import {ChainName} from './api/prover'
 import './ProofOfBurn.scss'
 
+const CHAIN_BY_ID: ChainName[] = ['BTC_MAINNET', 'BTC_TESTNET', 'ETH_MAINNET', 'ETH_TESTNET']
+
 export const ProofOfBurn = (): JSX.Element => {
-  const {addBurnWatcher, burnStatuses, refreshBurnStatus} = ProofOfBurnState.useContainer()
+  const pobState = ProofOfBurnState.useContainer()
   const walletState = WalletState.useContainer()
 
   const transparentAddresses =
@@ -18,7 +21,7 @@ export const ProofOfBurn = (): JSX.Element => {
       : []
   const {provers} = config
 
-  useInterval(refreshBurnStatus, 2000)
+  useInterval(pobState.refreshBurnStatus, 2000)
 
   const [showCreateBurnModal, setShowCreateBurnModal] = useState(false)
   const [showWatchBurnModal, setShowWatchBurnModal] = useState(false)
@@ -45,7 +48,7 @@ export const ProofOfBurn = (): JSX.Element => {
         &nbsp;
         <Button onClick={(): void => setShowWatchBurnModal(true)}>Watch Burn Address</Button>
         &nbsp;
-        <Button onClick={refreshBurnStatus}>Refresh</Button>
+        <Button onClick={pobState.refreshBurnStatus}>Refresh</Button>
         &nbsp;
         <Button
           onClick={async (): Promise<void> => {
@@ -80,14 +83,27 @@ export const ProofOfBurn = (): JSX.Element => {
               message.error('Unknown prover')
             } else {
               try {
-                const burnAddress = await walletState.getBurnAddress(
+                const burnAddressFromWallet = await walletState.getBurnAddress(
                   transparentAddress,
                   chainId,
                   reward,
                   autoConversion,
                 )
-                addBurnWatcher(burnAddress, prover)
-                setShowCreateBurnModal(false)
+                const burnAddressFromProver = await pobState.getBurnAddress(
+                  prover,
+                  transparentAddress,
+                  CHAIN_BY_ID[chainId],
+                  reward,
+                  autoConversion,
+                )
+                if (burnAddressFromWallet !== burnAddressFromProver) {
+                  message.error(
+                    `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddressFromWallet} vs ${burnAddressFromProver}`,
+                  )
+                } else {
+                  pobState.addBurnWatcher(burnAddressFromWallet, prover)
+                  setShowCreateBurnModal(false)
+                }
               } catch (e) {
                 message.error(e.message)
               }
@@ -99,14 +115,14 @@ export const ProofOfBurn = (): JSX.Element => {
           onCancel={(): void => setShowWatchBurnModal(false)}
           onWatchBurn={(proverAddress: string, burnAddress: string): void => {
             const prover = config.provers.find(({address}) => address === proverAddress)
-            if (prover) addBurnWatcher(burnAddress, prover)
+            if (prover) pobState.addBurnWatcher(burnAddress, prover)
             setShowWatchBurnModal(false)
           }}
           provers={provers}
         />
       </div>
       <div className="list">
-        {burnStatuses.map(([burnWatcher, burnStatus]) => (
+        {pobState.burnStatuses.map(([burnWatcher, burnStatus]) => (
           <div
             className="burn-watcher"
             key={`${burnWatcher.burnAddress}-${burnWatcher.prover.address}`}
