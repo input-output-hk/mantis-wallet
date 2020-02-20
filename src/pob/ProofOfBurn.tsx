@@ -6,10 +6,7 @@ import {ProofOfBurnState} from './pob-state'
 import {WalletState} from '../common/wallet-state'
 import {CreateBurnModal} from './modals/CreateBurnModal'
 import {WatchBurnModal} from './modals/WatchBurnModal'
-import {ChainName} from './api/prover'
 import './ProofOfBurn.scss'
-
-const CHAIN_BY_ID: ChainName[] = ['BTC_MAINNET', 'BTC_TESTNET', 'ETH_MAINNET', 'ETH_TESTNET']
 
 export const ProofOfBurn = (): JSX.Element => {
   const pobState = ProofOfBurnState.useContainer()
@@ -92,7 +89,7 @@ export const ProofOfBurn = (): JSX.Element => {
                 const burnAddressFromProver = await pobState.getBurnAddress(
                   prover,
                   transparentAddress,
-                  CHAIN_BY_ID[chainId],
+                  chainId,
                   reward,
                   autoConversion,
                 )

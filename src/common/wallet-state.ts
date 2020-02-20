@@ -5,6 +5,7 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
+import {Chain} from './chains'
 import {
   web3,
   TransparentAddress,
@@ -40,7 +41,7 @@ interface LoadedState {
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
   getBurnAddress: (
     address: string,
-    chainId: number,
+    chain: Chain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<string>
@@ -291,10 +292,10 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const getBurnAddress = async (
     address: string,
-    chainId: number,
+    chain: Chain,
     reward: number,
     autoConversion: boolean,
-  ): Promise<string> => wallet.getBurnAddress(address, chainId, reward, autoConversion)
+  ): Promise<string> => wallet.getBurnAddress(address, chain.walletId, reward, autoConversion)
 
   return {
     walletStatus,

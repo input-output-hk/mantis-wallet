@@ -3,28 +3,28 @@ import _ from 'lodash/fp'
 import {Dropdown, Menu} from 'antd'
 import './DialogDropdown.scss'
 
-interface DialogDropdownOption {
-  key: string
+interface DialogDropdownOption<T> {
+  key: T
   label: string
 }
 
-interface DialogDropdownProps {
+interface DialogDropdownProps<T> {
   label: string
-  options: Array<DialogDropdownOption | string>
-  onChange?: (option: string) => void
+  options: Array<DialogDropdownOption<T> | T>
+  onChange?: (option: T) => void
 }
 
-export const DialogDropdown: React.FunctionComponent<DialogDropdownProps> = ({
+export const DialogDropdown = <T extends string>({
   label,
   options,
   onChange,
-}: DialogDropdownProps) => {
-  const trueOptions: DialogDropdownOption[] = options.map((option) =>
+}: DialogDropdownProps<T>): JSX.Element => {
+  const trueOptions: Array<DialogDropdownOption<T>> = options.map((option) =>
     _.isString(option) ? {key: option, label: option} : option,
   )
   const [activeOption, setActiveOption] = useState(trueOptions[0])
 
-  const handleClick = (option: DialogDropdownOption) => () => {
+  const handleClick = (option: DialogDropdownOption<T>) => () => {
     setActiveOption(option)
     if (onChange) onChange(option.key)
   }

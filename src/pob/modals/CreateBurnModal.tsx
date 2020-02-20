@@ -7,6 +7,7 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogError} from '../../common/dialog/DialogError'
 import {ProverConfig} from '../../config/type'
+import {CHAINS, Chain} from '../../common/chains'
 
 interface CreateBurnModalProps {
   provers: ProverConfig[]
@@ -15,11 +16,13 @@ interface CreateBurnModalProps {
   onCreateBurn: (
     proverAddress: string,
     address: string,
-    chainId: number,
+    chain: Chain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
 }
+
+const CHAINS_IN_USE = [CHAINS.BTC_TESTNET, CHAINS.ETH_TESTNET]
 
 export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & ModalProps> = ({
   provers,
@@ -30,7 +33,7 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
 }: CreateBurnModalProps & ModalProps) => {
   const [proverAddress, setProverAddress] = useState<string>(provers[0].address)
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const [chainId, setChainId] = useState('0')
+  const [chainId, setChainId] = useState(CHAINS.BTC_TESTNET.id)
   const [reward, setReward] = useState('1')
   const [autoConversion, setAutoConversion] = useState(true)
 
@@ -47,7 +50,7 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
             onCreateBurn(
               proverAddress,
               transparentAddress,
-              parseInt(chainId),
+              CHAINS[chainId],
               parseInt(reward),
               autoConversion,
             ),
@@ -67,10 +70,13 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
           options={transparentAddresses}
           onChange={setTransparentAddress}
         />
-        <DialogInput
-          label="Chain ID"
-          defaultValue={chainId}
-          onChange={(e) => setChainId(e.target.value)}
+        <DialogDropdown
+          label="Transparent Address"
+          options={CHAINS_IN_USE.map(({id, name}) => ({
+            key: id,
+            label: name,
+          }))}
+          onChange={setChainId}
         />
         <DialogInput
           label="Reward"

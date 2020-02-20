@@ -1,7 +1,8 @@
 import {useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {getStatus, createBurn, BurnApiStatus, ChainName} from './api/prover'
+import {getStatus, createBurn, BurnApiStatus} from './api/prover'
+import {Chain} from '../common/chains'
 import {ProverConfig} from '../config/type'
 
 export interface BurnWatcher {
@@ -17,7 +18,7 @@ interface ProofOfBurnState {
   getBurnAddress: (
     prover: ProverConfig,
     address: string,
-    chainName: ChainName,
+    chain: Chain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<string>
