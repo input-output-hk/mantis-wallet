@@ -1,0 +1,94 @@
+@import '../themify';
+
+.BurnActions {
+  margin: 64px;
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    line-height: 30px;
+
+    .wallet {
+      margin: 0;
+      overflow: hidden;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 0.46px;
+    }
+
+    .action {
+      display: inline-block;
+      height: 30px;
+      margin-left: 19px;
+      padding: 0 26px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.24px;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+
+      &.secondary {
+        @include themify($themes) {
+          background-color: themed('secondary-background');
+          color: themed('text-color');
+        }
+
+        &:hover {
+          @include themify($themes) {
+            background-color: themed('quinary-background');
+          }
+        }
+      }
+    }
+  }
+
+  .no-balances {
+    margin: 20px auto;
+    text-align: center;
+
+    .link {
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .balances {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 350px;
+    margin-top: 13px;
+
+    @include themify($themes) {
+      border: solid 1px themed('tertiary-background');
+    }
+
+    .scroller {
+      height: 336px;
+      overflow: auto hidden;
+      text-align: center;
+      white-space: nowrap;
+
+      &::-webkit-scrollbar-thumb {
+        @include themify($themes) {
+          background-color: themed('secondary-background');
+        }
+      }
+
+      &::-webkit-scrollbar-track {
+        margin: 34px;
+        @include themify($themes) {
+          background-color: themed('tertiary-background');
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+    }
+  }
+}

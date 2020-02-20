@@ -2,24 +2,18 @@ import React from 'react'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, text, array} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
-import {WalletState} from '../common/wallet-state'
-import {ProofOfBurn} from './ProofOfBurn'
-import {ProofOfBurnState} from './pob-state'
 import {CreateBurnModal} from './modals/CreateBurnModal'
 import {WatchBurnModal} from './modals/WatchBurnModal'
+import {BurnCentre} from './BurnCentre'
+import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withPobState} from '../storybook-util/pob-state-decorator'
 
 export default {
-  title: 'Proof of Burn',
-  decorators: [withTheme, withKnobs],
+  title: 'Burn Centre',
+  decorators: [withTheme, withKnobs, withWalletState, withPobState],
 }
 
-export const proofOfBurn = (): JSX.Element => (
-  <ProofOfBurnState.Provider>
-    <WalletState.Provider>
-      <ProofOfBurn></ProofOfBurn>
-    </WalletState.Provider>
-  </ProofOfBurnState.Provider>
-)
+export const burnCentre = (): JSX.Element => <BurnCentre />
 
 export const createBurnModal = (): JSX.Element => (
   <CreateBurnModal
