@@ -65,45 +65,28 @@ export const ProofOfBurn = (): JSX.Element => {
           errorMessage={createErrorMessage}
           onCancel={() => setShowCreateBurnModal(false)}
           onCreateBurn={async (
-            proverAddress,
+            prover,
             transparentAddress,
             chainId,
             reward,
             autoConversion,
           ): Promise<void> => {
-            const prover = provers.find(({address}) => address === proverAddress)
-            if (walletState.walletStatus !== 'LOADED') {
-              message.error(
-                `Wallet is ${walletState.walletStatus}, it should be LOADED to create a burn address`,
+            if (walletState.walletStatus === 'LOADED') {
+              const burnAddress = await walletState.getBurnAddress(
+                transparentAddress,
+                chainId,
+                reward,
+                autoConversion,
               )
-            } else if (!prover) {
-              message.error('Unknown prover')
-            } else {
-              try {
-                const burnAddressFromWallet = await walletState.getBurnAddress(
-                  transparentAddress,
-                  chainId,
-                  reward,
-                  autoConversion,
-                )
-                const burnAddressFromProver = await pobState.getBurnAddress(
-                  prover,
-                  transparentAddress,
-                  chainId,
-                  reward,
-                  autoConversion,
-                )
-                if (burnAddressFromWallet !== burnAddressFromProver) {
-                  message.error(
-                    `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddressFromWallet} vs ${burnAddressFromProver}`,
-                  )
-                } else {
-                  pobState.addBurnWatcher(burnAddressFromWallet, prover)
-                  setShowCreateBurnModal(false)
-                }
-              } catch (e) {
-                message.error(e.message)
-              }
+              await pobState.observeBurnAddress(
+                burnAddress,
+                prover,
+                transparentAddress,
+                chainId,
+                reward,
+                autoConversion,
+              )
+              setShowCreateBurnModal(false)
             }
           }}
         />

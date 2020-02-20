@@ -8,13 +8,14 @@ import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogError} from '../../common/dialog/DialogError'
 import {ProverConfig} from '../../config/type'
 import {CHAINS, Chain} from '../../common/chains'
+import {message} from 'antd'
 
 interface CreateBurnModalProps {
   provers: ProverConfig[]
   transparentAddresses: string[]
   errorMessage?: string
   onCreateBurn: (
-    proverAddress: string,
+    prover: ProverConfig,
     address: string,
     chain: Chain,
     reward: number,
@@ -37,6 +38,10 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
   const [reward, setReward] = useState('1')
   const [autoConversion, setAutoConversion] = useState(true)
 
+  const prover = provers.find(({address}) => proverAddress === address)
+  const proverErrorMessage = prover ? '' : 'You must select a prover'
+  const errorMessageToShow = errorMessage ? errorMessage : proverErrorMessage
+
   return (
     <LunaModal {...props}>
       <Dialog
@@ -45,17 +50,24 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
           onClick: props.onCancel,
         }}
         nextButtonProps={{
-          disabled: !!errorMessage,
-          onClick: () =>
-            onCreateBurn(
-              proverAddress,
-              transparentAddress,
-              CHAINS[chainId],
-              parseInt(reward),
-              autoConversion,
-            ),
+          disabled: !!errorMessageToShow,
+          onClick: async () => {
+            if (prover) {
+              try {
+                await onCreateBurn(
+                  prover,
+                  transparentAddress,
+                  CHAINS[chainId],
+                  parseInt(reward),
+                  autoConversion,
+                )
+              } catch (e) {
+                message.error(e.message)
+              }
+            }
+          },
         }}
-        footer={errorMessage && <DialogError>{errorMessage}</DialogError>}
+        footer={errorMessageToShow && <DialogError>{errorMessageToShow}</DialogError>}
       >
         <DialogDropdown
           label="Prover"
