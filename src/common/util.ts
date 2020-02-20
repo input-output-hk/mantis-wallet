@@ -1,19 +1,18 @@
 import * as Comlink from 'comlink'
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 
-export function deserializeBigNumber(json: BigNumberJSON): Big {
-  const bigNumber = Big(0)
-  /* eslint-disable */
-  bigNumber.s = json.s
-  bigNumber.e = json.e
-  bigNumber.c = json.c
-  /* eslint-enable */
-  return bigNumber
+export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
+  return new BigNumber({_isBigNumber: true, ...json})
 }
 
-export function bigToNumber(bigNumber: Big): number {
+export function bigToNumber(bigNumber: BigNumber): number {
   return parseFloat(bigNumber.toFixed(10))
+}
+
+export function hasMaxDecimalPlaces(bigNumber: BigNumber, decimalPlaces: number): boolean {
+  const mod = new BigNumber(`0.${''.padStart(decimalPlaces - 1, '0')}1`)
+  return bigNumber.modulo(mod).isZero()
 }
 
 export const loadAll = async <T>(

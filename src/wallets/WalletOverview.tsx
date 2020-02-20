@@ -1,6 +1,6 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {WalletState} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
@@ -16,9 +16,9 @@ import transparentIcon from '../assets/icons/transparent.svg'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
-  pending: Big
-  confidential: Big
-  transparent: Big
+  pending: BigNumber
+  confidential: BigNumber
+  transparent: BigNumber
 }
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
@@ -45,14 +45,14 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         <div className="box-text">Total Balance</div>
         <div className="box-amount-big">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={total} />
+          <ShortNumber big={total} dp={2} />
         </div>
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
             <SVG src={clockIcon} className="svg" />
           </span>
-          Pending Amount · <ShortNumber big={pending} />
+          Pending Amount · <ShortNumber big={pending} dp={2} />
         </div>
       </div>
       <div className="confidential">
@@ -65,7 +65,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         </div>
         <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={confidential} />
+          <ShortNumber big={confidential} dp={2} />
         </div>
       </div>
       <div className="transparent">
@@ -79,7 +79,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         </div>
         <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={transparent} />
+          <ShortNumber big={transparent} dp={2} />
         </div>
       </div>
     </div>

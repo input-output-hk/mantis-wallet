@@ -6,6 +6,7 @@ import {TransactionHistory} from './TransactionHistory'
 import {Transaction, Account} from '../web3'
 import {WalletState} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
+import {toWei} from 'web3/lib/utils/utils.js'
 
 jest.mock('react-inlinesvg', () => {
   return function SVG(props: {title: string}): JSX.Element {
@@ -25,7 +26,7 @@ const tx1: Transaction = {
     status: 'confirmed',
     atBlock: '0x1',
   },
-  txValue: '123',
+  txValue: toWei('123'),
   txDetails: {
     txType: 'transfer',
   },
@@ -36,8 +37,8 @@ const tx2: Transaction = {
   txDirection: 'outgoing',
   txStatus: 'pending',
   txValue: {
-    value: '123456789',
-    fee: '100',
+    value: toWei('123456789'),
+    fee: toWei('100'),
   },
   txDetails: {
     txType: 'call',
@@ -76,8 +77,8 @@ test('TransactionHistory shows proper tx amounts', () => {
   const {getByText} = wrappedRender(
     <TransactionHistory transactions={[tx1, tx2]} transparentAddresses={[]} accounts={accounts} />,
   )
-  expect(getByText('123')).toBeInTheDocument()
-  expect(getByText('123.457M')).toBeInTheDocument()
+  expect(getByText('123.000000')).toBeInTheDocument()
+  expect(getByText('123.456789M')).toBeInTheDocument()
 })
 
 // txStatus.status

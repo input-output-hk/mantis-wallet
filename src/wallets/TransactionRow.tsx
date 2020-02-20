@@ -1,6 +1,6 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {Transaction} from '../web3'
 import {ThemeState} from '../theme-state'
@@ -50,7 +50,7 @@ export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.E
             <SVG src={outgoingIcon} className="svg" title="Outgoing" />
           )}
           &nbsp;
-          <ShortNumber big={Big(parseInt(value))} />
+          <ShortNumber big={new BigNumber(value)} />
         </span>
       </td>
       {/* FIXME: get proper date from transaction */}
