@@ -1,6 +1,5 @@
 import React from 'react'
-import {NavLink} from 'react-router-dom'
-import {ROUTES} from '../routes-config'
+import classnames from 'classnames'
 import './WalletListSidebar.scss'
 
 interface Wallet {
@@ -10,24 +9,30 @@ interface Wallet {
 
 interface WalletListSidebarProps {
   wallets: Wallet[]
+  currentWalletId: string
+  changeWallet(walletId: string): void
 }
 
 export const WalletListSidebar: React.FunctionComponent<WalletListSidebarProps> = ({
   wallets,
-}: WalletListSidebarProps) => (
-  <div className="WalletListSidebar invisible-scrollbar">
-    <ul className="wallet-links">
-      {wallets.map((wallet) => (
-        <li key={wallet.id}>
-          <NavLink
-            to={`${ROUTES.WALLETS.path}/${wallet.id}`}
-            className="wallet-link"
-            activeClassName="wallet-link-active"
-          >
-            {wallet.name}
-          </NavLink>
-        </li>
-      ))}
-    </ul>
-  </div>
-)
+  currentWalletId,
+  changeWallet,
+}: WalletListSidebarProps) => {
+  return (
+    <div className="WalletListSidebar invisible-scrollbar">
+      <ul className="wallet-links">
+        {wallets.map((wallet) => {
+          const isActive = currentWalletId == wallet.id
+          const classes = classnames('wallet-link', {'wallet-link-active': isActive})
+          return (
+            <li key={wallet.id}>
+              <div onClick={() => changeWallet(wallet.id)} className={classes}>
+                {wallet.name}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}

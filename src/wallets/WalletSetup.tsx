@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
-import {Redirect} from 'react-router-dom'
-import {ROUTES} from '../routes-config'
 import {WalletState} from '../common/wallet-state'
+import {Navigate} from '../layout/Router'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletCreate} from './WalletCreate'
 import {WalletRestore} from './WalletRestore'
@@ -33,12 +32,7 @@ const getContent = (
     case 'RESTORE':
       return <WalletRestore cancel={(): void => setStep('PATH_CHOOSER')} finish={finish} />
     case 'FINISHED':
-      return (
-        <>
-          HELLO
-          <Redirect to={ROUTES.WALLETS.path} />
-        </>
-      )
+      return <Navigate to="WALLETS" />
   }
 }
 

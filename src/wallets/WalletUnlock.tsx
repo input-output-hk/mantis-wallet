@@ -1,9 +1,8 @@
 import React, {useState} from 'react'
-import {Redirect} from 'react-router-dom'
 import {Button} from 'antd'
 import {WalletState} from '../common/wallet-state'
+import {Navigate} from '../layout/Router'
 import {BorderlessInputPassword} from '../common/BorderlessInput'
-import {ROUTES} from '../routes-config'
 import './WalletUnlock.scss'
 
 export const WalletUnlock = (): JSX.Element => {
@@ -27,7 +26,7 @@ export const WalletUnlock = (): JSX.Element => {
   }
 
   if (!isLocked) {
-    return <Redirect to={ROUTES.WALLETS.path} />
+    return <Navigate to="WALLETS" />
   } else {
     return (
       <div className="WalletUnlock">

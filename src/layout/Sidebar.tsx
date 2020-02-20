@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
-import {NavLink} from 'react-router-dom'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {ThemeState} from '../theme-state'
+import {RouterState} from '../router-state'
+import {MENU, MenuId, MenuItem} from '../routes-config'
 import {WalletState, canRemoveWallet} from '../common/wallet-state'
-import {ROUTES} from '../routes-config'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
@@ -12,11 +12,12 @@ import './Sidebar.scss'
 
 export const Sidebar = (): JSX.Element => {
   const themeState = ThemeState.useContainer()
+  const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
+
   const walletState = WalletState.useContainer()
+  const routerState = RouterState.useContainer()
 
   const [showLogOutModal, setShowLogOutModal] = useState(false)
-
-  const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
 
   const logOut = canRemoveWallet(walletState) ? (
     <span className="link" onClick={() => setShowLogOutModal(true)}>
@@ -25,6 +26,8 @@ export const Sidebar = (): JSX.Element => {
   ) : (
     <span className={classnames('link', 'disabled')}>Log Out</span>
   )
+
+  const handleMenuClick = (menuId: MenuId): void => routerState.navigate(MENU[menuId].route)
 
   return (
     <div className="Sidebar">
@@ -37,20 +40,22 @@ export const Sidebar = (): JSX.Element => {
       <div>
         <nav>
           <ul className="navigation">
-            {Object.values(ROUTES)
-              .filter((route) => !route.hidden)
-              .map((route) => (
-                <li key={route.path}>
-                  <NavLink to={route.path} className="link">
+            {Object.entries(MENU).map(([menuId, menuItem]: [string, MenuItem]) => {
+              const isActive = routerState.currentRoute.menu == menuId
+              const classes = classnames('link', {active: isActive})
+              return (
+                <li key={menuId}>
+                  <div className={classes} onClick={() => handleMenuClick(menuId as MenuId)}>
                     <span className="prefix">&nbsp;</span>
                     <span className="icon">
                       &nbsp;
-                      <SVG className="svg" src={route.icon} />
+                      <SVG className="svg" src={menuItem.icon} />
                     </span>
-                    <span>{route.title}</span>
-                  </NavLink>
+                    <span>{menuItem.title}</span>
+                  </div>
                 </li>
-              ))}
+              )
+            })}
           </ul>
         </nav>
       </div>

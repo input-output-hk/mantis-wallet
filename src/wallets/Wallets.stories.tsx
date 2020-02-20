@@ -1,6 +1,5 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {withKnobs, text} from '@storybook/addon-knobs'
-import {BrowserRouter} from 'react-router-dom'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {WalletListSidebar} from './WalletListSidebar'
 
@@ -9,8 +8,10 @@ export default {
   decorators: [withTheme, withKnobs],
 }
 
-export const walletList = (): JSX.Element => (
-  <BrowserRouter>
+export const walletList = (): JSX.Element => {
+  const [currentWalletId, changeWallet] = useState<string>('1')
+
+  return (
     <WalletListSidebar
       wallets={[
         {
@@ -26,6 +27,8 @@ export const walletList = (): JSX.Element => (
           name: text('Third wallet name', 'Third wallet'),
         },
       ]}
+      currentWalletId={currentWalletId}
+      changeWallet={changeWallet}
     />
-  </BrowserRouter>
-)
+  )
+}
