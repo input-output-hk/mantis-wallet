@@ -34,6 +34,9 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width,
     height,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   })
 
   const startUrl =
@@ -75,6 +78,10 @@ app.on('ready', createWindow)
 app.on('remote-get-global', (event, webContents, name) => {
   if (name === 'lunaConfig') {
     event.preventDefault()
+    // Electron extends DOM Event type, whose returnValue is typed to boolean
+    // while electron encourages to return any value
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
     event.returnValue = config
   }
 })
