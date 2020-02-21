@@ -27,3 +27,15 @@ export const loadAll = async <T>(
     return [...result, ...nextResult]
   }
 }
+
+export function validateAmount(v: string): string {
+  const n = new BigNumber(v)
+
+  if (!n.isFinite() || !n.isGreaterThan(new BigNumber(0))) {
+    return 'Must be a number greater than 0'
+  } else if (!hasMaxDecimalPlaces(n, 6)) {
+    return 'At most 6 decimal places are permitted'
+  } else {
+    return ''
+  }
+}

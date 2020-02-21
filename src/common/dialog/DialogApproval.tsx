@@ -3,7 +3,7 @@ import {Checkbox} from 'antd'
 import './DialogApproval.scss'
 
 interface DialogApprovalProps {
-  description: string
+  description: React.ReactNode
   onChange: (checked: boolean) => void
   checked: boolean
 }

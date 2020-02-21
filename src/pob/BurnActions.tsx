@@ -1,23 +1,27 @@
-import React from 'react'
-import {Button, message} from 'antd'
+import React, {useState} from 'react'
+import {Button} from 'antd'
 import {BurnBalance, BurnBalanceProps} from './BurnBalance'
+import {WatchBurnModal} from './modals/WatchBurnModal'
+import {ProofOfBurnState} from './pob-state'
+import {config} from '../config/renderer'
 import './BurnActions.scss'
-import {WalletState} from '../common/wallet-state'
 
 interface BurnActionsProps {
   onBurnCoins?: () => void
   onRegisterAuction?: () => void
-  onWatchBurn?: () => void
   burnBalances: Array<BurnBalanceProps & {address: string}>
 }
 
 export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   onBurnCoins,
   onRegisterAuction,
-  onWatchBurn,
   burnBalances,
 }: BurnActionsProps) => {
-  const walletState = WalletState.useContainer()
+  const pobState = ProofOfBurnState.useContainer()
+
+  const {provers} = config
+
+  const [showWatchBurnModal, setShowWatchBurnModal] = useState(false)
 
   return (
     <div className="BurnActions">
@@ -27,23 +31,15 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           <Button type="primary" className="action" onClick={onBurnCoins}>
             Burn Coins
           </Button>
-          <Button type="primary" className="action secondary" onClick={onWatchBurn}>
+          <Button
+            type="primary"
+            className="action secondary"
+            onClick={() => setShowWatchBurnModal(true)}
+          >
             Watch Burn
           </Button>
           <Button type="primary" className="action secondary" onClick={onRegisterAuction}>
             Register for Auction
-          </Button>
-          <Button
-            className="action"
-            onClick={async (): Promise<void> => {
-              if (walletState.walletStatus === 'LOADED') {
-                await walletState.generateNewAddress()
-                message.info('New transparent address generated')
-              }
-            }}
-            disabled={walletState.walletStatus !== 'LOADED'}
-          >
-            New Transparent Address
           </Button>
         </div>
       </div>
@@ -64,6 +60,16 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           </div>
         </div>
       )}
+      <WatchBurnModal
+        visible={showWatchBurnModal}
+        onCancel={(): void => setShowWatchBurnModal(false)}
+        onWatchBurn={(proverAddress: string, burnAddress: string): void => {
+          const prover = config.provers.find(({address}) => address === proverAddress)
+          if (prover) pobState.addBurnWatcher(burnAddress, prover)
+          setShowWatchBurnModal(false)
+        }}
+        provers={provers}
+      />
     </div>
   )
 }

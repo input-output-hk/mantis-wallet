@@ -1,0 +1,21 @@
+@import '../../themify';
+
+.BurnCoinsGenerateAddress {
+  margin-top: 100px;
+
+  .exchange {
+    margin-bottom: 25px;
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 0.69px;
+
+    .svg {
+      height: 20px;
+
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
+      }
+    }
+  }
+}

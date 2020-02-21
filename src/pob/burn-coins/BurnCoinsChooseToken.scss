@@ -1,0 +1,59 @@
+@import '../../themify';
+
+.BurnCoinsChooseToken {
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.46px;
+  }
+
+  .tokens {
+    margin-top: 16px;
+
+    .token {
+      display: inline-block;
+      width: 307px;
+      height: 307px;
+      margin: 0 30px 30px 0;
+      cursor: pointer;
+
+      @include themify($themes) {
+        border: solid 1px themed('tertiary-background');
+      }
+
+      .logo {
+        display: block;
+        height: 42%;
+        margin: 21% auto;
+
+        @include themify($themes) {
+          stroke: themed('text-color');
+          fill: themed('text-color');
+        }
+      }
+
+      .footer {
+        display: grid;
+        height: 16%;
+
+        @include themify($themes) {
+          background-color: themed('primary-color');
+        }
+
+        .footer-text {
+          margin: auto;
+          font-size: 16px;
+          font-weight: bold;
+          letter-spacing: 1.28px;
+          text-transform: uppercase;
+        }
+      }
+
+      &:hover {
+        @include themify($themes) {
+          border-color: themed('text-color');
+        }
+      }
+    }
+  }
+}

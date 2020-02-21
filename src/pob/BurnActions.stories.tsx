@@ -8,10 +8,11 @@ import {BurnBalance} from './BurnBalance'
 import {CHAINS} from './chains'
 import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withPobState} from '../storybook-util/pob-state-decorator'
 
 export default {
   title: 'Burn Actions',
-  decorators: [withTheme, withKnobs, withWalletState],
+  decorators: [withTheme, withKnobs, withWalletState, withPobState],
 }
 
 const dummyBurnBalances = [
