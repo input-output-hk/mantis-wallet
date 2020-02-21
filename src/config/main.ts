@@ -134,7 +134,12 @@ const configGetter = convict({
     doc: "Address where is available Wallet Backend's RPC",
   },
   provers: {
-    default: [],
+    default: [
+      {
+        name: 'Prover 1',
+        address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com:5047',
+      },
+    ],
     format: 'list-of-provers',
     arg: 'provers',
     env: 'LUNA_PROVERS',
