@@ -33,7 +33,7 @@ export const Wallets = (): JSX.Element => {
       } = state.getOverviewProps()
 
       return (
-        <div className="Wallets invisible-scrollbar">
+        <div className="Wallets invisible-scrollbar" id="wallets">
           <WalletOverview
             pending={pendingBalance}
             confidential={availableBalance}

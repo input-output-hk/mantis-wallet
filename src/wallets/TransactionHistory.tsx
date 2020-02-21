@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
+import _ from 'lodash/fp'
 import {Button, Dropdown, Menu, Icon} from 'antd'
+import InfiniteScroll from 'react-infinite-scroller'
 import * as record from 'fp-ts/lib/Record'
 import {sort, map} from 'fp-ts/lib/Array'
 import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
@@ -81,6 +83,7 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
 
   const state = WalletState.useContainer()
 
+  const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
 
@@ -156,25 +159,34 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
       )}
       {transactions.length > 0 && (
         <div className="transactions-container">
-          <table className="transactions">
-            <thead>
-              <tr className="header">
-                <th></th>
-                <th>Asset</th>
-                <th>Amount</th>
-                <th>Time</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {pipe(
-                transactions,
-                sort(getOrd(sortBy)),
-                map((tx: Transaction) => <TransactionRow transaction={tx} key={tx.hash} />),
-              )}
-            </tbody>
-          </table>
+          <InfiniteScroll
+            initialLoad={false}
+            loadMore={() => setShownTxNumber(shownTxNumber + 10)}
+            hasMore={transactions.length > shownTxNumber}
+            useWindow={false}
+            getScrollParent={() => document.getElementById('wallets')}
+          >
+            <table className="transactions">
+              <thead>
+                <tr className="header">
+                  <th></th>
+                  <th>Asset</th>
+                  <th>Amount</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {pipe(
+                  transactions,
+                  sort(getOrd(sortBy)),
+                  _.take(shownTxNumber),
+                  map((tx: Transaction) => <TransactionRow transaction={tx} key={tx.hash} />),
+                )}
+              </tbody>
+            </table>
+          </InfiniteScroll>
         </div>
       )}
     </div>
