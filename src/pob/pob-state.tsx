@@ -2,7 +2,7 @@ import {useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
 import {getStatus, createBurn, BurnApiStatus} from './api/prover'
-import {Chain} from '../common/chains'
+import {Chain} from './chains'
 import {ProverConfig} from '../config/type'
 
 export interface BurnWatcher {
@@ -15,13 +15,6 @@ type BurnStatus = BurnApiStatus | any
 
 interface ProofOfBurnState {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
-  getBurnAddress: (
-    prover: ProverConfig,
-    address: string,
-    chain: Chain,
-    reward: number,
-    autoConversion: boolean,
-  ) => Promise<string>
   observeBurnAddress: (
     burnAddress: string,
     prover: ProverConfig,
@@ -58,20 +51,18 @@ function useProofOfBurnState(): ProofOfBurnState {
     setBurnStatuses(burnStatuses)
   }
 
-  const getBurnAddress = createBurn
-
   const observeBurnAddress = async (
     burnAddress: string,
     prover: ProverConfig,
-    midnightaddress: string,
+    midnightAddress: string,
     chain: Chain,
     reward: number,
     autoConversion: boolean,
   ): Promise<void> => {
     const burnAddressFromProver = await createBurn(
       prover,
-      midnightaddress,
-      chain,
+      midnightAddress,
+      chain.id,
       reward,
       autoConversion,
     )
@@ -89,7 +80,6 @@ function useProofOfBurnState(): ProofOfBurnState {
     addBurnWatcher,
     burnStatuses,
     refreshBurnStatus,
-    getBurnAddress,
     observeBurnAddress,
   }
 }

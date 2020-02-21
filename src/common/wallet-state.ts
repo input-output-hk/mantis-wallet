@@ -5,7 +5,7 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
-import {Chain} from './chains'
+import {Chain} from '../pob/chains'
 import {
   web3,
   TransparentAddress,
@@ -295,7 +295,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     chain: Chain,
     reward: number,
     autoConversion: boolean,
-  ): Promise<string> => wallet.getBurnAddress(address, chain.walletId, reward, autoConversion)
+  ): Promise<string> => wallet.getBurnAddress(address, chain.numericId, reward, autoConversion)
 
   return {
     walletStatus,

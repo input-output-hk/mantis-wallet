@@ -67,14 +67,14 @@ export const ProofOfBurn = (): JSX.Element => {
           onCreateBurn={async (
             prover,
             transparentAddress,
-            chainId,
+            chain,
             reward,
             autoConversion,
           ): Promise<void> => {
             if (walletState.walletStatus === 'LOADED') {
               const burnAddress = await walletState.getBurnAddress(
                 transparentAddress,
-                chainId,
+                chain,
                 reward,
                 autoConversion,
               )
@@ -82,7 +82,7 @@ export const ProofOfBurn = (): JSX.Element => {
                 burnAddress,
                 prover,
                 transparentAddress,
-                chainId,
+                chain,
                 reward,
                 autoConversion,
               )

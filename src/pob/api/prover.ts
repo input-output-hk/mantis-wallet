@@ -1,32 +1,45 @@
+import * as t from 'io-ts'
+import * as tPromise from 'io-ts-promise'
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
-import {Chain} from '../../common/chains'
+import {ChainId} from '../chains'
 
-export interface NoBurnObserved {
-  status: 'No burn transactions observed.'
-}
+const NoBurnObserved = t.type({
+  status: t.literal('No burn transactions observed.'),
+})
 
-export interface BurnProgress {
-  status:
-    | 'BURN_OBSERVED'
-    | 'PROOF_READY'
-    | 'COMMITMENT_APPEARED'
-    | 'COMMITMENT_CONFIRMED'
-    | 'COMMITMENT_FAIL'
-    | 'REVEAL_APPEARED'
-    | 'REVEAL_CONFIRMED'
-    | 'REVEAL_FAIL'
-    | 'REVEAL_DONE_ANOTHER_PROVER'
-  txid: string
-  chain: string
-  midnight_txid: string
-  burn_tx_height: number
-  current_source_height: number
-  processing_start_height: number
-  last_tag_height: number
-}
+const BurnProgress = t.type({
+  status: t.keyof({
+    BURN_OBSERVED: null,
+    PROOF_READY: null,
+    COMMITMENT_APPEARED: null,
+    COMMITMENT_CONFIRMED: null,
+    COMMITMENT_FAIL: null,
+    REVEAL_APPEARED: null,
+    REVEAL_CONFIRMED: null,
+    REVEAL_FAIL: null,
+    REVEAL_DONE_ANOTHER_PROVER: null,
+  }),
+  txid: t.union([t.string, t.undefined]),
+  chain: t.string,
+  midnight_txid: t.union([t.string, t.undefined]),
+  burn_tx_height: t.number,
+  current_source_height: t.number,
+  processing_start_height: t.number,
+  last_tag_height: t.number,
+})
+
+const BurnApiStatuses = t.array(t.union([NoBurnObserved, BurnProgress]))
+
+export type NoBurnObserved = t.TypeOf<typeof NoBurnObserved>
+
+export type BurnProgress = t.TypeOf<typeof BurnProgress>
 
 export type BurnApiStatus = NoBurnObserved | BurnProgress
+
+const BurnType = t.type({
+  burn_address: t.string,
+})
 
 type RequestMode = 'observe' | 'prove'
 
@@ -55,26 +68,26 @@ const httpRequest = async (
 }
 
 export const getStatus = async ({burnAddress, prover}: BurnWatcher): Promise<BurnApiStatus> => {
-  const [apiStatus] = (await httpRequest(prover, 'prove', '/api/v1/status', {
+  return httpRequest(prover, 'prove', '/api/v1/status', {
     burn_address: burnAddress,
-  })) as [BurnApiStatus]
-  return apiStatus
+  })
+    .then(tPromise.decode(BurnApiStatuses))
+    .then(([apiStatus]) => apiStatus)
 }
 
 export const createBurn = async (
   prover: ProverConfig,
   address: string,
-  chain: Chain,
+  chainId: ChainId,
   reward: number,
   autoConversion: boolean,
 ): Promise<string> => {
-  const response = (await httpRequest(prover, 'observe', '/api/v1/observe', {
+  return httpRequest(prover, 'observe', '/api/v1/observe', {
     auto_dust_conversion: autoConversion,
-    chain_name: chain.id,
+    chain_name: chainId,
     midnight_address: address,
     reward,
-  })) as {
-    burn_address: string
-  }
-  return response.burn_address
+  })
+    .then(tPromise.decode(BurnType))
+    .then((burnType) => burnType.burn_address)
 }
