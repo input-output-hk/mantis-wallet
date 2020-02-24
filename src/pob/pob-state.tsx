@@ -10,8 +10,10 @@ export interface BurnWatcher {
   prover: ProverConfig
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type BurnStatus = BurnApiStatus | any
+export type BurnStatus = {
+  lastStatus: BurnApiStatus
+  error?: Error
+}
 
 interface ProofOfBurnState {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
@@ -23,13 +25,13 @@ interface ProofOfBurnState {
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
-  burnStatuses: Array<[BurnWatcher, BurnStatus]>
+  burnStatuses: Record<string, BurnStatus>
   refreshBurnStatus: () => Promise<void>
 }
 
 function useProofOfBurnState(): ProofOfBurnState {
   const [burnWatchers, setBurnWatchers] = useState<BurnWatcher[]>([])
-  const [burnStatuses, setBurnStatuses] = useState<Array<[BurnWatcher, BurnStatus]>>([])
+  const [burnStatuses, setBurnStatuses] = useState<Record<string, BurnStatus>>({})
 
   const addBurnWatcher = (burnAddress: string, prover: ProverConfig): boolean => {
     const newBurnWatcher = {burnAddress, prover}
@@ -41,14 +43,25 @@ function useProofOfBurnState(): ProofOfBurnState {
   }
 
   const refreshBurnStatus = async (): Promise<void> => {
-    const burnStatuses = await Promise.all(
+    const newBurnStatuses = await Promise.all(
       burnWatchers.map((burnWatcher) =>
         getStatus(burnWatcher)
-          .then((status): [BurnWatcher, BurnStatus] => [burnWatcher, status])
-          .catch((error): [BurnWatcher, BurnStatus] => [burnWatcher, error]),
+          .then((status): [string, BurnStatus] => [burnWatcher.burnAddress, {lastStatus: status}])
+          .catch((error): [string, BurnStatus] => {
+            const {burnAddress} = burnWatcher
+            return [
+              burnAddress,
+              {
+                lastStatus: burnStatuses[burnAddress]?.lastStatus || {
+                  status: 'No burn transactions observed.',
+                },
+                error,
+              },
+            ]
+          }),
       ),
     )
-    setBurnStatuses(burnStatuses)
+    setBurnStatuses(_.fromPairs(newBurnStatuses))
   }
 
   const observeBurnAddress = async (

@@ -11,6 +11,11 @@
     color: themed('text-color');
   }
 
+  main {
+    height: 100vh;
+    overflow: auto;
+  }
+
   h1,
   h2,
   h3,

@@ -39,7 +39,9 @@ const App: React.FC = () => {
               </header>
               <SyncStatus />
               <ProofOfBurnState.Provider>
-                <Router />
+                <main>
+                  <Router />
+                </main>
               </ProofOfBurnState.Provider>
             </WalletState.Provider>
           </RouterState.Provider>
