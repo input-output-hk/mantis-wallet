@@ -224,7 +224,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
         setTransparentBalance(some(availableTransparentBalance))
       })
       .catch((e: Error) => {
-        if (e.message === WALLET_IS_OFFLINE) return
+        if (e.message === WALLET_IS_OFFLINE) return setTransparentBalance(some(new BigNumber(0)))
         handleError(e)
       })
 
