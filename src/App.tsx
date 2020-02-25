@@ -5,7 +5,7 @@ import {ProofOfBurnState} from './pob/pob-state'
 import {RouterState} from './router-state'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
-import {SyncStatus} from './common/SyncStatus'
+import {FloatingSyncStatus} from './common/SyncStatus'
 import {SplashScreen} from './SplashScreen'
 import {web3} from './web3'
 import './App.scss'
@@ -37,7 +37,7 @@ const App: React.FC = () => {
               <header>
                 <Sidebar />
               </header>
-              <SyncStatus />
+              <FloatingSyncStatus />
               <ProofOfBurnState.Provider>
                 <main>
                   <Router />

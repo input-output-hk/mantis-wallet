@@ -1,39 +1,59 @@
 import React from 'react'
+import classnames from 'classnames'
+import SVG from 'react-inlinesvg'
+import {Popover} from 'antd'
 import {WalletState} from './wallet-state'
+import {RouterState} from '../router-state'
 import {useInterval} from './hook-utils'
 import {SynchronizationStatus} from '../web3'
+import refreshIcon from '../assets/icons/refresh.svg'
 import './SyncStatus.scss'
 
 interface SyncStatusProps {
   syncStatus: SynchronizationStatus
 }
 
-const Message = ({syncStatus}: SyncStatusProps): JSX.Element => {
-  if (syncStatus.mode === 'offline') {
-    return <>Wallet is offline. Last block: {syncStatus.currentBlock}</>
-  } else {
-    return (
-      <>
-        Synchronization progress: {syncStatus.percentage}%, Block: {syncStatus.currentBlock}
-      </>
-    )
-  }
+type SyncStatus = 'offline' | 'synced' | 'syncing'
+
+const getSyncStatus = (syncStatus: SynchronizationStatus): SyncStatus => {
+  if (syncStatus.mode === 'offline') return 'offline'
+  if (syncStatus.percentage === 100) return 'synced'
+  return 'syncing'
 }
 
-export const SyncStatus = (): JSX.Element => {
+const Message = ({syncStatus}: SyncStatusProps): JSX.Element => {
+  if (syncStatus.mode === 'offline') return <>Error Syncing</>
+  if (syncStatus.percentage === 100) return <>Fully Synced</>
+  return <>Syncing Blocks {syncStatus.percentage}%</>
+}
+
+export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
+  const classes = classnames('SyncStatus', getSyncStatus(syncStatus))
+  return (
+    <span className={classes}>
+      <Popover content={`Current block: ${syncStatus.currentBlock}`} placement="left">
+        <Message syncStatus={syncStatus} />
+        <SVG src={refreshIcon} className="svg" />
+      </Popover>
+    </span>
+  )
+}
+
+export const FloatingSyncStatus = (): JSX.Element => {
   const state = WalletState.useContainer()
+  const routerState = RouterState.useContainer()
 
   useInterval(() => {
     if (state.walletStatus === 'LOADED') state.refreshSyncStatus()
   }, 3000)
 
-  if (state.walletStatus !== 'LOADED') {
+  if (state.walletStatus !== 'LOADED' || routerState.currentRouteId === 'WALLETS') {
     return <></>
-  } else {
-    return (
-      <div className="SyncStatus">
-        <Message syncStatus={state.syncStatus} />
-      </div>
-    )
   }
+
+  return (
+    <div className="FloatingSyncStatus">
+      <SyncStatusContent syncStatus={state.syncStatus} />
+    </div>
+  )
 }
