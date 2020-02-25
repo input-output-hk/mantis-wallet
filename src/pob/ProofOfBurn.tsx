@@ -9,7 +9,7 @@ import {WatchBurnModal} from './modals/WatchBurnModal'
 import './ProofOfBurn.scss'
 
 export const ProofOfBurn = (): JSX.Element => {
-  const {addBurnWatcher, burnStatuses, refreshBurnStatus} = ProofOfBurnState.useContainer()
+  const pobState = ProofOfBurnState.useContainer()
   const walletState = WalletState.useContainer()
 
   const transparentAddresses =
@@ -18,7 +18,7 @@ export const ProofOfBurn = (): JSX.Element => {
       : []
   const {provers} = config
 
-  useInterval(refreshBurnStatus, 2000)
+  useInterval(pobState.refreshBurnStatus, 2000)
 
   const [showCreateBurnModal, setShowCreateBurnModal] = useState(false)
   const [showWatchBurnModal, setShowWatchBurnModal] = useState(false)
@@ -45,7 +45,7 @@ export const ProofOfBurn = (): JSX.Element => {
         &nbsp;
         <Button onClick={(): void => setShowWatchBurnModal(true)}>Watch Burn Address</Button>
         &nbsp;
-        <Button onClick={refreshBurnStatus}>Refresh</Button>
+        <Button onClick={pobState.refreshBurnStatus}>Refresh</Button>
         &nbsp;
         <Button
           onClick={async (): Promise<void> => {
@@ -65,32 +65,28 @@ export const ProofOfBurn = (): JSX.Element => {
           errorMessage={createErrorMessage}
           onCancel={() => setShowCreateBurnModal(false)}
           onCreateBurn={async (
-            proverAddress,
+            prover,
             transparentAddress,
-            chainId,
+            chain,
             reward,
             autoConversion,
           ): Promise<void> => {
-            const prover = provers.find(({address}) => address === proverAddress)
-            if (walletState.walletStatus !== 'LOADED') {
-              message.error(
-                `Wallet is ${walletState.walletStatus}, it should be LOADED to create a burn address`,
+            if (walletState.walletStatus === 'LOADED') {
+              const burnAddress = await walletState.getBurnAddress(
+                transparentAddress,
+                chain,
+                reward,
+                autoConversion,
               )
-            } else if (!prover) {
-              message.error('Unknown prover')
-            } else {
-              try {
-                const burnAddress = await walletState.getBurnAddress(
-                  transparentAddress,
-                  chainId,
-                  reward,
-                  autoConversion,
-                )
-                addBurnWatcher(burnAddress, prover)
-                setShowCreateBurnModal(false)
-              } catch (e) {
-                message.error(e.message)
-              }
+              await pobState.observeBurnAddress(
+                burnAddress,
+                prover,
+                transparentAddress,
+                chain,
+                reward,
+                autoConversion,
+              )
+              setShowCreateBurnModal(false)
             }
           }}
         />
@@ -99,14 +95,14 @@ export const ProofOfBurn = (): JSX.Element => {
           onCancel={(): void => setShowWatchBurnModal(false)}
           onWatchBurn={(proverAddress: string, burnAddress: string): void => {
             const prover = config.provers.find(({address}) => address === proverAddress)
-            if (prover) addBurnWatcher(burnAddress, prover)
+            if (prover) pobState.addBurnWatcher(burnAddress, prover)
             setShowWatchBurnModal(false)
           }}
           provers={provers}
         />
       </div>
       <div className="list">
-        {burnStatuses.map(([burnWatcher, burnStatus]) => (
+        {pobState.burnStatuses.map(([burnWatcher, burnStatus]) => (
           <div
             className="burn-watcher"
             key={`${burnWatcher.burnAddress}-${burnWatcher.prover.address}`}

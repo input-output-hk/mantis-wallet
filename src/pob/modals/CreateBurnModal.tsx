@@ -7,19 +7,23 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogError} from '../../common/dialog/DialogError'
 import {ProverConfig} from '../../config/type'
+import {CHAINS, Chain, ChainId} from '../chains'
+import {message} from 'antd'
 
 interface CreateBurnModalProps {
   provers: ProverConfig[]
   transparentAddresses: string[]
   errorMessage?: string
   onCreateBurn: (
-    proverAddress: string,
+    prover: ProverConfig,
     address: string,
-    chainId: number,
+    chain: Chain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
 }
+
+const CHAINS_IN_USE: ChainId[] = ['BTC_TESTNET', 'ETH_TESTNET']
 
 export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & ModalProps> = ({
   provers,
@@ -30,9 +34,14 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
 }: CreateBurnModalProps & ModalProps) => {
   const [proverAddress, setProverAddress] = useState<string>(provers[0].address)
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const [chainId, setChainId] = useState('0')
+  const [chainId, setChainId] = useState(CHAINS_IN_USE[0])
   const [reward, setReward] = useState('1')
   const [autoConversion, setAutoConversion] = useState(true)
+
+  const prover = provers.find(({address}) => proverAddress === address)
+  const chain = CHAINS.find(({id}) => id === chainId)
+  const proverErrorMessage = prover ? '' : 'You must select a prover'
+  const errorMessageToShow = errorMessage || proverErrorMessage
 
   return (
     <LunaModal {...props}>
@@ -42,17 +51,24 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
           onClick: props.onCancel,
         }}
         nextButtonProps={{
-          disabled: !!errorMessage,
-          onClick: () =>
-            onCreateBurn(
-              proverAddress,
-              transparentAddress,
-              parseInt(chainId),
-              parseInt(reward),
-              autoConversion,
-            ),
+          disabled: !!errorMessageToShow,
+          onClick: async () => {
+            if (prover && chain) {
+              try {
+                await onCreateBurn(
+                  prover,
+                  transparentAddress,
+                  chain,
+                  parseInt(reward),
+                  autoConversion,
+                )
+              } catch (e) {
+                message.error(e.message)
+              }
+            }
+          },
         }}
-        footer={errorMessage && <DialogError>{errorMessage}</DialogError>}
+        footer={errorMessageToShow && <DialogError>{errorMessageToShow}</DialogError>}
       >
         <DialogDropdown
           label="Prover"
@@ -67,10 +83,13 @@ export const CreateBurnModal: React.FunctionComponent<CreateBurnModalProps & Mod
           options={transparentAddresses}
           onChange={setTransparentAddress}
         />
-        <DialogInput
-          label="Chain ID"
-          defaultValue={chainId}
-          onChange={(e) => setChainId(e.target.value)}
+        <DialogDropdown
+          label="Chain"
+          options={CHAINS.filter(({id}) => CHAINS_IN_USE.includes(id)).map(({id, name}) => ({
+            key: id,
+            label: name,
+          }))}
+          onChange={setChainId}
         />
         <DialogInput
           label="Reward"
