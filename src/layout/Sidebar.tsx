@@ -51,7 +51,7 @@ export const Sidebar = (): JSX.Element => {
                       &nbsp;
                       <SVG className="svg" src={menuItem.icon} />
                     </span>
-                    <span>{menuItem.title}</span>
+                    <span className="link-title">{menuItem.title}</span>
                   </div>
                 </li>
               )

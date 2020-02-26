@@ -10,14 +10,16 @@
     background-color: themed('secondary-background');
   }
 
-  .logo {
-    margin: 37px 0 0 10px;
+  .logo img {
+    display: block;
+    margin: 1rem auto 0;
   }
 
   .title {
-    width: 280px;
+    width: 100%;
     height: 100px;
-    margin: 0 0 0 152px;
+    margin: 0;
+    padding-left: 152px;
     font-size: 54px;
     font-weight: bold;
     letter-spacing: -0.81px;
@@ -50,7 +52,6 @@
         font-weight: bold;
 
         .prefix {
-          width: 113px;
           @include themify($themes) {
             border-left: 3px solid themed('border-color-base');
           }
@@ -69,7 +70,7 @@
           transform: translate(-50%, -50%);
 
           @include themify($themes) {
-            stroke: themed('text-color');
+            stroke: rgba(0, 0, 0, 0);
             fill: themed('text-color');
           }
         }
@@ -78,10 +79,11 @@
   }
 
   .footer {
-    margin: 0 0 30px 155px;
+    margin: 0 0 2rem;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: 1.8px;
+    text-align: center;
     text-transform: uppercase;
 
     .link {
@@ -103,6 +105,36 @@
           }
         }
       }
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    $mini-left-padding: 73px;
+    width: 200px;
+
+    .title {
+      padding-left: $mini-left-padding;
+      font-size: 24px;
+    }
+
+    .logo img {
+      width: 150px;
+    }
+
+    .navigation {
+      .link {
+        .prefix {
+          width: $mini-left-padding;
+        }
+
+        .link-title {
+          display: none;
+        }
+      }
+    }
+
+    .footer {
+      font-size: 10px;
     }
   }
 }
