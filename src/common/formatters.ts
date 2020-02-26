@@ -29,8 +29,13 @@ export const formatAmount = (
   }
 }
 
-export const formatPercentage = (ratio: number): string =>
-  new Intl.NumberFormat(LOCALE).format(Math.round(ratio * 10000) / 100)
+export const formatPercentage = (ratio: number): string => {
+  if (Number.isNaN(ratio)) {
+    return '0'
+  } else {
+    return new Intl.NumberFormat(LOCALE).format(Math.round(ratio * 10000) / 100)
+  }
+}
 
 export const formatDate = (d: Date): string =>
   new Intl.DateTimeFormat(LOCALE, dateTimeFormatSettings).format(d)
