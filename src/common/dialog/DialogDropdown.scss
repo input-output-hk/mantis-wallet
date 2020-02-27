@@ -23,10 +23,34 @@
   }
 }
 
+.DialogDropdown.small {
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .active-option {
+    opacity: $secondary-opacity;
+    font-weight: 300;
+  }
+}
+
 .DialogDropdownOverlay {
+  .ant-dropdown-menu {
+    @include themify($themes) {
+      background-color: themed('component-background');
+      color: themed('text-color');
+    }
+  }
+
   .ant-dropdown-menu-item {
     width: 508px;
     overflow: hidden;
+
+    @include themify($themes) {
+      background-color: themed('component-background');
+      color: themed('text-color');
+    }
 
     &:hover {
       @include themify($themes) {

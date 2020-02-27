@@ -1,0 +1,25 @@
+@import '../../themify';
+
+.DialogAddress {
+  margin-bottom: 20px;
+
+  .display {
+    display: grid;
+    grid-column-gap: 30px;
+    grid-template-columns: auto 1fr;
+    margin-bottom: 10px;
+  }
+
+  .address {
+    word-break: break-all;
+  }
+
+  .logo {
+    height: 100px;
+
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
+  }
+}

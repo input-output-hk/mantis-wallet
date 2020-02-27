@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
+import classnames from 'classnames'
 import {Dropdown, Menu} from 'antd'
 import './DialogDropdown.scss'
 
@@ -9,12 +10,14 @@ interface DialogDropdownOption<T> {
 }
 
 interface DialogDropdownProps<T> {
+  type?: 'normal' | 'small'
   label: string
   options: Array<DialogDropdownOption<T> | T>
   onChange?: (option: T) => void
 }
 
 export const DialogDropdown = <T extends string>({
+  type = 'normal',
   label,
   options,
   onChange,
@@ -40,7 +43,7 @@ export const DialogDropdown = <T extends string>({
   )
 
   return (
-    <div className="DialogDropdown">
+    <div className={classnames('DialogDropdown', type)}>
       <Dropdown overlay={menu} overlayClassName="DialogDropdownOverlay">
         <span className="label">{label} ▼ </span>
       </Dropdown>

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {Option, none, some} from 'fp-ts/lib/Option'
-import {withKnobs, text, boolean, array} from '@storybook/addon-knobs'
+import {withKnobs, text, boolean, array, select, number} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {Dialog} from './Dialog'
@@ -18,6 +18,8 @@ import {DialogColumns} from './dialog/DialogColumns'
 import {DialogError} from './dialog/DialogError'
 import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
+import {DialogAddress} from './dialog/DialogAddress'
+import {CHAINS} from '../pob/chains'
 
 export default {
   title: 'Dialog',
@@ -40,6 +42,15 @@ export const InteractiveDialog: React.FunctionComponent<{}> = () => (
     footer={text('Footer', 'footer text')}
   >
     {text('Dialog content', 'Dialog content')}
+  </Dialog>
+)
+
+export const InteractiveAddress: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Columns">
+    <DialogAddress
+      chain={CHAINS[number('Chain Id', 0)]}
+      address={text('Address to show', 'test-address')}
+    />
   </Dialog>
 )
 
@@ -78,6 +89,7 @@ export const InteractiveDisplayWords: React.FunctionComponent<{}> = () => (
 export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Dropdown">
     <DialogDropdown
+      type={select('Dropdown type', ['normal', 'small'], 'normal')}
       label={text('Dropdown label', 'Hover me')}
       options={[
         {
@@ -105,13 +117,7 @@ export const InteractiveError: React.FunctionComponent<{}> = () => (
 )
 
 export const InteractiveInput: React.FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Input">
-    <DialogInput label={text('Input label', 'Input label')} />
-  </Dialog>
-)
-
-export const InteractiveDarkInput: React.FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Input dark" type="dark">
+  <Dialog title="Dialog Input" type={select('Input type', ['normal', 'dark'], 'normal')}>
     <DialogInput label={text('Input label', 'Input label')} />
   </Dialog>
 )

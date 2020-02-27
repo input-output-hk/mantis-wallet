@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {ModalProps} from 'antd/lib/modal'
 import {toWei} from 'web3/lib/utils/utils.js'
-import BigNumber from 'bignumber.js'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
@@ -10,24 +9,12 @@ import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {Account} from '../../web3'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useIsMounted} from '../../common/hook-utils'
+import {validateAmount} from '../../common/util'
 import './SendTransaction.scss'
-import {hasMaxDecimalPlaces} from '../../common/util'
 
 interface SendTransactionProps {
   accounts: Account[]
   onSend: (recipient: string, amount: number, fee: number) => Promise<void>
-}
-
-const validateAmount = (v: string): string => {
-  const n = new BigNumber(v)
-
-  if (!n.isFinite() || !n.isGreaterThan(new BigNumber(0))) {
-    return 'Must be a number greater than 0'
-  } else if (!hasMaxDecimalPlaces(n, 6)) {
-    return 'At most 6 decimal places are permitted'
-  } else {
-    return ''
-  }
 }
 
 export const SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({

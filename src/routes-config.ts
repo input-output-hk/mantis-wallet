@@ -4,6 +4,7 @@ import {ApiTest} from './components/ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
 import {BurnCentre} from './pob/BurnCentre'
+import {BurnCoins} from './pob/BurnCoins'
 import menuPortfolioIcon from './assets/icons/menu-portfolio.svg'
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
@@ -60,6 +61,7 @@ export type RouteId =
   | 'WALLET_SETUP'
   | 'WALLET_UNLOCK'
   | 'BURN_CENTRE'
+  | 'BURN_COINS'
   | 'GLACIER_DROP'
   | 'SETTINGS'
 
@@ -91,6 +93,10 @@ export const ROUTES: Routes = {
   },
   BURN_CENTRE: {
     component: BurnCentre,
+    menu: 'PROOF_OF_BURN',
+  },
+  BURN_COINS: {
+    component: BurnCoins,
     menu: 'PROOF_OF_BURN',
   },
   GLACIER_DROP: {
