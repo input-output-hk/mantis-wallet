@@ -89,7 +89,7 @@ div#root {
 .ant-btn-primary {
   @include themify($themes) {
     background-color: themed('primary-color');
-    color: #fff;
+    color: themed('text-color');
   }
 
   &:hover {

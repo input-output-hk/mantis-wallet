@@ -8,7 +8,9 @@ export default {
   decorators: [withTheme, withKnobs],
 }
 
-export const walletList = (): JSX.Element => {
+// `useState` cannot be used in stories
+// https://github.com/storybookjs/storybook/issues/4691
+const WalletList: React.FunctionComponent<{}> = () => {
   const [currentWalletId, changeWallet] = useState<string>('1')
 
   return (
@@ -32,3 +34,5 @@ export const walletList = (): JSX.Element => {
     />
   )
 }
+
+export const walletList: React.FunctionComponent<{}> = () => <WalletList />

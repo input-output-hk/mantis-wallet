@@ -3,7 +3,7 @@ import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './components/ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
-import {ProofOfBurn} from './pob/ProofOfBurn'
+import {BurnCentre} from './pob/BurnCentre'
 import menuPortfolioIcon from './assets/icons/menu-portfolio.svg'
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
@@ -37,7 +37,7 @@ export const MENU: Menu = {
   },
   PROOF_OF_BURN: {
     title: 'Proof of Burn',
-    route: 'PROOF_OF_BURN',
+    route: 'BURN_CENTRE',
     icon: menuPobIcon,
   },
   GLACIER_DROP: {
@@ -59,7 +59,7 @@ export type RouteId =
   | 'WALLETS'
   | 'WALLET_SETUP'
   | 'WALLET_UNLOCK'
-  | 'PROOF_OF_BURN'
+  | 'BURN_CENTRE'
   | 'GLACIER_DROP'
   | 'SETTINGS'
 
@@ -89,8 +89,8 @@ export const ROUTES: Routes = {
     component: WalletUnlock,
     menu: 'WALLETS',
   },
-  PROOF_OF_BURN: {
-    component: ProofOfBurn,
+  BURN_CENTRE: {
+    component: BurnCentre,
     menu: 'PROOF_OF_BURN',
   },
   GLACIER_DROP: {

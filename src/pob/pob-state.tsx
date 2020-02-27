@@ -11,7 +11,7 @@ export interface BurnWatcher {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BurnStatus = BurnApiStatus | any
+export type BurnStatus = BurnApiStatus | any
 
 interface ProofOfBurnState {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
