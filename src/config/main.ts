@@ -13,13 +13,18 @@ import {ClientName, Config, ProcessConfig, ProverConfig} from './type'
 const proverConfig: convict.Schema<ProverConfig> = {
   name: {
     default: '',
-    doc: `Name of the prover`,
-    format: 'url',
+    doc: 'Name of the prover',
+    format: String,
   },
   address: {
     default: '',
-    doc: `Address of the prover`,
+    doc: 'Address of the prover',
     format: 'url',
+  },
+  reward: {
+    default: 1,
+    doc: 'Default reward for the prover',
+    format: Number,
   },
 }
 
@@ -138,6 +143,7 @@ const configGetter = convict({
       {
         name: 'Prover 1',
         address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com',
+        reward: 0.01,
       },
     ],
     format: 'list-of-provers',

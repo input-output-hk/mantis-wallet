@@ -44,10 +44,12 @@ export const generateAddress = (): JSX.Element => (
       {
         name: text('First prover', 'First prover'),
         address: text('First prover address', 'first.prover.address'),
+        reward: number('First prover reward', 0.01),
       },
       {
         name: text('Second prover', 'Second prover'),
         address: text('Second prover address', 'second.prover.address'),
+        reward: number('Second prover reward', 10),
       },
     ]}
     transparentAddresses={array('Transparent addresses', ['first-address', 'second-address'])}

@@ -1,8 +1,7 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Dialog} from '../../common/Dialog'
 import {Chain} from '../chains'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import {DialogApproval} from '../../common/dialog/DialogApproval'
 import './BurnCoinsShowAddress.scss'
 
 interface BurnCoinsShowAddressProps {
@@ -16,8 +15,6 @@ export const BurnCoinsShowAddress: React.FunctionComponent<BurnCoinsShowAddressP
   burnAddress,
   goBack: cancel,
 }: BurnCoinsShowAddressProps) => {
-  const [approval, setApproval] = useState(false)
-
   return (
     <div className="BurnCoinsShowAddress">
       <Dialog
@@ -32,20 +29,6 @@ export const BurnCoinsShowAddress: React.FunctionComponent<BurnCoinsShowAddressP
         }}
       >
         <DialogAddress chain={chain} address={burnAddress} />
-        <DialogApproval
-          checked={approval}
-          onChange={setApproval}
-          description={
-            <>
-              This is a Bitcoin Address to which you can send Bitcoin to be burned and converted
-              into Midnight Tokens. these Midnight Tokens can be used to participate in an Auction
-              to win spendable Dust Tokens. The Burn process is irreversible and the Bitcoin burned
-              will be unspendable forever.
-              <br />
-              <br />I understand the process
-            </>
-          }
-        />
       </Dialog>
     </div>
   )
