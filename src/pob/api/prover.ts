@@ -4,38 +4,44 @@ import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
 import {ChainId} from '../chains'
 
-const NoBurnObserved = t.type({
-  status: t.literal('No burn transactions observed.'),
+const BurnStatusType = t.keyof({
+  ['No burn transactions observed.']: null,
+  BURN_OBSERVED: null,
+  PROOF_READY: null,
+  PROOF_FAIL: null,
+  COMMITMENT_APPEARED: null,
+  COMMITMENT_CONFIRMED: null,
+  COMMITMENT_FAIL: null,
+  REVEAL_APPEARED: null,
+  REVEAL_CONFIRMED: null,
+  REVEAL_FAIL: null,
+  REVEAL_DONE_ANOTHER_PROVER: null,
 })
 
-const BurnProgress = t.type({
-  status: t.keyof({
-    BURN_OBSERVED: null,
-    PROOF_READY: null,
-    COMMITMENT_APPEARED: null,
-    COMMITMENT_CONFIRMED: null,
-    COMMITMENT_FAIL: null,
-    REVEAL_APPEARED: null,
-    REVEAL_CONFIRMED: null,
-    REVEAL_FAIL: null,
-    REVEAL_DONE_ANOTHER_PROVER: null,
-  }),
+const BurnApiStatus = t.type({
+  status: BurnStatusType,
   txid: t.union([t.string, t.undefined]),
-  chain: t.string,
+  chain: t.union([
+    t.keyof({
+      BTC_MAINNET: null,
+      BTC_TESTNET: null,
+      ETH_MAINNET: null,
+      ETH_TESTNET: null,
+    }),
+    t.undefined,
+  ]),
   midnight_txid: t.union([t.string, t.undefined]),
-  burn_tx_height: t.number,
-  current_source_height: t.number,
-  processing_start_height: t.number,
-  last_tag_height: t.number,
+  burn_tx_height: t.union([t.number, t.undefined]),
+  current_source_height: t.union([t.number, t.undefined]),
+  processing_start_height: t.union([t.number, t.undefined]),
+  last_tag_height: t.union([t.number, t.undefined]),
 })
 
-const BurnApiStatuses = t.array(t.union([NoBurnObserved, BurnProgress]))
+const BurnApiStatuses = t.array(BurnApiStatus)
 
-export type NoBurnObserved = t.TypeOf<typeof NoBurnObserved>
+export type BurnStatusType = t.TypeOf<typeof BurnStatusType>
 
-export type BurnProgress = t.TypeOf<typeof BurnProgress>
-
-export type BurnApiStatus = NoBurnObserved | BurnProgress
+export type BurnApiStatus = t.TypeOf<typeof BurnApiStatus>
 
 const BurnType = t.type({
   burn_address: t.string,

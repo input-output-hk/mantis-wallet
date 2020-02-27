@@ -1,4 +1,4 @@
-const {override, fixBabelImports, addWebpackPlugin} = require('customize-cra')
+const {override, fixBabelImports, addWebpackPlugin, useBabelRc} = require('customize-cra')
 const AntdScssThemePlugin = require('antd-scss-theme-plugin')
 const WorkerPlugin = require('worker-plugin')
 
@@ -59,5 +59,6 @@ module.exports = override(
   }),
   addLessLoader(),
   addRawImages(),
+  useBabelRc(),
   (config) => ({...config, target: 'electron-renderer'}),
 )

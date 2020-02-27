@@ -7,11 +7,7 @@ export const Router = (): JSX.Element => {
     currentRoute: {component: Component},
   } = RouterState.useContainer()
 
-  return (
-    <main>
-      <Component />
-    </main>
-  )
+  return <Component />
 }
 
 interface NavigateProps {

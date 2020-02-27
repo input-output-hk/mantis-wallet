@@ -9,7 +9,11 @@ const AppDecorator = (storyFn) => {
     // set Luna body class for antd overwrites
     document.body.classList.add('Luna')
   }, [])
-  return <div className="App">{storyFn()}</div>
+  return (
+    <div className="App" style={{gridTemplateColumns: '1fr'}}>
+      {storyFn()}
+    </div>
+  )
 }
 addDecorator(AppDecorator)
 

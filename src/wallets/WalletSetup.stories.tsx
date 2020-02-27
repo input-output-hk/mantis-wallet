@@ -17,10 +17,12 @@ export default {
 }
 
 export const showPathChooser = (): JSX.Element => (
-  <WalletPathChooser
-    goToCreate={action('Go to Create Wallet')}
-    goToRestore={action('Go to Restore Wallet')}
-  />
+  <div style={{alignSelf: 'start', margin: 'auto'}}>
+    <WalletPathChooser
+      goToCreate={action('Go to Create Wallet')}
+      goToRestore={action('Go to Restore Wallet')}
+    />
+  </div>
 )
 
 export const showWalletRestore = (): JSX.Element => (
