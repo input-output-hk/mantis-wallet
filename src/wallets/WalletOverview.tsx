@@ -2,14 +2,14 @@ import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
-import {WalletState} from '../common/wallet-state'
+import {WalletState, LoadedState} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {bigToNumber} from '../common/util'
 import {OverviewGraph} from './OverviewGraph'
+import {SyncStatusContent} from '../common/SyncStatus'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
-import refreshIcon from '../assets/icons/refresh.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
@@ -22,21 +22,17 @@ interface WalletOverviewProps {
 }
 
 export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
-  const state = WalletState.useContainer()
+  const state = WalletState.useContainer() as LoadedState
   const themeState = ThemeState.useContainer()
   const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
-
-  const refresh = (): void => {
-    if (state.walletStatus === 'LOADED') state.reset()
-  }
 
   const {pending, confidential, transparent} = props
   const total = pending.plus(confidential).plus(transparent)
   return (
     <div className="WalletOverview">
-      <div className="title">Wallet Overview</div>
-      <div className="refresh">
-        <SVG src={refreshIcon} className="svg" onClick={refresh} />
+      <div className="header">
+        <span className="title">Wallet Overview</span>
+        <SyncStatusContent syncStatus={state.syncStatus} />
       </div>
       <div className="graph">
         <OverviewGraph {..._.mapValues(props, bigToNumber)} />

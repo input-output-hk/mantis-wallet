@@ -29,7 +29,7 @@ interface LoadingState {
   walletStatus: 'LOADING'
 }
 
-interface LoadedState {
+export interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
   transparentAddresses: TransparentAddress[]

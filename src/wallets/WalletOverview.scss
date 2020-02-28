@@ -1,15 +1,17 @@
-@import '../themify';
+@import '../themify', '../vars';
+
+$header-height: 120px;
+$header-text-height: 50px;
 
 .WalletOverview {
   display: grid;
   grid-template-areas:
-    'title title title refresh'
-    'graph total total .'
-    'graph confidential transparent .';
-  grid-template-columns: auto 1fr 1fr auto;
-  grid-template-rows: 124px auto auto;
-  height: 400px;
-  margin: 0 36px 100px 36px;
+    'header header header'
+    'graph total total'
+    'graph confidential transparent';
+  grid-template-columns: auto 1fr 1fr;
+  grid-template-rows: $header-height auto auto;
+  margin: 0 36px 100px;
 
   .svg {
     @include themify($themes) {
@@ -18,22 +20,28 @@
     }
   }
 
+  .header {
+    grid-area: header;
+    padding-top: ($header-height - $header-text-height) / 2;
+  }
+
+  %header-row {
+    display: inline-block;
+    height: $header-text-height;
+    line-height: $header-text-height;
+  }
+
   .title {
-    grid-area: title;
+    @extend %header-row;
     margin: 0;
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 0.46px;
-    line-height: 124px;
   }
 
-  .refresh {
-    grid-area: refresh;
-    line-height: 124px;
-
-    .svg {
-      cursor: pointer;
-    }
+  .SyncStatus {
+    @extend %header-row;
+    float: right;
   }
 
   .graph {
@@ -50,25 +58,23 @@
     white-space: nowrap;
   }
 
-  .confidential {
-    grid-area: confidential;
+  %balance {
     min-width: 205px;
-    height: 115px;
-    margin-right: 30px;
-    padding: 18px;
+    padding: 24px 24px 0;
     overflow: hidden;
     white-space: nowrap;
   }
 
-  .transparent {
-    grid-area: transparent;
-    min-width: 205px;
-    height: 115px;
+  .confidential {
+    @extend %balance;
+    grid-area: confidential;
     margin-right: 30px;
-    padding: 24px 18px 24px 15px;
-    overflow: hidden;
+  }
+
+  .transparent {
+    @extend %balance;
+    grid-area: transparent;
     border-radius: 20px;
-    white-space: nowrap;
 
     @include themify($themes) {
       background-color: themed('secondary-background');
@@ -76,7 +82,7 @@
   }
 
   .box-text {
-    padding-left: 12px;
+    margin-bottom: 4px;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: 1.95px;
@@ -87,13 +93,13 @@
   .box-icon {
     display: inline-block;
     position: relative;
-    width: 20px;
+    width: 25px;
 
     .svg {
       position: absolute;
       top: 50%;
       bottom: 50%;
-      transform: translate(-50%, -60%);
+      transform: translate(-20%, -60%);
     }
   }
 
@@ -117,7 +123,6 @@
   }
 
   .box-amount {
-    padding-top: 13px;
     font-size: 30px;
     font-weight: 300;
     letter-spacing: 0.69px;
@@ -125,13 +130,14 @@
   }
 
   .box-amount-big {
-    padding: 4px 0 7px 0;
+    padding-bottom: 7px;
     font-size: 45px;
     letter-spacing: 1.04px;
     line-height: 44px;
   }
 
   .dust {
+    margin-right: 6px;
     float: left;
   }
 }

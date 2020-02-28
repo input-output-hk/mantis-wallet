@@ -1,11 +1,56 @@
 @import '../themify';
 
 .SyncStatus {
+  font-size: 12px;
+  font-weight: bold;
+
+  @include themify($themes) {
+    color: themed('inactive-text-color');
+  }
+
+  svg {
+    height: 17px;
+    margin: 0 0 2px 5px;
+    vertical-align: middle;
+  }
+
+  &.syncing svg {
+    @include themify($themes) {
+      animation: spin 4s linear infinite;
+      stroke: themed('primary-color');
+    }
+  }
+
+  &.offline svg {
+    @include themify($themes) {
+      stroke: themed('error-color');
+    }
+  }
+
+  &.synced svg {
+    @include themify($themes) {
+      stroke: themed('text-color');
+    }
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.FloatingSyncStatus {
   position: absolute;
   z-index: 2000;
-  right: 0;
-  bottom: 0;
-  padding: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  border-radius: 1rem;
+
+  .SyncStatus > span {
+    display: inline-block;
+    padding: 1rem;
+  }
 
   @include themify($themes) {
     background-color: themed('secondary-background');

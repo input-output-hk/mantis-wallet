@@ -57,7 +57,7 @@ export const ApiTest = (): JSX.Element => {
     return (
       <Button
         type="primary"
-        style={{display: 'block', marginBottom: '0.5rem'}}
+        style={{display: 'inline-block', margin: '0 0.5rem 0.5rem 0'}}
         onClick={call(props.onClick)}
       >
         {props.children}

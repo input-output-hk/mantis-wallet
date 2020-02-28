@@ -3,6 +3,7 @@ import {createContainer} from 'unstated-next'
 import {ROUTES, MENU, RouteId, Route, MenuItem} from './routes-config'
 
 interface RouterState {
+  currentRouteId: RouteId
   currentRoute: Route
   currentMenu: MenuItem
   navigate: (routeId: RouteId) => void
@@ -27,6 +28,7 @@ function useRouterState(initialState: InitialState = {routeId: 'WALLETS'}): Rout
   }
 
   return {
+    currentRouteId,
     currentRoute,
     currentMenu,
     navigate,
