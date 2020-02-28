@@ -11,6 +11,7 @@ import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {validateAmount} from '../../common/util'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import './BurnCoinsGenerateAddress.scss'
+import {DialogMessage} from '../../common/dialog/DialogMessage'
 
 interface BurnCoinsGenerateAddressProps {
   chain: Chain
@@ -27,11 +28,10 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   cancel,
   generateBurnAddress,
 }: BurnCoinsGenerateAddressProps) => {
-  const [fee, setFee] = useState('1')
-  const [proverAddress, setProverAddress] = useState<string>(provers[0].address)
+  const [prover, setProver] = useState(provers[0])
+  const [fee, setFee] = useState(prover?.reward.toString(10) || '1')
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const [proverApproval, setProverApproval] = useState(false)
-  const prover = provers.find(({address}) => proverAddress === address)
+  const [approval, setApproval] = useState(false)
 
   const [inProgress, setInProgress] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -40,7 +40,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
 
   const errors = errorMessage && <DialogError>{errorMessage}</DialogError>
 
-  const disableGenerate = !!validateAmount(fee) || !proverApproval
+  const disableGenerate = !!validateAmount(fee) || !approval
 
   return (
     <div className="BurnCoinsGenerateAddress">
@@ -75,12 +75,6 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           options={transparentAddresses}
           onChange={setTransparentAddress}
         />
-        <DialogInput
-          label="Assign fee amount for burn processing"
-          defaultValue={fee}
-          onChange={(e) => setFee(e.target.value)}
-          errorMessage={validateAmount(fee)}
-        />
         <DialogDropdown
           type="small"
           label="Prover"
@@ -88,12 +82,34 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
             key: prover.address,
             label: `${prover.name} (${prover.address})`,
           }))}
-          onChange={setProverAddress}
+          onChange={(proverAddress) => {
+            const prover = provers.find(({address}) => proverAddress === address)
+            if (prover) {
+              setProver(prover)
+              setFee(prover.reward.toString(10))
+            }
+          }}
         />
+        <DialogInput
+          label="Assign reward for your prover"
+          value={fee}
+          onChange={(e) => setFee(e.target.value)}
+          errorMessage={validateAmount(fee)}
+        />
+        <DialogMessage description="www.prover_list_metrics" />
         <DialogApproval
-          checked={proverApproval}
-          onChange={setProverApproval}
-          description="Autoselect warning text goes here."
+          checked={approval}
+          onChange={setApproval}
+          description={
+            <>
+              This will generate a {chain.name} Address to which you can send {chain.name} to be
+              burned and converted into Midnight Tokens. these Midnight Tokens can be used to
+              participate in an Auction to win spendable Dust Tokens. The Burn process is
+              irreversible and the {chain.name} burned will be unspendable forever.
+              <br />
+              <br />I understand the process
+            </>
+          }
         />
       </Dialog>
     </div>
