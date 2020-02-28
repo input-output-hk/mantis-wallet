@@ -11,6 +11,7 @@ import './SyncStatus.scss'
 
 interface SyncStatusProps {
   syncStatus: SynchronizationStatus
+  onClick?: () => void
 }
 
 type SyncStatus = 'offline' | 'synced' | 'syncing'
@@ -27,10 +28,10 @@ const Message = ({syncStatus}: SyncStatusProps): JSX.Element => {
   return <>Syncing Blocks {syncStatus.percentage}%</>
 }
 
-export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
+export const SyncStatusContent = ({syncStatus, onClick}: SyncStatusProps): JSX.Element => {
   const classes = classnames('SyncStatus', getSyncStatus(syncStatus))
   return (
-    <span className={classes}>
+    <span className={classes} onClick={onClick}>
       <Popover content={`Current block: ${syncStatus.currentBlock}`} placement="left">
         <Message syncStatus={syncStatus} />
         <SVG src={refreshIcon} className="svg" />
