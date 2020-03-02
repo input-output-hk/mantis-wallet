@@ -1,4 +1,5 @@
-import {RefObject, useEffect, useRef} from 'react'
+import {RefObject, useEffect, useRef, useState, Dispatch, SetStateAction} from 'react'
+import {Store} from './store'
 
 export const useIsMounted = (): RefObject<boolean> => {
   const isMounted = useRef(false)
@@ -40,4 +41,42 @@ export function useInterval(callback: Callback, delay: number): void {
       return (): void => clearInterval(id)
     }
   }, [delay])
+}
+
+/**
+ * When using persisted state, you will need a `Store` which takes care of the persistence
+ * and has the data you need for your state.
+ *
+ * The value at path will be used by this hook analogically as it would be used by `React.useState`.
+ *
+ * @param path can be a single string referencing the first level of the object stored in Store
+ *  or an array of two strings referencing a path to the desired value in the object
+ */
+export function usePersistedState<TObject extends object, K1 extends keyof TObject>(
+  store: Store<TObject>,
+  path: K1,
+): [TObject[K1], Dispatch<SetStateAction<TObject[K1]>>]
+export function usePersistedState<
+  TObject extends object,
+  K1 extends keyof TObject,
+  K2 extends keyof TObject[K1]
+>(
+  store: Store<TObject>,
+  path: [K1, K2],
+): [TObject[K1][K2], Dispatch<SetStateAction<TObject[K1][K2]>>]
+export function usePersistedState<
+  TObject extends object,
+  K1 extends keyof TObject,
+  K2 extends keyof TObject[K1]
+>(
+  store: Store<TObject>,
+  path: [K1, K2],
+): [TObject[K1][K2], Dispatch<SetStateAction<TObject[K1][K2]>>] {
+  const [value, setValue] = useState(store.get(path))
+
+  useEffect(() => {
+    store.set(path, value)
+  }, [value])
+
+  return [value, setValue]
 }

@@ -1,5 +1,7 @@
-import {useState, useEffect} from 'react'
+import {useEffect} from 'react'
 import {createContainer} from 'unstated-next'
+import {usePersistedState} from './common/hook-utils'
+import {Store, createInMemoryStore, StoreSettingsData, defaultSettingsData} from './common/store'
 
 export type Theme = 'dark' | 'light'
 
@@ -8,8 +10,10 @@ interface ThemeState {
   switchTheme(newTheme: Theme): void
 }
 
-function useThemeState(initialState: Theme = 'dark'): ThemeState {
-  const [theme, switchTheme] = useState<Theme>(initialState)
+function useThemeState(
+  store: Store<StoreSettingsData> = createInMemoryStore(defaultSettingsData),
+): ThemeState {
+  const [theme, switchTheme] = usePersistedState(store, ['settings', 'theme'])
 
   useEffect(() => {
     document.body.classList.forEach((className) => {
