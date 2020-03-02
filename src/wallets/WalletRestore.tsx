@@ -3,15 +3,9 @@ import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogSwitch} from '../common/dialog/DialogSwitch'
 import {DialogInput} from '../common/dialog/DialogInput'
-import {DialogTabs} from '../common/dialog/DialogTabs'
 import {DialogError} from '../common/dialog/DialogError'
-import {DialogSeedPhrase} from '../common/dialog/DialogSeedPhrase'
 import {WalletState} from '../common/wallet-state'
-
-enum RecoveryMethod {
-  SpendingKey = 'Private key',
-  SeedPhrase = 'Recovery Phrase',
-}
+import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
 
 interface WalletRestoreProps {
   cancel: () => void
@@ -81,23 +75,10 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
         onChange={(e): void => setWalletName(e.target.value)}
         errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
       />
-      <DialogTabs
-        tabs={[
-          {
-            label: RecoveryMethod.SpendingKey,
-            content: (
-              <DialogInput
-                data-testid="private-key"
-                onChange={(e): void => setSpendingKey(e.target.value)}
-              />
-            ),
-          },
-          {
-            label: RecoveryMethod.SeedPhrase,
-            content: <DialogSeedPhrase onChange={setSeedPhrase} />,
-          },
-        ]}
-        onTabClick={(key: RecoveryMethod): void => setRecoveryMethod(key)}
+      <DialogSecrets
+        onMethodChange={setRecoveryMethod}
+        onSpendingKeyChange={setSpendingKey}
+        onSeedPhraseChange={setSeedPhrase}
       />
       <DialogSwitch
         key="use-password-switch"
