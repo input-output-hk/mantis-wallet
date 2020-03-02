@@ -34,12 +34,14 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
       return false
     }
 
+    const usedPassphrase = usePassphrase ? passphrase : ''
+
     switch (recoveryMethod) {
       case RecoveryMethod.SpendingKey:
-        return state.restoreFromSpendingKey({passphrase, spendingKey})
+        return state.restoreFromSpendingKey({passphrase: usedPassphrase, spendingKey})
       case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
-        return state.restoreFromSeedPhrase({passphrase, seedPhrase})
+        return state.restoreFromSeedPhrase({passphrase: usedPassphrase, seedPhrase})
     }
   }
 
