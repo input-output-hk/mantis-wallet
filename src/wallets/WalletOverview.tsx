@@ -11,6 +11,7 @@ import {SyncStatusContent} from '../common/SyncStatus'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import clockIcon from '../assets/icons/clock.svg'
+import sumIcon from '../assets/icons/sum.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
 import './WalletOverview.scss'
@@ -27,7 +28,8 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
   const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
 
   const {pending, confidential, transparent} = props
-  const total = pending.plus(confidential).plus(transparent)
+  const available = confidential.plus(transparent)
+  const total = pending.plus(available)
   return (
     <div className="WalletOverview">
       <div className="header">
@@ -38,10 +40,10 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
         <OverviewGraph {..._.mapValues(props, bigToNumber)} />
       </div>
       <div className="total">
-        <div className="box-text">Total Balance</div>
+        <div className="box-text">Available Balance</div>
         <div className="box-amount-big">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={total} dp={2} />
+          <ShortNumber big={available} dp={2} />
         </div>
         <div className="box-text">
           <span className="box-icon">
@@ -49,6 +51,13 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
             <SVG src={clockIcon} className="svg" />
           </span>
           Pending Amount · <ShortNumber big={pending} dp={2} />
+        </div>
+        <div className="box-text">
+          <span className="box-icon">
+            &nbsp;
+            <SVG src={sumIcon} className="svg" />
+          </span>
+          Total Balance · <ShortNumber big={total} dp={2} />
         </div>
       </div>
       <div className="confidential">
