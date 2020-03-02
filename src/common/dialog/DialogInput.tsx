@@ -1,4 +1,6 @@
-import React from 'react'
+import React, {Ref, forwardRef} from 'react'
+import {Input} from 'antd'
+import Password from 'antd/lib/input/Password'
 import {InputProps, PasswordProps} from 'antd/lib/input'
 import {BorderlessInput, BorderlessInputPassword} from '../BorderlessInput'
 import {InlineErrorProps} from '../InlineError'
@@ -24,18 +26,24 @@ const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
   </div>
 )
 
-export const DialogInputPassword: React.FunctionComponent<InlineErrorProps &
-  PasswordProps &
-  DialogInputProps> = ({label, ...props}: DialogInputProps) => (
+const _DialogInputPassword: React.RefForwardingComponent<
+  Password,
+  InlineErrorProps & PasswordProps & DialogInputProps
+> = ({label, ...props}: DialogInputProps, ref: Ref<Password>) => (
   <AbstractDialogInput label={label} id={props.id}>
-    <BorderlessInputPassword className="input" {...props} />
+    <BorderlessInputPassword className="input" {...props} ref={ref} />
   </AbstractDialogInput>
 )
 
-export const DialogInput: React.FunctionComponent<InlineErrorProps &
-  InputProps &
-  DialogInputProps> = ({label, ...props}: DialogInputProps) => (
+export const DialogInputPassword = forwardRef(_DialogInputPassword)
+
+const _DialogInput: React.RefForwardingComponent<
+  Input,
+  InlineErrorProps & InputProps & DialogInputProps
+> = ({label, ...props}: DialogInputProps, ref: Ref<Input>) => (
   <AbstractDialogInput label={label} id={props.id}>
-    <BorderlessInput className="input" {...props} />
+    <BorderlessInput className="input" {...props} ref={ref} />
   </AbstractDialogInput>
 )
+
+export const DialogInput = forwardRef(_DialogInput)

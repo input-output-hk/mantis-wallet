@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, Ref, forwardRef} from 'react'
 import _ from 'lodash'
 import * as bip39 from 'bip39'
 import {AutoComplete} from 'antd'
@@ -18,9 +18,10 @@ const filterResults = (searchValue: string, results = 5, fromIndex = 0): string[
   return i < 0 ? [] : [wordlist[i], ...filterResults(searchValue, results - 1, i + 1)]
 }
 
-export const DialogSeedPhrase: React.FunctionComponent<DialogSeedPhraseProps> = ({
-  onChange,
-}: DialogSeedPhraseProps) => {
+const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPhraseProps> = (
+  {onChange}: DialogSeedPhraseProps,
+  ref: Ref<AutoComplete>,
+) => {
   const [phrase, setPhrase] = useState<string>('')
   const [results, setResults] = useState<string[]>([])
 
@@ -51,6 +52,7 @@ export const DialogSeedPhrase: React.FunctionComponent<DialogSeedPhraseProps> = 
         onChange={handleChange}
         onSearch={handleSearch}
         onSelect={handleSelect}
+        ref={ref}
       >
         {results.map((result: string) => (
           <Option key={result}>{result}</Option>
@@ -59,3 +61,5 @@ export const DialogSeedPhrase: React.FunctionComponent<DialogSeedPhraseProps> = 
     </div>
   )
 }
+
+export const DialogSeedPhrase = forwardRef(_DialogSeedPhrase)
