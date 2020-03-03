@@ -47,21 +47,21 @@ const _WalletOverview = ({
         <div className="box-text">Available Balance</div>
         <div className="box-amount-big">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={available} dp={2} />
+          <ShortNumber big={available} />
         </div>
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
             <SVG src={clockIcon} className="svg" />
           </span>
-          Pending Amount · <ShortNumber big={pending} dp={2} />
+          <span className="uppercase">Pending Amount</span> · <ShortNumber big={pending} />
         </div>
         <div className="box-text">
           <span className="box-icon">
             &nbsp;
             <SVG src={sumIcon} className="svg" />
           </span>
-          Total Balance · <ShortNumber big={total} dp={2} />
+          <span className="uppercase">Total Balance</span> · <ShortNumber big={total} />
         </div>
       </div>
       <div className="confidential">
@@ -74,7 +74,7 @@ const _WalletOverview = ({
         </div>
         <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={confidential} dp={2} />
+          <ShortNumber big={confidential} />
         </div>
       </div>
       <div className="transparent">
@@ -88,7 +88,7 @@ const _WalletOverview = ({
         </div>
         <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={transparent} dp={2} />
+          <ShortNumber big={transparent} />
         </div>
       </div>
     </div>

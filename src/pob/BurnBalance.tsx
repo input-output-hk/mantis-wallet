@@ -17,24 +17,27 @@ export const BurnBalance: React.FunctionComponent<BurnBalanceProps> = ({
   chain,
   total,
   pending,
-}: BurnBalanceProps) => (
-  <div className="BurnBalance">
-    <div className="logo-container">
-      <SVG src={chain.burnLogo} className="logo" />
+}: BurnBalanceProps) => {
+  const tokenSymbol = `M-${chain.symbol}`
+  return (
+    <div className="BurnBalance">
+      <div className="logo-container">
+        <SVG src={chain.burnLogo} className="logo" />
+      </div>
+      <div className="available">
+        Available{' '}
+        <span className="amount">
+          <ShortNumber big={total.minus(pending)} /> {tokenSymbol}
+        </span>
+      </div>
+      <div className="rest">
+        <SVG src={clockIcon} className="icon" />
+        Pending Amount · <ShortNumber big={pending} /> {tokenSymbol}
+      </div>
+      <div className="rest">
+        <SVG src={sumIcon} className="icon" />
+        Total Amount · <ShortNumber big={total} /> {tokenSymbol}
+      </div>
     </div>
-    <div className="available">
-      Available{' '}
-      <span className="amount">
-        <ShortNumber big={total.minus(pending)} dp={2} /> M-{chain.symbol}
-      </span>
-    </div>
-    <div className="rest">
-      <SVG src={clockIcon} className="icon" />
-      Pending Amount · <ShortNumber big={pending} dp={2} /> M-{chain.symbol}
-    </div>
-    <div className="rest">
-      <SVG src={sumIcon} className="icon" />
-      Total Amount · <ShortNumber big={total} dp={2} /> M-{chain.symbol}
-    </div>
-  </div>
-)
+  )
+}

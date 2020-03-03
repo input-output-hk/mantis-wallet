@@ -7,7 +7,7 @@ export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
 }
 
 export function bigToNumber(bigNumber: BigNumber): number {
-  return parseFloat(bigNumber.toFixed(10))
+  return parseFloat(bigNumber.toString(10))
 }
 
 export function hasMaxDecimalPlaces(bigNumber: BigNumber, decimalPlaces: number): boolean {

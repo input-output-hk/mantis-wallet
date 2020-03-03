@@ -3,19 +3,25 @@ import {assert} from 'chai'
 import BigNumber from 'bignumber.js'
 
 it('abbreviates numbers correctly', () => {
-  const abbreviateBig = (n: number): string => abbreviateAmount(new BigNumber(n))
-  assert.equal(abbreviateBig(12.5), '12.5')
-  assert.equal(abbreviateBig(100), '100')
-  assert.equal(abbreviateBig(1001), '1,001')
-  assert.equal(abbreviateBig(10001), '10,001')
-  assert.equal(abbreviateBig(100001), '100,001')
-  assert.equal(abbreviateBig(1000 * 1000), '1M')
-  assert.equal(abbreviateBig(1000 * 1000 * 1000), '1G')
-  assert.equal(abbreviateBig(1000 * 1000 * 1000 * 1000), '1T')
-  assert.equal(abbreviateBig(0.1), '0.1')
-  assert.equal(abbreviateBig(0.001), '1m')
-  assert.equal(abbreviateBig(0.008), '0.008')
-  assert.equal(abbreviateBig(1 / 1000 / 1000), '1μ')
+  const abbreviateBig = (n: number | string): [string, string] => {
+    const {relaxed, strict} = abbreviateAmount(new BigNumber(n))
+    return [strict, relaxed]
+  }
+  assert.deepEqual(abbreviateBig('0.0000000123456789'), ['0.0000000123457', '0.0000000123456789'])
+  assert.deepEqual(abbreviateBig('0.000123456789'), ['0.000123457', '0.000123456789'])
+  assert.deepEqual(abbreviateBig('0.00123456789'), ['0.00123457', '0.00123456789'])
+  assert.deepEqual(abbreviateBig('0.0123456789'), ['0.0123457', '0.0123456789'])
+  assert.deepEqual(abbreviateBig('0.123456789'), ['0.123457', '0.123456789'])
+  assert.deepEqual(abbreviateBig('1.23456789'), ['1.234568', '1.23456789'])
+  assert.deepEqual(abbreviateBig('12.3456789'), ['12.34568', '12.3456789'])
+  assert.deepEqual(abbreviateBig('123.456789'), ['123.4568', '123.456789'])
+  assert.deepEqual(abbreviateBig('1234.56789'), ['1,234.568', '1,234.56789'])
+  assert.deepEqual(abbreviateBig('12345.6789'), ['12,345.68', '12,345.6789'])
+  assert.deepEqual(abbreviateBig('123456.789'), ['123,456.79', '123,456.789'])
+  assert.deepEqual(abbreviateBig('1234567.89'), ['1,234,567.89', '1,234,567.89'])
+  assert.deepEqual(abbreviateBig('12345678.9'), ['12,345,678.90', '12,345,678.90'])
+  assert.deepEqual(abbreviateBig('123456789'), ['123,456,789.00', '123,456,789.00'])
+  assert.deepEqual(abbreviateBig('1234567890'), ['1,234,567,890.00', '1,234,567,890.00'])
 })
 
 it('formats amount correctly', () => {
