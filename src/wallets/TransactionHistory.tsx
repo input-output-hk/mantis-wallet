@@ -109,6 +109,15 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
     </Menu>
   )
 
+  const sortableHeader = (name: Property): JSX.Element => (
+    <th onClick={changeOrder(name)} className="sortable">
+      {sortableProperties[name].label}{' '}
+      {sortBy.property === name && (
+        <Icon type={sortBy.direction === 'asc' ? 'caret-up' : 'caret-down'} />
+      )}
+    </th>
+  )
+
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
@@ -169,11 +178,11 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             <table className="transactions">
               <thead>
                 <tr className="header">
-                  <th></th>
+                  {sortableHeader('type')}
                   <th>Asset</th>
-                  <th>Amount</th>
-                  <th>Time</th>
-                  <th>Status</th>
+                  {sortableHeader('amount')}
+                  {sortableHeader('time')}
+                  {sortableHeader('status')}
                   <th></th>
                 </tr>
               </thead>
