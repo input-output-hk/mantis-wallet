@@ -19,7 +19,7 @@ interface TransactionHistoryProps {
   accounts: Account[]
 }
 
-type Property = 'type' | 'amount' | 'time' | 'status' | 'direction'
+type Property = 'type' | 'amount' | 'time' | 'status'
 type Direction = 'asc' | 'desc'
 
 interface SortBy {
@@ -37,21 +37,24 @@ const sortableProperties: Record<Property, PropertyConfig> = {
     label: 'Type',
     order: ord.contramap(ordString, ({txDetails}: Transaction) => txDetails.txType),
   },
-  direction: {
-    label: 'Direction',
-    order: ord.contramap(ordString, ({txDirection}: Transaction) => txDirection),
-  },
   amount: {
     label: 'Amount',
-    order: ord.contramap(ordNumber, ({txValue}: Transaction) =>
-      parseInt(typeof txValue === 'string' ? txValue : txValue.value),
-    ),
+    order: ord.contramap(ordNumber, ({txDirection, txValue}: Transaction) => {
+      const sign = txDirection === 'incoming' ? 1 : -1
+      return sign * parseInt(typeof txValue === 'string' ? txValue : txValue.value)
+    }),
   },
   time: {
     label: 'Time',
-    order: ord.contramap(ordString, ({txStatus}: Transaction) =>
-      txStatus === 'pending' || txStatus === 'failed' || !txStatus.atBlock ? '' : txStatus.atBlock,
-    ),
+    order: ord.contramap(ordNumber, ({txStatus}: Transaction) => {
+      if (txStatus === 'pending') {
+        return Infinity
+      } else if (txStatus === 'failed' || !txStatus.atBlock) {
+        return 0
+      } else {
+        return parseInt(txStatus.atBlock, 16)
+      }
+    }),
   },
   status: {
     label: 'Status',
