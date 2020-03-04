@@ -21,6 +21,8 @@ export const DialogSecrets: React.FunctionComponent<DialogSecrets> = ({
   onSpendingKeyChange,
   onSeedPhraseChange,
 }: DialogSecrets) => {
+  const [spendingKey, setSpendingKey] = useState('')
+  const [seedPhrase, setSeedPhrase] = useState('')
   const [recoveryMethod, setRecoveryMethod] = useState(RecoveryMethod.SpendingKey)
   const isInitialMount = useRef(true)
   const inputRefs = {
@@ -59,7 +61,7 @@ export const DialogSecrets: React.FunctionComponent<DialogSecrets> = ({
       <div
         className={classnames({hidden: RecoveryMethod.SpendingKey !== recoveryMethod})}
         onKeyDown={(e) => {
-          if (e.key === 'Tab' && !e.shiftKey) {
+          if (e.key === 'Tab' && !e.shiftKey && spendingKey.length === 0) {
             e.preventDefault()
             handleMethodChange(RecoveryMethod.SeedPhrase)()
           }
@@ -67,21 +69,28 @@ export const DialogSecrets: React.FunctionComponent<DialogSecrets> = ({
       >
         <DialogInput
           data-testid="private-key"
-          onChange={(e) => onSpendingKeyChange(e.target.value)}
+          onChange={(e) => {
+            const spendingKey = e.target.value
+            setSpendingKey(spendingKey)
+            onSpendingKeyChange(spendingKey)
+          }}
           ref={inputRefs[RecoveryMethod.SpendingKey]}
         />
       </div>
       <div
         className={classnames({hidden: RecoveryMethod.SeedPhrase !== recoveryMethod})}
         onKeyDown={(e) => {
-          if (e.key === 'Tab' && e.shiftKey) {
+          if (e.key === 'Tab' && e.shiftKey && seedPhrase.length === 0) {
             e.preventDefault()
             handleMethodChange(RecoveryMethod.SpendingKey)()
           }
         }}
       >
         <DialogSeedPhrase
-          onChange={onSeedPhraseChange}
+          onChange={(seedPhrase) => {
+            setSeedPhrase(seedPhrase)
+            onSeedPhraseChange(seedPhrase)
+          }}
           ref={inputRefs[RecoveryMethod.SeedPhrase]}
         />
       </div>
