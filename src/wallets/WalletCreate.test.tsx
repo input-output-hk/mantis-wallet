@@ -74,11 +74,11 @@ test('WalletCreate `Define` step', () => {
 
 test('WalletCreate `Security` step', () => {
   const spendingKey = 'm-test-shl-sk122732c6py9h89unt0069ce4epl8e707sv04jr3aqzts94styr9wq4lkg85'
-  const back = jest.fn()
+  const cancel = jest.fn()
   const next = jest.fn()
 
   const {getByText, getByRole} = render(
-    <WalletCreateSecurityStep back={back} next={next} spendingKey={spendingKey} />,
+    <WalletCreateSecurityStep cancel={cancel} next={next} spendingKey={spendingKey} />,
   )
 
   // Show spending key
@@ -89,10 +89,10 @@ test('WalletCreate `Security` step', () => {
   expect(getByText('Download.txt')).toBeInTheDocument()
 
   // Click Cancel
-  const backButton = getByText('Back')
-  expect(backButton).toBeInTheDocument()
-  userEvent.click(backButton)
-  expect(back).toHaveBeenCalled()
+  const cancelButton = getByText('Cancel')
+  expect(cancelButton).toBeInTheDocument()
+  userEvent.click(cancelButton)
+  expect(cancel).toHaveBeenCalled()
 
   // Click Next
   const nextButton = getByText('Next →')
@@ -112,7 +112,7 @@ test('WalletCreate `Display Recovery` step', () => {
   // every seed word is present in the docuement
   seedPhrase.map((word: string) => expect(getByText(word)).toBeInTheDocument())
 
-  // Click Cancel
+  // Click Back
   const backButton = getByText('Back')
   expect(backButton).toBeInTheDocument()
   userEvent.click(backButton)
@@ -158,7 +158,7 @@ test('WalletCreate `Verify Recovery` step', () => {
   // Button is still disabled
   expect(finish).not.toHaveBeenCalled()
 
-  // Click Cancel
+  // Click Back
   const backButton = getByText('Back')
   expect(backButton).toBeInTheDocument()
   userEvent.click(backButton)

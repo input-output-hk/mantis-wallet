@@ -6,20 +6,29 @@ interface RouterState {
   currentRouteId: RouteId
   currentRoute: Route
   currentMenu: MenuItem
+  isLocked: boolean
   navigate: (routeId: RouteId) => void
+  setLocked: (isLocked: boolean) => void
 }
 
 interface InitialState {
   routeId: RouteId
+  isLocked: boolean
 }
 
-function useRouterState(initialState: InitialState = {routeId: 'WALLETS'}): RouterState {
+function useRouterState(
+  initialState: InitialState = {routeId: 'WALLETS', isLocked: false},
+): RouterState {
   const [currentRouteId, setCurrentRouteId] = useState<RouteId>(initialState.routeId)
+  const [isLocked, setLocked] = useState<boolean>(initialState.isLocked)
 
   const currentRoute = ROUTES[currentRouteId]
   const currentMenu = MENU[currentRoute.menu]
 
   const navigate = (routeId: RouteId): void => {
+    if (isLocked) {
+      return console.debug(`Attempted navigation to ${routeId} while navigation is locked`)
+    }
     if (routeId === currentRouteId) {
       return console.debug(`Attempted double navigation to ${routeId}`)
     }
@@ -31,7 +40,9 @@ function useRouterState(initialState: InitialState = {routeId: 'WALLETS'}): Rout
     currentRouteId,
     currentRoute,
     currentMenu,
+    isLocked,
     navigate,
+    setLocked,
   }
 }
 

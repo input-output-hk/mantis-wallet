@@ -13,8 +13,8 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {promisify} from 'util'
 import {config} from '../config/main'
-import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
 import {ClientName} from '../config/type'
+import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

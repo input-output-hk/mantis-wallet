@@ -275,7 +275,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
   }
 
   const create = async (secrets: PassphraseSecrets): Promise<SpendingKey & SeedPhrase> => {
-    return wallet.create(secrets)
+    const result = await wallet.create(secrets)
+    load()
+    return result
   }
 
   const unlock = async (secrets: PassphraseSecrets): Promise<boolean> => {
@@ -286,7 +288,10 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
 
   const remove = async (secrets: PassphraseSecrets): Promise<boolean> => {
     const removed = await wallet.remove(secrets)
-    if (removed) reset()
+    if (removed) {
+      reset()
+      setWalletStatus('NO_WALLET')
+    }
     return removed
   }
 

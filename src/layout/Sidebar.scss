@@ -76,6 +76,10 @@
         }
       }
     }
+
+    &.locked .link {
+      cursor: not-allowed;
+    }
   }
 
   .footer {
@@ -86,7 +90,7 @@
     text-align: center;
     text-transform: uppercase;
 
-    .link {
+    .footer-link {
       cursor: pointer;
 
       &:hover {
@@ -97,7 +101,7 @@
 
       &.disabled {
         opacity: 0.3;
-        cursor: default;
+        cursor: not-allowed;
 
         &:hover {
           @include themify($themes) {

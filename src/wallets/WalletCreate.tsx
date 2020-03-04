@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
+import {WalletState} from '../common/wallet-state'
+import {RouterState} from '../router-state'
 import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
-import {WalletState} from '../common/wallet-state'
 
 interface WalletCreateProps {
   cancel: () => void
@@ -18,6 +19,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   finish,
 }: WalletCreateProps) => {
   const state = WalletState.useContainer()
+  const routerState = RouterState.useContainer()
 
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
 
@@ -25,9 +27,24 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   const createErrors = walletCreateError ? <DialogError>{walletCreateError}</DialogError> : null
 
   const [, setWalletName] = useState('')
-  const [, setPassphrase] = useState('')
+  const [passphrase, setPassphrase] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhrase, setSeedPhrase] = useState<string[]>([])
+
+  const cancelCreate = async (): Promise<void> => {
+    if (state.walletStatus === 'LOCKED') {
+      const removed = await state.remove({passphrase})
+      if (removed) {
+        cancel()
+        routerState.setLocked(false)
+      }
+    }
+  }
+
+  const finishCreate = (): void => {
+    routerState.setLocked(false)
+    finish()
+  }
 
   switch (step) {
     case 'DEFINE':
@@ -38,6 +55,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
             if (state.walletStatus !== 'NO_WALLET') {
               return setWalletCreateError('Wallet already exists')
             }
+            routerState.setLocked(true)
             setWalletCreateError('')
             try {
               const {spendingKey: newSpendingKey, seedPhrase: newSeedPhrase} = await state.create({
@@ -49,6 +67,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
               setSeedPhrase(newSeedPhrase)
               setStep('SECURITY')
             } catch (e) {
+              routerState.setLocked(false)
               setWalletCreateError(e.message)
             }
           }}
@@ -58,7 +77,7 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
     case 'SECURITY':
       return (
         <WalletCreateSecurityStep
-          back={(): void => setStep('DEFINE')}
+          cancel={cancelCreate}
           next={(): void => setStep('DISPLAY_RECOVERY')}
           spendingKey={spendingKey}
         />
@@ -74,8 +93,8 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
     case 'VERIFY_RECOVERY':
       return (
         <WalletCreateVerifyRecoveryStep
-          back={(): void => setStep('SECURITY')}
-          finish={finish}
+          back={(): void => setStep('DISPLAY_RECOVERY')}
+          finish={finishCreate}
           seedPhrase={seedPhrase}
         />
       )

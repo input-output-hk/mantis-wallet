@@ -5,13 +5,13 @@ import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
 
 interface WalletCreateSecurityStepProps {
-  back: () => void
+  cancel: () => void
   next: () => void
   spendingKey: string
 }
 
 export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecurityStepProps> = ({
-  back,
+  cancel,
   next,
   spendingKey,
 }: WalletCreateSecurityStepProps) => {
@@ -20,7 +20,7 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
   return (
     <Dialog
       title="Security"
-      prevButtonProps={{onClick: back, children: 'Back'}}
+      prevButtonProps={{onClick: cancel, children: 'Cancel'}}
       nextButtonProps={{onClick: next}}
     >
       <DialogMessage

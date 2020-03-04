@@ -19,6 +19,8 @@ const getContent = (
     setStep('FINISHED')
   }
 
+  const cancel = (): void => setStep('PATH_CHOOSER')
+
   switch (step) {
     case 'PATH_CHOOSER':
       return (
@@ -28,9 +30,9 @@ const getContent = (
         />
       )
     case 'CREATE':
-      return <WalletCreate cancel={(): void => setStep('PATH_CHOOSER')} finish={finish} />
+      return <WalletCreate cancel={cancel} finish={finish} />
     case 'RESTORE':
-      return <WalletRestore cancel={(): void => setStep('PATH_CHOOSER')} finish={finish} />
+      return <WalletRestore cancel={cancel} finish={finish} />
     case 'FINISHED':
       return <Navigate to="WALLETS" />
   }

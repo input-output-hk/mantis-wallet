@@ -19,13 +19,14 @@ export const Sidebar = (): JSX.Element => {
 
   const [showLogOutModal, setShowLogOutModal] = useState(false)
 
-  const logOut = canRemoveWallet(walletState) ? (
-    <span className="link" onClick={() => setShowLogOutModal(true)}>
-      Log Out
-    </span>
-  ) : (
-    <span className={classnames('link', 'disabled')}>Log Out</span>
-  )
+  const logOut =
+    canRemoveWallet(walletState) && !routerState.isLocked ? (
+      <span className="footer-link" onClick={() => setShowLogOutModal(true)}>
+        Log Out
+      </span>
+    ) : (
+      <span className={classnames('footer-link', 'disabled')}>Log Out</span>
+    )
 
   const handleMenuClick = (menuId: MenuId): void => routerState.navigate(MENU[menuId].route)
 
@@ -39,7 +40,7 @@ export const Sidebar = (): JSX.Element => {
       </div>
       <div>
         <nav>
-          <ul className="navigation">
+          <ul className={classnames('navigation', {locked: routerState.isLocked})}>
             {Object.entries(MENU).map(([menuId, menuItem]: [string, MenuItem]) => {
               const isActive = routerState.currentRoute.menu == menuId
               const classes = classnames('link', {active: isActive})
@@ -60,7 +61,7 @@ export const Sidebar = (): JSX.Element => {
         </nav>
       </div>
       <div className="footer">Support | {logOut}</div>
-      {canRemoveWallet(walletState) && (
+      {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal
           visible={showLogOutModal}
           onLogOut={async (passphrase: string): Promise<boolean> => {

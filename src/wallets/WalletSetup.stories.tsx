@@ -44,7 +44,7 @@ export const showWalletCreateDefineStep = (): JSX.Element => (
 
 export const showWalletCreateSecurityStep = (): JSX.Element => (
   <WalletCreateSecurityStep
-    back={action('on-back')}
+    cancel={action('on-cancel')}
     next={action('on-next')}
     spendingKey={text(
       'Private key',
