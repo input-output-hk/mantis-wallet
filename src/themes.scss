@@ -3,10 +3,12 @@
 $dark-text-color: #f7f7f7;
 $dark-normal-color: #414141;
 $dark-secondary-background: #000;
+$dark-btn-bg: #f0f0f0;
 
 $light-text-color: #000000;
 $light-normal-color: #fafafa;
 $light-secondary-background: #fafafa;
+$light-btn-bg: #a2a2a2;
 
 // secondary and tertiary backgrounds are used on components
 // put over the primary background
@@ -32,13 +34,12 @@ $themes: (
     secondary-text-color: #808080,
     error-background-color: #fcbbbb,
     border-color-base: $dark-text-color,
-    btn-default-bg: $dark-text-color,
-    btn-default-color: $dark-secondary-background,
+    btn-default-bg: $dark-btn-bg,
+    btn-disabled-bg: darken($dark-btn-bg, 20%),
     switch-bg: $dark-text-color,
     input-bg: $dark-normal-color,
     modal-content-bg: $dark-secondary-background,
     modal-header-bg: $dark-secondary-background,
-    background-button: #f0f0f0,
   ),
   light: (
     text-color: $light-text-color,
@@ -59,12 +60,11 @@ $themes: (
     secondary-text-color: #808080,
     error-background-color: #fcbbbb,
     border-color-base: $light-text-color,
-    btn-default-bg: $light-text-color,
-    btn-default-color: $light-secondary-background,
+    btn-default-bg: $light-btn-bg,
+    btn-disabled-bg: lighten($light-btn-bg, 20%),
     switch-bg: $light-text-color,
     input-bg: $light-normal-color,
     modal-content-bg: $light-secondary-background,
     modal-header-bg: $light-secondary-background,
-    background-button: #a2a2a2,
   ),
 );

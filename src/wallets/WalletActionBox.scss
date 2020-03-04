@@ -48,8 +48,8 @@
     text-transform: uppercase;
 
     @include themify($themes) {
-      background-color: themed('btn-default-bg');
-      color: themed('btn-default-color');
+      background-color: themed('text-color');
+      color: themed('secondary-background');
     }
   }
 }
