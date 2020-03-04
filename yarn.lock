@@ -4075,11 +4075,6 @@ bignumber.js@*, bignumber.js@^9.0.0:
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
   integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
 
-bignumber.js@4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-4.1.0.tgz#db6f14067c140bd46624815a7916c92d9b6c24b1"
-  integrity sha512-eJzYkFYy9L4JzXsbymsFn3p54D+llV27oTQ+ziJG7WFRheJcNZilgVXMG0LoZtlQSKBsJdWtLFqOD0u+U0jZKA==
-
 binary-extensions@^1.0.0:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.13.1.tgz#598afe54755b2868a5330d2aff9d4ebb53209b65"
@@ -16782,11 +16777,11 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
-"web3@git+ssh://git@github.com:input-output-hk/midnight-web3.git#e9ed13a394fed9b430771fcf830be0bd20f8a38c":
+"web3@git+ssh://git@github.com:input-output-hk/midnight-web3.git#143adcd55f9de1fa2f23cac8c1bbe8a8a6310fbb":
   version "0.20.6"
-  resolved "git+ssh://git@github.com:input-output-hk/midnight-web3.git#e9ed13a394fed9b430771fcf830be0bd20f8a38c"
+  resolved "git+ssh://git@github.com:input-output-hk/midnight-web3.git#143adcd55f9de1fa2f23cac8c1bbe8a8a6310fbb"
   dependencies:
-    bignumber.js "4.1.0"
+    bignumber.js "^9.0.0"
     crypto-js "3.1.4"
     utf8 "2.1.1"
     xhr2 "0.2.0"

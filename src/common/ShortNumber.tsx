@@ -1,8 +1,8 @@
 import React from 'react'
 import {Popover} from 'antd'
 import BigNumber from 'bignumber.js'
-import {formatAmount, abbreviateAmount} from './formatters'
 import {fromWei} from 'web3/lib/utils/utils.js'
+import {formatAmount, abbreviateAmount} from './formatters'
 
 interface ShortNumberProps {
   big: BigNumber
@@ -10,7 +10,7 @@ interface ShortNumberProps {
 }
 
 export const ShortNumber = ({big, dp = 6}: ShortNumberProps): JSX.Element => {
-  const dust = new BigNumber(fromWei(big))
+  const dust = fromWei(big)
 
   return (
     <Popover content={formatAmount(dust, dp, 'relaxed')} placement="bottom">
