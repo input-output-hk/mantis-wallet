@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="23.581" height="19.058" viewBox="0 0 23.581 19.058">
     <defs>
         <style>
-            .cls-1{stroke-width:2px;stroke-linecap:round;fill:none;stroke-linejoin:round}
+            .refresh-icon{stroke-width:2px;stroke-linecap:round;fill:none;stroke-linejoin:round}
         </style>
     </defs>
     <g id="Icon_feather-refresh-ccw" data-name="Icon feather-refresh-ccw" transform="translate(-.086 -3.463)">
-        <path id="Path_550" d="M1.5 6v5.66h5.66" class="cls-1" data-name="Path 550" transform="translate(0 -.555)"/>
-        <path id="Path_551" d="M31.16 26.66V21H25.5" class="cls-1" data-name="Path 551" transform="translate(-8.906 -6.122)"/>
-        <path id="Path_552" d="M19.886 10.161A8.49 8.49 0 0 0 5.877 6.992L1.5 11.1m20.754 3.773l-4.377 4.113a8.49 8.49 0 0 1-14.009-3.17" class="cls-1" data-name="Path 552"/>
+        <path id="Path_550" d="M1.5 6v5.66h5.66" class="refresh-icon" data-name="Path 550" transform="translate(0 -.555)"/>
+        <path id="Path_551" d="M31.16 26.66V21H25.5" class="refresh-icon" data-name="Path 551" transform="translate(-8.906 -6.122)"/>
+        <path id="Path_552" d="M19.886 10.161A8.49 8.49 0 0 0 5.877 6.992L1.5 11.1m20.754 3.773l-4.377 4.113a8.49 8.49 0 0 1-14.009-3.17" class="refresh-icon" data-name="Path 552"/>
     </g>
 </svg>
