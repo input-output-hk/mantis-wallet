@@ -32,6 +32,7 @@ export const WalletUnlock = (): JSX.Element => {
       <div className="WalletUnlock">
         <Dialog
           title="Unlock Wallet"
+          buttonDisplayMode="natural"
           prevButtonProps={{doNotRender: true}}
           nextButtonProps={{
             children: 'Unlock',

@@ -29,6 +29,7 @@ export default {
 export const InteractiveDialog: React.FunctionComponent<{}> = () => (
   <Dialog
     title={text('Dialog title', 'Dialog title')}
+    buttonDisplayMode={select('Button display mode', ['natural', 'grid'], 'grid')}
     prevButtonProps={{
       children: text('Cancel button label', 'Cancel'),
       onClick: action('prev-button-click'),

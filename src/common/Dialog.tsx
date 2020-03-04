@@ -11,6 +11,7 @@ interface DialogButtonProps {
 interface DialogProps {
   title?: string
   type?: 'normal' | 'dark'
+  buttonDisplayMode?: 'natural' | 'grid'
   prevButtonProps?: ButtonProps & DialogButtonProps
   nextButtonProps?: ButtonProps & DialogButtonProps
   footer?: React.ReactNode
@@ -19,6 +20,7 @@ interface DialogProps {
 export const Dialog: React.FunctionComponent<DialogProps> = ({
   title,
   type = 'normal',
+  buttonDisplayMode = 'grid',
   nextButtonProps = {},
   prevButtonProps = {},
   children,
@@ -43,7 +45,7 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
       {title && <div className="title">{title}</div>}
       <form onSubmit={(e) => e.preventDefault()}>
         <div>{children}</div>
-        <div className="actions">
+        <div className={classnames('actions', buttonDisplayMode)}>
           {!prevButtonProps.doNotRender && <Button {...prevButtonPropsToUse} />}
           {!nextButtonProps.doNotRender && <Button {...nextButtonPropsToUse} />}
         </div>
