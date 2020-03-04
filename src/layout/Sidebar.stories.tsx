@@ -18,7 +18,7 @@ export const sidebar = (): JSX.Element => (
   </RouterState.Provider>
 )
 
-export const emptyTransactionModal = (): JSX.Element => (
+export const logOutModal = (): JSX.Element => (
   <LogOutModal
     visible
     onLogOut={async (...args): Promise<boolean> => {

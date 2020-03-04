@@ -10,7 +10,16 @@ const AppDecorator = (storyFn) => {
     document.body.classList.add('Luna')
   }, [])
   return (
-    <div className="App" style={{gridTemplateColumns: '1fr'}}>
+    <div
+      className="App"
+      style={{
+        gridTemplateColumns: '1fr',
+        gridTemplateRows: '1fr',
+        minHeight: '100vh',
+        overflow: 'auto',
+        padding: '24px',
+      }}
+    >
       {storyFn()}
     </div>
   )
