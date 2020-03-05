@@ -74,13 +74,14 @@ div#root {
 // only for theming
 .ant-btn {
   @include themify($themes) {
-    background-color: themed('background-button');
+    background-color: themed('btn-default-bg');
     color: themed('secondary-background');
   }
 
+  &:focus,
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('background-button'), 5);
+      background-color: lighten(themed('btn-default-bg'), 5);
     }
   }
 }
@@ -89,13 +90,35 @@ div#root {
 .ant-btn-primary {
   @include themify($themes) {
     background-color: themed('primary-color');
-    color: themed('text-color');
+    color: #fff;
   }
 
+  &:focus,
   &:hover {
     @include themify($themes) {
       background-color: lighten(themed('primary-color'), 5);
     }
+  }
+}
+
+.ant-btn-disabled,
+.ant-btn.disabled,
+.ant-btn[disabled],
+.ant-btn-disabled:hover,
+.ant-btn.disabled:hover,
+.ant-btn[disabled]:hover,
+.ant-btn-disabled:focus,
+.ant-btn.disabled:focus,
+.ant-btn[disabled]:focus,
+.ant-btn-disabled:active,
+.ant-btn.disabled:active,
+.ant-btn[disabled]:active,
+.ant-btn-disabled.active,
+.ant-btn.disabled.active,
+.ant-btn[disabled].active {
+  @include themify($themes) {
+    background-color: themed('btn-disabled-bg');
+    color: rgba(0, 0, 0, 0.25);
   }
 }
 

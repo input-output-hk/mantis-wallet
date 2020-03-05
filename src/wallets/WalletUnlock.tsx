@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
-import {Button} from 'antd'
 import {WalletState} from '../common/wallet-state'
 import {Navigate} from '../layout/Router'
-import {BorderlessInputPassword} from '../common/BorderlessInput'
+import {Dialog} from '../common/Dialog'
+import {DialogInputPassword} from '../common/dialog/DialogInput'
 import './WalletUnlock.scss'
 
 export const WalletUnlock = (): JSX.Element => {
@@ -30,22 +30,23 @@ export const WalletUnlock = (): JSX.Element => {
   } else {
     return (
       <div className="WalletUnlock">
-        <div className="dialog">
-          <h1>Unlock Wallet</h1>
-          <div className="label">Enter Password</div>
-          <BorderlessInputPassword
-            className="input"
+        <Dialog
+          title="Unlock Wallet"
+          buttonDisplayMode="natural"
+          prevButtonProps={{doNotRender: true}}
+          nextButtonProps={{
+            children: 'Unlock',
+            disabled: isLoading,
+            onClick: unlock,
+          }}
+        >
+          <DialogInputPassword
+            label="Enter Password"
             errorMessage={errorMessage}
             visibilityToggle={false}
             onChange={(e): void => setPassphrase(e.target.value)}
-            onKeyDown={(e): void => {
-              if (e.key === 'Enter') unlock()
-            }}
           />
-          <Button type="primary" disabled={isLoading} onClick={unlock}>
-            Unlock
-          </Button>
-        </div>
+        </Dialog>
       </div>
     )
   }

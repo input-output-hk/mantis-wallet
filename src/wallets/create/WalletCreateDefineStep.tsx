@@ -25,7 +25,7 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
       title="Create wallet"
       prevButtonProps={{onClick: cancel}}
       nextButtonProps={{
-        onClick: async (): Promise<void> => next(walletName, passphrase),
+        onClick: async (): Promise<void> => next(walletName, usePassphrase ? passphrase : ''),
         disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
       }}
       footer={errors}

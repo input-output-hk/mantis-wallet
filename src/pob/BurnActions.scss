@@ -32,7 +32,8 @@
           color: themed('text-color');
         }
 
-        &:hover {
+        &:hover,
+        &:focus {
           @include themify($themes) {
             background-color: themed('quinary-background');
           }

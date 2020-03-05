@@ -3,6 +3,8 @@
 $header-height: 120px;
 $header-text-height: 50px;
 
+$balance-padding: 24px 24px 0;
+
 .WalletOverview {
   display: grid;
   grid-template-areas:
@@ -10,7 +12,7 @@ $header-text-height: 50px;
     'graph total total'
     'graph confidential transparent';
   grid-template-columns: auto 1fr 1fr;
-  grid-template-rows: $header-height auto auto;
+  grid-template-rows: $header-height 160px 115px;
   margin: 0 36px 100px;
 
   .svg {
@@ -52,16 +54,14 @@ $header-text-height: 50px;
 
   .total {
     grid-area: total;
-    height: 130px;
-    margin: 20px 30px 0 0;
-    padding: 0 18px;
+    padding: $balance-padding;
     overflow: hidden;
     white-space: nowrap;
   }
 
   %balance {
     min-width: 205px;
-    padding: 24px 24px 0;
+    padding: $balance-padding;
     overflow: hidden;
     white-space: nowrap;
   }

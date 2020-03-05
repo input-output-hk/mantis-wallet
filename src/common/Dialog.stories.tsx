@@ -11,7 +11,6 @@ import {DialogMessage} from './dialog/DialogMessage'
 import {DialogPassword} from './dialog/DialogPassword'
 import {DialogPrivateKey} from './dialog/DialogPrivateKey'
 import {DialogRecoveryPhrase} from './dialog/DialogRecoveryPhrase'
-import {DialogTabs} from './dialog/DialogTabs'
 import {DialogSwitch} from './dialog/DialogSwitch'
 import {DialogDropdown} from './dialog/DialogDropdown'
 import {DialogColumns} from './dialog/DialogColumns'
@@ -20,6 +19,7 @@ import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
 import {CHAINS} from '../pob/chains'
+import {DialogSecrets} from './dialog/DialogSecrets'
 
 export default {
   title: 'Dialog',
@@ -29,6 +29,7 @@ export default {
 export const InteractiveDialog: React.FunctionComponent<{}> = () => (
   <Dialog
     title={text('Dialog title', 'Dialog title')}
+    buttonDisplayMode={select('Button display mode', ['natural', 'grid'], 'grid')}
     prevButtonProps={{
       children: text('Cancel button label', 'Cancel'),
       onClick: action('prev-button-click'),
@@ -172,6 +173,18 @@ export const InteractiveRecoveryPhrase: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
+export const InteractiveSecrets: React.FunctionComponent<{}> = () => {
+  return (
+    <Dialog title="Dialog Secrets">
+      <DialogSecrets
+        onMethodChange={action('on-method-change')}
+        onSpendingKeyChange={action('on-spending-key-change')}
+        onSeedPhraseChange={action('on-seed-phrase-change')}
+      />
+    </Dialog>
+  )
+}
+
 export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
   const [switched, setSwitched] = useState(false)
 
@@ -189,21 +202,3 @@ export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
     </Dialog>
   )
 }
-
-export const InteractiveTabs: React.FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Tabs">
-    <DialogTabs
-      tabs={[
-        {
-          label: text('First tab', 'First tab'),
-          content: text('First tab content', 'First tab content'),
-        },
-        {
-          label: text('Second tab', 'Second tab'),
-          content: text('Second tab content', 'Second tab content'),
-        },
-      ]}
-      onTabClick={action('on-tab-click')}
-    />
-  </Dialog>
-)
