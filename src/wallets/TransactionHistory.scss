@@ -107,6 +107,7 @@
 
     .transactions {
       width: 100%;
+      table-layout: fixed;
       border-collapse: collapse;
 
       .header {
@@ -119,6 +120,15 @@
         line-height: 40px;
         text-align: left;
         text-transform: uppercase;
+
+        .sortable {
+          cursor: pointer;
+          user-select: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
 
       .line {
