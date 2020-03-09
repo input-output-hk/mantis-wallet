@@ -23,7 +23,7 @@
     "build-storybook": "build-storybook",
     "electron": "electron ./build/main/main.js",
     "electron-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 electron ./build/main/main.js",
-    "dev": "yarn build-main && concurrently --kill-others \"yarn start\" \"yarn electron-dev\"",
+    "dev": "yarn build-main && concurrently --kill-others \"yarn start\" \"wait-on http://localhost:3000 && yarn electron-dev\"",
     "build-all": "yarn build-renderer && yarn build-main",
     "package": "ts-node --project tsconfig.bin.json ./bin/package.ts",
     "package-win": "ts-node --project ./tsconfig.bin.json ./bin/package-win.ts",
@@ -137,6 +137,7 @@
     "stylelint-config-standard": "^19.0.0",
     "stylelint-scss": "^3.13.0",
     "ts-node": "^8.6.2",
+    "wait-on": "^4.0.1",
     "worker-plugin": "^3.2.0"
   },
   "browserslist": {
