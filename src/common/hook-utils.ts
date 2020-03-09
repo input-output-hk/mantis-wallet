@@ -17,6 +17,7 @@ type Callback = () => void
 
 export function useInterval(callback: Callback, delay: number): void {
   const savedCallback = useRef<Callback>()
+  const isInitialMount = useRef(true)
 
   // Remember the latest callback
   useEffect(() => {
@@ -30,6 +31,11 @@ export function useInterval(callback: Callback, delay: number): void {
       if (savedCallback.current) savedCallback.current()
     }
     if (delay !== null) {
+      if (isInitialMount.current) {
+        // eslint-disable-next-line
+        isInitialMount.current = false
+        callback()
+      }
       const id = setInterval(tick, delay)
       return (): void => clearInterval(id)
     }
