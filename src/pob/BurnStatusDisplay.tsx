@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
-import {Icon} from 'antd'
+import {Icon, Popover} from 'antd'
 import {CHAINS} from './chains'
 import {BurnStatusType, BurnApiStatus} from './api/prover'
 import checkIcon from '../assets/icons/check.svg'
@@ -94,10 +94,18 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   const chain = CHAINS.find(({id}) => id === burnStatus.chain)
   const progress = STATUS_TO_PROGRESS[burnStatus.status]
 
+  const ShowLongText = ({content}: {content: React.ReactNode}): JSX.Element => (
+    <Popover content={content} placement="bottom">
+      <div className="long-text">{content}</div>
+    </Popover>
+  )
+
   return (
     <div className="BurnStatusDisplay">
       <div className="info">
-        <div className="info-element">{address}</div>
+        <div className="info-element">
+          <ShowLongText content={address} />
+        </div>
         <div className="info-element">
           {chain && (
             <>
@@ -106,8 +114,12 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             </>
           )}
         </div>
-        <div className="info-element">{burnStatus['txid']}</div>
-        <div className="last">{burnStatus.midnight_txid}</div>
+        <div className="info-element">
+          <ShowLongText content={burnStatus.midnight_txid} />
+        </div>
+        <div className="info-element">
+          <ShowLongText content={burnStatus.txid} />
+        </div>
       </div>
       <div className="status">
         <div className="progress">{PROGRESS_ICONS[progress.found]} Found Transaction</div>
