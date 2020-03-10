@@ -29,7 +29,7 @@ interface ShowAddress {
 type BurnCoinsState = ChooseToken | GenerateBurn | ShowAddress
 
 const CHAINS_TO_USE: ChainId[] = ['BTC_TESTNET', 'ETH_TESTNET']
-const AUTO_DUST_CONVERSION = true
+const AUTO_DUST_CONVERSION = false
 
 export const BurnCoins: React.FunctionComponent<{}> = () => {
   const walletState = WalletState.useContainer()

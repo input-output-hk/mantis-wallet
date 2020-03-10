@@ -43,7 +43,7 @@ const App: React.FC = () => {
                 <Sidebar />
               </header>
               <FloatingSyncStatus />
-              <ProofOfBurnState.Provider>
+              <ProofOfBurnState.Provider initialState={store}>
                 <main id="main">
                   <Router />
                 </main>
