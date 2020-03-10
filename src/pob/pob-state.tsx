@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {getStatus, createBurn, BurnApiStatus} from './api/prover'
+import {getStatuses, createBurn, BurnApiStatus} from './api/prover'
 import {Chain} from './chains'
 import {ProverConfig} from '../config/type'
 
@@ -11,7 +11,7 @@ export interface BurnWatcher {
 }
 
 export type BurnStatus = {
-  lastStatus: BurnApiStatus
+  lastStatuses: BurnApiStatus[]
   error?: Error
 }
 
@@ -45,16 +45,21 @@ function useProofOfBurnState(): ProofOfBurnState {
   const refreshBurnStatus = async (): Promise<void> => {
     const newBurnStatuses = await Promise.all(
       burnWatchers.map((burnWatcher) =>
-        getStatus(burnWatcher)
-          .then((status): [string, BurnStatus] => [burnWatcher.burnAddress, {lastStatus: status}])
+        getStatuses(burnWatcher)
+          .then((statuses): [string, BurnStatus] => [
+            burnWatcher.burnAddress,
+            {lastStatuses: statuses},
+          ])
           .catch((error): [string, BurnStatus] => {
             const {burnAddress} = burnWatcher
             return [
               burnAddress,
               {
-                lastStatus: burnStatuses[burnAddress]?.lastStatus || {
-                  status: 'No burn transactions observed.',
-                },
+                lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [
+                  {
+                    status: 'No burn transactions observed.',
+                  },
+                ],
                 error,
               },
             ]

@@ -4,6 +4,7 @@ import {Icon} from 'antd'
 import {BurnStatus} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
+import {BurnApiStatus} from './api/prover'
 import './BurnActivity.scss'
 
 interface BurnActivityProps {
@@ -15,14 +16,15 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
 }: BurnActivityProps) => {
   const [searchTxId, setSearchTxId] = useState('')
 
-  const filteredStatuses = _.toPairs(burnStatuses).filter(
-    ([
-      ,
-      {
-        lastStatus: {txid, midnight_txid: midnightTxid},
-      },
-    ]) => (txid || '').includes(searchTxId) || (midnightTxid || '').includes(searchTxId),
-  )
+  const filteredStatuses = _.toPairs(burnStatuses)
+    .flatMap(([address, {lastStatuses, error}]) =>
+      lastStatuses.map((lastStatus: BurnApiStatus) => ({address, error, burnStatus: lastStatus})),
+    )
+    .filter(
+      ({burnStatus: {txid, midnight_txid: midnightTxid}}) =>
+        (txid || '').includes(searchTxId) || (midnightTxid || '').includes(searchTxId),
+    )
+
   return (
     <div className="BurnActivity">
       <div className="toolbar">
@@ -47,8 +49,8 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
             <div className="last">Source Transaction Id</div>
           </div>
           <div>
-            {filteredStatuses.map(([address, burnStatus]) => (
-              <BurnStatusDisplay key={address} address={address} status={burnStatus} />
+            {filteredStatuses.map((status) => (
+              <BurnStatusDisplay key={status.address} {...status} />
             ))}
           </div>
         </>

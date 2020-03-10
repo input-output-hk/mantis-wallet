@@ -1,9 +1,8 @@
 import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import {Icon} from 'antd'
-import {BurnStatus} from './pob-state'
 import {CHAINS} from './chains'
-import {BurnStatusType} from './api/prover'
+import {BurnStatusType, BurnApiStatus} from './api/prover'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
@@ -20,7 +19,8 @@ interface AllProgress {
 
 interface BurnStatusDisplayProps {
   address: string
-  status: BurnStatus
+  burnStatus: BurnApiStatus
+  error?: Error
 }
 
 const DEFAULT_PROGRESS: AllProgress = {
@@ -88,10 +88,11 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
 
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
-  status: {lastStatus, error},
+  burnStatus,
+  error,
 }: BurnStatusDisplayProps) => {
-  const chain = CHAINS.find(({id}) => id === lastStatus.chain)
-  const progress = STATUS_TO_PROGRESS[lastStatus.status]
+  const chain = CHAINS.find(({id}) => id === burnStatus.chain)
+  const progress = STATUS_TO_PROGRESS[burnStatus.status]
 
   return (
     <div className="BurnStatusDisplay">
@@ -105,8 +106,8 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             </>
           )}
         </div>
-        <div className="info-element">{lastStatus['txid']}</div>
-        <div className="last">{lastStatus.midnight_txid}</div>
+        <div className="info-element">{burnStatus['txid']}</div>
+        <div className="last">{burnStatus.midnight_txid}</div>
       </div>
       <div className="status">
         <div className="progress">{PROGRESS_ICONS[progress.found]} Found Transaction</div>
