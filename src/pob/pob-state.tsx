@@ -15,7 +15,7 @@ import {Chain, ChainId, CHAINS} from './chains'
 import {ProverConfig} from '../config/type'
 import {Store, defaultPobData, createInMemoryStore, StorePobData} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
-import {Web3API, makeWeb3Worker} from '../web3'
+import {Web3API, makeWeb3Worker, EthTransaction} from '../web3'
 import {deserializeBigNumber, bigSum, bech32toHex} from '../common/util'
 
 export interface BurnWatcher {
@@ -30,8 +30,10 @@ export interface BurnAddressInfo {
   autoConversion: boolean
 }
 
+export type RealBurnStatus = BurnApiStatus & {midnight_txid_height: number | null}
+
 export type BurnStatus = {
-  lastStatuses: BurnApiStatus[]
+  lastStatuses: RealBurnStatus[]
   errorMessage?: string
 }
 
@@ -94,25 +96,40 @@ function useProofOfBurnState(
     setBurnAddresses(_.merge(burnAddresses, {[burnAddress]: info}))
 
   const refreshBurnStatus = async (): Promise<void> => {
-    const newBurnStatuses = await Promise.all(
-      burnWatchers.map((burnWatcher) =>
-        getStatuses(burnWatcher)
-          .then((statuses): [string, BurnStatus] => [
-            burnWatcher.burnAddress,
-            {lastStatuses: statuses.filter(noBurnObservedFilter)},
-          ])
-          .catch((error): [string, BurnStatus] => {
-            const {burnAddress} = burnWatcher
-            return [
-              burnAddress,
-              {
-                lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
-                errorMessage: prettyErrorMessage(error),
-              },
-            ]
-          }),
-      ),
-    )
+    const getBurnStatuses = async (burnWatcher: BurnWatcher): Promise<[string, BurnStatus]> => {
+      try {
+        const statuses = await getStatuses(burnWatcher)
+        const statusesWithTxidHeight: RealBurnStatus[] = await Promise.all(
+          statuses.filter(noBurnObservedFilter).map(
+            (s: BurnApiStatus): Promise<RealBurnStatus> =>
+              !s.midnight_txid
+                ? Promise.resolve({...s, midnight_txid_height: null})
+                : web3.eth
+                    .getTransaction(s.midnight_txid || '')
+                    .then(({blockNumber}: EthTransaction) => ({
+                      ...s,
+                      midnight_txid_height: blockNumber,
+                    }))
+                    .catch((err) => {
+                      console.error(err)
+                      return {...s, midnight_txid_height: null}
+                    }),
+          ),
+        )
+        return [burnWatcher.burnAddress, {lastStatuses: statusesWithTxidHeight}]
+      } catch (error) {
+        const {burnAddress} = burnWatcher
+        return [
+          burnAddress,
+          {
+            lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
+            errorMessage: prettyErrorMessage(error),
+          },
+        ]
+      }
+    }
+
+    const newBurnStatuses = await Promise.all(burnWatchers.map(getBurnStatuses))
     setBurnStatuses(_.fromPairs(newBurnStatuses))
   }
 

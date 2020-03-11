@@ -51,7 +51,7 @@
 
   .status {
     @extend %status-steps;
-    grid-template-columns: repeat(3, auto 1fr) auto;
+    grid-template-columns: repeat(3, auto minmax(54px, 1fr)) auto;
     cursor: default;
   }
 

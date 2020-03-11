@@ -14,6 +14,7 @@ import {
   SynchronizationStatus,
   BigNumberJSON,
   ERC20Contract,
+  EthTransaction,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -167,6 +168,14 @@ const mockErc20Contracts = _.values(CHAINS).map(({id}): [ChainId, ERC20Contract]
 ])
 
 export const Web3MockApi: Web3API = {
+  eth: {
+    getTransaction: (hash: string): EthTransaction => {
+      return {
+        hash,
+        blockNumber: 2,
+      }
+    },
+  },
   midnight: {
     wallet: new MockWallet(),
   },

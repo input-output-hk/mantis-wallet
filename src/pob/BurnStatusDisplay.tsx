@@ -1,12 +1,16 @@
 import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import {Icon, Popover} from 'antd'
+import _ from 'lodash'
 import {CHAINS} from './chains'
-import {BurnStatusType, BurnApiStatus} from './api/prover'
+import {BurnStatusType} from './api/prover'
+import {formatPercentage} from '../common/formatters'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import {copyToClipboard} from '../common/clipboard'
+import {RealBurnStatus} from './pob-state'
+import {SynchronizationStatus} from '../web3'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
@@ -19,7 +23,8 @@ interface AllProgress {
 
 interface BurnStatusDisplayProps {
   address: string
-  burnStatus: BurnApiStatus
+  syncStatus: SynchronizationStatus
+  burnStatus: RealBurnStatus
   errorMessage?: string
 }
 
@@ -71,7 +76,7 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" />,
 }
 
-const ShowLongText = ({content}: {content: string | null}): JSX.Element =>
+const DisplayLongText = ({content}: {content: string | null}): JSX.Element =>
   content == null ? (
     <></>
   ) : (
@@ -82,6 +87,13 @@ const ShowLongText = ({content}: {content: string | null}): JSX.Element =>
       </Popover>
     </div>
   )
+
+const DisplayProgress = ({ratio}: {ratio: number | 'unknown'}): JSX.Element => (
+  <div className="percentage">
+    {ratio === 'unknown' && <Icon type="loading" style={{fontSize: 12}} spin />}
+    {ratio !== 'unknown' && `${formatPercentage(_.clamp(ratio, 0, 0.99))}%`}
+  </div>
+)
 
 const ProvingStarted = ({progress}: {progress: ProgressType}): JSX.Element => {
   switch (progress) {
@@ -146,8 +158,29 @@ const ProvingConfirmed = ({progress}: {progress: ProgressType}): JSX.Element => 
   }
 }
 
+const NUMBER_OF_BLOCKS_TO_SUCCESS = 10
+const NUMBER_OF_BLOCKS_TO_CONFIRM = 4
+
+const startedProgress = (current: number, tx: number | null, start: number | null): number =>
+  start && tx && start !== tx ? (current - tx) / (start - tx) : 0
+
+const successProgress = (status: BurnStatusType, current: string, tx: number | null): number => {
+  switch (status) {
+    case 'PROOF_READY':
+      return 0
+    case 'COMMITMENT_APPEARED':
+      return 0.1
+    default:
+      return tx ? 0.1 + (0.9 * (parseInt(current, 16) - tx)) / NUMBER_OF_BLOCKS_TO_SUCCESS : 0
+  }
+}
+
+const confirmProgress = (current: string, tx: number | null): number =>
+  tx ? (parseInt(current, 16) - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM : 0
+
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
+  syncStatus,
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
@@ -158,7 +191,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
     <div className="BurnStatusDisplay">
       <div className="info">
         <div className="info-element">
-          <ShowLongText content={address} />
+          <DisplayLongText content={address} />
         </div>
         <div className="info-element">
           {chain && (
@@ -169,10 +202,10 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           )}
         </div>
         <div className="info-element">
-          <ShowLongText content={burnStatus.midnight_txid} />
+          <DisplayLongText content={burnStatus.midnight_txid} />
         </div>
         <div className="info-element">
-          <ShowLongText content={burnStatus.txid} />
+          <DisplayLongText content={burnStatus.txid} />
         </div>
       </div>
       <div className="status">
@@ -184,15 +217,49 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             {PROGRESS_ICONS['CHECKED']} Found Transaction
           </Popover>
         </div>
-        <div className="line"></div>
+        <div className="line">
+          {progress.started === 'IN_PROGRESS' && (
+            <DisplayProgress
+              ratio={startedProgress(
+                burnStatus.current_source_height,
+                burnStatus.burn_tx_height,
+                burnStatus.processing_start_height,
+              )}
+            />
+          )}
+        </div>
         <div className="progress">
           <ProvingStarted progress={progress.started} />
         </div>
-        <div className="line"></div>
+        <div className="line">
+          {progress.success === 'IN_PROGRESS' && (
+            <DisplayProgress
+              ratio={
+                syncStatus.mode === 'offline'
+                  ? 'unknown'
+                  : successProgress(
+                      burnStatus.status,
+                      syncStatus.highestKnownBlock,
+                      burnStatus.midnight_txid_height,
+                    )
+              }
+            />
+          )}
+        </div>
         <div className="progress">
           <ProvingSuccessful progress={progress.success} />
         </div>
-        <div className="line"></div>
+        <div className="line">
+          {progress.confirm === 'IN_PROGRESS' && (
+            <DisplayProgress
+              ratio={
+                syncStatus.mode === 'offline'
+                  ? 'unknown'
+                  : confirmProgress(syncStatus.highestKnownBlock, burnStatus.midnight_txid_height)
+              }
+            />
+          )}
+        </div>
         <div className="progress">
           <ProvingConfirmed progress={progress.confirm} />
         </div>
