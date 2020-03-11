@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {getStatuses, createBurn, BurnApiStatus} from './api/prover'
+import {getStatuses, createBurn, BurnApiStatus, NO_BURN_OBSERVED} from './api/prover'
 import {Chain} from './chains'
 import {ProverConfig} from '../config/type'
 
@@ -57,7 +57,7 @@ function useProofOfBurnState(): ProofOfBurnState {
               {
                 lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [
                   {
-                    status: 'No burn transactions observed.',
+                    status: NO_BURN_OBSERVED,
                   },
                 ],
                 error,

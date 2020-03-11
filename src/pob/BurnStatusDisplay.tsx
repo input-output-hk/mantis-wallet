@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import {Icon, Popover} from 'antd'
 import {CHAINS} from './chains'
-import {BurnStatusType, BurnApiStatus} from './api/prover'
+import {BurnStatusType, BurnApiStatus, NO_BURN_OBSERVED} from './api/prover'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
@@ -30,8 +30,8 @@ const DEFAULT_PROGRESS: AllProgress = {
   confirm: 'UNKNOWN',
 }
 
-const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
-  ['No burn transactions observed.']: DEFAULT_PROGRESS,
+const STATUS_TO_PROGRESS: Record<BurnStatusType | typeof NO_BURN_OBSERVED, AllProgress> = {
+  [NO_BURN_OBSERVED]: DEFAULT_PROGRESS,
   BURN_OBSERVED: {found: 'CHECKED', started: 'IN_PROGRESS', success: 'UNKNOWN', confirm: 'UNKNOWN'},
   PROOF_READY: {found: 'CHECKED', started: 'CHECKED', success: 'IN_PROGRESS', confirm: 'UNKNOWN'},
   PROOF_FAIL: {found: 'CHECKED', started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
@@ -91,7 +91,9 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   burnStatus,
   error,
 }: BurnStatusDisplayProps) => {
-  const chain = CHAINS.find(({id}) => id === burnStatus.chain)
+  const chain = CHAINS.find(
+    ({id}) => burnStatus.status !== NO_BURN_OBSERVED && id === burnStatus.chain,
+  )
   const progress = STATUS_TO_PROGRESS[burnStatus.status]
 
   const ShowLongText = ({content}: {content: React.ReactNode}): JSX.Element => (
@@ -115,10 +117,12 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           )}
         </div>
         <div className="info-element">
-          <ShowLongText content={burnStatus.midnight_txid} />
+          {burnStatus.status !== NO_BURN_OBSERVED && (
+            <ShowLongText content={burnStatus.midnight_txid} />
+          )}
         </div>
         <div className="info-element">
-          <ShowLongText content={burnStatus.txid} />
+          {burnStatus.status !== NO_BURN_OBSERVED && <ShowLongText content={burnStatus.txid} />}
         </div>
       </div>
       <div className="status">

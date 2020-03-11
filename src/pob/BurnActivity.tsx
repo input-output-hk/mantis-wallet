@@ -5,6 +5,7 @@ import {BurnStatus} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnApiStatus} from './api/prover'
+import {NO_BURN_OBSERVED} from './api/prover'
 import './BurnActivity.scss'
 
 interface BurnActivityProps {
@@ -21,8 +22,11 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
       lastStatuses.map((lastStatus: BurnApiStatus) => ({address, error, burnStatus: lastStatus})),
     )
     .filter(
-      ({burnStatus: {txid, midnight_txid: midnightTxid}}) =>
-        (txid || '').includes(searchTxId) || (midnightTxid || '').includes(searchTxId),
+      ({burnStatus}) =>
+        searchTxId.length === 0 ||
+        (burnStatus.status !== NO_BURN_OBSERVED &&
+          ((burnStatus.txid || '').includes(searchTxId) ||
+            (burnStatus.midnight_txid || '').includes(searchTxId))),
     )
 
   return (
