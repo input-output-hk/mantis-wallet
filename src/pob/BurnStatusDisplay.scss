@@ -25,6 +25,12 @@
       }
     }
 
+    .long-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .exchange-icon {
       display: inline;
       height: 15px;

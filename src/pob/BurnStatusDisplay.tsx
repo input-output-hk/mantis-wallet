@@ -1,9 +1,8 @@
 import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
-import {Icon} from 'antd'
-import {BurnStatus} from './pob-state'
+import {Icon, Popover} from 'antd'
 import {CHAINS} from './chains'
-import {BurnStatusType} from './api/prover'
+import {BurnStatusType, BurnApiStatus} from './api/prover'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
@@ -20,7 +19,8 @@ interface AllProgress {
 
 interface BurnStatusDisplayProps {
   address: string
-  status: BurnStatus
+  burnStatus: BurnApiStatus
+  error?: Error
 }
 
 const DEFAULT_PROGRESS: AllProgress = {
@@ -88,15 +88,24 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
 
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
-  status: {lastStatus, error},
+  burnStatus,
+  error,
 }: BurnStatusDisplayProps) => {
-  const chain = CHAINS.find(({id}) => id === lastStatus.chain)
-  const progress = STATUS_TO_PROGRESS[lastStatus.status]
+  const chain = CHAINS.find(({id}) => id === burnStatus.chain)
+  const progress = STATUS_TO_PROGRESS[burnStatus.status]
+
+  const ShowLongText = ({content}: {content: React.ReactNode}): JSX.Element => (
+    <Popover content={content} placement="bottom">
+      <div className="long-text">{content}</div>
+    </Popover>
+  )
 
   return (
     <div className="BurnStatusDisplay">
       <div className="info">
-        <div className="info-element">{address}</div>
+        <div className="info-element">
+          <ShowLongText content={address} />
+        </div>
         <div className="info-element">
           {chain && (
             <>
@@ -105,8 +114,12 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             </>
           )}
         </div>
-        <div className="info-element">{lastStatus['txid']}</div>
-        <div className="last">{lastStatus.midnight_txid}</div>
+        <div className="info-element">
+          <ShowLongText content={burnStatus.midnight_txid} />
+        </div>
+        <div className="info-element">
+          <ShowLongText content={burnStatus.txid} />
+        </div>
       </div>
       <div className="status">
         <div className="progress">{PROGRESS_ICONS[progress.found]} Found Transaction</div>

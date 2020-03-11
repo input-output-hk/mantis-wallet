@@ -73,12 +73,10 @@ const httpRequest = async (
   ).json()
 }
 
-export const getStatus = async ({burnAddress, prover}: BurnWatcher): Promise<BurnApiStatus> => {
+export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<BurnApiStatus[]> => {
   return httpRequest(prover, 'prove', '/api/v1/status', {
     burn_address: burnAddress,
-  })
-    .then(tPromise.decode(BurnApiStatuses))
-    .then(([apiStatus]) => apiStatus)
+  }).then(tPromise.decode(BurnApiStatuses))
 }
 
 export const createBurn = async (

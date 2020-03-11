@@ -52,7 +52,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
             if (mounted.current) setInProgress(true)
             try {
               if (prover) {
-                await generateBurnAddress(prover, transparentAddress, Number())
+                await generateBurnAddress(prover, transparentAddress, Number(fee))
               } else {
                 setErrorMessage('No prover was selected.')
               }
