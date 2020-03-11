@@ -23,8 +23,12 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
   )(burnStatuses)
 
   const filteredStatuses = existingBurnStatuses
-    .flatMap(([address, {lastStatuses, error}]) =>
-      lastStatuses.map((lastStatus: BurnApiStatus) => ({address, error, burnStatus: lastStatus})),
+    .flatMap(([address, {lastStatuses, errorMessage}]) =>
+      lastStatuses.map((lastStatus: BurnApiStatus) => ({
+        address,
+        errorMessage,
+        burnStatus: lastStatus,
+      })),
     )
     .filter(
       ({burnStatus}) =>
@@ -45,18 +49,18 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
         />
       </div>
       {noBurnObserved.length > 0 &&
-        noBurnObserved.map(([address, {error}]) => (
+        noBurnObserved.map(([address, {errorMessage}]) => (
           <div className="burn-address-error" key={address}>
             <DialogError>
-              {error && (
+              {errorMessage && (
                 <>
                   Gathering burn activity for {address} from the prover failed with the following
                   error:
                   <br />
-                  {error.message}
+                  {errorMessage}
                 </>
               )}
-              {!error && `No burn transactions observed for burn address ${address}.`}
+              {!errorMessage && `No burn transactions observed for burn address ${address}.`}
             </DialogError>
           </div>
         ))}

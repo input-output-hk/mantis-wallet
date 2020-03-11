@@ -19,7 +19,7 @@ interface AllProgress {
 interface BurnStatusDisplayProps {
   address: string
   burnStatus: BurnApiStatus
-  error?: Error
+  errorMessage?: string
 }
 
 const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
@@ -73,7 +73,7 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
   burnStatus,
-  error,
+  errorMessage,
 }: BurnStatusDisplayProps) => {
   const chain = CHAINS.find(({id}) => id === burnStatus.chain)
   const progress = STATUS_TO_PROGRESS[burnStatus.status]
@@ -114,12 +114,12 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         <div className="line"></div>
         <div className="progress">{PROGRESS_ICONS[progress.confirm]} Proving Confirmed</div>
       </div>
-      {error && (
+      {errorMessage && (
         <div className="error">
           Information about burn progress might be out-dated. Gathering burn activity from the
           prover failed with the following error:
           <br />
-          {error.message}
+          {errorMessage}
         </div>
       )}
     </div>

@@ -42,15 +42,11 @@ export const burnActivity = (): JSX.Element => (
               last_tag_height: 1,
             },
           ],
-          error: new Error(
-            text('An error message #1', 'This is an error message for Burn Address #1'),
-          ),
+          errorMessage: text('An error message #1', 'This is an error message for Burn Address #1'),
         },
         [text('Burn address #2', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay42')]: {
           lastStatuses: [],
-          error: new Error(
-            text('An error message #2', 'This is an error message for Burn Address #2'),
-          ),
+          errorMessage: text('An error message #2', 'This is an error message for Burn Address #1'),
         },
         [text('Burn address #3', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay43')]: {
           lastStatuses: [],
@@ -89,7 +85,7 @@ export const burnStatusDisplay = (): JSX.Element => (
         processing_start_height: 1,
         last_tag_height: 1,
       }}
-      error={new Error(text('An error message', 'This is an error message'))}
+      errorMessage={text('An error message #1', 'This is an error message for Burn Address #1')}
     />
   </div>
 )
