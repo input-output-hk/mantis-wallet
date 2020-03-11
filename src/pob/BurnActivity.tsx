@@ -5,7 +5,7 @@ import {BurnStatus} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnApiStatus} from './api/prover'
-import {NO_BURN_OBSERVED} from './api/prover'
+import {DialogError} from '../common/dialog/DialogError'
 import './BurnActivity.scss'
 
 interface BurnActivityProps {
@@ -17,16 +17,19 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
 }: BurnActivityProps) => {
   const [searchTxId, setSearchTxId] = useState('')
 
-  const filteredStatuses = _.toPairs(burnStatuses)
+  const [noBurnObserved, existingBurnStatuses]: Array<Array<[string, BurnStatus]>> = _.pipe(
+    _.toPairs,
+    _.partition(([, {lastStatuses}]: [string, BurnStatus]) => lastStatuses.length === 0),
+  )(burnStatuses)
+
+  const filteredStatuses = existingBurnStatuses
     .flatMap(([address, {lastStatuses, error}]) =>
       lastStatuses.map((lastStatus: BurnApiStatus) => ({address, error, burnStatus: lastStatus})),
     )
     .filter(
       ({burnStatus}) =>
-        searchTxId.length === 0 ||
-        (burnStatus.status !== NO_BURN_OBSERVED &&
-          ((burnStatus.txid || '').includes(searchTxId) ||
-            (burnStatus.midnight_txid || '').includes(searchTxId))),
+        (burnStatus.txid || '').includes(searchTxId) ||
+        (burnStatus.midnight_txid || '').includes(searchTxId),
     )
 
   return (
@@ -41,6 +44,22 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
           onChange={(e) => setSearchTxId(e.target.value)}
         />
       </div>
+      {noBurnObserved.length > 0 &&
+        noBurnObserved.map(([address, {error}]) => (
+          <div className="burn-address-error" key={address}>
+            <DialogError>
+              {error && (
+                <>
+                  Gathering burn activity for {address} from the prover failed with the following
+                  error:
+                  <br />
+                  {error.message}
+                </>
+              )}
+              {!error && `No burn transactions observed for burn address ${address}.`}
+            </DialogError>
+          </div>
+        ))}
       {filteredStatuses.length === 0 && (
         <div className="no-activity">No burn activity to show.</div>
       )}

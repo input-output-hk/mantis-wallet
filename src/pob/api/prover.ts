@@ -43,9 +43,13 @@ const BurnApiStatuses = t.array(t.union([BurnApiStatus, NoBurnStatus]))
 
 export type BurnStatusType = t.TypeOf<typeof BurnStatusType>
 
-export type NoBurnStatus = typeof NoBurnStatus
+export type NoBurnStatus = t.TypeOf<typeof NoBurnStatus>
+export type BurnApiStatus = t.TypeOf<typeof BurnApiStatus>
 
-export type BurnApiStatus = t.TypeOf<typeof BurnApiStatus | NoBurnStatus>
+export type AllApiStatus = BurnApiStatus | NoBurnStatus
+
+export const noBurnObservedFilter = (status: AllApiStatus): status is BurnApiStatus =>
+  status.status !== NO_BURN_OBSERVED
 
 const BurnType = t.type({
   burn_address: t.string,
@@ -77,7 +81,7 @@ const httpRequest = async (
   ).json()
 }
 
-export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<BurnApiStatus[]> => {
+export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
   return httpRequest(prover, 'prove', '/api/v1/status', {
     burn_address: burnAddress,
   }).then(tPromise.decode(BurnApiStatuses))

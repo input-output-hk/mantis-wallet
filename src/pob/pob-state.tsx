@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {getStatuses, createBurn, BurnApiStatus, NO_BURN_OBSERVED} from './api/prover'
+import {getStatuses, createBurn, BurnApiStatus, noBurnObservedFilter} from './api/prover'
 import {Chain} from './chains'
 import {ProverConfig} from '../config/type'
 
@@ -48,18 +48,14 @@ function useProofOfBurnState(): ProofOfBurnState {
         getStatuses(burnWatcher)
           .then((statuses): [string, BurnStatus] => [
             burnWatcher.burnAddress,
-            {lastStatuses: statuses},
+            {lastStatuses: statuses.filter(noBurnObservedFilter)},
           ])
           .catch((error): [string, BurnStatus] => {
             const {burnAddress} = burnWatcher
             return [
               burnAddress,
               {
-                lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [
-                  {
-                    status: NO_BURN_OBSERVED,
-                  },
-                ],
+                lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
                 error,
               },
             ]

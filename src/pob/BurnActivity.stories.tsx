@@ -14,13 +14,12 @@ export const burnActivity = (): JSX.Element => (
   <div>
     <BurnActivity
       burnStatuses={{
-        [text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')]: {
+        [text('Burn address #1', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')]: {
           lastStatuses: [
             {
               status: select(
                 'Burn status',
                 [
-                  'No burn transactions observed.',
                   'BURN_OBSERVED',
                   'PROOF_READY',
                   'PROOF_FAIL',
@@ -43,7 +42,18 @@ export const burnActivity = (): JSX.Element => (
               last_tag_height: 1,
             },
           ],
-          error: new Error(text('An error message', 'This is an error message')),
+          error: new Error(
+            text('An error message #1', 'This is an error message for Burn Address #1'),
+          ),
+        },
+        [text('Burn address #2', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay42')]: {
+          lastStatuses: [],
+          error: new Error(
+            text('An error message #2', 'This is an error message for Burn Address #2'),
+          ),
+        },
+        [text('Burn address #3', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay43')]: {
+          lastStatuses: [],
         },
       }}
     />
@@ -58,7 +68,6 @@ export const burnStatusDisplay = (): JSX.Element => (
         status: select(
           'Burn status',
           [
-            'No burn transactions observed.',
             'BURN_OBSERVED',
             'PROOF_READY',
             'PROOF_FAIL',
