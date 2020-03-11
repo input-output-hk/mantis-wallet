@@ -176,7 +176,7 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             loadMore={() => setShownTxNumber(shownTxNumber + 10)}
             hasMore={transactions.length > shownTxNumber}
             useWindow={false}
-            getScrollParent={() => document.getElementById('wallets')}
+            getScrollParent={() => document.getElementById('main')}
           >
             <table className="transactions">
               <thead>

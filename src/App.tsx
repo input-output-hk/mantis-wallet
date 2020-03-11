@@ -39,7 +39,7 @@ const App: React.FC = () => {
               </header>
               <FloatingSyncStatus />
               <ProofOfBurnState.Provider>
-                <main>
+                <main id="main">
                   <Router />
                 </main>
               </ProofOfBurnState.Provider>
