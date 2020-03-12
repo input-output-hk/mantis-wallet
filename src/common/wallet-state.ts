@@ -259,7 +259,9 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     amount: number,
     fee: number,
   ): Promise<string> => {
-    return wallet.sendTransaction(recipient, amount, fee)
+    const result = await wallet.sendTransaction(recipient, amount, fee)
+    reset()
+    return result
   }
 
   const restoreFromSpendingKey = async (

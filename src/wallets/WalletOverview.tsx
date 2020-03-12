@@ -34,7 +34,7 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
     <div className="WalletOverview">
       <div className="header">
         <span className="title">Wallet Overview</span>
-        <SyncStatusContent syncStatus={state.syncStatus} onClick={state.reset} />
+        <SyncStatusContent syncStatus={state.syncStatus} />
       </div>
       <div className="graph">
         <OverviewGraph {..._.mapValues(props, bigToNumber)} />
