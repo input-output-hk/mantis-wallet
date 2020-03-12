@@ -3,11 +3,13 @@ import React, {FunctionComponent} from 'react'
 import {render, RenderResult} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {toWei} from 'web3/lib/utils/utils.js'
+import BigNumber from 'bignumber.js'
 import {TransactionHistory} from './TransactionHistory'
 import {Transaction, Account, makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
+import {abbreviateAmount} from '../common/formatters'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -85,8 +87,10 @@ test('TransactionHistory shows proper tx amounts', () => {
   const {getByText} = wrappedRender(
     <TransactionHistory transactions={[tx1, tx2]} transparentAddresses={[]} accounts={accounts} />,
   )
-  expect(getByText('123.000000')).toBeInTheDocument()
-  expect(getByText('123.456789M')).toBeInTheDocument()
+  const {strict: formattedNumber1} = abbreviateAmount(new BigNumber(123))
+  expect(getByText(formattedNumber1)).toBeInTheDocument()
+  const {strict: formattedNumber2} = abbreviateAmount(new BigNumber(123456789))
+  expect(getByText(formattedNumber2)).toBeInTheDocument()
 })
 
 // txStatus.status

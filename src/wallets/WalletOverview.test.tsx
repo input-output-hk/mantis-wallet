@@ -35,10 +35,12 @@ test('WalletOverview shows properly formatted balance', () => {
     </ThemeState.Provider>,
   )
 
-  const numbers = Object.values({...balance, total}).map((big) => fromWei(big))
+  const numbers = Object.values({...balance, total}).map((big) => {
+    return abbreviateAmount(fromWei(big)).strict
+  })
 
-  numbers.map((num) => {
-    const numberElem = getByText(abbreviateAmount(num, 2))
+  numbers.map((formattedNumber) => {
+    const numberElem = getByText(formattedNumber)
     // abbreviated numbers are present
     expect(numberElem).toBeInTheDocument()
   })
