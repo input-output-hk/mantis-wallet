@@ -2,11 +2,14 @@ import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent} from 'react'
 import {render, RenderResult} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {TransactionHistory} from './TransactionHistory'
-import {Transaction, Account} from '../web3'
-import {WalletState} from '../common/wallet-state'
-import {ThemeState} from '../theme-state'
 import {toWei} from 'web3/lib/utils/utils.js'
+import {TransactionHistory} from './TransactionHistory'
+import {Transaction, Account, makeWeb3Worker} from '../web3'
+import {mockWeb3Worker} from '../web3-mock'
+import {WalletState, WalletStatus} from '../common/wallet-state'
+import {ThemeState} from '../theme-state'
+
+const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('react-inlinesvg', () => {
   return function SVG(props: {title: string}): JSX.Element {
@@ -56,9 +59,14 @@ const accounts: Account[] = [
 ]
 
 const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNode}) => {
+  const initialState = {
+    walletStatus: 'LOADED' as WalletStatus,
+    web3,
+  }
+
   return (
     <ThemeState.Provider>
-      <WalletState.Provider>{children}</WalletState.Provider>
+      <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
     </ThemeState.Provider>
   )
 }

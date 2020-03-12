@@ -12,10 +12,12 @@ const getContent = (
   step: StepType,
   setStep: React.Dispatch<React.SetStateAction<StepType>>,
 ): JSX.Element => {
-  const state = WalletState.useContainer()
+  const walletState = WalletState.useContainer()
 
   const finish = (): void => {
-    if (state.walletStatus === 'NO_WALLET') state.reset()
+    if (walletState.walletStatus !== 'INITIAL' && walletState.walletStatus !== 'LOADING') {
+      walletState.reset()
+    }
     setStep('FINISHED')
   }
 

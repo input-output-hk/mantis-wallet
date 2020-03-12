@@ -22,7 +22,7 @@ export const WalletListSidebar: React.FunctionComponent<WalletListSidebarProps> 
     <div className="WalletListSidebar invisible-scrollbar">
       <ul className="wallet-links">
         {wallets.map((wallet) => {
-          const isActive = currentWalletId == wallet.id
+          const isActive = currentWalletId === wallet.id
           const classes = classnames('wallet-link', {'wallet-link-active': isActive})
           return (
             <li key={wallet.id}>

@@ -7,15 +7,15 @@ import {TransactionHistory} from './TransactionHistory'
 import './Wallets.scss'
 
 export const Wallets = (): JSX.Element => {
-  const state = WalletState.useContainer()
+  const walletState = WalletState.useContainer()
 
   useEffect(() => {
-    if (state.walletStatus === 'INITIAL') {
-      state.refreshSyncStatus()
+    if (walletState.walletStatus === 'INITIAL') {
+      walletState.refreshSyncStatus()
     }
-  }, [state.walletStatus])
+  }, [walletState.walletStatus])
 
-  switch (state.walletStatus) {
+  switch (walletState.walletStatus) {
     case 'INITIAL': {
       return <Loading />
     }
@@ -30,7 +30,7 @@ export const Wallets = (): JSX.Element => {
         pendingBalance,
         transparentAddresses,
         accounts,
-      } = state.getOverviewProps()
+      } = walletState.getOverviewProps()
 
       return (
         <div className="Wallets invisible-scrollbar">
@@ -54,7 +54,7 @@ export const Wallets = (): JSX.Element => {
       return <Navigate to="WALLET_SETUP" />
     }
     case 'ERROR': {
-      return <b>{state.errorMsg}</b>
+      return <b>{walletState.errorMsg}</b>
     }
   }
 }

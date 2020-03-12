@@ -14,6 +14,7 @@ import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecover
 export default {
   title: 'Wallet Setup',
   decorators: [withWalletState, withTheme, withKnobs],
+  parameters: {withWalletState: {walletStatus: 'NO_WALLET'}},
 }
 
 export const showPathChooser = (): JSX.Element => (

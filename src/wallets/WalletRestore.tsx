@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
+import {NoWalletState} from '../common/wallet-state'
+import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogSwitch} from '../common/dialog/DialogSwitch'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogError} from '../common/dialog/DialogError'
-import {WalletState} from '../common/wallet-state'
 import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
 
 interface WalletRestoreProps {
@@ -12,12 +13,11 @@ interface WalletRestoreProps {
   finish: () => void
 }
 
-export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
+const _WalletRestore = ({
   cancel,
   finish,
-}: WalletRestoreProps) => {
-  const state = WalletState.useContainer()
-
+  walletState,
+}: PropsWithWalletState<WalletRestoreProps, NoWalletState>): JSX.Element => {
   const [walletName, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
@@ -30,18 +30,14 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
   const footer = walletRestoreError ? <DialogError>{walletRestoreError}</DialogError> : null
 
   const restore = async (): Promise<boolean> => {
-    if (state.walletStatus !== 'NO_WALLET') {
-      return false
-    }
-
     const usedPassphrase = usePassphrase ? passphrase : ''
 
     switch (recoveryMethod) {
       case RecoveryMethod.SpendingKey:
-        return state.restoreFromSpendingKey({passphrase: usedPassphrase, spendingKey})
+        return walletState.restoreFromSpendingKey({passphrase: usedPassphrase, spendingKey})
       case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
-        return state.restoreFromSeedPhrase({passphrase: usedPassphrase, seedPhrase})
+        return walletState.restoreFromSeedPhrase({passphrase: usedPassphrase, seedPhrase})
     }
   }
 
@@ -52,10 +48,6 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
       nextButtonProps={{
         disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
         onClick: async (): Promise<void> => {
-          if (state.walletStatus !== 'NO_WALLET') {
-            return setWalletRestoreError('Wallet already exists')
-          }
-
           setWalletRestoreError('')
           try {
             const isRestored = await restore()
@@ -93,3 +85,5 @@ export const WalletRestore: React.FunctionComponent<WalletRestoreProps> = ({
     </Dialog>
   )
 }
+
+export const WalletRestore = withStatusGuard(_WalletRestore, 'NO_WALLET')

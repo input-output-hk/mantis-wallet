@@ -42,7 +42,7 @@ export const Sidebar = (): JSX.Element => {
         <nav>
           <ul className={classnames('navigation', {locked: routerState.isLocked})}>
             {Object.entries(MENU).map(([menuId, menuItem]: [string, MenuItem]) => {
-              const isActive = routerState.currentRoute.menu == menuId
+              const isActive = routerState.currentRoute.menu === menuId
               const classes = classnames('link', {active: isActive})
               return (
                 <li key={menuId}>

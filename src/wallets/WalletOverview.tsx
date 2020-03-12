@@ -2,8 +2,9 @@ import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
-import {WalletState, LoadedState} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
+import {LoadedState} from '../common/wallet-state'
+import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {ShortNumber} from '../common/ShortNumber'
 import {bigToNumber} from '../common/util'
 import {OverviewGraph} from './OverviewGraph'
@@ -22,22 +23,25 @@ interface WalletOverviewProps {
   transparent: BigNumber
 }
 
-export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
-  const state = WalletState.useContainer() as LoadedState
+const _WalletOverview = ({
+  pending,
+  confidential,
+  transparent,
+  walletState,
+}: PropsWithWalletState<WalletOverviewProps, LoadedState>): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
-
-  const {pending, confidential, transparent} = props
   const available = confidential.plus(transparent)
   const total = pending.plus(available)
+
   return (
     <div className="WalletOverview">
       <div className="header">
         <span className="title">Wallet Overview</span>
-        <SyncStatusContent syncStatus={state.syncStatus} />
+        <SyncStatusContent syncStatus={walletState.syncStatus} />
       </div>
       <div className="graph">
-        <OverviewGraph {..._.mapValues(props, bigToNumber)} />
+        <OverviewGraph {..._.mapValues({pending, confidential, transparent}, bigToNumber)} />
       </div>
       <div className="total">
         <div className="box-text">Available Balance</div>
@@ -90,3 +94,5 @@ export const WalletOverview = (props: WalletOverviewProps): JSX.Element => {
     </div>
   )
 }
+
+export const WalletOverview = withStatusGuard(_WalletOverview, 'LOADED')

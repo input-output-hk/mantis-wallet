@@ -2,8 +2,12 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import {WalletState, WalletStatus} from '../common/wallet-state'
+import {makeWeb3Worker} from '../web3'
 import {WalletRestore} from './WalletRestore'
-import {WalletState} from '../common/wallet-state'
+import {mockWeb3Worker} from '../web3-mock'
+
+const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('../config/renderer.ts')
 
@@ -31,8 +35,9 @@ test('WalletRestore', () => {
   const cancel = jest.fn()
   const finish = jest.fn()
 
+  const initialState = {walletStatus: 'NO_WALLET' as WalletStatus, web3}
   const {getByLabelText, getByText, getByRole, getByTestId} = render(
-    <WalletState.Provider>
+    <WalletState.Provider initialState={initialState}>
       <WalletRestore cancel={cancel} finish={finish} />
     </WalletState.Provider>,
   )

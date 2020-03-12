@@ -13,11 +13,15 @@ export interface Balance {
   totalBalance: BigNumberJSON
 }
 
+// Accounts
+
 export interface Account {
   wallet: string
-  address: string
   locked: boolean
+  address?: string
 }
+
+// Transparent addresses
 
 export interface TransparentAddress {
   address: string
@@ -137,7 +141,7 @@ export interface WalletAPI {
   getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
 }
 
-interface Web3API {
+export interface Web3API {
   midnight: {
     wallet: WalletAPI
   }
@@ -152,7 +156,10 @@ if (window.Worker === undefined) {
   window.Worker = MockWorker
 }
 
-const worker = new Worker('./web3.worker.js', {type: 'module'})
-worker.postMessage(['configure', config.rpcAddress])
+// should be done here to properly bundle them
+const web3Worker = new Worker('./web3.worker.js', {type: 'module'})
 
-export const web3 = Comlink.wrap<Web3API>(worker)
+export const makeWeb3Worker = (worker: Worker = web3Worker): Comlink.Remote<Web3API> => {
+  worker.postMessage(['configure', config.rpcAddress])
+  return Comlink.wrap<Web3API>(worker)
+}

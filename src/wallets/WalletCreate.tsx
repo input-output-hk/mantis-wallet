@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
-import {WalletState} from '../common/wallet-state'
 import {RouterState} from '../router-state'
+import {WalletState} from '../common/wallet-state'
 import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
@@ -14,13 +14,9 @@ interface WalletCreateProps {
 
 type WalletCreateSteps = 'DEFINE' | 'SECURITY' | 'DISPLAY_RECOVERY' | 'VERIFY_RECOVERY'
 
-export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
-  cancel,
-  finish,
-}: WalletCreateProps) => {
-  const state = WalletState.useContainer()
+export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element => {
   const routerState = RouterState.useContainer()
-
+  const walletState = WalletState.useContainer()
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
 
   const [walletCreateError, setWalletCreateError] = useState('')
@@ -32,8 +28,8 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
   const [seedPhrase, setSeedPhrase] = useState<string[]>([])
 
   const cancelCreate = async (): Promise<void> => {
-    if (state.walletStatus === 'LOCKED') {
-      const removed = await state.remove({passphrase})
+    if (walletState.walletStatus === 'LOCKED') {
+      const removed = await walletState.remove({passphrase})
       if (removed) {
         cancel()
         routerState.setLocked(false)
@@ -52,13 +48,16 @@ export const WalletCreate: React.FunctionComponent<WalletCreateProps> = ({
         <WalletCreateDefineStep
           cancel={cancel}
           next={async (walletName, passphrase): Promise<void> => {
-            if (state.walletStatus !== 'NO_WALLET') {
+            if (walletState.walletStatus !== 'NO_WALLET') {
               return setWalletCreateError('Wallet already exists')
             }
             routerState.setLocked(true)
             setWalletCreateError('')
             try {
-              const {spendingKey: newSpendingKey, seedPhrase: newSeedPhrase} = await state.create({
+              const {
+                spendingKey: newSpendingKey,
+                seedPhrase: newSeedPhrase,
+              } = await walletState.create({
                 passphrase,
               })
               setWalletName(walletName)

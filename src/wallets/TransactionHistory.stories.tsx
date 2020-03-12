@@ -4,6 +4,7 @@ import {withKnobs, object, text} from '@storybook/addon-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {Transaction, Account, TxStatus, TxDetailsIncAndOut} from '../web3'
+import {toHex} from '../common/util'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
@@ -21,8 +22,6 @@ const accounts: Account[] = [
     locked: false,
   },
 ]
-
-const toHex = (n: number): string => `0x${n.toString(16)}`
 
 export const withNoTransactions = (): JSX.Element => (
   <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={accounts} />

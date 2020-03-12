@@ -15,6 +15,8 @@ export function hasMaxDecimalPlaces(bigNumber: BigNumber, decimalPlaces: number)
   return bigNumber.modulo(mod).isZero()
 }
 
+export const toHex = (n: number): string => `0x${n.toString(16)}`
+
 export const loadAll = async <T>(
   fn: Comlink.Remote<PaginatedCallable<T>>,
   drop = 0,

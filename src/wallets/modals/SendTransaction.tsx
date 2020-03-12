@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import _ from 'lodash'
 import {ModalProps} from 'antd/lib/modal'
 import {toWei} from 'web3/lib/utils/utils.js'
 import {LunaModal} from '../../common/LunaModal'
@@ -57,7 +58,10 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
         type="dark"
         footer={errorMessage && <DialogError>{errorMessage}</DialogError>}
       >
-        <DialogDropdown label="Select Account" options={accounts.map(({address}) => address)} />
+        <DialogDropdown
+          label="Select Account"
+          options={accounts.map(({address}) => address).filter(_.isString)}
+        />
         <DialogInput
           label="Recipient"
           onChange={(e): void => setRecipient(e.target.value)}

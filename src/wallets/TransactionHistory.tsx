@@ -7,7 +7,8 @@ import {sort, map} from 'fp-ts/lib/Array'
 import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {Transaction, TransparentAddress, Account} from '../web3'
-import {WalletState} from '../common/wallet-state'
+import {LoadedState} from '../common/wallet-state'
+import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransactionPrivate} from './modals/ReceiveTransactionPrivate'
 import {TransactionRow} from './TransactionRow'
@@ -81,10 +82,10 @@ const getOrd = (sortBy: SortBy): Ord<Transaction> =>
     ? sortableProperties[sortBy.property].order
     : getDualOrd(sortableProperties[sortBy.property].order)
 
-export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element => {
-  const {transactions, accounts} = props
-
-  const state = WalletState.useContainer()
+const _TransactionHistory = (
+  props: PropsWithWalletState<TransactionHistoryProps, LoadedState>,
+): JSX.Element => {
+  const {transactions, accounts, walletState} = props
 
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -151,15 +152,13 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
             accounts={accounts}
             onCancel={(): void => setShowSendModal(false)}
             onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
-              if (state.walletStatus === 'LOADED') {
-                await state.sendTransaction(recipient, amount, fee)
-                setShowSendModal(false)
-              }
+              await walletState.sendTransaction(recipient, amount, fee)
+              setShowSendModal(false)
             }}
           />
           <ReceiveTransactionPrivate
             visible={showReceiveModal}
-            privateAddress={accounts[0].address}
+            privateAddress={accounts[0].address || ''} // FIXME: PM-1555 - refactor to support multiple wallets
             onCancel={(): void => setShowReceiveModal(false)}
           />
         </div>
@@ -204,3 +203,5 @@ export const TransactionHistory = (props: TransactionHistoryProps): JSX.Element 
     </div>
   )
 }
+
+export const TransactionHistory = withStatusGuard(_TransactionHistory, 'LOADED')

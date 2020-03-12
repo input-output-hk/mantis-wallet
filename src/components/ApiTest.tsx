@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Button} from 'antd'
 import {
-  web3,
+  makeWeb3Worker,
   SpendingKey,
   SeedPhrase,
   TransparentAddress,
@@ -12,11 +12,12 @@ import {ThemeState} from '../theme-state'
 import {WalletState} from '../common/wallet-state'
 import {DialogInput} from '../common/dialog/DialogInput'
 
+const web3 = makeWeb3Worker()
 const wallet = web3.midnight.wallet
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
-  const state = WalletState.useContainer()
+  const walletState = WalletState.useContainer()
   const themeState = ThemeState.useContainer()
 
   const [message, setMessage] = useState<string>('')
@@ -31,12 +32,12 @@ export const ApiTest = (): JSX.Element => {
 
   const call = (fn: CallableFunction) => (): void => {
     if (
-      state.walletStatus === 'LOADED' ||
-      state.walletStatus === 'ERROR' ||
-      state.walletStatus === 'LOCKED' ||
-      state.walletStatus === 'NO_WALLET'
+      walletState.walletStatus === 'LOADED' ||
+      walletState.walletStatus === 'ERROR' ||
+      walletState.walletStatus === 'LOCKED' ||
+      walletState.walletStatus === 'NO_WALLET'
     ) {
-      state.reset()
+      walletState.reset()
     }
 
     setMessage('Loading...')

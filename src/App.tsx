@@ -7,8 +7,10 @@ import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {FloatingSyncStatus} from './common/SyncStatus'
 import {SplashScreen} from './SplashScreen'
-import {web3} from './web3'
+import {makeWeb3Worker} from './web3'
 import './App.scss'
+
+const web3 = makeWeb3Worker()
 
 const App: React.FC = () => {
   const [isBackendRunning, setBackendRunning] = useState(false)

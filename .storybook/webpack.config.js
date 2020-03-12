@@ -1,9 +1,24 @@
-const AntdScssThemePlugin = require('antd-scss-theme-plugin')
-const webpack = require('webpack')
 const path = require('path')
+const webpack = require('webpack')
+const AntdScssThemePlugin = require('antd-scss-theme-plugin')
+const WorkerPlugin = require('worker-plugin')
+
+const disableEslint = (e) => {
+  return (
+    e.module.rules
+      .filter((e) => e.use && e.use.some((e) => e.options && void 0 !== e.options.useEslintrc))
+      .forEach((s) => {
+        e.module.rules = e.module.rules.filter((e) => e !== s)
+      }),
+    e
+  )
+}
 
 module.exports = ({config}) => {
+  config = disableEslint(config)
+
   config.plugins.push(new AntdScssThemePlugin('./src/vars.scss'))
+  config.plugins.push(new WorkerPlugin())
   config.plugins.push(
     new webpack.NormalModuleReplacementPlugin(
       /electron$/,

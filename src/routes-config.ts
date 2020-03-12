@@ -66,7 +66,7 @@ export type RouteId =
   | 'SETTINGS'
 
 export interface Route {
-  component: React.FunctionComponent
+  component: React.ComponentType
   menu: MenuId
 }
 

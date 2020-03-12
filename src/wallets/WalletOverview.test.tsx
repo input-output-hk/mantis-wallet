@@ -2,11 +2,15 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import {render} from '@testing-library/react'
-import {WalletOverview} from './WalletOverview'
-import {WalletState} from '../common/wallet-state'
-import {ThemeState} from '../theme-state'
 import {toWei, fromWei} from 'web3/lib/utils/utils.js'
+import {WalletOverview} from './WalletOverview'
+import {WalletState, WalletStatus} from '../common/wallet-state'
+import {ThemeState} from '../theme-state'
+import {makeWeb3Worker} from '../web3'
+import {mockWeb3Worker} from '../web3-mock'
 import {abbreviateAmount} from '../common/formatters'
+
+const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('../config/renderer.ts')
 
@@ -22,9 +26,10 @@ test('WalletOverview shows properly formatted balance', () => {
     pending,
   }
 
+  const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {getByText} = render(
     <ThemeState.Provider>
-      <WalletState.Provider>
+      <WalletState.Provider initialState={initialState}>
         <WalletOverview {...balance} />
       </WalletState.Provider>
     </ThemeState.Provider>,

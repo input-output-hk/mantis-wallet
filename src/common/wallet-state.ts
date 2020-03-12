@@ -1,13 +1,13 @@
 import {useState} from 'react'
 import BigNumber from 'bignumber.js'
-import _ from 'lodash'
+import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
 import {Chain} from '../pob/chains'
 import {
-  web3,
+  makeWeb3Worker,
   TransparentAddress,
   Balance,
   Transaction,
@@ -16,16 +16,16 @@ import {
   SeedPhrase,
   PassphraseSecrets,
   SynchronizationStatus,
+  Web3API,
 } from '../web3'
+import {Remote} from 'comlink'
 
-const wallet = web3.midnight.wallet
-
-interface InitialState {
+export interface InitialState {
   walletStatus: 'INITIAL'
   refreshSyncStatus: () => Promise<void>
 }
 
-interface LoadingState {
+export interface LoadingState {
   walletStatus: 'LOADING'
 }
 
@@ -47,14 +47,14 @@ export interface LoadedState {
   ) => Promise<string>
 }
 
-interface LockedState {
+export interface LockedState {
   walletStatus: 'LOCKED'
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
   unlock: (secrets: PassphraseSecrets) => Promise<boolean>
 }
 
-interface NoWalletState {
+export interface NoWalletState {
   walletStatus: 'NO_WALLET'
   reset: () => void
   create: (secrets: PassphraseSecrets) => Promise<SpendingKey & SeedPhrase>
@@ -62,7 +62,7 @@ interface NoWalletState {
   restoreFromSpendingKey: (secrets: SpendingKey & PassphraseSecrets) => Promise<boolean>
 }
 
-interface ErrorState {
+export interface ErrorState {
   walletStatus: 'ERROR'
   errorMsg: string
   reset: () => void
@@ -70,7 +70,7 @@ interface ErrorState {
 }
 
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'LOCKED' | 'NO_WALLET' | 'ERROR'
-type WalletState =
+export type WalletData =
   | InitialState
   | LoadingState
   | LoadedState
@@ -87,33 +87,73 @@ interface Overview {
   accounts: Account[]
 }
 
+interface WalletStateParams {
+  walletStatus: WalletStatus
+  web3: Remote<Web3API>
+  errorMsg: Option<string>
+  syncStatus: Option<SynchronizationStatus>
+  totalBalance: Option<BigNumber>
+  availableBalance: Option<BigNumber>
+  transparentBalance: Option<BigNumber>
+  transactions: Option<Transaction[]>
+  transparentAddresses: Option<TransparentAddress[]>
+  accounts: Option<Account[]>
+}
+
+const DEFAULT_STATE: WalletStateParams = {
+  walletStatus: 'INITIAL',
+  web3: makeWeb3Worker(),
+  errorMsg: none,
+  syncStatus: none,
+  totalBalance: none,
+  availableBalance: none,
+  transparentBalance: none,
+  transactions: none,
+  transparentAddresses: none,
+  accounts: none,
+}
+
 export const canRemoveWallet = (
-  walletState: WalletState,
+  walletState: WalletData,
 ): walletState is LoadedState | LockedState | ErrorState =>
   walletState.walletStatus === 'LOADED' ||
   walletState.walletStatus === 'LOCKED' ||
   walletState.walletStatus === 'ERROR'
 
-function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletState {
+function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
+  const _initialState = _.merge(DEFAULT_STATE)(initialState)
+  const wallet = _initialState.web3.midnight.wallet
+
   // wallet status
-  const [walletStatus_, setWalletStatus] = useState<WalletStatus>(initialWalletStatus)
-  const [errorMsgOption, setErrorMsg] = useState<Option<string>>(none)
-  const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(none)
+  const [walletStatus_, setWalletStatus] = useState<WalletStatus>(_initialState.walletStatus)
+  const [errorMsgOption, setErrorMsg] = useState<Option<string>>(_initialState.errorMsg)
+  const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(
+    _initialState.syncStatus,
+  )
 
   // balance
-  const [totalBalanceOption, setTotalBalance] = useState<Option<BigNumber>>(none)
-  const [availableBalanceOption, setAvailableBalance] = useState<Option<BigNumber>>(none)
-  const [transparentBalanceOption, setTransparentBalance] = useState<Option<BigNumber>>(none)
+  const [totalBalanceOption, setTotalBalance] = useState<Option<BigNumber>>(
+    _initialState.totalBalance,
+  )
+  const [availableBalanceOption, setAvailableBalance] = useState<Option<BigNumber>>(
+    _initialState.availableBalance,
+  )
+  const [transparentBalanceOption, setTransparentBalance] = useState<Option<BigNumber>>(
+    _initialState.transparentBalance,
+  )
 
   // transactions
-  const [transactionsOption, setTransactions] = useState<Option<Transaction[]>>(none)
+  const [transactionsOption, setTransactions] = useState<Option<Transaction[]>>(
+    _initialState.transactions,
+  )
 
-  // addresses
+  // addresses / accounts
+  const [accountsOption, setAccounts] = useState<Option<Account[]>>(_initialState.accounts)
   const [transparentAddressesOption, setTransparentAddresses] = useState<
     Option<TransparentAddress[]>
-  >(none)
+  >(_initialState.transparentAddresses)
+
   const transparentAddresses = getOrElse((): TransparentAddress[] => [])(transparentAddressesOption)
-  const [accountsOption, setAccounts] = useState<Option<Account[]>>(none)
 
   const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
@@ -238,7 +278,7 @@ function useWalletState(initialWalletStatus: WalletStatus = 'INITIAL'): WalletSt
     try {
       const response = await wallet.getSynchronizationStatus()
       if (response.currentBlock !== syncStatus.currentBlock) load()
-      if (!_.isEqual(response, syncStatus)) setSyncStatus(some(response))
+      if (!_.isEqual(response)(syncStatus)) setSyncStatus(some(response))
     } catch (e) {
       handleError(e)
     }

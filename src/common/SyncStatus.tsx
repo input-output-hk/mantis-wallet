@@ -41,20 +41,20 @@ export const SyncStatusContent = ({syncStatus, onClick}: SyncStatusProps): JSX.E
 }
 
 export const FloatingSyncStatus = (): JSX.Element => {
-  const state = WalletState.useContainer()
+  const walletState = WalletState.useContainer()
   const routerState = RouterState.useContainer()
 
   useInterval(() => {
-    if (state.walletStatus === 'LOADED') state.refreshSyncStatus()
+    if (walletState.walletStatus === 'LOADED') walletState.refreshSyncStatus()
   }, 3000)
 
-  if (state.walletStatus !== 'LOADED' || routerState.currentRouteId === 'WALLETS') {
+  if (walletState.walletStatus !== 'LOADED' || routerState.currentRouteId === 'WALLETS') {
     return <></>
   }
 
   return (
     <div className="FloatingSyncStatus">
-      <SyncStatusContent syncStatus={state.syncStatus} />
+      <SyncStatusContent syncStatus={walletState.syncStatus} />
     </div>
   )
 }

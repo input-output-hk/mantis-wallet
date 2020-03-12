@@ -1,14 +1,24 @@
 import React from 'react'
-import {makeDecorator, StoryContext, StoryGetter} from '@storybook/addons'
-import {WalletState} from '../common/wallet-state'
+import {makeDecorator, StoryContext, StoryGetter, StoryWrapper} from '@storybook/addons'
+import {WalletState, WalletStatus} from '../common/wallet-state'
+import {makeWeb3Worker} from '../web3'
+import {mockWeb3Worker} from '../web3-mock'
 
-const WithWalletState = (storyFn: StoryGetter, context: StoryContext): JSX.Element => {
+const web3 = makeWeb3Worker(mockWeb3Worker)
+
+const WithWalletState: StoryWrapper = (
+  storyFn: StoryGetter,
+  context: StoryContext,
+  {parameters},
+): JSX.Element => {
   const content = storyFn(context)
-  return <WalletState.Provider>{content}</WalletState.Provider>
+  const initialState = {walletStatus: 'LOADED' as WalletStatus, web3, ...parameters}
+
+  return <WalletState.Provider initialState={initialState}>{content}</WalletState.Provider>
 }
 
 export const withWalletState = makeDecorator({
   name: 'withWalletState',
-  parameterName: 'walletState',
+  parameterName: 'withWalletState',
   wrapper: WithWalletState,
 })
