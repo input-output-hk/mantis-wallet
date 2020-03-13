@@ -37,7 +37,7 @@ const _WalletOverview = ({
   return (
     <div className="WalletOverview">
       <div className="header">
-        <span className="title">Wallet Overview</span>
+        <span className="main-title">Wallet Overview</span>
         <SyncStatusContent syncStatus={walletState.syncStatus} />
       </div>
       <div className="graph">

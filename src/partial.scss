@@ -1,0 +1,80 @@
+@import './themify';
+
+%status-steps {
+  display: grid;
+  height: 30px;
+  padding: 0 14px;
+  font-size: 10px;
+  font-weight: bold;
+
+  @include themify($themes) {
+    color: themed('secondary-text-color');
+  }
+
+  .progress {
+    display: inline-block;
+    position: relative;
+    padding-left: 25px;
+
+    .icon {
+      position: absolute;
+      left: 2px;
+      width: 20px;
+      height: 15px;
+      padding-right: 5px;
+      font-size: 15px;
+    }
+
+    .checked {
+      @include themify($themes) {
+        fill: themed('success-color');
+      }
+    }
+
+    .in-progress {
+      left: 3px;
+
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
+      }
+    }
+
+    .fail {
+      @include themify($themes) {
+        color: themed('error-color');
+      }
+    }
+  }
+
+  .line {
+    @extend %line;
+
+    position: relative;
+    top: -8px;
+
+    @include themify($themes) {
+      background-color: themed('secondary-text-color');
+    }
+  }
+}
+
+%line {
+  content: '';
+  display: inline-block;
+  height: 1px;
+  margin: 15px 15px 0;
+  opacity: $secondary-opacity;
+  line-height: 1px;
+  vertical-align: middle;
+
+  @include themify($themes) {
+    background-color: themed('border-color-base');
+  }
+}
+
+%ellipsize {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

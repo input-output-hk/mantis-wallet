@@ -67,6 +67,14 @@ div#root {
   height: 5px;
 }
 
+.main-title {
+  margin: 0;
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 0.46px;
+}
+
 //
 // antd overwrites
 //
@@ -130,6 +138,13 @@ div#root {
     letter-spacing: 1.44px;
     text-align: right;
     text-transform: uppercase;
+
+    &.small-button {
+      height: 30px;
+      margin: 0.5rem 0;
+      font-size: 10px;
+      letter-spacing: initial;
+    }
   }
 
   .uppercase {

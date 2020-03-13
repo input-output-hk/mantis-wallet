@@ -20,7 +20,7 @@ const AppDecorator = (storyFn) => {
         padding: '24px',
       }}
     >
-      {storyFn()}
+      <main>{storyFn()}</main>
     </div>
   )
 }

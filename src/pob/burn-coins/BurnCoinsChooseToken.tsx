@@ -1,6 +1,6 @@
 import React from 'react'
-import SVG from 'react-inlinesvg'
 import {Chain} from '../chains'
+import {Token} from '../../common/Token'
 import './BurnCoinsChooseToken.scss'
 
 interface BurnCoinsChooseTokenProps {
@@ -13,17 +13,12 @@ export const BurnCoinsChooseToken: React.FunctionComponent<BurnCoinsChooseTokenP
   chooseChain,
 }: BurnCoinsChooseTokenProps) => (
   <div className="BurnCoinsChooseToken">
-    <div className="title">Wallet 01</div>
+    <div className="main-title">Wallet 01</div>
     <div className="tokens">
       {chains.map((chain) => (
-        <div className="token" key={chain.id} onClick={() => chooseChain(chain)}>
-          <SVG src={chain.logo} className="logo" />
-          <div className="footer">
-            <span className="footer-text">
-              Burn {chain.name} for M-{chain.symbol}
-            </span>
-          </div>
-        </div>
+        <Token chain={chain} chooseChain={chooseChain} key={chain.id}>
+          Burn {chain.name} for M-{chain.symbol}
+        </Token>
       ))}
     </div>
   </div>

@@ -11,7 +11,7 @@ export default {
 }
 
 export const burnActivity = (): JSX.Element => (
-  <div style={{padding: '24px'}}>
+  <div>
     <BurnActivity
       burnStatuses={{
         [text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')]: {
@@ -51,7 +51,7 @@ export const burnActivity = (): JSX.Element => (
 )
 
 export const burnStatusDisplay = (): JSX.Element => (
-  <div style={{padding: '24px'}}>
+  <div>
     <BurnStatusDisplay
       address={text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')}
       burnStatus={{

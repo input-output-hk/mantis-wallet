@@ -3,21 +3,10 @@
 .PobLayout {
   display: grid;
   grid-template-rows: auto 1fr;
-  height: 100%;
-  padding: 36px;
-  overflow-y: auto;
 
   .header {
     display: grid;
     grid-template-columns: 1fr 1fr;
-
-    .title {
-      margin: 0;
-      overflow: hidden;
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 0.46px;
-    }
 
     .more {
       align-self: end;

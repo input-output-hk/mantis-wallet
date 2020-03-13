@@ -28,7 +28,7 @@ export const BurnActivity: React.FunctionComponent<BurnActivityProps> = ({
   return (
     <div className="BurnActivity">
       <div className="toolbar">
-        <div className="title">Burn Activity</div>
+        <div className="main-title">Burn Activity</div>
         <div className="line"></div>
         <BorderlessInput
           className="search"

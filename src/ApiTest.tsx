@@ -7,10 +7,10 @@ import {
   TransparentAddress,
   Account,
   SynchronizationStatus,
-} from '../web3'
-import {ThemeState} from '../theme-state'
-import {WalletState} from '../common/wallet-state'
-import {DialogInput} from '../common/dialog/DialogInput'
+} from './web3'
+import {ThemeState} from './theme-state'
+import {WalletState} from './common/wallet-state'
+import {DialogInput} from './common/dialog/DialogInput'
 
 const web3 = makeWeb3Worker()
 const wallet = web3.midnight.wallet
@@ -67,8 +67,10 @@ export const ApiTest = (): JSX.Element => {
   }
 
   return (
-    <div style={{margin: '4rem'}}>
-      <h1>Api Test Interface</h1>
+    <div>
+      <div className="main-title" style={{marginBottom: '1em'}}>
+        Api Test Interface
+      </div>
 
       <div style={{marginBottom: '1rem'}}>
         <h2>Settings</h2>

@@ -1,0 +1,43 @@
+@import '../themify', '../partial';
+
+.GlacierDropOverview {
+  .main-title {
+    margin-bottom: 3em;
+  }
+
+  .content {
+    margin: 0 6rem;
+
+    .claim-buttons {
+      margin-bottom: 1rem;
+
+      .Token .footer .footer-text {
+        margin: auto 1rem;
+        text-align: right;
+      }
+    }
+
+    .claim-history {
+      margin-bottom: 100px;
+
+      .title {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        margin-bottom: 1rem;
+        line-height: 30px;
+
+        .main-title {
+          display: inline-block;
+        }
+
+        .line {
+          @extend %line;
+
+          @include themify($themes) {
+            background-color: themed('secondary-text-color');
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,11 +1,12 @@
 import React from 'react'
 import {withKnobs, text, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
+import {withTheme} from '../storybook-util/theme-switcher'
+import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withRouterState} from '../storybook-util/router-state-decorator'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletRestore} from './WalletRestore'
 import {WalletCreate} from './WalletCreate'
-import {withTheme} from '../storybook-util/theme-switcher'
-import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
@@ -13,17 +14,15 @@ import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecover
 
 export default {
   title: 'Wallet Setup',
-  decorators: [withWalletState, withTheme, withKnobs],
+  decorators: [withWalletState, withTheme, withRouterState, withKnobs],
   parameters: {withWalletState: {walletStatus: 'NO_WALLET'}},
 }
 
 export const showPathChooser = (): JSX.Element => (
-  <div style={{alignSelf: 'start', margin: 'auto'}}>
-    <WalletPathChooser
-      goToCreate={action('Go to Create Wallet')}
-      goToRestore={action('Go to Restore Wallet')}
-    />
-  </div>
+  <WalletPathChooser
+    goToCreate={action('Go to Create Wallet')}
+    goToRestore={action('Go to Restore Wallet')}
+  />
 )
 
 export const showWalletRestore = (): JSX.Element => (

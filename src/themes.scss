@@ -4,11 +4,13 @@ $dark-text-color: #f7f7f7;
 $dark-normal-color: #414141;
 $dark-secondary-background: #000;
 $dark-btn-bg: #f0f0f0;
+$dark-component-background: #292929;
 
 $light-text-color: #000000;
 $light-normal-color: #fafafa;
 $light-secondary-background: #fafafa;
 $light-btn-bg: #a2a2a2;
+$light-component-background: #fff;
 
 // secondary and tertiary backgrounds are used on components
 // put over the primary background
@@ -24,7 +26,9 @@ $themes: (
     secondary-color: $secondary-color,
     success-color: $success-color,
     error-color: $error-color,
-    component-background: #292929,
+    component-background: $dark-component-background,
+    secondary-component-background: lighten($dark-component-background, 5%),
+    tertiary-component-background: lighten($dark-component-background, 10%),
     modal-background: $dark-secondary-background,
     link-color: $dark-text-color,
     tertiary-background: #707070,
@@ -50,7 +54,9 @@ $themes: (
     secondary-color: $secondary-color,
     success-color: $success-color,
     error-color: $error-color,
-    component-background: #ffffff,
+    component-background: $light-component-background,
+    secondary-component-background: darken($light-component-background, 5%),
+    tertiary-component-background: darken($light-component-background, 10%),
     modal-background: #ffffff,
     link-color: $light-text-color,
     tertiary-background: #6b6b6b,

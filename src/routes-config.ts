@@ -1,10 +1,11 @@
 import {Unimplemented} from './common/Unimplemented'
 import {WalletSetup} from './wallets/WalletSetup'
-import {ApiTest} from './components/ApiTest'
+import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
 import {BurnCentre} from './pob/BurnCentre'
 import {BurnCoins} from './pob/BurnCoins'
+import {GlacierDropOverview} from './glacier-drop/GlacierDropOverview'
 import menuPortfolioIcon from './assets/icons/menu-portfolio.svg'
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
@@ -100,7 +101,7 @@ export const ROUTES: Routes = {
     menu: 'PROOF_OF_BURN',
   },
   GLACIER_DROP: {
-    component: Unimplemented,
+    component: GlacierDropOverview,
     menu: 'GLACIER_DROP',
   },
   SETTINGS: {

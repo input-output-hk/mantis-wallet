@@ -29,7 +29,10 @@ export const formatAmount = (
   }
 }
 
-export const formatPercentage = (ratio: number): string => {
+export const formatPercentage = (ratio: number | BigNumber): string => {
+  // eslint-disable-next-line
+  if (BigNumber.isBigNumber(ratio)) ratio = bigToNumber(ratio)
+
   if (Number.isNaN(ratio)) {
     return '0'
   } else {

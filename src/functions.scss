@@ -1,0 +1,13 @@
+@function repeat-with-separator($string, $times, $separator: ' ') {
+  @if $times <= 0 {
+    @return '';
+  }
+
+  $result: $string;
+
+  @for $i from 2 through $times {
+    $result: $result + $separator + $string;
+  }
+
+  @return $result;
+}

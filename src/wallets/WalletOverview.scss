@@ -1,6 +1,6 @@
 @import '../themify', '../vars';
 
-$header-height: 120px;
+$header-height: 70px;
 $header-text-height: 50px;
 
 $balance-padding: 24px 24px 0;
@@ -13,7 +13,7 @@ $balance-padding: 24px 24px 0;
     'graph confidential transparent';
   grid-template-columns: auto 1fr 1fr;
   grid-template-rows: $header-height 160px 115px;
-  margin: 0 36px 100px;
+  margin: 0 0 100px;
 
   .svg {
     @include themify($themes) {
@@ -25,21 +25,15 @@ $balance-padding: 24px 24px 0;
 
   .header {
     grid-area: header;
-    padding-top: ($header-height - $header-text-height) / 2;
   }
 
   %header-row {
     display: inline-block;
     height: $header-text-height;
-    line-height: $header-text-height;
   }
 
-  .title {
+  .main-title {
     @extend %header-row;
-    margin: 0;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 0.46px;
   }
 
   .SyncStatus {

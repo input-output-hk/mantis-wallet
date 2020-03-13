@@ -45,7 +45,7 @@ export const WalletSetup = (): JSX.Element => {
 
   return (
     <div className="WalletSetup">
-      <div className="title">Wallet Setup</div>
+      <div className="main-title">Wallet Setup</div>
       <div className="content">{getContent(step, setStep)}</div>
     </div>
   )

@@ -1,19 +1,8 @@
 .WalletSetup {
   display: grid;
   grid-template-rows: auto 1fr;
-  height: 100%;
-  padding: 36px;
-
-  .title {
-    margin: 0;
-    overflow: hidden;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 0.46px;
-  }
 
   .content {
-    align-self: start;
-    margin: 180px auto 0;
+    margin: 180px 0 0;
   }
 }

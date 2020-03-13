@@ -125,7 +125,7 @@ const _TransactionHistory = (
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
-        <div className="title">Transaction History</div>
+        <div className="main-title">Transaction History</div>
         <div className="line"></div>
         <div>
           <Dropdown overlay={sortByMenu} overlayClassName="SortByDropdown">

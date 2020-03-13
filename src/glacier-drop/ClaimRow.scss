@@ -1,0 +1,128 @@
+@import '../themify', '../vars', '../partial', '../functions';
+
+.ClaimRow {
+  margin-bottom: 2em;
+
+  .action-link {
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .amount {
+    display: inline-block;
+    margin-left: 1em;
+
+    @include themify($themes) {
+      color: themed('secondary-text-color');
+    }
+  }
+
+  .header {
+    display: grid;
+    grid-template-areas: 'claim-title exchange external-address midnight-address';
+    grid-template-columns: 1fr 2fr 3fr 3fr;
+
+    margin-bottom: 1em;
+    font-size: 12px;
+    letter-spacing: 0.01px;
+    line-height: 1.5;
+
+    .claim-title {
+      grid-area: claim-title;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .exchange {
+      grid-area: exchange;
+
+      .icon {
+        display: inline-block;
+        height: 15px;
+        vertical-align: middle;
+
+        @include themify($themes) {
+          fill: themed('text-color');
+        }
+      }
+    }
+
+    .external-address {
+      @extend %ellipsize;
+      grid-area: external-address;
+      opacity: $secondary-opacity;
+    }
+
+    .midnight-address {
+      @extend %ellipsize;
+      grid-area: midnight-address;
+      opacity: $secondary-opacity;
+    }
+  }
+
+  .status {
+    @extend %status-steps;
+    $columns: 4;
+    grid-template-areas:
+      repeat-with-separator('header', $columns * 2)
+      'claimed claimed unlocked unlocked unfrozen unfrozen withdrawn withdrawn';
+    grid-template-columns: repeat($columns, auto 1fr);
+    grid-template-rows: 25px auto;
+
+    height: unset;
+    padding: 2em 1.5em;
+
+    @include themify($themes) {
+      background-color: themed('secondary-component-background');
+    }
+
+    .detail {
+      padding-left: 4px;
+      font-weight: normal;
+
+      & > div:first-child {
+        margin-bottom: 1em;
+
+        @include themify($themes) {
+          color: themed('text-color');
+        }
+      }
+    }
+
+    .claimed {
+      grid-area: claimed;
+    }
+
+    .unlocked {
+      grid-area: unlocked;
+
+      .solved {
+        margin-bottom: 1.5em;
+      }
+
+      .puzzle-progress .time-left {
+        display: inline-block;
+        margin-left: 0.5em;
+        font-weight: bold;
+
+        @include themify($themes) {
+          color: themed('text-color');
+        }
+      }
+    }
+
+    .unfrozen {
+      grid-area: unfrozen;
+    }
+
+    .withdrawn {
+      grid-area: withdrawn;
+
+      .withdraw-progress {
+        margin-bottom: 2em;
+      }
+    }
+  }
+}

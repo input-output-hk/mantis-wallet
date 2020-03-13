@@ -12,7 +12,7 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
   return (
     <div className="PobLayout">
       <div className="header">
-        <div className="title">{title}</div>
+        <div className="main-title">{title}</div>
         <div className="more">
           <span className="link">More About the Proof of Burn</span>
         </div>

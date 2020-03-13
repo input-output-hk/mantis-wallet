@@ -1,4 +1,4 @@
-@import '../themify', '../vars';
+@import '../themify', '../vars', '../partial';
 
 .ReceiveModalFooter {
   padding: 24px 0;
@@ -23,7 +23,7 @@
 .TransactionHistory {
   display: grid;
   grid-template-rows: auto 1fr;
-  margin: 0 36px 100px 36px;
+  margin: 0 0 100px;
 
   .svg {
     @include themify($themes) {
@@ -37,26 +37,8 @@
     grid-template-columns: auto 1fr auto;
     line-height: 30px;
 
-    .title {
-      margin: 0;
-      overflow: hidden;
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 0.46px;
-    }
-
     .line {
-      content: '';
-      display: inline-block;
-      height: 1px;
-      margin: 15px 15px 0;
-      opacity: $secondary-opacity;
-      line-height: 1px;
-      vertical-align: middle;
-
-      @include themify($themes) {
-        background-color: themed('border-color-base');
-      }
+      @extend %line;
     }
 
     .sort-by {
