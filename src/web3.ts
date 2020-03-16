@@ -1,6 +1,7 @@
 import * as Comlink from 'comlink'
 import {MockWorker} from './stubs'
 import {config} from './config/renderer'
+import {ChainId} from './pob/chains'
 
 export interface BigNumberJSON {
   s: number
@@ -157,6 +158,10 @@ export interface WalletAPI {
   getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
 }
 
+export interface ERC20Contract {
+  balanceOf: (address: string) => BigNumberJSON
+}
+
 export interface Web3API {
   midnight: {
     wallet: WalletAPI
@@ -164,6 +169,7 @@ export interface Web3API {
   version: {
     ethereum: string
   }
+  erc20: Record<ChainId, ERC20Contract>
 }
 
 // for testing: ReactDOM doesn't know about workers

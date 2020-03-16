@@ -1,6 +1,7 @@
 /* eslint-disable fp/no-mutation */
 /* eslint-disable fp/no-mutating-methods */
 import BigNumber from 'bignumber.js'
+import _ from 'lodash'
 import {
   Web3API,
   PassphraseSecrets,
@@ -12,9 +13,11 @@ import {
   TransparentAddress,
   SynchronizationStatus,
   BigNumberJSON,
+  ERC20Contract,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
+import {CHAINS, ChainId} from './pob/chains'
 
 const HIGHEST_KNOWN_BLOCK = 1000
 const ADDRESS =
@@ -158,6 +161,11 @@ class MockWallet {
   }
 }
 
+const mockErc20Contracts = _.values(CHAINS).map(({id}): [ChainId, ERC20Contract] => [
+  id,
+  {balanceOf: () => new BigNumber(1) as BigNumberJSON},
+])
+
 export const Web3MockApi: Web3API = {
   midnight: {
     wallet: new MockWallet(),
@@ -165,4 +173,5 @@ export const Web3MockApi: Web3API = {
   version: {
     ethereum: 'mocked',
   },
+  erc20: _.fromPairs(mockErc20Contracts) as Record<ChainId, ERC20Contract>,
 }

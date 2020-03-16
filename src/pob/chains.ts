@@ -20,6 +20,7 @@ export interface Chain {
   clippedLogo: string
   burnLogo: string
   unitType: UnitType
+  contractAddress: string
 }
 
 export const CHAINS: Record<ChainId, Chain> = {
@@ -32,6 +33,7 @@ export const CHAINS: Record<ChainId, Chain> = {
     clippedLogo: bitcoinClippedLogo,
     burnLogo: bitcoinBurnLogo,
     unitType: 'Bitcoin',
+    contractAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqey26sy3',
   },
   BTC_TESTNET: {
     id: 'BTC_TESTNET',
@@ -42,6 +44,7 @@ export const CHAINS: Record<ChainId, Chain> = {
     clippedLogo: bitcoinClippedLogo,
     burnLogo: bitcoinBurnLogo,
     unitType: 'Bitcoin',
+    contractAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq62e0x2w',
   },
   ETH_MAINNET: {
     id: 'ETH_MAINNET',
@@ -52,6 +55,7 @@ export const CHAINS: Record<ChainId, Chain> = {
     clippedLogo: ethereumClippedLogo,
     burnLogo: ethereumBurnLogo,
     unitType: 'Ether',
+    contractAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqmh0mnhu',
   },
   ETH_TESTNET: {
     id: 'ETH_TESTNET',
@@ -62,6 +66,7 @@ export const CHAINS: Record<ChainId, Chain> = {
     clippedLogo: ethereumClippedLogo,
     burnLogo: ethereumBurnLogo,
     unitType: 'Ether',
+    contractAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqukkvrke',
   },
 }
 
