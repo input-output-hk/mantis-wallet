@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import {Button} from 'antd'
-import {BurnBalance, BurnBalanceProps} from './BurnBalance'
+import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {WatchBurnModal} from './modals/WatchBurnModal'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
-import {ProofOfBurnState, BurnAddressInfo} from './pob-state'
+import {ProofOfBurnState, BurnBalance, BurnAddressInfo} from './pob-state'
 import {config} from '../config/renderer'
 import {ProverConfig} from '../config/type'
 import './BurnActions.scss'
@@ -11,7 +11,7 @@ import './BurnActions.scss'
 interface BurnActionsProps {
   onBurnCoins?: () => void
   onRegisterAuction?: () => void
-  burnBalances: Array<BurnBalanceProps & {address: string}>
+  burnBalances: BurnBalance[]
 }
 
 export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
@@ -60,7 +60,7 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
         <div className="balances">
           <div className="scroller">
             {burnBalances.map((balance) => (
-              <BurnBalance key={balance.address} {...balance} />
+              <BurnBalanceDisplay key={balance.chain.id} balance={balance} />
             ))}
           </div>
         </div>

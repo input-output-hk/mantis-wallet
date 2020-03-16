@@ -62,6 +62,7 @@
     "antd": "^3.26.6",
     "antd-scss-theme-plugin": "^1.0.8",
     "babel-plugin-import": "^1.13.0",
+    "bech32-buffer": "^0.1.2",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "classnames": "^2.2.6",

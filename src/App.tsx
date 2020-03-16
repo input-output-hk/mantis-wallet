@@ -39,7 +39,7 @@ const App: React.FC = () => {
         <div className="App">
           <RouterState.Provider>
             <WalletState.Provider>
-              <ProofOfBurnState.Provider initialState={store}>
+              <ProofOfBurnState.Provider initialState={{store, web3}}>
                 <header>
                   <Sidebar />
                 </header>

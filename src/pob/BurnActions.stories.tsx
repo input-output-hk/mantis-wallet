@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import {withKnobs, number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
-import {BurnBalance} from './BurnBalance'
+import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {CHAINS} from './chains'
 import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
@@ -20,15 +20,13 @@ const {BTC_TESTNET, ETH_TESTNET} = CHAINS
 
 const dummyBurnBalances = [
   {
-    address: 'btc-address',
-    chain: BTC_TESTNET,
-    total: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(1000)),
+    chain: CHAINS.BTC_TESTNET,
+    available: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(1000)),
     pending: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(0)),
   },
   {
-    address: 'eth-address',
-    chain: ETH_TESTNET,
-    total: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(132.456)),
+    chain: CHAINS.ETH_TESTNET,
+    available: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(132.456)),
     pending: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(12.345)),
   },
 ]
@@ -50,18 +48,22 @@ export const dummyBurnActions = (): JSX.Element => (
 )
 
 export const burnBalanceEthereum = (): JSX.Element => (
-  <BurnBalance
-    chain={CHAINS.ETH_TESTNET}
-    total={UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000)))}
-    pending={UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100)))}
+  <BurnBalanceDisplay
+    balance={{
+      chain: CHAINS.ETH_TESTNET,
+      available: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000))),
+      pending: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100))),
+    }}
   />
 )
 
 export const burnBalanceBitcoin = (): JSX.Element => (
-  <BurnBalance
-    chain={CHAINS.BTC_TESTNET}
-    total={UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000)))}
-    pending={UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100)))}
+  <BurnBalanceDisplay
+    balance={{
+      chain: CHAINS.BTC_TESTNET,
+      available: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000))),
+      pending: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100))),
+    }}
   />
 )
 
