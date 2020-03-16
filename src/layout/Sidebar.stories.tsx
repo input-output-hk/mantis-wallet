@@ -6,10 +6,11 @@ import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {RouterState} from '../router-state'
 import {Sidebar} from './Sidebar'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
+import {withPobState} from '../storybook-util/pob-state-decorator'
 
 export default {
   title: 'Sidebar',
-  decorators: [withWalletState, withTheme, withKnobs],
+  decorators: [withWalletState, withTheme, withPobState, withKnobs],
 }
 
 export const sidebar = (): JSX.Element => (

@@ -39,11 +39,11 @@ const App: React.FC = () => {
         <div className="App">
           <RouterState.Provider>
             <WalletState.Provider>
-              <header>
-                <Sidebar />
-              </header>
-              <FloatingSyncStatus />
               <ProofOfBurnState.Provider initialState={store}>
+                <header>
+                  <Sidebar />
+                </header>
+                <FloatingSyncStatus />
                 <main id="main">
                   <Router />
                 </main>

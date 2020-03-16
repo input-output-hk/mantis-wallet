@@ -42,6 +42,7 @@ interface ProofOfBurnState {
   ) => Promise<void>
   burnStatuses: Record<string, BurnStatus>
   refreshBurnStatus: () => Promise<void>
+  reset: () => void
 }
 
 function useProofOfBurnState(
@@ -112,11 +113,18 @@ function useProofOfBurnState(
     addBurnWatcher(burnAddress, prover)
   }
 
+  const reset = (): void => {
+    setBurnAddresses({})
+    setBurnWatchers([])
+    setBurnStatuses({})
+  }
+
   return {
     addBurnWatcher,
     burnStatuses,
     refreshBurnStatus,
     observeBurnAddress,
+    reset,
   }
 }
 

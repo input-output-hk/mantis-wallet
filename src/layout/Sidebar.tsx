@@ -5,6 +5,7 @@ import {ThemeState} from '../theme-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
 import {WalletState, canRemoveWallet} from '../common/wallet-state'
+import {ProofOfBurnState} from '../pob/pob-state'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
@@ -16,6 +17,7 @@ export const Sidebar = (): JSX.Element => {
 
   const walletState = WalletState.useContainer()
   const routerState = RouterState.useContainer()
+  const pobState = ProofOfBurnState.useContainer()
 
   const [showLogOutModal, setShowLogOutModal] = useState(false)
 
@@ -66,7 +68,10 @@ export const Sidebar = (): JSX.Element => {
           visible={showLogOutModal}
           onLogOut={async (passphrase: string): Promise<boolean> => {
             const removed = await walletState.remove({passphrase})
-            if (removed) setShowLogOutModal(false)
+            if (removed) {
+              pobState.reset()
+              setShowLogOutModal(false)
+            }
             return removed
           }}
           onCancel={() => setShowLogOutModal(false)}
