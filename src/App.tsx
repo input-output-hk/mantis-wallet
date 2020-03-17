@@ -8,9 +8,12 @@ import {Sidebar} from './layout/Sidebar'
 import {FloatingSyncStatus} from './common/SyncStatus'
 import {SplashScreen} from './SplashScreen'
 import {makeWeb3Worker} from './web3'
+import {createPersistentStore} from './common/store'
 import './App.scss'
 
 const web3 = makeWeb3Worker()
+
+const store = createPersistentStore()
 
 const App: React.FC = () => {
   const [isBackendRunning, setBackendRunning] = useState(false)
@@ -31,7 +34,7 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <ThemeState.Provider>
+    <ThemeState.Provider initialState={store}>
       {isBackendRunning ? (
         <div className="App">
           <RouterState.Provider>
