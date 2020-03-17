@@ -4,8 +4,13 @@ import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
 import {ChainId} from '../chains'
 
+export const NO_BURN_OBSERVED = 'No burn transactions observed.'
+
+const NoBurnStatus = t.type({
+  status: t.literal(NO_BURN_OBSERVED),
+})
+
 const BurnStatusType = t.keyof({
-  ['No burn transactions observed.']: null,
   BURN_OBSERVED: null,
   PROOF_READY: null,
   PROOF_FAIL: null,
@@ -20,28 +25,31 @@ const BurnStatusType = t.keyof({
 
 const BurnApiStatus = t.type({
   status: BurnStatusType,
-  txid: t.union([t.string, t.undefined]),
-  chain: t.union([
-    t.keyof({
-      BTC_MAINNET: null,
-      BTC_TESTNET: null,
-      ETH_MAINNET: null,
-      ETH_TESTNET: null,
-    }),
-    t.undefined,
-  ]),
-  midnight_txid: t.union([t.string, t.undefined]),
-  burn_tx_height: t.union([t.number, t.undefined]),
-  current_source_height: t.union([t.number, t.undefined]),
-  processing_start_height: t.union([t.number, t.undefined]),
-  last_tag_height: t.union([t.number, t.undefined]),
+  txid: t.string,
+  chain: t.keyof({
+    BTC_MAINNET: null,
+    BTC_TESTNET: null,
+    ETH_MAINNET: null,
+    ETH_TESTNET: null,
+  }),
+  midnight_txid: t.union([t.string, t.null]),
+  burn_tx_height: t.union([t.number, t.null]),
+  current_source_height: t.number,
+  processing_start_height: t.union([t.number, t.null]),
+  last_tag_height: t.number,
 })
 
-const BurnApiStatuses = t.array(BurnApiStatus)
+const BurnApiStatuses = t.array(t.union([BurnApiStatus, NoBurnStatus]))
 
 export type BurnStatusType = t.TypeOf<typeof BurnStatusType>
 
+export type NoBurnStatus = t.TypeOf<typeof NoBurnStatus>
 export type BurnApiStatus = t.TypeOf<typeof BurnApiStatus>
+
+export type AllApiStatus = BurnApiStatus | NoBurnStatus
+
+export const noBurnObservedFilter = (status: AllApiStatus): status is BurnApiStatus =>
+  status.status !== NO_BURN_OBSERVED
 
 const BurnType = t.type({
   burn_address: t.string,
@@ -73,7 +81,7 @@ const httpRequest = async (
   ).json()
 }
 
-export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<BurnApiStatus[]> => {
+export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
   return httpRequest(prover, 'prove', '/api/v1/status', {
     burn_address: burnAddress,
   }).then(tPromise.decode(BurnApiStatuses))

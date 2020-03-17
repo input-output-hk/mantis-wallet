@@ -1,7 +1,8 @@
 import {useState} from 'react'
 import _ from 'lodash/fp'
+import * as tPromise from 'io-ts-promise'
 import {createContainer} from 'unstated-next'
-import {getStatuses, createBurn, BurnApiStatus} from './api/prover'
+import {getStatuses, createBurn, BurnApiStatus, noBurnObservedFilter} from './api/prover'
 import {Chain} from './chains'
 import {ProverConfig} from '../config/type'
 
@@ -12,8 +13,13 @@ export interface BurnWatcher {
 
 export type BurnStatus = {
   lastStatuses: BurnApiStatus[]
-  error?: Error
+  errorMessage?: string
 }
+
+const prettyErrorMessage = (error: Error): string =>
+  tPromise.isDecodeError(error)
+    ? 'Unexpected response from prover.'
+    : 'Unexpected error while communicating with prover.'
 
 interface ProofOfBurnState {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
@@ -48,19 +54,15 @@ function useProofOfBurnState(): ProofOfBurnState {
         getStatuses(burnWatcher)
           .then((statuses): [string, BurnStatus] => [
             burnWatcher.burnAddress,
-            {lastStatuses: statuses},
+            {lastStatuses: statuses.filter(noBurnObservedFilter)},
           ])
           .catch((error): [string, BurnStatus] => {
             const {burnAddress} = burnWatcher
             return [
               burnAddress,
               {
-                lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [
-                  {
-                    status: 'No burn transactions observed.',
-                  },
-                ],
-                error,
+                lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
+                errorMessage: prettyErrorMessage(error),
               },
             ]
           }),
