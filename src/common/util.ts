@@ -2,6 +2,16 @@ import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 
+const BITCOIN_TO_SATOSHI = new BigNumber('1e8')
+
+export function toSatoshi(number: BigNumber): BigNumber {
+  return number.multipliedBy(BITCOIN_TO_SATOSHI)
+}
+
+export function fromSatoshi(number: BigNumber): BigNumber {
+  return number.dividedBy(BITCOIN_TO_SATOSHI)
+}
+
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
 }

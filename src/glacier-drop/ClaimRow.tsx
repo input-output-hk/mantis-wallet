@@ -157,7 +157,8 @@ export const ClaimRow = ({
       <div className="header">
         <div className="claim-title">Claim #{index}</div>
         <div className="exchange">
-          <ShortNumber big={claim.externalAmount} /> {claim.chain.symbol}
+          <ShortNumber big={claim.externalAmount} unit={claim.chain.unitType} />{' '}
+          {claim.chain.symbol}
           <SVG src={exchangeIcon} className="icon" />
           <ShortNumber big={claim.dustAmount} /> DT
         </div>
