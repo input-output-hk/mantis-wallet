@@ -9,6 +9,7 @@ import {CHAINS} from './chains'
 import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
+import {toSatoshi} from '../common/util'
 
 export default {
   title: 'Burn Actions',
@@ -19,14 +20,14 @@ const dummyBurnBalances = [
   {
     address: 'text-address',
     chain: CHAINS[1],
-    total: toWei(new BigNumber(1000)),
-    pending: toWei(new BigNumber(0)),
+    total: toSatoshi(new BigNumber(1000)),
+    pending: toSatoshi(new BigNumber(0)),
   },
   {
     address: 'text-address',
     chain: CHAINS[3],
-    total: toWei(new BigNumber(1000)),
-    pending: toWei(new BigNumber(10)),
+    total: toSatoshi(new BigNumber(1000)),
+    pending: toSatoshi(new BigNumber(10)),
   },
   {
     address: 'text-address',
@@ -69,7 +70,7 @@ export const burnBalanceEthereum = (): JSX.Element => (
 export const burnBalanceBitcoin = (): JSX.Element => (
   <BurnBalance
     chain={CHAINS[1]}
-    total={toWei(new BigNumber(number('Total', 1000)))}
-    pending={toWei(new BigNumber(number('Pending', 100)))}
+    total={toSatoshi(new BigNumber(number('Total', 1000)))}
+    pending={toSatoshi(new BigNumber(number('Pending', 100)))}
   />
 )

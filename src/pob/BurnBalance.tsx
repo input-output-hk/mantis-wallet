@@ -27,16 +27,16 @@ export const BurnBalance: React.FunctionComponent<BurnBalanceProps> = ({
       <div className="available">
         Available{' '}
         <span className="amount">
-          <ShortNumber big={total.minus(pending)} /> {tokenSymbol}
+          <ShortNumber big={total.minus(pending)} unit={chain.unitType} /> {tokenSymbol}
         </span>
       </div>
       <div className="rest">
         <SVG src={clockIcon} className="icon" />
-        Pending Amount · <ShortNumber big={pending} /> {tokenSymbol}
+        Pending Amount · <ShortNumber big={pending} unit={chain.unitType} /> {tokenSymbol}
       </div>
       <div className="rest">
         <SVG src={sumIcon} className="icon" />
-        Total Amount · <ShortNumber big={total} /> {tokenSymbol}
+        Total Amount · <ShortNumber big={total} unit={chain.unitType} /> {tokenSymbol}
       </div>
     </div>
   )
