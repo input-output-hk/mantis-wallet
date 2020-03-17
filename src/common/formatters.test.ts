@@ -7,6 +7,7 @@ it('abbreviates numbers correctly', () => {
     const {relaxed, strict} = abbreviateAmount(new BigNumber(n))
     return [strict, relaxed]
   }
+  assert.deepEqual(abbreviateBig('0.00000001'), ['0.00000001', '0.00000001'])
   assert.deepEqual(abbreviateBig('0.0000000123456789'), ['0.0000000123457', '0.0000000123456789'])
   assert.deepEqual(abbreviateBig('0.000123456789'), ['0.000123457', '0.000123456789'])
   assert.deepEqual(abbreviateBig('0.00123456789'), ['0.00123457', '0.00123456789'])
