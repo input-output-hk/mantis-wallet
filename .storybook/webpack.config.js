@@ -22,7 +22,13 @@ module.exports = ({config}) => {
   config.plugins.push(
     new webpack.NormalModuleReplacementPlugin(
       /electron$/,
-      path.resolve(__dirname, 'electron.mock.js'),
+      path.resolve(__dirname, './mocks/electron.mock.js'),
+    ),
+  )
+  config.plugins.push(
+    new webpack.NormalModuleReplacementPlugin(
+      /electron-store$/,
+      path.resolve(__dirname, './mocks/electron-store.mock.js'),
     ),
   )
 
