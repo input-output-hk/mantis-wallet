@@ -1,8 +1,7 @@
 @import '../vars';
 
 .PobLayout {
-  display: grid;
-  grid-template-rows: auto 1fr;
+  height: 100%;
 
   .header {
     display: grid;
@@ -30,6 +29,7 @@
   }
 
   .content {
+    height: 100%;
     padding: 64px;
   }
 }

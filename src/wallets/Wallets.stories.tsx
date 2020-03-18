@@ -2,10 +2,12 @@ import React, {useState} from 'react'
 import {withKnobs, text} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {WalletListSidebar} from './WalletListSidebar'
+import {withRouterState} from '../storybook-util/router-state-decorator'
+import {NoWallet} from './NoWallet'
 
 export default {
   title: 'Wallets',
-  decorators: [withTheme, withKnobs],
+  decorators: [withRouterState, withTheme, withKnobs],
 }
 
 // `useState` cannot be used in stories
@@ -36,3 +38,5 @@ const WalletList: React.FunctionComponent<{}> = () => {
 }
 
 export const walletList: React.FunctionComponent<{}> = () => <WalletList />
+
+export const noWallet = (): JSX.Element => <NoWallet />

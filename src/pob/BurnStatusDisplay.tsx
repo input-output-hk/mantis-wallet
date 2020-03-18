@@ -6,6 +6,7 @@ import {BurnStatusType, BurnApiStatus} from './api/prover'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
+import {copyToClipboard} from '../common/clipboard'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
@@ -78,11 +79,17 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   const chain = CHAINS.find(({id}) => id === burnStatus.chain)
   const progress = STATUS_TO_PROGRESS[burnStatus.status]
 
-  const ShowLongText = ({content}: {content: React.ReactNode}): JSX.Element => (
-    <Popover content={content} placement="bottom">
-      <div className="long-text">{content}</div>
-    </Popover>
-  )
+  const ShowLongText = ({content}: {content: string | null}): JSX.Element =>
+    content == null ? (
+      <></>
+    ) : (
+      <div className="long-text">
+        <Icon type="copy" className="clickable" onClick={() => copyToClipboard(content)} />{' '}
+        <Popover content={content} placement="bottom">
+          {content}
+        </Popover>
+      </div>
+    )
 
   return (
     <div className="BurnStatusDisplay">

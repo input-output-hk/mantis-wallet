@@ -1,4 +1,4 @@
-@import '../themify', '../partial';
+@import '../themify', '../partial', '../vars';
 
 .BurnStatusDisplay {
   padding-bottom: 14px;
@@ -26,9 +26,16 @@
     }
 
     .long-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      @extend %ellipsize;
+
+      .clickable {
+        opacity: $secondary-opacity;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
     }
 
     .exchange-icon {
