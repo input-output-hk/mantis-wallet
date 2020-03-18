@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
 import {PobLayout} from './PobLayout'
 import {RouterState} from '../router-state'
-import {BurnCoinsNoWallet} from './burn-coins/BurnCoinsNoWallet'
-import {WalletState} from '../common/wallet-state'
+import {LoadedState} from '../common/wallet-state'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
 import {Chain, ChainId, CHAINS} from './chains'
@@ -10,6 +9,8 @@ import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {config} from '../config/renderer'
 import {ProofOfBurnState} from './pob-state'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
+import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
+import {EmptyProps} from 'antd/lib/empty'
 
 interface ChooseToken {
   step: 'CHOOSE_TOKEN'
@@ -29,24 +30,15 @@ interface ShowAddress {
 type BurnCoinsState = ChooseToken | GenerateBurn | ShowAddress
 
 const CHAINS_TO_USE: ChainId[] = ['BTC_TESTNET', 'ETH_TESTNET']
-const AUTO_DUST_CONVERSION = true
+const AUTO_DUST_CONVERSION = false
 
-export const BurnCoins: React.FunctionComponent<{}> = () => {
-  const walletState = WalletState.useContainer()
+const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   const pobState = ProofOfBurnState.useContainer()
   const routerState = RouterState.useContainer()
 
   const [burnState, setBurnState] = useState<BurnCoinsState>({step: 'CHOOSE_TOKEN'})
 
   const cancel = (): void => routerState.navigate('BURN_CENTRE')
-
-  if (walletState.walletStatus !== 'LOADED') {
-    return (
-      <PobLayout title="Burn Coins">
-        <BurnCoinsNoWallet cancel={cancel} goToWallets={() => routerState.navigate('WALLETS')} />
-      </PobLayout>
-    )
-  }
 
   if (walletState.transparentAddresses.length === 0) {
     const generateTransparentAddress = (): Promise<void> => walletState.generateNewAddress()
@@ -120,3 +112,5 @@ export const BurnCoins: React.FunctionComponent<{}> = () => {
     }
   }
 }
+
+export const BurnCoins = withStatusGuard(_BurnCoins, 'LOADED')

@@ -6,6 +6,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {DialogInputPassword} from '../../common/dialog/DialogInput'
 import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
+import {DialogApproval} from '../../common/dialog/DialogApproval'
 
 interface LogOutModalProps {
   onLogOut: (passphrase: string) => Promise<boolean>
@@ -16,6 +17,7 @@ export const LogOutModal: React.FunctionComponent<LogOutModalProps & ModalProps>
   ...props
 }: LogOutModalProps & ModalProps) => {
   const [inProgress, setInProgress] = useState(false)
+  const [approve, setApprove] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [passphrase, setPassphrase] = useState('')
 
@@ -42,6 +44,7 @@ export const LogOutModal: React.FunctionComponent<LogOutModalProps & ModalProps>
               if (mounted.current) setInProgress(false)
             }
           },
+          disabled: !approve,
           loading: inProgress,
           children: 'Log Out',
         }}
@@ -49,6 +52,11 @@ export const LogOutModal: React.FunctionComponent<LogOutModalProps & ModalProps>
       >
         <DialogMessage description="Enter your password to log out." />
         <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} />
+        <DialogApproval
+          checked={approve}
+          onChange={setApprove}
+          description="I understand that all my Burn Addresses will be deleted from this machine."
+        />
       </Dialog>
     </LunaModal>
   )

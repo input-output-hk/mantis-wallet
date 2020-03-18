@@ -1,7 +1,9 @@
-import _ from 'lodash'
+import _ from 'lodash/fp'
+import {set as mutatingSet} from 'lodash'
 import ElectronStore from 'electron-store'
 import {Theme} from '../theme-state'
 import {config} from '../config/renderer'
+import {BurnWatcher, BurnAddressInfo} from '../pob/pob-state'
 
 export type StoreSettingsData = {
   settings: {
@@ -15,7 +17,23 @@ export const defaultSettingsData: StoreSettingsData = {
   },
 }
 
-export type StoreData = StoreSettingsData
+export type StorePobData = {
+  pob: {
+    burnWatchers: BurnWatcher[]
+    burnAddresses: Record<string, BurnAddressInfo>
+  }
+}
+
+export const defaultPobData: StorePobData = {
+  pob: {
+    burnWatchers: [],
+    burnAddresses: {},
+  },
+}
+
+export type StoreData = StoreSettingsData & StorePobData
+
+const defaultData: StoreData = _.merge(defaultSettingsData, defaultPobData)
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]
@@ -34,14 +52,14 @@ export function createInMemoryStore<TObject extends object>(initial: TObject): S
   function get<K1 extends keyof TObject, K2 extends keyof TObject[K1]>(
     key: K1 | [K1, K2],
   ): TObject[K1] | TObject[K1][K2] {
-    return _.get(store, key)
+    return _.get(key)(store)
   }
 
   function set<K1 extends keyof TObject, K2 extends keyof TObject[K1]>(
     key: K1 | [K1, K2],
     value: TObject[K1] | TObject[K1][K2],
   ): void {
-    _.set(store, key, value)
+    mutatingSet(store, key, value)
   }
 
   return {
@@ -52,7 +70,7 @@ export function createInMemoryStore<TObject extends object>(initial: TObject): S
 
 export function createPersistentStore(): Store<StoreData> {
   const store = new ElectronStore({
-    defaults: defaultSettingsData,
+    defaults: defaultData,
     cwd: config.dataDir,
   })
 
@@ -60,7 +78,7 @@ export function createPersistentStore(): Store<StoreData> {
     key: K1 | [K1, K2],
   ): StoreData[K1] | StoreData[K1][K2] {
     if (_.isArray(key)) {
-      return _.get(store.get(key[0]), [key[1]])
+      return _.get([key[1]])(store.get(key[0]))
     } else {
       return store.get(key)
     }
@@ -72,7 +90,7 @@ export function createPersistentStore(): Store<StoreData> {
   ): void {
     if (_.isArray(key)) {
       store.set({
-        [key[0]]: _.set(store.get(key[0]), key[1], value),
+        [key[0]]: _.set(key[1], value)(store.get(key[0])),
       })
     } else {
       store.set(key, value)
