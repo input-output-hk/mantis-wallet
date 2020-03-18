@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
+import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
 import {deserializeBigNumber, loadAll} from '../common/util'
 import {Chain} from '../pob/chains'
@@ -18,7 +19,6 @@ import {
   SynchronizationStatus,
   Web3API,
 } from '../web3'
-import {Remote} from 'comlink'
 
 export interface InitialState {
   walletStatus: 'INITIAL'

@@ -1,6 +1,6 @@
-import {abbreviateAmount, formatPercentage, formatAmount} from './formatters'
 import {assert} from 'chai'
 import BigNumber from 'bignumber.js'
+import {abbreviateAmount, formatPercentage, formatAmount} from './formatters'
 
 it('abbreviates numbers correctly', () => {
   const abbreviateBig = (n: number | string): [string, string] => {

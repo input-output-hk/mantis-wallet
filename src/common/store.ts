@@ -1,5 +1,6 @@
 import _ from 'lodash/fp'
 import {set as mutatingSet} from 'lodash'
+// eslint-disable-next-line import/default
 import ElectronStore from 'electron-store'
 import {Theme} from '../theme-state'
 import {config} from '../config/renderer'

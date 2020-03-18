@@ -2,6 +2,7 @@ import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import {Icon, Button} from 'antd'
 import formatDistance from 'date-fns/formatDistance'
+import BigNumber from 'bignumber.js'
 import {formatPercentage} from '../common/formatters'
 import {bigToNumber} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
@@ -10,7 +11,6 @@ import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
-import BigNumber from 'bignumber.js'
 
 const PROGRESS_ICONS: Record<string, ReactNode> = {
   CHECKED: <SVG src={checkIcon} className="checked icon" />,

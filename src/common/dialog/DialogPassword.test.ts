@@ -1,6 +1,6 @@
-import {hasAllNeededCharacters} from './DialogPassword'
 import {isSome, isNone} from 'fp-ts/lib/Option'
 import {assert} from 'chai'
+import {hasAllNeededCharacters} from './DialogPassword'
 
 it('checks password validity correctly', () => {
   assert.isTrue(isSome(hasAllNeededCharacters('')), 'Empty string is invalid')

@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import {EmptyProps} from 'antd/lib/empty'
 import {PobLayout} from './PobLayout'
 import {RouterState} from '../router-state'
 import {LoadedState} from '../common/wallet-state'
@@ -10,7 +11,6 @@ import {config} from '../config/renderer'
 import {ProofOfBurnState} from './pob-state'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
-import {EmptyProps} from 'antd/lib/empty'
 
 interface ChooseToken {
   step: 'CHOOSE_TOKEN'

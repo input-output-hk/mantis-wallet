@@ -1,10 +1,10 @@
 import React from 'react'
+import BigNumber from 'bignumber.js'
 import {CHAINS, Chain} from '../pob/chains'
 import {Token} from '../common/Token'
 import {PeriodStatus} from './PeriodStatus'
 import {ClaimRow} from './ClaimRow'
 import './GlacierDropOverview.scss'
-import BigNumber from 'bignumber.js'
 
 export const availableChains: Chain[] = [CHAINS[2], CHAINS[0]]
 

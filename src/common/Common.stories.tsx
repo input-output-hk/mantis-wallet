@@ -1,7 +1,7 @@
 import React from 'react'
 import {withKnobs, number} from '@storybook/addon-knobs'
-import {withTheme} from '../storybook-util/theme-switcher'
 import BigNumber from 'bignumber.js'
+import {withTheme} from '../storybook-util/theme-switcher'
 import {ShortNumber} from './ShortNumber'
 import {Loading} from './Loading'
 import './Loading.scss'

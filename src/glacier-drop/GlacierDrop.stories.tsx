@@ -1,11 +1,11 @@
 import React from 'react'
 import {withKnobs, number, text, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
+import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {GlacierDropOverview, Claim, availableChains} from './GlacierDropOverview'
 import {ClaimRow} from './ClaimRow'
-import BigNumber from 'bignumber.js'
 
 export default {
   title: 'Glacier Drop',

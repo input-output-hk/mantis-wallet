@@ -4,6 +4,9 @@ module.exports = {
     'plugin:react/recommended',
     'prettier',
     'prettier/react',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
   ],
   plugins: ['fp', 'prettier'],
   root: true,
@@ -40,6 +43,15 @@ module.exports = {
     'curly': 0,
     // prettier
     'prettier/prettier': 'error',
+    // import
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'never',
+        'groups': ['builtin', 'external', ['parent', 'sibling'], 'index'],
+      },
+    ],
+    'import/no-named-as-default': 0,
     // fp
     'fp/no-arguments': 'error',
     'fp/no-delete': 'error',
