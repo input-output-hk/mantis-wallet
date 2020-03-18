@@ -1,15 +1,16 @@
 import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
+import BigNumber from 'bignumber.js'
 import {Icon, Button} from 'antd'
 import formatDistance from 'date-fns/formatDistance'
-import BigNumber from 'bignumber.js'
 import {formatPercentage} from '../common/formatters'
 import {bigToNumber} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
-import {Claim} from './GlacierDropOverview'
+import {DUST_SYMBOL} from '../pob/chains'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
+import {Claim} from './GlacierDropOverview'
 import './ClaimRow.scss'
 
 const PROGRESS_ICONS: Record<string, ReactNode> = {
@@ -79,7 +80,7 @@ const UnfreezeDetail = ({claim, onWithdrawDust}: UnfreezeDetailProps): JSX.Eleme
         <div>
           0%
           <span className="amount">
-            0 / <ShortNumber big={dustAmount} /> DT
+            0 / <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
           </span>
         </div>
         <div className="action-link">view unfreeze txn-id</div>
@@ -91,7 +92,7 @@ const UnfreezeDetail = ({claim, onWithdrawDust}: UnfreezeDetailProps): JSX.Eleme
       <div>
         {formatPercentage(unfrozenDustAmount.dividedBy(dustAmount))}%
         <span className="amount">
-          <ShortNumber big={unfrozenDustAmount} /> / <ShortNumber big={dustAmount} /> DT
+          <ShortNumber big={unfrozenDustAmount} /> / <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
         </span>
       </div>
       <div className="action-link">{EPOCHS_REMAINING} epochs until full unfreeze</div>
@@ -118,7 +119,7 @@ const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
       <div className="withdraw-progress">
         {formatPercentage(withdrawnDustAmount.dividedBy(dustAmount))}%
         <span className="amount">
-          <ShortNumber big={withdrawnDustAmount} /> / <ShortNumber big={dustAmount} /> DT
+          <ShortNumber big={withdrawnDustAmount} /> / <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
         </span>
       </div>
       <div className="action-link">view withdrawal txn-id</div>
@@ -152,22 +153,29 @@ export const ClaimRow = ({
   onSubmitPuzzle,
   onWithdrawDust,
 }: ClaimRowProps): JSX.Element => {
+  const {
+    dustAmount,
+    externalAmount,
+    midnightAddress,
+    externalAddress,
+    unfrozenDustAmount,
+    withdrawnDustAmount,
+    chain,
+  } = claim
+
   return (
     <div className="ClaimRow">
       <div className="header">
         <div className="claim-title">Claim #{index}</div>
         <div className="exchange">
-          <ShortNumber big={claim.externalAmount} unit={claim.chain.unitType} />{' '}
-          {claim.chain.symbol}
+          <ShortNumber big={externalAmount} unit={chain.unitType} /> {chain.symbol}
           <SVG src={exchangeIcon} className="icon" />
-          <ShortNumber big={claim.dustAmount} /> DT
+          <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
         </div>
         <div className="external-address">
-          {claim.chain.symbol} Address: {claim.externalAddress}
+          {chain.symbol} Address: {externalAddress}
         </div>
-        <div className="midnight-address">
-          Transparent Midnight Address: {claim.midnightAddress}
-        </div>
+        <div className="midnight-address">Transparent Midnight Address: {midnightAddress}</div>
       </div>
       <div className="status">
         <div className="progress">{PROGRESS_ICONS.CHECKED} Claimed</div>
@@ -175,21 +183,21 @@ export const ClaimRow = ({
         <div className="progress">{getUnlockedIcon(claim)} Unlocked</div>
         <div className="line"></div>
         <div className="progress">
-          {getNumericalProgressIcon(claim.unfrozenDustAmount, claim.dustAmount)} Unfrozen
+          {getNumericalProgressIcon(unfrozenDustAmount, dustAmount)} Unfrozen
         </div>
         <div className="line"></div>
         <div className="progress">
-          {getNumericalProgressIcon(claim.withdrawnDustAmount, claim.dustAmount)} Withdrawn
+          {getNumericalProgressIcon(withdrawnDustAmount, dustAmount)} Withdrawn
         </div>
 
         <div className="claimed detail">
           <div>
-            <ShortNumber big={claim.dustAmount} /> DT
+            <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
           </div>
         </div>
         <div className="unlocked detail">
           <div>
-            <ShortNumber big={claim.dustAmount} /> DT
+            <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
           </div>
           <div className="puzzle-progress">
             <PuzzleProgress claim={claim} onSubmitPuzzle={onSubmitPuzzle} />

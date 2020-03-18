@@ -1,0 +1,35 @@
+@import '../../themify';
+
+.Asset {
+  $height: 50px;
+  margin-bottom: 14px;
+
+  .label {
+    margin-bottom: 1em;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    .logo {
+      width: 40px;
+
+      svg {
+        width: auto;
+        height: $height;
+
+        @include themify($themes) {
+          stroke: themed('text-color');
+          fill: themed('text-color');
+        }
+      }
+    }
+
+    .amount {
+      line-height: $height;
+    }
+  }
+}

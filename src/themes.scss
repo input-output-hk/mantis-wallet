@@ -1,9 +1,9 @@
-@import 'vars';
+@import './vars';
 
 $dark-text-color: #f7f7f7;
 $dark-normal-color: #414141;
 $dark-secondary-background: #000;
-$dark-btn-bg: #f0f0f0;
+$dark-btn-bg: #e6e6e6;
 $dark-component-background: #292929;
 
 $light-text-color: #000000;
@@ -32,7 +32,9 @@ $themes: (
     modal-background: $dark-secondary-background,
     link-color: $dark-text-color,
     tertiary-background: #707070,
-    pending-color: #202020,
+    // for overview graph:
+      pending-color: #202020,
+    dialog-dark-input-bg: #202020,
     quaternary-background: #202020,
     quinary-background: #1e1e1e,
     secondary-text-color: #808080,
@@ -60,6 +62,7 @@ $themes: (
     modal-background: #ffffff,
     link-color: $light-text-color,
     tertiary-background: #6b6b6b,
+    dialog-dark-input-bg: #f5f5f5,
     pending-color: #e1f6fb,
     quaternary-background: #fafafa,
     quinary-background: #ccc,

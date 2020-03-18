@@ -12,8 +12,8 @@ interface DialogProps {
   title?: string
   type?: 'normal' | 'dark'
   buttonDisplayMode?: 'natural' | 'grid'
-  prevButtonProps?: ButtonProps & DialogButtonProps
-  nextButtonProps?: ButtonProps & DialogButtonProps
+  leftButtonProps?: ButtonProps & DialogButtonProps
+  rightButtonProps?: ButtonProps & DialogButtonProps
   footer?: React.ReactNode
 }
 
@@ -21,23 +21,23 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
   title,
   type = 'normal',
   buttonDisplayMode = 'grid',
-  nextButtonProps = {},
-  prevButtonProps = {},
+  rightButtonProps: rightButtonProps = {},
+  leftButtonProps: leftButtonProps = {},
   children,
   footer,
 }: React.PropsWithChildren<DialogProps>) => {
-  const prevButtonPropsToUse: ButtonProps = {
+  const leftButtonPropsToUse: ButtonProps = {
     size: 'large',
     children: 'Cancel',
-    ...prevButtonProps,
+    ...leftButtonProps,
   }
 
-  const nextButtonPropsToUse: ButtonProps = {
+  const rightButtonPropsToUse: ButtonProps = {
     type: 'primary',
     htmlType: 'submit',
     size: 'large',
     children: 'Next →',
-    ...nextButtonProps,
+    ...rightButtonProps,
   }
 
   return (
@@ -46,8 +46,8 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
       <form onSubmit={(e) => e.preventDefault()}>
         <div>{children}</div>
         <div className={classnames('actions', buttonDisplayMode)}>
-          {!prevButtonProps.doNotRender && <Button {...prevButtonPropsToUse} />}
-          {!nextButtonProps.doNotRender && <Button {...nextButtonPropsToUse} />}
+          {!leftButtonProps.doNotRender && <Button {...leftButtonPropsToUse} />}
+          {!rightButtonProps.doNotRender && <Button {...rightButtonPropsToUse} />}
         </div>
       </form>
       {footer && <div className="footer">{footer}</div>}

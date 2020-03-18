@@ -37,10 +37,10 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
   return (
     <LunaModal wrapClassName="SendTransaction" {...props}>
       <Dialog
-        prevButtonProps={{
+        leftButtonProps={{
           onClick: props.onCancel,
         }}
-        nextButtonProps={{
+        rightButtonProps={{
           children: 'Send →',
           onClick: async (): Promise<void> => {
             if (mounted.current) setInProgress(true)

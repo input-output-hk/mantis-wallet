@@ -8,12 +8,14 @@ interface DialogApprovalProps {
   checked: boolean
 }
 
-export const DialogApproval: React.FunctionComponent<DialogApprovalProps> = ({
+export const DialogApproval = ({
   description,
   onChange,
   checked,
-}: DialogApprovalProps) => (
+  children,
+}: React.PropsWithChildren<DialogApprovalProps>): JSX.Element => (
   <div className="DialogApproval">
+    {children && <div className="extra">{children}</div>}
     <Checkbox
       className="checkbox"
       checked={checked}

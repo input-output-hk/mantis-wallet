@@ -1,4 +1,4 @@
-@import './themify';
+@import './themify', './vars';
 
 %status-steps {
   display: grid;
@@ -77,4 +77,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+%dialog-label {
+  height: 25px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+%dialog-info-link {
+  display: block;
+  margin-bottom: 15px;
+  padding: 5px 0;
+  transition: opacity $transition-duration;
+  opacity: $secondary-opacity;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: right;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    transition: opacity $transition-duration;
+    opacity: 1;
+  }
+}
+
+%monospace {
+  font-family: 'Inconsolata', monospace;
+  font-weight: 400;
+  word-break: break-all;
 }

@@ -1,0 +1,11 @@
+@import '../../partial';
+
+.GeneratedMessage {
+  .DialogInput {
+    margin-bottom: 0px;
+  }
+
+  .more-info {
+    @extend %dialog-info-link;
+  }
+}

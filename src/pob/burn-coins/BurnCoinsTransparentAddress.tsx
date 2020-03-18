@@ -24,8 +24,8 @@ export const BurnCoinsTransparentAddress: React.FunctionComponent<BurnCoinsNoWal
     <div className="BurnCoinsTransparentAddress">
       <Dialog
         title="You need a transparent address to continue"
-        prevButtonProps={{onClick: cancel}}
-        nextButtonProps={{
+        leftButtonProps={{onClick: cancel}}
+        rightButtonProps={{
           children: 'Generate Transparent Address',
           onClick: async (): Promise<void> => {
             if (mounted.current) setInProgress(true)

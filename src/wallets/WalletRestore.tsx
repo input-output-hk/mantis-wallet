@@ -44,8 +44,8 @@ const _WalletRestore = ({
   return (
     <Dialog
       title="Restore wallet"
-      prevButtonProps={{onClick: cancel}}
-      nextButtonProps={{
+      leftButtonProps={{onClick: cancel}}
+      rightButtonProps={{
         disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
         onClick: async (): Promise<void> => {
           setWalletRestoreError('')

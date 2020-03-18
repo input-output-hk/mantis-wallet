@@ -33,8 +33,8 @@ export const WalletUnlock = (): JSX.Element => {
         <Dialog
           title="Unlock Wallet"
           buttonDisplayMode="natural"
-          prevButtonProps={{doNotRender: true}}
-          nextButtonProps={{
+          leftButtonProps={{doNotRender: true}}
+          rightButtonProps={{
             children: 'Unlock',
             disabled: isLoading,
             onClick: unlock,

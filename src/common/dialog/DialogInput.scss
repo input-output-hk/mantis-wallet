@@ -1,13 +1,11 @@
-@import '../../themify';
+@import '../../themify', '../../partial';
 
 .DialogInput {
   margin-bottom: 20px;
 
   .label {
+    @extend %dialog-label;
     display: block;
-    height: 25px;
-    font-size: 10px;
-    text-transform: uppercase;
   }
 
   .input {

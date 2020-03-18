@@ -27,10 +27,10 @@ export const LogOutModal: React.FunctionComponent<LogOutModalProps & ModalProps>
     <LunaModal {...props}>
       <Dialog
         title="Log Out"
-        prevButtonProps={{
+        leftButtonProps={{
           onClick: props.onCancel,
         }}
-        nextButtonProps={{
+        rightButtonProps={{
           onClick: async (): Promise<void> => {
             setInProgress(true)
             try {

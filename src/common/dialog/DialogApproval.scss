@@ -3,9 +3,17 @@
 .DialogApproval {
   margin-bottom: 20px;
   padding: 20px 13px;
+  font-size: 13px;
 
   @include themify($themes) {
     background-color: themed('normal-color');
+    color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+  }
+
+  .dark & {
+    @include themify($themes) {
+      background-color: themed('dialog-dark-input-bg');
+    }
   }
 
   .checkbox {
@@ -21,5 +29,9 @@
     .ant-checkbox {
       align-self: center;
     }
+  }
+
+  .extra {
+    margin-bottom: 20px;
   }
 }

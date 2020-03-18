@@ -20,8 +20,8 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
   return (
     <Dialog
       title="Security"
-      prevButtonProps={{onClick: cancel, children: 'Cancel'}}
-      nextButtonProps={{onClick: next}}
+      leftButtonProps={{onClick: cancel, children: 'Cancel'}}
+      rightButtonProps={{onClick: next}}
     >
       <DialogMessage
         label="Recovery Phrase"

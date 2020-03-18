@@ -22,11 +22,11 @@ export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreat
   return (
     <Dialog
       title="Recovery Phrase"
-      prevButtonProps={{
+      leftButtonProps={{
         onClick: back,
         children: 'Back',
       }}
-      nextButtonProps={{
+      rightButtonProps={{
         disabled: !isCondition1 || !isCondition2 || !isSeedPhraseValidated,
         children: 'Finish',
         onClick: finish,

@@ -4,6 +4,7 @@ import {Option, none, some} from 'fp-ts/lib/Option'
 import {withKnobs, text, boolean, array, select, number} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
+import {CHAINS} from '../pob/chains'
 import {Dialog} from './Dialog'
 import {DialogApproval} from './dialog/DialogApproval'
 import {DialogInput} from './dialog/DialogInput'
@@ -18,7 +19,6 @@ import {DialogError} from './dialog/DialogError'
 import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
-import {CHAINS} from '../pob/chains'
 import {DialogSecrets} from './dialog/DialogSecrets'
 
 export default {
@@ -30,12 +30,12 @@ export const InteractiveDialog: React.FunctionComponent<{}> = () => (
   <Dialog
     title={text('Dialog title', 'Dialog title')}
     buttonDisplayMode={select('Button display mode', ['natural', 'grid'], 'grid')}
-    prevButtonProps={{
+    leftButtonProps={{
       children: text('Cancel button label', 'Cancel'),
       onClick: action('prev-button-click'),
       disabled: boolean('Disable Prev button', false),
     }}
-    nextButtonProps={{
+    rightButtonProps={{
       children: text('Next button label', 'Next'),
       onClick: action('next-button-click'),
       disabled: boolean('Disable Next button', true),
@@ -47,7 +47,7 @@ export const InteractiveDialog: React.FunctionComponent<{}> = () => (
 )
 
 export const InteractiveAddress: React.FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Columns">
+  <Dialog title="Dialog Address">
     <DialogAddress
       chain={CHAINS[number('Chain Id', 0)]}
       address={text('Address to show', 'test-address')}
@@ -59,7 +59,7 @@ export const InteractiveApproval: React.FunctionComponent<{}> = () => {
   const [approved, setApproved] = useState(false)
 
   return (
-    <Dialog title="Dialog Approval">
+    <Dialog title="Dialog Approval" type={select('Input type', ['normal', 'dark'], 'normal')}>
       <DialogApproval
         description={text('Approval field text', 'Are you sure?')}
         checked={approved}

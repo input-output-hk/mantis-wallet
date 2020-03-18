@@ -25,10 +25,10 @@ export const WatchBurnModal: React.FunctionComponent<WatchBurnModalProps & Modal
     <LunaModal destroyOnClose {...props}>
       <Dialog
         title="Watch Burn Address"
-        prevButtonProps={{
+        leftButtonProps={{
           onClick: props.onCancel,
         }}
-        nextButtonProps={{
+        rightButtonProps={{
           disabled: !!errorMessage,
           onClick: () => {
             onWatchBurn(proverAddress, burnAddress)

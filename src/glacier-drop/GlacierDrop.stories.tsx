@@ -1,15 +1,14 @@
 import React from 'react'
+import BigNumber from 'bignumber.js'
 import {withKnobs, number, text, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
-import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {GlacierDropOverview, Claim, availableChains} from './GlacierDropOverview'
 import {ClaimRow} from './ClaimRow'
 
 export default {
   title: 'Glacier Drop',
-  decorators: [withWalletState, withTheme, withKnobs],
+  decorators: [withTheme, withKnobs],
 }
 
 export const overview = (): JSX.Element => <GlacierDropOverview />

@@ -4,6 +4,7 @@ import {Dialog} from '../../common/Dialog'
 import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
+import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {ProverConfig} from '../../config/type'
 import {Chain} from '../chains'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -11,7 +12,6 @@ import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {validateAmount} from '../../common/util'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import './BurnCoinsGenerateAddress.scss'
-import {DialogMessage} from '../../common/dialog/DialogMessage'
 
 interface BurnCoinsGenerateAddressProps {
   chain: Chain
@@ -45,8 +45,8 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   return (
     <div className="BurnCoinsGenerateAddress">
       <Dialog
-        prevButtonProps={{onClick: cancel}}
-        nextButtonProps={{
+        leftButtonProps={{onClick: cancel}}
+        rightButtonProps={{
           children: `Generate ${chain.symbol} Address`,
           onClick: async (): Promise<void> => {
             if (mounted.current) setInProgress(true)

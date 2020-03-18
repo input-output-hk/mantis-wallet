@@ -7,6 +7,7 @@ import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
 import {TransparentAddress} from '../../web3'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useIsMounted} from '../../common/hook-utils'
+import {copyToClipboard} from '../../common/clipboard'
 
 interface ReceiveTransactionProps {
   transparentAddresses: TransparentAddress[]
@@ -44,16 +45,16 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
     <LunaModal footer={usedAddresses} {...props}>
       <Dialog
         title={title}
-        prevButtonProps={{
+        leftButtonProps={{
           children: 'Copy Code',
           onClick: (): void => {
             if (newestAddress) {
-              navigator.clipboard.writeText(newestAddress.address)
+              copyToClipboard(newestAddress.address)
             }
           },
           disabled: !newestAddress,
         }}
-        nextButtonProps={{
+        rightButtonProps={{
           type: 'default',
           children: 'Generate new →',
           onClick: async (): Promise<void> => {

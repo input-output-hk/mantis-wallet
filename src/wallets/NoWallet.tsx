@@ -9,7 +9,7 @@ export const NoWallet: React.FunctionComponent<{}> = () => {
     <div className="NoWallet">
       <Dialog
         title="You need an unlocked wallet to continue"
-        nextButtonProps={{
+        rightButtonProps={{
           children: 'Go to Wallets',
           onClick: () => routerState.navigate('WALLETS'),
         }}

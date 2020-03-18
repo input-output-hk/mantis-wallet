@@ -1,0 +1,34 @@
+@import '../../themify', '../../vars';
+
+.EstimatedDust {
+  $height: 50px;
+  margin-bottom: 10px;
+
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+
+    .note {
+      opacity: $secondary-opacity;
+      text-transform: none;
+    }
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    .logo {
+      width: 40px;
+
+      img {
+        width: auto;
+        height: $height;
+      }
+    }
+
+    .amount {
+      line-height: $height;
+    }
+  }
+}

@@ -1,3 +1,11 @@
+/* Global theme */
+@import './themify', './vars', './partial';
+
+//
+// fonts
+//
+
+@import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap');
 @font-face {
   font-family: 'Helvetica Neue';
   font-weight: 300;
@@ -13,24 +21,15 @@
   font-weight: bold;
   src: url('./assets/fonts/HelveticaNeue-Bold.woff2') format('woff2');
 }
-@import './themify', './vars';
+
+//
+// elements
+//
 
 *,
 ::before,
 ::after {
   box-sizing: border-box;
-}
-
-a {
-  @include themify($themes) {
-    color: themed('link-color');
-  }
-
-  &:hover {
-    @include themify($themes) {
-      color: themed('text-color');
-    }
-  }
 }
 
 body {
@@ -40,9 +39,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  transition: color $transition-duration;
+
+  @include themify($themes) {
+    color: themed('link-color');
+  }
+
+  &:hover {
+    transition: color $transition-duration;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+}
+
 code,
 pre {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  @extend %monospace;
 }
 
 div#root {
@@ -67,6 +82,14 @@ div#root {
   height: 5px;
 }
 
+::selection {
+  background-color: lighten($primary-color, 20%);
+}
+
+//
+// utility classes
+//
+
 .main-title {
   margin: 0;
   overflow: hidden;
@@ -75,11 +98,15 @@ div#root {
   letter-spacing: 0.46px;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
 //
-// antd overwrites
+// theme-specific antd overrides
 //
 
-// only for theming
+// antd generic Button overrides
 .ant-btn {
   @include themify($themes) {
     background-color: themed('btn-default-bg');
@@ -89,12 +116,12 @@ div#root {
   &:focus,
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('btn-default-bg'), 5);
+      background-color: lighten(themed('btn-default-bg'), 10);
     }
   }
 }
 
-// only for theming
+// antd "primary" Button overrides
 .ant-btn-primary {
   @include themify($themes) {
     background-color: themed('primary-color');
@@ -109,6 +136,7 @@ div#root {
   }
 }
 
+// antd disabled Button theme overrides
 .ant-btn-disabled,
 .ant-btn.disabled,
 .ant-btn[disabled],
@@ -130,7 +158,38 @@ div#root {
   }
 }
 
-// general antd overwrite
+// antd Popover theme overrides
+.ant-popover-inner-content {
+  @include themify($themes) {
+    background-color: themed('text-color');
+    color: themed('secondary-background');
+  }
+}
+
+// antd Popover arrow theme overrides
+.ant-popover-placement-bottom > .ant-popover-content > .ant-popover-arrow,
+.ant-popover-placement-bottomLeft > .ant-popover-content > .ant-popover-arrow,
+.ant-popover-placement-bottomRight > .ant-popover-content > .ant-popover-arrow {
+  top: 7px;
+
+  @include themify($themes) {
+    border-top-color: themed('text-color');
+    border-left-color: themed('text-color');
+  }
+}
+
+// antd Message theme overrides
+.ant-message-notice-content {
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+    color: themed('text-color');
+  }
+}
+
+//
+// non-theme-specific antd overrides
+//
+
 .Luna {
   .ant-btn {
     height: 49px;
@@ -147,7 +206,9 @@ div#root {
     }
   }
 
-  .uppercase {
-    text-transform: uppercase;
+  // antd Wave animation override (e.g. Button click)
+  [ant-click-animating-without-extra-node='true']::after,
+  .ant-click-animating-node {
+    opacity: 0.62;
   }
 }

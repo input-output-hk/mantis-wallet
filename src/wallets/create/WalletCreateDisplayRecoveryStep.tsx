@@ -20,11 +20,11 @@ export const WalletCreateDisplayRecoveryStep: React.FunctionComponent<WalletCrea
   return (
     <Dialog
       title="Recovery Phrase"
-      prevButtonProps={{
+      leftButtonProps={{
         onClick: back,
         children: 'Back',
       }}
-      nextButtonProps={{
+      rightButtonProps={{
         onClick: next,
         disabled: !isRecoveryPhraseWritten,
       }}

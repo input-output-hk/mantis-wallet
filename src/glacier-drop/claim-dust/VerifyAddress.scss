@@ -1,0 +1,15 @@
+@import '../../partial';
+
+.VerifyAddress {
+  form > div:first-child {
+    margin: 1rem 0 2.5rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .label {
+    @extend %dialog-label;
+  }
+}

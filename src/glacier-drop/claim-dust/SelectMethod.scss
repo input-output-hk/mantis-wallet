@@ -1,0 +1,25 @@
+@import '../../partial', '../../vars';
+
+.SelectMethod {
+  .Dialog .actions {
+    margin-bottom: 0px;
+  }
+
+  .message {
+    margin-bottom: 40px;
+    opacity: $secondary-opacity;
+    font-size: 13px;
+  }
+
+  .section {
+    margin-bottom: 10px;
+  }
+
+  .label {
+    @extend %dialog-label;
+  }
+
+  .more-info {
+    @extend %dialog-info-link;
+  }
+}
