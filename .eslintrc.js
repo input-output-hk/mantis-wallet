@@ -64,7 +64,7 @@ module.exports = {
     'fp/no-mutation': 'error',
     'fp/no-proxy': 'error',
     'fp/no-valueof-field': 'error',
-    'fp/no-throw': 'error',
+    'fp/no-throw': 0,
     'fp/no-rest-parameters': 0,
     'fp/no-this': 0,
     'fp/no-class': 0,

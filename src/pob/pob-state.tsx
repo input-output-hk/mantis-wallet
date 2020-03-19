@@ -2,7 +2,13 @@ import {useState} from 'react'
 import _ from 'lodash/fp'
 import * as tPromise from 'io-ts-promise'
 import {createContainer} from 'unstated-next'
-import {getStatuses, createBurn, BurnApiStatus, noBurnObservedFilter} from './api/prover'
+import {
+  getStatuses,
+  createBurn,
+  BurnApiStatus,
+  noBurnObservedFilter,
+  proveTransaction,
+} from './api/prover'
 import {Chain, ChainId} from './chains'
 import {ProverConfig} from '../config/type'
 import {Store, defaultPobData, createInMemoryStore, StorePobData} from '../common/store'
@@ -43,6 +49,8 @@ interface ProofOfBurnState {
   burnStatuses: Record<string, BurnStatus>
   refreshBurnStatus: () => Promise<void>
   reset: () => void
+  burnAddresses: Record<string, BurnAddressInfo>
+  addTx: (prover: ProverConfig, burnTx: string, burnInfo: BurnAddressInfo) => Promise<void>
 }
 
 function useProofOfBurnState(
@@ -103,8 +111,6 @@ function useProofOfBurnState(
       autoConversion,
     )
     if (burnAddressFromProver !== burnAddress) {
-      // Disabled for fp/no-throw, storybook fails if we specify the rule
-      // eslint-disable-next-line
       throw new Error(
         `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddress} vs ${burnAddressFromProver}`,
       )
@@ -125,6 +131,8 @@ function useProofOfBurnState(
     refreshBurnStatus,
     observeBurnAddress,
     reset,
+    burnAddresses,
+    addTx: proveTransaction,
   }
 }
 

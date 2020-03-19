@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import * as tPromise from 'io-ts-promise'
 import {ProverConfig} from '../../config/type'
-import {BurnWatcher} from '../pob-state'
+import {BurnWatcher, BurnAddressInfo} from '../pob-state'
 import {ChainId} from '../chains'
 
 export const NO_BURN_OBSERVED = 'No burn transactions observed.'
@@ -70,15 +70,20 @@ const httpRequest = async (
   params: any,
 ): Promise<unknown> => {
   const url = `${proverConfig.address}:${REQUEST_MODE_PORT[mode]}${path}`
-  return (
-    await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(params),
-    })
-  ).json()
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  })
+
+  if (!res.ok) {
+    console.error(await res.json())
+    throw new Error("Couldn't process request")
+  }
+
+  return res.json()
 }
 
 export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
@@ -102,4 +107,20 @@ export const createBurn = async (
   })
     .then(tPromise.decode(BurnType))
     .then((burnType) => burnType.burn_address)
+}
+
+export const proveTransaction = async (
+  prover: ProverConfig,
+  txid: string,
+  burnAddress: BurnAddressInfo,
+): Promise<void> => {
+  await httpRequest(prover, 'prove', '/api/v1/prove', {
+    txid,
+    burn_params: {
+      midnight_address: burnAddress.midnightAddress,
+      reward: burnAddress.reward,
+      auto_dust_conversion: burnAddress.autoConversion,
+      chain_name: burnAddress.chainId,
+    },
+  })
 }

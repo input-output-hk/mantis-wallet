@@ -1,4 +1,4 @@
-@import '../../themify', '../../vars';
+@import '../../themify', '../../vars', '../../partial';
 
 .DialogDropdown {
   margin-bottom: 20px;
@@ -7,7 +7,7 @@
     width: 508px;
     padding: 10px 0;
     overflow: hidden;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
     white-space: nowrap;
 
@@ -25,13 +25,8 @@
 
 .DialogDropdown.small {
   .label {
-    font-size: 10px;
-    text-transform: uppercase;
-  }
-
-  .active-option {
-    opacity: $secondary-opacity;
-    font-weight: 300;
+    @extend %dialog-label;
+    font-weight: normal;
   }
 }
 

@@ -1,4 +1,3 @@
-/* eslint-disable fp/no-throw */
 /* eslint-disable fp/no-mutation */
 /* eslint-disable fp/no-mutating-methods */
 import BigNumber from 'bignumber.js'

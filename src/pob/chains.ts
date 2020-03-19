@@ -64,3 +64,9 @@ export const CHAINS: Chain[] = [
 
 // FIXME: refactor chains for general usage (including ETC and DUST)
 export const DUST_SYMBOL = 'DT'
+
+export const getChainById = (chainId: ChainId): Chain => {
+  const chain = CHAINS.find(({id}) => id === chainId)
+  if (chain === undefined) throw new Error("Chain doesn't exist")
+  return chain
+}

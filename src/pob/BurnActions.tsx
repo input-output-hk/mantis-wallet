@@ -2,8 +2,10 @@ import React, {useState} from 'react'
 import {Button} from 'antd'
 import {BurnBalance, BurnBalanceProps} from './BurnBalance'
 import {WatchBurnModal} from './modals/WatchBurnModal'
-import {ProofOfBurnState} from './pob-state'
+import {AddBurnTxModal} from './modals/AddBurnTxModal'
+import {ProofOfBurnState, BurnAddressInfo} from './pob-state'
 import {config} from '../config/renderer'
+import {ProverConfig} from '../config/type'
 import './BurnActions.scss'
 
 interface BurnActionsProps {
@@ -22,12 +24,16 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   const {provers} = config
 
   const [showWatchBurnModal, setShowWatchBurnModal] = useState(false)
+  const [showAddTxModal, setShowAddTxModal] = useState(false)
 
   return (
     <div className="BurnActions">
       <div className="toolbar">
         <div className="wallet">Wallet 01</div>
         <div>
+          <div className="link" onClick={() => setShowAddTxModal(true)}>
+            Enter burn transaction manually
+          </div>
           <Button type="primary" className="action" onClick={onBurnCoins}>
             Burn Coins
           </Button>
@@ -68,6 +74,20 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           setShowWatchBurnModal(false)
         }}
         provers={provers}
+      />
+      <AddBurnTxModal
+        visible={showAddTxModal}
+        onCancel={(): void => setShowAddTxModal(false)}
+        onAddTx={async (
+          prover: ProverConfig,
+          burnTx: string,
+          burnAddressInfo: BurnAddressInfo,
+        ): Promise<void> => {
+          await pobState.addTx(prover, burnTx, burnAddressInfo)
+          setShowAddTxModal(false)
+        }}
+        provers={provers}
+        burnAddresses={pobState.burnAddresses}
       />
     </div>
   )
