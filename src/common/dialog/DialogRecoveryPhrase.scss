@@ -1,4 +1,4 @@
-@import '../../themify', '../../vars';
+@import '../../themify', '../../vars', '../../partial';
 
 .DialogRecoveryPhrase {
   margin-bottom: 20px;
@@ -30,11 +30,9 @@
     text-align: right;
 
     .clear {
-      opacity: $secondary-opacity;
+      @extend %link;
       font-size: 12px;
       font-weight: bold;
-      text-decoration: underline;
-      cursor: pointer;
     }
   }
 

@@ -85,15 +85,9 @@
   text-transform: uppercase;
 }
 
-%dialog-info-link {
-  display: block;
-  margin-bottom: 15px;
-  padding: 5px 0;
+%link {
   transition: opacity $transition-duration;
   opacity: $secondary-opacity;
-  font-size: 12px;
-  font-weight: bold;
-  text-align: right;
   text-decoration: underline;
   cursor: pointer;
 
@@ -101,6 +95,16 @@
     transition: opacity $transition-duration;
     opacity: 1;
   }
+}
+
+%dialog-info-link {
+  @extend %link;
+  display: block;
+  margin-bottom: 15px;
+  padding: 5px 0;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: right;
 }
 
 %monospace {

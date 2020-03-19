@@ -3,29 +3,4 @@
 .BurnCentre {
   display: grid;
   grid-template-rows: auto auto 1fr;
-
-  .header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    .more {
-      align-self: end;
-      text-align: right;
-
-      .link {
-        margin: 0;
-        overflow: hidden;
-        opacity: $secondary-opacity;
-        font-size: 12px;
-        font-weight: bold;
-        letter-spacing: 1.8px;
-        cursor: pointer;
-
-        &:hover {
-          opacity: 1;
-          text-decoration: underline;
-        }
-      }
-    }
-  }
 }

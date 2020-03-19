@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../partial', '../vars';
 
 .BurnActions {
   .toolbar {
@@ -43,16 +43,10 @@
   }
 
   .no-balances {
+    @extend %link;
     margin: 20px auto;
+    opacity: $secondary-opacity;
     text-align: center;
-
-    .link {
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
 
   .balances {

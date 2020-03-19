@@ -45,9 +45,8 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
       </div>
       {burnBalances.length === 0 && (
         <div className="no-balances">
-          You have no burns in progress, to start burn,{' '}
           <span className="link" onClick={onBurnCoins}>
-            go here.
+            You have no burns in progress, to start burn, click here.
           </span>
         </div>
       )}
