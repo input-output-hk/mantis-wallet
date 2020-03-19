@@ -2,8 +2,7 @@ import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {Icon, Button} from 'antd'
-import formatDistance from 'date-fns/formatDistance'
-import {formatPercentage} from '../common/formatters'
+import {formatPercentage, toDurationString} from '../common/formatters'
 import {ShortNumber} from '../common/ShortNumber'
 import {DUST_SYMBOL} from '../pob/chains'
 import checkIcon from '../assets/icons/check.svg'
@@ -19,9 +18,6 @@ const PROGRESS_ICONS: Record<string, ReactNode> = {
 }
 
 const EPOCHS_REMAINING = 7
-
-const toDurationString = (seconds: number): string =>
-  formatDistance(0, seconds * 1000, {includeSeconds: true})
 
 interface PuzzleProgressProps {
   claim: Claim
