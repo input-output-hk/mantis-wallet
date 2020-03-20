@@ -5,10 +5,11 @@ import './LunaModal.scss'
 
 export const LunaModal: React.FunctionComponent<ModalProps> = (props) => (
   <Modal
-    width={636}
+    width={'auto'}
     footer={null}
     className="LunaModal"
     closeIcon={<Icon type="close" style={{fontSize: '40px'}} />}
+    centered
     {...props}
   />
 )
