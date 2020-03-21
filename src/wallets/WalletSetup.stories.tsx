@@ -92,5 +92,19 @@ export const showWalletCreateVerifyRecoveryStep = (): JSX.Element => (
       'offer',
       'baseball',
     ])}
+    shuffledSeedPhrase={array('Recovery Phrase Shuffled', [
+      'vengeful',
+      'legs',
+      'cute',
+      'rifle',
+      'bite',
+      'spell',
+      'ambiguous',
+      'impossible',
+      'fabulous',
+      'observe',
+      'offer',
+      'baseball',
+    ])}
   />
 )

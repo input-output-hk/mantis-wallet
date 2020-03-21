@@ -140,7 +140,12 @@ test('WalletCreate `Verify Recovery` step', () => {
   const finish = jest.fn()
 
   const {getByText} = render(
-    <WalletCreateVerifyRecoveryStep back={back} finish={finish} seedPhrase={seedPhrase} />,
+    <WalletCreateVerifyRecoveryStep
+      back={back}
+      finish={finish}
+      seedPhrase={seedPhrase}
+      shuffledSeedPhrase={seedPhrase}
+    />,
   )
 
   // Click seed words in correct order
