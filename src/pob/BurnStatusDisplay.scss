@@ -52,6 +52,7 @@
   .status {
     @extend %status-steps;
     grid-template-columns: repeat(3, auto 1fr) auto;
+    cursor: default;
   }
 
   .error {

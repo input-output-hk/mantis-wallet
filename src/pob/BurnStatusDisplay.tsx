@@ -54,7 +54,7 @@ const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
   },
   REVEAL_FAIL: {
     started: 'CHECKED',
-    success: 'FAILED',
+    success: 'CHECKED',
     confirm: 'FAILED',
   },
   REVEAL_DONE_ANOTHER_PROVER: {
@@ -71,6 +71,81 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" />,
 }
 
+const ShowLongText = ({content}: {content: string | null}): JSX.Element =>
+  content == null ? (
+    <></>
+  ) : (
+    <div className="long-text">
+      <Icon type="copy" className="clickable" onClick={() => copyToClipboard(content)} />{' '}
+      <Popover content={content} placement="top">
+        {content}
+      </Popover>
+    </div>
+  )
+
+const ProvingStarted = ({progress}: {progress: ProgressType}): JSX.Element => {
+  switch (progress) {
+    case 'IN_PROGRESS':
+      return (
+        <Popover
+          content="Waiting for enough confirmations from source blockchain to start."
+          placement="top"
+        >
+          {PROGRESS_ICONS[progress]} Proving Started
+        </Popover>
+      )
+    case 'CHECKED':
+      return (
+        <Popover content="Confirmations received from source blockchain." placement="top">
+          {PROGRESS_ICONS[progress]} Proving Started
+        </Popover>
+      )
+    default:
+      return <>{PROGRESS_ICONS[progress]} Proving Started</>
+  }
+}
+
+const ProvingSuccessful = ({progress}: {progress: ProgressType}): JSX.Element => {
+  switch (progress) {
+    case 'IN_PROGRESS':
+      return (
+        <Popover content="Proving underway." placement="top">
+          {PROGRESS_ICONS[progress]} Proving Successful
+        </Popover>
+      )
+    case 'CHECKED':
+      return (
+        <Popover content="Prover has successfully proved the burn transaction." placement="top">
+          {PROGRESS_ICONS[progress]} Proving Successful
+        </Popover>
+      )
+    default:
+      return <>{PROGRESS_ICONS[progress]} Proving Successful</>
+  }
+}
+
+const ProvingConfirmed = ({progress}: {progress: ProgressType}): JSX.Element => {
+  switch (progress) {
+    case 'IN_PROGRESS':
+      return (
+        <Popover content="Waiting for confirmations on Midnight." placement="top">
+          {PROGRESS_ICONS[progress]} Proving Confirmed
+        </Popover>
+      )
+    case 'CHECKED':
+      return (
+        <Popover
+          content="Burn Process complete. Midnight Tokens are now available."
+          placement="top"
+        >
+          {PROGRESS_ICONS[progress]} Proving Confirmed
+        </Popover>
+      )
+    default:
+      return <>{PROGRESS_ICONS[progress]} Proving Confirmed</>
+  }
+}
+
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
   burnStatus,
@@ -78,18 +153,6 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
 }: BurnStatusDisplayProps) => {
   const chain = CHAINS.find(({id}) => id === burnStatus.chain)
   const progress = STATUS_TO_PROGRESS[burnStatus.status]
-
-  const ShowLongText = ({content}: {content: string | null}): JSX.Element =>
-    content == null ? (
-      <></>
-    ) : (
-      <div className="long-text">
-        <Icon type="copy" className="clickable" onClick={() => copyToClipboard(content)} />{' '}
-        <Popover content={content} placement="bottom">
-          {content}
-        </Popover>
-      </div>
-    )
 
   return (
     <div className="BurnStatusDisplay">
@@ -113,13 +176,26 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         </div>
       </div>
       <div className="status">
-        <div className="progress">{PROGRESS_ICONS['CHECKED']} Found Transaction</div>
+        <div className="progress">
+          <Popover
+            content="Your burn transaction has been found on source blockchain."
+            placement="top"
+          >
+            {PROGRESS_ICONS['CHECKED']} Found Transaction
+          </Popover>
+        </div>
         <div className="line"></div>
-        <div className="progress">{PROGRESS_ICONS[progress.started]} Proving Started</div>
+        <div className="progress">
+          <ProvingStarted progress={progress.started} />
+        </div>
         <div className="line"></div>
-        <div className="progress">{PROGRESS_ICONS[progress.success]} Proving Successful</div>
+        <div className="progress">
+          <ProvingSuccessful progress={progress.success} />
+        </div>
         <div className="line"></div>
-        <div className="progress">{PROGRESS_ICONS[progress.confirm]} Proving Confirmed</div>
+        <div className="progress">
+          <ProvingConfirmed progress={progress.confirm} />
+        </div>
       </div>
       {errorMessage && (
         <div className="error">
