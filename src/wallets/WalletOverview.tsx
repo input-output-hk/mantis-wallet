@@ -6,7 +6,6 @@ import {ThemeState} from '../theme-state'
 import {LoadedState} from '../common/wallet-state'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {ShortNumber} from '../common/ShortNumber'
-import {bigToNumber} from '../common/util'
 import {OverviewGraph} from './OverviewGraph'
 import {SyncStatusContent} from '../common/SyncStatus'
 import dustIconDark from '../assets/dark/dust.png'
@@ -41,7 +40,9 @@ const _WalletOverview = ({
         <SyncStatusContent syncStatus={walletState.syncStatus} />
       </div>
       <div className="graph">
-        <OverviewGraph {..._.mapValues({pending, confidential, transparent}, bigToNumber)} />
+        <OverviewGraph
+          {..._.mapValues({pending, confidential, transparent}, (b) => b.toNumber())}
+        />
       </div>
       <div className="total">
         <div className="box-text">Available Balance</div>
