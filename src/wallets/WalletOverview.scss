@@ -1,18 +1,22 @@
 @import '../themify', '../vars';
 
-$header-height: 70px;
+$header-height: 110px;
 $header-text-height: 50px;
 
 $balance-padding: 24px 24px 0;
 
+$balance-width: 400px;
+$balance-min-width: 285px;
+
 .WalletOverview {
   display: grid;
   grid-template-areas:
-    'header header header'
-    'graph total total'
-    'graph confidential transparent';
-  grid-template-columns: auto 1fr 1fr;
-  grid-template-rows: $header-height 160px 115px;
+    'header header header header header'
+    'left confidential total transparent right';
+  grid-template-columns:
+    1fr minmax($balance-min-width, $balance-width) minmax($balance-min-width, $balance-width)
+    minmax($balance-min-width, $balance-width) 1fr;
+  grid-template-rows: $header-height $balance-width;
   margin: 0 0 100px;
 
   .svg {
@@ -25,6 +29,7 @@ $balance-padding: 24px 24px 0;
 
   .header {
     grid-area: header;
+    margin-bottom: 50px;
   }
 
   %header-row {
@@ -42,33 +47,41 @@ $balance-padding: 24px 24px 0;
   }
 
   .graph {
-    grid-area: graph;
-    margin: 20px 70px 0 0;
-  }
-
-  .total {
-    grid-area: total;
-    padding: $balance-padding;
-    overflow: hidden;
-    white-space: nowrap;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
   }
 
   %balance {
-    min-width: 205px;
+    height: 115px;
+    margin: auto;
     padding: $balance-padding;
-    overflow: hidden;
     white-space: nowrap;
+  }
+
+  .total {
+    @extend %balance;
+    position: relative;
+    grid-area: total;
+    width: 100%;
+    text-align: center;
   }
 
   .confidential {
     @extend %balance;
     grid-area: confidential;
-    margin-right: 30px;
+    justify-self: right;
+    margin-right: 20px;
   }
 
   .transparent {
     @extend %balance;
     grid-area: transparent;
+    width: 100%;
+    justify-self: left;
+    margin-left: 20px;
     border-radius: 20px;
 
     @include themify($themes) {
@@ -82,19 +95,14 @@ $balance-padding: 24px 24px 0;
     font-weight: bold;
     letter-spacing: 1.95px;
     line-height: 20px;
+    text-transform: uppercase;
   }
 
   .box-icon {
-    display: inline-block;
+    display: inline;
     position: relative;
-    width: 25px;
-
-    .svg {
-      position: absolute;
-      top: 50%;
-      bottom: 50%;
-      transform: translate(-20%, -60%);
-    }
+    top: 1px;
+    margin-right: 0.5em;
   }
 
   .box-info {
@@ -117,21 +125,18 @@ $balance-padding: 24px 24px 0;
   }
 
   .box-amount {
+    position: relative;
+    z-index: 10;
     font-size: 30px;
     font-weight: 300;
     letter-spacing: 0.69px;
     line-height: 44px;
   }
 
-  .box-amount-big {
-    padding-bottom: 7px;
-    font-size: 45px;
-    letter-spacing: 1.04px;
-    line-height: 44px;
-  }
-
   .dust {
-    margin-right: 6px;
-    float: left;
+    display: inline;
+    position: relative;
+    top: -2px;
+    margin-right: 0.5em;
   }
 }

@@ -39,14 +39,14 @@ const _WalletOverview = ({
         <span className="main-title">Wallet Overview</span>
         <SyncStatusContent syncStatus={walletState.syncStatus} />
       </div>
-      <div className="graph">
-        <OverviewGraph
-          {..._.mapValues({pending, confidential, transparent}, (b) => b.toNumber())}
-        />
-      </div>
       <div className="total">
+        <div className="graph">
+          <OverviewGraph
+            {..._.mapValues({pending, confidential, transparent}, (b) => b.toNumber())}
+          />
+        </div>
         <div className="box-text">Available Balance</div>
-        <div className="box-amount-big">
+        <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
           <ShortNumber big={available} />
         </div>
