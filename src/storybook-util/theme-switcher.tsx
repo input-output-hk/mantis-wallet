@@ -1,3 +1,4 @@
+import url from 'url'
 import React, {PropsWithChildren, useEffect} from 'react'
 import addons, {makeDecorator, StoryContext, StoryGetter} from '@storybook/addons'
 import {ThemeState} from '../theme-state'
@@ -21,6 +22,12 @@ const ThemeSwitcher: React.FunctionComponent<{}> = ({children}: PropsWithChildre
 
 const WithTheme = (storyFn: StoryGetter, context: StoryContext): JSX.Element => {
   const content = storyFn(context)
+
+  const currentURL = url.parse(window.location.href, true)
+  if (currentURL.query['theme'] === 'light') {
+    store.set(['settings', 'theme'], 'light')
+  }
+
   return (
     <ThemeState.Provider initialState={store}>
       <ThemeSwitcher>{content}</ThemeSwitcher>

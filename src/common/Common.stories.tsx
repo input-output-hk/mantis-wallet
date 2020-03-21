@@ -4,7 +4,9 @@ import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {ShortNumber} from './ShortNumber'
 import {Loading} from './Loading'
-import './Loading.scss'
+import {UNITS} from '../common/units'
+
+const {Dust} = UNITS
 
 export default {
   title: 'Common',
@@ -12,7 +14,7 @@ export default {
 }
 
 export const shortNumber = (): JSX.Element => (
-  <ShortNumber big={new BigNumber(number('Number', 123456789))} unit="Dust" />
+  <ShortNumber big={Dust.toBasic(new BigNumber(number('Number', 123456789)))} unit="Dust" />
 )
 
 export const loading = (): JSX.Element => (

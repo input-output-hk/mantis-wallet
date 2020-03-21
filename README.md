@@ -1,10 +1,8 @@
-# luna-wallet
+# Luna Wallet
 
-All relevant Luna development
+All scripts can be run in the project directory.
 
-## Available Scripts
-
-In the project directory, you can run:
+## Scripts for development
 
 ### `yarn build-main`
 
@@ -12,33 +10,71 @@ Builds the main process code to the `build/main` directory. It's required to be 
 
 ### `yarn start`
 
-Runs the renderer in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Runs the renderer in development mode, it can be accessed at [http://localhost:3000](http://localhost:3000). 
+
+:warning: This will only work through an Electron app - see [`yarn electron-dev`](#yarn-electron-dev)
+
+### `yarn electron-dev`
+
+`yarn electron-dev` will open the Electron application in debug mode.
+
+:warning: You will have to run [`yarn build-main`](#yarn-electron-dev) before this action.
+
+:warning: The renderer needs to be running - see [`yarn start`](#yarn-start).
+
+### `yarn dev`
+
+This runs [`yarn build-main`](#yarn-electron-dev) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
+
+### `yarn storybook`
+
+Starts storybook in debug mode.
+
+## Testing and code health related scripts
 
 ### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode. See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+:information_source: This command excludes the screenshot tests.
+
+### `yarn storyshots`
+
+Launches the test runner for the storybook screenshot tests in interactive watch mode.
+
+:information_source: You can use the interactive mode to update the snapshots (`u` command) or you can run `yarn storyshots --updateSnapshot`.
+
+:warning: Since these tests use Storybook, [`yarn storybook`](#yarn-storybook) has to be run before this action.
+
+### `yarn prettier`
+
+Prettifies the code.
+
+### `yarn lint`
+
+Runs all linting: prettier checks, eslint and stylelint.
+
+## Scripts for production
 
 ### `yarn build-renderer`
 
 Builds the app for production to the `build` folder.
 
-### `yarn electron-dev`
-
-`yarn start` followed by `yarn electron-dev` will open the debug Electron application.
-
 ### `yarn electron`
 
 `yarn build-renderer` and `yarn build-main` followed by `yarn electron` will open the production version of the Electron application.
 
-### `yarn storybook`
-
-Starts debug storybook.
-
 ### `yarn build-storybook`
 
 Creates a static storybook build in the `storybook-static` directory.
+
+### `yarn build-dist`
+
+Packages the application for Linux and Mac in `dist` folder.
+
+### `yarn build-dist-win`
+
+Packages the application for Windows in `dist` folder.
 
 ## Windows
 

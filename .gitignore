@@ -16,6 +16,9 @@ yalc.lock
 /storybook-static
 /dist
 
+# snapshot-diffs
+image-snapshots/__diff_output__
+
 # misc
 .DS_Store
 .env.local
