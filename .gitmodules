@@ -1,3 +1,6 @@
 [submodule "midnight-remix"]
 	path = midnight-remix
 	url = git@github.com:input-output-hk/midnight-remix
+[submodule "midnight"]
+	path = midnight
+	url = git@github.com:input-output-hk/midnight
