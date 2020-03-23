@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {Button, Dropdown, Menu, Icon} from 'antd'
+import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
 import * as record from 'fp-ts/lib/Record'
 import {sort, map} from 'fp-ts/lib/Array'
@@ -18,6 +19,7 @@ interface TransactionHistoryProps {
   transactions: Transaction[]
   transparentAddresses: TransparentAddress[]
   accounts: Account[]
+  availableBalance: BigNumber
 }
 
 type Property = 'type' | 'amount' | 'time' | 'status'
@@ -85,7 +87,7 @@ const getOrd = (sortBy: SortBy): Ord<Transaction> =>
 const _TransactionHistory = (
   props: PropsWithWalletState<TransactionHistoryProps, LoadedState>,
 ): JSX.Element => {
-  const {transactions, accounts, walletState} = props
+  const {transactions, accounts, walletState, availableBalance} = props
 
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -150,6 +152,7 @@ const _TransactionHistory = (
           <SendTransaction
             visible={showSendModal}
             accounts={accounts}
+            availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
             onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
               await walletState.sendTransaction(recipient, amount, fee)

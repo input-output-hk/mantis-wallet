@@ -1,9 +1,7 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {Option, none, some} from 'fp-ts/lib/Option'
-import {withKnobs, text, boolean, array, select, number} from '@storybook/addon-knobs'
-import BigNumber from 'bignumber.js'
-import {toWei} from 'web3/lib/utils/utils.js'
+import {withKnobs, text, boolean, array, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {Dialog} from './Dialog'
@@ -21,7 +19,7 @@ import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
-import {selectChain} from '../storybook-util/custom-knobs'
+import {selectChain, dust} from '../storybook-util/custom-knobs'
 import {DialogShowDust} from './dialog/DialogShowDust'
 
 export default {
@@ -188,7 +186,7 @@ export const InteractiveSecrets: React.FunctionComponent<{}> = () => {
 export const InteractiveShowDust: React.FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Secrets">
-      <DialogShowDust amount={toWei(new BigNumber(number('Dust amount', 123.456)))}>
+      <DialogShowDust amount={dust('Dust amount', 123.456)}>
         {text('Show Dust label', 'Dust amount')}
       </DialogShowDust>
     </Dialog>

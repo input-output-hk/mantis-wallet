@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import _ from 'lodash'
+import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
@@ -11,17 +12,20 @@ import {DialogError} from '../../common/dialog/DialogError'
 import {useIsMounted} from '../../common/hook-utils'
 import {validateAmount} from '../../common/util'
 import {UNITS} from '../../common/units'
+import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import './SendTransaction.scss'
 
 const {Dust} = UNITS
 
 interface SendTransactionProps {
   accounts: Account[]
+  availableAmount: BigNumber
   onSend: (recipient: string, amount: number, fee: number) => Promise<void>
 }
 
 export const SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({
   accounts,
+  availableAmount,
   onSend,
   ...props
 }: SendTransactionProps & ModalProps) => {
@@ -64,6 +68,7 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
           label="Select Account"
           options={accounts.map(({address}) => address).filter(_.isString)}
         />
+        <DialogShowDust amount={availableAmount}>Available Amount</DialogShowDust>
         <DialogInput
           label="Recipient"
           onChange={(e): void => setRecipient(e.target.value)}
