@@ -42,9 +42,17 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
 
   const disableGenerate = !!validateAmount(fee) || !approval
 
+  const title = (
+    <>
+      Token Exchange Rate: 1 {chain.symbol} <SVG src={exchangeIcon} className="svg" /> 1 M-
+      {chain.symbol}
+    </>
+  )
+
   return (
     <div className="BurnCoinsGenerateAddress">
       <Dialog
+        title={title}
         leftButtonProps={{onClick: cancel}}
         rightButtonProps={{
           children: `Generate ${chain.symbol} Address`,
@@ -67,9 +75,6 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
         }}
         footer={errors}
       >
-        <div className="exchange">
-          0.1 {chain.symbol} <SVG src={exchangeIcon} className="svg" /> 0.1 M-{chain.symbol}
-        </div>
         <DialogDropdown
           label="Select Receive Address"
           options={transparentAddresses}
@@ -91,7 +96,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           }}
         />
         <DialogInput
-          label="Assign reward for your prover"
+          label={`Assign reward in M-${chain.symbol} for your prover`}
           value={fee}
           onChange={(e) => setFee(e.target.value)}
           errorMessage={validateAmount(fee)}
@@ -103,9 +108,12 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           description={
             <>
               This will generate a {chain.name} Address to which you can send {chain.name} to be
-              burned and converted into Midnight Tokens. these Midnight Tokens can be used to
-              participate in an Auction to win spendable Dust Tokens. The Burn process is
-              irreversible and the {chain.name} burned will be unspendable forever.
+              burned and converted into Midnight Tokens. These Midnight Tokens can be used to
+              participate in an Auction to win spendable Dust Tokens.{' '}
+              <b>
+                The Burn process is irreversible and the {chain.name} Tokens burned will be
+                unspendable forever.
+              </b>
               <br />
               <br />I understand the process
             </>

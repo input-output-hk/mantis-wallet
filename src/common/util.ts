@@ -16,15 +16,6 @@ export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
 }
 
-export function bigToNumber(bigNumber: BigNumber): number {
-  return parseFloat(bigNumber.toString(10))
-}
-
-export function hasMaxDecimalPlaces(bigNumber: BigNumber, decimalPlaces: number): boolean {
-  const mod = new BigNumber(`0.${''.padStart(decimalPlaces - 1, '0')}1`)
-  return bigNumber.modulo(mod).isZero()
-}
-
 export const toHex = (n: number): string => `0x${n.toString(16)}`
 
 export const loadAll = async <T>(
@@ -45,7 +36,7 @@ export function validateAmount(v: string): string {
 
   if (!n.isFinite() || !n.isGreaterThan(new BigNumber(0))) {
     return 'Must be a number greater than 0'
-  } else if (!hasMaxDecimalPlaces(n, 6)) {
+  } else if (n.dp() > 6) {
     return 'At most 6 decimal places are permitted'
   } else {
     return ''

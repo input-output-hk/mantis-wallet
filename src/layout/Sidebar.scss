@@ -3,7 +3,7 @@
 .Sidebar {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  width: 450px;
+  width: $sidebar-width;
   height: 100vh;
 
   @include themify($themes) {
@@ -112,9 +112,9 @@
     }
   }
 
-  @media screen and (max-width: 1400px) {
+  @media screen and (max-width: $sidebar-collapse-at) {
     $mini-left-padding: 73px;
-    width: 200px;
+    width: $sidebar-collapsed-width;
 
     .title {
       padding-left: $mini-left-padding;

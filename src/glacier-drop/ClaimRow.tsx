@@ -4,7 +4,6 @@ import BigNumber from 'bignumber.js'
 import {Icon, Button} from 'antd'
 import formatDistance from 'date-fns/formatDistance'
 import {formatPercentage} from '../common/formatters'
-import {bigToNumber} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {DUST_SYMBOL} from '../pob/chains'
 import checkIcon from '../assets/icons/check.svg'
@@ -74,7 +73,7 @@ const UnfreezeDetail = ({claim, onWithdrawDust}: UnfreezeDetailProps): JSX.Eleme
   if (puzzleStatus === 'solving' || !unfrozen) {
     return <div>0%</div>
   }
-  if (bigToNumber(unfrozenDustAmount) === 0) {
+  if (unfrozenDustAmount.isZero()) {
     return (
       <>
         <div>
@@ -111,7 +110,7 @@ interface WithdrawDetailProps {
 
 const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
   const {withdrawnDustAmount, dustAmount} = claim
-  if (bigToNumber(withdrawnDustAmount) === 0) {
+  if (withdrawnDustAmount.isZero()) {
     return <div className="withdraw-progress">0%</div>
   }
   return (

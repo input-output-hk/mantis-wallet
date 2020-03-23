@@ -9,7 +9,7 @@ interface DialogButtonProps {
 }
 
 interface DialogProps {
-  title?: string
+  title?: React.ReactNode
   type?: 'normal' | 'dark'
   buttonDisplayMode?: 'natural' | 'grid'
   leftButtonProps?: ButtonProps & DialogButtonProps

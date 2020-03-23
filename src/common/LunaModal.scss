@@ -1,6 +1,12 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 .LunaModal {
+  margin-left: $sidebar-width;
+
+  @media screen and (max-width: $sidebar-collapse-at) {
+    margin-left: $sidebar-collapsed-width;
+  }
+
   @include themify($themes) {
     color: themed('text-color');
   }
