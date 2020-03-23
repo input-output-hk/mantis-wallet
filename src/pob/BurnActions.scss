@@ -1,10 +1,9 @@
-@import '../themify';
+@import '../themify', '../partial', '../vars';
 
 .BurnActions {
   .toolbar {
     display: grid;
     grid-template-columns: 1fr auto;
-    line-height: 30px;
 
     .wallet {
       margin: 0;
@@ -12,6 +11,13 @@
       font-size: 20px;
       font-weight: bold;
       letter-spacing: 0.46px;
+    }
+
+    .link {
+      @extend %link;
+      display: inline-block;
+      font-weight: bold;
+      vertical-align: bottom;
     }
 
     .action {
@@ -43,16 +49,10 @@
   }
 
   .no-balances {
+    @extend %link;
     margin: 20px auto;
+    opacity: $secondary-opacity;
     text-align: center;
-
-    .link {
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
 
   .balances {

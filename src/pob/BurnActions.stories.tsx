@@ -1,7 +1,7 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import {toWei} from 'web3/lib/utils/utils.js'
-import {withKnobs, number} from '@storybook/addon-knobs'
+import {withKnobs, number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {BurnBalance} from './BurnBalance'
@@ -10,6 +10,7 @@ import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
 import {toSatoshi} from '../common/util'
+import {AddBurnTxModal} from './modals/AddBurnTxModal'
 
 export default {
   title: 'Burn Actions',
@@ -72,5 +73,41 @@ export const burnBalanceBitcoin = (): JSX.Element => (
     chain={CHAINS[1]}
     total={toSatoshi(new BigNumber(number('Total', 1000)))}
     pending={toSatoshi(new BigNumber(number('Pending', 100)))}
+  />
+)
+
+export const addTransactionModal = (): JSX.Element => (
+  <AddBurnTxModal
+    provers={[
+      {
+        name: text('First prover', 'First prover'),
+        address: text('First prover address', 'first.prover.address'),
+        reward: number('First prover reward', 0.01),
+      },
+      {
+        name: text('Second prover', 'Second prover'),
+        address: text('Second prover address', 'second.prover.address'),
+        reward: number('Second prover reward', 10),
+      },
+    ]}
+    burnAddresses={{
+      [text('Burn Address Ethereum', 'burn-address-ethereum')]: {
+        midnightAddress: 'midnight-address',
+        chainId: 'ETH_TESTNET',
+        reward: 1,
+        autoConversion: false,
+      },
+      [text('Burn Address Bitcoin', 'burn-address-bitcoin')]: {
+        midnightAddress: 'midnight-address',
+        chainId: 'BTC_TESTNET',
+        reward: 1,
+        autoConversion: false,
+      },
+    }}
+    onAddTx={async (...args): Promise<void> => {
+      action('on-generate-address')(args)
+    }}
+    onCancel={action('on-cancel')}
+    visible
   />
 )

@@ -1,5 +1,4 @@
 // Convict formats require throwing errors to validate values
-/* eslint-disable fp/no-throw */
 import path from 'path'
 import fs from 'fs'
 import * as os from 'os'
