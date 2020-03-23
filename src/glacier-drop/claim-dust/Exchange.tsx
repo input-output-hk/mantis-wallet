@@ -8,7 +8,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {Asset} from './Asset'
-import {EstimatedDust} from './EstimatedDust'
+import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import './Exchange.scss'
 
 interface ExchangeProps {
@@ -52,7 +52,7 @@ export const Exchange = ({
         <Asset amount={externalAmount} chain={chain}>
           {chain.symbol} Balance
         </Asset>
-        <EstimatedDust amount={midnightAmount}>You are eligible for</EstimatedDust>
+        <DialogShowDust amount={midnightAmount}>You are eligible for</DialogShowDust>
         <DialogApproval
           description={`Confirm ${chain.symbol} Balance OK`}
           checked={extrernalBalanceConfirmed}

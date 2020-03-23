@@ -8,7 +8,7 @@ import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {Asset} from './Asset'
-import {EstimatedDust} from './EstimatedDust'
+import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import './ClaimWith.scss'
 
 interface ClaimWithMessageProps {
@@ -57,9 +57,9 @@ export const ClaimWithMessage = ({
         <Asset amount={externalAmount} chain={chain}>
           Asset
         </Asset>
-        <EstimatedDust amount={midnightAmount}>
+        <DialogShowDust amount={midnightAmount}>
           Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
-        </EstimatedDust>
+        </DialogShowDust>
         <DialogMessage label="Destination Address" description={midnightAddress} />
         <DialogApproval
           description="I’m aware that I have to keep my Luna wallet open during unlocking "

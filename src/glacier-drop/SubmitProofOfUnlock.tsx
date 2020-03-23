@@ -7,7 +7,7 @@ import {Dialog} from '../common/Dialog'
 import {DialogInput, DialogInputPassword} from '../common/dialog/DialogInput'
 import {DialogColumns} from '../common/dialog/DialogColumns'
 import {DialogMessage} from '../common/dialog/DialogMessage'
-import {EstimatedDust} from './claim-dust/EstimatedDust'
+import {DialogShowDust} from '../common/dialog/DialogShowDust'
 import './SubmitProofOfUnlock.scss'
 
 interface SubmitProofOfUnlockProps {
@@ -46,7 +46,7 @@ export const SubmitProofOfUnlock = ({
         type="dark"
       >
         <DialogMessage label="Midnight Transparent Address" description={midnightAddress} />
-        <EstimatedDust amount={midnightAmount}>Eligible Amount</EstimatedDust>
+        <DialogShowDust amount={midnightAmount}>Eligible Amount</DialogShowDust>
         <DialogColumns>
           <DialogInput
             label="Gas Price"
