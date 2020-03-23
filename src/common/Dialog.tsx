@@ -44,7 +44,7 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
     <div className={classnames('Dialog', type)}>
       {title && <div className="title">{title}</div>}
       <form onSubmit={(e) => e.preventDefault()}>
-        <div>{children}</div>
+        <div className="dialog-children">{children}</div>
         <div className={classnames('actions', buttonDisplayMode)}>
           {!leftButtonProps.doNotRender && <Button {...leftButtonPropsToUse} />}
           {!rightButtonProps.doNotRender && <Button {...rightButtonPropsToUse} />}

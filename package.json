@@ -86,7 +86,6 @@
     "react-inlinesvg": "^1.2.0",
     "react-polymorph": "^0.9.0-rc.24",
     "react-scripts": "^3.3.0",
-    "redux": "^4.0.4",
     "rxjs": "^6.5.4",
     "typescript": "3.7.3",
     "unstated-next": "^1.1.0",

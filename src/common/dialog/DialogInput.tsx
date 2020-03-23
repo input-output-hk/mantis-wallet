@@ -1,4 +1,5 @@
 import React, {Ref, forwardRef} from 'react'
+import classnames from 'classnames'
 import {Input} from 'antd'
 import Password from 'antd/lib/input/Password'
 import {InputProps, PasswordProps} from 'antd/lib/input'
@@ -9,14 +10,16 @@ import './DialogInput.scss'
 interface DialogInputProps {
   id?: string
   label?: string
+  className?: string
 }
 
 const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
   children,
   label,
   id,
+  className,
 }: React.PropsWithChildren<DialogInputProps>) => (
-  <div className="DialogInput">
+  <div className={classnames('DialogInput', className)}>
     {label && (
       <label className="label" htmlFor={id}>
         {label}
@@ -30,7 +33,7 @@ const _DialogInputPassword: React.RefForwardingComponent<
   Password,
   InlineErrorProps & PasswordProps & DialogInputProps
 > = ({label, ...props}: DialogInputProps, ref: Ref<Password>) => (
-  <AbstractDialogInput label={label} id={props.id}>
+  <AbstractDialogInput label={label} id={props.id} className="DialogInputPassword">
     <BorderlessInputPassword className="input" {...props} ref={ref} />
   </AbstractDialogInput>
 )

@@ -11,11 +11,27 @@
   .input {
     height: 47px;
   }
-}
 
-.Dialog.dark .DialogInput .input {
-  @include themify($themes) {
-    background-color: themed('quaternary-background');
-    color: themed('secondary-text-color');
+  .dark & {
+    .ant-input {
+      @include themify($themes) {
+        background-color: themed('dialog-dark-input-bg');
+        color: themed('secondary-text-color');
+      }
+    }
+
+    .input {
+      @include themify($themes) {
+        background-color: themed('quaternary-background');
+        color: themed('secondary-text-color');
+      }
+
+      svg {
+        @include themify($themes) {
+          stroke: themed('text-color');
+          fill: themed('text-color');
+        }
+      }
+    }
   }
 }

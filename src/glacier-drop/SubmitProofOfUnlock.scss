@@ -1,13 +1,8 @@
-@import '../../partial';
+@import '../partial';
 
-.ClaimWith {
+.SubmitProofOfUnlock {
   .dialog-children {
     margin-bottom: 3rem;
-  }
-
-  button.ant-btn {
-    width: 100%;
-    text-align: center;
   }
 
   .DialogMessage .description {
