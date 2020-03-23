@@ -7,6 +7,7 @@ import {GlacierDropOverview, Claim, availableChains} from './GlacierDropOverview
 import {ClaimRow} from './ClaimRow'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
+import {Epochs, EpochRow} from './Epochs'
 
 export default {
   title: 'Glacier Drop',
@@ -106,3 +107,32 @@ export const withdrawAvailableDust = (): JSX.Element => (
     onCancel={action('onCancel')}
   />
 )
+
+export const epochs = (): JSX.Element => {
+  const epochRows: EpochRow[] = [
+    {
+      walletId: number('Wallet ID', 1),
+      midnightAddress: text('Address', MIDNIGHT_ADDRESS),
+      dustAmount: new BigNumber(number('Amount', EXAMPLE_AMOUNT)),
+    },
+    {
+      walletId: 2,
+      midnightAddress: 'm-main-uns-ABCDjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
+      dustAmount: new BigNumber(9876543219876543212),
+    },
+    {
+      walletId: 3,
+      midnightAddress: 'm-main-uns-DEFGjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
+      dustAmount: new BigNumber(6789876789876),
+    },
+  ]
+  return (
+    <Epochs
+      visible
+      epochRows={epochRows}
+      numberOfEpochs={number('Number of Epochs', 9)}
+      currentEpoch={number('Current Epoch', 3)}
+      secondsLeft={number('Seconds Left', 123456)}
+    />
+  )
+}

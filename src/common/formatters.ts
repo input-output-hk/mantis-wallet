@@ -1,6 +1,9 @@
 import BigNumber from 'bignumber.js'
+import formatDistance from 'date-fns/formatDistance'
+import {enUS} from 'date-fns/locale'
 
 const LOCALE = 'en-US'
+const DATE_FNS_LOCALE = enUS
 
 const dateTimeFormatSettings = {
   year: 'numeric',
@@ -37,9 +40,6 @@ export const formatPercentage = (ratio: number | BigNumber): string => {
   }
 }
 
-export const formatDate = (d: Date): string =>
-  new Intl.DateTimeFormat(LOCALE, dateTimeFormatSettings).format(d)
-
 export const abbreviateAmount = (amount: BigNumber): {relaxed: string; strict: string} => {
   const log10 = amount.isZero() ? 0 : Math.log10(amount.toNumber()) | 0
 
@@ -50,3 +50,9 @@ export const abbreviateAmount = (amount: BigNumber): {relaxed: string; strict: s
     relaxed: formatAmount(amount, decimalPlaces, 'relaxed'),
   }
 }
+
+export const formatDate = (d: Date): string =>
+  new Intl.DateTimeFormat(LOCALE, dateTimeFormatSettings).format(d)
+
+export const toDurationString = (seconds: number): string =>
+  formatDistance(0, seconds * 1000, {includeSeconds: true, locale: DATE_FNS_LOCALE})
