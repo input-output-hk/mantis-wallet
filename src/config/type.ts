@@ -11,7 +11,6 @@ export interface ProcessConfig {
 export interface ProverConfig {
   name: string
   address: string
-  reward: number
 }
 
 export type ClientName = 'node' | 'wallet'

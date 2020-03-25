@@ -10,6 +10,7 @@ import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {UNITS} from '../common/units'
+import {prover} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Actions',
@@ -70,16 +71,15 @@ export const burnBalanceBitcoin = (): JSX.Element => (
 export const addTransactionModal = (): JSX.Element => (
   <AddBurnTxModal
     provers={[
-      {
-        name: text('First prover', 'First prover'),
-        address: text('First prover address', 'first.prover.address'),
-        reward: number('First prover reward', 0.01),
-      },
-      {
-        name: text('Second prover', 'Second prover'),
-        address: text('Second prover address', 'second.prover.address'),
-        reward: 10,
-      },
+      prover('First', {
+        rewards: {
+          BTC_MAINNET: 150,
+          BTC_TESTNET: 100,
+          ETH_MAINNET: 250,
+          ETH_TESTNET: 200,
+        },
+      }),
+      prover('Second'),
     ]}
     burnAddresses={{
       [text('Burn Address Ethereum', 'burn-address-ethereum')]: {

@@ -5,20 +5,20 @@ import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {ProverConfig} from '../../config/type'
 import {Chain} from '../chains'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {validateAmount} from '../../common/util'
+import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
   chain: Chain
-  provers: ProverConfig[]
+  provers: Prover[]
   transparentAddresses: string[]
   cancel: () => void
-  generateBurnAddress: (prover: ProverConfig, midnightAddress: string, fee: number) => Promise<void>
+  generateBurnAddress: (prover: Prover, midnightAddress: string, fee: number) => Promise<void>
 }
 
 export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerateAddressProps> = ({
@@ -28,13 +28,18 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   cancel,
   generateBurnAddress,
 }: BurnCoinsGenerateAddressProps) => {
-  const [prover, setProver] = useState(provers[0])
-  const [fee, setFee] = useState(prover?.reward.toString(10) || '1')
+  const compatibleProvers = provers.filter((p) => p.rewards[chain.id] !== undefined)
+  const [prover, setProver] = useState(compatibleProvers[0])
+  const [fee, setFee] = useState(prover?.rewards[chain.id]?.toString(10) || '10')
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
   const [approval, setApproval] = useState(false)
 
   const [inProgress, setInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(
+    compatibleProvers.length === 0
+      ? 'No compatible provers found. Please select different token.'
+      : '',
+  )
 
   const mounted = useIsMounted()
 
@@ -83,15 +88,15 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
         <DialogDropdown
           type="small"
           label="Prover"
-          options={provers.map((prover) => ({
+          options={compatibleProvers.map((prover) => ({
             key: prover.address,
             label: `${prover.name} (${prover.address})`,
           }))}
           onChange={(proverAddress) => {
-            const prover = provers.find(({address}) => proverAddress === address)
+            const prover = compatibleProvers.find(({address}) => proverAddress === address)
             if (prover) {
               setProver(prover)
-              setFee(prover.reward.toString(10))
+              setFee(prover.rewards[chain.id]?.toString(10) || '10')
             }
           }}
         />

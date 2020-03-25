@@ -4,10 +4,10 @@ import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {ProverConfig} from '../../config/type'
+import {Prover} from '../pob-state'
 
 interface WatchBurnModalProps {
-  provers: ProverConfig[]
+  provers: Prover[]
   onWatchBurn: (proverAddress: string, bunrAddress: string) => void
 }
 
