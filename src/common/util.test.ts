@@ -1,6 +1,13 @@
 import {assert} from 'chai'
 import BigNumber from 'bignumber.js'
-import {deserializeBigNumber, validateAmount, bigSum, bech32toHex, hexToBech32} from './util'
+import {
+  deserializeBigNumber,
+  validateAmount,
+  isGreaterOrEqual,
+  bigSum,
+  bech32toHex,
+  hexToBech32,
+} from './util'
 import {BigNumberJSON} from '../web3'
 
 it('deserializes BigNumber correctly', () => {
@@ -20,6 +27,8 @@ it('validates amount correctly', () => {
   assert.equal(validateAmount('0.000001'), '')
   assert.equal(validateAmount('24323423.345141'), '')
   assert.equal(validateAmount('342423'), '')
+  assert.equal(validateAmount('5', [isGreaterOrEqual(5)]), '')
+  assert.equal(validateAmount('4.99', [isGreaterOrEqual(5)]), 'Must be at least 5')
 })
 
 it('sums bignumbers', () => {
