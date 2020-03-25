@@ -1,11 +1,21 @@
 import * as t from 'io-ts'
 import * as tPromise from 'io-ts-promise'
 import _ from 'lodash'
+import {pipe} from 'fp-ts/lib/pipeable'
+import {fold} from 'fp-ts/lib/Either'
+import {ExtendableError} from '../../common/extendable-error'
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher, BurnAddressInfo} from '../pob-state'
 import {ChainId} from '../chains'
 
-export const NO_BURN_OBSERVED = 'No burn transactions observed.'
+const GenericError = t.type({
+  error: t.type({
+    message: t.string,
+    code: t.number,
+  }),
+})
+
+export const NO_BURN_OBSERVED = 'No burn transactions observed since observation start.'
 
 const NoBurnStatus = t.type({
   status: t.literal(NO_BURN_OBSERVED),
@@ -79,6 +89,34 @@ const REQUEST_MODE_PORT: Record<RequestMode, number> = {
   submitter: 5047,
 }
 
+export class ProverApiError extends ExtendableError {
+  response: unknown
+  code?: number
+
+  constructor(message: string, response: unknown, code?: number) {
+    super(message)
+    this.response = response // eslint-disable-line
+    this.code = code // eslint-disable-line
+  }
+}
+
+export const prettyErrorMessage = (
+  error: Error,
+  prettyApiError: (apiError: ProverApiError) => string = (e) => e.message,
+): string => {
+  console.error(error)
+
+  if (tPromise.isDecodeError(error)) {
+    return 'Unexpected response from prover.'
+  }
+
+  if (error instanceof ProverApiError) {
+    return prettyApiError(error)
+  }
+
+  return 'Unexpected error while communicating with prover.'
+}
+
 const httpRequest = async (
   proverConfig: ProverConfig,
   mode: RequestMode,
@@ -97,8 +135,20 @@ const httpRequest = async (
   })
 
   if (!res.ok) {
-    console.error(await res.json())
-    throw new Error("Couldn't process request")
+    const response = await res.json()
+    const {errorMessage, errorCode}: {errorMessage: string; errorCode?: number} = pipe(
+      GenericError.decode(response),
+      fold(
+        () => ({
+          errorMessage: 'Unknown error',
+        }),
+        (err) => ({
+          errorMessage: err.error.message,
+          errorCode: err.error.code,
+        }),
+      ),
+    )
+    throw new ProverApiError(`Couldn't process request: ${errorMessage}`, response, errorCode)
   }
 
   return res.json()
