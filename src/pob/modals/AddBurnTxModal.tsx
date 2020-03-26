@@ -7,7 +7,7 @@ import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {ProverConfig} from '../../config/type'
 import {BurnAddressInfo} from '../pob-state'
-import {getChainById} from '../chains'
+import {CHAINS} from '../chains'
 import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 
@@ -91,7 +91,7 @@ export const AddBurnTxModal: React.FunctionComponent<AddBurnTxModalProps & Modal
           type="small"
           options={_.toPairs(burnAddresses).map(([burnAddress, {chainId, reward}]) => ({
             key: burnAddress,
-            label: `(Reward: ${reward} M-${getChainById(chainId).symbol}) ${burnAddress}`,
+            label: `(Reward: ${reward} M-${CHAINS[chainId].symbol}) ${burnAddress}`,
           }))}
           onChange={setBurnAddress}
         />
