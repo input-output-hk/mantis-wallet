@@ -30,26 +30,41 @@ export interface TransparentAddress {
 
 // Transaction
 
+// Tx statuses
 interface ConfirmedTxStatus {
   status: 'confirmed'
   atBlock: string
+  timestamp: number
 }
 interface PersistedTxStatus {
   status: 'persisted'
   atBlock: string
+  timestamp: number
 }
 
 export type TxStatus = 'pending' | 'failed' | ConfirmedTxStatus | PersistedTxStatus
 
+// Tx details
 interface RedeemTxDetails {
   txType: 'redeem'
   usedTransparentAccountIndex: number
+}
+
+interface TransparentTransaction {
+  nonce: string // hex string
+  gasPrice: string // hex string
+  gasLimit: string // hex string
+  receivingAddress: string | null // bech32 string
+  sendingAddress: string // bech32 string
+  value: string // hex string
+  payload: string // hex string
 }
 
 interface CallTxDetails {
   txType: 'call'
   usedTransparentAccountIndex: number
   transparentTransactionHash: string
+  transparentTransaction: TransparentTransaction
 }
 
 interface TransferTxDetails {
@@ -69,6 +84,7 @@ interface BaseTransaction {
   txStatus: TxStatus
 }
 
+// Main tx types
 interface IncomingTransaction extends BaseTransaction {
   txDirection: 'incoming'
   txValue: string

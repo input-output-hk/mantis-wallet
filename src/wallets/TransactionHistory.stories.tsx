@@ -80,6 +80,7 @@ export const interactive = (): JSX.Element => {
           txStatus: {
             status: 'confirmed',
             atBlock: '0x1',
+            timestamp: 1584527520,
           },
           txDetails: {
             txType: 'transfer',
@@ -92,6 +93,7 @@ export const interactive = (): JSX.Element => {
           txStatus: {
             status: 'confirmed',
             atBlock: '0x1',
+            timestamp: 1584527720,
           },
           txDetails: {
             txType: 'transfer',

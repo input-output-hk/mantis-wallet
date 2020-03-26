@@ -2,9 +2,11 @@ import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
+import {fromUnixTime} from 'date-fns'
 import {Transaction} from '../web3'
 import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
+import {formatDate} from '../common/formatters'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import incomingIcon from '../assets/icons/incoming.svg'
@@ -22,7 +24,10 @@ export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.E
 
   const value = typeof txValue === 'string' ? txValue : txValue.value
   const status = typeof txStatus === 'string' ? txStatus : txStatus.status
-  const atBlock = txStatus === 'pending' || txStatus === 'failed' ? '' : txStatus.atBlock
+  const dateString =
+    txStatus === 'pending' || txStatus === 'failed'
+      ? ''
+      : formatDate(fromUnixTime(txStatus.timestamp))
 
   return (
     <tr>
@@ -53,8 +58,7 @@ export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.E
           <ShortNumber big={new BigNumber(value)} />
         </span>
       </td>
-      {/* FIXME: get proper date from transaction */}
-      <td className="line">{atBlock}</td>
+      <td className="line">{dateString}</td>
       <td className="line">
         {status === 'confirmed' && (
           <>

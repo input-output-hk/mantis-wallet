@@ -10,6 +10,7 @@ import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
 import {abbreviateAmount} from '../common/formatters'
+import {toHex} from '../common/util'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -30,6 +31,7 @@ const tx1: Transaction = {
   txStatus: {
     status: 'confirmed',
     atBlock: '0x1',
+    timestamp: 1584527520,
   },
   txValue: toWei('123'),
   txDetails: {
@@ -48,7 +50,16 @@ const tx2: Transaction = {
   txDetails: {
     txType: 'call',
     usedTransparentAccountIndex: 0,
-    transparentTransactionHash: '',
+    transparentTransactionHash: 'transparentTransactionHash',
+    transparentTransaction: {
+      nonce: toHex(12345),
+      gasPrice: toHex(12345),
+      gasLimit: toHex(12345),
+      receivingAddress: 'receivingAddress',
+      sendingAddress: 'sendingAddress',
+      value: toHex(12345),
+      payload: toHex(12345),
+    },
   },
 }
 
