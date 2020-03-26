@@ -6,7 +6,10 @@ import ethereumClippedLogo from '../assets/icons/chains/ethereum-clipped.svg'
 import ethereumBurnLogo from '../assets/icons/chains/m-eth.svg'
 import {UnitType} from '../common/ShortNumber'
 
-export type ChainId = 'BTC_MAINNET' | 'BTC_TESTNET' | 'ETH_MAINNET' | 'ETH_TESTNET'
+export const ALL_CHAIN_IDS = ['BTC_MAINNET', 'BTC_TESTNET', 'ETH_MAINNET', 'ETH_TESTNET'] as const
+type ChainIdsType = typeof ALL_CHAIN_IDS
+
+export type ChainId = ChainIdsType[number]
 
 export interface Chain {
   id: ChainId
@@ -19,8 +22,8 @@ export interface Chain {
   unitType: UnitType
 }
 
-export const CHAINS: Chain[] = [
-  {
+export const CHAINS: Record<ChainId, Chain> = {
+  BTC_MAINNET: {
     id: 'BTC_MAINNET',
     numericId: 0,
     symbol: 'BTC',
@@ -30,7 +33,7 @@ export const CHAINS: Chain[] = [
     burnLogo: bitcoinBurnLogo,
     unitType: 'Bitcoin',
   },
-  {
+  BTC_TESTNET: {
     id: 'BTC_TESTNET',
     numericId: 1,
     symbol: 'BTC',
@@ -40,7 +43,7 @@ export const CHAINS: Chain[] = [
     burnLogo: bitcoinBurnLogo,
     unitType: 'Bitcoin',
   },
-  {
+  ETH_MAINNET: {
     id: 'ETH_MAINNET',
     numericId: 2,
     symbol: 'ETH',
@@ -50,7 +53,7 @@ export const CHAINS: Chain[] = [
     burnLogo: ethereumBurnLogo,
     unitType: 'Ether',
   },
-  {
+  ETH_TESTNET: {
     id: 'ETH_TESTNET',
     numericId: 3,
     symbol: 'ETH',
@@ -60,13 +63,7 @@ export const CHAINS: Chain[] = [
     burnLogo: ethereumBurnLogo,
     unitType: 'Ether',
   },
-]
+}
 
 // FIXME: refactor chains for general usage (including ETC and DUST)
 export const DUST_SYMBOL = 'DT'
-
-export const getChainById = (chainId: ChainId): Chain => {
-  const chain = CHAINS.find(({id}) => id === chainId)
-  if (chain === undefined) throw new Error("Chain doesn't exist")
-  return chain
-}

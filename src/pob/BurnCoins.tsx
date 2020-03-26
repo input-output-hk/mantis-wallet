@@ -5,7 +5,7 @@ import {RouterState} from '../router-state'
 import {LoadedState} from '../common/wallet-state'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
-import {Chain, ChainId, CHAINS} from './chains'
+import {Chain, CHAINS} from './chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {config} from '../config/renderer'
 import {ProofOfBurnState} from './pob-state'
@@ -29,7 +29,7 @@ interface ShowAddress {
 
 type BurnCoinsState = ChooseToken | GenerateBurn | ShowAddress
 
-const CHAINS_TO_USE: ChainId[] = ['BTC_TESTNET', 'ETH_TESTNET']
+const CHAINS_TO_USE: Chain[] = [CHAINS.BTC_TESTNET, CHAINS.ETH_TESTNET]
 const AUTO_DUST_CONVERSION = false
 
 const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
@@ -58,7 +58,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
       return (
         <PobLayout title="Token Burn">
           <BurnCoinsChooseToken
-            chains={CHAINS.filter(({id}) => CHAINS_TO_USE.includes(id))}
+            chains={CHAINS_TO_USE}
             chooseChain={(chain) => {
               setBurnState({
                 step: 'GENERATE_BURN_ADDRESS',

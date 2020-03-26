@@ -1,6 +1,7 @@
 import React from 'react'
+import _ from 'lodash'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, text, array, number, select} from '@storybook/addon-knobs'
+import {withKnobs, text, array, number} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {BurnCoins} from './BurnCoins'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
@@ -11,6 +12,7 @@ import {CHAINS} from './chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
+import {selectChain} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Coins',
@@ -29,12 +31,12 @@ export const transparentAddress = (): JSX.Element => (
 )
 
 export const chooseToken = (): JSX.Element => (
-  <BurnCoinsChooseToken chains={CHAINS} chooseChain={action('choose-chain')} />
+  <BurnCoinsChooseToken chains={_.values(CHAINS)} chooseChain={action('choose-chain')} />
 )
 
 export const generateAddress = (): JSX.Element => (
   <BurnCoinsGenerateAddress
-    chain={CHAINS[select('Chain id', [0, 1, 2, 3], 0)]}
+    chain={selectChain()}
     provers={[
       {
         name: text('First prover', 'First prover'),
@@ -57,7 +59,7 @@ export const generateAddress = (): JSX.Element => (
 
 export const showAddress = (): JSX.Element => (
   <BurnCoinsShowAddress
-    chain={CHAINS[number('Chain id', 0)]}
+    chain={selectChain()}
     burnAddress={text('Burn Address', 'test-address')}
     goBack={action('on-go-back')}
   />

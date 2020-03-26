@@ -42,7 +42,7 @@ export const VerifyAddress = ({
         </div>
         <div className="section">
           <div className="label">Midnight Address</div>
-          <DialogAddress chain={CHAINS[0]} address={midnightAddress} />
+          <DialogAddress chain={CHAINS.BTC_MAINNET} address={midnightAddress} />
         </div>
       </Dialog>
     </LunaModal>

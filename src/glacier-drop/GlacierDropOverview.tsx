@@ -6,7 +6,7 @@ import {PeriodStatus} from './PeriodStatus'
 import {ClaimRow} from './ClaimRow'
 import './GlacierDropOverview.scss'
 
-export const availableChains: Chain[] = [CHAINS[2], CHAINS[0]]
+export const availableChains: Chain[] = [CHAINS.ETH_MAINNET, CHAINS.BTC_MAINNET]
 
 interface BaseClaim {
   chain: Chain

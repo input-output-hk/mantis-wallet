@@ -20,25 +20,25 @@ export default {
 const dummyBurnBalances = [
   {
     address: 'text-address',
-    chain: CHAINS[1],
+    chain: CHAINS.BTC_TESTNET,
     total: toSatoshi(new BigNumber(1000)),
     pending: toSatoshi(new BigNumber(0)),
   },
   {
     address: 'text-address',
-    chain: CHAINS[3],
+    chain: CHAINS.ETH_TESTNET,
     total: toSatoshi(new BigNumber(1000)),
     pending: toSatoshi(new BigNumber(10)),
   },
   {
     address: 'text-address',
-    chain: CHAINS[1],
+    chain: CHAINS.BTC_TESTNET,
     total: toWei(new BigNumber(132.456)),
     pending: toWei(new BigNumber(12.345)),
   },
   {
     address: 'text-address',
-    chain: CHAINS[3],
+    chain: CHAINS.ETH_TESTNET,
     total: toWei(new BigNumber(132.456)),
     pending: toWei(new BigNumber(12.345)),
   },
@@ -62,7 +62,7 @@ export const dummyBurnActions = (): JSX.Element => (
 
 export const burnBalanceEthereum = (): JSX.Element => (
   <BurnBalance
-    chain={CHAINS[3]}
+    chain={CHAINS.ETH_TESTNET}
     total={toWei(new BigNumber(number('Total', 1000)))}
     pending={toWei(new BigNumber(number('Pending', 100)))}
   />
@@ -70,7 +70,7 @@ export const burnBalanceEthereum = (): JSX.Element => (
 
 export const burnBalanceBitcoin = (): JSX.Element => (
   <BurnBalance
-    chain={CHAINS[1]}
+    chain={CHAINS.BTC_TESTNET}
     total={toSatoshi(new BigNumber(number('Total', 1000)))}
     pending={toSatoshi(new BigNumber(number('Pending', 100)))}
   />

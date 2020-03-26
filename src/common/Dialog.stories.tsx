@@ -1,10 +1,9 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {Option, none, some} from 'fp-ts/lib/Option'
-import {withKnobs, text, boolean, array, select, number} from '@storybook/addon-knobs'
+import {withKnobs, text, boolean, array, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
-import {CHAINS} from '../pob/chains'
 import {Dialog} from './Dialog'
 import {DialogApproval} from './dialog/DialogApproval'
 import {DialogInput} from './dialog/DialogInput'
@@ -20,6 +19,7 @@ import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
+import {selectChain} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Dialog',
@@ -48,10 +48,7 @@ export const InteractiveDialog: React.FunctionComponent<{}> = () => (
 
 export const InteractiveAddress: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Address">
-    <DialogAddress
-      chain={CHAINS[number('Chain Id', 0)]}
-      address={text('Address to show', 'test-address')}
-    />
+    <DialogAddress chain={selectChain()} address={text('Address to show', 'test-address')} />
   </Dialog>
 )
 

@@ -151,7 +151,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
-  const chain = CHAINS.find(({id}) => id === burnStatus.chain)
+  const chain = CHAINS[burnStatus.chain]
   const progress = STATUS_TO_PROGRESS[burnStatus.status]
 
   return (

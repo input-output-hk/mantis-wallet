@@ -4,6 +4,7 @@ import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnActivity} from './BurnActivity'
+import {selectChain} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Activity',
@@ -34,7 +35,7 @@ export const burnActivity = (): JSX.Element => (
                 'BURN_OBSERVED',
               ),
               txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
-              chain: select('Chain', ['BTC_TESTNET', 'ETH_TESTNET'], 'ETH_TESTNET'),
+              chain: selectChain().id,
               midnight_txid: text('Midnight transaction id', 'midnight-transaction-id'),
               burn_tx_height: 1,
               current_source_height: 1,
@@ -78,7 +79,7 @@ export const burnStatusDisplay = (): JSX.Element => (
           'BURN_OBSERVED',
         ),
         txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
-        chain: select('Chain', ['BTC_TESTNET', 'ETH_TESTNET'], 'ETH_TESTNET'),
+        chain: selectChain().id,
         midnight_txid: text('Midnight transaction id', 'midnight-transaction-id'),
         burn_tx_height: 1,
         current_source_height: 1,
