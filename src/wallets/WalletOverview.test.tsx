@@ -2,22 +2,24 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import {render} from '@testing-library/react'
-import {toWei, fromWei} from 'web3/lib/utils/utils.js'
 import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
 import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {abbreviateAmount} from '../common/formatters'
+import {UNITS} from '../common/units'
+
+const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('../config/renderer.ts')
 
 test('WalletOverview shows properly formatted balance', () => {
-  const confidential = toWei(new BigNumber(12345))
-  const transparent = toWei(new BigNumber(98765))
-  const pending = toWei(new BigNumber(3456789))
+  const confidential = Dust.toBasic(new BigNumber(12345))
+  const transparent = Dust.toBasic(new BigNumber(98765))
+  const pending = Dust.toBasic(new BigNumber(3456789))
   const total = confidential.plus(transparent).plus(pending)
 
   const balance = {
@@ -36,7 +38,7 @@ test('WalletOverview shows properly formatted balance', () => {
   )
 
   const numbers = Object.values({...balance, total}).map((big) => {
-    return abbreviateAmount(fromWei(big)).strict
+    return abbreviateAmount(Dust.fromBasic(big)).strict
   })
 
   numbers.map((formattedNumber) => {

@@ -1,6 +1,5 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {toWei} from 'web3/lib/utils/utils.js'
 import {withKnobs, number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
@@ -9,38 +8,28 @@ import {CHAINS} from './chains'
 import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
-import {toSatoshi} from '../common/util'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
+import {UNITS} from '../common/units'
 
 export default {
   title: 'Burn Actions',
   decorators: [withTheme, withKnobs, withWalletState, withPobState],
 }
 
+const {BTC_TESTNET, ETH_TESTNET} = CHAINS
+
 const dummyBurnBalances = [
   {
-    address: 'text-address',
-    chain: CHAINS.BTC_TESTNET,
-    total: toSatoshi(new BigNumber(1000)),
-    pending: toSatoshi(new BigNumber(0)),
+    address: 'btc-address',
+    chain: BTC_TESTNET,
+    total: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(1000)),
+    pending: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(0)),
   },
   {
-    address: 'text-address',
-    chain: CHAINS.ETH_TESTNET,
-    total: toSatoshi(new BigNumber(1000)),
-    pending: toSatoshi(new BigNumber(10)),
-  },
-  {
-    address: 'text-address',
-    chain: CHAINS.BTC_TESTNET,
-    total: toWei(new BigNumber(132.456)),
-    pending: toWei(new BigNumber(12.345)),
-  },
-  {
-    address: 'text-address',
-    chain: CHAINS.ETH_TESTNET,
-    total: toWei(new BigNumber(132.456)),
-    pending: toWei(new BigNumber(12.345)),
+    address: 'eth-address',
+    chain: ETH_TESTNET,
+    total: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(132.456)),
+    pending: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(12.345)),
   },
 ]
 
@@ -63,16 +52,16 @@ export const dummyBurnActions = (): JSX.Element => (
 export const burnBalanceEthereum = (): JSX.Element => (
   <BurnBalance
     chain={CHAINS.ETH_TESTNET}
-    total={toWei(new BigNumber(number('Total', 1000)))}
-    pending={toWei(new BigNumber(number('Pending', 100)))}
+    total={UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000)))}
+    pending={UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100)))}
   />
 )
 
 export const burnBalanceBitcoin = (): JSX.Element => (
   <BurnBalance
     chain={CHAINS.BTC_TESTNET}
-    total={toSatoshi(new BigNumber(number('Total', 1000)))}
-    pending={toSatoshi(new BigNumber(number('Pending', 100)))}
+    total={UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000)))}
+    pending={UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100)))}
   />
 )
 
@@ -87,7 +76,7 @@ export const addTransactionModal = (): JSX.Element => (
       {
         name: text('Second prover', 'Second prover'),
         address: text('Second prover address', 'second.prover.address'),
-        reward: number('Second prover reward', 10),
+        reward: 10,
       },
     ]}
     burnAddresses={{

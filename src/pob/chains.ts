@@ -1,10 +1,10 @@
+import {UnitType} from '../common/units'
 import bitcoinLogo from '../assets/icons/chains/bitcoin.svg'
 import bitcoinClippedLogo from '../assets/icons/chains/bitcoin-clipped.svg'
 import bitcoinBurnLogo from '../assets/icons/chains/m-btc.svg'
 import ethereumLogo from '../assets/icons/chains/ethereum.svg'
 import ethereumClippedLogo from '../assets/icons/chains/ethereum-clipped.svg'
 import ethereumBurnLogo from '../assets/icons/chains/m-eth.svg'
-import {UnitType} from '../common/ShortNumber'
 
 export const ALL_CHAIN_IDS = ['BTC_MAINNET', 'BTC_TESTNET', 'ETH_MAINNET', 'ETH_TESTNET'] as const
 type ChainIdsType = typeof ALL_CHAIN_IDS

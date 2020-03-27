@@ -2,7 +2,6 @@ import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent} from 'react'
 import {render, RenderResult} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {toWei} from 'web3/lib/utils/utils.js'
 import BigNumber from 'bignumber.js'
 import {TransactionHistory} from './TransactionHistory'
 import {Transaction, Account, makeWeb3Worker} from '../web3'
@@ -11,6 +10,9 @@ import {WalletState, WalletStatus} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
 import {abbreviateAmount} from '../common/formatters'
 import {toHex} from '../common/util'
+import {UNITS} from '../common/units'
+
+const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -33,7 +35,7 @@ const tx1: Transaction = {
     atBlock: '0x1',
     timestamp: 1584527520,
   },
-  txValue: toWei('123'),
+  txValue: Dust.toBasic('123'),
   txDetails: {
     txType: 'transfer',
   },
@@ -44,8 +46,8 @@ const tx2: Transaction = {
   txDirection: 'outgoing',
   txStatus: 'pending',
   txValue: {
-    value: toWei('123456789'),
-    fee: toWei('100'),
+    value: Dust.toBasic('123456789'),
+    fee: Dust.toBasic('100'),
   },
   txDetails: {
     txType: 'call',
