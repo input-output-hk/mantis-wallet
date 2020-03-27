@@ -66,6 +66,8 @@ interface ProofOfBurnState {
   addTx: (prover: ProverConfig, burnTx: string, burnInfo: BurnAddressInfo) => Promise<void>
 }
 
+const FINISHED_BURN_STATUSES = ['REVEAL_CONFIRMED', 'REVEAL_DONE_ANOTHER_PROVER']
+
 function useProofOfBurnState(
   {
     store,
@@ -156,10 +158,15 @@ function useProofOfBurnState(
         ),
       )
 
+      const allPending = _.values(burnStatuses)
+        .flatMap(({lastStatuses}) => lastStatuses)
+        .filter(({status, chain}) => chain === chainId && !FINISHED_BURN_STATUSES.includes(status))
+        .map((status) => new BigNumber(status.tx_value || 0))
+
       return {
         chain: CHAINS[chainId],
         available: bigSum(allAvailable),
-        pending: new BigNumber(0),
+        pending: bigSum(allPending),
       }
     }
 
