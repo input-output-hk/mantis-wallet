@@ -12,6 +12,7 @@ import {copyToClipboard} from '../common/clipboard'
 import {RealBurnStatus} from './pob-state'
 import {SynchronizationStatus} from '../web3'
 import './BurnStatusDisplay.scss'
+import {ShortNumber} from '../common/ShortNumber'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
 
@@ -222,8 +223,9 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         <div className="info-element">
           {burnStatus.tx_value && (
             <>
-              {burnStatus.tx_value} {chain.symbol}{' '}
-              <SVG src={exchangeIcon} className="exchange-icon" /> {burnStatus.tx_value} M-
+              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
+              <SVG src={exchangeIcon} className="exchange-icon" />{' '}
+              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> M-
               {chain.symbol}
             </>
           )}

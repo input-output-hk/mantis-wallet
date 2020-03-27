@@ -10,6 +10,7 @@ import {BurnAddressInfo} from '../pob-state'
 import {CHAINS} from '../chains'
 import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
+import {ShortNumber} from '../../common/ShortNumber'
 
 interface AddBurnTxModalProps {
   provers: ProverConfig[]
@@ -91,7 +92,12 @@ export const AddBurnTxModal: React.FunctionComponent<AddBurnTxModalProps & Modal
           type="small"
           options={_.toPairs(burnAddresses).map(([burnAddress, {chainId, reward}]) => ({
             key: burnAddress,
-            label: `(Reward: ${reward} M-${CHAINS[chainId].symbol}) ${burnAddress}`,
+            label: (
+              <>
+                (Reward: <ShortNumber big={reward} unit={CHAINS[chainId].unitType} /> M-
+                {CHAINS[chainId].symbol}) {burnAddress}
+              </>
+            ),
           }))}
           onChange={setBurnAddress}
         />
