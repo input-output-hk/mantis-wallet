@@ -14,6 +14,7 @@ const BurnStatusType = t.keyof({
   BURN_OBSERVED: null,
   PROOF_READY: null,
   PROOF_FAIL: null,
+  TX_VALUE_TOO_LOW: null,
   COMMITMENT_APPEARED: null,
   COMMITMENT_CONFIRMED: null,
   COMMITMENT_FAIL: null,
@@ -37,6 +38,7 @@ const BurnApiStatus = t.type({
   current_source_height: t.number,
   processing_start_height: t.union([t.number, t.null]),
   last_tag_height: t.number,
+  tx_value: t.union([t.number, t.null, t.undefined]),
 })
 
 const BurnApiStatuses = t.array(t.union([BurnApiStatus, NoBurnStatus]))
