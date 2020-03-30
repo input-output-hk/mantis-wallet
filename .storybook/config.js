@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react'
 import {configure, addDecorator} from '@storybook/react'
+import requireContext from 'require-context.macro'
 import 'antd/dist/antd.less'
 import '../src/App.scss'
 import '../src/index.scss'
@@ -27,4 +28,4 @@ const AppDecorator = (storyFn) => {
 addDecorator(AppDecorator)
 
 // automatically import all files ending in *.stories.js
-configure(require.context('../src', true, /\.stories\.tsx$/), module)
+configure(requireContext('../src', true, /\.stories\.tsx$/), module)

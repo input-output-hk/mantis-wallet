@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import _ from 'lodash'
 import {RouterState} from '../router-state'
 import {WalletState} from '../common/wallet-state'
 import {DialogError} from '../common/dialog/DialogError'
@@ -95,6 +96,7 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
           back={(): void => setStep('DISPLAY_RECOVERY')}
           finish={finishCreate}
           seedPhrase={seedPhrase}
+          shuffledSeedPhrase={_.shuffle(seedPhrase)}
         />
       )
   }

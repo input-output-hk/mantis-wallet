@@ -8,12 +8,14 @@ interface WalletCreateVerifyRecoveryStepProps {
   back: () => void
   finish: () => void
   seedPhrase: string[]
+  shuffledSeedPhrase: string[]
 }
 
 export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreateVerifyRecoveryStepProps> = ({
   back,
   finish,
   seedPhrase,
+  shuffledSeedPhrase,
 }: WalletCreateVerifyRecoveryStepProps) => {
   const [isSeedPhraseValidated, setSeedPhraseValidated] = useState(false)
   const [isCondition1, setCondition1] = useState(false)
@@ -35,7 +37,7 @@ export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreat
       <DialogRecoveryPhrase
         recoveryPhraseValidation={(enteredPhrase): boolean => _.isEqual(enteredPhrase, seedPhrase)}
         setRecoveryPhraseValidated={setSeedPhraseValidated}
-        recoveryPhraseShuffled={_.shuffle(seedPhrase)}
+        recoveryPhraseShuffled={shuffledSeedPhrase}
       />
       <DialogApproval
         description="I understand that my wallet and tokens are held securely on this device only and not on any servers"

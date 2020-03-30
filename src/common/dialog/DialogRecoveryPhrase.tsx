@@ -56,6 +56,7 @@ export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> 
   const clear = (): void => {
     setEnteredPhrase([])
     setShuffledWords(shuffledWords.map(({word}) => ({word, used: false})))
+    setRecoveryPhraseValidated(false)
   }
 
   const showValidationError =
