@@ -1,12 +1,9 @@
 import React from 'react'
-import {withKnobs, number} from '@storybook/addon-knobs'
-import BigNumber from 'bignumber.js'
+import {withKnobs} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
+import {dust} from '../storybook-util/custom-knobs'
 import {ShortNumber} from './ShortNumber'
 import {Loading} from './Loading'
-import {UNITS} from '../common/units'
-
-const {Dust} = UNITS
 
 export default {
   title: 'Common',
@@ -14,7 +11,7 @@ export default {
 }
 
 export const shortNumber = (): JSX.Element => (
-  <ShortNumber big={Dust.toBasic(new BigNumber(number('Number', 123456789)))} unit="Dust" />
+  <ShortNumber big={dust('Number', 123456789)} unit="Dust" />
 )
 
 export const loading = (): JSX.Element => (
