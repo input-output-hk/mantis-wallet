@@ -17,6 +17,7 @@ export const packageLuna = (
       /public\//,
       /src\//,
       /bin\//,
+      /image-snapshots\//,
       /platform-config\.json5/,
     ],
     out: path.resolve(appDir, 'dist'),
