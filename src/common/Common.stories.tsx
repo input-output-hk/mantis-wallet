@@ -12,7 +12,7 @@ export default {
 }
 
 export const shortNumber = (): JSX.Element => (
-  <ShortNumber big={new BigNumber(number('Number', 123456789))} unit="exact" />
+  <ShortNumber big={new BigNumber(number('Number', 123456789))} unit="Dust" />
 )
 
 export const loading = (): JSX.Element => (

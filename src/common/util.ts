@@ -2,16 +2,6 @@ import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 
-const BITCOIN_TO_SATOSHI = new BigNumber('1e8')
-
-export function toSatoshi(number: BigNumber): BigNumber {
-  return number.multipliedBy(BITCOIN_TO_SATOSHI)
-}
-
-export function fromSatoshi(number: BigNumber): BigNumber {
-  return number.dividedBy(BITCOIN_TO_SATOSHI)
-}
-
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
 }
@@ -36,8 +26,8 @@ export function validateAmount(v: string): string {
 
   if (!n.isFinite() || !n.isGreaterThan(new BigNumber(0))) {
     return 'Must be a number greater than 0'
-  } else if (n.dp() > 6) {
-    return 'At most 6 decimal places are permitted'
+  } else if (n.dp() > 8) {
+    return 'At most 8 decimal places are permitted'
   } else {
     return ''
   }

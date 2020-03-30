@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import _ from 'lodash'
 import {ModalProps} from 'antd/lib/modal'
-import {toWei} from 'web3/lib/utils/utils.js'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
@@ -11,7 +10,10 @@ import {Account} from '../../web3'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useIsMounted} from '../../common/hook-utils'
 import {validateAmount} from '../../common/util'
+import {UNITS} from '../../common/units'
 import './SendTransaction.scss'
+
+const {Dust} = UNITS
 
 interface SendTransactionProps {
   accounts: Account[]
@@ -45,7 +47,7 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
           onClick: async (): Promise<void> => {
             if (mounted.current) setInProgress(true)
             try {
-              await onSend(recipient, Number(toWei(amount)), Number(toWei(fee)))
+              await onSend(recipient, Number(Dust.toBasic(amount)), Number(Dust.toBasic(fee)))
             } catch (e) {
               if (mounted.current) setErrorMessage(e.message)
             } finally {
