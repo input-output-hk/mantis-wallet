@@ -14,7 +14,7 @@ export const BurnCentre = (): JSX.Element => {
   const routerState = RouterState.useContainer()
   const walletState = WalletState.useContainer()
 
-  useInterval(pobState.refreshBurnStatus, 2000)
+  useInterval(pobState.refresh, 5000)
 
   if (walletState.walletStatus !== 'LOADED') {
     return (
@@ -26,7 +26,10 @@ export const BurnCentre = (): JSX.Element => {
 
   return (
     <PobLayout title="Burn Centre">
-      <BurnActions burnBalances={[]} onBurnCoins={() => routerState.navigate('BURN_COINS')} />
+      <BurnActions
+        burnBalances={pobState.burnBalances}
+        onBurnCoins={() => routerState.navigate('BURN_COINS')}
+      />
       <BurnActivity burnStatuses={pobState.burnStatuses} />
     </PobLayout>
   )

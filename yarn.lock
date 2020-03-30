@@ -4112,12 +4112,17 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bech32-buffer@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/bech32-buffer/-/bech32-buffer-0.1.2.tgz#1a00dbf6ce81c7282d277001f035c7c3bd27dcc1"
+  integrity sha512-WPSZN/HiNxlPsjDLu02arCdC6ZF0IMU/0aG5QJiV/JCaeDAcP1royrltQCpQeYtcYRlWvhFA8SZcV6RlUuAkjQ==
+
 big.js@^5.2.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
-bignumber.js@*, bignumber.js@^9.0.0:
+bignumber.js@*, bignumber.js@9.0.0, bignumber.js@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
   integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
@@ -16919,11 +16924,11 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
-"web3@git+ssh://git@github.com:input-output-hk/midnight-web3.git#143adcd55f9de1fa2f23cac8c1bbe8a8a6310fbb":
+"web3@git+ssh://git@github.com:input-output-hk/midnight-web3.git#be63e0cfb558b5dbea835fb1c2edd13e4a285d25":
   version "0.20.6"
-  resolved "git+ssh://git@github.com:input-output-hk/midnight-web3.git#143adcd55f9de1fa2f23cac8c1bbe8a8a6310fbb"
+  resolved "git+ssh://git@github.com:input-output-hk/midnight-web3.git#be63e0cfb558b5dbea835fb1c2edd13e4a285d25"
   dependencies:
-    bignumber.js "^9.0.0"
+    bignumber.js "9.0.0"
     crypto-js "3.1.4"
     utf8 "2.1.1"
     xhr2 "0.2.0"

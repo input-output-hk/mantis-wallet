@@ -1,33 +1,28 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import BigNumber from 'bignumber.js'
-import {Chain} from './chains'
 import {ShortNumber} from '../common/ShortNumber'
 import clockIcon from '../assets/icons/clock.svg'
 import sumIcon from '../assets/icons/sum.svg'
-import './BurnBalance.scss'
+import {BurnBalance} from './pob-state'
+import './BurnBalanceDisplay.scss'
 
-export interface BurnBalanceProps {
-  chain: Chain
-  total: BigNumber
-  pending: BigNumber
+interface BurnBalanceDisplayProps {
+  balance: BurnBalance
 }
 
-export const BurnBalance: React.FunctionComponent<BurnBalanceProps> = ({
-  chain,
-  total,
-  pending,
-}: BurnBalanceProps) => {
+export const BurnBalanceDisplay: React.FunctionComponent<BurnBalanceDisplayProps> = ({
+  balance: {chain, available, pending},
+}: BurnBalanceDisplayProps) => {
   const tokenSymbol = `M-${chain.symbol}`
   return (
-    <div className="BurnBalance">
+    <div className="BurnBalanceDisplay">
       <div className="logo-container">
         <SVG src={chain.burnLogo} className="logo" />
       </div>
       <div className="available">
         Available{' '}
         <span className="amount">
-          <ShortNumber big={total.minus(pending)} unit={chain.unitType} /> {tokenSymbol}
+          <ShortNumber big={available} unit={chain.unitType} /> {tokenSymbol}
         </span>
       </div>
       <div className="rest">
@@ -36,7 +31,8 @@ export const BurnBalance: React.FunctionComponent<BurnBalanceProps> = ({
       </div>
       <div className="rest">
         <SVG src={sumIcon} className="icon" />
-        Total Amount · <ShortNumber big={total} unit={chain.unitType} /> {tokenSymbol}
+        Total Amount · <ShortNumber big={available.plus(pending)} unit={chain.unitType} />{' '}
+        {tokenSymbol}
       </div>
     </div>
   )

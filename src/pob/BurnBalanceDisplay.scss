@@ -1,9 +1,9 @@
 @import '../themify';
 
-.BurnBalance {
+.BurnBalanceDisplay {
   display: inline-block;
   position: relative;
-  width: 415px;
+  min-width: 415px;
   height: 276px;
   margin: 30px 15px 25px;
   padding: 28px;
