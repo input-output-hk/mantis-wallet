@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {Button} from 'antd'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
-import {WatchBurnModal} from './modals/WatchBurnModal'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {ProofOfBurnState, BurnBalance, BurnAddressInfo} from './pob-state'
 import {ProverConfig} from '../config/type'
@@ -21,7 +20,6 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   const pobState = ProofOfBurnState.useContainer()
   const provers = pobState.provers
 
-  const [showWatchBurnModal, setShowWatchBurnModal] = useState(false)
   const [showAddTxModal, setShowAddTxModal] = useState(false)
 
   return (
@@ -34,13 +32,6 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           </div>
           <Button type="primary" className="action" onClick={onBurnCoins}>
             Burn Coins
-          </Button>
-          <Button
-            type="primary"
-            className="action secondary"
-            onClick={() => setShowWatchBurnModal(true)}
-          >
-            Watch Burn
           </Button>
           <Button type="primary" className="action secondary" onClick={onRegisterAuction}>
             Register for Auction
@@ -63,16 +54,6 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           </div>
         </div>
       )}
-      <WatchBurnModal
-        visible={showWatchBurnModal}
-        onCancel={(): void => setShowWatchBurnModal(false)}
-        onWatchBurn={(proverAddress: string, burnAddress: string): void => {
-          const prover = provers.find(({address}) => address === proverAddress)
-          if (prover) pobState.addBurnWatcher(burnAddress, prover)
-          setShowWatchBurnModal(false)
-        }}
-        provers={provers}
-      />
       <AddBurnTxModal
         visible={showAddTxModal}
         onCancel={(): void => setShowAddTxModal(false)}
