@@ -10,6 +10,9 @@ export const packageLuna = (
     dir: appDir,
     arch: 'x64',
     extraResource: path.resolve(appDir, '..', 'midnight-dist'),
+    // the icon's extension is normalized inside electron-packager per platform
+    // for windows it will use icon.ico, for mac it will use icon.icns
+    icon: path.resolve(appDir, 'public/icon.png'),
     ignore: [
       /\.idea/,
       /\.storybook/,
