@@ -162,7 +162,19 @@ export interface ERC20Contract {
   balanceOf: (address: string) => BigNumberJSON
 }
 
+// This interface isn't complete, check documentation if it needs to be expanded:
+// https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyhash
+export interface EthTransaction {
+  hash: string
+  blockNumber: number
+}
+
+export interface EthApi {
+  getTransaction(hash: string): EthTransaction
+}
+
 export interface Web3API {
+  eth: EthApi
   midnight: {
     wallet: WalletAPI
   }

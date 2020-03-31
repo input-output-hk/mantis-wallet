@@ -56,6 +56,17 @@
     @include themify($themes) {
       background-color: themed('secondary-text-color');
     }
+
+    .percentage {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      @include themify($themes) {
+        color: themed('text-color');
+      }
+    }
   }
 }
 

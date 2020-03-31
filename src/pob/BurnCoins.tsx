@@ -11,6 +11,7 @@ import {config} from '../config/renderer'
 import {ProofOfBurnState} from './pob-state'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
+import {NoWallet} from '../wallets/NoWallet'
 
 interface ChooseToken {
   step: 'CHOOSE_TOKEN'
@@ -113,4 +114,8 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
   }
 }
 
-export const BurnCoins = withStatusGuard(_BurnCoins, 'LOADED')
+export const BurnCoins = withStatusGuard(_BurnCoins, 'LOADED', () => (
+  <PobLayout title="Burn Coins">
+    <NoWallet />
+  </PobLayout>
+))

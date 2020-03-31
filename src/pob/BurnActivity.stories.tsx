@@ -1,10 +1,11 @@
 import React from 'react'
-import {withKnobs, select, text} from '@storybook/addon-knobs'
+import {withKnobs, select, text, number} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnActivity} from './BurnActivity'
 import {selectChain} from '../storybook-util/custom-knobs'
+import {toHex} from '../common/util'
 
 export default {
   title: 'Burn Activity',
@@ -37,6 +38,7 @@ export const burnActivity = (): JSX.Element => (
               txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
               chain: selectChain().id,
               midnight_txid: text('Midnight transaction id', 'midnight-transaction-id'),
+              midnight_txid_height: number('Midnight transaction height', 10),
               burn_tx_height: 1,
               current_source_height: 1,
               processing_start_height: 1,
@@ -81,10 +83,17 @@ export const burnStatusDisplay = (): JSX.Element => (
         txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
         chain: selectChain().id,
         midnight_txid: text('Midnight transaction id', 'midnight-transaction-id'),
-        burn_tx_height: 1,
-        current_source_height: 1,
-        processing_start_height: 1,
+        midnight_txid_height: number('Midnight transaction height', 10),
+        burn_tx_height: number('Burn tx height', 1000),
+        current_source_height: number('Current height', 1001),
+        processing_start_height: number('Processing start height', 1100),
         last_tag_height: 1,
+      }}
+      syncStatus={{
+        mode: select('Sync status type', ['online', 'offline'], 'online'),
+        currentBlock: '0x0',
+        highestKnownBlock: toHex(number('Highest known block', 11)),
+        percentage: 100,
       }}
       errorMessage={text('An error message #1', 'This is an error message for Burn Address #1')}
     />
