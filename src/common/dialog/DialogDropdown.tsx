@@ -6,7 +6,7 @@ import './DialogDropdown.scss'
 
 interface DialogDropdownOption<T> {
   key: T
-  label: string
+  label: React.ReactNode
 }
 
 interface DialogDropdownProps<T> {

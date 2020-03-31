@@ -20,12 +20,12 @@ const {BTC_TESTNET, ETH_TESTNET} = CHAINS
 
 const dummyBurnBalances = [
   {
-    chain: CHAINS.BTC_TESTNET,
+    chain: BTC_TESTNET,
     available: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(1000)),
     pending: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(0)),
   },
   {
-    chain: CHAINS.ETH_TESTNET,
+    chain: ETH_TESTNET,
     available: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(132.456)),
     pending: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(12.345)),
   },
@@ -50,7 +50,7 @@ export const dummyBurnActions = (): JSX.Element => (
 export const burnBalanceEthereum = (): JSX.Element => (
   <BurnBalanceDisplay
     balance={{
-      chain: CHAINS.ETH_TESTNET,
+      chain: ETH_TESTNET,
       available: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000))),
       pending: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100))),
     }}
@@ -60,7 +60,7 @@ export const burnBalanceEthereum = (): JSX.Element => (
 export const burnBalanceBitcoin = (): JSX.Element => (
   <BurnBalanceDisplay
     balance={{
-      chain: CHAINS.BTC_TESTNET,
+      chain: BTC_TESTNET,
       available: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Total', 1000))),
       pending: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(number('Pending', 100))),
     }}

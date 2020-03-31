@@ -12,6 +12,7 @@ import {copyToClipboard} from '../common/clipboard'
 import {RealBurnStatus} from './pob-state'
 import {SynchronizationStatus} from '../web3'
 import './BurnStatusDisplay.scss'
+import {ShortNumber} from '../common/ShortNumber'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
 
@@ -32,6 +33,7 @@ const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
   BURN_OBSERVED: {started: 'IN_PROGRESS', success: 'UNKNOWN', confirm: 'UNKNOWN'},
   PROOF_READY: {started: 'CHECKED', success: 'IN_PROGRESS', confirm: 'UNKNOWN'},
   PROOF_FAIL: {started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
+  TX_VALUE_TOO_LOW: {started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
   COMMITMENT_APPEARED: {
     started: 'CHECKED',
     success: 'IN_PROGRESS',
@@ -178,6 +180,31 @@ const successProgress = (status: BurnStatusType, current: string, tx: number | n
 const confirmProgress = (current: string, tx: number | null): number =>
   tx ? (parseInt(current, 16) - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM : 0
 
+const DisplayError = ({
+  errorMessage,
+  status,
+}: {
+  errorMessage?: string
+  status: BurnStatusType
+}): JSX.Element => {
+  if (errorMessage) {
+    return (
+      <div className="error">
+        Information about burn progress might be out-dated. Gathering burn activity from the prover
+        failed with the following error:
+        <br />
+        {errorMessage}
+      </div>
+    )
+  }
+
+  if (status === 'TX_VALUE_TOO_LOW') {
+    return <div className="error">Transaction value or fee was too low.</div>
+  }
+
+  return <></>
+}
+
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
   syncStatus,
@@ -194,9 +221,11 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <DisplayLongText content={address} />
         </div>
         <div className="info-element">
-          {chain && (
+          {burnStatus.tx_value && (
             <>
-              1 {chain.symbol} <SVG src={exchangeIcon} className="exchange-icon" /> 1 M-
+              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
+              <SVG src={exchangeIcon} className="exchange-icon" />{' '}
+              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> M-
               {chain.symbol}
             </>
           )}
@@ -264,14 +293,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <ProvingConfirmed progress={progress.confirm} />
         </div>
       </div>
-      {errorMessage && (
-        <div className="error">
-          Information about burn progress might be out-dated. Gathering burn activity from the
-          prover failed with the following error:
-          <br />
-          {errorMessage}
-        </div>
-      )}
+      <DisplayError errorMessage={errorMessage} status={burnStatus.status} />
     </div>
   )
 }

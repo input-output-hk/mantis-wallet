@@ -25,6 +25,7 @@ export const burnActivity = (): JSX.Element => (
                   'BURN_OBSERVED',
                   'PROOF_READY',
                   'PROOF_FAIL',
+                  'TX_VALUE_TOO_LOW',
                   'COMMITMENT_APPEARED',
                   'COMMITMENT_CONFIRMED',
                   'COMMITMENT_FAIL',
@@ -43,6 +44,7 @@ export const burnActivity = (): JSX.Element => (
               current_source_height: 1,
               processing_start_height: 1,
               last_tag_height: 1,
+              tx_value: number('Burn tokens sent', 2),
             },
           ],
           errorMessage: text('An error message #1', 'This is an error message for Burn Address #1'),
@@ -70,6 +72,7 @@ export const burnStatusDisplay = (): JSX.Element => (
             'BURN_OBSERVED',
             'PROOF_READY',
             'PROOF_FAIL',
+            'TX_VALUE_TOO_LOW',
             'COMMITMENT_APPEARED',
             'COMMITMENT_CONFIRMED',
             'COMMITMENT_FAIL',
@@ -88,6 +91,7 @@ export const burnStatusDisplay = (): JSX.Element => (
         current_source_height: number('Current height', 1001),
         processing_start_height: number('Processing start height', 1100),
         last_tag_height: 1,
+        tx_value: number('Burn tokens sent', 2),
       }}
       syncStatus={{
         mode: select('Sync status type', ['online', 'offline'], 'online'),
