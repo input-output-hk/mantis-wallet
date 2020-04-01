@@ -43,6 +43,7 @@ export const Wallets = (): JSX.Element => {
             transactions={transactions}
             transparentAddresses={transparentAddresses}
             accounts={accounts}
+            availableBalance={walletState.getOverviewProps().availableBalance}
           />
         </div>
       )

@@ -10,8 +10,6 @@ import {OverviewGraph} from './OverviewGraph'
 import {SyncStatusContent} from '../common/SyncStatus'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
-import clockIcon from '../assets/icons/clock.svg'
-import sumIcon from '../assets/icons/sum.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
 import './WalletOverview.scss'
@@ -39,30 +37,16 @@ const _WalletOverview = ({
         <span className="main-title">Wallet Overview</span>
         <SyncStatusContent syncStatus={walletState.syncStatus} />
       </div>
-      <div className="graph">
-        <OverviewGraph
-          {..._.mapValues({pending, confidential, transparent}, (b) => b.toNumber())}
-        />
-      </div>
       <div className="total">
-        <div className="box-text">Available Balance</div>
-        <div className="box-amount-big">
+        <div className="graph">
+          <OverviewGraph
+            {..._.mapValues({pending, confidential, transparent}, (b) => b.toNumber())}
+          />
+        </div>
+        <div className="box-text">Total Balance</div>
+        <div className="box-amount">
           <img src={dustIcon} alt="dust" className="dust" />
-          <ShortNumber big={available} />
-        </div>
-        <div className="box-text">
-          <span className="box-icon">
-            &nbsp;
-            <SVG src={clockIcon} className="svg" />
-          </span>
-          <span className="uppercase">Pending Amount</span> · <ShortNumber big={pending} />
-        </div>
-        <div className="box-text">
-          <span className="box-icon">
-            &nbsp;
-            <SVG src={sumIcon} className="svg" />
-          </span>
-          <span className="uppercase">Total Balance</span> · <ShortNumber big={total} />
+          <ShortNumber big={total} />
         </div>
       </div>
       <div className="confidential">

@@ -19,7 +19,8 @@ import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
-import {selectChain} from '../storybook-util/custom-knobs'
+import {selectChain, dust} from '../storybook-util/custom-knobs'
+import {DialogShowDust} from './dialog/DialogShowDust'
 
 export default {
   title: 'Dialog',
@@ -178,6 +179,16 @@ export const InteractiveSecrets: React.FunctionComponent<{}> = () => {
         onSpendingKeyChange={action('on-spending-key-change')}
         onSeedPhraseChange={action('on-seed-phrase-change')}
       />
+    </Dialog>
+  )
+}
+
+export const InteractiveShowDust: React.FunctionComponent<{}> = () => {
+  return (
+    <Dialog title="Dialog Secrets">
+      <DialogShowDust amount={dust('Dust amount', 123.456)}>
+        {text('Show Dust label', 'Dust amount')}
+      </DialogShowDust>
     </Dialog>
   )
 }

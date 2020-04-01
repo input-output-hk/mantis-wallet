@@ -1,11 +1,16 @@
 import React from 'react'
+import {StoryGetter, StoryContext} from '@storybook/addons'
 import {withKnobs, number} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {OverviewGraph} from './OverviewGraph'
 
+const graphDecorator = (storyFn: StoryGetter, context: StoryContext): JSX.Element => (
+  <div style={{width: '400px'}}>{storyFn(context)}</div>
+)
+
 export default {
   title: 'Overview Graph',
-  decorators: [withTheme, withKnobs],
+  decorators: [withTheme, withKnobs, graphDecorator],
 }
 
 export const withZeroBalance = (): JSX.Element => (

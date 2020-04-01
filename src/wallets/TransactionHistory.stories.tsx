@@ -1,4 +1,5 @@
 import React from 'react'
+import BigNumber from 'bignumber.js'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, object, text} from '@storybook/addon-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
@@ -8,7 +9,7 @@ import {toHex} from '../common/util'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import './TransactionHistory.scss'
+import {dust} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Transaction History',
@@ -24,7 +25,12 @@ const accounts: Account[] = [
 ]
 
 export const withNoTransactions = (): JSX.Element => (
-  <TransactionHistory transactions={[]} transparentAddresses={[]} accounts={accounts} />
+  <TransactionHistory
+    transactions={[]}
+    transparentAddresses={[]}
+    accounts={accounts}
+    availableBalance={new BigNumber(0)}
+  />
 )
 
 const dummyTransactions: Transaction[] = [
@@ -144,6 +150,7 @@ export const withDemoTransactions = (): JSX.Element => (
     transactions={dummyTransactions}
     transparentAddresses={[]}
     accounts={accounts}
+    availableBalance={dust('Available Balance', 1000)}
   />
 )
 
@@ -212,6 +219,7 @@ export const interactive = (): JSX.Element => {
           locked: false,
         },
       ]}
+      availableBalance={dust('Available Balance', 1000)}
     />
   )
 }
@@ -230,6 +238,7 @@ export const sendTransactionModal = (): JSX.Element => (
         locked: false,
       },
     ]}
+    availableAmount={dust('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     onSend={async (recipient, amount, fee): Promise<void> =>
       action('generate-new')(recipient, amount, fee)

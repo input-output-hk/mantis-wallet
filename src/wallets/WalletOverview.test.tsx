@@ -37,7 +37,7 @@ test('WalletOverview shows properly formatted balance', () => {
     </ThemeState.Provider>,
   )
 
-  const numbers = Object.values({...balance, total}).map((big) => {
+  const numbers = [confidential, transparent, total].map((big) => {
     return abbreviateAmount(Dust.fromBasic(big)).strict
   })
 

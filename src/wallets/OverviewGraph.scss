@@ -1,12 +1,8 @@
 @import '../themify';
 
 .graph-svg {
-  width: 249px;
-  height: 249px;
-
-  @include themify($themes) {
-    fill: themed('secondary-background');
-  }
+  width: 100%;
+  height: auto;
 }
 
 .graph-confidential {
@@ -24,5 +20,11 @@
 .graph-pending {
   @include themify($themes) {
     stroke: themed('pending-color');
+  }
+}
+
+.graph-empty {
+  @include themify($themes) {
+    stroke: themed('secondary-background');
   }
 }
