@@ -1,14 +1,12 @@
 import React from 'react'
-import {withKnobs, number, select} from '@storybook/addon-knobs'
+import {withKnobs, select} from '@storybook/addon-knobs'
 import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
+import {dust} from '../storybook-util/custom-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {SynchronizationStatus} from '../web3'
 import {SyncStatusContent} from '../common/SyncStatus'
 import {WalletOverview} from './WalletOverview'
-import {UNITS} from '../common/units'
-
-const {Dust} = UNITS
 
 export default {
   title: 'Wallet Overview',
@@ -26,9 +24,9 @@ export const withZeroBalance = (): JSX.Element => (
 export const interactive = (): JSX.Element => {
   return (
     <WalletOverview
-      confidential={Dust.toBasic(new BigNumber(number('Confidential', 15262.4578)))}
-      transparent={Dust.toBasic(new BigNumber(number('Transparent', 6359.36)))}
-      pending={Dust.toBasic(new BigNumber(number('Pending', 3815.62)))}
+      confidential={dust('Confidential', 15262.4578)}
+      transparent={dust('Transparent', 6359.36)}
+      pending={dust('Pending', 3815.62)}
     />
   )
 }
