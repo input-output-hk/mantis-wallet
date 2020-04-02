@@ -7,7 +7,6 @@ import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddr
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
 import {Chain, CHAINS} from './chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
-import {config} from '../config/renderer'
 import {ProofOfBurnState} from './pob-state'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
@@ -36,6 +35,7 @@ const AUTO_DUST_CONVERSION = false
 const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   const pobState = ProofOfBurnState.useContainer()
   const routerState = RouterState.useContainer()
+  const provers = pobState.provers
 
   const [burnState, setBurnState] = useState<BurnCoinsState>({step: 'CHOOSE_TOKEN'})
 
@@ -75,7 +75,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
         <PobLayout title={`Send ${chain.name}`}>
           <BurnCoinsGenerateAddress
             chain={chain}
-            provers={config.provers}
+            provers={provers}
             transparentAddresses={walletState.transparentAddresses.map(({address}) => address)}
             cancel={cancel}
             generateBurnAddress={async (prover, transparentAddress, fee): Promise<void> => {

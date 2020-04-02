@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, text, array, number} from '@storybook/addon-knobs'
+import {withKnobs, text, array} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {BurnCoins} from './BurnCoins'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
@@ -12,7 +12,7 @@ import {CHAINS} from './chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
-import {selectChain} from '../storybook-util/custom-knobs'
+import {selectChain, prover} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Coins',
@@ -38,16 +38,15 @@ export const generateAddress = (): JSX.Element => (
   <BurnCoinsGenerateAddress
     chain={selectChain()}
     provers={[
-      {
-        name: text('First prover', 'First prover'),
-        address: text('First prover address', 'first.prover.address'),
-        reward: number('First prover reward', 0.01),
-      },
-      {
-        name: text('Second prover', 'Second prover'),
-        address: text('Second prover address', 'second.prover.address'),
-        reward: number('Second prover reward', 10),
-      },
+      prover('First', {
+        rewards: {
+          BTC_MAINNET: 150,
+          BTC_TESTNET: 100,
+          ETH_MAINNET: 250,
+          ETH_TESTNET: 200,
+        },
+      }),
+      prover('Second'),
     ]}
     transparentAddresses={array('Transparent addresses', ['first-address', 'second-address'])}
     cancel={action('on-cancel')}

@@ -23,16 +23,25 @@ export const loadAll = async <T>(
   }
 }
 
-export function validateAmount(v: string): string {
-  const n = new BigNumber(v)
+export const isGreater = (minValue = 0) => (b: BigNumber) =>
+  !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
+    ? `Must be a number greater than ${minValue}`
+    : ''
 
-  if (!n.isFinite() || !n.isGreaterThan(new BigNumber(0))) {
-    return 'Must be a number greater than 0'
-  } else if (n.dp() > 8) {
-    return 'At most 8 decimal places are permitted'
-  } else {
-    return ''
-  }
+export const isGreaterOrEqual = (minValue: BigNumber.Value = 0) => (b: BigNumber) =>
+  !b.isFinite() || !b.isGreaterThanOrEqualTo(new BigNumber(minValue))
+    ? `Must be at least ${minValue.toString(10)}`
+    : ''
+
+export const hasAtMostDecimalPlaces = (dp = 8) => (b: BigNumber) =>
+  b.dp() > dp ? `At most ${dp} decimal places are permitted` : ''
+
+export function validateAmount(
+  v: string,
+  validators: Array<(b: BigNumber) => string> = [isGreater(), hasAtMostDecimalPlaces()],
+): string {
+  const b = new BigNumber(v)
+  return validators.reduce((acc, cur) => (acc !== '' ? acc : cur(b)), '')
 }
 
 export function bigSum(numbers: BigNumber[]): BigNumber {

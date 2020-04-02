@@ -1,7 +1,6 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import _ from 'lodash/fp'
 import * as Comlink from 'comlink'
-import * as tPromise from 'io-ts-promise'
 import BigNumber from 'bignumber.js'
 import {createContainer} from 'unstated-next'
 import {
@@ -10,6 +9,8 @@ import {
   BurnApiStatus,
   noBurnObservedFilter,
   proveTransaction,
+  getInfo,
+  prettyErrorMessage,
 } from './api/prover'
 import {Chain, ChainId, CHAINS} from './chains'
 import {ProverConfig} from '../config/type'
@@ -17,6 +18,7 @@ import {Store, defaultPobData, createInMemoryStore, StorePobData} from '../commo
 import {usePersistedState} from '../common/hook-utils'
 import {Web3API, makeWeb3Worker, EthTransaction} from '../web3'
 import {deserializeBigNumber, bigSum, bech32toHex} from '../common/util'
+import {config} from '../config/renderer'
 
 export interface BurnWatcher {
   burnAddress: string
@@ -37,10 +39,9 @@ export type BurnStatus = {
   errorMessage?: string
 }
 
-const prettyErrorMessage = (error: Error): string =>
-  tPromise.isDecodeError(error)
-    ? 'Unexpected response from prover.'
-    : 'Unexpected error while communicating with prover.'
+export interface Prover extends ProverConfig {
+  rewards: Partial<Record<ChainId, number>>
+}
 
 export type BurnBalance = {
   chain: Chain
@@ -64,6 +65,7 @@ interface ProofOfBurnState {
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnInfo: BurnAddressInfo) => Promise<void>
+  provers: Prover[]
 }
 
 const FINISHED_BURN_STATUSES = ['REVEAL_CONFIRMED', 'REVEAL_DONE_ANOTHER_PROVER']
@@ -84,6 +86,26 @@ function useProofOfBurnState(
   const [burnAddresses, setBurnAddresses] = usePersistedState(store, ['pob', 'burnAddresses'])
   const [burnStatuses, setBurnStatuses] = useState<Record<string, BurnStatus>>({})
   const [burnBalances, setBurnBalances] = useState<BurnBalance[]>([])
+  const [provers, setProvers] = useState(config.provers.map((p): Prover => ({...p, rewards: {}})))
+
+  useEffect(() => {
+    Promise.all(
+      provers.map((prover) =>
+        getInfo(prover)
+          .then((chainInfos) => ({
+            ...prover,
+            rewards: _.fromPairs(
+              // eslint-disable-next-line
+              chainInfos.map(({source_chain, min_fee}) => [source_chain, min_fee]),
+            ),
+          }))
+          .catch((err) => {
+            console.error(err)
+            return prover
+          }),
+      ),
+    ).then(setProvers)
+  }, [])
 
   const addBurnWatcher = (burnAddress: string, prover: ProverConfig): boolean => {
     const newBurnWatcher = {burnAddress, prover}
@@ -194,7 +216,13 @@ function useProofOfBurnState(
       chain.id,
       reward,
       autoConversion,
-    )
+    ).catch((err) => {
+      throw new Error(
+        prettyErrorMessage(err, ({message, code}) =>
+          code === 1001 ? 'Reward is too low for the selected prover.' : message,
+        ),
+      )
+    })
     if (burnAddressFromProver !== burnAddress) {
       throw new Error(
         `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddress} vs ${burnAddressFromProver}`,
@@ -219,6 +247,7 @@ function useProofOfBurnState(
     reset,
     burnAddresses,
     addTx: proveTransaction,
+    provers,
   }
 }
 

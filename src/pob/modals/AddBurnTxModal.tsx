@@ -5,18 +5,17 @@ import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {ProverConfig} from '../../config/type'
-import {BurnAddressInfo} from '../pob-state'
+import {BurnAddressInfo, Prover} from '../pob-state'
 import {CHAINS} from '../chains'
 import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {ShortNumber} from '../../common/ShortNumber'
 
 interface AddBurnTxModalProps {
-  provers: ProverConfig[]
+  provers: Prover[]
   burnAddresses: Record<string, BurnAddressInfo>
   onAddTx: (
-    proverAddress: ProverConfig,
+    proverAddress: Prover,
     burnTx: string,
     bunrAddressInfo: BurnAddressInfo,
   ) => Promise<void>

@@ -20,11 +20,6 @@ const proverConfig: convict.Schema<ProverConfig> = {
     doc: 'Address of the prover',
     format: 'url',
   },
-  reward: {
-    default: 1,
-    doc: 'Default reward for the prover',
-    format: Number,
-  },
 }
 
 convict.addFormats({
@@ -142,7 +137,6 @@ const configGetter = convict({
       {
         name: 'Prover 1',
         address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com',
-        reward: 0.01,
       },
     ],
     format: 'list-of-provers',

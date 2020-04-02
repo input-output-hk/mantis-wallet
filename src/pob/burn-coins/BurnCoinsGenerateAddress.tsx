@@ -1,24 +1,26 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
+import BigNumber from 'bignumber.js'
 import {Dialog} from '../../common/Dialog'
 import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {ProverConfig} from '../../config/type'
 import {Chain} from '../chains'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
-import {validateAmount} from '../../common/util'
+import {validateAmount, hasAtMostDecimalPlaces, isGreaterOrEqual} from '../../common/util'
+import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
+import {UNITS} from '../../common/units'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
   chain: Chain
-  provers: ProverConfig[]
+  provers: Prover[]
   transparentAddresses: string[]
   cancel: () => void
-  generateBurnAddress: (prover: ProverConfig, midnightAddress: string, fee: number) => Promise<void>
+  generateBurnAddress: (prover: Prover, midnightAddress: string, fee: number) => Promise<void>
 }
 
 export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerateAddressProps> = ({
@@ -28,19 +30,30 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   cancel,
   generateBurnAddress,
 }: BurnCoinsGenerateAddressProps) => {
-  const [prover, setProver] = useState(provers[0])
-  const [fee, setFee] = useState(prover?.reward.toString(10) || '1')
+  const compatibleProvers = provers.filter((p) => p.rewards[chain.id] !== undefined)
+  const [prover, setProver] = useState(compatibleProvers[0])
+  const minFee = UNITS[chain.unitType].fromBasic(new BigNumber(prover?.rewards[chain.id] || 0))
+  const minValue = UNITS[chain.unitType].fromBasic(new BigNumber(1))
+  const [fee, setFee] = useState(minFee.toString(10))
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
   const [approval, setApproval] = useState(false)
 
   const [inProgress, setInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(
+    compatibleProvers.length === 0
+      ? 'No compatible provers found. Please select different token.'
+      : '',
+  )
 
   const mounted = useIsMounted()
 
   const errors = errorMessage && <DialogError>{errorMessage}</DialogError>
+  const feeError = validateAmount(fee, [
+    isGreaterOrEqual(minFee),
+    hasAtMostDecimalPlaces(minValue.dp()),
+  ])
 
-  const disableGenerate = !!validateAmount(fee) || !approval
+  const disableGenerate = !!feeError || !approval
 
   const title = (
     <>
@@ -60,7 +73,11 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
             if (mounted.current) setInProgress(true)
             try {
               if (prover) {
-                await generateBurnAddress(prover, transparentAddress, Number(fee))
+                await generateBurnAddress(
+                  prover,
+                  transparentAddress,
+                  Number(UNITS[chain.unitType].toBasic(fee)),
+                )
               } else {
                 setErrorMessage('No prover was selected.')
               }
@@ -83,23 +100,20 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
         <DialogDropdown
           type="small"
           label="Prover"
-          options={provers.map((prover) => ({
+          options={compatibleProvers.map((prover) => ({
             key: prover.address,
             label: `${prover.name} (${prover.address})`,
           }))}
           onChange={(proverAddress) => {
-            const prover = provers.find(({address}) => proverAddress === address)
-            if (prover) {
-              setProver(prover)
-              setFee(prover.reward.toString(10))
-            }
+            const prover = compatibleProvers.find(({address}) => proverAddress === address)
+            if (prover) setProver(prover)
           }}
         />
         <DialogInput
           label={`Assign reward in M-${chain.symbol} for your prover`}
           value={fee}
           onChange={(e) => setFee(e.target.value)}
-          errorMessage={validateAmount(fee)}
+          errorMessage={feeError}
         />
         <DialogMessage description="www.prover_list_metrics" />
         <DialogApproval
