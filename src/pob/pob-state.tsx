@@ -68,7 +68,14 @@ interface ProofOfBurnState {
   provers: Prover[]
 }
 
-const FINISHED_BURN_STATUSES = ['REVEAL_CONFIRMED', 'REVEAL_DONE_ANOTHER_PROVER']
+const FINISHED_BURN_STATUSES = [
+  'REVEAL_CONFIRMED',
+  'REVEAL_DONE_ANOTHER_PROVER',
+  'PROOF_FAIL',
+  'TX_VALUE_TOO_LOW',
+  'COMMITMENT_FAIL',
+  'REVEAL_FAIL',
+]
 
 function useProofOfBurnState(
   {
