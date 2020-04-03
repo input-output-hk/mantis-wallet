@@ -300,7 +300,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: number,
   ): Promise<string> => {
     const result = await wallet.sendTransaction(recipient, amount, fee)
-    reset()
+    load()
     return result
   }
 

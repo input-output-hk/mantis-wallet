@@ -73,8 +73,6 @@ const BurnType = t.type({
 const ChainInfo = t.type({
   source_chain: chainType,
   chain_id: t.number,
-  last_block: t.number,
-  last_tag_height: t.number,
   min_fee: t.number,
 })
 

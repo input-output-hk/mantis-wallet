@@ -166,19 +166,19 @@ const NUMBER_OF_BLOCKS_TO_CONFIRM = 4
 const startedProgress = (current: number, tx: number | null, start: number | null): number =>
   start && tx && start !== tx ? (current - tx) / (start - tx) : 0
 
-const successProgress = (status: BurnStatusType, current: string, tx: number | null): number => {
+const successProgress = (status: BurnStatusType, current: string, tx: number): number => {
   switch (status) {
     case 'PROOF_READY':
       return 0
     case 'COMMITMENT_APPEARED':
       return 0.1
     default:
-      return tx ? 0.1 + (0.9 * (parseInt(current, 16) - tx)) / NUMBER_OF_BLOCKS_TO_SUCCESS : 0
+      return 0.1 + (0.9 * (parseInt(current, 16) - tx)) / NUMBER_OF_BLOCKS_TO_SUCCESS
   }
 }
 
-const confirmProgress = (current: string, tx: number | null): number =>
-  tx ? (parseInt(current, 16) - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM : 0
+const confirmProgress = (current: string, tx: number): number =>
+  (parseInt(current, 16) - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM
 
 const DisplayError = ({
   errorMessage,
@@ -264,7 +264,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           {progress.success === 'IN_PROGRESS' && (
             <DisplayProgress
               ratio={
-                syncStatus.mode === 'offline'
+                syncStatus.mode === 'offline' || burnStatus.midnight_txid_height === null
                   ? 'unknown'
                   : successProgress(
                       burnStatus.status,
@@ -282,7 +282,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           {progress.confirm === 'IN_PROGRESS' && (
             <DisplayProgress
               ratio={
-                syncStatus.mode === 'offline'
+                syncStatus.mode === 'offline' || burnStatus.midnight_txid_height === null
                   ? 'unknown'
                   : confirmProgress(syncStatus.highestKnownBlock, burnStatus.midnight_txid_height)
               }
