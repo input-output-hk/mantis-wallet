@@ -16,15 +16,7 @@ const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-jest.mock('react-inlinesvg', () => {
-  return function SVG(props: {title: string}): JSX.Element {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg">
-        <title>{props.title}</title>
-      </svg>
-    )
-  }
-})
+jest.mock('react-inlinesvg')
 jest.mock('../config/renderer.ts')
 
 const tx1: Transaction = {

@@ -72,10 +72,10 @@ const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
 }
 
 const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
-  CHECKED: <SVG src={checkIcon} className="checked icon" />,
-  UNKNOWN: <Icon type="close" className="unknown icon" />,
-  FAILED: <Icon type="close" className="fail icon" />,
-  IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" />,
+  CHECKED: <SVG src={checkIcon} className="checked icon" title="Checked" />,
+  UNKNOWN: <Icon type="close" className="unknown icon" title="Unknown" />,
+  FAILED: <Icon type="close" className="fail icon" title="Failed" />,
+  IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" title="In progress" />,
 }
 
 const DisplayLongText = ({content}: {content: string | null}): JSX.Element =>
@@ -180,6 +180,8 @@ const successProgress = (status: BurnStatusType, current: string, tx: number): n
 const confirmProgress = (current: string, tx: number): number =>
   (parseInt(current, 16) - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM
 
+export const TX_VALUE_TOO_LOW_MESSAGE = 'Transaction value or fee was too low.'
+
 const DisplayError = ({
   errorMessage,
   status,
@@ -199,7 +201,7 @@ const DisplayError = ({
   }
 
   if (status === 'TX_VALUE_TOO_LOW') {
-    return <div className="error">Transaction value or fee was too low.</div>
+    return <div className="error">{TX_VALUE_TOO_LOW_MESSAGE}</div>
   }
 
   return <></>
