@@ -2,9 +2,7 @@ import React, {useEffect} from 'react'
 import {WalletState} from '../common/wallet-state'
 import {Navigate} from '../layout/Router'
 import {Loading} from '../common/Loading'
-import {WalletOverview} from './WalletOverview'
-import {TransactionHistory} from './TransactionHistory'
-import './Wallets.scss'
+import {Wallet} from './Wallet'
 
 export const Wallets = (): JSX.Element => {
   const walletState = WalletState.useContainer()
@@ -23,30 +21,7 @@ export const Wallets = (): JSX.Element => {
       return <Loading />
     }
     case 'LOADED': {
-      const {
-        transactions,
-        transparentBalance,
-        availableBalance,
-        pendingBalance,
-        transparentAddresses,
-        accounts,
-      } = walletState.getOverviewProps()
-
-      return (
-        <div className="Wallets invisible-scrollbar">
-          <WalletOverview
-            pending={pendingBalance}
-            confidential={availableBalance}
-            transparent={transparentBalance}
-          />
-          <TransactionHistory
-            transactions={transactions}
-            transparentAddresses={transparentAddresses}
-            accounts={accounts}
-            availableBalance={walletState.getOverviewProps().availableBalance}
-          />
-        </div>
-      )
+      return <Wallet />
     }
     case 'LOCKED': {
       return <Navigate to="WALLET_UNLOCK" />
