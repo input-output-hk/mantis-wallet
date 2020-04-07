@@ -1,0 +1,50 @@
+@import '../themify', '../vars', '../partial';
+
+.TransactionRow {
+  height: 106px;
+  padding-top: 24px;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  line-height: 44px;
+  vertical-align: middle;
+
+  @include themify($themes) {
+    border-bottom: 1px solid rgba($color: themed('tertiary-background'), $alpha: $secondary-opacity);
+  }
+
+  .type-icon {
+    display: inline-block;
+    position: relative;
+    width: 20px;
+    padding-left: 12px;
+
+    .svg {
+      position: absolute;
+      top: 50%;
+      bottom: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .check {
+    @include themify($themes) {
+      fill: themed('success-color');
+    }
+  }
+
+  .dust {
+    margin-right: 6px;
+    float: left;
+  }
+
+  .amount {
+    display: inline-block;
+    padding: 0 10px;
+    font-weight: bold;
+    line-height: 32px;
+
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+    }
+  }
+}

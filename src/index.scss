@@ -134,6 +134,20 @@ div#root {
       background-color: lighten(themed('primary-color'), 5);
     }
   }
+
+  &.secondary {
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+      color: themed('text-color');
+    }
+
+    &:hover,
+    &:focus {
+      @include themify($themes) {
+        background-color: themed('quinary-background');
+      }
+    }
+  }
 }
 
 // antd disabled Button theme overrides

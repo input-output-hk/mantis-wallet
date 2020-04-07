@@ -188,7 +188,6 @@ const _TransactionHistory = (
                   {sortableHeader('amount')}
                   {sortableHeader('time')}
                   {sortableHeader('status')}
-                  <th></th>
                 </tr>
               </thead>
               <tbody>

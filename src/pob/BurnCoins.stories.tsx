@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import {action} from '@storybook/addon-actions'
 import {withKnobs, text, array} from '@storybook/addon-knobs'
+import {selectChain, prover, asyncAction} from '../storybook-util/custom-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {BurnCoins} from './BurnCoins'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
@@ -12,7 +13,6 @@ import {CHAINS} from './chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
-import {selectChain, prover} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Coins',
@@ -24,9 +24,7 @@ export const burnCoins = (): JSX.Element => <BurnCoins />
 export const transparentAddress = (): JSX.Element => (
   <BurnCoinsTransparentAddress
     cancel={action('on-cancel')}
-    generateTransparentAddress={async (...args): Promise<void> => {
-      action('on-generate-transparent-address')(args)
-    }}
+    generateTransparentAddress={asyncAction('on-generate-transparent-address')}
   />
 )
 
@@ -50,9 +48,7 @@ export const generateAddress = (): JSX.Element => (
     ]}
     transparentAddresses={array('Transparent addresses', ['first-address', 'second-address'])}
     cancel={action('on-cancel')}
-    generateBurnAddress={async (...args): Promise<void> => {
-      action('on-generate-address')(args)
-    }}
+    generateBurnAddress={asyncAction('on-generate-address')}
   />
 )
 

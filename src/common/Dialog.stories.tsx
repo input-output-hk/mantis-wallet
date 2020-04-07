@@ -123,7 +123,10 @@ export const InteractiveInput: React.FunctionComponent<{}> = () => (
 
 export const InteractiveMessage: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Message">
-    <DialogMessage description={text('Message text', 'This is a message in a dialog')} />
+    <DialogMessage
+      description={text('Message text', 'This is a message in a dialog')}
+      type={select('Input type', ['default', 'highlight'], 'default')}
+    />
   </Dialog>
 )
 

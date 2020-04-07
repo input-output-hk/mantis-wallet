@@ -21,8 +21,8 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
   title,
   type = 'normal',
   buttonDisplayMode = 'grid',
-  rightButtonProps: rightButtonProps = {},
-  leftButtonProps: leftButtonProps = {},
+  rightButtonProps: {doNotRender: doNotRenderRight = false, ...rightButtonProps} = {},
+  leftButtonProps: {doNotRender: doNotRenderLeft = false, ...leftButtonProps} = {},
   children,
   footer,
 }: React.PropsWithChildren<DialogProps>) => {
@@ -46,8 +46,8 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="dialog-children">{children}</div>
         <div className={classnames('actions', buttonDisplayMode)}>
-          {!leftButtonProps.doNotRender && <Button {...leftButtonPropsToUse} />}
-          {!rightButtonProps.doNotRender && <Button {...rightButtonPropsToUse} />}
+          {!doNotRenderLeft && <Button {...leftButtonPropsToUse} />}
+          {!doNotRenderRight && <Button {...rightButtonPropsToUse} />}
         </div>
       </form>
       {footer && <div className="footer">{footer}</div>}

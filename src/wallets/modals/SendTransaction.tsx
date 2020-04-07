@@ -13,7 +13,6 @@ import {useIsMounted} from '../../common/hook-utils'
 import {validateAmount} from '../../common/util'
 import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
-import './SendTransaction.scss'
 
 const {Dust} = UNITS
 

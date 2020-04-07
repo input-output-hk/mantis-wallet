@@ -2,6 +2,7 @@ import React from 'react'
 import BigNumber from 'bignumber.js'
 import {withKnobs, number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
+import {prover, asyncAction} from '../storybook-util/custom-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {CHAINS} from './chains'
@@ -9,7 +10,6 @@ import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {UNITS} from '../common/units'
-import {prover} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Actions',
@@ -117,9 +117,7 @@ export const addTransactionModal = (): JSX.Element => (
         autoConversion: false,
       },
     }}
-    onAddTx={async (...args): Promise<void> => {
-      action('on-generate-address')(args)
-    }}
+    onAddTx={asyncAction('on-generate-address')}
     onCancel={action('on-cancel')}
     visible
   />

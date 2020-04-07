@@ -8,10 +8,10 @@ import {formatPercentage} from '../common/formatters'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
-import {copyToClipboard} from '../common/clipboard'
+import {ShortNumber} from '../common/ShortNumber'
+import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
-import {ShortNumber} from '../common/ShortNumber'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
@@ -77,18 +77,6 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   FAILED: <Icon type="close" className="fail icon" title="Failed" />,
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" title="In progress" />,
 }
-
-const DisplayLongText = ({content}: {content: string | null}): JSX.Element =>
-  content == null ? (
-    <></>
-  ) : (
-    <div className="long-text">
-      <Icon type="copy" className="clickable" onClick={() => copyToClipboard(content)} />{' '}
-      <Popover content={content} placement="top">
-        {content}
-      </Popover>
-    </div>
-  )
 
 const DisplayProgress = ({ratio}: {ratio: number | 'unknown'}): JSX.Element => (
   <div className="percentage">
@@ -220,7 +208,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
     <div className="BurnStatusDisplay">
       <div className="info">
         <div className="info-element">
-          <DisplayLongText content={address} />
+          <CopyableLongText content={address} />
         </div>
         <div className="info-element">
           {burnStatus.tx_value && (
@@ -233,10 +221,10 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           )}
         </div>
         <div className="info-element">
-          <DisplayLongText content={burnStatus.midnight_txid} />
+          <CopyableLongText content={burnStatus.midnight_txid} />
         </div>
         <div className="info-element">
-          <DisplayLongText content={burnStatus.txid} />
+          <CopyableLongText content={burnStatus.txid} />
         </div>
       </div>
       <div className="status">

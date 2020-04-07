@@ -1,7 +1,22 @@
-@import '../../partial';
+@import '../../themify', '../../partial';
 
 .DialogMessage {
   margin-bottom: 20px;
+
+  &.highlight {
+    padding: 20px 13px;
+
+    @include themify($themes) {
+      background-color: themed('normal-color');
+      color: themed('text-color');
+    }
+  }
+
+  .dark &.highlight {
+    @include themify($themes) {
+      background-color: themed('dialog-dark-input-bg');
+    }
+  }
 
   .label {
     @extend %dialog-label;
