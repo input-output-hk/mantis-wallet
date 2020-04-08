@@ -127,7 +127,7 @@ const _GlacierDropOverview = ({
   }, [currentBlock])
 
   const chooseChain = (_chain: DisplayChain): void => {
-    if (walletState.transparentAddresses.length === 0) {
+    if (walletState.transparentAccounts.length === 0) {
       message.error('You must create a transparent address first.')
     } else {
       setActiveModal('EnterAddress')

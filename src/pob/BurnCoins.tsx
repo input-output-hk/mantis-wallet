@@ -41,7 +41,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
 
   const cancel = (): void => routerState.navigate('BURN_CENTRE')
 
-  if (walletState.transparentAddresses.length === 0) {
+  if (walletState.transparentAccounts.length === 0) {
     const generateTransparentAddress = (): Promise<void> => walletState.generateNewAddress()
 
     return (
@@ -76,7 +76,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
           <BurnCoinsGenerateAddress
             chain={chain}
             provers={provers}
-            transparentAddresses={walletState.transparentAddresses.map(({address}) => address)}
+            transparentAddresses={walletState.transparentAccounts.map(({address}) => address)}
             cancel={cancel}
             generateBurnAddress={async (prover, transparentAddress, fee): Promise<void> => {
               const burnAddress = await walletState.getBurnAddress(

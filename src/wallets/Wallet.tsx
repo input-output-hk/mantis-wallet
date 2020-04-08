@@ -12,7 +12,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
     transparentBalance,
     availableBalance,
     pendingBalance,
-    transparentAddresses,
+    transparentAccounts,
     accounts,
   } = walletState.getOverviewProps()
 
@@ -25,7 +25,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
       />
       <TransactionHistory
         transactions={transactions}
-        transparentAddresses={transparentAddresses}
+        transparentAddresses={transparentAccounts}
         accounts={accounts}
         availableBalance={walletState.getOverviewProps().availableBalance}
       />
