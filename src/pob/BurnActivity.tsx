@@ -80,7 +80,7 @@ export const _BurnActivity = ({
           <div>
             {filteredStatuses.map((status) => (
               <BurnStatusDisplay
-                key={status.address}
+                key={`${status.address}-${status.burnStatus.txid}`}
                 syncStatus={walletState.syncStatus}
                 {...status}
               />
