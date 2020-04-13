@@ -1,0 +1,45 @@
+@import '../../themify', '../../vars';
+
+.DialogTextSwitch {
+  margin: 20px auto;
+  text-align: center;
+
+  .button {
+    width: 172px;
+    height: 30px !important; // FIXME PM-1812 make button sizes consistent
+    transition: color 0.6s, background-color 0.6s;
+    text-align: center;
+
+    &.inactive {
+      opacity: $secondary-opacity;
+
+      @include themify($themes) {
+        background-color: themed('secondary-background');
+        color: themed('text-color');
+      }
+
+      &:hover,
+      &:focus {
+        opacity: 1;
+
+        @include themify($themes) {
+          background-color: themed('quinary-background');
+        }
+      }
+    }
+
+    &.right {
+      @include themify($themes) {
+        background-color: themed('primary-color');
+        color: #fff;
+      }
+
+      &:focus,
+      &:hover {
+        @include themify($themes) {
+          background-color: lighten(themed('primary-color'), 5);
+        }
+      }
+    }
+  }
+}
