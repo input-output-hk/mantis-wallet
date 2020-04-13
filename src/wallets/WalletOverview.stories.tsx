@@ -1,5 +1,6 @@
 import React from 'react'
 import {withKnobs, select} from '@storybook/addon-knobs'
+import {action} from '@storybook/addon-actions'
 import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
@@ -18,6 +19,7 @@ export const withZeroBalance = (): JSX.Element => (
     pending={new BigNumber(0)}
     transparent={new BigNumber(0)}
     confidential={new BigNumber(0)}
+    goToAccounts={action('set-view-type')}
   />
 )
 
@@ -27,6 +29,7 @@ export const interactive = (): JSX.Element => {
       confidential={dust('Confidential', 15262.4578)}
       transparent={dust('Transparent', 6359.36)}
       pending={dust('Pending', 3815.62)}
+      goToAccounts={action('set-view-type')}
     />
   )
 }

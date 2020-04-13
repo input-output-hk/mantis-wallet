@@ -1,0 +1,142 @@
+@import '../themify', '../vars', '../partial';
+
+.TransparentAccounts {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  margin: 0 0 100px;
+
+  .svg {
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    line-height: 30px;
+
+    .line {
+      @extend %line;
+    }
+
+    .action {
+      display: inline-block;
+      height: 30px;
+      margin-left: 19px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+  }
+
+  .accounts {
+    margin-top: 1em;
+
+    .no-accounts-text {
+      margin-top: 2em;
+      opacity: 0.16;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .list-accounts {
+      .header {
+        display: grid;
+        position: sticky;
+        z-index: 100;
+        top: 0;
+        grid-template-columns: 20% 20% 20% 40%;
+        margin-bottom: 1em;
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 1.95px;
+        line-height: 40px;
+        text-align: left;
+        text-transform: uppercase;
+
+        @include themify($themes) {
+          background-color: themed('component-background');
+        }
+      }
+
+      .transparent-account {
+        margin-bottom: 3em;
+        padding: 1em 0;
+
+        @include themify($themes) {
+          background-color: themed('normal-color');
+        }
+
+        .info {
+          display: grid;
+          grid-template-columns: 20% 20% 20% 40%;
+          min-height: 73px;
+          font-size: 13px;
+          letter-spacing: 0.3px;
+          line-height: 44px;
+          vertical-align: middle;
+
+          & > * {
+            margin: auto 0;
+          }
+
+          & > :first-child {
+            padding-left: 1em;
+          }
+
+          .dust {
+            margin-right: 6px;
+            float: left;
+          }
+
+          .amount {
+            display: inline-block;
+            padding: 0 10px;
+            font-weight: bold;
+            line-height: 32px;
+
+            @include themify($themes) {
+              background-color: themed('secondary-background');
+            }
+          }
+
+          .actions {
+            text-align: right;
+          }
+
+          .action {
+            display: inline-block;
+            height: 32px;
+            margin-right: 1em;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 32px;
+          }
+        }
+
+        .transactions-container {
+          margin: 1em 2em;
+          padding: 0 1em 1em;
+          @include themify($themes) {
+            background-color: themed('secondary-background');
+          }
+
+          .transactions {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+          }
+        }
+      }
+    }
+  }
+}

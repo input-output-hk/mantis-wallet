@@ -199,6 +199,7 @@ export interface WalletAPI {
   getTransparentWalletBalance(address: string): string // returns hex string
 
   // transactions
+  redeemValue(address: string, amount: number, fee: number): string
   sendTransaction(recipient: string, amount: number, fee: number): string
   getTransactionHistory: PaginatedCallable<Transaction>
   callContract(callParams: CallParams): string

@@ -38,6 +38,8 @@ const SynchronizationStatusOnline = t.type({
 
 const SynchronizationStatus = t.union([SynchronizationStatusOffline, SynchronizationStatusOnline])
 
+const TRANSFER_GAS_LIMIT = 21000
+
 export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
 
 export type TransparentAccount = TransparentAddress & {balance: BigNumber}
@@ -63,6 +65,12 @@ export interface LoadedState {
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
+  sendTxToTransparent: (
+    recipient: string,
+    amount: BigNumber,
+    gasPrice: BigNumber,
+  ) => Promise<string>
+  redeemValue: (address: string, amount: number, fee: number) => Promise<string>
   getBurnAddress: (
     address: string,
     chain: Chain,
@@ -250,7 +258,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     )
 
     return Promise.all(
-      transparentAddresses.map(
+      // eslint-disable-next-line
+      _.reverse(transparentAddresses).map(
         async (address: TransparentAddress): Promise<TransparentAccount> => {
           const balance = await wallet.getTransparentWalletBalance(address.address)
           return {
@@ -331,6 +340,28 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return result
   }
 
+  const sendTxToTransparent = async (
+    recipient: string,
+    amount: BigNumber,
+    gasPrice: BigNumber,
+  ): Promise<string> => {
+    const result = await wallet.callContract({
+      from: 'Wallet',
+      to: recipient,
+      value: amount.toString(16),
+      gasPrice: gasPrice.toString(16),
+      gasLimit: TRANSFER_GAS_LIMIT.toString(16),
+    })
+    load()
+    return result
+  }
+
+  const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
+    const result = await wallet.redeemValue(address, amount, fee)
+    load()
+    return result
+  }
+
   const restoreFromSpendingKey = async (
     secrets: SpendingKey & PassphraseSecrets,
   ): Promise<boolean> => {
@@ -380,6 +411,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     generateNewAddress,
     refreshSyncStatus,
     sendTransaction,
+    sendTxToTransparent,
+    redeemValue,
     create,
     unlock,
     restoreFromSpendingKey,

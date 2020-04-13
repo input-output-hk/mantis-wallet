@@ -28,12 +28,7 @@
   }
 
   .ant-modal-footer {
-    padding: 0 64px;
+    padding: 0;
     border-top-width: 0;
-
-    @include themify($themes) {
-      background-color: themed('quinary-background');
-      color: themed('secondary-text-color');
-    }
   }
 }

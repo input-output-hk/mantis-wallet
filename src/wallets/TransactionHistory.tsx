@@ -8,10 +8,8 @@ import {sort, map} from 'fp-ts/lib/Array'
 import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {Transaction, TransparentAddress, Account} from '../web3'
-import {LoadedState} from '../common/wallet-state'
-import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {SendTransaction} from './modals/SendTransaction'
-import {ReceiveTransactionPrivate} from './modals/ReceiveTransactionPrivate'
+import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionRow} from './TransactionRow'
 import './TransactionHistory.scss'
 
@@ -20,6 +18,10 @@ interface TransactionHistoryProps {
   transparentAddresses: TransparentAddress[]
   accounts: Account[]
   availableBalance: BigNumber
+  sendTransaction: (recipient: string, amount: number, fee: number) => Promise<void>
+  sendTxToTransparent: (recipient: string, amount: BigNumber, gasPrice: BigNumber) => Promise<void>
+  generateAddress: () => Promise<void>
+  goToAccounts: () => void
 }
 
 type Property = 'type' | 'amount' | 'time' | 'status'
@@ -84,11 +86,16 @@ const getOrd = (sortBy: SortBy): Ord<Transaction> =>
     ? sortableProperties[sortBy.property].order
     : getDualOrd(sortableProperties[sortBy.property].order)
 
-const _TransactionHistory = (
-  props: PropsWithWalletState<TransactionHistoryProps, LoadedState>,
-): JSX.Element => {
-  const {transactions, accounts, walletState, availableBalance} = props
-
+export const TransactionHistory = ({
+  transactions,
+  accounts,
+  availableBalance,
+  sendTransaction,
+  sendTxToTransparent,
+  generateAddress,
+  transparentAddresses,
+  goToAccounts,
+}: TransactionHistoryProps): JSX.Element => {
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
@@ -155,14 +162,25 @@ const _TransactionHistory = (
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
             onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
-              await walletState.sendTransaction(recipient, amount, fee)
+              await sendTransaction(recipient, amount, fee)
+              setShowSendModal(false)
+            }}
+            onSendToTransparent={async (
+              recipient: string,
+              amount: BigNumber,
+              gasPrice: BigNumber,
+            ): Promise<void> => {
+              await sendTxToTransparent(recipient, amount, gasPrice)
               setShowSendModal(false)
             }}
           />
-          <ReceiveTransactionPrivate
+          <ReceiveTransaction
             visible={showReceiveModal}
             privateAddress={accounts[0].address || ''} // FIXME: PM-1555 - refactor to support multiple wallets
             onCancel={(): void => setShowReceiveModal(false)}
+            onGenerateNew={generateAddress}
+            transparentAddresses={transparentAddresses}
+            goToAccounts={goToAccounts}
           />
         </div>
       </div>
@@ -205,5 +223,3 @@ const _TransactionHistory = (
     </div>
   )
 }
-
-export const TransactionHistory = withStatusGuard(_TransactionHistory, 'LOADED')

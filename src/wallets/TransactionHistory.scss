@@ -1,25 +1,5 @@
 @import '../themify', '../partial';
 
-.ReceiveModalFooter {
-  padding: 24px 0;
-  text-align: left;
-
-  .title {
-    padding: 10px 0;
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-
-  .address {
-    width: 508px;
-    padding: 10px 0;
-    overflow: hidden;
-    font-size: 10px;
-    white-space: nowrap;
-  }
-}
-
 .TransactionHistory {
   display: grid;
   grid-template-rows: auto 1fr;

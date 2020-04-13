@@ -78,30 +78,29 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
   )
 }
 
-const wrappedRender = (ui: React.ReactElement): RenderResult => render(ui, {wrapper: WithProviders})
-
-test('TransactionHistory shows proper message with empty tx list', () => {
-  const {getByText} = wrappedRender(
+const renderTransactionHistory = (transactions: Transaction[]): RenderResult =>
+  render(
     <TransactionHistory
-      transactions={[]}
+      transactions={transactions}
       transparentAddresses={[]}
       accounts={accounts}
       availableBalance={new BigNumber(1000)}
+      sendTransaction={jest.fn()}
+      sendTxToTransparent={jest.fn()}
+      generateAddress={jest.fn()}
+      goToAccounts={jest.fn()}
     />,
+    {wrapper: WithProviders},
   )
+
+test('TransactionHistory shows proper message with empty tx list', () => {
+  const {getByText} = renderTransactionHistory([])
   expect(getByText("You haven't made a transaction")).toBeInTheDocument()
 })
 
 // txAmount
 test('TransactionHistory shows proper tx amounts', () => {
-  const {getByText} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx1, tx2]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByText} = renderTransactionHistory([tx1, tx2])
   const {strict: formattedNumber1} = abbreviateAmount(new BigNumber(123))
   expect(getByText(formattedNumber1)).toBeInTheDocument()
   const {strict: formattedNumber2} = abbreviateAmount(new BigNumber(123456789))
@@ -110,105 +109,49 @@ test('TransactionHistory shows proper tx amounts', () => {
 
 // txStatus.status
 test('TransactionHistory shows `Confirmed` status/icon', () => {
-  const {getByTitle} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx1]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTitle} = renderTransactionHistory([tx1])
   expect(getByTitle('Confirmed')).toBeInTheDocument()
 })
 
 test('TransactionHistory shows `Pending` status', () => {
-  const {getByText} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx2]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByText} = renderTransactionHistory([tx2])
   expect(getByText('Pending')).toBeInTheDocument()
 })
 
 // txDirection
 test('TransactionHistory shows `Incoming` tx icon', () => {
-  const {getByTitle} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx1]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTitle} = renderTransactionHistory([tx1])
   expect(getByTitle('Incoming')).toBeInTheDocument()
 })
 
 test('TransactionHistory shows `Outgoing` tx icon', () => {
-  const {getByTitle} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx2]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTitle} = renderTransactionHistory([tx2])
   expect(getByTitle('Outgoing')).toBeInTheDocument()
 })
 
 // Transparent/Confidential
 test('TransactionHistory shows `Confidential` tx icon', () => {
-  const {getByTitle} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx1]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTitle} = renderTransactionHistory([tx1])
   expect(getByTitle('Confidential')).toBeInTheDocument()
 })
 
 test('TransactionHistory shows `Transparent` tx icon', () => {
-  const {getByTitle} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx2]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTitle} = renderTransactionHistory([tx2])
   expect(getByTitle('Transparent')).toBeInTheDocument()
 })
 
 // Modals
 test('Send modal shows up', () => {
-  const {getByTestId, getByText} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx1, tx2]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTestId, getAllByText} = renderTransactionHistory([tx1, tx2])
   const sendButton = getByTestId('send-button')
   expect(sendButton).toBeInTheDocument()
   userEvent.click(sendButton)
 
-  expect(getByText('Recipient')).toBeInTheDocument()
+  expect(getAllByText('Recipient')).toHaveLength(2)
 })
 
 test('Receive modal shows up', () => {
-  const {getByTestId, getByText} = wrappedRender(
-    <TransactionHistory
-      transactions={[tx1, tx2]}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-    />,
-  )
+  const {getByTestId, getByText} = renderTransactionHistory([tx1, tx2])
   const receiveButton = getByTestId('receive-button')
   expect(receiveButton).toBeInTheDocument()
   userEvent.click(receiveButton)
