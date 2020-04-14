@@ -39,20 +39,3 @@
     transform: rotate(-360deg);
   }
 }
-
-.FloatingSyncStatus {
-  position: absolute;
-  z-index: 2000;
-  right: 1rem;
-  bottom: 1rem;
-  border-radius: 1rem;
-
-  .SyncStatus > span {
-    display: inline-block;
-    padding: 1rem;
-  }
-
-  @include themify($themes) {
-    background-color: themed('secondary-background');
-  }
-}

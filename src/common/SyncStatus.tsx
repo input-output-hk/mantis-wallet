@@ -2,15 +2,15 @@ import React from 'react'
 import classnames from 'classnames'
 import SVG from 'react-inlinesvg'
 import {Popover} from 'antd'
-import {WalletState, SynchronizationStatus} from './wallet-state'
-import {RouterState} from '../router-state'
+import {EmptyProps} from 'antd/lib/empty'
+import {SynchronizationStatus, LoadedState} from './wallet-state'
 import {useInterval} from './hook-utils'
+import {withStatusGuard, PropsWithWalletState} from './wallet-status-guard'
 import refreshIcon from '../assets/icons/refresh.svg'
 import './SyncStatus.scss'
 
 interface SyncStatusProps {
   syncStatus: SynchronizationStatus
-  onClick?: () => void
 }
 
 type SyncStatus = 'offline' | 'synced' | 'syncing'
@@ -27,10 +27,10 @@ const Message = ({syncStatus}: SyncStatusProps): JSX.Element => {
   return <>Syncing Blocks {syncStatus.percentage}%</>
 }
 
-export const SyncStatusContent = ({syncStatus, onClick}: SyncStatusProps): JSX.Element => {
+export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
   const classes = classnames('SyncStatus', getSyncStatus(syncStatus))
   return (
-    <span className={classes} onClick={onClick}>
+    <span className={classes}>
       <Popover content={`Current block: ${syncStatus.currentBlock}`} placement="left">
         <Message syncStatus={syncStatus} />
         <SVG src={refreshIcon} className="svg" />
@@ -39,21 +39,12 @@ export const SyncStatusContent = ({syncStatus, onClick}: SyncStatusProps): JSX.E
   )
 }
 
-export const FloatingSyncStatus = (): JSX.Element => {
-  const walletState = WalletState.useContainer()
-  const routerState = RouterState.useContainer()
-
+const _SyncStatus = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   useInterval(() => {
-    if (walletState.walletStatus === 'LOADED') walletState.refreshSyncStatus()
+    walletState.refreshSyncStatus()
   }, 3000)
 
-  if (walletState.walletStatus !== 'LOADED' || routerState.currentRouteId === 'WALLETS') {
-    return <></>
-  }
-
-  return (
-    <div className="FloatingSyncStatus">
-      <SyncStatusContent syncStatus={walletState.syncStatus} />
-    </div>
-  )
+  return <SyncStatusContent syncStatus={walletState.syncStatus} />
 }
+
+export const SyncStatus = withStatusGuard(_SyncStatus, 'LOADED', () => <></>)

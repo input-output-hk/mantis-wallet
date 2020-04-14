@@ -1,0 +1,15 @@
+@import '../partial';
+
+.HeaderWithSyncStatus {
+  .link {
+    @extend %link;
+    margin: 0;
+    overflow: hidden;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+
+  .SyncStatus {
+    float: right;
+  }
+}
