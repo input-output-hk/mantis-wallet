@@ -1,0 +1,16 @@
+.disable-animations {
+  *,
+  ::before,
+  ::after {
+    animation: none !important;
+  }
+}
+
+.storybook-app {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  min-height: 100vh;
+  padding: 24px;
+  overflow: auto;
+}

@@ -24,41 +24,16 @@ const getCustomBrowser = (): Promise<Browser> =>
     },
   })
 
-const animatedStories: Array<{kind: string; story: string}> = [
-  {
-    kind: 'Splash Screen',
-    story: 'Splash Screen',
-  },
-  {
-    kind: 'Common',
-    story: 'Loading',
-  },
-]
-
 const getMatchOptions = (theme: Theme) => ({
   context,
 }: {
   context: Context
-}): MatchImageSnapshotOptions => {
-  const threshold: Partial<MatchImageSnapshotOptions> = animatedStories.find(
-    ({kind, story}) => kind === context.kind && story === context.story,
-  )
-    ? {
-        failureThreshold: 0.2,
-        failureThresholdType: 'percent',
-      }
-    : {}
-
-  return {
-    customSnapshotsDir: path.resolve(__dirname, '../image-snapshots'),
-    customSnapshotIdentifier: `${theme}-${_.kebabCase(context.kind)}--${_.kebabCase(
-      context.story,
-    )}`,
-    customDiffConfig: {threshold: 0.1},
-    blur: 2,
-    ...threshold,
-  }
-}
+}): MatchImageSnapshotOptions => ({
+  customSnapshotsDir: path.resolve(__dirname, '../image-snapshots'),
+  customSnapshotIdentifier: `${theme}-${_.kebabCase(context.kind)}--${_.kebabCase(context.story)}`,
+  customDiffConfig: {threshold: 0.1},
+  blur: 2,
+})
 
 const beforeScreenshot = (theme: Theme) => (page: Page): Promise<void> => {
   return page.goto(`${page.url()}&theme=${theme}`).then(
