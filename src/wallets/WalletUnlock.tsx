@@ -37,6 +37,7 @@ export const WalletUnlock = (): JSX.Element => {
           }}
         >
           <DialogInputPassword
+            autoFocus
             label="Enter Password"
             errorMessage={errorMessage}
             visibilityToggle={false}

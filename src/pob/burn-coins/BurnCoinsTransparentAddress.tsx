@@ -17,6 +17,7 @@ export const BurnCoinsTransparentAddress: React.FunctionComponent<BurnCoinsNoWal
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
         children: 'Generate Transparent Address',
+        autoFocus: true,
         onClick: generateTransparentAddress,
       }}
     />

@@ -55,6 +55,7 @@ const _Exchange = ({
       </Asset>
       <DialogShowDust amount={minimumDustAmount}>You are eligible for at least</DialogShowDust>
       <DialogApproval
+        autoFocus
         description={`Confirm ${chain.symbol} Balance OK`}
         checked={extrernalBalanceConfirmed}
         onChange={setExternalBalanceConfirmed}

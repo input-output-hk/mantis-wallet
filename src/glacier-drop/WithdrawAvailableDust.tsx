@@ -78,6 +78,7 @@ const _WithdrawAvailableDust = ({
       <DialogShowDust amount={estimatedWithdrawableDust} />
       <DialogColumns>
         <DialogInput
+          autoFocus
           label="Gas Price"
           defaultValue={gasPrice}
           onChange={(e): void => setGasPrice(e.target.value)}

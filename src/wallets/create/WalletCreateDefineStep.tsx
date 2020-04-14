@@ -31,6 +31,7 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
       footer={errors}
     >
       <DialogInput
+        autoFocus
         label="Wallet name"
         id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}

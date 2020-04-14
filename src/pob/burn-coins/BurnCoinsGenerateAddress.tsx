@@ -99,6 +99,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           }}
         />
         <DialogInput
+          autoFocus
           label={`Assign reward in M-${chain.symbol} for your prover`}
           value={fee}
           onChange={(e) => setFee(e.target.value)}

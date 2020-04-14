@@ -52,6 +52,7 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
       onSetLoading={modalLocker.setLocked}
     >
       <DialogInput
+        autoFocus
         label="Burn Transaction Id"
         value={burnTx}
         onChange={(e): void => setBurnTx(e.target.value)}

@@ -62,6 +62,7 @@ const _ClaimWithMessage = ({
       buttonDisplayMode="natural"
     >
       <DialogInput
+        autoFocus
         label={`Input Signed Message`}
         onChange={(e): void => {
           setSignedMessage(e.target.value)

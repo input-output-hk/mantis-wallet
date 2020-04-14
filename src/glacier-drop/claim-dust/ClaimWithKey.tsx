@@ -58,6 +58,7 @@ const _ClaimWithKey = ({
       buttonDisplayMode="natural"
     >
       <DialogInput
+        autoFocus
         label={`${chain.symbol} Private Key from your ${chain.symbol} Wallet `}
         onChange={(e): void => setEtcPrivateKey(e.target.value.toLowerCase())}
         errorMessage={privateKeyError}

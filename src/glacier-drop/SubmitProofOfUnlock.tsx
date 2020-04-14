@@ -63,6 +63,7 @@ const _SubmitProofOfUnlock = ({
       <DialogShowDust amount={dustAmount}>Eligible Amount</DialogShowDust>
       <DialogColumns>
         <DialogInput
+          autoFocus
           label="Gas Price"
           defaultValue={gasPrice}
           onChange={(e): void => setGasPrice(e.target.value)}

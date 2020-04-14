@@ -61,6 +61,7 @@ const SendToConfidentialDialog = ({
     >
       {children}
       <DialogInput
+        autoFocus
         label="Recipient"
         onChange={(e): void => setRecipient(e.target.value)}
         errorMessage={recipient.length === 0 ? 'Recipient must be set' : ''}

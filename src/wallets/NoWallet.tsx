@@ -14,6 +14,7 @@ export const NoWallet: React.FunctionComponent<{}> = () => {
         leftButtonProps={{doNotRender: true}}
         rightButtonProps={{
           children: 'Go to Wallets',
+          autoFocus: true,
           onClick: () => routerState.navigate('WALLETS'),
         }}
       />

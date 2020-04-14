@@ -39,7 +39,7 @@ export const SelectMethod = ({
         <div className="section">
           <div className="label">{chain.symbol} Private Key</div>
           <div className="actions grid">
-            <Button size="large" onClick={onPrivateKey}>
+            <Button autoFocus size="large" onClick={onPrivateKey}>
               Continue
             </Button>
           </div>

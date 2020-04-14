@@ -28,6 +28,7 @@ export const VerifyAddress = ({
       <Dialog
         title="Claim Dust"
         rightButtonProps={{
+          autoFocus: true,
           children: 'Generate Message',
           type: 'default',
           onClick: () => onNext(),
