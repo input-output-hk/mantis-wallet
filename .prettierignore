@@ -2,6 +2,7 @@
 docs
 build
 coverage
+dist
 storybook-static
 .*
 
