@@ -4,7 +4,7 @@ import path from 'path'
 import url from 'url'
 import {spawn, exec} from 'child_process'
 import {promisify} from 'util'
-import {app, BrowserWindow, dialog, globalShortcut, screen} from 'electron'
+import {app, BrowserWindow, dialog, globalShortcut, screen, Menu} from 'electron'
 import {asapScheduler, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
@@ -15,6 +15,7 @@ import * as _ from 'lodash/fp'
 import {config} from '../config/main'
 import {ClientName} from '../config/type'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
+import {buildMenu} from './menu'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -40,6 +41,8 @@ function createWindow(): void {
       nodeIntegration: true,
     },
   })
+
+  Menu.setApplicationMenu(buildMenu())
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
