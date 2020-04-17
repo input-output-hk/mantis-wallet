@@ -9,13 +9,26 @@ const appMenuForMac: MenuItemConstructorOptions[] = [
   {type: 'separator'},
 ]
 
-const template: MenuItemConstructorOptions[] = [
-  {
-    label: 'Luna',
-    submenu: [...(isMac ? appMenuForMac : []), {role: 'quit'}],
-  },
-  {role: 'editMenu'},
-  {role: 'viewMenu'},
-]
+export const buildMenu = (openRemix: () => void): Menu => {
+  const template: MenuItemConstructorOptions[] = [
+    {
+      label: 'Luna',
+      submenu: [
+        {label: 'Open Remix IDE', click: openRemix},
+        {type: 'separator'},
+        ...(isMac ? appMenuForMac : []),
+        {role: 'quit'},
+      ],
+    },
+    {role: 'editMenu'},
+    {role: 'viewMenu'},
+  ]
 
-export const buildMenu = (): Menu => Menu.buildFromTemplate(template)
+  return Menu.buildFromTemplate(template)
+}
+
+export const buildRemixMenu = (): Menu => {
+  const template: MenuItemConstructorOptions[] = [{role: 'editMenu'}, {role: 'viewMenu'}]
+
+  return Menu.buildFromTemplate(template)
+}
