@@ -11,10 +11,15 @@ import {
   Account,
   Transaction,
   TransparentAddress,
-  SynchronizationStatus,
+  RawSynchronizationStatus,
   BigNumberJSON,
   ERC20Contract,
   EthTransaction,
+  RawBalanceWithProof,
+  RawAuthorizationSignature,
+  CallParams,
+  MineResponse,
+  GetMiningStateResponse,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -81,12 +86,9 @@ class MockWallet {
       totalBalance: new BigNumber(250_000_000) as BigNumberJSON,
     }
   }
-  getTransparentWalletBalance(_address: string): Balance {
+  getTransparentWalletBalance(_address: string): string {
     this._lockGuard()
-    return {
-      availableBalance: new BigNumber(100_000_00) as BigNumberJSON,
-      totalBalance: new BigNumber(250_000_000) as BigNumberJSON,
-    }
+    return toHex(12345)
   }
 
   // transactions
@@ -110,6 +112,10 @@ class MockWallet {
     this._lockGuard()
     return this.transactions
   }
+  callContract(_contractParams: CallParams): string {
+    this._lockGuard()
+    return 'contract-result'
+  }
 
   // transparent addresses
   listTransparentAddresses(): TransparentAddress[] {
@@ -131,7 +137,7 @@ class MockWallet {
     }
   }
 
-  getSynchronizationStatus(): SynchronizationStatus {
+  getSynchronizationStatus(): RawSynchronizationStatus {
     this._existGuard()
     this.currentBlock += 1
     return {
@@ -160,6 +166,36 @@ class MockWallet {
     this._existGuard()
     if (this.isLocked) throw Error(WALLET_IS_LOCKED)
   }
+
+  getEtcSnapshotBalanceWithProof(_etcAddress: string): RawBalanceWithProof {
+    return {
+      balance: toHex(123456789),
+      proof: 'abcdefg',
+    }
+  }
+
+  authorizationSign(_midnightAddress: string): RawAuthorizationSignature {
+    return {
+      r: '0xe316ff5f701f3414ea61bd66540ed46aeed2f9abdee39c4c6deda66fdc7814fd',
+      s: '0x4292396321c366bda216ef6eec700d6e3abde3e50ab2b106315953777f4a5799',
+      v: 28,
+    }
+  }
+
+  mine(_externalAmount: string, _etcAddress: string): MineResponse {
+    return {
+      status: 'NewMineStarted',
+      message: '',
+    }
+  }
+
+  getMiningState(): GetMiningStateResponse {
+    return {
+      status: 'MiningSuccessful',
+      nonce: '0x0',
+      mixHash: '0x0',
+    }
+  }
 }
 
 const mockErc20Contracts = _.values(CHAINS).map(({id}): [ChainId, ERC20Contract] => [
@@ -169,12 +205,12 @@ const mockErc20Contracts = _.values(CHAINS).map(({id}): [ChainId, ERC20Contract]
 
 export const Web3MockApi: Web3API = {
   eth: {
-    getTransaction: (hash: string): EthTransaction => {
-      return {
-        hash,
-        blockNumber: 2,
-      }
-    },
+    getTransaction: (hash: string): EthTransaction => ({
+      hash,
+      blockNumber: 2,
+    }),
+    getTransactionReceipt: () => null,
+    call: () => '',
   },
   midnight: {
     wallet: new MockWallet(),

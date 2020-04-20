@@ -160,6 +160,7 @@ div#root {
 
 // antd Popover theme overrides
 .ant-popover-inner-content {
+  font-size: 12px;
   @include themify($themes) {
     background-color: themed('text-color');
     color: themed('secondary-background');

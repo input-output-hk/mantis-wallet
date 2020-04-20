@@ -55,7 +55,7 @@ export const LogOutModal: React.FunctionComponent<LogOutModalProps & ModalProps>
         <DialogApproval
           checked={approve}
           onChange={setApprove}
-          description="I understand that all my Burn Addresses will be deleted from this machine."
+          description="I understand that all my Burn Addresses and Glacier Drop Claims will be deleted from this machine."
         />
       </Dialog>
     </LunaModal>

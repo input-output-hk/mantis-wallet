@@ -100,6 +100,18 @@ interface OutgoingTransaction extends BaseTransaction {
 
 export type Transaction = IncomingTransaction | OutgoingTransaction
 
+// Contracts
+
+export interface CallParams {
+  from: ['Wallet', string] | 'Wallet' // WalletName, optional: transparentAddress (if missing, new one will be generated)
+  to?: string // transparent contract address in bech32 format
+  value?: string // value of transaction
+  gasLimit: string // decimal as string, if not specified, default is equal to 90000
+  gasPrice: string // decimal as string, if not specified, default is equal to 20000000000
+  nonce?: string // If not specified, default is equal to current transparent sender nonce
+  data?: string // smart contract deployment/calling code
+}
+
 // Secrets
 
 export interface PassphraseSecrets {
@@ -112,6 +124,10 @@ export interface SpendingKey {
 
 export interface SeedPhrase {
   seedPhrase: string[]
+}
+
+export interface EtcPrivateKeySecrets {
+  etcPrivateKey: string
 }
 
 // SynchronizationStatus
@@ -128,7 +144,43 @@ export interface SynchronizationStatusOnline {
   percentage: number
 }
 
-export type SynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
+export type RawSynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
+
+// Glacier Drop
+
+export interface RawBalanceWithProof {
+  balance: string // hex number string
+  proof: string // hex string
+}
+
+export interface RawAuthorizationSignature {
+  r: string // hex string
+  s: string // hex string
+  v: number
+}
+
+interface NewMineStarted {
+  status: 'NewMineStarted'
+  message: string
+}
+
+interface MiningInProgress {
+  status: 'MiningInProgress'
+  currentNonce: string // hex number string
+  message: string
+}
+
+export type MineResponse = NewMineStarted | MiningInProgress
+
+interface MiningSuccessful {
+  status: 'MiningSuccessful'
+  nonce: string // hex number string
+  mixHash: string // hex string
+}
+
+export type GetMiningStateResponse = MiningInProgress | MiningSuccessful
+
+// Helpers
 
 export type PaginatedCallable<T> = (count: number, drop: number) => T[]
 
@@ -143,19 +195,29 @@ export interface WalletAPI {
 
   // balances
   getBalance(): Balance
-  getTransparentWalletBalance(address: string): Balance
+  getTransparentWalletBalance(address: string): string // returns hex string
 
   // transactions
   sendTransaction(recipient: string, amount: number, fee: number): string
   getTransactionHistory: PaginatedCallable<Transaction>
+  callContract(callParams: CallParams): string
 
   // transparent addresses
   listTransparentAddresses: PaginatedCallable<TransparentAddress>
   generateTransparentAddress(): TransparentAddress
 
   listAccounts(): Account[]
-  getSynchronizationStatus(): SynchronizationStatus
+  getSynchronizationStatus(): RawSynchronizationStatus
   getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
+
+  // glacier drop
+  getEtcSnapshotBalanceWithProof(etcAddress: string): RawBalanceWithProof
+  authorizationSign(
+    transparentAddress: string,
+    secrets: EtcPrivateKeySecrets,
+  ): RawAuthorizationSignature
+  mine(externalAmount: string, etcAddress: string): MineResponse
+  getMiningState(): GetMiningStateResponse
 }
 
 export interface ERC20Contract {
@@ -169,8 +231,24 @@ export interface EthTransaction {
   blockNumber: number
 }
 
+export interface TransactionReceipt {
+  transactionHash: string // hex string
+  transactionIndex: string // hex num string
+  blockNumber: string // hex num string
+  blockHash: string // hex string
+  cumulativeGasUsed: string // hex num string
+  gasUsed: string // hex num string
+  contractAddress: null
+  logs: []
+  statusCode: string // hex num string
+  returnData: string // hex string
+}
+
 export interface EthApi {
   getTransaction(hash: string): EthTransaction
+  getTransactionReceipt(transactionHash: string): TransactionReceipt | null
+  // used to get constant values from contracts:
+  call(callParams: Partial<CallParams>, version: 'latest'): string
 }
 
 export interface Web3API {

@@ -14,7 +14,7 @@ import {
 } from './api/prover'
 import {Chain, ChainId, CHAINS} from './chains'
 import {ProverConfig} from '../config/type'
-import {Store, defaultPobData, createInMemoryStore, StorePobData} from '../common/store'
+import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {Web3API, makeWeb3Worker, EthTransaction} from '../web3'
 import {deserializeBigNumber, bigSum, bech32toHex} from '../common/util'
@@ -66,6 +66,20 @@ interface ProofOfBurnState {
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnInfo: BurnAddressInfo) => Promise<void>
   provers: Prover[]
+}
+
+export type StorePobData = {
+  pob: {
+    burnWatchers: BurnWatcher[]
+    burnAddresses: Record<string, BurnAddressInfo>
+  }
+}
+
+export const defaultPobData: StorePobData = {
+  pob: {
+    burnWatchers: [],
+    burnAddresses: {},
+  },
 }
 
 const FINISHED_BURN_STATUSES = [

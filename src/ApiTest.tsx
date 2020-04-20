@@ -6,9 +6,10 @@ import {
   SeedPhrase,
   TransparentAddress,
   Account,
-  SynchronizationStatus,
+  RawSynchronizationStatus,
 } from './web3'
 import {ThemeState} from './theme-state'
+import {GlacierState} from './glacier-drop/glacier-state'
 import {WalletState} from './common/wallet-state'
 import {DialogInput} from './common/dialog/DialogInput'
 
@@ -19,6 +20,7 @@ const wallet = web3.midnight.wallet
 export const ApiTest = (): JSX.Element => {
   const walletState = WalletState.useContainer()
   const themeState = ThemeState.useContainer()
+  const glacierState = GlacierState.useContainer()
 
   const [message, setMessage] = useState<string>('')
 
@@ -120,10 +122,14 @@ export const ApiTest = (): JSX.Element => {
         </TestButton>
         <TestButton onClick={(): Promise<Account[]> => wallet.listAccounts()}>Accounts</TestButton>
         <TestButton
-          onClick={(): Promise<SynchronizationStatus> => wallet.getSynchronizationStatus()}
+          onClick={(): Promise<RawSynchronizationStatus> => wallet.getSynchronizationStatus()}
         >
           Sync Status
         </TestButton>
+        <TestButton onClick={(): Promise<void> => glacierState.removeClaims()}>
+          Remove Claims
+        </TestButton>
+
         <Button
           type="primary"
           style={{display: 'block', marginBottom: '0.5rem'}}

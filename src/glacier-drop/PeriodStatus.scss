@@ -41,10 +41,10 @@
       }
     }
 
-    .unlock {
+    .current-period {
       margin-bottom: 1em;
 
-      .unlock-title {
+      .current-period-title {
         margin-bottom: 0.5em;
         font-weight: bold;
         letter-spacing: 1.95px;
@@ -55,12 +55,12 @@
         }
       }
 
-      .unlock-detail {
+      .current-period-detail {
         font-size: 12px;
       }
     }
 
-    .unfreeze {
+    .next-period {
       font-size: 12px;
     }
   }

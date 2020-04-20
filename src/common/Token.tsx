@@ -1,18 +1,18 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import {Chain} from '../pob/chains'
+import {DisplayChain} from '../pob/chains'
 import './Token.scss'
 
-interface BurnCoinsChooseTokenProps {
-  chain: Chain
-  chooseChain: (chain: Chain) => void
+type TokenProps<T extends DisplayChain> = {
+  chain: T
+  chooseChain: (chain: T) => void
 }
 
-export const Token: React.FunctionComponent<BurnCoinsChooseTokenProps> = ({
+export const Token = <T extends DisplayChain>({
   chain,
   chooseChain,
   children,
-}: React.PropsWithChildren<BurnCoinsChooseTokenProps>) => (
+}: React.PropsWithChildren<TokenProps<T>>): JSX.Element => (
   <div className="Token" onClick={() => chooseChain(chain)}>
     <SVG src={chain.logo} className="logo" />
     <div className="footer">

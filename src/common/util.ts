@@ -2,13 +2,18 @@ import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import * as bech32 from 'bech32-buffer'
 import _ from 'lodash'
+import {isChecksumAddress} from 'web3/lib/utils/utils.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
 }
 
-export const toHex = (n: number): string => `0x${n.toString(16)}`
+export const toHex = (n: number | BigNumber): string => {
+  const asString = n.toString(16)
+  if (asString.startsWith('-')) throw Error('n must be positive')
+  return `0x${asString}`
+}
 
 export const loadAll = async <T>(
   fn: Comlink.Remote<PaginatedCallable<T>>,
@@ -22,6 +27,11 @@ export const loadAll = async <T>(
     return [...result, ...nextResult]
   }
 }
+
+export const isLess = (minValue = 0) => (b: BigNumber) =>
+  !b.isFinite() || !b.isLessThan(new BigNumber(minValue))
+    ? `Must be a number less than ${minValue}`
+    : ''
 
 export const isGreater = (minValue = 0) => (b: BigNumber) =>
   !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
@@ -65,4 +75,38 @@ export function hexToBech32(hexAddress: string, prefix = 'm-test-uns-ad'): strin
   const trailingZeros = _.fill(new Array(20 - data.length), 0)
 
   return bech32.encode(prefix, new Uint8Array([...trailingZeros, ...data]))
+}
+
+export const EMPTY_ADDRESS_MSG = 'Address must be set'
+export const INVALID_ADDRESS_MSG = 'Invalid address'
+
+export function validateEthAddress(rawInput: string): string {
+  if (rawInput.length === 0) return EMPTY_ADDRESS_MSG
+  try {
+    if (!isChecksumAddress(rawInput)) return INVALID_ADDRESS_MSG
+  } catch (e) {
+    return INVALID_ADDRESS_MSG
+  }
+  return ''
+}
+
+const MAX_KEY_VALUE = new BigNumber(
+  '0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141',
+)
+const INVALID_PRIVATE_KEY_MSG = 'Invalid private key'
+const PRIVATE_KEY_MUST_BE_SET_MSG = 'Private Key must be set'
+
+export function validateEthPrivateKey(privateKey: string): string {
+  if (privateKey.length === 0) {
+    return PRIVATE_KEY_MUST_BE_SET_MSG
+  }
+  try {
+    const k = new BigNumber(privateKey)
+    if (!k.isFinite() || k.isZero() || k.isGreaterThan(MAX_KEY_VALUE)) {
+      return INVALID_PRIVATE_KEY_MSG
+    }
+  } catch (e) {
+    return INVALID_PRIVATE_KEY_MSG
+  }
+  return ''
 }

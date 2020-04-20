@@ -1,12 +1,12 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
-import {Chain} from '../../pob/chains'
+import {DisplayChain} from '../../pob/chains'
 import {ShortNumber} from '../../common/ShortNumber'
 import './Asset.scss'
 
 interface AssetProps {
-  chain: Chain
+  chain: DisplayChain
   amount: BigNumber
 }
 

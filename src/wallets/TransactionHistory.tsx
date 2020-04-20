@@ -95,7 +95,7 @@ const _TransactionHistory = (
 
   const [sortBy, setSortBy] = useState<SortBy>({
     property: 'time',
-    direction: 'asc',
+    direction: 'desc',
   })
 
   const changeOrder = (property: Property) => (): void => setSortBy(updateSorting(sortBy, property))
