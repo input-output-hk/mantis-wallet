@@ -12,6 +12,9 @@ $light-secondary-background: #fafafa;
 $light-btn-bg: #a2a2a2;
 $light-component-background: #fff;
 
+$error-background-color: #fdcece;
+$error-dialog-color: #c20000;
+
 // secondary and tertiary backgrounds are used on components
 // put over the primary background
 // quaternary and quinary backgrounds are used on modals
@@ -28,7 +31,7 @@ $themes: (
     error-color: $error-color,
     component-background: $dark-component-background,
     secondary-component-background: lighten($dark-component-background, 5%),
-    tertiary-component-background: lighten($dark-component-background, 10%),
+    tertiary-component-background: lighten($dark-component-background, 7%),
     modal-background: $dark-secondary-background,
     link-color: $dark-text-color,
     tertiary-background: #707070,
@@ -38,7 +41,8 @@ $themes: (
     quaternary-background: #202020,
     quinary-background: #1e1e1e,
     secondary-text-color: #808080,
-    error-background-color: #fcbbbb,
+    error-background-color: $error-background-color,
+    error-dialog-color: $error-dialog-color,
     border-color-base: $dark-text-color,
     btn-default-bg: $dark-btn-bg,
     btn-disabled-bg: darken($dark-btn-bg, 20%),
@@ -56,9 +60,10 @@ $themes: (
     secondary-color: $secondary-color,
     success-color: $success-color,
     error-color: $error-color,
+    error-dialog-color: $error-dialog-color,
     component-background: $light-component-background,
     secondary-component-background: darken($light-component-background, 5%),
-    tertiary-component-background: darken($light-component-background, 10%),
+    tertiary-component-background: darken($light-component-background, 7%),
     modal-background: #ffffff,
     link-color: $light-text-color,
     tertiary-background: #6b6b6b,
@@ -67,7 +72,7 @@ $themes: (
     quaternary-background: #fafafa,
     quinary-background: #ccc,
     secondary-text-color: #808080,
-    error-background-color: #fcbbbb,
+    error-background-color: $error-background-color,
     border-color-base: $light-text-color,
     btn-default-bg: $light-btn-bg,
     btn-disabled-bg: lighten($light-btn-bg, 20%),

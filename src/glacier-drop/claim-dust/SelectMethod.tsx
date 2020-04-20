@@ -1,23 +1,24 @@
 import React from 'react'
 import {ModalProps} from 'antd/lib/modal'
 import {Button} from 'antd'
+import {ETC_CHAIN} from '../glacier-config'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
-import {Chain} from '../../pob/chains'
+import {DisplayChain} from '../../pob/chains'
 import './SelectMethod.scss'
 
 interface SelectMethodProps {
-  chain: Chain
   onPrivateKey: () => void
   onMessageCreate: () => void
   onMessageUseSigned: () => void
+  chain?: DisplayChain
 }
 
 export const SelectMethod = ({
-  chain,
   onPrivateKey,
   onMessageCreate,
   onMessageUseSigned,
+  chain = ETC_CHAIN,
   ...props
 }: SelectMethodProps & ModalProps): JSX.Element => {
   return (
@@ -52,7 +53,7 @@ export const SelectMethod = ({
             <Button size="large" onClick={onMessageCreate}>
               Create
             </Button>
-            <Button size="large" onClick={onMessageUseSigned}>
+            <Button size="large" onClick={onMessageUseSigned} disabled={true /* FIXME: PM-1709 */}>
               Use Signed
             </Button>
           </div>

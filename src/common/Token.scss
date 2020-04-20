@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 .Token {
   display: inline-block;
@@ -25,6 +25,7 @@
   .footer {
     display: grid;
     height: 16%;
+    transition: background-color $transition-duration;
 
     @include themify($themes) {
       background-color: themed('primary-color');
@@ -39,9 +40,11 @@
     }
   }
 
-  &:hover {
+  &:hover .footer {
+    transition: background-color $transition-duration;
+
     @include themify($themes) {
-      border-color: themed('text-color');
+      background-color: darken(themed('primary-color'), 5%);
     }
   }
 }

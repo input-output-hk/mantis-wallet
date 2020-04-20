@@ -1,10 +1,10 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import {Chain} from '../../pob/chains'
+import {DisplayChain} from '../../pob/chains'
 import './DialogAddress.scss'
 
 interface DialogAddressProps {
-  chain: Chain
+  chain: DisplayChain
   address: string
 }
 

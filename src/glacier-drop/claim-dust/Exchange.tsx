@@ -1,58 +1,74 @@
 import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
-import {Chain, DUST_SYMBOL} from '../../pob/chains'
+import {DisplayChain, DUST_SYMBOL} from '../../pob/chains'
 import {LunaModal} from '../../common/LunaModal'
 import {ShortNumber} from '../../common/ShortNumber'
 import {Dialog} from '../../common/Dialog'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
-import {Asset} from './Asset'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {Asset} from './Asset'
+import {ETC_CHAIN} from '../glacier-config'
 import './Exchange.scss'
 
 interface ExchangeProps {
-  chain: Chain
   externalAmount: BigNumber
-  midnightAmount: BigNumber
+  dustAmount: BigNumber
   availableDust: BigNumber
   transparentAddresses: string[]
   onNext: (transparentAddress: string) => void
+  onCancel: () => void
+  chain?: DisplayChain
 }
 
 export const Exchange = ({
-  chain,
   externalAmount,
-  midnightAmount,
+  dustAmount,
   availableDust,
   transparentAddresses,
   onNext,
+  onCancel,
+  chain = ETC_CHAIN,
   ...props
 }: ExchangeProps & ModalProps): JSX.Element => {
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
   const [extrernalBalanceConfirmed, setExternalBalanceConfirmed] = useState<boolean>(false)
   const [midnightBalanceConfirmed, setMidnightBalanceConfirmed] = useState<boolean>(false)
-  const disabled = true
+  const disabled = !extrernalBalanceConfirmed || !midnightBalanceConfirmed || !transparentAddress
+
+  const reset = (): void => {
+    setExternalBalanceConfirmed(false)
+    setMidnightBalanceConfirmed(false)
+  }
+
+  const close = (): void => {
+    reset()
+    onCancel()
+  }
 
   return (
-    <LunaModal destroyOnClose wrapClassName="Exchange" {...props}>
+    <LunaModal destroyOnClose wrapClassName="Exchange" onCancel={close} {...props}>
       <Dialog
         title="Claim Dust"
         rightButtonProps={{
           children: 'Go to Unlocking',
           type: 'default',
-          onClick: () => onNext(transparentAddress),
+          onClick: () => {
+            reset()
+            onNext(transparentAddress)
+          },
           disabled,
         }}
         leftButtonProps={{
-          children: 'Claim Dust Reward',
+          doNotRender: true,
         }}
         type="dark"
       >
         <Asset amount={externalAmount} chain={chain}>
           {chain.symbol} Balance
         </Asset>
-        <DialogShowDust amount={midnightAmount}>You are eligible for</DialogShowDust>
+        <DialogShowDust amount={dustAmount}>You are eligible for</DialogShowDust>
         <DialogApproval
           description={`Confirm ${chain.symbol} Balance OK`}
           checked={extrernalBalanceConfirmed}

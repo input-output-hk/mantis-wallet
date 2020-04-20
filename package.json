@@ -72,6 +72,7 @@
     "customize-cra": "^0.9.1",
     "date-fns": "^2.10.0",
     "electron-store": "^5.1.1",
+    "ethereumjs-util": "^6.2.0",
     "fp-ts": "^2.4.1",
     "io-ts": "^2.1.1",
     "io-ts-promise": "^2.0.2",
@@ -79,28 +80,26 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
-    "prop-types": "^15.0.0",
     "qrcode.react": "^1.0.0",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.12.0",
     "react-infinite-scroller": "^1.2.4",
     "react-inlinesvg": "^1.2.0",
-    "react-polymorph": "^0.9.0-rc.24",
     "react-scripts": "^3.3.0",
     "rxjs": "^6.5.4",
-    "typescript": "3.7.3",
+    "typescript": "3.8.3",
     "unstated-next": "^1.1.0",
-    "web3": "git+ssh://git@github.com:input-output-hk/midnight-web3.git#be63e0cfb558b5dbea835fb1c2edd13e4a285d25"
+    "web3": "git+ssh://git@github.com:input-output-hk/midnight-web3.git#a11663962e01f6296962c594503f7aa7864194d6"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-optional-chaining": "^7.8.3",
-    "@electron-forge/cli": "6.0.0-beta.47",
-    "@electron-forge/maker-deb": "6.0.0-beta.47",
-    "@electron-forge/maker-rpm": "6.0.0-beta.47",
-    "@electron-forge/maker-squirrel": "6.0.0-beta.47",
-    "@electron-forge/maker-zip": "6.0.0-beta.47",
+    "@electron-forge/cli": "^6.0.0-beta.47",
+    "@electron-forge/maker-deb": "^6.0.0-beta.47",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.47",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.47",
+    "@electron-forge/maker-zip": "^6.0.0-beta.47",
     "@storybook/addon-actions": "^5.2.8",
     "@storybook/addon-info": "^5.2.8",
     "@storybook/addon-knobs": "^5.2.8",
@@ -133,7 +132,7 @@
     "eslint-plugin-react": "^7.17.0",
     "husky": "^3.1.0",
     "jest-canvas-mock": "^2.2.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "puppeteer": "^2.1.1",
@@ -152,14 +151,11 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "Chrome >= 80"
     ],
     "development": [
       "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 firefox version"
     ]
   },
   "config": {

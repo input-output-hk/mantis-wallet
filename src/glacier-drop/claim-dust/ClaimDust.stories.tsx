@@ -1,9 +1,9 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, array, number, text, select} from '@storybook/addon-knobs'
+import {withKnobs, array, number, text} from '@storybook/addon-knobs'
 import {withTheme} from '../../storybook-util/theme-switcher'
-import {availableChains} from '../GlacierDropOverview'
+import {withGlacierState} from '../../storybook-util/glacier-state-decorator'
 import {EnterAddress} from './EnterAddress'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
@@ -19,24 +19,18 @@ const EXAMPLE_AMOUNT = 123456789123456789124
 
 export default {
   title: 'Glacier Drop Claim Dust',
-  decorators: [withTheme, withKnobs],
+  decorators: [withTheme, withKnobs, withGlacierState],
 }
 
 export const enterAddress = (): JSX.Element => (
-  <EnterAddress
-    visible
-    chain={availableChains[select('chain', [0, 1], 0)]}
-    onNext={action('onNext')}
-    onCancel={action('onCancel')}
-  />
+  <EnterAddress visible onNext={action('onNext')} onCancel={action('onCancel')} />
 )
 
 export const verifyAddress = (): JSX.Element => (
   <VerifyAddress
     visible
-    chain={availableChains[select('chain', [0, 1], 0)]}
     externalAddress={text('external address', EXTERNAL_ADDRESS)}
-    midnightAddress={text('midnight address', MIDNIGHT_ADDRESS)}
+    transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onCancel={action('onCancel')}
     onNext={action('onNext')}
   />
@@ -45,8 +39,7 @@ export const verifyAddress = (): JSX.Element => (
 export const generatedMessage = (): JSX.Element => (
   <GeneratedMessage
     visible
-    externalAddress={text('external address', EXTERNAL_ADDRESS)}
-    midnightAddress={text('midnight address', MIDNIGHT_ADDRESS)}
+    transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onNext={action('onNext')}
   />
 )
@@ -54,41 +47,40 @@ export const generatedMessage = (): JSX.Element => (
 export const claimWithKey = (): JSX.Element => (
   <ClaimWithKey
     visible
-    chain={availableChains[select('chain', [0, 1], 0)]}
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
-    midnightAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
-    midnightAddress={text('midnight address', MIDNIGHT_ADDRESS)}
+    dustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
+    transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onNext={action('onNext')}
+    onCancel={action('onCancel')}
   />
 )
 
 export const claimWithMessage = (): JSX.Element => (
   <ClaimWithMessage
     visible
-    chain={availableChains[select('chain', [0, 1], 0)]}
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
-    midnightAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
-    midnightAddress={text('midnight address', MIDNIGHT_ADDRESS)}
+    dustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
+    transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onNext={action('onNext')}
+    onCancel={action('onCancel')}
   />
 )
 
 export const exchange = (): JSX.Element => (
   <Exchange
     visible
-    chain={availableChains[select('chain', [0, 1], 0)]}
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
-    midnightAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
+    dustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
     availableDust={new BigNumber(number('available dust', EXAMPLE_AMOUNT))}
     transparentAddresses={array('Transparent addresses', [MIDNIGHT_ADDRESS, MIDNIGHT_ADDRESS2])}
     onNext={action('onNext')}
+    onCancel={action('onCancel')}
   />
 )
 
 export const selectMethod = (): JSX.Element => (
   <SelectMethod
     visible
-    chain={availableChains[select('chain', [0, 1], 0)]}
     onPrivateKey={action('onPrivateKey')}
     onMessageCreate={action('onMessageCreate')}
     onMessageUseSigned={action('onMessageUseSigned')}

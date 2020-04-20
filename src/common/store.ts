@@ -2,9 +2,11 @@ import _ from 'lodash/fp'
 import {set as mutatingSet} from 'lodash'
 // eslint-disable-next-line import/default
 import ElectronStore from 'electron-store'
+import BigNumber from 'bignumber.js'
 import {Theme} from '../theme-state'
 import {config} from '../config/renderer'
-import {BurnWatcher, BurnAddressInfo} from '../pob/pob-state'
+import {StorePobData, defaultPobData} from '../pob/pob-state'
+import {Claim, StoreGlacierData, defaultGlacierData} from '../glacier-drop/glacier-state'
 
 export type StoreSettingsData = {
   settings: {
@@ -18,23 +20,9 @@ export const defaultSettingsData: StoreSettingsData = {
   },
 }
 
-export type StorePobData = {
-  pob: {
-    burnWatchers: BurnWatcher[]
-    burnAddresses: Record<string, BurnAddressInfo>
-  }
-}
+export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData
 
-export const defaultPobData: StorePobData = {
-  pob: {
-    burnWatchers: [],
-    burnAddresses: {},
-  },
-}
-
-export type StoreData = StoreSettingsData & StorePobData
-
-const defaultData: StoreData = _.merge(defaultSettingsData, defaultPobData)
+const defaultData: StoreData = _.mergeAll([defaultSettingsData, defaultPobData, defaultGlacierData])
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]
@@ -69,10 +57,35 @@ export function createInMemoryStore<TObject extends object>(initial: TObject): S
   }
 }
 
+// deserializers
+
+interface SerializedClaim {
+  added: number
+  dustAmount: string
+  externalAmount: string
+  withdrawnDustAmount: string
+}
+
+const deserializeClaim = (serializedClaim: SerializedClaim): Claim => {
+  const {added, dustAmount, externalAmount, withdrawnDustAmount} = serializedClaim
+
+  return {
+    ...serializedClaim,
+    added: new Date(added),
+    dustAmount: new BigNumber(dustAmount),
+    externalAmount: new BigNumber(externalAmount),
+    withdrawnDustAmount: new BigNumber(withdrawnDustAmount),
+  } as Claim // FIXME: PM-1658
+}
+
 export function createPersistentStore(): Store<StoreData> {
   const store = new ElectronStore({
     defaults: defaultData,
     cwd: config.dataDir,
+    deserialize: (text: string) =>
+      _.update(['glacierDrop', 'claims'], (v) => {
+        return _.mapValues(deserializeClaim)(v)
+      })(JSON.parse(text)),
   })
 
   function get<K1 extends keyof StoreData, K2 extends keyof StoreData[K1]>(

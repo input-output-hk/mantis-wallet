@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {WalletState} from './common/wallet-state'
 import {ThemeState} from './theme-state'
 import {ProofOfBurnState} from './pob/pob-state'
+import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
@@ -40,13 +41,15 @@ const App: React.FC = () => {
           <RouterState.Provider>
             <WalletState.Provider>
               <ProofOfBurnState.Provider initialState={{store, web3}}>
-                <header>
-                  <Sidebar />
-                </header>
-                <FloatingSyncStatus />
-                <main id="main">
-                  <Router />
-                </main>
+                <GlacierState.Provider initialState={{store}}>
+                  <header>
+                    <Sidebar />
+                  </header>
+                  <FloatingSyncStatus />
+                  <main id="main">
+                    <Router />
+                  </main>
+                </GlacierState.Provider>
               </ProofOfBurnState.Provider>
             </WalletState.Provider>
           </RouterState.Provider>

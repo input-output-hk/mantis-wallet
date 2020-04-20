@@ -98,7 +98,7 @@
     .unlocked {
       grid-area: unlocked;
 
-      .solved {
+      .pow-status {
         margin-bottom: 1.5em;
       }
 
@@ -122,6 +122,17 @@
 
       .withdraw-progress {
         margin-bottom: 2em;
+      }
+    }
+
+    .tx-status {
+      margin-bottom: 0.5em;
+      font-weight: bold;
+
+      .fail {
+        @include themify($themes) {
+          color: themed('error-color');
+        }
       }
     }
   }

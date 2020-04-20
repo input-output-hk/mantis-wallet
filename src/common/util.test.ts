@@ -4,6 +4,10 @@ import {
   deserializeBigNumber,
   validateAmount,
   isGreaterOrEqual,
+  validateEthAddress,
+  EMPTY_ADDRESS_MSG,
+  INVALID_ADDRESS_MSG,
+  toHex,
   bigSum,
   bech32toHex,
   hexToBech32,
@@ -157,4 +161,28 @@ it('converts hex address to bech32', () => {
     assert.equal(hexToBech32(address, 'm-main-uns-ad'), mainnnetBech32)
   })
   assert.equal(hexToBech32('0x1c'), 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqukkvrke')
+})
+
+it('converts number/BigNumber to hex correctly', () => {
+  const t = (n: number, expectedResult: string): void => {
+    assert.equal(toHex(n), expectedResult)
+    assert.equal(toHex(new BigNumber(n)), expectedResult)
+  }
+
+  t(0, '0x0')
+  t(1, '0x1')
+  t(15, '0xf')
+  t(16, '0x10')
+  t(100000, '0x186a0')
+  assert.throw(() => toHex(-1))
+})
+
+it('validates ethereum address', () => {
+  assert.equal(validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC7'), '')
+  assert.equal(validateEthAddress(''), EMPTY_ADDRESS_MSG)
+  assert.equal(validateEthAddress('foobar'), INVALID_ADDRESS_MSG)
+  assert.equal(
+    validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC8'),
+    INVALID_ADDRESS_MSG,
+  )
 })

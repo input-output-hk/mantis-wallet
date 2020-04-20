@@ -1,159 +1,205 @@
-import React from 'react'
-import BigNumber from 'bignumber.js'
-import {CHAINS, Chain} from '../pob/chains'
+import React, {useState} from 'react'
+import {message} from 'antd'
+import {EmptyProps} from 'antd/lib/empty'
+import {isNone} from 'fp-ts/lib/Option'
+import {DisplayChain} from '../pob/chains'
+import {ETC_CHAIN} from './glacier-config'
+import {Claim, GlacierState, PeriodConfig, getUnlockStatus} from './glacier-state'
+import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
+import {LoadedState} from '../common/wallet-state'
+import {useInterval} from '../common/hook-utils'
 import {Token} from '../common/Token'
+import {Loading} from '../common/Loading'
+import {NoWallet} from '../wallets/NoWallet'
 import {PeriodStatus} from './PeriodStatus'
+import {getCurrentPeriod, getUnfrozenAmount} from './Period'
+import {ClaimController, ModalId} from './claim-dust/ClaimController'
 import {ClaimRow} from './ClaimRow'
+import {Epochs} from './Epochs'
+import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
+import {WithdrawAvailableDust} from './WithdrawAvailableDust'
 import './GlacierDropOverview.scss'
 
-export const availableChains: Chain[] = [CHAINS.ETH_MAINNET, CHAINS.BTC_MAINNET]
+const availableChains: DisplayChain[] = [ETC_CHAIN]
 
-interface BaseClaim {
-  chain: Chain
-  midnightAddress: string
-  externalAddress: string
-  dustAmount: BigNumber
-  externalAmount: BigNumber
-  unfrozenDustAmount: BigNumber
-  withdrawnDustAmount: BigNumber
-  unfrozen: boolean
+interface ClaimHistoryProps {
+  claims: Claim[]
+  currentBlock: number
+  periodConfig: PeriodConfig
+  showEpochs(): void
 }
 
-interface SolvingClaim extends BaseClaim {
-  puzzleStatus: 'solving'
-  remainingSeconds: number
-  unfrozen: false
+const ClaimHistory = ({
+  claims,
+  currentBlock,
+  periodConfig,
+  showEpochs,
+}: ClaimHistoryProps): JSX.Element => {
+  const [claimToSubmit, setClaimToSubmit] = useState<Claim | null>(null)
+  const [claimToWithdraw, setClaimToWithdraw] = useState<Claim | null>(null)
+
+  return (
+    <>
+      <div className="claim-history">
+        <div className="title">
+          <div className="main-title">Claim History</div>
+          <div className="line"></div>
+        </div>
+        {claims.length > 0 && (
+          <div className="claims">
+            {claims.map((c: Claim, i: number) => (
+              <ClaimRow
+                claim={c}
+                index={i}
+                key={c.externalAddress}
+                currentBlock={currentBlock}
+                periodConfig={periodConfig}
+                showEpochs={showEpochs}
+                onSubmitPuzzle={(claim: Claim): void => setClaimToSubmit(claim)}
+                onWithdrawDust={(claim: Claim): void => setClaimToWithdraw(claim)}
+              />
+            ))}
+          </div>
+        )}
+        {claims.length === 0 && <div className="message">You haven&apos;t made claims yet</div>}
+      </div>
+      {claimToSubmit && (
+        <SubmitProofOfUnlock
+          visible
+          claim={claimToSubmit}
+          currentBlock={currentBlock}
+          onCancel={() => setClaimToSubmit(null)}
+          onNext={(_unlockTxId) => setClaimToSubmit(null)}
+        />
+      )}
+      {claimToWithdraw && (
+        <WithdrawAvailableDust
+          visible
+          claim={claimToWithdraw}
+          currentBlock={currentBlock}
+          periodConfig={periodConfig}
+          showEpochs={() => showEpochs()}
+          onCancel={() => setClaimToWithdraw(null)}
+          onNext={() => setClaimToWithdraw(null)}
+        />
+      )}
+    </>
+  )
 }
 
-interface UnsubmittedClaim extends BaseClaim {
-  puzzleStatus: 'unsubmitted'
-  unfrozen: false
-}
+const _GlacierDropOverview = ({
+  walletState,
+}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
+  const {
+    claims,
+    addClaim,
+    mine,
+    getMiningState,
+    updateTxStatuses,
+    constants,
+  } = GlacierState.useContainer()
 
-interface SubmittedClaim extends BaseClaim {
-  puzzleStatus: 'submitted'
-}
+  if (isNone(constants)) {
+    return <Loading />
+  }
+  const {periodConfig} = constants.value
+  const {currentBlock} = walletState.syncStatus
+  const period = getCurrentPeriod(currentBlock, periodConfig)
 
-export type Claim = SolvingClaim | UnsubmittedClaim | SubmittedClaim
+  const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
+  const solvingClaim = claims.find((c) => c.puzzleStatus === 'solving')
 
-const testClaims: Claim[] = [
-  {
-    puzzleStatus: 'solving',
-    remainingSeconds: 12312,
-    chain: availableChains[0],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(0),
-    withdrawnDustAmount: new BigNumber(0),
-    unfrozen: false,
-  },
-  {
-    puzzleStatus: 'unsubmitted',
-    chain: availableChains[1],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(0),
-    withdrawnDustAmount: new BigNumber(0),
-    unfrozen: false,
-  },
-  {
-    puzzleStatus: 'submitted',
-    chain: availableChains[1],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(0),
-    withdrawnDustAmount: new BigNumber(0),
-    unfrozen: false,
-  },
-  {
-    puzzleStatus: 'submitted',
-    chain: availableChains[1],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(0),
-    withdrawnDustAmount: new BigNumber(0),
-    unfrozen: true,
-  },
-  {
-    puzzleStatus: 'submitted',
-    chain: availableChains[1],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(1000012345678),
-    withdrawnDustAmount: new BigNumber(0),
-    unfrozen: true,
-  },
-  {
-    puzzleStatus: 'submitted',
-    chain: availableChains[1],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(10000123456789),
-    withdrawnDustAmount: new BigNumber(1000012345678),
-    unfrozen: true,
-  },
-  {
-    puzzleStatus: 'submitted',
-    chain: availableChains[1],
-    midnightAddress: 'm-main-uns-ad1qqxcxcspxx8vdzv6va2qdypcy7q8gv5q2ut0mu',
-    externalAddress: '0xDf7D7e053933b5cC24372f878c90E62dADAD5d42',
-    dustAmount: new BigNumber(10000123456789),
-    externalAmount: new BigNumber(20000123456789),
-    unfrozenDustAmount: new BigNumber(10000123456789),
-    withdrawnDustAmount: new BigNumber(10000123456789),
-    unfrozen: true,
-  },
-]
+  const [activeModal, setActiveModal] = useState<ModalId>('none')
+  const [epochsShown, showEpochs] = useState<boolean>(false)
 
-export const GlacierDropOverview: React.FunctionComponent<{}> = () => {
-  const chooseChain = (_chain: Chain): void => undefined
-  const onWithdrawDust = (): void => undefined
-  const onSubmitPuzzle = (): void => undefined
-  const claims = testClaims
+  useInterval(async () => {
+    if (!solvingClaim) return
+    try {
+      await getMiningState(solvingClaim)
+    } catch (e) {
+      console.error(e)
+    }
+  }, 2000)
+
+  useInterval(async () => {
+    try {
+      await updateTxStatuses(currentBlock)
+    } catch (e) {
+      console.error(e)
+    }
+  }, 10000)
+
+  const chooseChain = (_chain: DisplayChain): void => {
+    if (walletState.transparentAddresses.length === 0) {
+      message.error('You must create a transparent address first.')
+    } else {
+      setActiveModal('EnterAddress')
+    }
+  }
+
+  const startPuzzle = (claim: Claim): void => {
+    addClaim(claim)
+    mine(claim)
+  }
 
   return (
     <div className="GlacierDropOverview">
       <div className="main-title">Glacier Drop</div>
       <div className="content">
         <div className="wallet-selector"></div>
-        <div className="claim-buttons">
-          {availableChains.map((c: Chain) => (
-            <Token chain={c} chooseChain={chooseChain} key={c.id}>
-              Claim Dust
-            </Token>
-          ))}
-        </div>
-        <PeriodStatus />
-        <div className="claim-history">
-          <div className="title">
-            <div className="main-title">Claim History</div>
-            <div className="line"></div>
-          </div>
-          <div className="claims">
-            {claims.map((c: Claim, i: number) => (
-              <ClaimRow
-                claim={c}
-                index={i}
-                key={i}
-                onSubmitPuzzle={onSubmitPuzzle}
-                onWithdrawDust={onWithdrawDust}
-              />
+        {period === 'Unlocking' && !solvingClaim && (
+          <div className="claim-buttons">
+            {availableChains.map((c: DisplayChain) => (
+              <Token chain={c} chooseChain={chooseChain} key={c.name}>
+                Claim Dust
+              </Token>
             ))}
           </div>
-        </div>
+        )}
+        <PeriodStatus
+          currentBlock={currentBlock}
+          periodConfig={periodConfig}
+          powPuzzleComplete={powPuzzleComplete}
+        />
+        <ClaimHistory
+          claims={claims}
+          currentBlock={currentBlock}
+          periodConfig={periodConfig}
+          showEpochs={() => showEpochs(true)}
+        />
       </div>
+      <ClaimController
+        walletState={walletState}
+        onFinish={startPuzzle}
+        activeModal={activeModal}
+        setActiveModal={setActiveModal}
+      />
+      <Epochs
+        visible={epochsShown}
+        epochRows={claims
+          .filter((claim) =>
+            getUnfrozenAmount(
+              currentBlock,
+              periodConfig,
+              getUnlockStatus(claim),
+              claim.dustAmount,
+            ).isGreaterThan(0),
+          )
+          .map(({transparentAddress, dustAmount}) => ({
+            walletId: 1, // FIXME: [PM-1555] Refactor WalletState for Multiple Wallets
+            transparentAddress,
+            dustAmount,
+          }))}
+        periodConfig={periodConfig}
+        currentBlock={currentBlock}
+        onCancel={() => showEpochs(false)}
+      />
     </div>
   )
 }
+
+export const GlacierDropOverview = withStatusGuard(_GlacierDropOverview, 'LOADED', () => (
+  <div className="no-wallet-container">
+    <NoWallet />
+  </div>
+))

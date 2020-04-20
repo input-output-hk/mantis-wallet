@@ -7,18 +7,17 @@ import {copyToClipboard} from '../../common/clipboard'
 import './GeneratedMessage.scss'
 
 interface GeneratedMessageProps {
-  externalAddress: string
-  midnightAddress: string
+  transparentAddress: string
   onNext: () => void
 }
 
 export const GeneratedMessage = ({
-  externalAddress,
-  midnightAddress,
+  transparentAddress,
   onNext,
   ...props
 }: GeneratedMessageProps & ModalProps): JSX.Element => {
-  const msg = `I authorise ${midnightAddress} to get my ${externalAddress} GlacierDrop`
+  // TODO: get authorization message from an endpoint
+  const msg = `I authorise ${transparentAddress} to get my glacier airdrop.`
 
   return (
     <LunaModal destroyOnClose wrapClassName="GeneratedMessage" {...props}>

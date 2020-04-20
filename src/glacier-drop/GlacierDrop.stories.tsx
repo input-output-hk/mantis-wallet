@@ -1,9 +1,13 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {withKnobs, number, text, select} from '@storybook/addon-knobs'
+import {withKnobs, number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
-import {GlacierDropOverview, Claim, availableChains} from './GlacierDropOverview'
+import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withGlacierState} from '../storybook-util/glacier-state-decorator'
+import {withRouterState} from '../storybook-util/router-state-decorator'
+import {Claim, PeriodConfig} from './glacier-state'
+import {GlacierDropOverview} from './GlacierDropOverview'
 import {ClaimRow} from './ClaimRow'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
@@ -11,59 +15,88 @@ import {Epochs, EpochRow} from './Epochs'
 
 export default {
   title: 'Glacier Drop',
-  decorators: [withTheme, withKnobs],
+  decorators: [withTheme, withKnobs, withWalletState, withGlacierState, withRouterState],
 }
 
 const MIDNIGHT_ADDRESS = 'm-main-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk'
 const EXTERNAL_ADDRESS = '0xab96032f5a7Efe3B95622c5B9D98D50F96a91756'
 const EXAMPLE_AMOUNT = 123456789123456789124
+const PERIOD_CONFIG: PeriodConfig = {
+  unlockingStartBlock: 1,
+  unlockingEndBlock: 5,
+  unfreezingStartBlock: 10,
+  epochLength: 1,
+  numberOfEpochs: 10,
+}
+
+const baseClaim = {
+  added: new Date(),
+  transparentAddress: MIDNIGHT_ADDRESS,
+  externalAddress: EXTERNAL_ADDRESS,
+  dustAmount: new BigNumber(700000000000),
+  externalAmount: new BigNumber(1400000000000),
+  authSignature: {r: '', s: '', v: 0},
+  inclusionProof: '',
+  puzzleDuration: 1800,
+  powNonce: null,
+  unlockTxHash: null,
+  withdrawTxHashes: [],
+  txStatuses: {},
+}
+
+const unsubmittedClaim: Claim = {
+  ...baseClaim,
+  puzzleStatus: 'unsubmitted',
+  withdrawnDustAmount: new BigNumber(0),
+  powNonce: 1,
+}
+
+const submittedClaim: Claim = {
+  ...baseClaim,
+  puzzleStatus: 'submitted',
+  withdrawnDustAmount: new BigNumber(number('withdrawn dust', 0)),
+  unlockTxHash: '0xc41',
+  txStatuses: {'0xc41': {status: 'TransactionPending', atBlock: 1}},
+  powNonce: 1,
+}
 
 export const overview = (): JSX.Element => <GlacierDropOverview />
 
 export const claimSolving = (): JSX.Element => {
   const claim: Claim = {
+    ...baseClaim,
+    added: new Date(),
     puzzleStatus: 'solving',
-    remainingSeconds: number('remainingSeconds', 12345),
-    chain: availableChains[select('chain', [0, 1], 1)],
-    midnightAddress: text('midnightAddress', MIDNIGHT_ADDRESS),
+    puzzleDuration: number('puzzleDuration', 12345),
+    transparentAddress: text('transparentAddress', MIDNIGHT_ADDRESS),
     externalAddress: text('externalAddress', EXTERNAL_ADDRESS),
     dustAmount: new BigNumber(number('dustAmount', 700000000000)),
     externalAmount: new BigNumber(number('externalAmount', 1400000000000)),
-    unfrozenDustAmount: new BigNumber(0),
     withdrawnDustAmount: new BigNumber(0),
-    unfrozen: false,
+    authSignature: {r: '', s: '', v: 0},
   }
 
   return (
     <ClaimRow
       claim={claim}
       index={1}
+      currentBlock={25}
+      periodConfig={PERIOD_CONFIG}
+      showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
     />
   )
 }
 
-const baseClaim = {
-  chain: availableChains[1],
-  midnightAddress: MIDNIGHT_ADDRESS,
-  externalAddress: EXTERNAL_ADDRESS,
-  dustAmount: new BigNumber(700000000000),
-  externalAmount: new BigNumber(1400000000000),
-}
 export const claimUnsubmitted = (): JSX.Element => {
-  const claim: Claim = {
-    puzzleStatus: 'unsubmitted',
-    unfrozenDustAmount: new BigNumber(0),
-    withdrawnDustAmount: new BigNumber(0),
-    unfrozen: false,
-    ...baseClaim,
-  }
-
   return (
     <ClaimRow
-      claim={claim}
+      claim={unsubmittedClaim}
       index={1}
+      currentBlock={5}
+      periodConfig={PERIOD_CONFIG}
+      showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
     />
@@ -71,18 +104,13 @@ export const claimUnsubmitted = (): JSX.Element => {
 }
 
 export const claimSubmitted = (): JSX.Element => {
-  const claim: Claim = {
-    puzzleStatus: 'submitted',
-    unfrozenDustAmount: new BigNumber(number('unfrozen dust', 70000000000)),
-    withdrawnDustAmount: new BigNumber(number('withdrawn dust', 0)),
-    unfrozen: true,
-    ...baseClaim,
-  }
-
   return (
     <ClaimRow
-      claim={claim}
+      claim={submittedClaim}
       index={1}
+      currentBlock={15}
+      periodConfig={PERIOD_CONFIG}
+      showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
     />
@@ -92,8 +120,8 @@ export const claimSubmitted = (): JSX.Element => {
 export const submitProofOfUnlock = (): JSX.Element => (
   <SubmitProofOfUnlock
     visible
-    midnightAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
-    midnightAddress={text('midnight address', MIDNIGHT_ADDRESS)}
+    currentBlock={1}
+    claim={unsubmittedClaim}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
   />
@@ -102,7 +130,10 @@ export const submitProofOfUnlock = (): JSX.Element => (
 export const withdrawAvailableDust = (): JSX.Element => (
   <WithdrawAvailableDust
     visible
-    midnightAddress={text('midnight address', MIDNIGHT_ADDRESS)}
+    claim={submittedClaim}
+    currentBlock={10}
+    periodConfig={PERIOD_CONFIG}
+    showEpochs={action('showEpochs')}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
   />
@@ -112,17 +143,17 @@ export const epochs = (): JSX.Element => {
   const epochRows: EpochRow[] = [
     {
       walletId: number('Wallet ID', 1),
-      midnightAddress: text('Address', MIDNIGHT_ADDRESS),
+      transparentAddress: text('Address', MIDNIGHT_ADDRESS),
       dustAmount: new BigNumber(number('Amount', EXAMPLE_AMOUNT)),
     },
     {
       walletId: 2,
-      midnightAddress: 'm-main-uns-ABCDjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
+      transparentAddress: 'm-main-uns-ABCDjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
       dustAmount: new BigNumber(9876543219876543212),
     },
     {
       walletId: 3,
-      midnightAddress: 'm-main-uns-DEFGjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
+      transparentAddress: 'm-main-uns-DEFGjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
       dustAmount: new BigNumber(6789876789876),
     },
   ]
@@ -130,9 +161,8 @@ export const epochs = (): JSX.Element => {
     <Epochs
       visible
       epochRows={epochRows}
-      numberOfEpochs={number('Number of Epochs', 9)}
-      currentEpoch={number('Current Epoch', 3)}
-      secondsLeft={number('Seconds Left', 123456)}
+      periodConfig={PERIOD_CONFIG}
+      currentBlock={number('Current Block', 5)}
     />
   )
 }

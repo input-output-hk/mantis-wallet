@@ -5,7 +5,6 @@ import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnActivity} from './BurnActivity'
 import {selectChain} from '../storybook-util/custom-knobs'
-import {toHex} from '../common/util'
 
 export default {
   title: 'Burn Activity',
@@ -95,8 +94,8 @@ export const burnStatusDisplay = (): JSX.Element => (
       }}
       syncStatus={{
         mode: select('Sync status type', ['online', 'offline'], 'online'),
-        currentBlock: '0x0',
-        highestKnownBlock: toHex(number('Highest known block', 11)),
+        currentBlock: 0,
+        highestKnownBlock: number('Highest known block', 11),
         percentage: 100,
       }}
       errorMessage={text('An error message #1', 'This is an error message for Burn Address #1')}

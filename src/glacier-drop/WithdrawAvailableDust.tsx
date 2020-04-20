@@ -1,88 +1,129 @@
 import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
-import {validateAmount} from '../common/util'
+import {DEFAULT_GAS_PRICE, DEFAULT_GAS_LIMIT} from './glacier-config'
+import {GlacierState, Claim, getUnlockStatus, PeriodConfig} from './glacier-state'
+import {validateAmount, isGreaterOrEqual} from '../common/util'
 import {LunaModal} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
-import {DialogInput, DialogInputPassword} from '../common/dialog/DialogInput'
+import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogColumns} from '../common/dialog/DialogColumns'
 import {DialogMessage} from '../common/dialog/DialogMessage'
+import {DialogError} from '../common/dialog/DialogError'
+import {DialogShowDust} from '../common/dialog/DialogShowDust'
+import {getUnfrozenAmount} from './Period'
 import './WithdrawAvailableDust.scss'
 
 interface WithdrawAvailableDustProps {
-  midnightAddress: string
-  onNext: (
-    dustAmount: BigNumber,
-    gasPrice: BigNumber,
-    gasLimit: BigNumber,
-    passphrase: string,
-  ) => void
+  claim: Claim
+  currentBlock: number
+  periodConfig: PeriodConfig
+  showEpochs: () => void
+  onNext: (withdrawTxHash: string) => void
   onCancel: () => void
 }
 
 export const WithdrawAvailableDust = ({
-  midnightAddress,
+  claim,
+  periodConfig,
+  currentBlock,
+  showEpochs,
   onNext,
   onCancel,
   ...props
 }: WithdrawAvailableDustProps & ModalProps): JSX.Element => {
-  const [dustAmount, setDustAmount] = useState<string>('0')
-  const [gasPrice, setGasPrice] = useState<string>('0')
-  const [gasLimit, setGasLimit] = useState<string>('0')
-  const [passphrase, setPassphrase] = useState<string>('')
+  const {withdraw} = GlacierState.useContainer()
+  const {transparentAddress, withdrawnDustAmount, dustAmount} = claim
+  const unlockStatus = getUnlockStatus(claim)
+
+  const [gasPrice, setGasPrice] = useState<string>(DEFAULT_GAS_PRICE)
+  const [gasLimit, setGasLimit] = useState<string>(DEFAULT_GAS_LIMIT)
+  const [isLoading, setLoading] = useState<boolean>(false)
+  const [globalErrorMsg, setGlobalErrorMsg] = useState<string>('')
+
+  const globalErrorElem = globalErrorMsg && <DialogError>{globalErrorMsg}</DialogError>
+
+  const unfrozenDustAmount = getUnfrozenAmount(currentBlock, periodConfig, unlockStatus, dustAmount)
+  const estimatedWithdrawableDust = unfrozenDustAmount.minus(withdrawnDustAmount)
+
+  const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual(0)])
+  const gasLimitError = validateAmount(gasLimit, [isGreaterOrEqual(65536)])
 
   const disabled =
-    validateAmount(dustAmount) !== '' ||
-    validateAmount(gasPrice) !== '' ||
-    validateAmount(gasLimit) !== ''
+    gasPriceError !== '' ||
+    gasLimitError !== '' ||
+    estimatedWithdrawableDust.isEqualTo(0) ||
+    isLoading
+
+  const close = (): void => {
+    if (isLoading) return
+    setGasPrice(DEFAULT_GAS_PRICE)
+    setGasLimit(DEFAULT_GAS_LIMIT)
+    setGlobalErrorMsg('')
+    onCancel()
+  }
 
   return (
-    <LunaModal destroyOnClose wrapClassName="WithdrawAvailableDust" {...props}>
+    <LunaModal destroyOnClose wrapClassName="WithdrawAvailableDust" onCancel={close} {...props}>
       <Dialog
         title="Withdraw Available Dust"
         rightButtonProps={{
           children: 'Withdraw',
           type: 'default',
-          onClick: () =>
-            onNext(
-              new BigNumber(dustAmount),
-              new BigNumber(gasPrice),
-              new BigNumber(gasLimit),
-              passphrase,
-            ),
+          onClick: async () => {
+            setLoading(true)
+            try {
+              const callParams = {
+                gasLimit: new BigNumber(gasLimit),
+                gasPrice: new BigNumber(gasPrice),
+              }
+              const withdrawTxHash = await withdraw(
+                claim,
+                callParams,
+                currentBlock,
+                unfrozenDustAmount,
+              )
+              setLoading(false)
+              onNext(withdrawTxHash)
+            } catch (e) {
+              setLoading(false)
+              setGlobalErrorMsg(e.message)
+            }
+          },
           disabled,
         }}
         leftButtonProps={{
-          onClick: onCancel,
+          onClick: close,
+          disabled: isLoading,
         }}
         type="dark"
+        footer={globalErrorElem}
       >
-        <DialogMessage label="Midnight Transparent Address" description={midnightAddress} />
-        <DialogInput
-          label="Withdraw Available Dust"
-          defaultValue={dustAmount}
-          onChange={(e): void => setDustAmount(e.target.value)}
-          errorMessage={validateAmount(dustAmount)}
-        />
+        <DialogMessage label="Midnight Transparent Address" description={transparentAddress} />
+        <DialogShowDust amount={estimatedWithdrawableDust} />
         <DialogColumns>
           <DialogInput
             label="Gas Price"
             defaultValue={gasPrice}
             onChange={(e): void => setGasPrice(e.target.value)}
-            errorMessage={validateAmount(gasPrice)}
+            errorMessage={gasPriceError}
           />
           <DialogInput
             label="Gas Limit"
             defaultValue={gasLimit}
             onChange={(e): void => setGasLimit(e.target.value)}
-            errorMessage={validateAmount(gasLimit)}
+            errorMessage={gasLimitError}
           />
         </DialogColumns>
-        <DialogInputPassword
-          label="Spending Password for Luna Wallet"
-          onChange={(e): void => setPassphrase(e.target.value)}
-        />
-        <div className="more-info">view unfreezing progress</div>
+        <div
+          className="more-info"
+          onClick={() => {
+            close()
+            showEpochs()
+          }}
+        >
+          view unfreezing progress
+        </div>
       </Dialog>
     </LunaModal>
   )

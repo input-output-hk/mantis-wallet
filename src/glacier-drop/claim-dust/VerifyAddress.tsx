@@ -3,27 +3,28 @@ import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import {Chain, CHAINS} from '../../pob/chains'
+import {DisplayChain, CHAINS} from '../../pob/chains'
+import {ETC_CHAIN} from '../glacier-config'
 import './VerifyAddress.scss'
 
 interface VerifyAddressProps {
-  chain: Chain
   externalAddress: string
-  midnightAddress: string
+  transparentAddress: string
   onNext: () => void
   onCancel: () => void
+  chain?: DisplayChain
 }
 
 export const VerifyAddress = ({
-  chain,
   externalAddress,
-  midnightAddress,
+  transparentAddress,
   onNext,
   onCancel,
+  chain = ETC_CHAIN,
   ...props
 }: VerifyAddressProps & ModalProps): JSX.Element => {
   return (
-    <LunaModal destroyOnClose wrapClassName="VerifyAddress" {...props}>
+    <LunaModal destroyOnClose wrapClassName="VerifyAddress" onCancel={onCancel} {...props}>
       <Dialog
         title="Claim Dust"
         rightButtonProps={{
@@ -42,7 +43,8 @@ export const VerifyAddress = ({
         </div>
         <div className="section">
           <div className="label">Midnight Address</div>
-          <DialogAddress chain={CHAINS.BTC_MAINNET} address={midnightAddress} />
+          {/* FIXME: use dust asset below when it becomes available */}
+          <DialogAddress chain={CHAINS.BTC_MAINNET} address={transparentAddress} />
         </div>
       </Dialog>
     </LunaModal>

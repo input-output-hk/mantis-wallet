@@ -4,8 +4,8 @@ import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {SynchronizationStatus} from '../web3'
 import {SyncStatusContent} from '../common/SyncStatus'
+import {SynchronizationStatus} from '../common/wallet-state'
 import {WalletOverview} from './WalletOverview'
 
 export default {
@@ -35,18 +35,18 @@ export const syncStatus = (): JSX.Element => {
   const statuses: Record<string, SynchronizationStatus> = {
     offline: {
       mode: 'offline',
-      currentBlock: '0x0',
+      currentBlock: 0,
     },
     syncing: {
       mode: 'online',
-      currentBlock: '0x0',
-      highestKnownBlock: '0x0',
+      currentBlock: 0,
+      highestKnownBlock: 0,
       percentage: 50,
     },
     synced: {
       mode: 'online',
-      currentBlock: '0x0',
-      highestKnownBlock: '0x0',
+      currentBlock: 0,
+      highestKnownBlock: 0,
       percentage: 100,
     },
   }

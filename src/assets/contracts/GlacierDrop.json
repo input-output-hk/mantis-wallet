@@ -1,0 +1,91 @@
+[{
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "etcOwner",
+        "type": "address"
+    }, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "etcBalance",
+        "type": "uint256"
+    }, {
+        "indexed": false,
+        "internalType": "address",
+        "name": "midnightDropReceiver",
+        "type": "address"
+    }],
+    "name": "Unlocked",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "etcOwner",
+        "type": "address"
+    }, {
+        "indexed": false,
+        "internalType": "address",
+        "name": "midnightDropDestination",
+        "type": "address"
+    }, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentEpoch",
+        "type": "uint256"
+    }, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dustWithdrawn",
+        "type": "uint256"
+    }, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalDustUnlocked",
+        "type": "uint256"
+    }],
+    "name": "Withdrawn",
+    "type": "event"
+}, {
+    "constant": false,
+    "inputs": [{
+        "internalType": "uint8",
+        "name": "signatureV",
+        "type": "uint8"
+    }, {
+        "internalType": "bytes32",
+        "name": "signatureR",
+        "type": "bytes32"
+    }, {
+        "internalType": "bytes32",
+        "name": "signatureS",
+        "type": "bytes32"
+    }, {
+        "internalType": "bytes",
+        "name": "inclusionProof",
+        "type": "bytes"
+    }, {
+        "internalType": "uint64",
+        "name": "powNonce",
+        "type": "uint64"
+    }],
+    "name": "unlock",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{
+        "internalType": "address",
+        "name": "etcOwner",
+        "type": "address"
+    }],
+    "name": "withdraw",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}]

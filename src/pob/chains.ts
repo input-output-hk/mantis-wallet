@@ -11,15 +11,18 @@ type ChainIdsType = typeof ALL_CHAIN_IDS
 
 export type ChainId = ChainIdsType[number]
 
-export interface Chain {
-  id: ChainId
-  numericId: number
+export interface DisplayChain {
   symbol: string
   name: string
   logo: string
   clippedLogo: string
   burnLogo: string
   unitType: UnitType
+}
+
+export interface Chain extends DisplayChain {
+  id: ChainId
+  numericId: number
   contractAddress: string
 }
 

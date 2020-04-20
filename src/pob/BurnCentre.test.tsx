@@ -7,13 +7,12 @@ import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
 import {UNITS} from '../common/units'
 import {abbreviateAmount, formatPercentage} from '../common/formatters'
-import {WalletState, WalletStatus} from '../common/wallet-state'
+import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BurnActivity} from './BurnActivity'
 import {BurnApiStatus, BurnStatusType} from './api/prover'
-import {makeWeb3Worker, SynchronizationStatus} from '../web3'
+import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {BurnStatusDisplay, TX_VALUE_TOO_LOW_MESSAGE} from './BurnStatusDisplay'
-import {toHex} from '../common/util'
 
 const {ETH_TESTNET} = CHAINS
 
@@ -182,8 +181,8 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
 
 const syncStatus: SynchronizationStatus = {
   mode: 'online',
-  currentBlock: toHex(10),
-  highestKnownBlock: toHex(15),
+  currentBlock: 10,
+  highestKnownBlock: 15,
   percentage: 25,
 }
 

@@ -10,9 +10,9 @@ import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import {copyToClipboard} from '../common/clipboard'
 import {RealBurnStatus} from './pob-state'
-import {SynchronizationStatus} from '../web3'
-import './BurnStatusDisplay.scss'
+import {SynchronizationStatus} from '../common/wallet-state'
 import {ShortNumber} from '../common/ShortNumber'
+import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
 
@@ -166,19 +166,19 @@ const NUMBER_OF_BLOCKS_TO_CONFIRM = 4
 const startedProgress = (current: number, tx: number | null, start: number | null): number =>
   start && tx && start !== tx ? (current - tx) / (start - tx) : 0
 
-const successProgress = (status: BurnStatusType, current: string, tx: number): number => {
+const successProgress = (status: BurnStatusType, current: number, tx: number): number => {
   switch (status) {
     case 'PROOF_READY':
       return 0
     case 'COMMITMENT_APPEARED':
       return 0.1
     default:
-      return 0.1 + (0.9 * (parseInt(current, 16) - tx)) / NUMBER_OF_BLOCKS_TO_SUCCESS
+      return 0.1 + (0.9 * (current - tx)) / NUMBER_OF_BLOCKS_TO_SUCCESS
   }
 }
 
-const confirmProgress = (current: string, tx: number): number =>
-  (parseInt(current, 16) - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM
+const confirmProgress = (current: number, tx: number): number =>
+  (current - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM
 
 export const TX_VALUE_TOO_LOW_MESSAGE = 'Transaction value or fee was too low.'
 

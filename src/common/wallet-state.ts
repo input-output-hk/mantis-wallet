@@ -1,12 +1,15 @@
 import {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash/fp'
+import * as t from 'io-ts'
+import * as tPromise from 'io-ts-promise'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
-import {deserializeBigNumber, loadAll} from '../common/util'
+import {deserializeBigNumber, loadAll, bigSum} from '../common/util'
 import {Chain} from '../pob/chains'
+import {NumberFromHexString} from './io-helpers'
 import {
   makeWeb3Worker,
   TransparentAddress,
@@ -16,9 +19,28 @@ import {
   SpendingKey,
   SeedPhrase,
   PassphraseSecrets,
-  SynchronizationStatus,
   Web3API,
 } from '../web3'
+
+// API Types
+
+const SynchronizationStatusOffline = t.type({
+  mode: t.literal('offline'),
+  currentBlock: NumberFromHexString,
+})
+
+const SynchronizationStatusOnline = t.type({
+  mode: t.literal('online'),
+  currentBlock: NumberFromHexString,
+  highestKnownBlock: NumberFromHexString,
+  percentage: t.number,
+})
+
+const SynchronizationStatus = t.union([SynchronizationStatusOffline, SynchronizationStatusOnline])
+
+export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
+
+// States
 
 export interface InitialState {
   walletStatus: 'INITIAL'
@@ -190,7 +212,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const syncStatus = getOrElse(
     (): SynchronizationStatus => ({
       mode: 'offline',
-      currentBlock: '-1',
+      currentBlock: -1,
     }),
   )(syncStatusOption)
 
@@ -229,15 +251,17 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTransparentAddresses(some(transparentAddresses))
 
     // get balance for every transparent address
-    const balances: Balance[] = await Promise.all(
+    const balances: BigNumber[] = await Promise.all(
       transparentAddresses.map(
-        async (address: TransparentAddress): Promise<Balance> =>
-          wallet.getTransparentWalletBalance(address.address),
+        async ({address}: TransparentAddress): Promise<BigNumber> => {
+          const balance = await wallet.getTransparentWalletBalance(address)
+          return new BigNumber(balance)
+        },
       ),
     )
-    return balances
-      .map((balance) => deserializeBigNumber(balance.availableBalance))
-      .reduce((prev: BigNumber, current: BigNumber) => prev.plus(current), new BigNumber(0))
+
+    // return sum of every transparent balance
+    return bigSum(balances)
   }
 
   const load = (): void => {
@@ -276,9 +300,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const refreshSyncStatus = async (): Promise<void> => {
     try {
-      const response = await wallet.getSynchronizationStatus()
-      if (response.currentBlock !== syncStatus.currentBlock) load()
-      if (!_.isEqual(response)(syncStatus)) setSyncStatus(some(response))
+      const result = await wallet.getSynchronizationStatus()
+      if (typeof result === 'string') throw Error(result)
+      const newSyncStatus = await tPromise.decode(SynchronizationStatus, result)
+      if (newSyncStatus.currentBlock !== syncStatus.currentBlock) load()
+      if (!_.isEqual(newSyncStatus)(syncStatus)) setSyncStatus(some(newSyncStatus))
     } catch (e) {
       handleError(e)
     }
