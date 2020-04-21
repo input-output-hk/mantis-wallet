@@ -166,7 +166,9 @@ class MockWallet {
     this._existGuard()
     if (this.isLocked) throw Error(WALLET_IS_LOCKED)
   }
+}
 
+class MockGlacierDrop {
   getEtcSnapshotBalanceWithProof(_etcAddress: string): RawBalanceWithProof {
     return {
       balance: toHex(123456789),
@@ -214,6 +216,7 @@ export const Web3MockApi: Web3API = {
   },
   midnight: {
     wallet: new MockWallet(),
+    glacierdrop: new MockGlacierDrop(),
   },
   version: {
     ethereum: 'mocked',
