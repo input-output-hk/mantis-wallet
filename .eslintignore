@@ -4,6 +4,7 @@ build
 dist
 storybook-static
 docs
+midnight-remix
 
 bin/
 src/web3.worker.js

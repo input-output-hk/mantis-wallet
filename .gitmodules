@@ -1,0 +1,5 @@
+[submodule "midnight-remix"]
+	path = midnight-remix
+	url = git@github.com:input-output-hk/midnight-remix
+  # FIXME PM-1849 Change this after Remix publish process is finalized
+	branch = for-luna

@@ -26,13 +26,17 @@ Runs the renderer in development mode, it can be accessed at [http://localhost:3
 
 ### `yarn dev`
 
-This runs [`yarn build-main`](#yarn-build-main) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
+This runs [`yarn build-main`](#yarn-build-main) and [`yarn copy-remix`](#yarn-copy-remix) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
 
 `yarn dev:hot` runs with `yarn build-main --watch` for automatic reload and `yarn electron-dev:hot` for automatic restart on change.
 
 ### `yarn storybook`
 
 Starts storybook in debug mode.
+
+### `yarn copy-remix`
+
+Copies `midnight-remix` files to build directory. This step is mandatory, if you want to run Remix from Luna.
 
 ## Testing and code health related scripts
 
