@@ -209,8 +209,9 @@ export interface WalletAPI {
   listAccounts(): Account[]
   getSynchronizationStatus(): RawSynchronizationStatus
   getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
+}
 
-  // glacier drop
+export interface GlacierDropAPI {
   getEtcSnapshotBalanceWithProof(etcAddress: string): RawBalanceWithProof
   authorizationSign(
     transparentAddress: string,
@@ -255,6 +256,7 @@ export interface Web3API {
   eth: EthApi
   midnight: {
     wallet: WalletAPI
+    glacierdrop: GlacierDropAPI
   }
   version: {
     ethereum: string

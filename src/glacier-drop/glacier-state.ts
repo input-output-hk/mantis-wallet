@@ -182,7 +182,7 @@ const DEFAULT_STATE = {
 
 function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierData {
   const {web3, store} = _.merge(DEFAULT_STATE)(initialState)
-  const {wallet} = web3.midnight
+  const {wallet, glacierdrop: gd} = web3.midnight
 
   const [claims, setClaims] = usePersistedState(store, ['glacierDrop', 'claims'])
   const [constants, setConstants] = useState<Option<GlacierConstants>>(none)
@@ -291,7 +291,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const validationError = validateEthAddress(etcAddress)
     if (validationError) throw Error(validationError)
 
-    const result = await wallet.getEtcSnapshotBalanceWithProof(etcAddress)
+    const result = await gd.getEtcSnapshotBalanceWithProof(etcAddress)
     if (typeof result === 'string') throw Error(result)
     const {balance, proof} = await tPromise.decode(BalanceWithProof, result)
     return {
@@ -304,7 +304,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     transparentAddress: string,
     etcPrivateKey: string,
   ): Promise<AuthorizationSignature> => {
-    const result = await wallet.authorizationSign(transparentAddress, {etcPrivateKey})
+    const result = await gd.authorizationSign(transparentAddress, {etcPrivateKey})
     if (typeof result === 'string') throw Error(result)
     return tPromise.decode(AuthorizationSignature, result)
   }
@@ -313,13 +313,13 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const mine = async (claim: Claim): Promise<MineResponse> => {
     const {externalAmount, externalAddress} = claim
-    const response = await wallet.mine(toHex(externalAmount), externalAddress)
+    const response = await gd.mine(toHex(externalAmount), externalAddress)
     if (response.status !== 'NewMineStarted') throw Error(response.message)
     return response
   }
 
   const getMiningState = async (claim: Claim): Promise<GetMiningStateResponse> => {
-    const response = await wallet.getMiningState()
+    const response = await gd.getMiningState()
     if (response.status === 'MiningSuccessful') {
       updateClaim(claim, {
         puzzleStatus: 'unsubmitted',
