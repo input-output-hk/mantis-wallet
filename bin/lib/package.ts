@@ -13,16 +13,8 @@ export const packageLuna = (
     // the icon's extension is normalized inside electron-packager per platform
     // for windows it will use icon.ico, for mac it will use icon.icns
     icon: path.resolve(appDir, 'public/icon.png'),
-    ignore: [
-      /\.idea/,
-      /\.storybook/,
-      /\.circleci/,
-      /public\//,
-      /src\//,
-      /bin\//,
-      /image-snapshots\//,
-      /platform-config\.json5/,
-    ],
+    // FIXME PM-1837 don't include package.json as it is in dist package
+    ignore: /^\/(?!build|package.json).*/,
     out: path.resolve(appDir, 'dist'),
     overwrite: true,
     ...options,
