@@ -1,6 +1,17 @@
 # Luna Wallet
 
-All scripts can be run in the project directory.
+Wallet for Midnight.
+
+## Prerequisites
+
+* [Node.js](https://nodejs.org/en/) - v12 is currently used for Luna, tested with v12.16.2.
+  * (optional) [nvm](https://github.com/nvm-sh/nvm) - you can use nvm to automatically pick-up the Node version you need
+* [yarn](https://classic.yarnpkg.com/en/) - tested with 1.21.1
+* (optional) If you want to use Remix from Luna, you will have to setup [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules#_cloning_submodules) in your project directory. Running these two commands should do the trick: `git submodule init` and `git submodule update`.
+
+## Initialize the project
+
+Running the `yarn` command in the project directory will download the dependencies. After this action, all the script below can be run. 
 
 ## Scripts for development
 
