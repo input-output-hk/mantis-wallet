@@ -1,142 +1,125 @@
 @import '../themify', '../vars';
 
-$header-height: 110px;
-$header-text-height: 50px;
-
 $balance-padding: 24px 24px 0;
 
 $balance-width: 400px;
 $balance-min-width: 285px;
 
 .WalletOverview {
-  display: grid;
-  grid-template-areas:
-    'header header header header header'
-    'left confidential total transparent right';
-  grid-template-columns:
-    1fr minmax($balance-min-width, $balance-width) minmax($balance-min-width, $balance-width)
-    minmax($balance-min-width, $balance-width) 1fr;
-  grid-template-rows: $header-height $balance-width;
   margin: 0 0 100px;
 
-  .svg {
-    @include themify($themes) {
-      stroke-width: 0.5;
-      stroke: themed('text-color');
-      fill: themed('text-color');
-    }
-  }
-
   .header {
-    grid-area: header;
-    margin-bottom: 50px;
+    height: 110px;
   }
 
-  %header-row {
-    display: inline-block;
-    height: $header-text-height;
-  }
+  .balances {
+    display: grid;
+    grid-template-areas: 'left confidential total transparent right';
+    grid-template-columns:
+      1fr minmax($balance-min-width, $balance-width) minmax($balance-min-width, $balance-width)
+      minmax($balance-min-width, $balance-width) 1fr;
+    height: $balance-width;
 
-  .main-title {
-    @extend %header-row;
-  }
-
-  .SyncStatus {
-    @extend %header-row;
-    float: right;
-  }
-
-  .graph {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    transform: translate(-50%, -50%);
-  }
-
-  %balance {
-    height: 115px;
-    margin: auto;
-    padding: $balance-padding;
-    white-space: nowrap;
-  }
-
-  .total {
-    @extend %balance;
-    position: relative;
-    grid-area: total;
-    width: 100%;
-    text-align: center;
-  }
-
-  .confidential {
-    @extend %balance;
-    grid-area: confidential;
-    justify-self: right;
-    margin-right: 20px;
-  }
-
-  .transparent {
-    @extend %balance;
-    grid-area: transparent;
-    width: 100%;
-    justify-self: left;
-    margin-left: 20px;
-    border-radius: 20px;
-
-    @include themify($themes) {
-      background-color: themed('secondary-background');
+    .svg {
+      @include themify($themes) {
+        stroke-width: 0.5;
+        stroke: themed('text-color');
+        fill: themed('text-color');
+      }
     }
-  }
 
-  .box-text {
-    margin-bottom: 4px;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 1.95px;
-    line-height: 20px;
-    text-transform: uppercase;
-  }
-
-  .box-icon {
-    display: inline;
-    position: relative;
-    top: 1px;
-    margin-right: 0.5em;
-  }
-
-  .box-info {
-    width: 20px;
-    height: 20px;
-    float: right;
-    border-radius: 50%;
-    font-family: Georgia, serif;
-    font-size: 12px;
-    font-style: italic;
-    font-weight: bold;
-    line-height: 20px;
-    text-align: center;
-    text-transform: lowercase;
-
-    @include themify($themes) {
-      background-color: themed('tertiary-background');
-      color: #fff;
+    .graph {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%, -50%);
     }
-  }
 
-  .box-amount {
-    position: relative;
-    z-index: 10;
-    font-size: 30px;
-    font-weight: 300;
-    letter-spacing: 0.69px;
-    line-height: 44px;
-  }
+    %balance {
+      height: 115px;
+      margin: auto;
+      padding: $balance-padding;
+      white-space: nowrap;
+    }
 
-  .dust {
-    display: inline;
-    position: relative;
-    top: -2px;
-    margin-right: 0.5em;
+    .total {
+      @extend %balance;
+      position: relative;
+      grid-area: total;
+      width: 100%;
+      text-align: center;
+    }
+
+    .confidential {
+      @extend %balance;
+      grid-area: confidential;
+      justify-self: right;
+      margin-right: 20px;
+    }
+
+    .transparent {
+      @extend %balance;
+      grid-area: transparent;
+      width: 100%;
+      justify-self: left;
+      margin-left: 20px;
+      border-radius: 20px;
+
+      @include themify($themes) {
+        background-color: themed('secondary-background');
+      }
+    }
+
+    .box-text {
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 1.95px;
+      line-height: 20px;
+      text-transform: uppercase;
+    }
+
+    .box-icon {
+      display: inline;
+      position: relative;
+      top: 1px;
+      margin-right: 0.5em;
+    }
+
+    .box-info {
+      width: 20px;
+      height: 20px;
+      float: right;
+      border-radius: 50%;
+      font-family: Georgia, serif;
+      font-size: 12px;
+      font-style: italic;
+      font-weight: bold;
+      line-height: 20px;
+      text-align: center;
+      text-transform: lowercase;
+
+      @include themify($themes) {
+        background-color: themed('tertiary-background');
+        color: #fff;
+      }
+    }
+
+    .box-amount {
+      position: relative;
+      z-index: 10;
+      font-size: 30px;
+      font-weight: 300;
+      letter-spacing: 0.69px;
+      line-height: 44px;
+    }
+
+    .dust {
+      display: inline;
+      position: relative;
+      top: -2px;
+      margin-right: 0.5em;
+    }
   }
 }

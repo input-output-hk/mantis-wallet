@@ -18,6 +18,7 @@ import {ClaimRow} from './ClaimRow'
 import {Epochs} from './Epochs'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
+import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import './GlacierDropOverview.scss'
 
 const availableChains: DisplayChain[] = [ETC_CHAIN]
@@ -144,7 +145,10 @@ const _GlacierDropOverview = ({
 
   return (
     <div className="GlacierDropOverview">
-      <div className="main-title">Glacier Drop</div>
+      <HeaderWithSyncStatus>
+        Glacier Drop
+        <div className="link">Learn more about Glacier Drop</div>
+      </HeaderWithSyncStatus>
       <div className="content">
         <div className="wallet-selector"></div>
         {period === 'Unlocking' && !solvingClaim && (

@@ -6,7 +6,6 @@ import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
-import {FloatingSyncStatus} from './common/SyncStatus'
 import {SplashScreen} from './SplashScreen'
 import {makeWeb3Worker} from './web3'
 import {createPersistentStore} from './common/store'
@@ -45,7 +44,6 @@ const App: React.FC = () => {
                   <header>
                     <Sidebar />
                   </header>
-                  <FloatingSyncStatus />
                   <main id="main">
                     <Router />
                   </main>

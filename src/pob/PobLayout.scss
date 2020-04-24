@@ -3,25 +3,6 @@
 .PobLayout {
   height: 100%;
 
-  .header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    .more {
-      align-self: end;
-      text-align: right;
-
-      .link {
-        @extend %link;
-        margin: 0;
-        overflow: hidden;
-        font-size: 12px;
-        font-weight: bold;
-        letter-spacing: 1.8px;
-      }
-    }
-  }
-
   .content {
     height: 100%;
     padding: 64px;

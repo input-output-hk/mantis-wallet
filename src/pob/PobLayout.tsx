@@ -1,4 +1,5 @@
 import React from 'react'
+import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import './PobLayout.scss'
 
 interface PobLayoutProps {
@@ -11,12 +12,10 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
 }: React.PropsWithChildren<PobLayoutProps>) => {
   return (
     <div className="PobLayout">
-      <div className="header">
-        <div className="main-title">{title}</div>
-        <div className="more">
-          <span className="link">More About the Proof of Burn</span>
-        </div>
-      </div>
+      <HeaderWithSyncStatus>
+        {title}
+        <div className="link">Learn about the Proof of Burn</div>
+      </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>
   )
