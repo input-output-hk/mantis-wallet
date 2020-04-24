@@ -127,12 +127,36 @@
 
     .navigation {
       .link {
+        position: relative;
+        z-index: $zindex-sidebar;
+
+        &.active {
+          font-weight: normal;
+        }
+
         .prefix {
           width: $mini-left-padding;
         }
 
         .link-title {
           display: none;
+          position: absolute;
+          top: 0;
+          left: 0;
+          margin-left: 120px;
+          padding: 0 20px 0 10px;
+          font-size: 24px;
+          white-space: nowrap;
+
+          @include themify($themes) {
+            background-color: themed('secondary-background');
+          }
+        }
+
+        &:hover {
+          .link-title {
+            display: block;
+          }
         }
       }
     }
