@@ -1,6 +1,8 @@
 @import '../themify', '../vars', '../partial';
 
 .BurnActivity {
+  margin-bottom: 64px;
+
   .toolbar {
     display: grid;
     grid-template-columns: auto 1fr auto;

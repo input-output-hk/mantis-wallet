@@ -23,6 +23,8 @@ interface BurnCoinsGenerateAddressProps {
   generateBurnAddress: (prover: Prover, midnightAddress: string, fee: number) => Promise<void>
 }
 
+const DEFAULT_FEE = 0.0001
+
 export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerateAddressProps> = ({
   chain,
   provers,
@@ -33,8 +35,9 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const compatibleProvers = provers.filter((p) => p.rewards[chain.id] !== undefined)
   const [prover, setProver] = useState(compatibleProvers[0])
   const minFee = UNITS[chain.unitType].fromBasic(new BigNumber(prover?.rewards[chain.id] || 0))
+  const defaultFee = minFee.isLessThan(DEFAULT_FEE) ? DEFAULT_FEE : minFee
   const minValue = UNITS[chain.unitType].fromBasic(new BigNumber(1))
-  const [fee, setFee] = useState(minFee.toString(10))
+  const [fee, setFee] = useState(defaultFee.toString(10))
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
   const [approval, setApproval] = useState(false)
 

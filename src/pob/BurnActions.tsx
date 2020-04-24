@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Button} from 'antd'
+import {Button, Popover} from 'antd'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {ProofOfBurnState, BurnBalance, BurnAddressInfo} from './pob-state'
@@ -27,12 +27,14 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
       <div className="toolbar">
         <div className="wallet">Wallet 01</div>
         <div>
-          <div className="link" onClick={() => setShowAddTxModal(true)}>
-            Enter burn transaction manually
-          </div>
           <Button type="primary" className="action" onClick={onBurnCoins}>
             Burn Coins
           </Button>
+          <Popover content="Enter burn transaction manually">
+            <Button type="primary" className="action" onClick={() => setShowAddTxModal(true)}>
+              Manual Burn
+            </Button>
+          </Popover>
           <Button type="primary" className="action secondary" onClick={onRegisterAuction}>
             Register for Auction
           </Button>

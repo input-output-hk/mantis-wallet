@@ -14,7 +14,6 @@
     padding-top: 25px;
     padding-bottom: 10px;
     font-size: 13px;
-    font-weight: bold;
     word-break: break-all;
 
     .info-element {
@@ -27,6 +26,7 @@
 
     .long-text {
       @extend %ellipsize;
+      @extend %monospace;
 
       .clickable {
         opacity: $secondary-opacity;

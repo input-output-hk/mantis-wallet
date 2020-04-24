@@ -83,7 +83,7 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
     })
 
   // Adding Burn Tx Manually
-  const addBurnTxLink = getByText('Enter burn transaction manually')
+  const addBurnTxLink = getByText('Manual Burn')
   expect(addBurnTxLink).toBeInTheDocument()
   userEvent.click(addBurnTxLink)
   expect(getByText('Burn Transaction Id')).toBeInTheDocument()
