@@ -124,6 +124,7 @@ export const ClaimController = ({
       />
       <GeneratedMessage
         visible={activeModal === 'GeneratedMessage'}
+        externalAddress={externalAddress}
         transparentAddress={transparentAddress}
         onNext={() => setActiveModal('SelectMethod')}
         onCancel={() => setActiveModal('SelectMethod')}

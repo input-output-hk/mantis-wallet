@@ -53,7 +53,7 @@ export const SelectMethod = ({
             <Button size="large" onClick={onMessageCreate}>
               Create
             </Button>
-            <Button size="large" onClick={onMessageUseSigned} disabled={true /* FIXME: PM-1709 */}>
+            <Button size="large" onClick={onMessageUseSigned}>
               Use Signed
             </Button>
           </div>
