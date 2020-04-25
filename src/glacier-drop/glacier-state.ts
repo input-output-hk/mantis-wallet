@@ -314,7 +314,9 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   const mine = async (claim: Claim): Promise<MineResponse> => {
     const {externalAmount, externalAddress} = claim
     const response = await gd.mine(toHex(externalAmount), externalAddress)
+    console.log({response})
     if (response.status !== 'NewMineStarted') throw Error(response.message)
+    updateClaim(claim, {puzzleDuration: response.estimatedTime})
     return response
   }
 

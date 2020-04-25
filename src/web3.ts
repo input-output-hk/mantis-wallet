@@ -161,6 +161,7 @@ export interface RawAuthorizationSignature {
 
 interface NewMineStarted {
   status: 'NewMineStarted'
+  estimatedTime: number
   message: string
 }
 

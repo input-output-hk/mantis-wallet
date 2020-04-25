@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {message} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {isNone} from 'fp-ts/lib/Option'
@@ -122,13 +122,9 @@ const _GlacierDropOverview = ({
     }
   }, 2000)
 
-  useInterval(async () => {
-    try {
-      await updateTxStatuses(currentBlock)
-    } catch (e) {
-      console.error(e)
-    }
-  }, 10000)
+  useEffect(() => {
+    updateTxStatuses(currentBlock).catch((e) => console.error(e))
+  }, [currentBlock])
 
   const chooseChain = (_chain: DisplayChain): void => {
     if (walletState.transparentAddresses.length === 0) {

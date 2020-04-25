@@ -187,6 +187,7 @@ class MockGlacierDrop {
   mine(_externalAmount: string, _etcAddress: string): MineResponse {
     return {
       status: 'NewMineStarted',
+      estimatedTime: 123,
       message: '',
     }
   }
