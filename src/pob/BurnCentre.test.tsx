@@ -20,24 +20,11 @@ const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('../config/renderer.ts')
 jest.mock('react-inlinesvg')
-jest.mock('./pob-state.tsx', () => ({
-  ProofOfBurnState: {
-    useContainer: () => ({
-      burnBalances: [],
-      provers: [
-        {
-          name: 'Test Prover',
-          address: 'http://test-prover',
-          rewards: {},
-        },
-      ],
-    }),
-  },
-}))
 
 test('Burn Centre shows correct burn balances and its buttons work as expected', async () => {
   const registerAuction = jest.fn()
   const burnCoins = jest.fn()
+  const addTx = jest.fn()
 
   const pending = UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(500))
   const available = UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(600))
@@ -50,6 +37,22 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
           available,
         },
       ]}
+      provers={[
+        {
+          name: 'Test Prover',
+          address: 'http://test-prover',
+          rewards: {},
+        },
+      ]}
+      burnAddresses={{
+        'burn-address': {
+          midnightAddress: 'transparent-midnight-address',
+          chainId: 'ETH_TESTNET',
+          autoConversion: false,
+          reward: 1e16,
+        },
+      }}
+      addTx={addTx}
       onBurnCoins={burnCoins}
       onRegisterAuction={registerAuction}
     />,

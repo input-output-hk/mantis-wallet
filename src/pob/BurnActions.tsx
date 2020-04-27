@@ -1,25 +1,26 @@
 import React, {useState} from 'react'
 import {Button, Popover} from 'antd'
+import _ from 'lodash'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
-import {ProofOfBurnState, BurnBalance, BurnAddressInfo} from './pob-state'
+import {ProofOfBurnData, BurnAddressInfo} from './pob-state'
 import {ProverConfig} from '../config/type'
 import './BurnActions.scss'
 
-interface BurnActionsProps {
+interface BurnActionsProps
+  extends Pick<ProofOfBurnData, 'burnBalances' | 'burnAddresses' | 'provers' | 'addTx'> {
   onBurnCoins?: () => void
   onRegisterAuction?: () => void
-  burnBalances: BurnBalance[]
 }
 
 export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   onBurnCoins,
   onRegisterAuction,
   burnBalances,
+  burnAddresses,
+  provers,
+  addTx,
 }: BurnActionsProps) => {
-  const pobState = ProofOfBurnState.useContainer()
-  const provers = pobState.provers
-
   const [showAddTxModal, setShowAddTxModal] = useState(false)
 
   return (
@@ -27,14 +28,16 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
       <div className="toolbar">
         <div className="wallet">Wallet 01</div>
         <div>
+          {!_.isEmpty(burnAddresses) && (
+            <Popover content="Enter burn transaction manually">
+              <Button type="primary" className="action" onClick={() => setShowAddTxModal(true)}>
+                Manual Burn
+              </Button>
+            </Popover>
+          )}
           <Button type="primary" className="action" onClick={onBurnCoins}>
             Burn Coins
           </Button>
-          <Popover content="Enter burn transaction manually">
-            <Button type="primary" className="action" onClick={() => setShowAddTxModal(true)}>
-              Manual Burn
-            </Button>
-          </Popover>
           <Button type="primary" className="action secondary" onClick={onRegisterAuction}>
             Register for Auction
           </Button>
@@ -64,11 +67,11 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           burnTx: string,
           burnAddressInfo: BurnAddressInfo,
         ): Promise<void> => {
-          await pobState.addTx(prover, burnTx, burnAddressInfo)
+          await addTx(prover, burnTx, burnAddressInfo)
           setShowAddTxModal(false)
         }}
         provers={provers}
-        burnAddresses={pobState.burnAddresses}
+        burnAddresses={burnAddresses}
       />
     </div>
   )

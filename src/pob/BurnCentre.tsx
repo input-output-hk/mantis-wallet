@@ -17,10 +17,7 @@ export const _BurnCentre = (): JSX.Element => {
 
   return (
     <PobLayout title="Burn Centre">
-      <BurnActions
-        burnBalances={pobState.burnBalances}
-        onBurnCoins={() => routerState.navigate('BURN_COINS')}
-      />
+      <BurnActions onBurnCoins={() => routerState.navigate('BURN_COINS')} {...pobState} />
       <BurnActivity burnStatuses={pobState.burnStatuses} />
     </PobLayout>
   )

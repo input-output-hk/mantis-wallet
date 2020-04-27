@@ -50,7 +50,7 @@ export const AddBurnTxModal: React.FunctionComponent<AddBurnTxModalProps & Modal
         rightButtonProps={{
           children: 'Process Burn',
           loading: inProgress,
-          disabled: !!txErrorMessage,
+          disabled: !!txErrorMessage || !burnAddresses[burnAddress],
           onClick: async (): Promise<void> => {
             if (mounted.current) setInProgress(true)
             try {
