@@ -315,6 +315,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const {externalAmount, externalAddress} = claim
     const response = await gd.mine(toHex(externalAmount), externalAddress)
     if (response.status !== 'NewMineStarted') throw Error(response.message)
+    updateClaim(claim, {puzzleDuration: response.estimatedTime})
     return response
   }
 
@@ -343,13 +344,25 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
       powNonce,
       puzzleStatus,
       transparentAddress,
+      externalAddress,
     } = claim
 
     if (!powNonce || puzzleStatus !== 'unsubmitted') {
       throw Error('Puzzle is not solved yet.')
     }
 
-    const data = GlacierDropContract.unlock.getData(v, r, s, inclusionProof, powNonce)
+    // See GlacierDrop.sol unlock function
+    const data = GlacierDropContract.unlock.getData(
+      transparentAddress,
+      externalAddress,
+      v,
+      r,
+      s,
+      inclusionProof,
+      powNonce,
+    )
+
+    console.info({unlockData: data})
 
     const unlockTxHash = await wallet.callContract({
       from: ['Wallet', transparentAddress],

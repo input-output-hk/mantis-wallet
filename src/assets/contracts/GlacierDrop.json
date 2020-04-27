@@ -13,6 +13,11 @@
     }, {
         "indexed": false,
         "internalType": "address",
+        "name": "midnightDropSender",
+        "type": "address"
+    }, {
+        "indexed": false,
+        "internalType": "address",
         "name": "midnightDropReceiver",
         "type": "address"
     }],
@@ -28,7 +33,12 @@
     }, {
         "indexed": false,
         "internalType": "address",
-        "name": "midnightDropDestination",
+        "name": "midnightDropSender",
+        "type": "address"
+    }, {
+        "indexed": false,
+        "internalType": "address",
+        "name": "midnightDropReceiver",
         "type": "address"
     }, {
         "indexed": false,
@@ -51,6 +61,142 @@
 }, {
     "constant": false,
     "inputs": [{
+        "internalType": "string",
+        "name": "bech32AddressString",
+        "type": "string"
+    }],
+    "name": "bech32ToAddress",
+    "outputs": [{
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "baseTarget",
+        "type": "uint256"
+    }],
+    "name": "calculateTarget",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "address",
+        "name": "etcOwner",
+        "type": "address"
+    }],
+    "name": "getDustWithdrawnByUser",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "address",
+        "name": "etcOwner",
+        "type": "address"
+    }],
+    "name": "getNumberOfEpochsForFullUnfreeze",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [],
+    "name": "getTotalUnlockedEther",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "string",
+        "name": "hexAddressString",
+        "type": "string"
+    }],
+    "name": "hexToAddress",
+    "outputs": [{
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "uint256",
+        "name": "etcOwnerBalance",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "minimumUnlockedBalance",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "averageUnlockedBalance",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "maximumUnlockedBalance",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "totalEpochs",
+        "type": "uint256"
+    }],
+    "name": "numberEpochsForFullUnfreeze",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{
+        "internalType": "string",
+        "name": "dustReceiverString",
+        "type": "string"
+    }, {
+        "internalType": "string",
+        "name": "etcOwnerString",
+        "type": "string"
+    }, {
         "internalType": "uint8",
         "name": "signatureV",
         "type": "uint8"
@@ -73,6 +219,70 @@
     }],
     "name": "unlock",
     "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "address",
+        "name": "etcAddress",
+        "type": "address"
+    }, {
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+    }, {
+        "internalType": "uint64",
+        "name": "powNonce",
+        "type": "uint64"
+    }, {
+        "internalType": "uint256",
+        "name": "baseTarget",
+        "type": "uint256"
+    }],
+    "name": "validatePoW",
+    "outputs": [{
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+    }],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{
+        "internalType": "string",
+        "name": "dustReceiverString",
+        "type": "string"
+    }, {
+        "internalType": "string",
+        "name": "etcOwnerString",
+        "type": "string"
+    }, {
+        "internalType": "uint8",
+        "name": "signatureV",
+        "type": "uint8"
+    }, {
+        "internalType": "bytes32",
+        "name": "signatureR",
+        "type": "bytes32"
+    }, {
+        "internalType": "bytes32",
+        "name": "signatureS",
+        "type": "bytes32"
+    }],
+    "name": "verifyAuthorizationMessage",
+    "outputs": [{
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }, {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"

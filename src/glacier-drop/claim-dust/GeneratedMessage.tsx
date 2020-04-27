@@ -8,16 +8,18 @@ import './GeneratedMessage.scss'
 
 interface GeneratedMessageProps {
   transparentAddress: string
+  externalAddress: string
   onNext: () => void
 }
 
 export const GeneratedMessage = ({
   transparentAddress,
+  externalAddress,
   onNext,
   ...props
 }: GeneratedMessageProps & ModalProps): JSX.Element => {
   // TODO: get authorization message from an endpoint
-  const msg = `I authorise ${transparentAddress} to get my glacier airdrop.`
+  const msg = `I authorise ${transparentAddress} to get my ${externalAddress} GlacierDrop`
 
   return (
     <LunaModal destroyOnClose wrapClassName="GeneratedMessage" {...props}>

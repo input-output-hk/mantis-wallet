@@ -39,6 +39,7 @@ export const verifyAddress = (): JSX.Element => (
 export const generatedMessage = (): JSX.Element => (
   <GeneratedMessage
     visible
+    externalAddress={text('external address', EXTERNAL_ADDRESS)}
     transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onNext={action('onNext')}
   />
