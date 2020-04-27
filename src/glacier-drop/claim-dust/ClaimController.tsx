@@ -71,7 +71,7 @@ export const ClaimController = ({
       inclusionProof: balanceWithProof.proof,
       withdrawnDustAmount: new BigNumber(0),
       powNonce: null,
-      puzzleDuration: 600, // FIXME: PM-1707 when estimation is available from backend
+      puzzleDuration: 600, // FIXME: PM-1855 Refactor Claim Creation
       unlockTxHash: null,
       withdrawTxHashes: [],
       txStatuses: {},
