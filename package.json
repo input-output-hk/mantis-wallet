@@ -10,7 +10,7 @@
   "scripts": {
     "start": "cross-env EXTEND_ESLINT=true BROWSER=none react-app-rewired start",
     "build-renderer": "cross-env EXTEND_ESLINT=true react-app-rewired build",
-    "build-main": "webpack",
+    "build-main": "webpack --config webpack.main.config.js",
     "test": "cross-env EXTEND_ESLINT=true react-app-rewired test \"^((?!storyshots).)*$\"",
     "test:coverage": "react-app-rewired test --coverage",
     "storyshots": "cross-env EXTEND_ESLINT=true react-app-rewired test \"storyshots.*\"",
