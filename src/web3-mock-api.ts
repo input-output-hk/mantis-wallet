@@ -217,7 +217,7 @@ export const Web3MockApi: Web3API = {
   },
   midnight: {
     wallet: new MockWallet(),
-    glacierdrop: new MockGlacierDrop(),
+    glacierDrop: new MockGlacierDrop(),
   },
   version: {
     ethereum: 'mocked',
