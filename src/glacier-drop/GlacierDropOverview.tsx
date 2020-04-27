@@ -5,11 +5,13 @@ import {isNone} from 'fp-ts/lib/Option'
 import {DisplayChain} from '../pob/chains'
 import {ETC_CHAIN} from './glacier-config'
 import {Claim, GlacierState, PeriodConfig, getUnlockStatus} from './glacier-state'
-import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
+import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
+import {makeDesktopNotification} from '../common/notify'
 import {Token} from '../common/Token'
 import {Loading} from '../common/Loading'
+import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {NoWallet} from '../wallets/NoWallet'
 import {PeriodStatus} from './PeriodStatus'
 import {getCurrentPeriod, getUnfrozenAmount} from './Period'
@@ -18,7 +20,6 @@ import {ClaimRow} from './ClaimRow'
 import {Epochs} from './Epochs'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
-import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import './GlacierDropOverview.scss'
 
 const availableChains: DisplayChain[] = [ETC_CHAIN]
@@ -50,9 +51,9 @@ const ClaimHistory = ({
           <div className="claims">
             {claims.map((c: Claim, i: number) => (
               <ClaimRow
+                key={c.externalAddress}
                 claim={c}
                 index={i}
-                key={c.externalAddress}
                 currentBlock={currentBlock}
                 periodConfig={periodConfig}
                 showEpochs={showEpochs}
@@ -97,6 +98,7 @@ const _GlacierDropOverview = ({
     mine,
     getMiningState,
     updateTxStatuses,
+    updateDustAmounts,
     constants,
   } = GlacierState.useContainer()
 
@@ -116,7 +118,10 @@ const _GlacierDropOverview = ({
   useInterval(async () => {
     if (!solvingClaim) return
     try {
-      await getMiningState(solvingClaim)
+      const miningState = await getMiningState(solvingClaim)
+      if (miningState.status === 'MiningSuccessful') {
+        makeDesktopNotification('PoW Puzzle Complete')
+      }
     } catch (e) {
       console.error(e)
     }
@@ -124,6 +129,7 @@ const _GlacierDropOverview = ({
 
   useEffect(() => {
     updateTxStatuses(currentBlock).catch((e) => console.error(e))
+    updateDustAmounts(period).catch((e) => console.error(e))
   }, [currentBlock])
 
   const chooseChain = (_chain: DisplayChain): void => {

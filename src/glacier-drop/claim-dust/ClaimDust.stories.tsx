@@ -49,7 +49,7 @@ export const claimWithKey = (): JSX.Element => (
   <ClaimWithKey
     visible
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
-    dustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
+    minimumDustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
     transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
@@ -60,7 +60,7 @@ export const claimWithMessage = (): JSX.Element => (
   <ClaimWithMessage
     visible
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
-    dustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
+    minimumDustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
     transparentAddress={text('midnight address', MIDNIGHT_ADDRESS)}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
@@ -71,7 +71,7 @@ export const exchange = (): JSX.Element => (
   <Exchange
     visible
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
-    dustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
+    minimumDustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
     availableDust={new BigNumber(number('available dust', EXAMPLE_AMOUNT))}
     transparentAddresses={array('Transparent addresses', [MIDNIGHT_ADDRESS, MIDNIGHT_ADDRESS2])}
     onNext={action('onNext')}

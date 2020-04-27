@@ -14,7 +14,7 @@ import './Exchange.scss'
 
 interface ExchangeProps {
   externalAmount: BigNumber
-  dustAmount: BigNumber
+  minimumDustAmount: BigNumber
   availableDust: BigNumber
   transparentAddresses: string[]
   onNext: (transparentAddress: string) => void
@@ -24,7 +24,7 @@ interface ExchangeProps {
 
 export const Exchange = ({
   externalAmount,
-  dustAmount,
+  minimumDustAmount,
   availableDust,
   transparentAddresses,
   onNext,
@@ -68,7 +68,7 @@ export const Exchange = ({
         <Asset amount={externalAmount} chain={chain}>
           {chain.symbol} Balance
         </Asset>
-        <DialogShowDust amount={dustAmount}>You are eligible for</DialogShowDust>
+        <DialogShowDust amount={minimumDustAmount}>You are eligible for at least</DialogShowDust>
         <DialogApproval
           description={`Confirm ${chain.symbol} Balance OK`}
           checked={extrernalBalanceConfirmed}
