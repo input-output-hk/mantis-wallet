@@ -49,7 +49,7 @@ export type BurnBalance = {
   available: BigNumber
 }
 
-interface ProofOfBurnState {
+export interface ProofOfBurnData {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
   observeBurnAddress: (
     burnAddress: string,
@@ -102,7 +102,7 @@ function useProofOfBurnState(
     store: createInMemoryStore(defaultPobData),
     web3: makeWeb3Worker(),
   },
-): ProofOfBurnState {
+): ProofOfBurnData {
   const [burnWatchers, setBurnWatchers] = usePersistedState(store, ['pob', 'burnWatchers'])
   const [burnAddresses, setBurnAddresses] = usePersistedState(store, ['pob', 'burnAddresses'])
   const [burnStatuses, setBurnStatuses] = useState<Record<string, BurnStatus>>({})
