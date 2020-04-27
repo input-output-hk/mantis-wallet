@@ -19,7 +19,7 @@ export const GeneratedMessage = ({
   ...props
 }: GeneratedMessageProps & ModalProps): JSX.Element => {
   // TODO: get authorization message from an endpoint
-  const msg = `I authorise ${transparentAddress} to get my ${externalAddress} GlacierDrop`
+  const msg = `I authorise ${transparentAddress} to get my ${externalAddress.toLowerCase()} GlacierDrop`
 
   return (
     <LunaModal destroyOnClose wrapClassName="GeneratedMessage" {...props}>
