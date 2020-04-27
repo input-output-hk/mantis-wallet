@@ -18,8 +18,8 @@ interface ChildProcess extends childProcess.ChildProcess {
 
 export class SpawnedMidnightProcess {
   constructor(public name: ClientName, private childProcess: ChildProcess) {
-    console.log(`Spawned ${name}, PID: ${childProcess.pid}`)
-    childProcess.on('close', (code) => console.log('exited with', code))
+    console.info(`Spawned ${name}, PID: ${childProcess.pid}`)
+    childProcess.on('close', (code) => console.info('exited with', code))
     childProcess.on('error', (err) => console.error(err))
   }
 
@@ -34,9 +34,9 @@ export class SpawnedMidnightProcess {
   close$ = merge(fromEvent(this.childProcess, 'close'), fromEvent(this.childProcess, 'exit'))
 
   kill = async (): Promise<void> => {
-    console.log(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
+    console.info(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
     if (this.childProcess.exitCode !== null) {
-      console.log(`...already exited with exit code ${this.childProcess.exitCode}`)
+      console.info(`...already exited with exit code ${this.childProcess.exitCode}`)
     }
     return generate({
       initialState: 0,
@@ -75,7 +75,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
 
   return {
     spawn: () => {
-      console.log(
+      console.info(
         `spawning ${name} (from ${processConfig.packageDirectory}): ${executablePath} ${settingsAsArguments}`,
       )
       return new SpawnedMidnightProcess(

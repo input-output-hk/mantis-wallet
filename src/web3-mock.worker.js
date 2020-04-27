@@ -4,7 +4,7 @@ import * as Comlink from 'comlink'
 
 onmessage = (message) => {
   if (message.data[0] === 'configure') {
-    console.log('setProvider', message.data[1])
+    console.info('setProvider', message.data[1])
   }
 }
 
