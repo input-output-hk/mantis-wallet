@@ -223,7 +223,9 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         epochLength: await loadConstant('getEpochLength', toNumber),
         numberOfEpochs: await loadConstant('getNumberOfEpochs', toNumber),
       },
-      totalDustDistributed: await loadConstant('getTotalDustDistributed', toBigNumber),
+      totalDustDistributed: (await loadConstant('getTotalDustDistributed', toBigNumber)).dividedBy(
+        new BigNumber('1e10'), // TODO: investigate
+      ),
     }
   }
 

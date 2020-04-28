@@ -105,7 +105,7 @@ const _GlacierDropOverview = ({
   if (isNone(constants)) {
     return <Loading />
   }
-  const {periodConfig} = constants.value
+  const {periodConfig, totalDustDistributed} = constants.value
   const {currentBlock} = walletState.syncStatus
   const period = getCurrentPeriod(currentBlock, periodConfig)
 
@@ -176,6 +176,7 @@ const _GlacierDropOverview = ({
       </div>
       <ClaimController
         walletState={walletState}
+        totalDustDistributed={totalDustDistributed}
         onFinish={startPuzzle}
         activeModal={activeModal}
         setActiveModal={setActiveModal}
