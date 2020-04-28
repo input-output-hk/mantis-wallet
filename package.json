@@ -90,7 +90,7 @@
     "rxjs": "^6.5.4",
     "typescript": "3.8.3",
     "unstated-next": "^1.1.0",
-    "web3": "git+ssh://git@github.com:input-output-hk/midnight-web3.git#d5020dbc8b203e9cc522c007bd878da5ef0b0f00"
+    "web3": "git+ssh://git@github.com:input-output-hk/midnight-web3.git#734156212296f2bc8ce91885fc6ead5ac74b9caf"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",

@@ -182,7 +182,7 @@ const DEFAULT_STATE = {
 
 function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierData {
   const {web3, store} = _.merge(DEFAULT_STATE)(initialState)
-  const {wallet, glacierdrop: gd} = web3.midnight
+  const {wallet, glacierDrop: gd} = web3.midnight
 
   const [claims, setClaims] = usePersistedState(store, ['glacierDrop', 'claims'])
   const [constants, setConstants] = useState<Option<GlacierConstants>>(none)

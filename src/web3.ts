@@ -257,7 +257,7 @@ export interface Web3API {
   eth: EthApi
   midnight: {
     wallet: WalletAPI
-    glacierdrop: GlacierDropAPI
+    glacierDrop: GlacierDropAPI
   }
   version: {
     ethereum: string
