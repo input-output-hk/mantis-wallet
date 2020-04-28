@@ -354,7 +354,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     // See GlacierDrop.sol unlock function
     const data = GlacierDropContract.unlock.getData(
       transparentAddress,
-      externalAddress,
+      externalAddress.toLowerCase(),
       v,
       r,
       s,
