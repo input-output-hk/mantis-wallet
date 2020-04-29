@@ -18,13 +18,17 @@ Runs the renderer in development mode, it can be accessed at [http://localhost:3
 
 `yarn electron-dev` will open the Electron application in debug mode.
 
-:warning: You will have to run [`yarn build-main`](#yarn-electron-dev) before this action.
+`yarn electron-dev:hot` will open the Electron application in debug mode with hot reload of the main process. Keep in mind, when using this mode closing the Electron window will not exit the watch mode. If you let it running in the terminal, when a change happens in the main process' code, it will fireup a new window.
+
+:warning: You will have to run [`yarn build-main`](#yarn-build-main) before this action. For *hot* mode run it as `yarn build-main --watch`, so it rebuilds automatically on change.
 
 :warning: The renderer needs to be running - see [`yarn start`](#yarn-start).
 
 ### `yarn dev`
 
-This runs [`yarn build-main`](#yarn-electron-dev) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
+This runs [`yarn build-main`](#yarn-build-main) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
+
+`yarn dev:hot` runs with `yarn build-main --watch` for automatic reload and `yarn electron-dev:hot` for automatic restart on change.
 
 ### `yarn storybook`
 
