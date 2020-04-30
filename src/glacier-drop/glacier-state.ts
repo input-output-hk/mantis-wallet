@@ -272,20 +272,13 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     setClaims({...claims, [claim.externalAddress]: claim})
   }
 
-  const updateClaim = (claim: Claim, updateContent: Partial<Claim>): void => {
-    const updatedClaim = _.merge(claim)(updateContent)
-    setClaims({...claims, [claim.externalAddress]: updatedClaim})
+  const updateClaim = (updatedClaim: Claim): void => {
+    setClaims({...claims, [updatedClaim.externalAddress]: updatedClaim})
   }
 
-  const updateClaims = (updateArray: Array<[Claim, Partial<Claim>]>): void => {
-    const updatedClaims = _.fromPairs(
-      updateArray.map(([claim, updateContent]: [Claim, Partial<Claim>]): [string, Claim] => [
-        claim.externalAddress,
-        _.merge(claim)(updateContent),
-      ]),
-    )
-
-    setClaims({...claims, ...updatedClaims})
+  const updateClaims = (updatedClaims: Claim[]): void => {
+    const claimsByExternalAddress = _.keyBy((c: Claim) => c.externalAddress)(updatedClaims)
+    setClaims({...claims, ...claimsByExternalAddress})
   }
 
   const removeClaims = async (): Promise<void> => setClaims({})
@@ -331,10 +324,12 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         ),
     )
 
-    const updateArray = newStatuses.map(([claim, txHash, txStatus]): [Claim, Partial<Claim>] => [
-      claim,
-      {txStatuses: {...claim.txStatuses, [txHash]: txStatus}},
-    ])
+    const updateArray = newStatuses.map(
+      ([claim, txHash, txStatus]): Claim => ({
+        ...claim,
+        txStatuses: {...claim.txStatuses, [txHash]: txStatus},
+      }),
+    )
     updateClaims(updateArray)
   }
 
@@ -350,13 +345,13 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     }
 
     const totalUnlockedEther = await getTotalUnlockedEther()
-    const updateArray = claimsToUpdate.map((claim: Claim): [Claim, Partial<Claim>] => [
-      claim,
-      {
+    const updateArray = claimsToUpdate.map(
+      (claim): Claim => ({
+        ...claim,
         dustAmount: getFinalUnlockedDustForClaim(claim, totalUnlockedEther),
         isFinalDustAmount: true,
-      },
-    ])
+      }),
+    )
 
     updateClaims(updateArray)
   }
@@ -391,14 +386,15 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const {externalAmount, externalAddress} = claim
     const response = await gd.mine(toHex(externalAmount), externalAddress)
     if (response.status !== 'NewMineStarted') throw Error(response.message)
-    updateClaim(claim, {puzzleDuration: response.estimatedTime})
+    updateClaim({...claim, puzzleDuration: response.estimatedTime})
     return response
   }
 
-  const getMiningState = async (claim: Claim): Promise<GetMiningStateResponse> => {
+  const getMiningState = async (claim: SolvingClaim): Promise<GetMiningStateResponse> => {
     const response = await gd.getMiningState()
     if (response.status === 'MiningSuccessful') {
-      updateClaim(claim, {
+      updateClaim({
+        ...claim,
         puzzleStatus: 'unsubmitted',
         puzzleDuration: 0,
         powNonce: parseInt(response.nonce, 16),
@@ -410,7 +406,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   // Contract Call Methods
 
   const unlock = async (
-    claim: Claim,
+    claim: UnsubmittedClaim,
     {gasLimit, gasPrice}: ContractParams,
     currentBlock: number,
   ): Promise<string> => {
@@ -449,7 +445,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
       data,
     })
 
-    updateClaim(claim, {
+    updateClaim({
+      ...claim,
       puzzleStatus: 'submitted',
       unlockTxHash,
       txStatuses: {
@@ -486,7 +483,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
       data,
     })
 
-    updateClaim(claim, {
+    updateClaim({
+      ...claim,
       withdrawTxHashes: [...claim.withdrawTxHashes, withdrawTxHash],
       withdrawnDustAmount: unfrozenDustAmount,
       txStatuses: {
