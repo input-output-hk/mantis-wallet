@@ -18,12 +18,14 @@
         color: themed('text-color');
       }
 
-      &:hover,
-      &:focus {
-        opacity: 1;
+      &:not(:disabled) {
+        &:hover,
+        &:focus {
+          opacity: 1;
 
-        @include themify($themes) {
-          background-color: themed('quinary-background');
+          @include themify($themes) {
+            background-color: themed('quinary-background');
+          }
         }
       }
     }
@@ -34,10 +36,18 @@
         color: #fff;
       }
 
-      &:focus,
-      &:hover {
+      &:disabled {
         @include themify($themes) {
-          background-color: lighten(themed('primary-color'), 5);
+          background-color: rgba(themed('primary-color'), 0.5);
+        }
+      }
+
+      &:not(:disabled) {
+        &:hover,
+        &:focus {
+          @include themify($themes) {
+            background-color: lighten(themed('primary-color'), 5);
+          }
         }
       }
     }

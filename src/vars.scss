@@ -14,7 +14,9 @@ $sidebar-width: 450px;
 $sidebar-collapse-at: 1400px;
 $sidebar-collapsed-width: 200px;
 
-$zindex-sidebar: 1100;
+// antd uses z-index of 10xx for modals, tooltips, etc
+// let's keep sidebar under them
+$zindex-sidebar: 900;
 
 // antd overwrites
 $primary-color: #04b7e0;

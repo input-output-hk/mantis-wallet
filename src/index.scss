@@ -226,4 +226,12 @@ div#root {
   .ant-click-animating-node {
     opacity: 0.62;
   }
+
+  .ant-message {
+    padding-left: $sidebar-width;
+
+    @media screen and (max-width: $sidebar-collapse-at) {
+      padding-left: $sidebar-collapsed-width;
+    }
+  }
 }
