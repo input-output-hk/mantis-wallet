@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import ethereumLogo from '../assets/icons/chains/ethereum.svg'
 import ethereumClippedLogo from '../assets/icons/chains/ethereum-clipped.svg'
 import ethereumBurnLogo from '../assets/icons/chains/m-eth.svg'
@@ -13,6 +14,8 @@ export const ETC_CHAIN: DisplayChain = {
 }
 
 export const BLOCK_TIME_SECONDS = 3.9 * 60
+// FIXME: when sum of ETC in snapshot is available from contract call (waiting on backend)
+export const TOTAL_ETHER_IN_SNAPSHOT = new BigNumber('99987579302527058980101585')
 
 // Contract Addresses
 export const GLACIER_DROP_ADDRESS = 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95'

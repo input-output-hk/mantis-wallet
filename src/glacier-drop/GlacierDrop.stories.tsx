@@ -34,6 +34,7 @@ const baseClaim = {
   transparentAddress: MIDNIGHT_ADDRESS,
   externalAddress: EXTERNAL_ADDRESS,
   dustAmount: new BigNumber(700000000000),
+  isFinalDustAmount: false,
   externalAmount: new BigNumber(1400000000000),
   authSignature: {r: '', s: '', v: 0},
   inclusionProof: '',

@@ -8,7 +8,7 @@ packageLuna({
   afterCopy: [
     (buildPath, electronVersion, platform, arch, cb) => {
       const targetPlatformConfigPath = path.resolve(buildPath, 'platform-config.json5')
-      console.log(`Writing Windows-specific configuration to ${targetPlatformConfigPath} ...`)
+      console.info(`Writing Windows-specific configuration to ${targetPlatformConfigPath} ...`)
       const platformConfig = {runClients: false}
 
       return fs.writeFile(targetPlatformConfigPath, JSON.stringify(platformConfig)).then(() => cb())
@@ -16,7 +16,7 @@ packageLuna({
     (buildPath, electronVersion, platform, arch, cb) => {
       const currentReadmePath = path.resolve(__dirname, 'resources', 'README-WIN.txt')
       const targetPlatformReadmePath = path.resolve(buildPath, '..', '..', 'README.txt')
-      console.log(`Writing Windows-specific README to ${targetPlatformReadmePath} ...`)
+      console.info(`Writing Windows-specific README to ${targetPlatformReadmePath} ...`)
 
       return fs.copyFile(currentReadmePath, targetPlatformReadmePath).then(() => cb())
     },

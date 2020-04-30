@@ -17,7 +17,7 @@ import './ClaimWith.scss'
 
 interface ClaimWithKeyProps {
   externalAmount: BigNumber
-  dustAmount: BigNumber
+  minimumDustAmount: BigNumber
   transparentAddress: string
   onNext: (signature: AuthorizationSignature) => void
   onCancel: () => void
@@ -26,7 +26,7 @@ interface ClaimWithKeyProps {
 
 export const ClaimWithKey = ({
   externalAmount,
-  dustAmount,
+  minimumDustAmount,
   transparentAddress,
   onNext,
   onCancel,
@@ -87,7 +87,7 @@ export const ClaimWithKey = ({
         <Asset amount={externalAmount} chain={chain}>
           Asset
         </Asset>
-        <DialogShowDust amount={dustAmount}>
+        <DialogShowDust amount={minimumDustAmount}>
           Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
         </DialogShowDust>
         <DialogMessage label="Destination Address" description={transparentAddress} />

@@ -5,12 +5,13 @@ import {Option, none, some, getOrElse} from 'fp-ts/lib/Option'
 import {EnterAddress} from './EnterAddress'
 import {Exchange} from './Exchange'
 import {LoadedState} from '../../common/wallet-state'
+import {Claim, BalanceWithProof, AuthorizationSignature} from '../glacier-state'
+import {TOTAL_ETHER_IN_SNAPSHOT} from '../glacier-config'
 import {SelectMethod} from './SelectMethod'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
 import {ClaimWithKey} from './ClaimWithKey'
 import {ClaimWithMessage} from './ClaimWithMessage'
-import {Claim, BalanceWithProof, AuthorizationSignature} from '../glacier-state'
 
 export type ModalId =
   | 'none'
@@ -24,6 +25,7 @@ export type ModalId =
 
 interface ClaimControllerProps {
   walletState: LoadedState
+  totalDustDistributed: BigNumber
   activeModal: ModalId
   setActiveModal(modalId: ModalId): void
   onFinish(claim: Claim): void
@@ -31,6 +33,7 @@ interface ClaimControllerProps {
 
 export const ClaimController = ({
   walletState,
+  totalDustDistributed,
   activeModal,
   setActiveModal,
   onFinish,
@@ -49,8 +52,9 @@ export const ClaimController = ({
     }),
   )(balanceWithProofOption)
 
-  // FIXME: PM-1708 when sum of total ETC in snapshot is available
-  const dustAmount = balanceWithProof.balance.dividedBy(3000000000)
+  const minimumDustAmount = balanceWithProof.balance
+    .dividedBy(TOTAL_ETHER_IN_SNAPSHOT)
+    .multipliedBy(totalDustDistributed)
 
   useEffect(() => {
     if (activeModal === 'none') {
@@ -64,7 +68,8 @@ export const ClaimController = ({
     return {
       added: new Date(),
       puzzleStatus: 'solving',
-      dustAmount,
+      dustAmount: minimumDustAmount, // Final amount will be calculated after unlocking period is over
+      isFinalDustAmount: false,
       transparentAddress,
       externalAddress,
       authSignature,
@@ -100,7 +105,7 @@ export const ClaimController = ({
       <Exchange
         visible={activeModal === 'Exchange'}
         externalAmount={balanceWithProof.balance}
-        dustAmount={dustAmount}
+        minimumDustAmount={minimumDustAmount}
         availableDust={availableBalance}
         transparentAddresses={transparentAccounts.map((a) => _.get('address')(a))}
         onNext={(transparentAddress: string) => {
@@ -134,7 +139,7 @@ export const ClaimController = ({
         visible={activeModal === 'ClaimWithKey'}
         transparentAddress={transparentAddress}
         externalAmount={balanceWithProof.balance}
-        dustAmount={dustAmount}
+        minimumDustAmount={minimumDustAmount}
         onNext={finish}
         onCancel={onCancel}
       />
@@ -142,7 +147,7 @@ export const ClaimController = ({
         visible={activeModal === 'ClaimWithMessage'}
         transparentAddress={transparentAddress}
         externalAmount={balanceWithProof.balance}
-        dustAmount={dustAmount}
+        minimumDustAmount={minimumDustAmount}
         onNext={finish}
         onCancel={onCancel}
       />

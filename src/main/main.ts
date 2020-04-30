@@ -101,11 +101,11 @@ if (config.runClients) {
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
-    console.log('Fetching zkSNARK parameters')
+    console.info('Fetching zkSNARK parameters')
     const fetchParamsPath = path.resolve(config.distPackagesDir, 'fetch-params.sh')
     return promisify(exec)(fetchParamsPath)
       .then(({stdout, stderr}) => {
-        console.log(stdout)
+        console.info(stdout)
         console.error(stderr)
       })
       .catch((error) => {
@@ -132,7 +132,7 @@ if (config.runClients) {
       }),
       (logs) => scheduled(logs, asapScheduler),
       mergeAll(),
-    ).subscribe(console.log)
+    ).subscribe(console.info)
   }
 
   function spawnClients(): void {
@@ -163,7 +163,7 @@ if (config.runClients) {
   }
 
   async function restartClients(): Promise<void> {
-    console.log('restarting clients')
+    console.info('restarting clients')
     return killClients().then(spawnClients)
   }
 
