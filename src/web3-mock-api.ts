@@ -20,6 +20,7 @@ import {
   CallParams,
   MineResponse,
   GetMiningStateResponse,
+  WalletAPI,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -33,7 +34,7 @@ const TRANSPARENT_ADDRESS: TransparentAddress = {
   index: 0,
 }
 
-class MockWallet {
+class MockWallet implements WalletAPI {
   currentBlock = 0
   walletExists = true
   isLocked = false
@@ -118,6 +119,11 @@ class MockWallet {
   }
 
   // transparent addresses
+  redeemValue(): string {
+    this._lockGuard()
+    return '0x67a31ad21ac9ccf29e579adbf4e7b1fc61c4eb13dc9fe3a4e607f5db2e6ca57c'
+  }
+
   listTransparentAddresses(): TransparentAddress[] {
     this._lockGuard()
     return [TRANSPARENT_ADDRESS]

@@ -9,7 +9,7 @@ import {toHex} from '../common/util'
 import {TransactionHistory} from './TransactionHistory'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {dust} from '../storybook-util/custom-knobs'
+import {dust, asyncAction} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Transaction History',
@@ -30,6 +30,10 @@ export const withNoTransactions = (): JSX.Element => (
     transparentAddresses={[]}
     accounts={accounts}
     availableBalance={new BigNumber(0)}
+    sendTransaction={asyncAction('on-send-transaction')}
+    sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
+    generateAddress={asyncAction('on-generate-address')}
+    goToAccounts={action('on-go-to-accounts')}
   />
 )
 
@@ -151,6 +155,10 @@ export const withDemoTransactions = (): JSX.Element => (
     transparentAddresses={[]}
     accounts={accounts}
     availableBalance={dust('Available Balance', 1000)}
+    sendTransaction={asyncAction('on-send-transaction')}
+    sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
+    generateAddress={asyncAction('on-generate-address')}
+    goToAccounts={action('on-go-to-accounts')}
   />
 )
 
@@ -220,6 +228,10 @@ export const interactive = (): JSX.Element => {
         },
       ]}
       availableBalance={dust('Available Balance', 1000)}
+      sendTransaction={asyncAction('on-send-transaction')}
+      sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
+      generateAddress={asyncAction('on-generate-address')}
+      goToAccounts={action('on-go-to-accounts')}
     />
   )
 }
@@ -240,36 +252,39 @@ export const sendTransactionModal = (): JSX.Element => (
     ]}
     availableAmount={dust('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
-    onSend={async (recipient, amount, fee): Promise<void> =>
-      action('generate-new')(recipient, amount, fee)
-    }
+    onSend={asyncAction('on-send')}
+    onSendToTransparent={asyncAction('on-send-to-transparent')}
     visible
   />
 )
 
 export const receiveTransactionModal = (): JSX.Element => (
   <ReceiveTransaction
+    privateAddress={text('Private address', 'private-address')}
     transparentAddresses={[
-      {
-        address: text('Old address', 'old-address'),
-        index: 0,
-      },
       {
         address: text('New address', 'new-address'),
         index: 1,
       },
+      {
+        address: text('Old address', 'old-address'),
+        index: 0,
+      },
     ]}
     onCancel={action('receive-transaction-cancelled')}
-    onGenerateNew={async (): Promise<void> => action('generate-new')()}
+    onGenerateNew={asyncAction('generate-new')}
+    goToAccounts={action('on-go-to-accounts')}
     visible
   />
 )
 
 export const emptyTransactionModal = (): JSX.Element => (
   <ReceiveTransaction
+    privateAddress={text('Private address', 'private-address')}
     transparentAddresses={[]}
     onCancel={action('receive-transaction-cancelled')}
-    onGenerateNew={async (): Promise<void> => action('generate-new')()}
+    onGenerateNew={asyncAction('generate-new')}
+    goToAccounts={action('on-go-to-accounts')}
     visible
   />
 )

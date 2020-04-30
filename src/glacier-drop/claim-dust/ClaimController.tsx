@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import _ from 'lodash/fp'
 import BigNumber from 'bignumber.js'
 import {Option, none, some, getOrElse} from 'fp-ts/lib/Option'
 import {EnterAddress} from './EnterAddress'
@@ -34,7 +35,7 @@ export const ClaimController = ({
   setActiveModal,
   onFinish,
 }: React.PropsWithChildren<ClaimControllerProps>): JSX.Element => {
-  const {transparentAddresses, getOverviewProps} = walletState
+  const {transparentAccounts, getOverviewProps} = walletState
   const {availableBalance} = getOverviewProps()
 
   const [externalAddress, setExternalAddress] = useState<string>('')
@@ -101,7 +102,7 @@ export const ClaimController = ({
         externalAmount={balanceWithProof.balance}
         dustAmount={dustAmount}
         availableDust={availableBalance}
-        transparentAddresses={transparentAddresses.map(({address}: {address: string}) => address)}
+        transparentAddresses={transparentAccounts.map((a) => _.get('address')(a))}
         onNext={(transparentAddress: string) => {
           setTransparentAddress(transparentAddress)
           setActiveModal('SelectMethod')

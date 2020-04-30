@@ -14,7 +14,7 @@ import outgoingIcon from '../assets/icons/outgoing.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import checkIcon from '../assets/icons/check.svg'
-import arrowDownIcon from '../assets/icons/arrow-down.svg'
+import './TransactionRow.scss'
 
 export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element => {
   const {txDetails, txDirection, txStatus, txValue} = transaction
@@ -30,7 +30,7 @@ export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.E
       : formatDate(fromUnixTime(txStatus.timestamp))
 
   return (
-    <tr>
+    <tr className="TransactionRow">
       <td className="line">
         <span className="type-icon">
           &nbsp;
@@ -67,9 +67,6 @@ export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.E
           </>
         )}
         {_.capitalize(status)}
-      </td>
-      <td className="line">
-        <SVG src={arrowDownIcon} className="svg" />
       </td>
     </tr>
   )

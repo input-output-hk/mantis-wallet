@@ -43,8 +43,11 @@ export const isGreaterOrEqual = (minValue: BigNumber.Value = 0) => (b: BigNumber
     ? `Must be at least ${minValue.toString(10)}`
     : ''
 
+const hasAtMostDecimalPlacesMessage = (dp: number): string =>
+  dp === 0 ? 'It must be an integer value' : `At most ${dp} decimal places are permitted`
+
 export const hasAtMostDecimalPlaces = (dp = 8) => (b: BigNumber) =>
-  b.dp() > dp ? `At most ${dp} decimal places are permitted` : ''
+  b.dp() > dp ? hasAtMostDecimalPlacesMessage(dp) : ''
 
 export function validateAmount(
   v: string,

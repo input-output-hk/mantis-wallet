@@ -1,0 +1,16 @@
+@import '../partial', '../vars';
+
+.CopyableLongText {
+  @extend %ellipsize;
+  @extend %monospace;
+
+  .clickable {
+    margin-right: 0.5em;
+    opacity: $secondary-opacity;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

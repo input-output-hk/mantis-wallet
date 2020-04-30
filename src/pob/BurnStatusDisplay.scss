@@ -1,4 +1,4 @@
-@import '../themify', '../partial', '../vars';
+@import '../themify', '../partial';
 
 .BurnStatusDisplay {
   padding-bottom: 14px;
@@ -21,20 +21,6 @@
 
       &:first-child {
         padding: 0 14px;
-      }
-    }
-
-    .long-text {
-      @extend %ellipsize;
-      @extend %monospace;
-
-      .clickable {
-        opacity: $secondary-opacity;
-        cursor: pointer;
-
-        &:hover {
-          opacity: 1;
-        }
       }
     }
 

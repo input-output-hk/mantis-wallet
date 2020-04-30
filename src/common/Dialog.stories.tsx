@@ -21,6 +21,7 @@ import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
 import {selectChain, dust} from '../storybook-util/custom-knobs'
 import {DialogShowDust} from './dialog/DialogShowDust'
+import {DialogTextSwitch} from './dialog/DialogTextSwitch'
 
 export default {
   title: 'Dialog',
@@ -123,7 +124,10 @@ export const InteractiveInput: React.FunctionComponent<{}> = () => (
 
 export const InteractiveMessage: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Message">
-    <DialogMessage description={text('Message text', 'This is a message in a dialog')} />
+    <DialogMessage
+      description={text('Message text', 'This is a message in a dialog')}
+      type={select('Input type', ['default', 'highlight'], 'default')}
+    />
   </Dialog>
 )
 
@@ -206,6 +210,18 @@ export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
           action(checked ? 'Is switched' : 'Is not switched')()
         }}
         checked={switched}
+      />
+    </Dialog>
+  )
+}
+
+export const InteractiveTextSwitch: React.FunctionComponent<{}> = () => {
+  return (
+    <Dialog title="Dialog Text Switch">
+      <DialogTextSwitch
+        left={{label: text('Left label', 'Left'), type: 'left'}}
+        right={{label: text('Right label', 'Right'), type: 'right'}}
+        onChange={action('on-change')}
       />
     </Dialog>
   )

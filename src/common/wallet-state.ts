@@ -38,7 +38,11 @@ const SynchronizationStatusOnline = t.type({
 
 const SynchronizationStatus = t.union([SynchronizationStatusOffline, SynchronizationStatusOnline])
 
+const TRANSFER_GAS_LIMIT = 21000
+
 export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
+
+export type TransparentAccount = TransparentAddress & {balance: BigNumber}
 
 // States
 
@@ -54,13 +58,19 @@ export interface LoadingState {
 export interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
-  transparentAddresses: TransparentAddress[]
+  transparentAccounts: TransparentAccount[]
   getOverviewProps: () => Overview
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
+  sendTxToTransparent: (
+    recipient: string,
+    amount: BigNumber,
+    gasPrice: BigNumber,
+  ) => Promise<string>
+  redeemValue: (address: string, amount: number, fee: number) => Promise<string>
   getBurnAddress: (
     address: string,
     chain: Chain,
@@ -105,7 +115,7 @@ interface Overview {
   transparentBalance: BigNumber
   availableBalance: BigNumber
   pendingBalance: BigNumber
-  transparentAddresses: TransparentAddress[]
+  transparentAccounts: TransparentAccount[]
   accounts: Account[]
 }
 
@@ -118,7 +128,7 @@ interface WalletStateParams {
   availableBalance: Option<BigNumber>
   transparentBalance: Option<BigNumber>
   transactions: Option<Transaction[]>
-  transparentAddresses: Option<TransparentAddress[]>
+  transparentAccounts: Option<TransparentAccount[]>
   accounts: Option<Account[]>
 }
 
@@ -131,7 +141,7 @@ const DEFAULT_STATE: WalletStateParams = {
   availableBalance: none,
   transparentBalance: none,
   transactions: none,
-  transparentAddresses: none,
+  transparentAccounts: none,
   accounts: none,
 }
 
@@ -171,11 +181,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   // addresses / accounts
   const [accountsOption, setAccounts] = useState<Option<Account[]>>(_initialState.accounts)
-  const [transparentAddressesOption, setTransparentAddresses] = useState<
-    Option<TransparentAddress[]>
-  >(_initialState.transparentAddresses)
+  const [transparentAccountsOption, setTransparentAccounts] = useState<
+    Option<TransparentAccount[]>
+  >(_initialState.transparentAccounts)
 
-  const transparentAddresses = getOrElse((): TransparentAddress[] => [])(transparentAddressesOption)
+  const transparentAccounts = getOrElse((): TransparentAccount[] => [])(transparentAccountsOption)
 
   const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
@@ -193,7 +203,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       transparentBalance,
       availableBalance,
       pendingBalance,
-      transparentAddresses,
+      transparentAccounts,
       accounts,
     }
   }
@@ -203,7 +213,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     isSome(availableBalanceOption) &&
     isSome(transactionsOption) &&
     isSome(transparentBalanceOption) &&
-    isSome(transparentAddressesOption) &&
+    isSome(transparentAccountsOption) &&
     isSome(accountsOption) &&
     isSome(syncStatusOption)
 
@@ -223,7 +233,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTransparentBalance(none)
     setTransactions(none)
     setErrorMsg(none)
-    setTransparentAddresses(none)
+    setTransparentAccounts(none)
     setAccounts(none)
     setSyncStatus(none)
   }
@@ -242,26 +252,23 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const errorMsg = getOrElse((): string => 'Unknown error')(errorMsgOption)
 
-  const loadTransparentBalance = async (): Promise<BigNumber> => {
-    // get every transparent address
+  const loadTransparentAccounts = async (): Promise<TransparentAccount[]> => {
     const transparentAddresses: TransparentAddress[] = await loadAll(
       wallet.listTransparentAddresses,
     )
 
-    setTransparentAddresses(some(transparentAddresses))
-
-    // get balance for every transparent address
-    const balances: BigNumber[] = await Promise.all(
-      transparentAddresses.map(
-        async ({address}: TransparentAddress): Promise<BigNumber> => {
-          const balance = await wallet.getTransparentWalletBalance(address)
-          return new BigNumber(balance)
+    return Promise.all(
+      // eslint-disable-next-line
+      _.reverse(transparentAddresses).map(
+        async (address: TransparentAddress): Promise<TransparentAccount> => {
+          const balance = await wallet.getTransparentWalletBalance(address.address)
+          return {
+            balance: new BigNumber(balance),
+            ...address,
+          }
         },
       ),
     )
-
-    // return sum of every transparent balance
-    return bigSum(balances)
   }
 
   const load = (): void => {
@@ -282,13 +289,18 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       })
       .catch(handleError)
 
-    // load transparent balances
-    loadTransparentBalance()
-      .then((availableTransparentBalance) => {
-        setTransparentBalance(some(availableTransparentBalance))
+    // load transparent accounts and total transparent balance
+    loadTransparentAccounts()
+      .then((transparentAccounts) => {
+        setTransparentAccounts(some(transparentAccounts))
+        setTransparentBalance(some(bigSum(transparentAccounts.map(({balance}) => balance))))
       })
       .catch((e: Error) => {
-        if (e.message === WALLET_IS_OFFLINE) return setTransparentBalance(some(new BigNumber(0)))
+        if (e.message === WALLET_IS_OFFLINE) {
+          setTransparentBalance(some(new BigNumber(0)))
+          setTransparentAccounts(some([]))
+          return
+        }
         handleError(e)
       })
 
@@ -313,11 +325,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const generateNewAddress = async (): Promise<void> => {
     await wallet.generateTransparentAddress()
 
-    const transparentAddresses: TransparentAddress[] = await loadAll(
-      wallet.listTransparentAddresses,
-    )
+    const transparentAccounts = await loadTransparentAccounts()
 
-    setTransparentAddresses(some(transparentAddresses))
+    setTransparentAccounts(some(transparentAccounts))
   }
 
   const sendTransaction = async (
@@ -326,6 +336,28 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: number,
   ): Promise<string> => {
     const result = await wallet.sendTransaction(recipient, amount, fee)
+    load()
+    return result
+  }
+
+  const sendTxToTransparent = async (
+    recipient: string,
+    amount: BigNumber,
+    gasPrice: BigNumber,
+  ): Promise<string> => {
+    const result = await wallet.callContract({
+      from: 'Wallet',
+      to: recipient,
+      value: amount.toString(16),
+      gasPrice: gasPrice.toString(16),
+      gasLimit: TRANSFER_GAS_LIMIT.toString(16),
+    })
+    load()
+    return result
+  }
+
+  const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
+    const result = await wallet.redeemValue(address, amount, fee)
     load()
     return result
   }
@@ -379,13 +411,15 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     generateNewAddress,
     refreshSyncStatus,
     sendTransaction,
+    sendTxToTransparent,
+    redeemValue,
     create,
     unlock,
     restoreFromSpendingKey,
     restoreFromSeedPhrase,
     remove,
     getBurnAddress,
-    transparentAddresses,
+    transparentAccounts,
   }
 }
 

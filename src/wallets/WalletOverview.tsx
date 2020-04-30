@@ -2,6 +2,7 @@ import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
+import {Popover} from 'antd'
 import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {OverviewGraph} from './OverviewGraph'
@@ -16,17 +17,29 @@ interface WalletOverviewProps {
   pending: BigNumber
   confidential: BigNumber
   transparent: BigNumber
+  goToAccounts: () => void
 }
 
 export const WalletOverview = ({
   pending,
   confidential,
   transparent,
+  goToAccounts,
 }: WalletOverviewProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
   const available = confidential.plus(transparent)
   const total = pending.plus(available)
+
+  const transparentTooltip = (
+    <p>
+      These funds are transparent and can be visible to other Midnight users,
+      <br />
+      we recommened you move them to a confidental address.
+      <br />
+      <b>To view your Transparent balances, click here.</b>
+    </p>
+  )
 
   return (
     <div className="WalletOverview">
@@ -59,19 +72,21 @@ export const WalletOverview = ({
             <ShortNumber big={confidential} />
           </div>
         </div>
-        <div className="transparent">
-          <div className="box-text">
-            <div className="box-info">i</div>
-            <span className="box-icon">
-              &nbsp;
-              <SVG src={transparentIcon} className="svg" />
-            </span>
-            Transparent
-          </div>
-          <div className="box-amount">
-            <img src={dustIcon} alt="dust" className="dust" />
-            <ShortNumber big={transparent} />
-          </div>
+        <div className="transparent" onClick={goToAccounts}>
+          <Popover content={transparentTooltip}>
+            <div className="box-text">
+              <div className="box-info">i</div>
+              <span className="box-icon">
+                &nbsp;
+                <SVG src={transparentIcon} className="svg" />
+              </span>
+              Transparent
+            </div>
+            <div className="box-amount">
+              <img src={dustIcon} alt="dust" className="dust" />
+              <ShortNumber big={transparent} />
+            </div>
+          </Popover>
         </div>
       </div>
     </div>

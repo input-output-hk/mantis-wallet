@@ -1,0 +1,40 @@
+@import '../../themify', '../../partial', '../../vars';
+
+.ReceiveModalFooter {
+  padding: 24px 64px;
+  text-align: left;
+
+  @include themify($themes) {
+    background-color: themed('quinary-background');
+  }
+
+  .title {
+    padding: 0.5em 0;
+    opacity: $secondary-opacity;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .address {
+    @extend %monospace;
+    width: 508px;
+    padding: 0.5em 0;
+    overflow: hidden;
+    opacity: $secondary-opacity;
+    font-size: 12px;
+    white-space: nowrap;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .link {
+    @extend %link;
+    padding: 0.5em 0;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+}

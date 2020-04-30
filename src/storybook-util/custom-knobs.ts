@@ -1,4 +1,5 @@
 import {select, text, number} from '@storybook/addon-knobs'
+import {action, ActionOptions} from '@storybook/addon-actions'
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 import {Prover} from '../pob/pob-state'
@@ -31,4 +32,12 @@ export const prover = (name: string, value: Partial<Prover> = {}): Prover => {
       number(`${name} prover ${k} reward`, v),
     ),
   }
+}
+
+export const asyncAction = (
+  name: string,
+  options?: ActionOptions | undefined,
+  // eslint-disable-next-line
+): ((...args: any[]) => Promise<void>) => {
+  return (...args) => Promise.resolve(action(name, options)(args))
 }

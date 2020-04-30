@@ -8,72 +8,163 @@ import {TransparentAddress} from '../../web3'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useIsMounted} from '../../common/hook-utils'
 import {copyToClipboard} from '../../common/clipboard'
+import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
+import {CopyableLongText} from '../../common/CopyableLongText'
+import {DialogMessage} from '../../common/dialog/DialogMessage'
+import './ReceiveTransaction.scss'
 
-interface ReceiveTransactionProps {
-  transparentAddresses: TransparentAddress[]
+interface ReceivePrivateTransactionProps {
+  privateAddress: string
+}
+
+interface ReceivePublicTransactionProps {
+  transparentAddress?: TransparentAddress
   onGenerateNew: () => Promise<void>
 }
 
-export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps & ModalProps> = ({
-  transparentAddresses,
+interface ReceiveTransactionProps
+  extends ReceivePrivateTransactionProps,
+    Pick<ReceivePublicTransactionProps, 'onGenerateNew'> {
+  transparentAddresses: TransparentAddress[]
+  goToAccounts: () => void
+}
+
+const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransactionProps> = ({
+  privateAddress,
+}: ReceivePrivateTransactionProps) => (
+  <Dialog
+    leftButtonProps={{
+      children: 'Copy Code',
+      onClick: (): void => {
+        copyToClipboard(privateAddress)
+      },
+    }}
+    rightButtonProps={{
+      doNotRender: true,
+    }}
+    type="dark"
+  >
+    <div className="title">Your private address</div>
+    <DialogPrivateKey privateKey={privateAddress} />
+  </Dialog>
+)
+
+const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransactionProps> = ({
+  transparentAddress,
   onGenerateNew,
-  ...props
-}: ReceiveTransactionProps & ModalProps) => {
+}: ReceivePublicTransactionProps) => {
   const mounted = useIsMounted()
   const [inProgress, setInProgress] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const orderedAddresses = _.orderBy('index', 'desc', transparentAddresses)
-  const newestAddress = _.head(orderedAddresses)
-
-  const title = newestAddress ? `Receive Account ${newestAddress.index}` : 'No known addresses'
+  const title = transparentAddress
+    ? `Receive Account ${transparentAddress.index}`
+    : 'No known addresses'
 
   const errors = errorMessage && <DialogError>{errorMessage}</DialogError>
 
-  const usedAddresses = orderedAddresses && orderedAddresses.length > 1 && (
-    <div className="ReceiveModalFooter">
-      <div className="title">Used addresses</div>
-      {_.tail(orderedAddresses).map(({address}) => (
-        <div key={address} className="address">
-          {address}
-        </div>
-      ))}
-    </div>
+  return (
+    <Dialog
+      leftButtonProps={{
+        children: 'Copy Code',
+        onClick: (): void => {
+          if (transparentAddress) {
+            copyToClipboard(transparentAddress.address)
+          }
+        },
+        disabled: !transparentAddress,
+      }}
+      rightButtonProps={{
+        type: 'default',
+        children: 'Generate new →',
+        onClick: async (): Promise<void> => {
+          if (mounted.current) {
+            setInProgress(true)
+            setErrorMessage('')
+          }
+          try {
+            await onGenerateNew()
+          } catch (e) {
+            if (mounted.current) setErrorMessage(e.message)
+          } finally {
+            if (mounted.current) setInProgress(false)
+          }
+        },
+        loading: inProgress,
+      }}
+      type="dark"
+      footer={errors}
+    >
+      <div className="title">{title}</div>
+      {transparentAddress && (
+        <>
+          <DialogPrivateKey privateKey={transparentAddress.address} />
+          <DialogMessage
+            description={
+              <>
+                <b>Warning:</b> By using a transparent address your transaction will not stay
+                confidential.
+              </>
+            }
+            type="highlight"
+          />
+        </>
+      )}
+    </Dialog>
   )
+}
+
+export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps & ModalProps> = ({
+  privateAddress,
+  transparentAddresses,
+  onGenerateNew,
+  goToAccounts,
+  ...props
+}: ReceiveTransactionProps & ModalProps) => {
+  const [mode, setMode] = useState<'transparent' | 'confidential'>('confidential')
+
+  const newestAddress = _.head(transparentAddresses)
+
+  const usedAddresses = mode === 'transparent' &&
+    transparentAddresses &&
+    transparentAddresses.length > 1 && (
+      <div className="ReceiveModalFooter">
+        <div className="title">Last Used addresses</div>
+        {transparentAddresses.slice(1, 6).map(({address}) => (
+          <div key={address} className="address">
+            <CopyableLongText content={address} showQrCode />
+          </div>
+        ))}
+        <div onClick={goToAccounts}>
+          <span className="link">See all Transparent Addresseses</span>
+        </div>
+      </div>
+    )
 
   return (
-    <LunaModal footer={usedAddresses} {...props}>
+    <LunaModal destroyOnClose footer={usedAddresses} {...props}>
       <Dialog
-        title={title}
         leftButtonProps={{
-          children: 'Copy Code',
-          onClick: (): void => {
-            if (newestAddress) {
-              copyToClipboard(newestAddress.address)
-            }
-          },
-          disabled: !newestAddress,
+          doNotRender: true,
         }}
         rightButtonProps={{
-          type: 'default',
-          children: 'Generate new →',
-          onClick: async (): Promise<void> => {
-            if (mounted.current) setInProgress(true)
-            try {
-              await onGenerateNew()
-            } catch (e) {
-              if (mounted.current) setErrorMessage(e.message)
-            } finally {
-              if (mounted.current) setInProgress(false)
-            }
-          },
-          loading: inProgress,
+          doNotRender: true,
         }}
-        type="dark"
-        footer={errors}
       >
-        {newestAddress && <DialogPrivateKey privateKey={newestAddress.address} />}
+        <DialogTextSwitch
+          defaultMode={mode}
+          left={{label: 'Confidential', type: 'confidential'}}
+          right={{label: 'Transparent', type: 'transparent'}}
+          onChange={setMode}
+        />
       </Dialog>
+      {mode === 'confidential' && <ReceivePrivateTransaction privateAddress={privateAddress} />}
+      {mode === 'transparent' && (
+        <ReceivePublicTransaction
+          transparentAddress={newestAddress}
+          onGenerateNew={onGenerateNew}
+        />
+      )}
     </LunaModal>
   )
 }
