@@ -4,7 +4,7 @@ import path from 'path'
 import url from 'url'
 import {spawn, exec} from 'child_process'
 import {promisify} from 'util'
-import {app, BrowserWindow, dialog, globalShortcut, screen} from 'electron'
+import {app, BrowserWindow, dialog, globalShortcut, screen, Menu} from 'electron'
 import {asapScheduler, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
@@ -15,11 +15,45 @@ import * as _ from 'lodash/fp'
 import {config} from '../config/main'
 import {ClientName} from '../config/type'
 import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
+import {buildMenu, buildRemixMenu} from './menu'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let mainWindowHandle: BrowserWindow | null = null
+
+let remixWindowHandle: BrowserWindow | null = null
+
+function createRemixWindow(): void {
+  const {width, height} = screen.getPrimaryDisplay().workAreaSize
+
+  const remixWindow = new BrowserWindow({
+    width,
+    height,
+    icon: path.join(__dirname, '/../icon.png'),
+  })
+
+  const remixUrl = url.format({
+    pathname: path.join(__dirname, '/../remix-ide/index.html'),
+    protocol: 'file:',
+    slashes: true,
+  })
+
+  remixWindow.setMenu(buildRemixMenu())
+  remixWindow.loadURL(remixUrl)
+
+  // Work-around for electron/chrome 51+ onbeforeunload behavior
+  // which prevents the app window to close if not invalidated.
+  remixWindow.webContents.on('dom-ready', () => {
+    remixWindow.webContents.executeJavaScript('window.onbeforeunload = null')
+  })
+
+  remixWindow.on('closed', () => {
+    remixWindowHandle = null
+  })
+
+  remixWindowHandle = remixWindow
+}
 
 function createWindow(): void {
   // Debug logs
@@ -40,6 +74,16 @@ function createWindow(): void {
       nodeIntegration: true,
     },
   })
+
+  const openRemix = (): void => {
+    if (remixWindowHandle) {
+      remixWindowHandle.focus()
+    } else {
+      createRemixWindow()
+    }
+  }
+
+  Menu.setApplicationMenu(buildMenu(openRemix))
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
@@ -62,6 +106,13 @@ function createWindow(): void {
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
+    if (remixWindowHandle) {
+      remixWindowHandle.close()
+    }
+    if (remixWindowHandle) {
+      remixWindowHandle.destroy()
+    }
+
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.

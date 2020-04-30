@@ -1,5 +1,6 @@
 {
   "name": "luna-wallet",
+  "productName": "Luna",
   "version": "0.1.2",
   "private": true,
   "engines": {
@@ -25,9 +26,10 @@
     "electron": "electron ./build/main/main.js",
     "electron-dev": "wait-on http://localhost:3000 && cross-env ELECTRON_START_URL=http://localhost:3000 electron ./build/main/main.js",
     "electron-dev:hot": "wait-on http://localhost:3000 && cross-env ELECTRON_START_URL=http://localhost:3000 nodemon --exec electron ./build/main/main.js",
-    "dev": "yarn build-main && concurrently --kill-others \"yarn start\" \"yarn electron-dev\"",
-    "dev:hot": "concurrently --kill-others \"yarn start\" \"yarn build-main --watch\" \"yarn electron-dev:hot\"",
-    "build-all": "yarn build-renderer && yarn build-main",
+    "dev": "yarn copy-remix && yarn build-main && concurrently --kill-others \"yarn start\" \"yarn electron-dev\"",
+    "dev:hot": "yarn copy-remix && concurrently --kill-others \"yarn start\" \"yarn build-main --watch\" \"yarn electron-dev:hot\"",
+    "copy-remix": "yarn copyfiles -u 1 midnight-remix/index.html midnight-remix/icon.png midnight-remix/build/app.js \"midnight-remix/assets/**/*\" build/remix-ide",
+    "build-all": "yarn build-renderer && yarn build-main && yarn copy-remix",
     "package": "ts-node --project tsconfig.bin.json ./bin/package.ts",
     "package-win": "ts-node --project ./tsconfig.bin.json ./bin/package-win.ts",
     "build-dist": "yarn build-all && yarn package",
@@ -122,6 +124,7 @@
     "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "concurrently": "^5.1.0",
+    "copyfiles": "^2.2.0",
     "cross-env": "^7.0.0",
     "electron": "^8.0.1",
     "electron-packager": "^14.2.0",
