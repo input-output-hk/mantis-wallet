@@ -2,7 +2,7 @@
 /* eslint-disable fp/no-let, fp/no-mutation */
 import path from 'path'
 import url from 'url'
-import {spawn, exec} from 'child_process'
+import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
 import {app, BrowserWindow, dialog, globalShortcut, screen, Menu} from 'electron'
 import {asapScheduler, scheduled} from 'rxjs'
@@ -12,9 +12,9 @@ import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
-import {config} from '../config/main'
+import {MidnightProcess, processExececutablePath, SpawnedMidnightProcess} from './MidnightProcess'
 import {ClientName} from '../config/type'
-import {MidnightProcess, SpawnedMidnightProcess} from './MidnightProcess'
+import {config} from '../config/main'
 import {buildMenu, buildRemixMenu} from './menu'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -153,8 +153,10 @@ if (config.runClients) {
 
   async function fetchParams(): Promise<void> {
     console.info('Fetching zkSNARK parameters')
-    const fetchParamsPath = path.resolve(config.distPackagesDir, 'fetch-params.sh')
-    return promisify(exec)(fetchParamsPath)
+    const nodePath = processExececutablePath(config.clientConfigs.node)
+    return promisify(exec)(`${nodePath} fetch-params`, {
+      cwd: config.clientConfigs.node.packageDirectory,
+    })
       .then(({stdout, stderr}) => {
         console.info(stdout)
         console.error(stderr)
@@ -163,6 +165,7 @@ if (config.runClients) {
         console.error(error)
         dialog.showErrorBox('Luna startup error', 'Failed to fetch zkSNARK parameters')
         app.exit(1)
+        return Promise.reject(error)
       })
   }
 

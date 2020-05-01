@@ -1,14 +1,17 @@
 import * as path from 'path'
 import {resolve} from 'path'
 import * as childProcess from 'child_process'
+import * as os from 'os'
 import * as rxop from 'rxjs/operators'
 import {EMPTY, fromEvent, generate, merge, Observable} from 'rxjs'
 import * as option from 'fp-ts/lib/Option'
 import * as record from 'fp-ts/lib/Record'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
-import {readableToObservable} from './streamUtils'
 import {ClientName, ProcessConfig} from '../config/type'
+import {readableToObservable} from './streamUtils'
+
+const isWin = os.platform() === 'win32'
 
 // @types/node's ChildProcess is missing exitCode property documented below:
 // https://nodejs.org/api/child_process.html#child_process_subprocess_exitcode
@@ -53,16 +56,19 @@ export class SpawnedMidnightProcess {
   }
 }
 
+export const processExececutablePath = (processConfig: ProcessConfig): string => {
+  const thePath = resolve(processConfig.packageDirectory, 'bin', processConfig.executableName)
+
+  return isWin ? `"${thePath}.bat"` : thePath
+}
+
 export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   name: ClientName,
   dataDir: string,
   processConfig: ProcessConfig,
 ) => {
-  const executablePath = resolve(
-    processConfig.packageDirectory,
-    'bin',
-    processConfig.executableName,
-  )
+  const executablePath = processExececutablePath(processConfig)
+
   const settingsAsArguments = pipe(
     processConfig.additionalSettings,
     record.insertAt(
@@ -82,7 +88,8 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
         name,
         spawn(executablePath, settingsAsArguments, {
           cwd: processConfig.packageDirectory,
-          detached: true,
+          detached: false,
+          shell: isWin,
         }) as ChildProcess,
       )
     },

@@ -86,6 +86,7 @@ convict.addFormats({
 
 const defaultDataDir = path.resolve(homedir(), '.luna')
 const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'midnight-dist')
+const midnightVersion = 'v0.10.0'
 
 const clientConfig = (
   name: ClientName,
@@ -171,7 +172,10 @@ const configGetter = convict({
   },
   clientConfigs: {
     node: clientConfig('node', {
-      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-node-moth-pupa-v0.8.0'),
+      packageDirectory: path.resolve(
+        defaultDistPackagesDir,
+        `midnight-node-moth-pupa-${midnightVersion}`,
+      ),
       executableName: 'midnight-node',
       dataDir: {
         settingName: 'midnight.datadir',
@@ -180,7 +184,10 @@ const configGetter = convict({
       additionalSettings: {},
     }),
     wallet: clientConfig('wallet', {
-      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-wallet-moth-pupa-v0.8.0'),
+      packageDirectory: path.resolve(
+        defaultDistPackagesDir,
+        `midnight-wallet-moth-pupa-${midnightVersion}`,
+      ),
       executableName: 'midnight-wallet',
       dataDir: {
         settingName: 'wallet.datadir',
