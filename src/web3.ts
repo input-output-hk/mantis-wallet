@@ -162,6 +162,7 @@ export interface RawAuthorizationSignature {
 export interface NewMineStarted {
   status: 'NewMineStarted'
   estimatedTime: number
+  estimatedBlockOfTxInclusion: string // hex number string
   message: string
 }
 
@@ -219,7 +220,12 @@ export interface GlacierDropAPI {
     transparentAddress: string,
     secrets: EtcPrivateKeySecrets,
   ): RawAuthorizationSignature
-  mine(externalAmount: string, etcAddress: string): MineResponse
+  mine(
+    externalAmount: string,
+    etcAddress: string,
+    unlockingStartBlock: number,
+    unlockingEndBlock: number,
+  ): MineResponse
   getMiningState(): GetMiningStateResponse
 }
 

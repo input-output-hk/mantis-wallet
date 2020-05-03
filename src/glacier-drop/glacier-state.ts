@@ -429,7 +429,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const {balance, proof} = await tPromise.decode(BalanceWithProof, result)
     return {
       balance,
-      proof: `0x${proof}`,
+      proof,
     }
   }
 
@@ -445,8 +445,18 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   // PoW Puzzle
 
   const mine = async (claim: IncompleteClaim): Promise<NewMineStarted> => {
+    if (isNone(constants)) {
+      throw new Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
+    }
+
     const {externalAmount, externalAddress} = claim
-    const response = await gd.mine(toHex(externalAmount), externalAddress)
+    const {unlockingStartBlock, unlockingEndBlock} = constants.value.periodConfig
+    const response = await gd.mine(
+      toHex(externalAmount),
+      externalAddress,
+      unlockingStartBlock,
+      unlockingEndBlock,
+    )
     if (response.status !== 'NewMineStarted') throw Error(response.message)
     return response
   }
