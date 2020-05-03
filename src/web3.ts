@@ -159,13 +159,13 @@ export interface RawAuthorizationSignature {
   v: number
 }
 
-interface NewMineStarted {
+export interface NewMineStarted {
   status: 'NewMineStarted'
   estimatedTime: number
   message: string
 }
 
-interface MiningInProgress {
+export interface MiningInProgress {
   status: 'MiningInProgress'
   currentNonce: string // hex number string
   message: string

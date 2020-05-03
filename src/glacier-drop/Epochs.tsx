@@ -10,19 +10,20 @@ import {ShortNumber} from '../common/ShortNumber'
 import checkIcon from '../assets/icons/check.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import {PeriodConfig} from './glacier-state'
-import {getCurrentEpoch, getSecondsUntilNextEpoch} from './Period'
+import {getCurrentEpoch, getSecondsUntilNextEpoch, getUnfrozenAmount} from './Period'
 import './Epochs.scss'
-
-interface EpochsProps {
-  epochRows: EpochRow[]
-  periodConfig: PeriodConfig
-  currentBlock: number
-}
 
 export interface EpochRow {
   walletId: number
   transparentAddress: string
   dustAmount: BigNumber
+  numberOfEpochs: number
+}
+
+interface EpochsProps {
+  epochRows: EpochRow[]
+  periodConfig: PeriodConfig
+  currentBlock: number
 }
 
 export const Epochs = ({
@@ -31,23 +32,23 @@ export const Epochs = ({
   currentBlock,
   ...props
 }: EpochsProps & ModalProps): JSX.Element => {
-  const {numberOfEpochs} = periodConfig
+  const {numberOfEpochs: maximumNumberOfEpochs} = periodConfig
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
   const secondsUntilNextEpoch = getSecondsUntilNextEpoch(currentBlock, periodConfig, currentEpoch)
 
   const isEpochPending = (shownEpoch: number): boolean => shownEpoch > currentEpoch
 
-  const epochIndices = _.range(1, numberOfEpochs + 1)
+  const epochIndices = _.range(1, maximumNumberOfEpochs + 1)
   const tableStyle = {
-    gridTemplateColumns: `1fr 2fr 1fr repeat(${numberOfEpochs}, 1fr)`,
-    width: `${numberOfEpochs * 175}px`,
+    gridTemplateColumns: `1fr 2fr 1fr repeat(${maximumNumberOfEpochs}, 1fr)`,
+    width: `${maximumNumberOfEpochs * 175}px`,
   }
 
   return (
     <LunaModal destroyOnClose wrapClassName="Epochs" width="1000px" {...props}>
       <div className="main-title">
         Epochs
-        {currentEpoch < numberOfEpochs && (
+        {currentEpoch < maximumNumberOfEpochs && (
           <span className="epoch-timer">
             <SVG src={clockIcon} className="clock icon" />
             Epoch {currentEpoch} finishes in {toDurationString(secondsUntilNextEpoch)}
@@ -72,7 +73,6 @@ export const Epochs = ({
 
           {/* Epoch Rows */}
           {epochRows.map((epochRow, epochRowIndex) => {
-            const amountPerEpoch = epochRow.dustAmount.dividedBy(numberOfEpochs)
             const {walletId, transparentAddress, dustAmount} = epochRow
             return (
               <React.Fragment key={epochRowIndex}>
@@ -81,11 +81,22 @@ export const Epochs = ({
                 <div className="dust-amount">
                   <ShortNumber big={dustAmount} />
                 </div>
-                {epochIndices.map((epochNum) => (
-                  <div key={epochNum} className={classnames({pending: isEpochPending(epochNum)})}>
-                    <ShortNumber big={amountPerEpoch.multipliedBy(epochNum)} />
-                  </div>
-                ))}
+                {epochIndices.map((epochNum) => {
+                  const unfrozenAmountAtEpoch = getUnfrozenAmount(
+                    dustAmount,
+                    epochNum,
+                    epochRow.numberOfEpochs,
+                  )
+                  return (
+                    <div key={epochNum} className={classnames({pending: isEpochPending(epochNum)})}>
+                      {unfrozenAmountAtEpoch.isEqualTo(dustAmount) ? (
+                        'Total Dust'
+                      ) : (
+                        <ShortNumber big={unfrozenAmountAtEpoch} />
+                      )}
+                    </div>
+                  )
+                })}
               </React.Fragment>
             )
           })}

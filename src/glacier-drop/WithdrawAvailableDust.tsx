@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
 import {DEFAULT_GAS_PRICE, DEFAULT_GAS_LIMIT} from './glacier-config'
-import {GlacierState, Claim, getUnlockStatus, PeriodConfig} from './glacier-state'
+import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
 import {validateAmount, isGreaterOrEqual} from '../common/util'
 import {LunaModal} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
@@ -11,7 +11,7 @@ import {DialogColumns} from '../common/dialog/DialogColumns'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {DialogError} from '../common/dialog/DialogError'
 import {DialogShowDust} from '../common/dialog/DialogShowDust'
-import {getUnfrozenAmount} from './Period'
+import {getUnfrozenAmount, getNumberOfEpochsForClaim, getCurrentEpoch} from './Period'
 import './WithdrawAvailableDust.scss'
 
 interface WithdrawAvailableDustProps {
@@ -34,7 +34,6 @@ export const WithdrawAvailableDust = ({
 }: WithdrawAvailableDustProps & ModalProps): JSX.Element => {
   const {withdraw} = GlacierState.useContainer()
   const {transparentAddress, withdrawnDustAmount, dustAmount} = claim
-  const unlockStatus = getUnlockStatus(claim)
 
   const [gasPrice, setGasPrice] = useState<string>(DEFAULT_GAS_PRICE)
   const [gasLimit, setGasLimit] = useState<string>(DEFAULT_GAS_LIMIT)
@@ -43,7 +42,14 @@ export const WithdrawAvailableDust = ({
 
   const globalErrorElem = globalErrorMsg && <DialogError>{globalErrorMsg}</DialogError>
 
-  const unfrozenDustAmount = getUnfrozenAmount(currentBlock, periodConfig, unlockStatus, dustAmount)
+  const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
+  const numberOfEpochsForClaim = getNumberOfEpochsForClaim(claim, periodConfig)
+  const unfrozenDustAmount = getUnfrozenAmount(
+    dustAmount,
+    currentEpoch,
+    numberOfEpochsForClaim,
+    isUnlocked(claim),
+  )
   const estimatedWithdrawableDust = unfrozenDustAmount.minus(withdrawnDustAmount)
 
   const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual(0)])

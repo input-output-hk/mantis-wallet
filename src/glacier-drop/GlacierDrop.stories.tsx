@@ -43,6 +43,7 @@ const baseClaim = {
   unlockTxHash: null,
   withdrawTxHashes: [],
   txStatuses: {},
+  numberOfEpochsForFullUnfreeze: 15,
 }
 
 const unsubmittedClaim: Claim = {
@@ -81,8 +82,9 @@ export const claimSolving = (): JSX.Element => {
     <ClaimRow
       claim={claim}
       index={1}
-      currentBlock={25}
+      currentBlock={4}
       periodConfig={PERIOD_CONFIG}
+      period={'Unlocking'}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -97,6 +99,7 @@ export const claimUnsubmitted = (): JSX.Element => {
       index={1}
       currentBlock={5}
       periodConfig={PERIOD_CONFIG}
+      period={'Unlocking'}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -109,8 +112,9 @@ export const claimSubmitted = (): JSX.Element => {
     <ClaimRow
       claim={submittedClaim}
       index={1}
-      currentBlock={15}
+      currentBlock={6}
       periodConfig={PERIOD_CONFIG}
+      period={'Unlocking'}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -146,16 +150,19 @@ export const epochs = (): JSX.Element => {
       walletId: number('Wallet ID', 1),
       transparentAddress: text('Address', MIDNIGHT_ADDRESS),
       dustAmount: new BigNumber(number('Amount', EXAMPLE_AMOUNT)),
+      numberOfEpochs: number('Number of Epochs For Full Unfreeze', 5),
     },
     {
       walletId: 2,
       transparentAddress: 'm-main-uns-ABCDjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
       dustAmount: new BigNumber(9876543219876543212),
+      numberOfEpochs: 10,
     },
     {
       walletId: 3,
       transparentAddress: 'm-main-uns-DEFGjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
       dustAmount: new BigNumber(6789876789876),
+      numberOfEpochs: 3,
     },
   ]
   return (

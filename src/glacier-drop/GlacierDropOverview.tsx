@@ -1,10 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import {message} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {isNone} from 'fp-ts/lib/Option'
+import {isNone, getOrElse} from 'fp-ts/lib/Option'
 import {DisplayChain} from '../pob/chains'
-import {ETC_CHAIN} from './glacier-config'
-import {Claim, GlacierState, PeriodConfig, getUnlockStatus} from './glacier-state'
+import {ETC_CHAIN, MINING_STATUS_CHECK_INTERVAL, DEFAULT_GLACIER_CONSTANTS} from './glacier-config'
+import {
+  Claim,
+  GlacierState,
+  PeriodConfig,
+  SolvingClaim,
+  IncompleteClaim,
+  isUnlocked,
+  GlacierConstants,
+} from './glacier-state'
 import {LoadedState} from '../common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
@@ -13,8 +21,13 @@ import {Token} from '../common/Token'
 import {Loading} from '../common/Loading'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {NoWallet} from '../wallets/NoWallet'
+import {
+  getCurrentPeriod,
+  getUnfrozenAmount,
+  getNumberOfEpochsForClaim,
+  getCurrentEpoch,
+} from './Period'
 import {PeriodStatus} from './PeriodStatus'
-import {getCurrentPeriod, getUnfrozenAmount} from './Period'
 import {ClaimController, ModalId} from './claim-dust/ClaimController'
 import {ClaimRow} from './ClaimRow'
 import {Epochs} from './Epochs'
@@ -40,6 +53,8 @@ const ClaimHistory = ({
   const [claimToSubmit, setClaimToSubmit] = useState<Claim | null>(null)
   const [claimToWithdraw, setClaimToWithdraw] = useState<Claim | null>(null)
 
+  const period = getCurrentPeriod(currentBlock, periodConfig)
+
   return (
     <>
       <div className="claim-history">
@@ -56,6 +71,7 @@ const ClaimHistory = ({
                 index={i}
                 currentBlock={currentBlock}
                 periodConfig={periodConfig}
+                period={period}
                 showEpochs={showEpochs}
                 onSubmitPuzzle={(claim: Claim): void => setClaimToSubmit(claim)}
                 onWithdrawDust={(claim: Claim): void => setClaimToWithdraw(claim)}
@@ -89,31 +105,40 @@ const ClaimHistory = ({
   )
 }
 
+const GlacierDropWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.Element => {
+  return (
+    <div className="GlacierDropOverview">
+      <HeaderWithSyncStatus>
+        Glacier Drop
+        <div className="link">Learn more about Glacier Drop</div>
+      </HeaderWithSyncStatus>
+      <div className="content">{children}</div>
+    </div>
+  )
+}
+
 const _GlacierDropOverview = ({
   walletState,
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   const {
     claims,
     addClaim,
-    mine,
     getMiningState,
-    updateTxStatuses,
-    updateDustAmounts,
     constants,
+    updateTxStatuses,
+    updateUnfreezingClaimData,
+    updateDustAmounts,
   } = GlacierState.useContainer()
 
-  if (isNone(constants)) {
-    return <Loading />
-  }
-  const {periodConfig, totalDustDistributed} = constants.value
-  const {currentBlock} = walletState.syncStatus
-  const period = getCurrentPeriod(currentBlock, periodConfig)
+  const [activeModal, setActiveModal] = useState<ModalId>('none')
+  const [epochsShown, showEpochs] = useState<boolean>(false)
+
+  const {currentBlock, mode} = walletState.syncStatus
 
   const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
   const solvingClaim = claims.find((c) => c.puzzleStatus === 'solving')
 
-  const [activeModal, setActiveModal] = useState<ModalId>('none')
-  const [epochsShown, showEpochs] = useState<boolean>(false)
+  // Checks puzzle mining state every N milliseconds if a mining is in progress
 
   useInterval(async () => {
     if (!solvingClaim) return
@@ -125,12 +150,48 @@ const _GlacierDropOverview = ({
     } catch (e) {
       console.error(e)
     }
-  }, 2000)
+  }, MINING_STATUS_CHECK_INTERVAL)
+
+  // Bookkeeping of values which depend on block progression
+
+  const {periodConfig, totalDustDistributed} = getOrElse(
+    (): GlacierConstants => DEFAULT_GLACIER_CONSTANTS,
+  )(constants)
+
+  const period = getCurrentPeriod(currentBlock, periodConfig)
+
+  const update = async (): Promise<void> => {
+    if (isNone(constants)) return
+    await updateTxStatuses(currentBlock)
+    await updateUnfreezingClaimData(period)
+    await updateDustAmounts(period)
+  }
 
   useEffect(() => {
-    updateTxStatuses(currentBlock).catch((e) => console.error(e))
-    updateDustAmounts(period).catch((e) => console.error(e))
+    update().catch(console.error)
   }, [currentBlock])
+
+  // Wait for constants to be loaded
+
+  if (isNone(constants)) {
+    return <Loading />
+  }
+
+  // Do not allow Glacier Drop operations when wallet is not syncing
+
+  if (mode === 'offline') {
+    return (
+      <GlacierDropWrapper>
+        <div className="error">Wallet is not syncing.</div>
+      </GlacierDropWrapper>
+    )
+  }
+
+  // Callbacks
+
+  const startPuzzle = (claim: IncompleteClaim): void => {
+    addClaim(claim).then((addedClaim: SolvingClaim) => console.info({addedClaim}))
+  }
 
   const chooseChain = (_chain: DisplayChain): void => {
     if (walletState.transparentAccounts.length === 0) {
@@ -140,40 +201,29 @@ const _GlacierDropOverview = ({
     }
   }
 
-  const startPuzzle = (claim: Claim): void => {
-    addClaim(claim)
-    mine(claim)
-  }
-
   return (
-    <div className="GlacierDropOverview">
-      <HeaderWithSyncStatus>
-        Glacier Drop
-        <div className="link">Learn more about Glacier Drop</div>
-      </HeaderWithSyncStatus>
-      <div className="content">
-        <div className="wallet-selector"></div>
-        {period === 'Unlocking' && !solvingClaim && (
-          <div className="claim-buttons">
-            {availableChains.map((c: DisplayChain) => (
-              <Token chain={c} chooseChain={chooseChain} key={c.name}>
-                Claim Dust
-              </Token>
-            ))}
-          </div>
-        )}
-        <PeriodStatus
-          currentBlock={currentBlock}
-          periodConfig={periodConfig}
-          powPuzzleComplete={powPuzzleComplete}
-        />
-        <ClaimHistory
-          claims={claims}
-          currentBlock={currentBlock}
-          periodConfig={periodConfig}
-          showEpochs={() => showEpochs(true)}
-        />
-      </div>
+    <GlacierDropWrapper>
+      <div className="wallet-selector"></div>
+      {period === 'Unlocking' && !solvingClaim && (
+        <div className="claim-buttons">
+          {availableChains.map((c: DisplayChain) => (
+            <Token chain={c} chooseChain={chooseChain} key={c.name}>
+              Claim Dust
+            </Token>
+          ))}
+        </div>
+      )}
+      <PeriodStatus
+        currentBlock={currentBlock}
+        periodConfig={periodConfig}
+        powPuzzleComplete={powPuzzleComplete}
+      />
+      <ClaimHistory
+        claims={claims}
+        currentBlock={currentBlock}
+        periodConfig={periodConfig}
+        showEpochs={() => showEpochs(true)}
+      />
       <ClaimController
         walletState={walletState}
         totalDustDistributed={totalDustDistributed}
@@ -186,27 +236,34 @@ const _GlacierDropOverview = ({
         epochRows={claims
           .filter((claim) =>
             getUnfrozenAmount(
-              currentBlock,
-              periodConfig,
-              getUnlockStatus(claim),
               claim.dustAmount,
+              getCurrentEpoch(currentBlock, periodConfig),
+              getNumberOfEpochsForClaim(claim, periodConfig),
+              isUnlocked(claim),
             ).isGreaterThan(0),
           )
-          .map(({transparentAddress, dustAmount}) => ({
-            walletId: 1, // FIXME: [PM-1555] Refactor WalletState for Multiple Wallets
-            transparentAddress,
-            dustAmount,
-          }))}
+          .map((claim) => {
+            const {transparentAddress, dustAmount} = claim
+            const numberOfEpochs = getNumberOfEpochsForClaim(claim, periodConfig)
+            return {
+              walletId: 1, // FIXME: [PM-1555] Refactor WalletState for Multiple Wallets
+              numberOfEpochs,
+              transparentAddress,
+              dustAmount,
+            }
+          })}
         periodConfig={periodConfig}
         currentBlock={currentBlock}
         onCancel={() => showEpochs(false)}
       />
-    </div>
+    </GlacierDropWrapper>
   )
 }
 
 export const GlacierDropOverview = withStatusGuard(_GlacierDropOverview, 'LOADED', () => (
-  <div className="no-wallet-container">
-    <NoWallet />
-  </div>
+  <GlacierDropWrapper>
+    <div className="no-wallet-container">
+      <NoWallet />
+    </div>
+  </GlacierDropWrapper>
 ))

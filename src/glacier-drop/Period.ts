@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import {PeriodConfig, TransactionStatus} from './glacier-state'
+import {PeriodConfig, Claim} from './glacier-state'
 import {BLOCK_TIME_SECONDS} from './glacier-config'
 
 export type Period = 'UnlockingNotStarted' | 'Unlocking' | 'UnlockingEnded' | 'Unfreezing'
@@ -34,20 +34,22 @@ export const getCurrentPeriod = (
   }
 }
 
-export const getUnfrozenAmount = (
-  currentBlock: number,
-  periodConfig: PeriodConfig,
-  unlockStatus: TransactionStatus | null,
-  dustAmount: BigNumber,
-): BigNumber => {
-  return unlockStatus?.status === 'TransactionOk'
-    ? dustAmount
-        .dividedBy(periodConfig.numberOfEpochs)
-        .multipliedBy(getCurrentEpoch(currentBlock, periodConfig))
-    : new BigNumber(0)
-}
+export const getNumberOfEpochsForClaim = (claim: Claim, periodConfig: PeriodConfig): number =>
+  claim.numberOfEpochsForFullUnfreeze || periodConfig.numberOfEpochs
 
-export const getUnlockedAmount = (
-  unlockStatus: TransactionStatus | null,
+export const getUnfrozenAmount = (
   dustAmount: BigNumber,
-): BigNumber => (unlockStatus?.status === 'TransactionOk' ? dustAmount : new BigNumber(0))
+  currentEpoch: number,
+  numberOfEpochsForClaim: number,
+  isUnlocked = true,
+): BigNumber => {
+  if (!isUnlocked) {
+    return new BigNumber(0)
+  }
+
+  if (currentEpoch >= numberOfEpochsForClaim) {
+    return dustAmount
+  }
+
+  return dustAmount.dividedBy(numberOfEpochsForClaim).multipliedBy(currentEpoch)
+}

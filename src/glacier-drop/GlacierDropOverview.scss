@@ -2,7 +2,11 @@
 
 .GlacierDropOverview {
   .content {
-    margin: 3em 6rem 0;
+    margin: 3em 64px 0;
+
+    > .error {
+      text-align: center;
+    }
 
     .claim-buttons {
       margin-bottom: 1rem;

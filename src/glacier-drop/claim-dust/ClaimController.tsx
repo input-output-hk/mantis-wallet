@@ -5,7 +5,7 @@ import {Option, none, some, getOrElse} from 'fp-ts/lib/Option'
 import {EnterAddress} from './EnterAddress'
 import {Exchange} from './Exchange'
 import {LoadedState} from '../../common/wallet-state'
-import {Claim, BalanceWithProof, AuthorizationSignature} from '../glacier-state'
+import {IncompleteClaim, BalanceWithProof, AuthorizationSignature} from '../glacier-state'
 import {TOTAL_ETHER_IN_SNAPSHOT} from '../glacier-config'
 import {SelectMethod} from './SelectMethod'
 import {VerifyAddress} from './VerifyAddress'
@@ -28,7 +28,7 @@ interface ClaimControllerProps {
   totalDustDistributed: BigNumber
   activeModal: ModalId
   setActiveModal(modalId: ModalId): void
-  onFinish(claim: Claim): void
+  onFinish(claim: IncompleteClaim): void
 }
 
 export const ClaimController = ({
@@ -64,12 +64,11 @@ export const ClaimController = ({
     }
   }, [activeModal])
 
-  const createClaim = (authSignature: AuthorizationSignature): Claim => {
+  const createClaim = (authSignature: AuthorizationSignature): IncompleteClaim => {
     return {
       added: new Date(),
       puzzleStatus: 'solving',
       dustAmount: minimumDustAmount, // Final amount will be calculated after unlocking period is over
-      isFinalDustAmount: false,
       transparentAddress,
       externalAddress,
       authSignature,
@@ -77,10 +76,11 @@ export const ClaimController = ({
       inclusionProof: balanceWithProof.proof,
       withdrawnDustAmount: new BigNumber(0),
       powNonce: null,
-      puzzleDuration: 600, // FIXME: PM-1855 Refactor Claim Creation
       unlockTxHash: null,
       withdrawTxHashes: [],
       txStatuses: {},
+      isFinalDustAmount: false,
+      numberOfEpochsForFullUnfreeze: null,
     }
   }
 
