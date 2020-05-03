@@ -14,7 +14,7 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
     <div className="PobLayout">
       <HeaderWithSyncStatus>
         {title}
-        <div className="link">Learn about the Proof of Burn</div>
+        <div className="link">Learn more about Proof of Burn</div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>
