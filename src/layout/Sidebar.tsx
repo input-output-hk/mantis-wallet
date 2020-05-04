@@ -68,14 +68,14 @@ export const Sidebar = (): JSX.Element => {
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal
           visible={showLogOutModal}
-          onLogOut={async (passphrase: string): Promise<boolean> => {
+          onLogOut={async (passphrase: string): Promise<void> => {
             const removed = await walletState.remove({passphrase})
-            if (removed) {
-              pobState.reset()
-              glacierState.removeClaims()
-              setShowLogOutModal(false)
+            if (!removed) {
+              throw new Error('Log out was not successful.')
             }
-            return removed
+            pobState.reset()
+            glacierState.removeClaims()
+            setShowLogOutModal(false)
           }}
           onCancel={() => setShowLogOutModal(false)}
         />

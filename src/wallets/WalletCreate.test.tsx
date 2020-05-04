@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render} from '@testing-library/react'
+import {render, wait} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
@@ -24,7 +24,7 @@ const seedPhrase = [
   'baseball',
 ]
 
-test('WalletCreate `Define` step', () => {
+test('WalletCreate `Define` step', async () => {
   const walletName = 'Example Wallet Name'
   const password = 'Foobar1234'
   const cancel = jest.fn()
@@ -63,16 +63,16 @@ test('WalletCreate `Define` step', () => {
   const nextButton = getByText('Next →')
   expect(nextButton).toBeInTheDocument()
   userEvent.click(nextButton)
-  expect(next).toHaveBeenCalledWith(walletName, password)
+  await wait(() => expect(next).toHaveBeenCalledWith(walletName, password))
 
   // Click Cancel
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
   userEvent.click(cancelButton)
-  expect(cancel).toHaveBeenCalled()
+  await wait(() => expect(cancel).toHaveBeenCalled())
 })
 
-test('WalletCreate `Security` step', () => {
+test('WalletCreate `Security` step', async () => {
   const spendingKey = 'm-test-shl-sk122732c6py9h89unt0069ce4epl8e707sv04jr3aqzts94styr9wq4lkg85'
   const cancel = jest.fn()
   const next = jest.fn()
@@ -92,16 +92,16 @@ test('WalletCreate `Security` step', () => {
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
   userEvent.click(cancelButton)
-  expect(cancel).toHaveBeenCalled()
+  await wait(() => expect(cancel).toHaveBeenCalled())
 
   // Click Next
   const nextButton = getByText('Next →')
   expect(nextButton).toBeInTheDocument()
   userEvent.click(nextButton)
-  expect(next).toHaveBeenCalled()
+  await wait(() => expect(next).toHaveBeenCalled())
 })
 
-test('WalletCreate `Display Recovery` step', () => {
+test('WalletCreate `Display Recovery` step', async () => {
   const back = jest.fn()
   const next = jest.fn()
 
@@ -132,10 +132,10 @@ test('WalletCreate `Display Recovery` step', () => {
 
   // Button should be enabled afteer confirmation
   userEvent.click(nextButton)
-  expect(next).toHaveBeenCalled()
+  await wait(() => expect(next).toHaveBeenCalled())
 })
 
-test('WalletCreate `Verify Recovery` step', () => {
+test('WalletCreate `Verify Recovery` step', async () => {
   const back = jest.fn()
   const finish = jest.fn()
 
@@ -167,7 +167,7 @@ test('WalletCreate `Verify Recovery` step', () => {
   const backButton = getByText('Back')
   expect(backButton).toBeInTheDocument()
   userEvent.click(backButton)
-  expect(back).toHaveBeenCalled()
+  await wait(() => expect(back).toHaveBeenCalled())
 
   // Accept conditions
   const label1 = getByText(
@@ -183,5 +183,5 @@ test('WalletCreate `Verify Recovery` step', () => {
 
   // Click Finish
   userEvent.click(finishButton)
-  expect(finish).toHaveBeenCalled()
+  await wait(() => expect(finish).toHaveBeenCalled())
 })

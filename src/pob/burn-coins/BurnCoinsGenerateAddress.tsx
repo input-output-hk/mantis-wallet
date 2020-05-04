@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {Dialog} from '../../common/Dialog'
-import {useIsMounted} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
@@ -40,23 +39,14 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const [fee, setFee] = useState(defaultFee.toString(10))
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
   const [approval, setApproval] = useState(false)
+  const noCompatibleProvers = compatibleProvers.length === 0
 
-  const [inProgress, setInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(
-    compatibleProvers.length === 0
-      ? 'No compatible provers found. Please select different token.'
-      : '',
-  )
-
-  const mounted = useIsMounted()
-
-  const errors = errorMessage && <DialogError>{errorMessage}</DialogError>
   const feeError = validateAmount(fee, [
     isGreaterOrEqual(minFee),
     hasAtMostDecimalPlaces(minValue.dp()),
   ])
 
-  const disableGenerate = !!feeError || !approval
+  const disableGenerate = !!feeError || !approval || noCompatibleProvers
 
   const title = (
     <>
@@ -73,27 +63,23 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
         rightButtonProps={{
           children: `Generate ${chain.symbol} Address`,
           onClick: async (): Promise<void> => {
-            if (mounted.current) setInProgress(true)
-            try {
-              if (prover) {
-                await generateBurnAddress(
-                  prover,
-                  transparentAddress,
-                  Number(UNITS[chain.unitType].toBasic(fee)),
-                )
-              } else {
-                setErrorMessage('No prover was selected.')
-              }
-            } catch (e) {
-              if (mounted.current) setErrorMessage(e.message)
-            } finally {
-              if (mounted.current) setInProgress(false)
+            if (prover) {
+              await generateBurnAddress(
+                prover,
+                transparentAddress,
+                Number(UNITS[chain.unitType].toBasic(fee)),
+              )
+            } else {
+              throw new Error('No prover was selected.')
             }
           },
-          loading: inProgress,
           disabled: disableGenerate,
         }}
-        footer={errors}
+        footer={
+          noCompatibleProvers && (
+            <DialogError>No compatible provers found. Please select different token.</DialogError>
+          )
+        }
       >
         <DialogDropdown
           label="Select Receive Address"

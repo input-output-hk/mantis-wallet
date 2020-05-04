@@ -9,19 +9,16 @@ export const WalletUnlock = (): JSX.Element => {
   const walletState = WalletState.useContainer()
   const isLocked = walletState.walletStatus === 'LOCKED'
 
-  const [isLoading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [passphrase, setPassphrase] = useState<string>('')
 
   const unlock = async (): Promise<void> => {
-    if (walletState.walletStatus !== 'LOCKED' || isLoading) return
+    if (walletState.walletStatus !== 'LOCKED') return
 
-    setLoading(true)
     try {
       await walletState.unlock({passphrase})
     } catch (e) {
       setErrorMessage(e.message)
-      setLoading(false)
     }
   }
 
@@ -36,7 +33,6 @@ export const WalletUnlock = (): JSX.Element => {
           leftButtonProps={{doNotRender: true}}
           rightButtonProps={{
             children: 'Unlock',
-            disabled: isLoading,
             onClick: unlock,
           }}
         >

@@ -2,14 +2,12 @@ import React, {useState, PropsWithChildren} from 'react'
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
-import {LunaModal} from '../../common/LunaModal'
+import {ModalLocker, ModalOnCancel, wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {Account} from '../../web3'
-import {DialogError} from '../../common/dialog/DialogError'
-import {useIsMounted} from '../../common/hook-utils'
 import {validateAmount, hasAtMostDecimalPlaces, isGreater} from '../../common/util'
 import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
@@ -18,34 +16,31 @@ import {DialogApproval} from '../../common/dialog/DialogApproval'
 
 const {Dust} = UNITS
 
-interface SendDialogProps {
+interface SendToConfidentialDialogProps extends ModalOnCancel {
   onSend: (recipient: string, amount: number, fee: number) => Promise<void>
   onCancel: () => void
 }
 
-interface SendToTransparentDialogProps {
+interface SendToTransparentDialogProps extends ModalOnCancel {
   onSendToTransparent: (recipient: string, amount: BigNumber, gasPrice: BigNumber) => Promise<void>
   onCancel: () => void
 }
 
-interface SendTransactionProps extends SendDialogProps, SendToTransparentDialogProps {
+interface SendTransactionProps extends SendToConfidentialDialogProps, SendToTransparentDialogProps {
   accounts: Account[]
   availableAmount: BigNumber
 }
 
-const SendDialog = ({
+const SendToConfidentialDialog = ({
   onSend,
   onCancel,
   children,
-}: PropsWithChildren<SendDialogProps>): JSX.Element => {
+}: PropsWithChildren<SendToConfidentialDialogProps>): JSX.Element => {
   const [amount, setAmount] = useState('0')
   const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
 
-  const mounted = useIsMounted()
-
-  const [inProgress, setInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const modalLocker = ModalLocker.useContainer()
 
   const disableSend = !!validateAmount(fee) || !!validateAmount(amount) || recipient.length === 0
 
@@ -53,24 +48,16 @@ const SendDialog = ({
     <Dialog
       leftButtonProps={{
         onClick: onCancel,
+        disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
         children: 'Send →',
-        onClick: async (): Promise<void> => {
-          if (mounted.current) setInProgress(true)
-          try {
-            await onSend(recipient, Number(Dust.toBasic(amount)), Number(Dust.toBasic(fee)))
-          } catch (e) {
-            if (mounted.current) setErrorMessage(e.message)
-          } finally {
-            if (mounted.current) setInProgress(false)
-          }
-        },
+        onClick: (): Promise<void> =>
+          onSend(recipient, Number(Dust.toBasic(amount)), Number(Dust.toBasic(fee))),
         disabled: disableSend,
-        loading: inProgress,
       }}
+      onSetLoading={modalLocker.setLocked}
       type="dark"
-      footer={errorMessage && <DialogError>{errorMessage}</DialogError>}
     >
       {children}
       <DialogInput
@@ -106,10 +93,7 @@ const SendToTransparentDialog = ({
   const [recipient, setRecipient] = useState('')
   const [approval, setApproval] = useState(false)
 
-  const mounted = useIsMounted()
-
-  const [inProgress, setInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const modalLocker = ModalLocker.useContainer()
 
   const amountError = validateAmount(amount)
   const gasPriceError = validateAmount(gasPrice, [isGreater(), hasAtMostDecimalPlaces(0)])
@@ -119,28 +103,20 @@ const SendToTransparentDialog = ({
     <Dialog
       leftButtonProps={{
         onClick: onCancel,
+        disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
         children: 'Send →',
-        onClick: async (): Promise<void> => {
-          if (mounted.current) setInProgress(true)
-          try {
-            await onSendToTransparent(
-              recipient,
-              new BigNumber(Dust.toBasic(amount)),
-              new BigNumber(gasPrice),
-            )
-          } catch (e) {
-            if (mounted.current) setErrorMessage(e.message)
-          } finally {
-            if (mounted.current) setInProgress(false)
-          }
-        },
+        onClick: (): Promise<void> =>
+          onSendToTransparent(
+            recipient,
+            new BigNumber(Dust.toBasic(amount)),
+            new BigNumber(gasPrice),
+          ),
         disabled: disableSend,
-        loading: inProgress,
       }}
+      onSetLoading={modalLocker.setLocked}
       type="dark"
-      footer={errorMessage && <DialogError>{errorMessage}</DialogError>}
     >
       {children}
       <DialogInput
@@ -176,7 +152,7 @@ const SendToTransparentDialog = ({
   )
 }
 
-export const SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({
+export const _SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({
   accounts,
   availableAmount,
   onSend,
@@ -184,9 +160,10 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
   ...props
 }: SendTransactionProps & ModalProps) => {
   const [mode, setMode] = useState<'transparent' | 'confidential'>('confidential')
+  const modalLocker = ModalLocker.useContainer()
 
   return (
-    <LunaModal wrapClassName="SendTransaction" {...props}>
+    <>
       <Dialog
         leftButtonProps={{
           doNotRender: true,
@@ -199,6 +176,7 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
           defaultMode={mode}
           left={{label: 'Confidential', type: 'confidential'}}
           right={{label: 'Transparent', type: 'transparent'}}
+          disabled={modalLocker.isLocked}
           onChange={setMode}
         />
         <DialogDropdown
@@ -208,7 +186,7 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
         <DialogShowDust amount={availableAmount}>Available Amount</DialogShowDust>
       </Dialog>
       <div style={{display: mode === 'confidential' ? 'block' : 'none'}}>
-        <SendDialog onCancel={props.onCancel} onSend={onSend} />
+        <SendToConfidentialDialog onCancel={props.onCancel} onSend={onSend} />
       </div>
       <div style={{display: mode === 'transparent' ? 'block' : 'none'}}>
         <SendToTransparentDialog
@@ -216,6 +194,8 @@ export const SendTransaction: React.FunctionComponent<SendTransactionProps & Mod
           onSendToTransparent={onSendToTransparent}
         />
       </div>
-    </LunaModal>
+    </>
   )
 }
+
+export const SendTransaction = wrapWithModal(_SendTransaction)
