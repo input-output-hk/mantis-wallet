@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import classnames from 'classnames'
 import {Button} from 'antd'
 import {ButtonProps} from 'antd/lib/button'
+import {createContainer} from 'unstated-next'
 import {useIsMounted} from './hook-utils'
 import {DialogError} from './dialog/DialogError'
 import './Dialog.scss'
@@ -20,7 +21,21 @@ interface DialogProps {
   footer?: React.ReactNode
 }
 
-export const Dialog: React.FunctionComponent<DialogProps> = ({
+export interface DialogState {
+  errorMessage: string
+  setErrorMessage: (errorMessage: string) => void
+}
+
+export const DialogState = createContainer(() => {
+  const [errorMessage, setErrorMessage] = useState('')
+
+  return {
+    errorMessage,
+    setErrorMessage,
+  }
+})
+
+const _Dialog: React.FunctionComponent<DialogProps> = ({
   title,
   type = 'normal',
   buttonDisplayMode = 'grid',
@@ -30,9 +45,10 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
   onSetLoading,
   footer,
 }: React.PropsWithChildren<DialogProps>) => {
+  const {errorMessage, setErrorMessage} = DialogState.useContainer()
+
   const [leftInProgress, setLeftInProgress] = useState(false)
   const [rightInProgress, setRightInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
   const mounted = useIsMounted()
 
   const createHandleClick = (
@@ -91,3 +107,9 @@ export const Dialog: React.FunctionComponent<DialogProps> = ({
     </div>
   )
 }
+
+export const Dialog: React.FunctionComponent<DialogProps> = (props) => (
+  <DialogState.Provider>
+    <_Dialog {...props} />
+  </DialogState.Provider>
+)
