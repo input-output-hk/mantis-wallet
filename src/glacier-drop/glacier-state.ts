@@ -281,7 +281,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const getNumberOfEpochsForFullUnfreeze = async (externalAddress: string): Promise<number> => {
     const data = GlacierDropContract.getNumberOfEpochsForFullUnfreeze.getData(
-      externalAddress.toLowerCase(),
+      normalizeAddress(externalAddress),
     )
     const response = await simulateTransaction(GLACIER_DROP_ADDRESS, data)
     return parseInt(response, 16)
@@ -512,7 +512,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     // See GlacierDrop.sol unlock function
     const data = GlacierDropContract.unlock.getData(
       transparentAddress,
-      externalAddress.toLowerCase(),
+      normalizeAddress(externalAddress),
       v,
       r,
       s,
@@ -556,7 +556,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
       throw Error('Puzzle is in invalid status')
     }
 
-    const data = GlacierDropContract.withdraw.getData(claim.externalAddress.toLowerCase())
+    const data = GlacierDropContract.withdraw.getData(normalizeAddress(claim.externalAddress))
 
     console.info({withdrawData: data})
 
@@ -582,8 +582,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     return withdrawTxHash
   }
 
-  const returnClaims = claims || {}
-  const claimList = _.sortBy((c: Claim) => c.added)(Object.values(returnClaims))
+  const claimList = _.sortBy((c: Claim) => c.added)(Object.values(claims))
   const claimedAddresses = claimList.map((c) => c.externalAddress)
 
   return {
@@ -623,4 +622,8 @@ export function getWithdrawalStatus(claim: Claim): TransactionStatus | null {
   }
   const lastWithdrawalTxHash = withdrawTxHashes[withdrawTxHashes.length - 1]
   return txStatuses[lastWithdrawalTxHash]
+}
+
+export function normalizeAddress(externalAddress: string): string {
+  return externalAddress.toLowerCase()
 }
