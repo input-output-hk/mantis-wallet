@@ -9,6 +9,11 @@ export const makeDesktopNotification = (
 ): void => {
   if (body.length > 256) {
     console.error('Notification body will be truncated on macOS (max 256 chars)')
+    console.info({notificationBody: body})
+  }
+
+  if (document.hasFocus()) {
+    return // Do not show notifications if the document has focus
   }
 
   const show = (): void => {

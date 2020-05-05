@@ -10,11 +10,12 @@ import {
   getUnlockStatus,
   getWithdrawalStatus,
   TransactionStatus,
+  isUnlocked,
 } from './glacier-state'
 import {formatPercentage, toDurationString} from '../common/formatters'
 import {ShortNumber} from '../common/ShortNumber'
 import {DUST_SYMBOL} from '../pob/chains'
-import {getUnfrozenAmount, getCurrentEpoch, getUnlockedAmount} from './Period'
+import {getUnfrozenAmount, getCurrentEpoch, Period, getNumberOfEpochsForClaim} from './Period'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
@@ -49,10 +50,11 @@ const TxStatusText = ({txStatus}: TxStatusTextProps): JSX.Element => {
 
 interface PuzzleProgressProps {
   claim: Claim
+  period: Period
   onSubmitPuzzle(claim: Claim): void
 }
 
-const PuzzleProgress = ({claim, onSubmitPuzzle}: PuzzleProgressProps): JSX.Element => {
+const PuzzleProgress = ({claim, period, onSubmitPuzzle}: PuzzleProgressProps): JSX.Element => {
   switch (claim.puzzleStatus) {
     case 'solving': {
       return (
@@ -72,9 +74,13 @@ const PuzzleProgress = ({claim, onSubmitPuzzle}: PuzzleProgressProps): JSX.Eleme
         <>
           <div className="pow-status">Puzzle Solved</div>
           <div>
-            <Button type="primary" className="small-button" onClick={() => onSubmitPuzzle(claim)}>
-              Submit Proof of Unlock
-            </Button>
+            {period === 'Unlocking' ? (
+              <Button type="primary" className="small-button" onClick={() => onSubmitPuzzle(claim)}>
+                Submit Proof of Unlock
+              </Button>
+            ) : (
+              'You can no longer submit your Proof of Unlock.'
+            )}
           </div>
         </>
       )
@@ -100,7 +106,8 @@ const PuzzleProgress = ({claim, onSubmitPuzzle}: PuzzleProgressProps): JSX.Eleme
 interface UnfreezeDetailProps {
   claim: Claim
   unfrozenDustAmount: BigNumber
-  epochsRemaining: number
+  currentEpoch: number
+  numberOfEpochsForClaim: number
   showEpochs(): void
   onWithdrawDust(claim: Claim): void
 }
@@ -108,14 +115,14 @@ interface UnfreezeDetailProps {
 const UnfreezeDetail = ({
   claim,
   unfrozenDustAmount,
-  epochsRemaining,
+  currentEpoch,
+  numberOfEpochsForClaim,
   showEpochs,
   onWithdrawDust,
 }: UnfreezeDetailProps): JSX.Element => {
   const {puzzleStatus, dustAmount, withdrawnDustAmount} = claim
 
-  const isUnfrozen =
-    unfrozenDustAmount.isGreaterThan(0) && getUnlockStatus(claim)?.status === 'TransactionOk'
+  const isUnfrozen = unfrozenDustAmount.isGreaterThan(0) && isUnlocked(claim)
 
   if (puzzleStatus === 'solving' || !isUnfrozen) {
     return <div>0%</div>
@@ -133,6 +140,8 @@ const UnfreezeDetail = ({
     )
   } else {
     const cannotWithdrawMore = withdrawnDustAmount.isGreaterThanOrEqualTo(unfrozenDustAmount)
+    const epochsRemaining = numberOfEpochsForClaim - currentEpoch
+
     return (
       <>
         <div>
@@ -219,6 +228,7 @@ interface ClaimRowProps {
   index: number
   currentBlock: number
   periodConfig: PeriodConfig
+  period: Period
   showEpochs(): void
   onSubmitPuzzle(claim: Claim): void
   onWithdrawDust(claim: Claim): void
@@ -229,6 +239,7 @@ export const ClaimRow = ({
   index,
   currentBlock,
   periodConfig,
+  period,
   showEpochs,
   onSubmitPuzzle,
   onWithdrawDust,
@@ -240,11 +251,17 @@ export const ClaimRow = ({
     externalAddress,
     withdrawnDustAmount,
   } = claim
-  const unlockStatus = getUnlockStatus(claim)
-  const unfrozenDustAmount = getUnfrozenAmount(currentBlock, periodConfig, unlockStatus, dustAmount)
-  const unlockedDustAmount = getUnlockedAmount(unlockStatus, dustAmount)
+
+  const unlocked = isUnlocked(claim)
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
-  const epochsRemaining = periodConfig.numberOfEpochs - currentEpoch
+  const numberOfEpochsForClaim = getNumberOfEpochsForClaim(claim, periodConfig)
+  const unfrozenDustAmount = getUnfrozenAmount(
+    dustAmount,
+    currentEpoch,
+    numberOfEpochsForClaim,
+    unlocked,
+  )
+  const unlockedDustAmount = unlocked ? dustAmount : new BigNumber(0)
 
   return (
     <div className="ClaimRow">
@@ -289,14 +306,15 @@ export const ClaimRow = ({
             <ShortNumber big={unlockedDustAmount} /> {DUST_SYMBOL}
           </div>
           <div className="puzzle-progress">
-            <PuzzleProgress claim={claim} onSubmitPuzzle={onSubmitPuzzle} />
+            <PuzzleProgress claim={claim} period={period} onSubmitPuzzle={onSubmitPuzzle} />
           </div>
         </div>
         <div className="unfrozen detail">
           <UnfreezeDetail
             claim={claim}
             unfrozenDustAmount={unfrozenDustAmount}
-            epochsRemaining={epochsRemaining}
+            numberOfEpochsForClaim={numberOfEpochsForClaim}
+            currentEpoch={getCurrentEpoch(currentBlock, periodConfig)}
             showEpochs={showEpochs}
             onWithdrawDust={onWithdrawDust}
           />

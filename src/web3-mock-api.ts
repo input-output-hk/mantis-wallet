@@ -190,10 +190,16 @@ class MockGlacierDrop {
     }
   }
 
-  mine(_externalAmount: string, _etcAddress: string): MineResponse {
+  mine(
+    _externalAmount: string,
+    _etcAddress: string,
+    _unlockingStartBlock: number,
+    _unlockingEndBlock: number,
+  ): MineResponse {
     return {
       status: 'NewMineStarted',
       estimatedTime: 123,
+      estimatedBlockOfTxInclusion: '0x123',
       message: '',
     }
   }

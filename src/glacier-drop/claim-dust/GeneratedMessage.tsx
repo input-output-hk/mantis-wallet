@@ -4,6 +4,7 @@ import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {copyToClipboard} from '../../common/clipboard'
+import {normalizeAddress} from '../glacier-state'
 import './GeneratedMessage.scss'
 
 interface GeneratedMessageProps {
@@ -19,7 +20,8 @@ export const GeneratedMessage = ({
   ...props
 }: GeneratedMessageProps & ModalProps): JSX.Element => {
   // TODO: get authorization message from an endpoint
-  const msg = `I authorise ${transparentAddress} to get my ${externalAddress.toLowerCase()} GlacierDrop`
+  const normalizedEtcAddress = normalizeAddress(externalAddress)
+  const msg = `I authorise ${transparentAddress} to get my ${normalizedEtcAddress} GlacierDrop`
 
   return (
     <LunaModal destroyOnClose wrapClassName="GeneratedMessage" {...props}>

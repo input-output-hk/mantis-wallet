@@ -24,3 +24,18 @@ export const CONSTANTS_REPO_ADDRESS = 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqq
 // Contract Call Defaults
 export const DEFAULT_GAS_PRICE = '0'
 export const DEFAULT_GAS_LIMIT = '1185920'
+
+// UI config
+export const MINING_STATUS_CHECK_INTERVAL = 2000
+
+// Mock
+export const DEFAULT_GLACIER_CONSTANTS = {
+  periodConfig: {
+    unlockingStartBlock: 1,
+    unlockingEndBlock: 2,
+    unfreezingStartBlock: 3,
+    epochLength: 1,
+    numberOfEpochs: 1,
+  },
+  totalDustDistributed: new BigNumber(1),
+}
