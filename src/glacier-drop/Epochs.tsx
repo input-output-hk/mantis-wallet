@@ -45,7 +45,7 @@ export const Epochs = ({
   }
 
   return (
-    <LunaModal destroyOnClose wrapClassName="Epochs" width="1000px" {...props}>
+    <LunaModal wrapClassName="Epochs" width="1000px" {...props}>
       <div className="main-title">
         Epochs
         {currentEpoch < maximumNumberOfEpochs && (

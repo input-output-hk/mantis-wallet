@@ -13,6 +13,7 @@ export interface DialogTextSwitchProps<T> {
   left: SwitchMode<T>
   right: SwitchMode<T>
   buttonClassName?: string
+  disabled?: boolean
   onChange: (mode: T) => void
 }
 
@@ -21,6 +22,7 @@ export const DialogTextSwitch = <T extends string>({
   left,
   right,
   buttonClassName,
+  disabled = false,
   onChange,
 }: DialogTextSwitchProps<T>): JSX.Element => {
   const [mode, setMode] = useState<T>(defaultMode || left.type)
@@ -35,6 +37,7 @@ export const DialogTextSwitch = <T extends string>({
       <Button
         onClick={() => handleChange(left.type)}
         className={classnames('button', buttonClassName, mode === left.type ? 'left' : 'inactive')}
+        disabled={disabled}
       >
         {left.label}
       </Button>
@@ -45,6 +48,7 @@ export const DialogTextSwitch = <T extends string>({
           buttonClassName,
           mode === right.type ? 'right' : 'inactive',
         )}
+        disabled={disabled}
       >
         {right.label}
       </Button>

@@ -36,8 +36,12 @@ export const prover = (name: string, value: Partial<Prover> = {}): Prover => {
 
 export const asyncAction = (
   name: string,
+  delay = 1000,
   options?: ActionOptions | undefined,
   // eslint-disable-next-line
 ): ((...args: any[]) => Promise<void>) => {
-  return (...args) => Promise.resolve(action(name, options)(args))
+  return (...args) =>
+    new Promise(function(resolve) {
+      setTimeout(resolve, delay)
+    }).then(() => action(name, options)(args))
 }

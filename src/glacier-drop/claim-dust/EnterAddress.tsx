@@ -1,88 +1,56 @@
 import React, {useState} from 'react'
-import {ModalProps} from 'antd/lib/modal'
 import {validateEthAddress} from '../../common/util'
-import {LunaModal} from '../../common/LunaModal'
+import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DisplayChain} from '../../pob/chains'
 import {GlacierState, BalanceWithProof} from '../glacier-state'
-import {DialogError} from '../../common/dialog/DialogError'
 import {ETC_CHAIN} from '../glacier-config'
 
-interface EnterAddressProps {
+interface EnterAddressProps extends ModalOnCancel {
   onNext: (address: string, balanceWithProof: BalanceWithProof) => void
-  onCancel: () => void
   chain?: DisplayChain
 }
 
-export const EnterAddress = ({
-  onNext,
-  onCancel,
-  chain = ETC_CHAIN,
-  ...props
-}: EnterAddressProps & ModalProps): JSX.Element => {
+const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps): JSX.Element => {
   const {getEtcSnapshotBalanceWithProof, claimedAddresses} = GlacierState.useContainer()
 
   const [address, setAddress] = useState<string>('')
 
-  const [globalErrorMsg, setGlobalErrorMsg] = useState<string>('')
-  const [isLoading, setLoading] = useState<boolean>(false)
+  const modalLocker = ModalLocker.useContainer()
 
   const addressClaimedError = claimedAddresses.includes(address) ? 'Already claimed' : ''
   const addressError = validateEthAddress(address) || addressClaimedError
-  const isDisabled = addressError !== '' || isLoading
-
-  const globalErrorElem = globalErrorMsg && <DialogError>{globalErrorMsg}</DialogError>
-
-  const reset = (): void => {
-    setGlobalErrorMsg('')
-    setAddress('')
-  }
-
-  const close = (): void => {
-    if (isLoading) return
-    reset()
-    onCancel()
-  }
+  const isDisabled = addressError !== ''
 
   return (
-    <LunaModal destroyOnClose wrapClassName="EnterAddress" onCancel={close} {...props}>
-      <Dialog
-        title="Claim Dust"
-        rightButtonProps={{
-          children: 'Proceed',
-          type: 'default',
-          onClick: async () => {
-            setLoading(true)
-            try {
-              const balanceWithProof = await getEtcSnapshotBalanceWithProof(address)
-              setLoading(false)
-              reset()
-              onNext(address, balanceWithProof)
-            } catch (e) {
-              setGlobalErrorMsg(e.message)
-              setLoading(false)
-            }
-          },
-          disabled: isDisabled,
+    <Dialog
+      title="Claim Dust"
+      rightButtonProps={{
+        children: 'Proceed',
+        type: 'default',
+        onClick: async () => {
+          const balanceWithProof = await getEtcSnapshotBalanceWithProof(address)
+          onNext(address, balanceWithProof)
+        },
+        disabled: isDisabled,
+      }}
+      leftButtonProps={{
+        onClick: onCancel,
+        disabled: modalLocker.isLocked,
+      }}
+      type="dark"
+    >
+      <DialogInput
+        label={`${chain.symbol} Public Address`}
+        value={address}
+        onChange={(e): void => {
+          setAddress(e.target.value)
         }}
-        leftButtonProps={{
-          onClick: close,
-          disabled: isLoading,
-        }}
-        type="dark"
-        footer={globalErrorElem}
-      >
-        <DialogInput
-          label={`${chain.symbol} Public Address`}
-          value={address}
-          onChange={(e): void => {
-            setAddress(e.target.value)
-            setGlobalErrorMsg('')
-          }}
-          errorMessage={addressError}
-        />
-      </Dialog>
-    </LunaModal>
+        errorMessage={addressError}
+      />
+    </Dialog>
   )
 }
+
+export const EnterAddress = wrapWithModal(_EnterAddress, 'EnterAddress')

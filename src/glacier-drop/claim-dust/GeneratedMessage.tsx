@@ -24,7 +24,7 @@ export const GeneratedMessage = ({
   const msg = `I authorise ${transparentAddress} to get my ${normalizedEtcAddress} GlacierDrop`
 
   return (
-    <LunaModal destroyOnClose wrapClassName="GeneratedMessage" {...props}>
+    <LunaModal wrapClassName="GeneratedMessage" {...props}>
       <Dialog
         title="Claim Dust"
         leftButtonProps={{

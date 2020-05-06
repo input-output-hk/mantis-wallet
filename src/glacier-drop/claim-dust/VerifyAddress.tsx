@@ -24,7 +24,7 @@ export const VerifyAddress = ({
   ...props
 }: VerifyAddressProps & ModalProps): JSX.Element => {
   return (
-    <LunaModal destroyOnClose wrapClassName="VerifyAddress" onCancel={onCancel} {...props}>
+    <LunaModal wrapClassName="VerifyAddress" onCancel={onCancel} {...props}>
       <Dialog
         title="Claim Dust"
         rightButtonProps={{

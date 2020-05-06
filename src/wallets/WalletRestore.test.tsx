@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, fireEvent} from '@testing-library/react'
+import {render, fireEvent, wait} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {makeWeb3Worker} from '../web3'
@@ -26,7 +26,7 @@ const seedPhrase = [
   'baseball',
 ]
 
-test('WalletRestore', () => {
+test('WalletRestore', async () => {
   const walletName = 'Example Wallet Name'
   const password = 'Foobar1234'
   const privateKey = 'm-test-shl-sk1fj335eanpmupaj9vx5879t7ljfnh7xct486rqgwxw8evwp2qkaksmcqu88'
@@ -86,5 +86,5 @@ test('WalletRestore', () => {
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
   userEvent.click(cancelButton)
-  expect(cancel).toHaveBeenCalled()
+  await wait(() => expect(cancel).toHaveBeenCalled())
 })

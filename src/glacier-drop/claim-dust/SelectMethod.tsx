@@ -22,7 +22,7 @@ export const SelectMethod = ({
   ...props
 }: SelectMethodProps & ModalProps): JSX.Element => {
   return (
-    <LunaModal destroyOnClose wrapClassName="SelectMethod" {...props}>
+    <LunaModal wrapClassName="SelectMethod" {...props}>
       <Dialog
         title="Claim Dust"
         rightButtonProps={{

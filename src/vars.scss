@@ -5,7 +5,6 @@ $btn-border-width: 0;
 $switch-height: 22px;
 $checkbox-size: 20px;
 $modal-body-padding: 42px 64px 53px;
-$modal-mask-bg: 0;
 
 $transition-duration: 0.3s;
 $wave-animation-width: 6px;
@@ -14,7 +13,9 @@ $sidebar-width: 450px;
 $sidebar-collapse-at: 1400px;
 $sidebar-collapsed-width: 200px;
 
-$zindex-sidebar: 1100;
+// antd uses z-index of 10xx for modals, tooltips, etc
+// let's keep sidebar under them
+$zindex-sidebar: 900;
 
 // antd overwrites
 $primary-color: #04b7e0;

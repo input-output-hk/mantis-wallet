@@ -1,12 +1,10 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {ModalProps} from 'antd/lib/modal'
-import {LunaModal} from '../../common/LunaModal'
+import {LunaModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
 import {TransparentAddress} from '../../web3'
-import {DialogError} from '../../common/dialog/DialogError'
-import {useIsMounted} from '../../common/hook-utils'
 import {copyToClipboard} from '../../common/clipboard'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {CopyableLongText} from '../../common/CopyableLongText'
@@ -53,15 +51,11 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
   transparentAddress,
   onGenerateNew,
 }: ReceivePublicTransactionProps) => {
-  const mounted = useIsMounted()
-  const [inProgress, setInProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const modalLocker = ModalLocker.useContainer()
 
   const title = transparentAddress
     ? `Receive Account ${transparentAddress.index}`
     : 'No known addresses'
-
-  const errors = errorMessage && <DialogError>{errorMessage}</DialogError>
 
   return (
     <Dialog
@@ -77,23 +71,10 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
       rightButtonProps={{
         type: 'default',
         children: 'Generate new →',
-        onClick: async (): Promise<void> => {
-          if (mounted.current) {
-            setInProgress(true)
-            setErrorMessage('')
-          }
-          try {
-            await onGenerateNew()
-          } catch (e) {
-            if (mounted.current) setErrorMessage(e.message)
-          } finally {
-            if (mounted.current) setInProgress(false)
-          }
-        },
-        loading: inProgress,
+        onClick: onGenerateNew,
       }}
+      onSetLoading={modalLocker.setLocked}
       type="dark"
-      footer={errors}
     >
       <div className="title">{title}</div>
       {transparentAddress && (
@@ -135,14 +116,19 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
             <CopyableLongText content={address} showQrCode />
           </div>
         ))}
-        <div onClick={goToAccounts}>
+        <div
+          onClick={() => {
+            const modalLocker = ModalLocker.useContainer()
+            if (!modalLocker.isLocked) goToAccounts()
+          }}
+        >
           <span className="link">See all Transparent Addresseses</span>
         </div>
       </div>
     )
 
   return (
-    <LunaModal destroyOnClose footer={usedAddresses} {...props}>
+    <LunaModal footer={usedAddresses} {...props}>
       <Dialog
         leftButtonProps={{
           doNotRender: true,
