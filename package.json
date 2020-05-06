@@ -28,7 +28,7 @@
     "electron-dev:hot": "wait-on http://localhost:3000 && cross-env ELECTRON_START_URL=http://localhost:3000 nodemon --exec electron ./build/main/main.js",
     "dev": "yarn copy-remix && yarn build-main && concurrently --kill-others \"yarn start\" \"yarn electron-dev\"",
     "dev:hot": "yarn copy-remix && concurrently --kill-others \"yarn start\" \"yarn build-main --watch\" \"yarn electron-dev:hot\"",
-    "copy-remix": "yarn copyfiles -u 1 midnight-remix/index.html midnight-remix/icon.png midnight-remix/build/app.js \"midnight-remix/assets/**/*\" build/remix-ide",
+    "copy-remix": "yarn copyfiles -u 2 \"midnight-remix/dist/**/*\" build/remix-ide",
     "build-all": "yarn build-renderer && yarn build-main && yarn copy-remix",
     "package": "ts-node --project tsconfig.bin.json ./bin/package.ts",
     "package-win": "ts-node --project ./tsconfig.bin.json ./bin/package-win.ts",
