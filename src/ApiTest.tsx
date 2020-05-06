@@ -11,7 +11,8 @@ import {
 import {ThemeState} from './theme-state'
 import {GlacierState} from './glacier-drop/glacier-state'
 import {WalletState} from './common/wallet-state'
-import {DialogInput} from './common/dialog/DialogInput'
+import {BorderlessInput} from './common/BorderlessInput'
+import './ApiTest.scss'
 
 const web3 = makeWeb3Worker()
 const wallet = web3.midnight.wallet
@@ -69,28 +70,34 @@ export const ApiTest = (): JSX.Element => {
   }
 
   return (
-    <div>
+    <div className="ApiTest">
       <div className="main-title" style={{marginBottom: '1em'}}>
         Api Test Interface
       </div>
 
       <div style={{marginBottom: '1rem'}}>
         <h2>Settings</h2>
-        <DialogInput
-          label="Passphrase"
-          value={passphrase}
-          onChange={(e): void => setPassphrase(e.target.value)}
-        />
-        <DialogInput
-          label="Spending Key"
-          value={spendingKey}
-          onChange={(e): void => setSpendingKey(e.target.value)}
-        />
-        <DialogInput
-          label="Seed Phrase"
-          value={seedPhrase}
-          onChange={(e): void => setSeedPhrase(e.target.value)}
-        />
+        <div className="input">
+          <label>Passphrase</label>
+          <BorderlessInput
+            value={passphrase}
+            onChange={(e): void => setPassphrase(e.target.value)}
+          />
+        </div>
+        <div className="input">
+          <label>Spending Key</label>
+          <BorderlessInput
+            value={spendingKey}
+            onChange={(e): void => setSpendingKey(e.target.value)}
+          />
+        </div>
+        <div className="input">
+          <label>Seed Phrase</label>
+          <BorderlessInput
+            value={seedPhrase}
+            onChange={(e): void => setSeedPhrase(e.target.value)}
+          />
+        </div>
 
         <h2>Actions</h2>
         <TestButton onClick={(): Promise<SpendingKey & SeedPhrase> => wallet.create({passphrase})}>

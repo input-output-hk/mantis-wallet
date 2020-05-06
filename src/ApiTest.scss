@@ -1,0 +1,16 @@
+@import './partial';
+
+.ApiTest {
+  .input {
+    margin-bottom: 20px;
+
+    label {
+      @extend %dialog-label;
+      display: block;
+    }
+
+    input {
+      height: 47px;
+    }
+  }
+}
