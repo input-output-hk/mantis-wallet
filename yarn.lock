@@ -6487,6 +6487,11 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+dat.gui@^0.7.7:
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/dat.gui/-/dat.gui-0.7.7.tgz#7f96dbd21621a76385203659aebfa264ee6ae89b"
+  integrity sha512-sRl/28gF/XRC5ywC9I4zriATTsQcpSsRG7seXCPnTkK8/EQMIbCu5NPMpICLGxX9ZEUvcXR3ArLYCtgreFoMDw==
+
 data-urls@^1.0.0, data-urls@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/data-urls/-/data-urls-1.1.0.tgz#15ee0582baa5e22bb59c77140da8f9c76963bbfe"
@@ -6698,6 +6703,13 @@ detect-file@^1.0.0:
   resolved "https://registry.yarnpkg.com/detect-file/-/detect-file-1.0.0.tgz#f0d66d03672a825cb1b73bdb3fe62310c8e552b7"
   integrity sha1-8NZtA2cqglyxtzvbP+YjEMjlUrc=
 
+detect-gpu@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/detect-gpu/-/detect-gpu-1.2.0.tgz#e685cf9ee0dbf9579d1819be8fd9a2b431d175a5"
+  integrity sha512-FvzAJhneRVc2BzUGB8zEkpI4/Q8pB1iJqvaGlOIwydfTCqA/NEOL3/23XzDBU67NU831bdHVLloh0t656ahGOw==
+  dependencies:
+    detect-ua "^1.0.0"
+
 detect-libc@^1.0.2, detect-libc@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
@@ -6728,6 +6740,11 @@ detect-port@^1.3.0:
   dependencies:
     address "^1.0.1"
     debug "^2.6.0"
+
+detect-ua@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/detect-ua/-/detect-ua-1.0.0.tgz#cdbb4cdf62c214d5d139055f6fee18fffe02988e"
+  integrity sha512-rY6OMGbB+fWoybd6dE2eRXqtA/FsnbSw41z+A4mKOSwWCWUCRd4d1CEc+PrAwrr4ABcq8LDu0TBWygAl7jGWUA==
 
 detective@^4.3.1:
   version "4.7.1"
@@ -8827,6 +8844,11 @@ globule@^1.0.0:
     lodash "~4.17.10"
     minimatch "~3.0.2"
 
+glsl-noise@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/glsl-noise/-/glsl-noise-0.0.0.tgz#367745f3a33382c0eeec4cb54b7e99cfc1d7670b"
+  integrity sha1-NndF86MzgsDu7Ey1S36Zz8HXZws=
+
 glur@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/glur/-/glur-1.1.2.tgz#f20ea36db103bfc292343921f1f91e83c3467689"
@@ -8872,6 +8894,11 @@ growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
+
+gsap@^3.2.6:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.2.6.tgz#fbaddab30c8c2fb029d61ef56f667b42f99c932f"
+  integrity sha512-QX7WQWZUAooS9tOCYg4kKLcnjBreA4Xyu11EVx6zp4BbKijnMK+NtzkB47las/E0luFE84hGscOZm5vd13KzZA==
 
 gud@^1.0.0:
   version "1.0.0"
@@ -11320,6 +11347,17 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
+"luna-wallet-loader@git+ssh://git@github.com:input-output-hk/luna-wallet-loader.git#master":
+  version "0.0.1"
+  resolved "git+ssh://git@github.com:input-output-hk/luna-wallet-loader.git#bb1a9043e291717a005d6e331044fa5a6d3d7417"
+  dependencies:
+    dat.gui "^0.7.7"
+    detect-gpu "^1.2.0"
+    glsl-noise "^0.0.0"
+    gsap "^3.2.6"
+    mixin "^0.2.0"
+    three "^0.116.0"
+
 make-dir@^2.0.0, make-dir@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-2.1.0.tgz#5f0310e18b8be898cc07009295a30ae41e91e6f5"
@@ -11815,6 +11853,11 @@ mixin-object@^2.0.1:
   dependencies:
     for-in "^0.1.3"
     is-extendable "^0.1.1"
+
+mixin@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/mixin/-/mixin-0.2.0.tgz#fb9db3d31175badb0a199dd4aad66476147b7d93"
+  integrity sha1-+52z0xF1utsKGZ3UqtZkdhR7fZM=
 
 mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   version "0.5.1"
@@ -17440,6 +17483,11 @@ text-table@0.2.0, text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+three@^0.116.0:
+  version "0.116.1"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.116.1.tgz#a393f7a81fdc3e2fbf57ded5ba47dc5bd3678ce0"
+  integrity sha512-l2JCMiA/lVZAuSrLWRYMalvpR+0j8hbIhCpfs4V6JFnw2+JQEQJ5HltNpfFr+9TDpQts1BhtcISehWf/xBGPvQ==
 
 throat@^4.0.0:
   version "4.1.0"

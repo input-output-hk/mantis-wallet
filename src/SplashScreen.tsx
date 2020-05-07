@@ -1,20 +1,18 @@
 import React from 'react'
 import {Icon} from 'antd'
+import {LunaWalletLoader} from 'luna-wallet-loader'
 import {ThemeState} from './theme-state'
-import lunaLogoDark from './assets/dark/luna-big.png'
-import lunaLogoLight from './assets/light/luna-big.png'
 import './SplashScreen.scss'
 
 export const SplashScreen: React.FunctionComponent<{}> = () => {
-  const themeState = ThemeState.useContainer()
-  const lunaLogo = themeState.theme === 'dark' ? lunaLogoDark : lunaLogoLight
+  const {theme} = ThemeState.useContainer()
 
   return (
     <div className="SplashScreen">
-      <img className="logo" src={lunaLogo} alt="Luna" />
+      <LunaWalletLoader className="logo" mode={theme} />
       <div className="title">Luna</div>
       <div className="spinner">
-        <Icon type="loading" style={{fontSize: 24}} spin />
+        <Icon type="loading" spin />
       </div>
       <div className="loading">Loading</div>
     </div>

@@ -3,7 +3,7 @@
 .LunaModal {
   margin-left: $sidebar-width;
 
-  @media screen and (max-width: $sidebar-collapse-at) {
+  @media screen and #{$sidebar-collapse-query} {
     margin-left: $sidebar-collapsed-width;
   }
 

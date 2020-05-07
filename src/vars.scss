@@ -10,8 +10,8 @@ $transition-duration: 0.3s;
 $wave-animation-width: 6px;
 
 $sidebar-width: 450px;
-$sidebar-collapse-at: 1400px;
 $sidebar-collapsed-width: 200px;
+$sidebar-collapse-query: '(max-width: 1400px), (max-height: 800px)';
 
 // antd uses z-index of 10xx for modals, tooltips, etc
 // let's keep sidebar under them

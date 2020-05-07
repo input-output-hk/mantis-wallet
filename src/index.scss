@@ -230,7 +230,7 @@ div#root {
   .ant-message {
     padding-left: $sidebar-width;
 
-    @media screen and (max-width: $sidebar-collapse-at) {
+    @media screen and #{$sidebar-collapse-query} {
       padding-left: $sidebar-collapsed-width;
     }
   }

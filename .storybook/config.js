@@ -16,7 +16,7 @@ const AppDecorator = (storyFn) => {
 
   return (
     <div className="App storybook-app">
-      <main>{storyFn()}</main>
+      <main id="main">{storyFn()}</main>
     </div>
   )
 }
