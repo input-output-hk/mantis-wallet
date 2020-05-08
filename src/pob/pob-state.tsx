@@ -11,12 +11,13 @@ import {
   proveTransaction,
   getInfo,
   prettyErrorMessage,
+  BurnStatusType,
 } from './api/prover'
 import {Chain, ChainId, CHAINS} from './chains'
 import {ProverConfig} from '../config/type'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
-import {Web3API, makeWeb3Worker, EthTransaction} from '../web3'
+import {Web3API, makeWeb3Worker} from '../web3'
 import {deserializeBigNumber, bigSum, bech32toHex} from '../common/util'
 import {config} from '../config/renderer'
 
@@ -32,7 +33,11 @@ export interface BurnAddressInfo {
   autoConversion: boolean
 }
 
-export type RealBurnStatus = BurnApiStatus & {midnight_txid_height: number | null}
+export interface RealBurnStatus extends BurnApiStatus {
+  burnAddressInfo: BurnAddressInfo
+  commitment_txid_height: number | null
+  redeem_txid_height: number | null
+}
 
 export type BurnStatus = {
   lastStatuses: RealBurnStatus[]
@@ -64,7 +69,7 @@ export interface ProofOfBurnData {
   burnBalances: BurnBalance[]
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
-  addTx: (prover: ProverConfig, burnTx: string, burnInfo: BurnAddressInfo) => Promise<void>
+  addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
   provers: Prover[]
 }
 
@@ -82,13 +87,12 @@ export const defaultPobData: StorePobData = {
   },
 }
 
-const FINISHED_BURN_STATUSES = [
-  'REVEAL_CONFIRMED',
-  'REVEAL_DONE_ANOTHER_PROVER',
-  'PROOF_FAIL',
-  'TX_VALUE_TOO_LOW',
-  'COMMITMENT_FAIL',
-  'REVEAL_FAIL',
+const FINISHED_BURN_STATUSES: BurnStatusType[] = [
+  'redeem_appeared',
+  'redeem_another_prover',
+  'proof_fail',
+  'commitment_fail',
+  'redeem_fail',
 ]
 
 function useProofOfBurnState(
@@ -115,10 +119,7 @@ function useProofOfBurnState(
         getInfo(prover)
           .then((chainInfos) => ({
             ...prover,
-            rewards: _.fromPairs(
-              // eslint-disable-next-line
-              chainInfos.map(({source_chain, min_fee}) => [source_chain, min_fee]),
-            ),
+            rewards: _.mapValues(_.get('min_fee'))(chainInfos),
           }))
           .catch((err) => {
             console.error(err)
@@ -140,25 +141,31 @@ function useProofOfBurnState(
   const addBurnAddress = (burnAddress: string, info: BurnAddressInfo): void =>
     setBurnAddresses(_.merge(burnAddresses, {[burnAddress]: info}))
 
+  const getTransactionHeight = async (txid: string | null): Promise<number | null> => {
+    if (txid == null) return null
+    try {
+      const tx = await web3.eth.getTransaction(txid)
+      return _.get('blockNumber')(tx) || null
+    } catch (err) {
+      console.error(err)
+      return null
+    }
+  }
+
   const refreshBurnStatus = async (): Promise<void> => {
     const getBurnStatuses = async (burnWatcher: BurnWatcher): Promise<[string, BurnStatus]> => {
       try {
         const statuses = await getStatuses(burnWatcher)
         const statusesWithTxidHeight: RealBurnStatus[] = await Promise.all(
           statuses.filter(noBurnObservedFilter).map(
-            (s: BurnApiStatus): Promise<RealBurnStatus> =>
-              !s.midnight_txid
-                ? Promise.resolve({...s, midnight_txid_height: null})
-                : web3.eth
-                    .getTransaction(s.midnight_txid || '')
-                    .then(({blockNumber}: EthTransaction) => ({
-                      ...s,
-                      midnight_txid_height: blockNumber,
-                    }))
-                    .catch((err) => {
-                      console.error(err)
-                      return {...s, midnight_txid_height: null}
-                    }),
+            async (s: BurnApiStatus): Promise<RealBurnStatus> => {
+              return {
+                ...s,
+                burnAddressInfo: burnAddresses[burnWatcher.burnAddress],
+                commitment_txid_height: await getTransactionHeight(s.commitment_txid),
+                redeem_txid_height: await getTransactionHeight(s.redeem_txid),
+              }
+            },
           ),
         )
         return [burnWatcher.burnAddress, {lastStatuses: statusesWithTxidHeight}]

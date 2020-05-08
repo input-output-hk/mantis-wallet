@@ -3,7 +3,7 @@ import {Button, Popover} from 'antd'
 import _ from 'lodash'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
-import {ProofOfBurnData, BurnAddressInfo} from './pob-state'
+import {ProofOfBurnData} from './pob-state'
 import {ProverConfig} from '../config/type'
 import './BurnActions.scss'
 
@@ -65,9 +65,9 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
         onAddTx={async (
           prover: ProverConfig,
           burnTx: string,
-          burnAddressInfo: BurnAddressInfo,
+          burnAddress: string,
         ): Promise<void> => {
-          await addTx(prover, burnTx, burnAddressInfo)
+          await addTx(prover, burnTx, burnAddress)
           setShowAddTxModal(false)
         }}
         provers={provers}

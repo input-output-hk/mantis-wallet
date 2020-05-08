@@ -11,11 +11,7 @@ import {ShortNumber} from '../../common/ShortNumber'
 interface AddBurnTxModalProps extends ModalOnCancel {
   provers: Prover[]
   burnAddresses: Record<string, BurnAddressInfo>
-  onAddTx: (
-    proverAddress: Prover,
-    burnTx: string,
-    bunrAddressInfo: BurnAddressInfo,
-  ) => Promise<void>
+  onAddTx: (proverAddress: Prover, burnTx: string, bunrAddress: string) => Promise<void>
 }
 
 const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
@@ -43,7 +39,7 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
         disabled: !!txErrorMessage || !burnAddresses[burnAddress],
         onClick: async (): Promise<void> => {
           if (prover) {
-            await onAddTx(prover, burnTx, burnAddresses[burnAddress])
+            await onAddTx(prover, burnTx, burnAddress)
           } else {
             throw new Error('No prover was selected.')
           }

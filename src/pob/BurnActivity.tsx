@@ -35,7 +35,8 @@ export const _BurnActivity = ({
     .filter(
       ({burnStatus}) =>
         (burnStatus.txid || '').includes(searchTxId) ||
-        (burnStatus.midnight_txid || '').includes(searchTxId),
+        (burnStatus.commitment_txid || '').includes(searchTxId) ||
+        (burnStatus.redeem_txid || '').includes(searchTxId),
     )
 
   return (

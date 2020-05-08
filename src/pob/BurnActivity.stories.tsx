@@ -11,6 +11,22 @@ export default {
   decorators: [withWalletState, withTheme, withKnobs],
 }
 
+const burnStatusSelect = select(
+  'Burn status',
+  [
+    'tx_found',
+    'commitment_submitted',
+    'commitment_appeared',
+    'redeem_submitted',
+    'redeem_appeared',
+    'redeem_another_prover',
+    'proof_fail',
+    'commitment_fail',
+    'redeem_fail',
+  ],
+  'tx_found',
+)
+
 export const burnActivity = (): JSX.Element => (
   <div>
     <BurnActivity
@@ -18,27 +34,19 @@ export const burnActivity = (): JSX.Element => (
         [text('Burn address #1', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')]: {
           lastStatuses: [
             {
-              status: select(
-                'Burn status',
-                [
-                  'BURN_OBSERVED',
-                  'PROOF_READY',
-                  'PROOF_FAIL',
-                  'TX_VALUE_TOO_LOW',
-                  'COMMITMENT_APPEARED',
-                  'COMMITMENT_CONFIRMED',
-                  'COMMITMENT_FAIL',
-                  'REVEAL_APPEARED',
-                  'REVEAL_CONFIRMED',
-                  'REVEAL_FAIL',
-                  'REVEAL_DONE_ANOTHER_PROVER',
-                ],
-                'BURN_OBSERVED',
-              ),
+              burnAddressInfo: {
+                midnightAddress: 'midnight-address',
+                chainId: selectChain().id,
+                reward: 1,
+                autoConversion: false,
+              },
+              status: burnStatusSelect,
               txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
               chain: selectChain().id,
-              midnight_txid: text('Midnight transaction id', 'midnight-transaction-id'),
-              midnight_txid_height: number('Midnight transaction height', 10),
+              commitment_txid: text('Commitment transaction id', 'commitment-transaction-id'),
+              commitment_txid_height: number('Commitment transaction height', 10),
+              redeem_txid: text('Redeem transaction id', 'redeem-transaction-id'),
+              redeem_txid_height: number('Redeem transaction height', 15),
               burn_tx_height: 1,
               current_source_height: 1,
               processing_start_height: 1,
@@ -65,27 +73,19 @@ export const burnStatusDisplay = (): JSX.Element => (
     <BurnStatusDisplay
       address={text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')}
       burnStatus={{
-        status: select(
-          'Burn status',
-          [
-            'BURN_OBSERVED',
-            'PROOF_READY',
-            'PROOF_FAIL',
-            'TX_VALUE_TOO_LOW',
-            'COMMITMENT_APPEARED',
-            'COMMITMENT_CONFIRMED',
-            'COMMITMENT_FAIL',
-            'REVEAL_APPEARED',
-            'REVEAL_CONFIRMED',
-            'REVEAL_FAIL',
-            'REVEAL_DONE_ANOTHER_PROVER',
-          ],
-          'BURN_OBSERVED',
-        ),
+        burnAddressInfo: {
+          midnightAddress: 'midnight-address',
+          chainId: selectChain().id,
+          reward: 1,
+          autoConversion: false,
+        },
+        status: burnStatusSelect,
         txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
         chain: selectChain().id,
-        midnight_txid: text('Midnight transaction id', 'midnight-transaction-id'),
-        midnight_txid_height: number('Midnight transaction height', 10),
+        commitment_txid: text('Commitment transaction id', 'commitment-transaction-id'),
+        commitment_txid_height: number('Commitment transaction height', 10),
+        redeem_txid: text('Redeem transaction id', 'redeem-transaction-id'),
+        redeem_txid_height: number('Redeem transaction height', 15),
         burn_tx_height: number('Burn tx height', 1000),
         current_source_height: number('Current height', 1001),
         processing_start_height: number('Processing start height', 1100),

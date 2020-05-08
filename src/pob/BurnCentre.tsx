@@ -9,11 +9,13 @@ import {NoWallet} from '../wallets/NoWallet'
 import {withStatusGuard} from '../common/wallet-status-guard'
 import './BurnCentre.scss'
 
+const refreshRate = 2000
+
 export const _BurnCentre = (): JSX.Element => {
   const pobState = ProofOfBurnState.useContainer()
   const routerState = RouterState.useContainer()
 
-  useInterval(pobState.refresh, 5000)
+  useInterval(pobState.refresh, refreshRate)
 
   return (
     <PobLayout title="Burn Centre">
