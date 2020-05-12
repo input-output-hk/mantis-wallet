@@ -64,6 +64,7 @@ const _WalletRestore = ({
       footer={footer}
     >
       <DialogInput
+        autoFocus
         label="Wallet name"
         id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}

@@ -33,6 +33,7 @@ export const WalletCreateDisplayRecoveryStep: React.FunctionComponent<WalletCrea
       <DialogMessage description="The phrase is case sensitive. Please make sure you write down and save your recovery phrase. You will need this phrase to use and restore your wallet" />
       <DialogDisplayWords words={seedPhrase} />
       <DialogApproval
+        autoFocus
         description="Yes, I have written it down."
         checked={isRecoveryPhraseWritten}
         onChange={setRecoveryPhraseWritten}

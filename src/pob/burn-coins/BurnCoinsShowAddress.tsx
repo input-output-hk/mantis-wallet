@@ -26,6 +26,7 @@ export const BurnCoinsShowAddress: React.FunctionComponent<BurnCoinsShowAddressP
         }}
         rightButtonProps={{
           children: 'Copy Code',
+          autoFocus: true,
           onClick: () => copyToClipboard(burnAddress),
         }}
       >

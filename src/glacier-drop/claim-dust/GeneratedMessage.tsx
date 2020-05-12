@@ -28,6 +28,7 @@ export const GeneratedMessage = ({
       <Dialog
         title="Claim Dust"
         leftButtonProps={{
+          autoFocus: true,
           children: 'Copy Message',
           onClick: () => copyToClipboard(msg),
         }}

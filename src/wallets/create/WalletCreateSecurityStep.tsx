@@ -28,6 +28,7 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
         description="On the following Screen you will see a 12 Word Phrase. This is your wallet backup phrase. It can be entered in any version of Luna in order to restore your wallet."
       />
       <DialogSwitch
+        autoFocus
         key="private-key-switch"
         label="Private Key"
         description="Please make sure your screen is not visible to anyone but you to ensure security"

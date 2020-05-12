@@ -32,7 +32,7 @@ const LogOutDialog: React.FunctionComponent<LogOutModalProps> = ({
       onSetLoading={modalLocker.setLocked}
     >
       <DialogMessage description="Enter your password to log out." />
-      <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} />
+      <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
       <DialogApproval
         checked={approve}
         onChange={setApprove}

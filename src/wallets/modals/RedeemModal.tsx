@@ -52,6 +52,7 @@ const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
       <DialogShowDust amount={transparentAccount.balance}>Available Amount</DialogShowDust>
       <DialogColumns>
         <DialogInput
+          autoFocus
           label="Fee"
           defaultValue={fee}
           onChange={(e): void => setFee(e.target.value)}

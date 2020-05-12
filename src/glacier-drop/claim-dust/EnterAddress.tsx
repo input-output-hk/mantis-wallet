@@ -42,6 +42,7 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
       type="dark"
     >
       <DialogInput
+        autoFocus
         label={`${chain.symbol} Public Address`}
         value={address}
         onChange={(e): void => {
