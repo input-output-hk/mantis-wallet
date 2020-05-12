@@ -11,7 +11,6 @@
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   min-height: 100vh;
-  padding: 24px;
   overflow: auto;
 }
 
@@ -21,4 +20,8 @@
 
 .LunaModal {
   margin-left: 0 !important;
+}
+
+.no-padding {
+  padding: 0 !important;
 }

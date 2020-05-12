@@ -8,6 +8,8 @@ import {Theme} from './theme-state'
 
 jest.mock('./config/renderer.ts')
 
+const delay = 600 as const
+
 const getCustomBrowser = (): Promise<Browser> =>
   puppeteer.launch({
     args: [
@@ -36,14 +38,9 @@ const getMatchOptions = (theme: Theme) => ({
 })
 
 const beforeScreenshot = (theme: Theme) => (page: Page): Promise<void> => {
-  return page.goto(`${page.url()}&theme=${theme}`).then(
-    () =>
-      new Promise((resolve) =>
-        setTimeout(() => {
-          resolve()
-        }, 600),
-      ),
-  )
+  return page
+    .goto(`${page.url()}&theme=${theme}`)
+    .then(() => new Promise((resolve) => setTimeout(resolve, delay)))
 }
 
 const initStoryshotsByTheme = (theme: Theme): void => {
@@ -58,6 +55,7 @@ const initStoryshotsByTheme = (theme: Theme): void => {
       getMatchOptions: getMatchOptions(theme),
       getCustomBrowser,
     }),
+    storyNameRegex: /^((?!Splash Screen).)*$/,
   })
 }
 

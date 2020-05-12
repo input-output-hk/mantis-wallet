@@ -112,7 +112,7 @@
     }
   }
 
-  @media screen and (max-width: $sidebar-collapse-at) {
+  @media screen and #{$sidebar-collapse-query} {
     $mini-left-padding: 73px;
     width: $sidebar-collapsed-width;
 
