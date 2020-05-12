@@ -30,41 +30,35 @@ interface BurnStatusDisplayProps {
 }
 
 const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
-  BURN_OBSERVED: {started: 'IN_PROGRESS', success: 'UNKNOWN', confirm: 'UNKNOWN'},
-  PROOF_READY: {started: 'CHECKED', success: 'IN_PROGRESS', confirm: 'UNKNOWN'},
-  PROOF_FAIL: {started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
-  TX_VALUE_TOO_LOW: {started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
-  COMMITMENT_APPEARED: {
+  tx_found: {started: 'IN_PROGRESS', success: 'UNKNOWN', confirm: 'UNKNOWN'},
+  commitment_submitted: {started: 'CHECKED', success: 'IN_PROGRESS', confirm: 'UNKNOWN'},
+  proof_fail: {started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
+  commitment_appeared: {
     started: 'CHECKED',
     success: 'IN_PROGRESS',
     confirm: 'UNKNOWN',
   },
-  COMMITMENT_CONFIRMED: {
-    started: 'CHECKED',
-    success: 'IN_PROGRESS',
-    confirm: 'UNKNOWN',
-  },
-  COMMITMENT_FAIL: {
-    started: 'CHECKED',
-    success: 'FAILED',
-    confirm: 'FAILED',
-  },
-  REVEAL_APPEARED: {
+  redeem_submitted: {
     started: 'CHECKED',
     success: 'CHECKED',
     confirm: 'IN_PROGRESS',
   },
-  REVEAL_CONFIRMED: {
+  commitment_fail: {
+    started: 'CHECKED',
+    success: 'FAILED',
+    confirm: 'FAILED',
+  },
+  redeem_appeared: {
     started: 'CHECKED',
     success: 'CHECKED',
-    confirm: 'CHECKED',
+    confirm: 'IN_PROGRESS',
   },
-  REVEAL_FAIL: {
+  redeem_fail: {
     started: 'CHECKED',
     success: 'CHECKED',
     confirm: 'FAILED',
   },
-  REVEAL_DONE_ANOTHER_PROVER: {
+  redeem_another_prover: {
     started: 'CHECKED',
     success: 'CHECKED',
     confirm: 'CHECKED',
@@ -78,7 +72,9 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" title="In progress" />,
 }
 
-const DisplayProgress = ({ratio}: {ratio: number | 'unknown'}): JSX.Element => (
+type DisplayProgressRatio = number | 'unknown'
+
+const DisplayProgress = ({ratio}: {ratio: DisplayProgressRatio}): JSX.Element => (
   <div className="percentage">
     {ratio === 'unknown' && <Icon type="loading" style={{fontSize: 12}} spin />}
     {ratio !== 'unknown' && `${formatPercentage(_.clamp(ratio, 0, 0.99))}%`}
@@ -154,29 +150,38 @@ const NUMBER_OF_BLOCKS_TO_CONFIRM = 4
 const startedProgress = (current: number, tx: number | null, start: number | null): number =>
   start && tx && start !== tx ? (current - tx) / (start - tx) : 0
 
-const successProgress = (status: BurnStatusType, current: number, tx: number): number => {
-  switch (status) {
-    case 'PROOF_READY':
-      return 0
-    case 'COMMITMENT_APPEARED':
-      return 0.1
-    default:
-      return 0.1 + (0.9 * (current - tx)) / NUMBER_OF_BLOCKS_TO_SUCCESS
-  }
+const successProgress = (
+  status: BurnStatusType,
+  current: number,
+  txHeight: number | null,
+): DisplayProgressRatio => {
+  if (status === 'commitment_submitted') return 1 / (NUMBER_OF_BLOCKS_TO_SUCCESS + 1)
+  if (txHeight === null) return 'unknown'
+  return (1 + current - txHeight) / (NUMBER_OF_BLOCKS_TO_SUCCESS + 1)
 }
 
-const confirmProgress = (current: number, tx: number): number =>
-  (current - tx) / NUMBER_OF_BLOCKS_TO_CONFIRM
+const confirmProgress = (
+  status: BurnStatusType,
+  current: number,
+  txHeight: number | null,
+): DisplayProgressRatio => {
+  if (status === 'redeem_submitted') return 1 / (NUMBER_OF_BLOCKS_TO_CONFIRM + 1)
+  if (txHeight === null) return 'unknown'
+  return (1 + current - txHeight) / (NUMBER_OF_BLOCKS_TO_CONFIRM + 1)
+}
 
-export const TX_VALUE_TOO_LOW_MESSAGE = 'Transaction value or fee was too low.'
+const isRedeemDone = (
+  syncStatus: SynchronizationStatus,
+  redeemTxHeight: number | null,
+): boolean => {
+  return (
+    syncStatus.mode === 'online' &&
+    redeemTxHeight != null &&
+    redeemTxHeight + NUMBER_OF_BLOCKS_TO_CONFIRM <= syncStatus.highestKnownBlock
+  )
+}
 
-const DisplayError = ({
-  errorMessage,
-  status,
-}: {
-  errorMessage?: string
-  status: BurnStatusType
-}): JSX.Element => {
+const DisplayError = ({errorMessage}: {errorMessage?: string}): JSX.Element => {
   if (errorMessage) {
     return (
       <div className="error">
@@ -188,10 +193,6 @@ const DisplayError = ({
     )
   }
 
-  if (status === 'TX_VALUE_TOO_LOW') {
-    return <div className="error">{TX_VALUE_TOO_LOW_MESSAGE}</div>
-  }
-
   return <></>
 }
 
@@ -201,8 +202,14 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
-  const chain = CHAINS[burnStatus.chain]
-  const progress = STATUS_TO_PROGRESS[burnStatus.status]
+  const chain = CHAINS[burnStatus.burnAddressInfo.chainId]
+  const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
+    ? {
+        started: 'CHECKED',
+        success: 'CHECKED',
+        confirm: 'CHECKED',
+      }
+    : STATUS_TO_PROGRESS[burnStatus.status]
 
   return (
     <div className="BurnStatusDisplay">
@@ -221,7 +228,13 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           )}
         </div>
         <div className="info-element">
-          <CopyableLongText content={burnStatus.midnight_txid} />
+          <CopyableLongText content={burnStatus.commitment_txid} />
+          {burnStatus.redeem_txid && (
+            <>
+              <br />
+              <CopyableLongText content={burnStatus.redeem_txid} />
+            </>
+          )}
         </div>
         <div className="info-element">
           <CopyableLongText content={burnStatus.txid} />
@@ -254,12 +267,12 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           {progress.success === 'IN_PROGRESS' && (
             <DisplayProgress
               ratio={
-                syncStatus.mode === 'offline' || burnStatus.midnight_txid_height === null
+                syncStatus.mode === 'offline'
                   ? 'unknown'
                   : successProgress(
                       burnStatus.status,
                       syncStatus.highestKnownBlock,
-                      burnStatus.midnight_txid_height,
+                      burnStatus.commitment_txid_height,
                     )
               }
             />
@@ -272,9 +285,13 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           {progress.confirm === 'IN_PROGRESS' && (
             <DisplayProgress
               ratio={
-                syncStatus.mode === 'offline' || burnStatus.midnight_txid_height === null
+                syncStatus.mode === 'offline'
                   ? 'unknown'
-                  : confirmProgress(syncStatus.highestKnownBlock, burnStatus.midnight_txid_height)
+                  : confirmProgress(
+                      burnStatus.status,
+                      syncStatus.highestKnownBlock,
+                      burnStatus.redeem_txid_height,
+                    )
               }
             />
           )}
@@ -283,7 +300,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <ProvingConfirmed progress={progress.confirm} />
         </div>
       </div>
-      <DisplayError errorMessage={errorMessage} status={burnStatus.status} />
+      <DisplayError errorMessage={errorMessage} />
     </div>
   )
 }

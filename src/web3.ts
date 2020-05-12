@@ -236,8 +236,8 @@ export interface ERC20Contract {
 // This interface isn't complete, check documentation if it needs to be expanded:
 // https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyhash
 export interface EthTransaction {
-  hash: string
-  blockNumber: number
+  hash: string | null
+  blockNumber: number | null
 }
 
 export interface TransactionReceipt {
@@ -254,7 +254,7 @@ export interface TransactionReceipt {
 }
 
 export interface EthApi {
-  getTransaction(hash: string): EthTransaction
+  getTransaction(hash: string): EthTransaction | null
   getTransactionReceipt(transactionHash: string): TransactionReceipt | null
   // used to get constant values from contracts:
   call(callParams: Partial<CallParams>, version: 'latest'): string

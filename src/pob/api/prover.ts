@@ -1,12 +1,15 @@
 import * as t from 'io-ts'
 import * as tPromise from 'io-ts-promise'
-import _ from 'lodash'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {fold} from 'fp-ts/lib/Either'
 import {ExtendableError} from '../../common/extendable-error'
 import {ProverConfig} from '../../config/type'
-import {BurnWatcher, BurnAddressInfo} from '../pob-state'
+import {BurnWatcher} from '../pob-state'
 import {ChainId} from '../chains'
+
+function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
+  return t.union([type, t.null, t.undefined])
+}
 
 const GenericError = t.type({
   error: t.type({
@@ -15,24 +18,22 @@ const GenericError = t.type({
   }),
 })
 
-export const NO_BURN_OBSERVED = 'No burn transactions observed since observation start.'
+export const NO_BURN_OBSERVED = 'No burn transactions found since observation start.'
 
 const NoBurnStatus = t.type({
   status: t.literal(NO_BURN_OBSERVED),
 })
 
 const BurnStatusType = t.keyof({
-  BURN_OBSERVED: null,
-  PROOF_READY: null,
-  PROOF_FAIL: null,
-  TX_VALUE_TOO_LOW: null,
-  COMMITMENT_APPEARED: null,
-  COMMITMENT_CONFIRMED: null,
-  COMMITMENT_FAIL: null,
-  REVEAL_APPEARED: null,
-  REVEAL_CONFIRMED: null,
-  REVEAL_FAIL: null,
-  REVEAL_DONE_ANOTHER_PROVER: null,
+  tx_found: null,
+  commitment_submitted: null,
+  commitment_appeared: null,
+  redeem_submitted: null,
+  redeem_appeared: null,
+  redeem_another_prover: null,
+  proof_fail: null,
+  commitment_fail: null,
+  redeem_fail: null,
 })
 
 const chainType = t.keyof({
@@ -43,15 +44,16 @@ const chainType = t.keyof({
 })
 
 const BurnApiStatus = t.type({
-  status: BurnStatusType,
   txid: t.string,
-  chain: chainType,
-  midnight_txid: t.union([t.string, t.null]),
+  tx_value: t.union([t.number, t.null]),
+  status: BurnStatusType,
   burn_tx_height: t.union([t.number, t.null]),
   current_source_height: t.number,
   processing_start_height: t.union([t.number, t.null]),
-  last_tag_height: t.number,
-  tx_value: t.union([t.number, t.null, t.undefined]),
+  commitment_txid: t.union([t.string, t.null]),
+  redeem_txid: t.union([t.string, t.null]),
+  chain: notRequired(chainType),
+  last_tag_height: notRequired(t.number),
 })
 
 const BurnApiStatuses = t.array(t.union([BurnApiStatus, NoBurnStatus]))
@@ -71,12 +73,13 @@ const BurnType = t.type({
 })
 
 const ChainInfo = t.type({
-  source_chain: chainType,
   chain_id: t.number,
   min_fee: t.number,
 })
 
-const ProverInfo = t.record(t.string, ChainInfo)
+const ProverInfo = t.type({
+  chains: t.record(t.string, ChainInfo),
+})
 
 export type ChainInfo = t.TypeOf<typeof ChainInfo>
 
@@ -168,7 +171,7 @@ export const createBurn = async (
   prover: ProverConfig,
   address: string,
   chainId: ChainId,
-  reward: number,
+  fee: number,
   autoConversion: boolean,
 ): Promise<string> => {
   return httpRequest(
@@ -177,10 +180,10 @@ export const createBurn = async (
     '/api/v1/observe',
     {method: 'POST'},
     {
-      auto_dust_conversion: autoConversion,
-      chain_name: chainId,
       midnight_address: address,
-      reward,
+      chain: chainId,
+      fee,
+      auto_exchange: autoConversion,
     },
   )
     .then(tPromise.decode(BurnType))
@@ -190,7 +193,7 @@ export const createBurn = async (
 export const proveTransaction = async (
   prover: ProverConfig,
   txid: string,
-  burnAddress: BurnAddressInfo,
+  burnAddress: string,
 ): Promise<void> => {
   await httpRequest(
     prover,
@@ -199,18 +202,15 @@ export const proveTransaction = async (
     {method: 'POST'},
     {
       txid,
-      burn_params: {
-        midnight_address: burnAddress.midnightAddress,
-        reward: burnAddress.reward,
-        auto_dust_conversion: burnAddress.autoConversion,
-        chain_name: burnAddress.chainId,
-      },
+      burn_address: burnAddress,
     },
   )
 }
 
-export const getInfo = async (prover: ProverConfig): Promise<ChainInfo[]> => {
+export const getInfo = async (
+  prover: ProverConfig,
+): Promise<Partial<Record<ChainId, ChainInfo>>> => {
   return httpRequest(prover, 'submitter', '/api/v1/info', {method: 'GET'})
     .then(tPromise.decode(ProverInfo))
-    .then((p: Record<string, ChainInfo>) => _.values(p))
+    .then(({chains}) => chains)
 }

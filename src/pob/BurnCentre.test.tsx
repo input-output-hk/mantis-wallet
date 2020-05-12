@@ -9,10 +9,11 @@ import {UNITS} from '../common/units'
 import {abbreviateAmount, formatPercentage} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BurnActivity} from './BurnActivity'
-import {BurnApiStatus, BurnStatusType} from './api/prover'
+import {BurnStatusType} from './api/prover'
 import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
-import {BurnStatusDisplay, TX_VALUE_TOO_LOW_MESSAGE} from './BurnStatusDisplay'
+import {BurnStatusDisplay} from './BurnStatusDisplay'
+import {RealBurnStatus, BurnAddressInfo} from './pob-state'
 
 const {ETH_TESTNET} = CHAINS
 
@@ -100,13 +101,24 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
 
   const burnAddress3 = 'burn-address-3'
   const errorForBurnAddress3 = 'This is an error message for Burn Address #3'
-  const lastStatuses: Array<BurnApiStatus & {midnight_txid_height: number}> = [
+
+  const burnAddressInfo: BurnAddressInfo = {
+    midnightAddress: 'transparent-midnight-address',
+    chainId: 'BTC_TESTNET',
+    autoConversion: false,
+    reward: 1e16,
+  }
+
+  const lastStatuses: RealBurnStatus[] = [
     {
-      status: 'BURN_OBSERVED',
+      burnAddressInfo,
+      status: 'tx_found',
       txid: 'source-chain-burn-transaction-id-1',
       chain: 'BTC_TESTNET',
-      midnight_txid: 'midnight-transaction-id-1',
-      midnight_txid_height: 10,
+      commitment_txid: 'midnight-transaction-id-1',
+      commitment_txid_height: 10,
+      redeem_txid: null,
+      redeem_txid_height: null,
       burn_tx_height: 1,
       current_source_height: 1,
       processing_start_height: 1,
@@ -114,11 +126,14 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       tx_value: 20,
     },
     {
-      status: 'BURN_OBSERVED',
+      burnAddressInfo,
+      status: 'tx_found',
       txid: 'source-chain-burn-transaction-id-2',
       chain: 'BTC_TESTNET',
-      midnight_txid: 'midnight-transaction-id-2',
-      midnight_txid_height: 10,
+      commitment_txid: 'midnight-transaction-id-1',
+      commitment_txid_height: 10,
+      redeem_txid: null,
+      redeem_txid_height: null,
       burn_tx_height: 1,
       current_source_height: 1,
       processing_start_height: 1,
@@ -154,10 +169,10 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
   expect(getAllByText(burnAddress3, {exact: false})).toHaveLength(2)
 
   // all valid statuses are shown
-  lastStatuses.map(({txid, midnight_txid: mTxid, chain}) => {
+  lastStatuses.map(({txid, commitment_txid: mTxid, burnAddressInfo: {chainId}}) => {
     expect(getByText(txid)).toBeInTheDocument()
     mTxid && expect(getByText(txid)).toBeInTheDocument()
-    expect(getAllByText(CHAINS[chain].symbol, {exact: false})).not.toHaveLength(0)
+    expect(getAllByText(CHAINS[chainId].symbol, {exact: false})).not.toHaveLength(0)
   })
 
   // no burn observed error is shown for Burn Address #1
@@ -190,10 +205,17 @@ const syncStatus: SynchronizationStatus = {
 }
 
 const burnStatus = {
+  burnAddressInfo: {
+    midnightAddress: 'transparent-midnight-address',
+    chainId: 'BTC_TESTNET',
+    autoConversion: false,
+    reward: 1e16,
+  },
   txid: 'source-chain-burn-transaction-id-1',
   chain: 'BTC_TESTNET',
-  midnight_txid: 'midnight-transaction-id-1',
-  midnight_txid_height: 10,
+  commitment_txid: 'midnight-transaction-id-1',
+  commitment_txid_height: 10,
+  redeem_txid: null,
   burn_tx_height: 1000,
   current_source_height: 1027,
   processing_start_height: 1100,
@@ -208,7 +230,7 @@ const renderBurnStatusDisplay = (status: BurnStatusType): RenderResult =>
         {
           status,
           ...burnStatus,
-        } as BurnApiStatus & {midnight_txid_height: number}
+        } as RealBurnStatus
       }
       address={'burnAddress'}
       syncStatus={syncStatus}
@@ -216,7 +238,7 @@ const renderBurnStatusDisplay = (status: BurnStatusType): RenderResult =>
   )
 
 test('Burn Status - Display burn transaction found', async () => {
-  const {getByText, getAllByTitle} = renderBurnStatusDisplay('BURN_OBSERVED')
+  const {getByText, getAllByTitle} = renderBurnStatusDisplay('tx_found')
 
   expect(getByText(`${formatPercentage(0.27)}%`)).toBeInTheDocument()
   expect(getAllByTitle('Checked')).toHaveLength(1)
@@ -224,16 +246,8 @@ test('Burn Status - Display burn transaction found', async () => {
   expect(getAllByTitle('Unknown')).toHaveLength(2)
 })
 
-test('Burn Status - Display fee too low error', async () => {
-  const {getByText, getAllByTitle} = renderBurnStatusDisplay('TX_VALUE_TOO_LOW')
-
-  expect(getByText(TX_VALUE_TOO_LOW_MESSAGE)).toBeInTheDocument()
-  expect(getAllByTitle('Checked')).toHaveLength(1)
-  expect(getAllByTitle('Failed')).toHaveLength(3)
-})
-
 test('Burn Status - Display proof ready status', async () => {
-  const {getAllByTitle} = renderBurnStatusDisplay('PROOF_READY')
+  const {getAllByTitle} = renderBurnStatusDisplay('commitment_submitted')
 
   expect(getAllByTitle('Checked')).toHaveLength(2)
   expect(getAllByTitle('In progress')).toHaveLength(1)
@@ -241,7 +255,7 @@ test('Burn Status - Display proof ready status', async () => {
 })
 
 test('Burn Status - Display proving started status', async () => {
-  const {getAllByTitle} = renderBurnStatusDisplay('COMMITMENT_APPEARED')
+  const {getAllByTitle} = renderBurnStatusDisplay('commitment_appeared')
 
   expect(getAllByTitle('Checked')).toHaveLength(2)
   expect(getAllByTitle('In progress')).toHaveLength(1)
@@ -249,14 +263,14 @@ test('Burn Status - Display proving started status', async () => {
 })
 
 test('Burn Status - Display proving successful status', async () => {
-  const {getAllByTitle} = renderBurnStatusDisplay('REVEAL_APPEARED')
+  const {getAllByTitle} = renderBurnStatusDisplay('redeem_appeared')
 
   expect(getAllByTitle('Checked')).toHaveLength(3)
   expect(getAllByTitle('In progress')).toHaveLength(1)
 })
 
-test('Burn Status - Display proving confirmed status', async () => {
-  const {getAllByTitle} = renderBurnStatusDisplay('REVEAL_CONFIRMED')
+// test('Burn Status - Display proving confirmed status', async () => {
+//   const {getAllByTitle} = renderBurnStatusDisplay('REVEAL_CONFIRMED')
 
-  expect(getAllByTitle('Checked')).toHaveLength(4)
-})
+//   expect(getAllByTitle('Checked')).toHaveLength(4)
+// })
