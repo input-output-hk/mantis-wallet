@@ -6,7 +6,7 @@ import {DialogSeedPhrase} from './DialogSeedPhrase'
 import './DialogSecrets.scss'
 
 export enum RecoveryMethod {
-  SpendingKey = 'Private key',
+  SpendingKey = 'Private Key',
   SeedPhrase = 'Recovery Phrase',
 }
 

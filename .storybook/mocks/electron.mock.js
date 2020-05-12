@@ -9,4 +9,9 @@ module.exports = {
       ],
     }),
   },
+  ipcRenderer: {
+    on: () => undefined,
+    removeAllListeners: () => undefined,
+    send: () => undefined,
+  },
 }

@@ -56,7 +56,7 @@ export class SpawnedMidnightProcess {
   }
 }
 
-export const processExececutablePath = (processConfig: ProcessConfig): string => {
+export const processExecutablePath = (processConfig: ProcessConfig): string => {
   const thePath = resolve(processConfig.packageDirectory, 'bin', processConfig.executableName)
 
   return isWin ? `"${thePath}.bat"` : thePath
@@ -67,7 +67,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   dataDir: string,
   processConfig: ProcessConfig,
 ) => {
-  const executablePath = processExececutablePath(processConfig)
+  const executablePath = processExecutablePath(processConfig)
 
   const settingsAsArguments = pipe(
     processConfig.additionalSettings,
@@ -82,7 +82,9 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   return {
     spawn: () => {
       console.info(
-        `spawning ${name} (from ${processConfig.packageDirectory}): ${executablePath} ${settingsAsArguments}`,
+        `spawning ${name} (from ${
+          processConfig.packageDirectory
+        }): ${executablePath} ${settingsAsArguments.join(' ')}`,
       )
       return new SpawnedMidnightProcess(
         name,

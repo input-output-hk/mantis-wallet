@@ -7,7 +7,14 @@ import convict from 'convict'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
-import {ClientName, Config, ProcessConfig, ProverConfig} from './type'
+import {
+  ClientName,
+  Config,
+  ProcessConfig,
+  ProverConfig,
+  ContractConfigItem,
+  LunaManagedConfig,
+} from './type'
 
 const proverConfig: convict.Schema<ProverConfig> = {
   name: {
@@ -22,8 +29,26 @@ const proverConfig: convict.Schema<ProverConfig> = {
   },
 }
 
+const contractConfigItemSchema: convict.Schema<ContractConfigItem> = {
+  networkName: {
+    doc: 'Name of the network',
+    format: String,
+    default: '',
+  },
+  glacierDrop: {
+    doc: 'Glacier Drop contract address',
+    format: 'bech32',
+    default: '',
+  },
+  constantsRepo: {
+    doc: 'Constants Repository contract address',
+    format: 'bech32',
+    default: '',
+  },
+}
+
 convict.addFormats({
-  ['existing-directory']: {
+  'existing-directory': {
     validate(val: unknown): void {
       if (typeof val != 'string') {
         throw new Error('Expected a string containing path to existing directory')
@@ -34,10 +59,10 @@ convict.addFormats({
       }
     },
   },
-  ['settings-map']: {
+  'settings-map': {
     validate(val: unknown): void {
-      if (!(val instanceof Map)) {
-        throw new Error(`Expected ${JSON.stringify(val)} to be a Map`)
+      if (!(val instanceof Map) && !(val instanceof Object)) {
+        throw new Error(`Expected ${JSON.stringify(val)} to be a Map/Object`)
       }
     },
     coerce(val: unknown): Map<string, string> {
@@ -79,6 +104,27 @@ convict.addFormats({
         if (!possibleProver.name) {
           throw new Error("Name shouldn't be empty for prover")
         }
+      })
+    },
+  },
+  'contract-config': {
+    validate(contractConfigs: unknown) {
+      if (!_.isArray(contractConfigs)) {
+        throw Error('Must be Array')
+      }
+
+      const networkNames = new Set()
+
+      contractConfigs.forEach((item) => {
+        convict(contractConfigItemSchema)
+          .load(item)
+          .validate()
+
+        if (networkNames.has(item.networkName)) {
+          throw Error(`Contract config contains ${item.networkName} more than once.`)
+        }
+
+        networkNames.add(item.networkName)
       })
     },
   },
@@ -194,9 +240,21 @@ const configGetter = convict({
         directoryName: 'wallet',
       },
       additionalSettings: {
+        // FIXME: https://github.com/mozilla/node-convict/issues/250
         'midnight.network.rpc.http.cors-allowed-origins': '*', // Make it possible for Luna to access Wallet's RPC
       },
     }),
+  },
+  contractConfig: {
+    doc: 'A collection of contract address configs',
+    format: 'contract-config',
+    default: [
+      {
+        networkName: 'development',
+        glacierDrop: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95',
+        constantsRepo: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5gzg0gy',
+      },
+    ],
   },
 })
 
@@ -212,13 +270,16 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
     }))
     .forEach((configSource) => {
       if (!configSource.doesExist) {
-        console.warn(
+        console.info(
           `Tried to load ${configSource.name}, (resolved to: ${configSource.path}) but it doesn't exist. Skipping`,
         )
       } else {
         configGetter.loadFile(configSource.path)
       }
     })
+
+  // FIXME: https://github.com/mozilla/node-convict/issues/250
+  // configGetter.validate()
 
   return pipe(configGetter.getProperties() as Config, (config) => ({
     ...config,
@@ -231,8 +292,52 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
 export const config = loadConfigs([
   {
     name: 'platform-specific configuration',
-    path: path.resolve(__dirname, '..', '..', 'platform-config.json5'),
+    path: path.resolve(__dirname, '..', '..', 'config-platform.json5'),
   },
   {name: 'user configuration', path: path.resolve(__dirname, '..', '..', 'config.json5')},
+  {
+    name: 'contract address config',
+    path: path.resolve(__dirname, '..', '..', 'config-contract.json5'),
+  },
   {name: 'environment variable LUNA_CONFIG_FILE', path: process.env.LUNA_CONFIG_FILE || ''},
 ])
+
+// Luna managed config
+
+const lunaManagedConfigSchema = {
+  selectedNetwork: {
+    doc: 'Name of the network to which Luna is connected',
+    format: String,
+    default: 'development',
+  },
+  miningEnabled: {
+    doc: 'Whether mining is enabled or not',
+    format: Boolean,
+    default: false,
+  },
+  pkd: {
+    format: String,
+    default: '',
+  },
+  diversifier: {
+    format: String,
+    default: '',
+  },
+  ovk: {
+    format: String,
+    default: '',
+  },
+}
+
+export const lunaManagedConfigPath = path.resolve(config.dataDir, 'config-luna-managed.json')
+
+export const loadLunaManagedConfig = (): LunaManagedConfig => {
+  const lunaManagedConfigGetter = convict(lunaManagedConfigSchema)
+  if (fs.existsSync(lunaManagedConfigPath)) {
+    lunaManagedConfigGetter.loadFile(lunaManagedConfigPath)
+  } else {
+    console.info(`Luna managed config doesn't exist at path: ${lunaManagedConfigPath}`)
+  }
+  lunaManagedConfigGetter.validate()
+  return lunaManagedConfigGetter.getProperties()
+}

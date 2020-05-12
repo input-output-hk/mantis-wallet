@@ -12,6 +12,8 @@ import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
+const DEV_MODE = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+
 export const Sidebar = (): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
@@ -36,6 +38,9 @@ export const Sidebar = (): JSX.Element => {
 
   return (
     <div className="Sidebar">
+      {DEV_MODE && (
+        <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
+      )}
       <div className="logo">
         <img src={logo} alt="logo" />
       </div>

@@ -12,10 +12,12 @@ import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
-import {MidnightProcess, processExececutablePath, SpawnedMidnightProcess} from './MidnightProcess'
 import {ClientName} from '../config/type'
-import {config} from '../config/main'
+import {config, loadLunaManagedConfig} from '../config/main'
+import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
 import {buildMenu, buildRemixMenu} from './menu'
+import {getMiningParams} from './dynamic-config'
+import {ipcListen} from './util'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -128,33 +130,37 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
+//
+// Configuartion
+//
+
+const shared = {
+  lunaConfig: () => config,
+  lunaManagedConfig: () => loadLunaManagedConfig(),
+}
+
 // Make configuration available for renderer process
 app.on('remote-get-global', (event, webContents, name) => {
-  if (name === 'lunaConfig') {
+  if (name in shared) {
     event.preventDefault()
     // Electron extends DOM Event type, whose returnValue is typed to boolean
     // while electron encourages to return any value
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    event.returnValue = config
+    event.returnValue = shared[name]()
   }
 })
 
+//
 // Handle client child processes
-if (config.runClients) {
-  const spawners = pipe(
-    config.clientConfigs,
-    record.toArray,
-    array.map(([name, processConfig]) =>
-      MidnightProcess(spawn)(name, config.dataDir, processConfig),
-    ),
-  )
+//
 
+if (config.runClients) {
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
     console.info('Fetching zkSNARK parameters')
-    const nodePath = processExececutablePath(config.clientConfigs.node)
+    const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
       cwd: config.clientConfigs.node.packageDirectory,
     })
@@ -190,9 +196,17 @@ if (config.runClients) {
     ).subscribe(console.info)
   }
 
-  function spawnClients(): void {
+  function spawnClients(extraParams: Record<string, Record<string, string | null>>): void {
     const clients = pipe(
-      spawners,
+      config.clientConfigs,
+      record.toArray,
+      array.map(([name, processConfig]) => {
+        const finalProcessConfig =
+          !!extraParams && extraParams[name] && !_.isEmpty(extraParams[name])
+            ? _.merge(processConfig)({additionalSettings: extraParams[name]})
+            : processConfig
+        return MidnightProcess(spawn)(name, config.dataDir, finalProcessConfig)
+      }),
       array.map((spawner) => spawner.spawn()),
     )
 
@@ -217,9 +231,19 @@ if (config.runClients) {
       : Promise.resolve()
   }
 
+  const startClients = async (): Promise<void> => {
+    try {
+      const extraParams = await getMiningParams()
+      await spawnClients(extraParams)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   async function restartClients(): Promise<void> {
     console.info('restarting clients')
-    return killClients().then(spawnClients)
+    await killClients()
+    await startClients()
   }
 
   function killAndQuit(event: Event): void {
@@ -229,8 +253,18 @@ if (config.runClients) {
     }
   }
 
-  fetchParams().then(() => spawnClients())
+  fetchParams().then(startClients)
+
   app.on('before-quit', killAndQuit)
   app.on('will-quit', killAndQuit)
   app.on('window-all-closed', killAndQuit)
+
+  ipcListen('restart-clients', async (event) => {
+    try {
+      await killClients()
+    } catch (e) {
+      console.error(e)
+      event.reply('restart-clients-failure', e.message)
+    }
+  })
 }

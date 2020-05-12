@@ -227,7 +227,13 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const loadConstants = async (): Promise<GlacierConstants> => {
     const toNumber = (raw: string): number => parseInt(raw, 16)
-    const toBigNumber = (raw: string): BigNumber => new BigNumber(raw)
+    const toBigNumber = (raw: string): BigNumber => {
+      const result = new BigNumber(raw)
+      if (result.isNaN()) {
+        throw Error('Failed to load Glacier Drop constants from smart contract')
+      }
+      return result
+    }
 
     return {
       periodConfig: {

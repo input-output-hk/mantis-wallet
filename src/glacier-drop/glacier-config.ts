@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js'
+import {loadLunaManagedConfig, getContractAddresses} from '../config/renderer'
+import {DisplayChain} from '../pob/chains'
 import ethereumLogo from '../assets/icons/chains/ethereum.svg'
 import ethereumClippedLogo from '../assets/icons/chains/ethereum-clipped.svg'
 import ethereumBurnLogo from '../assets/icons/chains/m-eth.svg'
-import {DisplayChain} from '../pob/chains'
 
 export const ETC_CHAIN: DisplayChain = {
   symbol: 'ETC',
@@ -18,8 +19,17 @@ export const BLOCK_TIME_SECONDS = 3.9 * 60
 export const TOTAL_ETHER_IN_SNAPSHOT = new BigNumber('99987579302527058980101585')
 
 // Contract Addresses
-export const GLACIER_DROP_ADDRESS = 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95'
-export const CONSTANTS_REPO_ADDRESS = 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5gzg0gy'
+const contractAddresses = getContractAddresses()
+const lunaManagedConfig = loadLunaManagedConfig()
+const addressConfig =
+  lunaManagedConfig.selectedNetwork in contractAddresses
+    ? contractAddresses[lunaManagedConfig.selectedNetwork]
+    : {
+        glacierDrop: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95',
+        constantsRepo: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5gzg0gy',
+      }
+export const GLACIER_DROP_ADDRESS = addressConfig.glacierDrop
+export const CONSTANTS_REPO_ADDRESS = addressConfig.constantsRepo
 
 // Contract Call Defaults
 export const DEFAULT_GAS_PRICE = '0'
