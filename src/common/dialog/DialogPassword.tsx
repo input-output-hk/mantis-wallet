@@ -2,8 +2,8 @@ import React, {useState} from 'react'
 import {Option, none, some, getOrElse, isNone, getFirstMonoid} from 'fp-ts/lib/Option'
 import {BorderlessInputPassword} from '../BorderlessInput'
 import {DialogColumns} from './DialogColumns'
-import './DialogPassword.scss'
 import {InlineError} from '../InlineError'
+import './DialogPassword.scss'
 
 interface DialogPasswordProps {
   onChange?: (value: string) => void
