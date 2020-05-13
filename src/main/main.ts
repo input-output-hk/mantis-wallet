@@ -4,7 +4,7 @@ import path from 'path'
 import url from 'url'
 import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
-import {app, BrowserWindow, dialog, globalShortcut, screen, Menu} from 'electron'
+import {app, BrowserWindow, dialog, screen, Menu} from 'electron'
 import {asapScheduler, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
@@ -99,11 +99,6 @@ function createWindow(): void {
     // Open the DevTools.
     mainWindow.webContents.openDevTools()
   }
-
-  // Register Ctrl+D to open DevTools
-  globalShortcut.register('CommandOrControl+D', () => {
-    mainWindow.webContents.openDevTools()
-  })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
