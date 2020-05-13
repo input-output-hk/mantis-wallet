@@ -77,7 +77,9 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
         }}
         footer={
           noCompatibleProvers && (
-            <DialogError>No compatible provers found. Please select different token.</DialogError>
+            <DialogError>
+              No compatible provers found. Please, select a different token.
+            </DialogError>
           )
         }
       >
