@@ -5,10 +5,9 @@ import * as os from 'os'
 import * as rxop from 'rxjs/operators'
 import {EMPTY, fromEvent, generate, merge, Observable} from 'rxjs'
 import * as option from 'fp-ts/lib/Option'
-import * as record from 'fp-ts/lib/Record'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
-import {ClientName, ProcessConfig} from '../config/type'
+import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
 import {readableToObservable} from './streamUtils'
 
 const isWin = os.platform() === 'win32'
@@ -69,18 +68,21 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
 ) => {
   const executablePath = processExecutablePath(processConfig)
 
-  const settingsAsArguments = pipe(
-    processConfig.additionalSettings,
-    record.insertAt(
-      processConfig.dataDir.settingName,
-      path.resolve(dataDir, processConfig.dataDir.directoryName),
-    ),
-    Object.entries,
-    array.map(([key, value]) => `-D${key}=${value}`),
-  )
-
   return {
-    spawn: () => {
+    name,
+    spawn: (additionalConfig: ClientSettings) => {
+      const settingsAsArguments = pipe(
+        {
+          ...processConfig.additionalSettings,
+          ...additionalConfig,
+          [processConfig.dataDir.settingName]: path.resolve(
+            dataDir,
+            processConfig.dataDir.directoryName,
+          ),
+        },
+        Object.entries,
+        array.map(([key, value]) => `-D${key}=${value}`),
+      )
       console.info(
         `spawning ${name} (from ${
           processConfig.packageDirectory

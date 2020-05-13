@@ -1,11 +1,11 @@
 import React, {ComponentType} from 'react'
 import {WalletState, WalletData, WalletStatus} from './wallet-state'
+import {Filter} from '../shared/typeUtils'
 
 export type PropsWithWalletState<TProps extends object, TState extends WalletData> = {
   walletState: TState
 } & TProps
 
-type Filter<T, U> = T extends U ? T : never // Remove types from T that are not assignable to U
 type StateByStatus<TStatus extends WalletStatus> = Filter<WalletData, {walletStatus: TStatus}>
 
 const isInStatus = <TStatus extends WalletStatus>(

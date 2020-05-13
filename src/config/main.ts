@@ -1,12 +1,13 @@
 // Convict formats require throwing errors to validate values
 import path from 'path'
 import fs from 'fs'
-import * as os from 'os'
 import {homedir} from 'os'
 import convict from 'convict'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
+import {option} from 'fp-ts'
+import {Option} from 'fp-ts/lib/Option'
 import {
   ClientName,
   Config,
@@ -15,6 +16,9 @@ import {
   ContractConfigItem,
   LunaManagedConfig,
 } from './type'
+import {tildeToHome} from '../main/pathUtils'
+import {mapProp, optionZip, through} from '../shared/utils'
+import {TLSConfig} from '../main/tls'
 
 const proverConfig: convict.Schema<ProverConfig> = {
   name: {
@@ -132,7 +136,7 @@ convict.addFormats({
 
 const defaultDataDir = path.resolve(homedir(), '.luna')
 const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'midnight-dist')
-const midnightVersion = 'v0.10.0'
+const midnightVersion = 'v0.11.0'
 
 const clientConfig = (
   name: ClientName,
@@ -173,7 +177,7 @@ const clientConfig = (
 
 const configGetter = convict({
   rpcAddress: {
-    default: 'http://127.0.0.1:8342/',
+    default: 'https://127.0.0.1:8342/',
     format: 'url',
     arg: 'rpc-address',
     env: 'LUNA_RPC_ADDRESS',
@@ -202,6 +206,20 @@ const configGetter = convict({
     arg: 'data-dir',
     env: 'LUNA_DATA_DIR',
     doc: 'Directory, where Luna stores its all data',
+  },
+  tls: {
+    keyStorePath: {
+      default: '',
+      arg: 'tls-key-store-path',
+      env: 'LUNA_TLS_KEY_STORE_PATH',
+      doc: 'Path to keystore file in PKCS#12 format to be used to validate certificates',
+    },
+    passwordPath: {
+      default: '',
+      arg: 'tls-password-path',
+      env: 'LUNA_TLS_PASSWORD_PATH',
+      doc: 'Path to password file, needed to decrypt keys in keystore',
+    },
   },
   runClients: {
     default: true,
@@ -281,12 +299,22 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
   // FIXME: https://github.com/mozilla/node-convict/issues/250
   // configGetter.validate()
 
-  return pipe(configGetter.getProperties() as Config, (config) => ({
-    ...config,
-    dataDir: config.dataDir.startsWith('~')
-      ? config.dataDir.replace(`~`, os.homedir())
-      : config.dataDir,
-  }))
+  return pipe(
+    configGetter.getProperties(),
+    mapProp('tls', ({keyStorePath, passwordPath}) => {
+      const handlePath: (path: string) => Option<string> = through(
+        option.fromNullable,
+        option.filter((p) => !_.isEmpty(p)),
+        option.map(tildeToHome),
+      )
+      return pipe(
+        optionZip(handlePath(keyStorePath), handlePath(passwordPath)),
+        option.map(([keyStorePath, passwordPath]): TLSConfig => ({keyStorePath, passwordPath})),
+      )
+    }),
+    (config) => config as Config,
+    mapProp('dataDir', tildeToHome),
+  )
 }
 
 export const config = loadConfigs([

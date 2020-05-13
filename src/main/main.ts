@@ -4,7 +4,7 @@ import path from 'path'
 import url from 'url'
 import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
-import {app, BrowserWindow, dialog, screen, Menu} from 'electron'
+import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
 import {asapScheduler, scheduled} from 'rxjs'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as rxop from 'rxjs/operators'
@@ -12,11 +12,19 @@ import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
+import {option} from 'fp-ts'
 import {LunaManagedConfigPaths} from '../shared/ipc-types'
-import {ClientName} from '../config/type'
-import {config, loadLunaManagedConfig} from '../config/main'
+import {ClientName, SettingsPerClient} from '../config/type'
 import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
-import {updateConfig, getMiningParams, getCoinbaseParams} from './dynamic-config'
+import {
+  configToParams,
+  registerCertificateValidationHandler,
+  setupExternalTLS,
+  setupOwnTLS,
+} from './tls'
+import {flatTap, prop} from '../shared/utils'
+import {config, loadLunaManagedConfig} from '../config/main'
+import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
 import {ipcListen} from './util'
 
@@ -180,11 +188,40 @@ ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
   }
 })
 
-//
-// Handle client child processes
-//
+//Handle TLS from external config
+if (!config.runClients) {
+  pipe(
+    config.tls,
+    option.map(setupExternalTLS),
+    option.fold(
+      () => void 0,
+      (tlsDataPromise) =>
+        tlsDataPromise
+          .then((tlsData) => registerCertificateValidationHandler(app, tlsData, config.rpcAddress))
+          .catch((error) => {
+            console.error(error)
+            dialog.showErrorBox('Luna startup error', error.message)
+            app.exit(1)
+          }),
+    ),
+  )
+}
 
+//
+// Handle client child processes with TLS
+//
 if (config.runClients) {
+  const tlsDataPromise = setupOwnTLS(processExecutablePath(config.clientConfigs.node))
+    .then((tlsData) => ({tlsData, tlsParams: configToParams(tlsData)}))
+    .catch((error): never => {
+      console.error(error)
+      dialog.showErrorBox('Luna startup error', error.message)
+      app.exit(1)
+      // Little trick to make typechecker see that this promise cannot contain undefined
+      // Because always an error is thrown
+      throw new Error('exiting')
+    })
+
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
@@ -225,20 +262,14 @@ if (config.runClients) {
     ).subscribe(console.info)
   }
 
-  function spawnClients(
-    extraParams: Partial<Record<ClientName, Record<string, string | null>>>,
-  ): void {
+  function spawnClients(additionalSettings: SettingsPerClient): void {
     const clients = pipe(
       config.clientConfigs,
       record.toArray,
-      array.map(([name, processConfig]) => {
-        const finalProcessConfig =
-          !!extraParams && extraParams[name] && !_.isEmpty(extraParams[name])
-            ? _.merge(processConfig)({additionalSettings: extraParams[name]})
-            : processConfig
-        return MidnightProcess(spawn)(name, config.dataDir, finalProcessConfig)
-      }),
-      array.map((spawner) => spawner.spawn()),
+      array.map(([name, processConfig]) =>
+        MidnightProcess(spawn)(name, config.dataDir, processConfig),
+      ),
+      array.map((spawner) => spawner.spawn(additionalSettings[spawner.name])),
     )
 
     logClients(Object.values(clients))
@@ -262,19 +293,18 @@ if (config.runClients) {
       : Promise.resolve()
   }
 
-  const startClients = async (): Promise<void> => {
-    try {
-      const extraParams = await getMiningParams()
-      await spawnClients(extraParams)
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  const startClients = (): Promise<void> =>
+    Promise.all([getMiningParams(), tlsDataPromise.then(prop('tlsParams'))])
+      .then(_.mergeAll)
+      .then(spawnClients)
+      .catch((error) => {
+        console.error(error)
+        return Promise.reject(error)
+      })
 
   async function restartClients(): Promise<void> {
     console.info('restarting clients')
-    await killClients()
-    await startClients()
+    return killClients().then(startClients)
   }
 
   function killAndQuit(event: Event): void {
@@ -284,7 +314,10 @@ if (config.runClients) {
     }
   }
 
-  fetchParams().then(startClients)
+  tlsDataPromise.then(flatTap(() => fetchParams())).then(startClients)
+  tlsDataPromise.then(({tlsData}) => {
+    registerCertificateValidationHandler(app, tlsData, config.rpcAddress)
+  })
 
   app.on('before-quit', killAndQuit)
   app.on('will-quit', killAndQuit)

@@ -1,3 +1,14 @@
+import {Option} from 'fp-ts/lib/Option'
+import {TLSConfig} from '../main/tls'
+
+export type ClientSettings = Record<string, string | boolean | null>
+export type SettingsPerClient = Record<ClientName, ClientSettings>
+export const SettingsPerClient = (data: Partial<SettingsPerClient>): SettingsPerClient => ({
+  node: {},
+  wallet: {},
+  ...data,
+})
+
 export interface ProcessConfig {
   packageDirectory: string
   executableName: string
@@ -5,7 +16,7 @@ export interface ProcessConfig {
     settingName: string
     directoryName: string
   }
-  additionalSettings: Record<string, string>
+  additionalSettings: ClientSettings
 }
 
 export interface ProverConfig {
@@ -21,6 +32,7 @@ export interface ContractConfigItem {
 }
 
 export type ClientName = 'node' | 'wallet'
+export const clientNames: ClientName[] = ['node', 'wallet']
 
 export interface Config {
   rpcAddress: string
@@ -31,6 +43,7 @@ export interface Config {
   runClients: boolean
   clientConfigs: Record<ClientName, ProcessConfig>
   openDevTools: boolean
+  tls: Option<TLSConfig>
 }
 
 export interface LunaManagedConfig {

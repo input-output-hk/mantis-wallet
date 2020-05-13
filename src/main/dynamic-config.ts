@@ -3,7 +3,7 @@ import {promises as fs} from 'fs'
 import {exec} from 'child_process'
 import * as _ from 'lodash/fp'
 import {processExecutablePath} from './MidnightProcess'
-import {ProcessConfig, LunaManagedConfig, ClientName} from '../config/type'
+import {LunaManagedConfig, ProcessConfig, SettingsPerClient} from '../config/type'
 import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
 
 const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
@@ -42,24 +42,22 @@ export async function updateConfig(toUpdate: Partial<LunaManagedConfig>): Promis
   await fs.writeFile(lunaManagedConfigPath, JSON.stringify(newConfig, undefined, 2), 'utf8')
 }
 
-export async function getMiningParams(): Promise<
-  Partial<Record<ClientName, Record<string, string | null>>>
-> {
+export async function getMiningParams(): Promise<SettingsPerClient> {
   const currentConfig = await loadLunaManagedConfig()
   if (!currentConfig.miningEnabled) {
-    return {
+    return SettingsPerClient({
       node: {
         'midnight.consensus.mining-enabled': 'false',
       },
-    }
+    })
   } else {
-    return {
+    return SettingsPerClient({
       node: {
         [getPrivateCoinbaseOptionPath('pkd')]: currentConfig.pkd,
         [getPrivateCoinbaseOptionPath('diversifier')]: currentConfig.diversifier,
         [getPrivateCoinbaseOptionPath('ovk')]: currentConfig.ovk,
         'midnight.consensus.mining-enabled': 'true',
       },
-    }
+    })
   }
 }
