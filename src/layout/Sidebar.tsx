@@ -12,7 +12,8 @@ import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
-const DEV_MODE = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+const DEV_MODE = true // FIXME: [PM-1966] add config option to enable "hack mode"
+// const DEV_MODE = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 export const Sidebar = (): JSX.Element => {
   const themeState = ThemeState.useContainer()
