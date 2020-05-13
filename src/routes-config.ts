@@ -5,9 +5,10 @@ import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
 import {BurnCentre} from './pob/BurnCentre'
 import {BurnCoins} from './pob/BurnCoins'
+import menuWalletsIcon from './assets/icons/menu-wallets.svg'
+import {Settings} from './Settings'
 import {GlacierDropOverview} from './glacier-drop/GlacierDropOverview'
 import menuPortfolioIcon from './assets/icons/menu-portfolio.svg'
-import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
 import menuGlacierIcon from './assets/icons/menu-glacier.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
@@ -65,6 +66,7 @@ export type RouteId =
   | 'BURN_COINS'
   | 'GLACIER_DROP'
   | 'SETTINGS'
+  | 'API_TEST'
 
 export interface Route {
   component: React.ComponentType
@@ -105,6 +107,10 @@ export const ROUTES: Routes = {
     menu: 'GLACIER_DROP',
   },
   SETTINGS: {
+    component: Settings,
+    menu: 'SETTINGS',
+  },
+  API_TEST: {
     component: ApiTest,
     menu: 'SETTINGS',
   },

@@ -5,8 +5,8 @@ import Password from 'antd/lib/input/Password'
 import {InputProps, PasswordProps} from 'antd/lib/input'
 import {BorderlessInput, BorderlessInputPassword} from '../BorderlessInput'
 import {InlineErrorProps} from '../InlineError'
-import './DialogInput.scss'
 import {DialogState} from '../Dialog'
+import './DialogInput.scss'
 
 interface DialogInputProps {
   id?: string

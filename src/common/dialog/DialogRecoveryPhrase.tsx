@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
-import './DialogRecoveryPhrase.scss'
 import {InlineError} from '../InlineError'
 import checkIcon from '../../assets/icons/check.svg'
+import './DialogRecoveryPhrase.scss'
 
 interface DialogRecoveryProps {
   recoveryPhraseShuffled: string[]

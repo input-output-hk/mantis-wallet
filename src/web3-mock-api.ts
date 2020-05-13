@@ -225,7 +225,7 @@ export const Web3MockApi: Web3API = {
       blockNumber: 2,
     }),
     getTransactionReceipt: () => null,
-    call: () => '',
+    call: () => '0x1',
   },
   midnight: {
     wallet: new MockWallet(),

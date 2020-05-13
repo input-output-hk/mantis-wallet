@@ -8,10 +8,12 @@ import {
   Account,
   RawSynchronizationStatus,
 } from './web3'
-import {ThemeState} from './theme-state'
-import {GlacierState} from './glacier-drop/glacier-state'
+import {getContractAddresses} from './config/renderer'
 import {WalletState} from './common/wallet-state'
+import {GlacierState} from './glacier-drop/glacier-state'
+import {updateSelectedNetworkConfig} from './common/ipc-util'
 import {BorderlessInput} from './common/BorderlessInput'
+import {DialogDropdown} from './common/dialog/DialogDropdown'
 import './ApiTest.scss'
 
 const web3 = makeWeb3Worker()
@@ -19,8 +21,8 @@ const wallet = web3.midnight.wallet
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
+  const contractAddresses = getContractAddresses()
   const walletState = WalletState.useContainer()
-  const themeState = ThemeState.useContainer()
   const glacierState = GlacierState.useContainer()
 
   const [message, setMessage] = useState<string>('')
@@ -85,7 +87,7 @@ export const ApiTest = (): JSX.Element => {
           />
         </div>
         <div className="input">
-          <label>Spending Key</label>
+          <label>Private Key</label>
           <BorderlessInput
             value={spendingKey}
             onChange={(e): void => setSpendingKey(e.target.value)}
@@ -98,6 +100,16 @@ export const ApiTest = (): JSX.Element => {
             onChange={(e): void => setSeedPhrase(e.target.value)}
           />
         </div>
+
+        {Object.keys(contractAddresses).length > 1 && (
+          <div>
+            <DialogDropdown
+              label="Selected Network"
+              options={Object.keys(contractAddresses)}
+              onChange={updateSelectedNetworkConfig}
+            />
+          </div>
+        )}
 
         <h2>Actions</h2>
         <TestButton onClick={(): Promise<SpendingKey & SeedPhrase> => wallet.create({passphrase})}>
@@ -118,7 +130,7 @@ export const ApiTest = (): JSX.Element => {
         <TestButton
           onClick={(): Promise<boolean> => wallet.restoreFromSpendingKey({passphrase, spendingKey})}
         >
-          Restore from Spending Key
+          Restore from Private Key
         </TestButton>
         <TestButton
           onClick={(): Promise<boolean> =>
@@ -136,14 +148,6 @@ export const ApiTest = (): JSX.Element => {
         <TestButton onClick={(): Promise<void> => glacierState.removeClaims()}>
           Remove Claims
         </TestButton>
-
-        <Button
-          type="primary"
-          style={{display: 'block', marginBottom: '0.5rem'}}
-          onClick={() => themeState.switchTheme(themeState.theme === 'dark' ? 'light' : 'dark')}
-        >
-          Switch Theme
-        </Button>
       </div>
 
       <div>

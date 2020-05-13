@@ -12,10 +12,13 @@ import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
-import {MidnightProcess, processExececutablePath, SpawnedMidnightProcess} from './MidnightProcess'
+import {LunaManagedConfigPaths} from '../shared/ipc-types'
 import {ClientName} from '../config/type'
-import {config} from '../config/main'
+import {config, loadLunaManagedConfig} from '../config/main'
+import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
+import {updateConfig, getMiningParams, getCoinbaseParams} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
+import {ipcListen} from './util'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -128,33 +131,70 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
+//
+// Configuration
+//
+
+const shared = {
+  lunaConfig: () => config,
+  lunaManagedConfig: () => loadLunaManagedConfig(),
+}
+
 // Make configuration available for renderer process
 app.on('remote-get-global', (event, webContents, name) => {
-  if (name === 'lunaConfig') {
+  if (name in shared) {
     event.preventDefault()
     // Electron extends DOM Event type, whose returnValue is typed to boolean
     // while electron encourages to return any value
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    event.returnValue = config
+    event.returnValue = shared[name]()
   }
 })
 
-// Handle client child processes
-if (config.runClients) {
-  const spawners = pipe(
-    config.clientConfigs,
-    record.toArray,
-    array.map(([name, processConfig]) =>
-      MidnightProcess(spawn)(name, config.dataDir, processConfig),
-    ),
-  )
+ipcListen('update-config', async (event, keyPath: LunaManagedConfigPaths, value: string) => {
+  try {
+    await updateConfig({[keyPath]: value})
+    event.reply('update-config-success')
+  } catch (e) {
+    console.error(e)
+    event.reply('update-config-failure', e.message)
+  }
+})
 
+ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
+  if (!spendingKey) {
+    console.info('Disabling mining')
+    try {
+      await updateConfig({miningEnabled: false})
+    } catch (e) {
+      return event.reply('disable-mining-failure', e.message)
+    }
+    event.reply('disable-mining-success')
+    event.reply('update-config-success')
+  } else {
+    console.info(`Enabling mining with spending key: ${spendingKey}`)
+    try {
+      const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
+      await updateConfig({miningEnabled: true, ...coinbaseParams})
+    } catch (e) {
+      return event.reply('enable-mining-failure', e.message)
+    }
+    event.reply('enable-mining-success')
+    event.reply('update-config-success')
+  }
+})
+
+//
+// Handle client child processes
+//
+
+if (config.runClients) {
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
     console.info('Fetching zkSNARK parameters')
-    const nodePath = processExececutablePath(config.clientConfigs.node)
+    const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
       cwd: config.clientConfigs.node.packageDirectory,
     })
@@ -190,9 +230,19 @@ if (config.runClients) {
     ).subscribe(console.info)
   }
 
-  function spawnClients(): void {
+  function spawnClients(
+    extraParams: Partial<Record<ClientName, Record<string, string | null>>>,
+  ): void {
     const clients = pipe(
-      spawners,
+      config.clientConfigs,
+      record.toArray,
+      array.map(([name, processConfig]) => {
+        const finalProcessConfig =
+          !!extraParams && extraParams[name] && !_.isEmpty(extraParams[name])
+            ? _.merge(processConfig)({additionalSettings: extraParams[name]})
+            : processConfig
+        return MidnightProcess(spawn)(name, config.dataDir, finalProcessConfig)
+      }),
       array.map((spawner) => spawner.spawn()),
     )
 
@@ -217,9 +267,19 @@ if (config.runClients) {
       : Promise.resolve()
   }
 
+  const startClients = async (): Promise<void> => {
+    try {
+      const extraParams = await getMiningParams()
+      await spawnClients(extraParams)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   async function restartClients(): Promise<void> {
     console.info('restarting clients')
-    return killClients().then(spawnClients)
+    await killClients()
+    await startClients()
   }
 
   function killAndQuit(event: Event): void {
@@ -229,8 +289,18 @@ if (config.runClients) {
     }
   }
 
-  fetchParams().then(() => spawnClients())
+  fetchParams().then(startClients)
+
   app.on('before-quit', killAndQuit)
   app.on('will-quit', killAndQuit)
   app.on('window-all-closed', killAndQuit)
+
+  ipcListen('restart-clients', async (event) => {
+    try {
+      await killClients()
+    } catch (e) {
+      console.error(e)
+      event.reply('restart-clients-failure', e.message)
+    }
+  })
 }

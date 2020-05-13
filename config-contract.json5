@@ -1,0 +1,15 @@
+{
+    // Default contract addresses
+    "contractConfig": [
+      {
+        "networkName": "development",
+        "glacierDrop": "m-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95",
+        "constantsRepo": "m-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5gzg0gy",
+      },
+      {
+        "networkName": "testnet",
+        "glacierDrop": "m-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95",
+        "constantsRepo": "m-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5gzg0gy",
+      },
+    ],
+}

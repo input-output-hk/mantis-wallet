@@ -13,14 +13,30 @@ export interface ProverConfig {
   address: string
 }
 
+// Contract addresses / network
+export interface ContractConfigItem {
+  networkName: string
+  glacierDrop: string
+  constantsRepo: string
+}
+
 export type ClientName = 'node' | 'wallet'
 
 export interface Config {
   rpcAddress: string
   provers: ProverConfig[]
+  contractConfig: ContractConfigItem[]
   dataDir: string
   distPackagesDir: string
   runClients: boolean
   clientConfigs: Record<ClientName, ProcessConfig>
   openDevTools: boolean
+}
+
+export interface LunaManagedConfig {
+  selectedNetwork: string
+  miningEnabled: boolean
+  pkd: string
+  diversifier: string
+  ovk: string
 }

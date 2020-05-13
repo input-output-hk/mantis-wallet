@@ -2,8 +2,8 @@ import React from 'react'
 import {Dialog} from '../../common/Dialog'
 import {Chain} from '../chains'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import './BurnCoinsShowAddress.scss'
 import {copyToClipboard} from '../../common/clipboard'
+import './BurnCoinsShowAddress.scss'
 
 interface BurnCoinsShowAddressProps {
   chain: Chain

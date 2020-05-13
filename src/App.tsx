@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react'
+import {makeWeb3Worker} from './web3'
+import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
 import {ThemeState} from './theme-state'
 import {ProofOfBurnState} from './pob/pob-state'
@@ -7,12 +9,10 @@ import {RouterState} from './router-state'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
-import {makeWeb3Worker} from './web3'
-import {createPersistentStore} from './common/store'
+import {RemoteSettingsManager} from './RemoteSettingsManager'
 import './App.scss'
 
 const web3 = makeWeb3Worker()
-
 const store = createPersistentStore()
 
 const App: React.FC = () => {
@@ -51,6 +51,7 @@ const App: React.FC = () => {
               </ProofOfBurnState.Provider>
             </WalletState.Provider>
           </RouterState.Provider>
+          <RemoteSettingsManager />
         </div>
       ) : (
         <SplashScreen />
