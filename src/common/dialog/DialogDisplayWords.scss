@@ -12,6 +12,7 @@
     font-weight: bold;
     line-height: 30px;
     text-align: center;
+    user-select: none;
 
     @include themify($themes) {
       background-color: themed('secondary-background');
