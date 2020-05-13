@@ -12,11 +12,12 @@ import {mergeAll} from 'rxjs/operators'
 import * as record from 'fp-ts/lib/Record'
 import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
+import {LunaManagedConfigPaths} from '../shared/ipc-types'
 import {ClientName} from '../config/type'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
+import {updateConfig, getMiningParams, getCoinbaseParams} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
-import {getMiningParams} from './dynamic-config'
 import {ipcListen} from './util'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -131,7 +132,7 @@ function createWindow(): void {
 app.on('ready', createWindow)
 
 //
-// Configuartion
+// Configuration
 //
 
 const shared = {
@@ -148,6 +149,39 @@ app.on('remote-get-global', (event, webContents, name) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     event.returnValue = shared[name]()
+  }
+})
+
+ipcListen('update-config', async (event, keyPath: LunaManagedConfigPaths, value: string) => {
+  try {
+    await updateConfig({[keyPath]: value})
+    event.reply('update-config-success')
+  } catch (e) {
+    console.error(e)
+    event.reply('update-config-failure', e.message)
+  }
+})
+
+ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
+  if (!spendingKey) {
+    console.info('Disabling mining')
+    try {
+      await updateConfig({miningEnabled: false})
+    } catch (e) {
+      return event.reply('disable-mining-failure', e.message)
+    }
+    event.reply('disable-mining-success')
+    event.reply('update-config-success')
+  } else {
+    console.info(`Enabling mining with spending key: ${spendingKey}`)
+    try {
+      const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
+      await updateConfig({miningEnabled: true, ...coinbaseParams})
+    } catch (e) {
+      return event.reply('enable-mining-failure', e.message)
+    }
+    event.reply('enable-mining-success')
+    event.reply('update-config-success')
   }
 })
 
@@ -196,7 +230,9 @@ if (config.runClients) {
     ).subscribe(console.info)
   }
 
-  function spawnClients(extraParams: Record<string, Record<string, string | null>>): void {
+  function spawnClients(
+    extraParams: Partial<Record<ClientName, Record<string, string | null>>>,
+  ): void {
     const clients = pipe(
       config.clientConfigs,
       record.toArray,

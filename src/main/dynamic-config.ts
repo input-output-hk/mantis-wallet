@@ -3,15 +3,13 @@ import {promises as fs} from 'fs'
 import {exec} from 'child_process'
 import * as _ from 'lodash/fp'
 import {processExecutablePath} from './MidnightProcess'
-import {LunaManagedConfigPaths} from '../shared/ipc-types'
-import {ProcessConfig, LunaManagedConfig} from '../config/type'
-import {config, loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
-import {ipcListen} from './util'
+import {ProcessConfig, LunaManagedConfig, ClientName} from '../config/type'
+import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
 
 const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
   `midnight.consensus.private-coinbase.${option}`
 
-async function getCoinbaseParams(
+export async function getCoinbaseParams(
   walletBackendConfig: ProcessConfig,
   spendingKey: string,
 ): Promise<Pick<LunaManagedConfig, 'pkd' | 'diversifier' | 'ovk'>> {
@@ -36,7 +34,7 @@ async function getCoinbaseParams(
   }
 }
 
-async function updateConfig(toUpdate: Partial<LunaManagedConfig>): Promise<void> {
+export async function updateConfig(toUpdate: Partial<LunaManagedConfig>): Promise<void> {
   const previousConfig = loadLunaManagedConfig()
   const newConfig = _.merge(previousConfig)(toUpdate)
   console.info('Config changed')
@@ -44,42 +42,9 @@ async function updateConfig(toUpdate: Partial<LunaManagedConfig>): Promise<void>
   await fs.writeFile(lunaManagedConfigPath, JSON.stringify(newConfig, undefined, 2), 'utf8')
 }
 
-ipcListen('update-config', async (event, keyPath: LunaManagedConfigPaths, value: string) => {
-  try {
-    await updateConfig({[keyPath]: value})
-    event.reply('update-config-success')
-  } catch (e) {
-    console.error(e)
-    event.reply('update-config-failure', e.message)
-  }
-})
-
-ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
-  if (!spendingKey) {
-    // Disable mining
-    console.info('Disabling mining')
-    try {
-      await updateConfig({miningEnabled: false})
-    } catch (e) {
-      return event.reply('disable-mining-failure', e.message)
-    }
-    event.reply('disable-mining-success')
-    event.reply('update-config-success')
-  } else {
-    // Enable mining
-    console.info('Enabling mining')
-    try {
-      const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
-      await updateConfig({miningEnabled: true, ...coinbaseParams})
-    } catch (e) {
-      return event.reply('enable-mining-failure', e.message)
-    }
-    event.reply('enable-mining-success')
-    event.reply('update-config-success')
-  }
-})
-
-export async function getMiningParams(): Promise<{node: Record<string, string | null>}> {
+export async function getMiningParams(): Promise<
+  Partial<Record<ClientName, Record<string, string | null>>>
+> {
   const currentConfig = await loadLunaManagedConfig()
   if (!currentConfig.miningEnabled) {
     return {

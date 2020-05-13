@@ -2,15 +2,15 @@ import React, {useState, useEffect} from 'react'
 import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {ThemeState} from './theme-state'
+import {IPCToRendererChannelName} from './shared/ipc-types'
 import {withStatusGuard} from './common/wallet-status-guard'
 import {updateMiningConfig, ipcRemoveAllListeners, ipcListen} from './common/ipc-util'
-import {NoWallet} from './wallets/NoWallet'
 import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
+import {NoWallet} from './wallets/NoWallet'
 import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
 import {loadLunaManagedConfig} from './config/renderer'
-import './Settings.scss'
 import {LunaManagedConfig} from './config/type'
-import {IPCToRendererChannelName} from './shared/ipc-types'
+import './Settings.scss'
 
 const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
@@ -32,13 +32,13 @@ const _Settings = (): JSX.Element => {
 
   const reloadTriggers: IPCToRendererChannelName[] = ['disable-mining-success']
 
-  // subscribe on mount
   useEffect(() => {
-    reloadTriggers.forEach((channel) => ipcListen(channel, () => reloadConfig()))
-  }, [])
+    // subscribe on mount
+    reloadTriggers.forEach((channel) => ipcListen(channel, reloadConfig))
 
-  // unsubscribe on unmount
-  useEffect(() => () => reloadTriggers.forEach(ipcRemoveAllListeners), [])
+    // unsubscribe on unmount
+    return () => reloadTriggers.forEach(ipcRemoveAllListeners)
+  }, [])
 
   const updateMiningState = (miningEnabled: boolean): void => {
     if (!miningEnabled) {
@@ -74,9 +74,7 @@ const _Settings = (): JSX.Element => {
           miningConfigChannels.forEach(ipcRemoveAllListeners)
           setMiningConfigModalShown(false)
         }}
-        onFinish={() => {
-          reloadConfig()
-        }}
+        onFinish={reloadConfig}
       />
     </SettingsWrapper>
   )

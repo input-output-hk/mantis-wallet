@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {none, Option, isNone, some} from 'fp-ts/lib/Option'
 import {message} from 'antd'
+import {IPCToRendererChannelName} from './shared/ipc-types'
 import {wrapWithModal} from './common/LunaModal'
 import {Dialog} from './common/Dialog'
 import {ipcListen, restartClients, updateMiningConfig} from './common/ipc-util'
@@ -8,7 +9,6 @@ import {DialogInput} from './common/dialog/DialogInput'
 import {DialogError} from './common/dialog/DialogError'
 import {DialogMessage} from './common/dialog/DialogMessage'
 import './RestartPrompt.scss'
-import {IPCToRendererChannelName} from './shared/ipc-types'
 
 interface MiningConfigModalProps {
   onCancel: () => void
