@@ -31,7 +31,7 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
         autoFocus
         key="private-key-switch"
         label="Private Key"
-        description="Please make sure your screen is not visible to anyone but you to ensure security"
+        description="Please, make sure your screen is not visible to anyone but you to ensure security"
         checked={useSpendingKey}
         onChange={setUseSpendingKey}
       />
