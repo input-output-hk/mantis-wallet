@@ -9,8 +9,8 @@ import * as forge from 'node-forge'
 import {array, option} from 'fp-ts'
 import * as T from 'io-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {optionZip, prop, through} from '../shared/utils'
 import {ClientName, clientNames, ClientSettings, SettingsPerClient} from '../config/type'
+import {optionZip, prop, through} from '../shared/utils'
 
 const keyStoreFilename = 'midnightCA.p12'
 const passwordFilename = 'password'
@@ -151,9 +151,19 @@ export async function setupOwnTLS(nodeExecutablePath: string): Promise<TLSData> 
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'luna'))
   const keyStorePath = path.resolve(tempDir, keyStoreFilename)
   const passwordPath = path.resolve(tempDir, passwordFilename)
-  await promisify(childProcess.exec)(
-    `${nodeExecutablePath} keytool -genkeypair -keystore "${keyStorePath}" -storetype PKCS12 -dname "CN=${issuer}" -ext "san=ip:127.0.0.1,dns:localhost" -keypass ${password} -storepass ${password} -keyalg RSA -keysize 4096 -validity 9999 -ext KeyUsage:critical="keyCertSign" -ext BasicConstraints:critical="ca:true"`,
-  )
+  const keytoolOptions = [
+    `-genkeypair`,
+    `-keystore "${keyStorePath}"`,
+    `-storetype PKCS12`,
+    `-dname "CN=${issuer}"`,
+    `-ext "san=ip:127.0.0.1,dns:localhost"`,
+    `-keypass ${password}`,
+    `-storepass ${password}`,
+    `-keyalg RSA`,
+    `-keysize 4096`,
+    `-validity 9999`,
+  ]
+  await promisify(childProcess.exec)(`${nodeExecutablePath} keytool ${keytoolOptions.join(' ')}`)
   await fs.writeFile(passwordPath, password)
 
   const config: TLSConfig = {keyStorePath, passwordPath}
