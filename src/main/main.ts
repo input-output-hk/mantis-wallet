@@ -22,7 +22,7 @@ import {
   setupExternalTLS,
   setupOwnTLS,
 } from './tls'
-import {flatTap, prop} from '../shared/utils'
+import {flatTap, prop, wait} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
@@ -34,6 +34,8 @@ import {ipcListen} from './util'
 let mainWindowHandle: BrowserWindow | null = null
 
 let remixWindowHandle: BrowserWindow | null = null
+
+let shuttingDown = false
 
 function createRemixWindow(): void {
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
@@ -303,11 +305,16 @@ if (config.runClients) {
       })
 
   async function restartClients(): Promise<void> {
-    console.info('restarting clients')
-    return killClients().then(startClients)
+    if (!shuttingDown) {
+      console.info('restarting clients')
+      return killClients()
+        .then(() => wait(500))
+        .then(startClients)
+    }
   }
 
   function killAndQuit(event: Event): void {
+    shuttingDown = true
     if (runningClients) {
       event.preventDefault()
       killClients().then(() => app.quit())
