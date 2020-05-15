@@ -81,6 +81,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   processConfig: ProcessConfig,
 ) => {
   const executablePath = processExecutablePath(processConfig)
+  const processDataDir = path.resolve(dataDir, processConfig.dataDir.directoryName)
 
   return {
     name,
@@ -89,10 +90,8 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
         {
           ...processConfig.additionalSettings,
           ...additionalConfig,
-          [processConfig.dataDir.settingName]: path.resolve(
-            dataDir,
-            processConfig.dataDir.directoryName,
-          ),
+          [processConfig.dataDir.settingName]: processDataDir,
+          LOGS_DIR: path.resolve(processDataDir, 'logs'),
         },
         Object.entries,
         array.map(([key, value]) => `-D${key}=${value}`),
