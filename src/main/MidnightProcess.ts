@@ -5,7 +5,7 @@ import * as os from 'os'
 import {promisify} from 'util'
 import psTree from 'ps-tree'
 import * as rxop from 'rxjs/operators'
-import {EMPTY, fromEvent, generate, merge, interval, Observable} from 'rxjs'
+import {EMPTY, fromEvent, generate, merge, Observable} from 'rxjs'
 import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
@@ -21,21 +21,6 @@ interface ChildProcess extends childProcess.ChildProcess {
 }
 
 export class SpawnedMidnightProcess {
-  private javaPidPromise: Promise<number> = isWin
-    ? interval(10)
-        .pipe(
-          rxop.concatMap(() =>
-            this.isRunning() ? Promise.resolve() : Promise.reject('Process is not running...'),
-          ),
-          rxop.concatMap(() => promisify(psTree)(this.childProcess.pid)),
-          rxop.map((children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID),
-          rxop.filter((pid): pid is string => pid != null),
-          rxop.first(),
-          rxop.map(parseInt),
-        )
-        .toPromise()
-    : Promise.resolve(this.childProcess.pid)
-
   constructor(public name: ClientName, private childProcess: ChildProcess) {
     console.info(`Spawned ${name}, PID: ${childProcess.pid}`)
     childProcess.on('close', (code) => console.info('exited with', code))
@@ -58,9 +43,13 @@ export class SpawnedMidnightProcess {
   kill = async (): Promise<void> => {
     console.info(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
     if (isWin) {
-      const javaPid = await this.javaPidPromise
-      console.info(`...killing Java process on Win with PID ${javaPid}`)
-      process.kill(javaPid)
+      const javaPid = await promisify(psTree)(this.childProcess.pid).then(
+        (children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID,
+      )
+      if (javaPid) {
+        console.info(`...killing Java process for ${this.name} on Win with PID ${javaPid}`)
+        process.kill(parseInt(javaPid))
+      }
     }
     if (this.childProcess.exitCode !== null) {
       console.info(`...already exited with exit code ${this.childProcess.exitCode}`)
