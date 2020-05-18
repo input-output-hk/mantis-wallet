@@ -11,6 +11,7 @@ import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
 import {readableToObservable} from './streamUtils'
+import {setProcessStatus} from './status'
 
 const isWin = os.platform() === 'win32'
 
@@ -23,6 +24,7 @@ interface ChildProcess extends childProcess.ChildProcess {
 export class SpawnedMidnightProcess {
   constructor(public name: ClientName, private childProcess: ChildProcess) {
     console.info(`Spawned ${name}, PID: ${childProcess.pid}`)
+    setProcessStatus(name, {pid: childProcess.pid, status: 'running'})
     childProcess.on('close', (code) => console.info('exited with', code))
     childProcess.on('error', (err) => console.error(err))
   }
@@ -66,6 +68,7 @@ export class SpawnedMidnightProcess {
         rxop.map(() => void 0),
       )
       .toPromise()
+      .then(() => setProcessStatus(this.name, {status: 'not-running'}))
   }
 }
 

@@ -21,8 +21,8 @@ const getSyncStatus = (syncStatus: SynchronizationStatus): SyncStatus => {
   return 'syncing'
 }
 
-const Message = ({syncStatus}: SyncStatusProps): JSX.Element => {
-  if (syncStatus.mode === 'offline') return <>Error Syncing</>
+export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
+  if (syncStatus.mode === 'offline') return <>Connecting</>
   if (syncStatus.percentage === 100) return <>Fully Synced</>
   return <>Syncing Blocks {syncStatus.percentage}%</>
 }
@@ -32,7 +32,7 @@ export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element =>
   return (
     <span className={classes}>
       <Popover content={`Current block: ${syncStatus.currentBlock}`} placement="left">
-        <Message syncStatus={syncStatus} />
+        <SyncMessage syncStatus={syncStatus} />
         <SVG src={refreshIcon} className="svg" />
       </Popover>
     </span>

@@ -27,6 +27,7 @@ import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
 import {ipcListen} from './util'
+import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -142,6 +143,7 @@ app.on('ready', createWindow)
 
 const shared = {
   lunaConfig: () => config,
+  lunaStatus: () => status,
   lunaManagedConfig: () => loadLunaManagedConfig(),
 }
 
@@ -228,15 +230,18 @@ if (config.runClients) {
 
   async function fetchParams(): Promise<void> {
     console.info('Fetching zkSNARK parameters')
+    setFetchParamsStatus('running')
     const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
       cwd: config.clientConfigs.node.packageDirectory,
     })
       .then(({stdout, stderr}) => {
+        setFetchParamsStatus('finished')
         console.info(stdout)
         console.error(stderr)
       })
       .catch((error) => {
+        setFetchParamsStatus('failed')
         console.error(error)
         dialog.showErrorBox('Luna startup error', 'Failed to fetch zkSNARK parameters')
         app.exit(1)
@@ -257,7 +262,10 @@ if (config.runClients) {
       clients,
       array.map((client) => {
         const prefix = buildPrefix(client.name)
-        return client.log$.pipe(rxop.map((line) => `${prefix}${line}`))
+        return client.log$.pipe(
+          rxop.tap(inspectLineForDAGStatus),
+          rxop.map((line) => `${prefix}${line}`),
+        )
       }),
       (logs) => scheduled(logs, asapScheduler),
       mergeAll(),
