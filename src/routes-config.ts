@@ -1,4 +1,3 @@
-import {Unimplemented} from './common/Unimplemented'
 import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
@@ -8,14 +7,13 @@ import {BurnCoins} from './pob/BurnCoins'
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import {Settings} from './Settings'
 import {GlacierDropOverview} from './glacier-drop/GlacierDropOverview'
-import menuPortfolioIcon from './assets/icons/menu-portfolio.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
 import menuGlacierIcon from './assets/icons/menu-glacier.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
 
 // Menu
 
-export type MenuId = 'PORTFOLIO' | 'WALLETS' | 'PROOF_OF_BURN' | 'GLACIER_DROP' | 'SETTINGS'
+export type MenuId = 'WALLETS' | 'PROOF_OF_BURN' | 'GLACIER_DROP' | 'SETTINGS'
 
 export interface MenuItem {
   title: string
@@ -28,11 +26,6 @@ export type Menu = {
 }
 
 export const MENU: Menu = {
-  PORTFOLIO: {
-    title: 'Portfolio',
-    route: 'PORTFOLIO',
-    icon: menuPortfolioIcon,
-  },
   WALLETS: {
     title: 'Wallets',
     route: 'WALLETS',
@@ -58,7 +51,6 @@ export const MENU: Menu = {
 // Routes
 
 export type RouteId =
-  | 'PORTFOLIO'
   | 'WALLETS'
   | 'WALLET_SETUP'
   | 'WALLET_UNLOCK'
@@ -78,10 +70,6 @@ export type Routes = {
 }
 
 export const ROUTES: Routes = {
-  PORTFOLIO: {
-    component: Unimplemented,
-    menu: 'PORTFOLIO',
-  },
   WALLETS: {
     component: Wallets,
     menu: 'WALLETS',
