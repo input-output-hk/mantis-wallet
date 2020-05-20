@@ -186,12 +186,12 @@ const configGetter = convict({
   provers: {
     default: [
       {
-        name: 'VacuumLabs',
-        address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com',
+        name: 'Testnet',
+        address: 'http://pob-prover-1.testnet-pupa.project42.iohkdev.io',
       },
       {
-        name: 'Testnet',
-        address: 'https://pob-prover-1.testnet-pupa.project42.iohkdev.io',
+        name: 'VacuumLabs',
+        address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com',
       },
     ],
     format: 'list-of-provers',
