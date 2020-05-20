@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import {Button, message} from 'antd'
+import BigNumber from 'bignumber.js'
 import {ThemeState} from '../theme-state'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
-import {TransparentAccount} from '../common/wallet-state'
+import {TransparentAccount, FeeEstimates} from '../common/wallet-state'
 import {RedeemModal} from './modals/RedeemModal'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
@@ -90,6 +91,7 @@ interface TransparentAccountsProps {
   transparentAccounts: TransparentAccount[]
   generateAddress: () => void
   redeem: (address: string, amount: number, fee: number) => Promise<void>
+  estimateRedeemFee: (amount: BigNumber) => Promise<FeeEstimates>
   backToTransactions: () => void
   transactions: Transaction[]
 }
@@ -98,6 +100,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
   transparentAccounts,
   generateAddress,
   redeem,
+  estimateRedeemFee,
   backToTransactions,
   transactions,
 }: TransparentAccountsProps) => {
@@ -180,6 +183,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
             await redeem(address, amount, fee)
             setShowRedeem(false)
           }}
+          estimateRedeemFee={estimateRedeemFee}
         />
       )}
     </div>

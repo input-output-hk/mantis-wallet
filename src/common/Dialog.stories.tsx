@@ -22,6 +22,7 @@ import {DialogSecrets} from './dialog/DialogSecrets'
 import {selectChain, dust} from '../storybook-util/custom-knobs'
 import {DialogShowDust} from './dialog/DialogShowDust'
 import {DialogTextSwitch} from './dialog/DialogTextSwitch'
+import {DialogFee} from './dialog/DialogFee'
 
 export default {
   title: 'Dialog',
@@ -113,6 +114,21 @@ export const InteractiveError: React.FunctionComponent<{}> = () => (
     footer={<DialogError>{text('Error in footer', 'Error in the footer')}</DialogError>}
   >
     <DialogError>{text('Error in content', 'Error in the dialog')}</DialogError>
+  </Dialog>
+)
+
+export const InteractiveFee: React.FunctionComponent<{}> = () => (
+  <Dialog title="Dialog Fee" type={select('Input fee', ['normal', 'dark'], 'normal')}>
+    <DialogFee
+      label={text('Fee label', 'Fee label')}
+      feeEstimates={{
+        low: dust('Fee low estimate', 0.01),
+        medium: dust('Fee medium estimate', 0.02),
+        high: dust('Fee high estimate', 0.03),
+      }}
+      hideCustom={boolean('Hide custom', false)}
+      onChange={action('on-change')}
+    />
   </Dialog>
 )
 

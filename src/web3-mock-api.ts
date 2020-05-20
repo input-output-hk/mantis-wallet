@@ -21,6 +21,7 @@ import {
   MineResponse,
   GetMiningStateResponse,
   WalletAPI,
+  FeeLevel,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -116,6 +117,13 @@ class MockWallet implements WalletAPI {
   callContract(_contractParams: CallParams): string {
     this._lockGuard()
     return 'contract-result'
+  }
+  estimateFees(_txType: string, _amount: number | CallParams): Record<FeeLevel, string> {
+    return {
+      low: '0x100',
+      medium: '0x200',
+      high: '0x300',
+    }
   }
 
   // transparent addresses
@@ -226,6 +234,11 @@ export const Web3MockApi: Web3API = {
     }),
     getTransactionReceipt: () => null,
     call: () => '0x1',
+    getGasPriceEstimation: (): Record<FeeLevel, number> => ({
+      low: 1,
+      medium: 2,
+      high: 3,
+    }),
   },
   midnight: {
     wallet: new MockWallet(),

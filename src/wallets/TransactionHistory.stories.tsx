@@ -7,7 +7,7 @@ import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
-import {dummyTransactions} from '../storybook-util/dummies'
+import {dummyTransactions, estimateFeesWithRandomDelay} from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
@@ -33,6 +33,9 @@ export const withNoTransactions = (): JSX.Element => (
     availableBalance={new BigNumber(0)}
     sendTransaction={asyncAction('on-send-transaction')}
     sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
+    estimateGasPrice={estimateFeesWithRandomDelay}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
+    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
     goToAccounts={action('on-go-to-accounts')}
   />
@@ -46,6 +49,9 @@ export const withDemoTransactions = (): JSX.Element => (
     availableBalance={dust('Available Balance', 1000)}
     sendTransaction={asyncAction('on-send-transaction')}
     sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
+    estimateGasPrice={estimateFeesWithRandomDelay}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
+    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
     goToAccounts={action('on-go-to-accounts')}
   />
@@ -119,6 +125,9 @@ export const interactive = (): JSX.Element => {
       availableBalance={dust('Available Balance', 1000)}
       sendTransaction={asyncAction('on-send-transaction')}
       sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
+      estimateGasPrice={estimateFeesWithRandomDelay}
+      estimateTransactionFee={estimateFeesWithRandomDelay}
+      estimatePublicTransactionFee={estimateFeesWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
       goToAccounts={action('on-go-to-accounts')}
     />
@@ -143,6 +152,9 @@ export const sendTransactionModal = (): JSX.Element => (
     onCancel={action('send-transaction-cancelled')}
     onSend={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}
+    estimateGasPrice={estimateFeesWithRandomDelay}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
+    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     visible
   />
 )

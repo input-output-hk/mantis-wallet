@@ -4,6 +4,7 @@ import * as bech32 from 'bech32-buffer'
 import _ from 'lodash'
 import {isChecksumAddress} from 'web3/lib/utils/utils.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
+import {UnitType, UNITS} from './units'
 
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
@@ -43,6 +44,17 @@ export const isGreaterOrEqual = (minValue: BigNumber.Value = 0) => (b: BigNumber
     ? `Must be at least ${minValue.toString(10)}`
     : ''
 
+export const isLowerOrEqual = (maxValue: BigNumber.Value, message?: string) => (b: BigNumber) =>
+  !b.isFinite() || !b.isLessThanOrEqualTo(new BigNumber(maxValue))
+    ? message || `Must be at most ${maxValue.toString(10)}`
+    : ''
+
+export const areFundsEnough = (
+  funds: BigNumber,
+  unit: UnitType = 'Dust',
+): ReturnType<typeof isLowerOrEqual> =>
+  isLowerOrEqual(UNITS[unit].fromBasic(funds), 'Insufficient funds')
+
 const hasAtMostDecimalPlacesMessage = (dp: number): string =>
   dp === 0 ? 'It must be an integer value' : `At most ${dp} decimal places are permitted`
 
@@ -55,6 +67,18 @@ export function validateAmount(
 ): string {
   const b = new BigNumber(v)
   return validators.reduce((acc, cur) => (acc !== '' ? acc : cur(b)), '')
+}
+
+export function validateTxAmount(amount: string, availableAmount: BigNumber): string {
+  return validateAmount(amount, [
+    isGreater(),
+    areFundsEnough(availableAmount),
+    hasAtMostDecimalPlaces(),
+  ])
+}
+
+export function validateFee(fee: string): string {
+  return validateAmount(fee, [isGreaterOrEqual(), hasAtMostDecimalPlaces()])
 }
 
 export function bigSum(numbers: BigNumber[]): BigNumber {

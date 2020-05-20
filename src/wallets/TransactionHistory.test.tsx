@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent} from 'react'
-import {render, RenderResult} from '@testing-library/react'
+import {render, RenderResult, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import {TransactionHistory} from './TransactionHistory'
 import {Transaction, Account, makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
-import {WalletState, WalletStatus} from '../common/wallet-state'
+import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {ThemeState} from '../theme-state'
 import {abbreviateAmount} from '../common/formatters'
 import {toHex} from '../common/util'
@@ -77,6 +77,13 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
   )
 }
 
+const estimateFees = (): Promise<FeeEstimates> =>
+  Promise.resolve({
+    low: new BigNumber(100),
+    medium: new BigNumber(200),
+    high: new BigNumber(300),
+  })
+
 const renderTransactionHistory = (transactions: Transaction[]): RenderResult =>
   render(
     <TransactionHistory
@@ -86,6 +93,9 @@ const renderTransactionHistory = (transactions: Transaction[]): RenderResult =>
       availableBalance={new BigNumber(1000)}
       sendTransaction={jest.fn()}
       sendTxToTransparent={jest.fn()}
+      estimateGasPrice={estimateFees}
+      estimateTransactionFee={estimateFees}
+      estimatePublicTransactionFee={estimateFees}
       generateAddress={jest.fn()}
       goToAccounts={jest.fn()}
     />,
@@ -140,12 +150,12 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 })
 
 // Modals
-test('Send modal shows up', () => {
+test('Send modal shows up', async () => {
   const {getByTestId, getAllByText} = renderTransactionHistory([tx1, tx2])
   const sendButton = getByTestId('send-button')
   userEvent.click(sendButton)
 
-  expect(getAllByText('Recipient')).toHaveLength(2)
+  await waitFor(() => expect(getAllByText('Recipient')).toHaveLength(2))
 })
 
 test('Receive modal shows up', () => {

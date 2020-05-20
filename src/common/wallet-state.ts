@@ -9,7 +9,7 @@ import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
 import {deserializeBigNumber, loadAll, bigSum} from '../common/util'
 import {Chain} from '../pob/chains'
-import {NumberFromHexString} from './io-helpers'
+import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
   makeWeb3Worker,
   TransparentAddress,
@@ -20,6 +20,8 @@ import {
   SeedPhrase,
   PassphraseSecrets,
   Web3API,
+  FeeLevel,
+  CallParams,
 } from '../web3'
 
 // API Types
@@ -38,11 +40,20 @@ const SynchronizationStatusOnline = t.type({
 
 const SynchronizationStatus = t.union([SynchronizationStatusOffline, SynchronizationStatusOnline])
 
+const FeeEstimatesForIoType: Record<FeeLevel, typeof BigNumberFromHexString> = {
+  low: BigNumberFromHexString,
+  medium: BigNumberFromHexString,
+  high: BigNumberFromHexString,
+}
+const FeeEstimates = t.type(FeeEstimatesForIoType)
+
 const TRANSFER_GAS_LIMIT = 21000
 
 export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
 
 export type TransparentAccount = TransparentAddress & {balance: BigNumber}
+
+export type FeeEstimates = t.TypeOf<typeof FeeEstimates>
 
 // States
 
@@ -71,6 +82,10 @@ export interface LoadedState {
     gasPrice: BigNumber,
   ) => Promise<string>
   redeemValue: (address: string, amount: number, fee: number) => Promise<string>
+  estimatePublicTransactionFee(amount: BigNumber, recipient: string): Promise<FeeEstimates>
+  estimateTransactionFee(amount: BigNumber): Promise<FeeEstimates>
+  estimateRedeemFee(amount: BigNumber): Promise<FeeEstimates>
+  estimateGasPrice(): Promise<FeeEstimates>
   getBurnAddress: (
     address: string,
     chain: Chain,
@@ -152,9 +167,22 @@ export const canRemoveWallet = (
   walletState.walletStatus === 'LOCKED' ||
   walletState.walletStatus === 'ERROR'
 
+const getPublicTransactionParams = (
+  amount: BigNumber,
+  gasPrice: BigNumber,
+  to?: string,
+): CallParams => ({
+  from: 'Wallet',
+  to,
+  value: amount.toString(16),
+  gasPrice: gasPrice.toString(16),
+  gasLimit: TRANSFER_GAS_LIMIT.toString(16),
+})
+
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const wallet = _initialState.web3.midnight.wallet
+  const eth = _initialState.web3.eth
 
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(_initialState.walletStatus)
@@ -345,13 +373,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     amount: BigNumber,
     gasPrice: BigNumber,
   ): Promise<string> => {
-    const result = await wallet.callContract({
-      from: 'Wallet',
-      to: recipient,
-      value: amount.toString(16),
-      gasPrice: gasPrice.toString(16),
-      gasLimit: TRANSFER_GAS_LIMIT.toString(16),
-    })
+    const result = await wallet.callContract(
+      getPublicTransactionParams(amount, gasPrice, recipient),
+    )
     load()
     return result
   }
@@ -402,6 +426,34 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     autoConversion: boolean,
   ): Promise<string> => wallet.getBurnAddress(address, chain.numericId, reward, autoConversion)
 
+  const estimateGasPrice = (): Promise<FeeEstimates> =>
+    eth
+      .getGasPriceEstimation()
+      .then((res) => _.mapValues<number, BigNumber>((v) => new BigNumber(v))(res) as FeeEstimates)
+
+  const estimateFees = (
+    txType: 'RedeemTx' | 'TransferTx',
+    amount: BigNumber,
+  ): Promise<FeeEstimates> =>
+    wallet.estimateFees(txType, amount.toNumber()).then((res) => tPromise.decode(FeeEstimates, res))
+
+  const estimateRedeemFee = (amount: BigNumber): Promise<FeeEstimates> =>
+    estimateFees('RedeemTx', amount)
+
+  const estimateTransactionFee = (amount: BigNumber): Promise<FeeEstimates> =>
+    estimateFees('TransferTx', amount)
+
+  const estimatePublicTransactionFee = (
+    amount: BigNumber,
+    recipient: string,
+  ): Promise<FeeEstimates> =>
+    wallet
+      .estimateFees(
+        'CallTx',
+        getPublicTransactionParams(amount, new BigNumber(0), recipient ? recipient : undefined),
+      )
+      .then((res) => tPromise.decode(FeeEstimates, res))
+
   return {
     walletStatus,
     errorMsg,
@@ -412,6 +464,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     refreshSyncStatus,
     sendTransaction,
     sendTxToTransparent,
+    estimatePublicTransactionFee,
+    estimateTransactionFee,
+    estimateRedeemFee,
+    estimateGasPrice,
     redeemValue,
     create,
     unlock,

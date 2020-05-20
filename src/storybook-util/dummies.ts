@@ -1,4 +1,7 @@
+import BigNumber from 'bignumber.js'
 import {Transaction} from '../web3'
+import {wait} from '../shared/utils'
+import {FeeEstimates} from '../common/wallet-state'
 
 export const dummyTransactions: Transaction[] = [
   {
@@ -136,3 +139,12 @@ export const dummyTransactions: Transaction[] = [
     },
   },
 ]
+
+export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEstimates> =>
+  wait(Math.floor(Math.random() * Math.floor(200))).then(() =>
+    Promise.resolve({
+      low: new BigNumber(3).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      medium: new BigNumber(5).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      high: new BigNumber(7).times(amount && !amount.isEqualTo(0) ? amount : 1),
+    }),
+  )

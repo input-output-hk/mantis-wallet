@@ -21,6 +21,7 @@ import {
   TxDetailsCell,
 } from './TransactionRow'
 import './TransactionHistory.scss'
+import {FeeEstimates} from '../common/wallet-state'
 
 interface TransactionHistoryProps {
   transactions: Transaction[]
@@ -28,7 +29,10 @@ interface TransactionHistoryProps {
   accounts: Account[]
   availableBalance: BigNumber
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<void>
+  estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
   sendTxToTransparent: (recipient: string, amount: BigNumber, gasPrice: BigNumber) => Promise<void>
+  estimateGasPrice: () => Promise<FeeEstimates>
+  estimatePublicTransactionFee: (amount: BigNumber, recipient: string) => Promise<FeeEstimates>
   generateAddress: () => Promise<void>
   goToAccounts: () => void
 }
@@ -143,7 +147,10 @@ export const TransactionHistory = ({
   accounts,
   availableBalance,
   sendTransaction,
+  estimateTransactionFee,
   sendTxToTransparent,
+  estimateGasPrice,
+  estimatePublicTransactionFee,
   generateAddress,
   transparentAddresses,
   goToAccounts,
@@ -224,6 +231,7 @@ export const TransactionHistory = ({
               await sendTransaction(recipient, amount, fee)
               setShowSendModal(false)
             }}
+            estimateTransactionFee={estimateTransactionFee}
             onSendToTransparent={async (
               recipient: string,
               amount: BigNumber,
@@ -232,6 +240,8 @@ export const TransactionHistory = ({
               await sendTxToTransparent(recipient, amount, gasPrice)
               setShowSendModal(false)
             }}
+            estimateGasPrice={estimateGasPrice}
+            estimatePublicTransactionFee={estimatePublicTransactionFee}
           />
           <ReceiveTransaction
             visible={showReceiveModal}
