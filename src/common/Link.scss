@@ -1,0 +1,5 @@
+@import '../partial';
+
+.Link {
+  @extend %link;
+}

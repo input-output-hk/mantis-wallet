@@ -8,7 +8,7 @@ import {RedeemModal} from './modals/RedeemModal'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import {Transaction} from '../web3'
-import {TransactionRow} from './TransactionRow'
+import {TransactionRow, transactionTableStyle} from './TransactionHistory'
 import './TransparentAccounts.scss'
 
 interface ShowAccountProps {
@@ -63,13 +63,11 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
         </div>
         {transactionsVisible && transactions.length > 0 && (
           <div className="transactions-container">
-            <table className="transactions">
-              <tbody>
-                {transactions.map((tx: Transaction) => (
-                  <TransactionRow transaction={tx} key={tx.hash} />
-                ))}
-              </tbody>
-            </table>
+            <div className="transactions" style={transactionTableStyle}>
+              {transactions.map((tx: Transaction) => (
+                <TransactionRow transaction={tx} key={tx.hash} />
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -140,8 +138,10 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
                 redeem={() => handleRedeem(a)}
                 transactions={transparentTransactions.filter(
                   ({txDetails}) =>
-                    (txDetails.txType === 'redeem' || txDetails.txType === 'call') &&
-                    txDetails.usedTransparentAccountIndex === a.index,
+                    (txDetails.txType === 'redeem' &&
+                      a.index === txDetails.usedTransparentAccountIndex) ||
+                    (txDetails.txType === 'call' &&
+                      a.address === txDetails.transparentTransaction.sendingAddress),
                 )}
               />
             ))}

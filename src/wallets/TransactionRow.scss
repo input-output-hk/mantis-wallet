@@ -1,8 +1,7 @@
 @import '../themify', '../vars', '../partial';
 
 .TransactionRow {
-  height: 106px;
-  padding-top: 24px;
+  display: contents;
   font-size: 13px;
   letter-spacing: 0.3px;
   line-height: 44px;
@@ -12,23 +11,95 @@
     border-bottom: 1px solid rgba($color: themed('tertiary-background'), $alpha: $secondary-opacity);
   }
 
-  .type-icon {
-    display: inline-block;
-    position: relative;
-    width: 20px;
-    padding-left: 12px;
+  .icon {
+    vertical-align: middle;
 
-    .svg {
-      position: absolute;
-      top: 50%;
-      bottom: 50%;
-      transform: translate(-50%, -50%);
+    svg {
+      width: 20px;
+      padding-right: 5px;
+
+      &.pending {
+        @include themify($themes) {
+          fill: themed('text-color');
+        }
+      }
+
+      &.confirmed {
+        @include themify($themes) {
+          fill: themed('text-color');
+        }
+      }
+
+      &.persisted {
+        @include themify($themes) {
+          fill: themed('success-color');
+        }
+      }
+
+      &.failed {
+        @include themify($themes) {
+          fill: themed('error-color');
+        }
+      }
     }
   }
 
-  .check {
+  .row-header {
+    display: contents;
+  }
+
+  .cell {
+    align-self: center;
+    justify-self: left;
+    white-space: nowrap;
+  }
+
+  .collapse-icon {
+    padding-right: 1rem;
+    float: left;
+    cursor: pointer;
+    user-select: none;
+
+    svg {
+      transform: rotate(0);
+      transition: transform 0.5s;
+    }
+  }
+
+  &.open .collapse-icon svg {
+    transform: rotate(90deg);
+    transition: transform 0.5s;
+  }
+
+  .details {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s;
+    line-height: 1rem;
+
     @include themify($themes) {
-      fill: themed('success-color');
+      border-bottom: 1px solid
+        rgba($color: themed('tertiary-background'), $alpha: $secondary-opacity);
+    }
+
+    &.active {
+      max-height: 500px;
+      transition: max-height 1s;
+    }
+
+    .content {
+      padding: 0 0 1rem;
+
+      > div {
+        margin-bottom: 1em;
+      }
+
+      .type-label {
+        margin-bottom: 1em;
+        font-weight: bold;
+      }
     }
   }
 
@@ -38,13 +109,39 @@
   }
 
   .amount {
+    @extend %monospace;
     display: inline-block;
-    padding: 0 10px;
+    padding: 10px;
     font-weight: bold;
-    line-height: 32px;
+    line-height: 14px;
 
     @include themify($themes) {
       background-color: themed('secondary-background');
     }
+
+    &.incoming {
+      @include themify($themes) {
+        color: themed('success-color');
+      }
+    }
+
+    .fee {
+      display: block;
+    }
   }
+}
+
+// In tooltip scope too
+.two-col-table {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+}
+
+.DetailedAmount {
+  max-width: 150px;
+}
+
+.monospace {
+  @extend %monospace;
 }

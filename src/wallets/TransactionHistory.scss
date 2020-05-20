@@ -68,11 +68,10 @@
     margin-top: 30px;
 
     .transactions {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
+      @extend %transactions-grid;
 
       .header {
+        display: contents;
         position: sticky;
         top: 0;
         padding-left: 12px;
@@ -87,10 +86,18 @@
           cursor: pointer;
           user-select: none;
 
-          &:hover {
-            text-decoration: underline;
+          .label {
+            margin-right: 0.5em;
+
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
+      }
+
+      .body {
+        display: contents;
       }
     }
   }

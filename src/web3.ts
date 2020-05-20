@@ -44,6 +44,7 @@ interface PersistedTxStatus {
 }
 
 export type TxStatus = 'pending' | 'failed' | ConfirmedTxStatus | PersistedTxStatus
+export type TxStatusString = 'pending' | 'failed' | 'confirmed' | 'persisted'
 
 // Tx details
 interface RedeemTxDetails {
@@ -63,7 +64,7 @@ interface TransparentTransaction {
 
 interface CallTxDetails {
   txType: 'call'
-  usedTransparentAccountIndex: number
+  usedTransparentAccountIndexes: number[]
   transparentTransactionHash: string
   transparentTransaction: TransparentTransaction
 }

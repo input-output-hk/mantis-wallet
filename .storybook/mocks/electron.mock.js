@@ -14,4 +14,7 @@ module.exports = {
     removeAllListeners: () => undefined,
     send: () => undefined,
   },
+  shell: {
+    openExternal: () => undefined,
+  },
 }

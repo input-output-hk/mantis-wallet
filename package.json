@@ -37,7 +37,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx|scss)\" && yarn lint"
+      "pre-push": "tsc --noEmit && pretty-quick --staged --pattern \"**/*.*(js|ts|tsx|scss)\" && yarn lint"
     }
   },
   "jest": {

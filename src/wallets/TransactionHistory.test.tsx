@@ -43,7 +43,7 @@ const tx2: Transaction = {
   },
   txDetails: {
     txType: 'call',
-    usedTransparentAccountIndex: 0,
+    usedTransparentAccountIndexes: [0],
     transparentTransactionHash: 'transparentTransactionHash',
     transparentTransaction: {
       nonce: toHex(12345),
@@ -102,9 +102,9 @@ test('TransactionHistory shows proper message with empty tx list', () => {
 test('TransactionHistory shows proper tx amounts', () => {
   const {getByText} = renderTransactionHistory([tx1, tx2])
   const {strict: formattedNumber1} = abbreviateAmount(new BigNumber(123))
-  expect(getByText(formattedNumber1)).toBeInTheDocument()
-  const {strict: formattedNumber2} = abbreviateAmount(new BigNumber(123456789))
-  expect(getByText(formattedNumber2)).toBeInTheDocument()
+  expect(getByText(`+${formattedNumber1}`)).toBeInTheDocument()
+  const {strict: formattedNumber2} = abbreviateAmount(new BigNumber(123456889))
+  expect(getByText(`-${formattedNumber2}`)).toBeInTheDocument()
 })
 
 // txStatus.status
@@ -114,19 +114,19 @@ test('TransactionHistory shows `Confirmed` status/icon', () => {
 })
 
 test('TransactionHistory shows `Pending` status', () => {
-  const {getByText} = renderTransactionHistory([tx2])
-  expect(getByText('Pending')).toBeInTheDocument()
+  const {getByTitle} = renderTransactionHistory([tx2])
+  expect(getByTitle('Pending')).toBeInTheDocument()
 })
 
 // txDirection
-test('TransactionHistory shows `Incoming` tx icon', () => {
-  const {getByTitle} = renderTransactionHistory([tx1])
-  expect(getByTitle('Incoming')).toBeInTheDocument()
+test('TransactionHistory shows `Incoming` tx text', () => {
+  const {getByText} = renderTransactionHistory([tx1])
+  expect(getByText('Received Confidential')).toBeInTheDocument()
 })
 
-test('TransactionHistory shows `Outgoing` tx icon', () => {
-  const {getByTitle} = renderTransactionHistory([tx2])
-  expect(getByTitle('Outgoing')).toBeInTheDocument()
+test('TransactionHistory shows `Outgoing` tx text', () => {
+  const {getByText} = renderTransactionHistory([tx2])
+  expect(getByText('Sent Transparent')).toBeInTheDocument()
 })
 
 // Transparent/Confidential
