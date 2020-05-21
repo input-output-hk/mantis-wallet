@@ -1,4 +1,4 @@
-@import './themify';
+@import './themify', './partial';
 
 .SplashScreen {
   display: flex;
@@ -40,10 +40,40 @@
   .loading {
     font-size: 2vmin;
     font-weight: bold;
-    text-transform: uppercase;
+    text-align: center;
 
     @include themify($themes) {
       color: themed('text-color');
+    }
+
+    &:after {
+      content: '\2026'; /* unicode code for the ellipsis character */
+      display: inline-block;
+      width: 0;
+      margin-right: 0;
+      overflow: hidden;
+      animation: ellipsis steps(4, end) 900ms infinite;
+      text-align: left;
+      vertical-align: bottom;
+    }
+
+    @keyframes ellipsis {
+      to {
+        width: 25px;
+        margin-right: -25px;
+      }
+    }
+  }
+
+  .details {
+    @extend %link;
+
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+
+    @include themify($themes) {
+      color: rgba(themed('text-color'), 0.8);
     }
   }
 }

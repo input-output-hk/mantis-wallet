@@ -1,19 +1,46 @@
 import React, {useState} from 'react'
+import _ from 'lodash/fp'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {ThemeState} from '../theme-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
-import {WalletState, canRemoveWallet} from '../common/wallet-state'
+import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
 import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
+import {StatusModal} from '../common/StatusModal'
+import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
+import {useInterval} from '../common/hook-utils'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
 const DEV_MODE = true // FIXME: [PM-1966] add config option to enable "hack mode"
 // const DEV_MODE = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+
+const UpdatingStatusModal = ({
+  syncStatus,
+  onCancel,
+}: {
+  syncStatus?: SynchronizationStatus
+  onCancel: () => void
+}): JSX.Element => {
+  const [lunaStatus, setLunaStatus] = useState(loadLunaStatus)
+
+  useInterval(() => setLunaStatus(_.clone(loadLunaStatus())), 2000)
+
+  return (
+    <StatusModal
+      status={lunaStatus}
+      config={loadConfig()}
+      managedConfig={loadLunaManagedConfig()}
+      syncStatus={syncStatus}
+      onCancel={onCancel}
+      visible
+    />
+  )
+}
 
 export const Sidebar = (): JSX.Element => {
   const themeState = ThemeState.useContainer()
@@ -25,6 +52,7 @@ export const Sidebar = (): JSX.Element => {
   const glacierState = GlacierState.useContainer()
 
   const [showLogOutModal, setShowLogOutModal] = useState(false)
+  const [showStatusModal, setShowStatusModal] = useState(false)
 
   const logOut =
     canRemoveWallet(walletState) && !routerState.isLocked ? (
@@ -70,7 +98,15 @@ export const Sidebar = (): JSX.Element => {
           </ul>
         </nav>
       </div>
-      <div className="footer">Support | {logOut}</div>
+      <div className="footer">
+        <div>
+          Support |{' '}
+          <span className="footer-link" onClick={() => setShowStatusModal(true)}>
+            Status
+          </span>
+        </div>
+        <div>{logOut}</div>
+      </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal
           visible={showLogOutModal}
@@ -84,6 +120,12 @@ export const Sidebar = (): JSX.Element => {
             setShowLogOutModal(false)
           }}
           onCancel={() => setShowLogOutModal(false)}
+        />
+      )}
+      {showStatusModal && (
+        <UpdatingStatusModal
+          syncStatus={walletState.walletStatus === 'LOADED' ? walletState.syncStatus : undefined}
+          onCancel={() => setShowStatusModal(false)}
         />
       )}
     </div>

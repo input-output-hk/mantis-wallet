@@ -9,10 +9,11 @@ import {RouterState} from '../router-state'
 import {Sidebar} from './Sidebar'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 import {asyncAction} from '../storybook-util/custom-knobs'
+import {toFullScreen} from '../storybook-util/full-screen-decorator'
 
 export default {
   title: 'Sidebar',
-  decorators: [withWalletState, withTheme, withPobState, withGlacierState, withKnobs],
+  decorators: [withWalletState, withTheme, withPobState, withGlacierState, withKnobs, toFullScreen],
 }
 
 export const sidebar = (): JSX.Element => (
