@@ -1,7 +1,8 @@
-import React, {ReactNode} from 'react'
+import React, {ReactNode, useState} from 'react'
 import SVG from 'react-inlinesvg'
 import {Icon, Popover} from 'antd'
 import _ from 'lodash'
+import classnames from 'classnames'
 import {CHAINS} from './chains'
 import {BurnStatusType} from './api/prover'
 import {formatPercentage} from '../common/formatters'
@@ -12,6 +13,7 @@ import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
+import {InfoIcon} from '../common/InfoIcon'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
@@ -125,7 +127,7 @@ const getTransactionProgress = (blocks: number, submittedStatus: BurnStatusType)
 ): DisplayProgressRatio => {
   if (status === submittedStatus) return 1 / (blocks + 1)
   if (txHeight === null || syncStatus.mode === 'offline') return 'unknown'
-  return (1 + syncStatus.highestKnownBlock - txHeight) / (NUMBER_OF_BLOCKS_TO_SUCCESS + 1)
+  return (1 + syncStatus.highestKnownBlock - txHeight) / (blocks + 1)
 }
 
 const isRedeemDone = (
@@ -145,6 +147,8 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
+  const [detailsShown, setDetailsShown] = useState(false)
+
   const chain = CHAINS[burnStatus.burnAddressInfo.chainId]
   const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
     ? {
@@ -156,32 +160,22 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
 
   return (
     <div className="BurnStatusDisplay">
-      <div className="info">
-        <div className="info-element">
-          <CopyableLongText content={address} />
+      <div
+        className={classnames('exchange-info', {open: detailsShown})}
+        onClick={() => setDetailsShown(!detailsShown)}
+      >
+        <div className="collapse-icon">
+          <Icon type="right" />
         </div>
-        <div className="info-element">
-          {burnStatus.tx_value && (
-            <>
-              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
-              <SVG src={exchangeIcon} className="exchange-icon" />{' '}
-              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> M-
-              {chain.symbol}
-            </>
-          )}
-        </div>
-        <div className="info-element">
-          <CopyableLongText content={burnStatus.commitment_txid} />
-          {burnStatus.redeem_txid && (
-            <>
-              <br />
-              <CopyableLongText content={burnStatus.redeem_txid} />
-            </>
-          )}
-        </div>
-        <div className="info-element">
-          <CopyableLongText content={burnStatus.txid} />
-        </div>
+        <span>Burn Amount / Midnight Token: </span>
+        {burnStatus.tx_value && (
+          <>
+            <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
+            <SVG src={exchangeIcon} className="exchange-icon" />{' '}
+            <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> M-
+            {chain.symbol}
+          </>
+        )}
       </div>
       <div className="status">
         <div className="progress">
@@ -250,11 +244,53 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           />
         </div>
       </div>
+      <div className={classnames('burn-details', {active: detailsShown})}>
+        <div className="burn-details-header">Burn Details</div>
+        <div className="burn-details-info">
+          <div>Burn address:</div>
+          <div>
+            <CopyableLongText content={address} />
+          </div>
+          <div>Associated midnight address:</div>
+          <div>
+            <CopyableLongText content={burnStatus.burnAddressInfo.midnightAddress} />
+          </div>
+          <div>Prover&apos;s reward:</div>
+          <div>
+            <ShortNumber big={burnStatus.burnAddressInfo.reward} unit={chain.unitType} /> M-
+            {chain.symbol}
+          </div>
+          <div>Prover:</div>
+          <div>
+            {burnStatus.prover.name} ({burnStatus.prover.address})
+          </div>
+        </div>
+        <div className="burn-details-info">
+          <div>Burn transaction:</div>
+          <div>
+            <CopyableLongText content={burnStatus.txid} />
+          </div>
+          <div>
+            <InfoIcon content="Tagging Federation has monitored Source chains and published commitments to them on the Midnight Network" />{' '}
+            Commitment contract submission:
+          </div>
+          <div>
+            <CopyableLongText content={burnStatus.commitment_txid} fallback="-" />
+          </div>
+          <div>
+            <InfoIcon content="Prover is certain that the burn can be redeemed and has created Midnight Tokens" />{' '}
+            Redeem contract submission:
+          </div>
+          <div>
+            <CopyableLongText content={burnStatus.redeem_txid} fallback="-" />
+          </div>
+        </div>
+      </div>
       {burnStatus.fail_reason && <div className="error">{burnStatus.fail_reason}</div>}
       {errorMessage && (
         <div className="error">
-          Information about burn progress might be out-dated. Gathering burn activity from the
-          prover failed with the following error:
+          Information about burn progress might be outdated. Gathering burn activity from the prover
+          failed with the following error:
           <br />
           {errorMessage}
         </div>

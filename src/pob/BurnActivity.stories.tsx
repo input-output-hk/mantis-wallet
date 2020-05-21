@@ -4,8 +4,7 @@ import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnActivity} from './BurnActivity'
-import {selectChain, selectBurnStatus} from '../storybook-util/custom-knobs'
-import {RealBurnStatus} from './pob-state'
+import {burnStatus} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Activity',
@@ -17,57 +16,10 @@ export const burnActivity = (): JSX.Element => (
     <BurnActivity
       burnStatuses={{
         [text('Burn address #1', 'Burn address #1')]: {
-          lastStatuses: [
-            {
-              burnAddressInfo: {
-                midnightAddress: 'midnight-address',
-                chainId: selectChain().id,
-                reward: 1,
-                autoConversion: false,
-              },
-              status: selectBurnStatus('Burn Status #1'),
-              txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
-              chain: selectChain().id,
-              commitment_txid: text('Commitment transaction id', 'commitment-transaction-id'),
-              commitment_txid_height: number('Commitment transaction height', 10),
-              redeem_txid: text('Redeem transaction id', 'redeem-transaction-id'),
-              redeem_txid_height: number('Redeem transaction height', 15),
-              fail_reason: text(
-                'An error message #1',
-                'This is an error message for Burn Address #1',
-              ),
-              burn_tx_height: 1,
-              current_source_height: 1,
-              processing_start_height: 1,
-              last_tag_height: 1,
-              tx_value: number('Burn tokens sent', 2),
-            } as RealBurnStatus,
-          ],
+          lastStatuses: [burnStatus('Burn #1')],
         },
         [text('Burn address #2', 'Burn address #2')]: {
-          lastStatuses: [
-            {
-              burnAddressInfo: {
-                midnightAddress: 'midnight-address',
-                chainId: selectChain().id,
-                reward: 1,
-                autoConversion: false,
-              },
-              status: selectBurnStatus('Burn Status #2'),
-              txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
-              chain: selectChain().id,
-              commitment_txid: text('Commitment transaction id', 'commitment-transaction-id'),
-              commitment_txid_height: number('Commitment transaction height', 10),
-              redeem_txid: text('Redeem transaction id', 'redeem-transaction-id'),
-              redeem_txid_height: number('Redeem transaction height', 15),
-              fail_reason: null,
-              burn_tx_height: 1,
-              current_source_height: 1,
-              processing_start_height: 1,
-              last_tag_height: 1,
-              tx_value: number('Burn tokens sent', 2),
-            } as RealBurnStatus,
-          ],
+          lastStatuses: [burnStatus('Burn #2')],
           errorMessage: text('An error message #2', 'This is an error message for Burn Address #2'),
         },
         [text('Burn address #3', 'Burn address #3')]: {
@@ -86,29 +38,7 @@ export const burnStatusDisplay = (): JSX.Element => (
   <div>
     <BurnStatusDisplay
       address={text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')}
-      burnStatus={
-        {
-          burnAddressInfo: {
-            midnightAddress: 'midnight-address',
-            chainId: selectChain().id,
-            reward: 1,
-            autoConversion: false,
-          },
-          status: selectBurnStatus(),
-          txid: text('Transaction id', 'source-chain-transaction-very-very-very-very-long-id'),
-          chain: selectChain().id,
-          commitment_txid: text('Commitment transaction id', 'commitment-transaction-id'),
-          commitment_txid_height: number('Commitment transaction height', 10),
-          redeem_txid: text('Redeem transaction id', 'redeem-transaction-id'),
-          redeem_txid_height: number('Redeem transaction height', 15),
-          burn_tx_height: number('Burn tx height', 1000),
-          current_source_height: number('Current height', 1001),
-          processing_start_height: number('Processing start height', 1100),
-          fail_reason: text('A fail reason', 'This is a error message for this burn transaction'),
-          last_tag_height: 1,
-          tx_value: number('Burn tokens sent', 2),
-        } as RealBurnStatus
-      }
+      burnStatus={burnStatus()}
       syncStatus={{
         mode: select('Sync status type', ['online', 'offline'], 'online'),
         currentBlock: 0,

@@ -7,15 +7,15 @@ import './CopyableLongText.scss'
 interface CopyableLongTextProps {
   content?: string | null
   showQrCode?: boolean
+  fallback?: string
 }
 
 export const CopyableLongText = ({
   content,
   showQrCode = false,
+  fallback = '',
 }: CopyableLongTextProps): JSX.Element =>
-  content == null ? (
-    <></>
-  ) : (
+  content ? (
     <div className="CopyableLongText">
       {showQrCode && (
         <Popover content={<QRCode value={content} />} placement="top">
@@ -29,4 +29,6 @@ export const CopyableLongText = ({
         {content}
       </Popover>
     </div>
+  ) : (
+    <>{fallback}</>
   )
