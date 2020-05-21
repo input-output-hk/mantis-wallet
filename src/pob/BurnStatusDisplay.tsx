@@ -81,66 +81,34 @@ const DisplayProgress = ({ratio}: {ratio: DisplayProgressRatio}): JSX.Element =>
   </div>
 )
 
-const ProvingStarted = ({progress}: {progress: ProgressType}): JSX.Element => {
-  switch (progress) {
-    case 'IN_PROGRESS':
-      return (
-        <Popover
-          content="Waiting for enough confirmations from source blockchain to start."
-          placement="top"
-        >
-          {PROGRESS_ICONS[progress]} Proving Started
-        </Popover>
-      )
-    case 'CHECKED':
-      return (
-        <Popover content="Confirmations received from source blockchain." placement="top">
-          {PROGRESS_ICONS[progress]} Proving Started
-        </Popover>
-      )
-    default:
-      return <>{PROGRESS_ICONS[progress]} Proving Started</>
-  }
-}
+const ProvingProgressLabel = ({
+  progress,
+  label,
+  inProgressMessage,
+  checkedMessage,
+}: {
+  progress: ProgressType
+  label: string
+  inProgressMessage: string
+  checkedMessage: string
+}): JSX.Element => {
+  const labelWithIcon = (
+    <span>
+      {PROGRESS_ICONS[progress]} {label}
+    </span>
+  )
 
-const ProvingSuccessful = ({progress}: {progress: ProgressType}): JSX.Element => {
-  switch (progress) {
-    case 'IN_PROGRESS':
-      return (
-        <Popover content="Proving underway." placement="top">
-          {PROGRESS_ICONS[progress]} Proving Successful
-        </Popover>
-      )
-    case 'CHECKED':
-      return (
-        <Popover content="Prover has successfully proved the burn transaction." placement="top">
-          {PROGRESS_ICONS[progress]} Proving Successful
-        </Popover>
-      )
-    default:
-      return <>{PROGRESS_ICONS[progress]} Proving Successful</>
-  }
-}
-
-const ProvingConfirmed = ({progress}: {progress: ProgressType}): JSX.Element => {
-  switch (progress) {
-    case 'IN_PROGRESS':
-      return (
-        <Popover content="Waiting for confirmations on Midnight." placement="top">
-          {PROGRESS_ICONS[progress]} Proving Confirmed
-        </Popover>
-      )
-    case 'CHECKED':
-      return (
-        <Popover
-          content="Burn Process complete. Midnight Tokens are now available."
-          placement="top"
-        >
-          {PROGRESS_ICONS[progress]} Proving Confirmed
-        </Popover>
-      )
-    default:
-      return <>{PROGRESS_ICONS[progress]} Proving Confirmed</>
+  if (progress === 'IN_PROGRESS' || progress === 'CHECKED') {
+    return (
+      <Popover
+        content={progress === 'IN_PROGRESS' ? inProgressMessage : checkedMessage}
+        placement="top"
+      >
+        {labelWithIcon}
+      </Popover>
+    )
+  } else {
+    return labelWithIcon
   }
 }
 
@@ -150,24 +118,14 @@ const NUMBER_OF_BLOCKS_TO_CONFIRM = 4
 const startedProgress = (current: number, tx: number | null, start: number | null): number =>
   start && tx && start !== tx ? (current - tx) / (start - tx) : 0
 
-const successProgress = (
+const getTransactionProgress = (blocks: number, submittedStatus: BurnStatusType) => (
   status: BurnStatusType,
-  current: number,
   txHeight: number | null,
+  syncStatus: SynchronizationStatus,
 ): DisplayProgressRatio => {
-  if (status === 'commitment_submitted') return 1 / (NUMBER_OF_BLOCKS_TO_SUCCESS + 1)
-  if (txHeight === null) return 'unknown'
-  return (1 + current - txHeight) / (NUMBER_OF_BLOCKS_TO_SUCCESS + 1)
-}
-
-const confirmProgress = (
-  status: BurnStatusType,
-  current: number,
-  txHeight: number | null,
-): DisplayProgressRatio => {
-  if (status === 'redeem_submitted') return 1 / (NUMBER_OF_BLOCKS_TO_CONFIRM + 1)
-  if (txHeight === null) return 'unknown'
-  return (1 + current - txHeight) / (NUMBER_OF_BLOCKS_TO_CONFIRM + 1)
+  if (status === submittedStatus) return 1 / (blocks + 1)
+  if (txHeight === null || syncStatus.mode === 'offline') return 'unknown'
+  return (1 + syncStatus.highestKnownBlock - txHeight) / (NUMBER_OF_BLOCKS_TO_SUCCESS + 1)
 }
 
 const isRedeemDone = (
@@ -246,43 +204,50 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           )}
         </div>
         <div className="progress">
-          <ProvingStarted progress={progress.started} />
+          <ProvingProgressLabel
+            progress={progress.started}
+            label="Proving Started"
+            inProgressMessage="Waiting for enough confirmations from source blockchain to start."
+            checkedMessage="Confirmations received from source blockchain."
+          />
         </div>
         <div className="line">
           {progress.success === 'IN_PROGRESS' && (
             <DisplayProgress
-              ratio={
-                syncStatus.mode === 'offline'
-                  ? 'unknown'
-                  : successProgress(
-                      burnStatus.status,
-                      syncStatus.highestKnownBlock,
-                      burnStatus.commitment_txid_height,
-                    )
-              }
+              ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
+                burnStatus.status,
+                burnStatus.commitment_txid_height,
+                syncStatus,
+              )}
             />
           )}
         </div>
         <div className="progress">
-          <ProvingSuccessful progress={progress.success} />
+          <ProvingProgressLabel
+            progress={progress.success}
+            label="Proving Successful"
+            inProgressMessage="Proving underway."
+            checkedMessage="Prover has successfully proved the burn transaction."
+          />
         </div>
         <div className="line">
           {progress.confirm === 'IN_PROGRESS' && (
             <DisplayProgress
-              ratio={
-                syncStatus.mode === 'offline'
-                  ? 'unknown'
-                  : confirmProgress(
-                      burnStatus.status,
-                      syncStatus.highestKnownBlock,
-                      burnStatus.redeem_txid_height,
-                    )
-              }
+              ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
+                burnStatus.status,
+                burnStatus.redeem_txid_height,
+                syncStatus,
+              )}
             />
           )}
         </div>
         <div className="progress">
-          <ProvingConfirmed progress={progress.confirm} />
+          <ProvingProgressLabel
+            progress={progress.confirm}
+            label="Proving Confirmed"
+            inProgressMessage="Waiting for confirmations on Midnight."
+            checkedMessage="Burn Process complete. Midnight Tokens are now available."
+          />
         </div>
       </div>
       {burnStatus.fail_reason && <div className="error">{burnStatus.fail_reason}</div>}
