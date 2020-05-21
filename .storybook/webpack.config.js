@@ -65,5 +65,8 @@ module.exports = ({config}) => {
   )
   config.resolve.extensions.push('.ts', '.tsx', '.less')
 
+  // output.globalObject is set to "window". It must be set to "self" to support HMR in Workers
+  config.output.globalObject = 'this'
+
   return config
 }

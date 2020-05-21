@@ -53,5 +53,5 @@ test('WalletOverview shows properly formatted balance', () => {
   const transparentBalance = getByText('Transparent', {exact: false})
   expect(transparentBalance).toBeInTheDocument()
   userEvent.click(transparentBalance)
-  expect(setViewType).toHaveBeenCalled()
+  expect(setViewType).toBeCalled()
 })

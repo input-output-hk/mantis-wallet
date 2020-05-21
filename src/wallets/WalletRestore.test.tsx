@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, fireEvent, wait} from '@testing-library/react'
+import {render, fireEvent, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {makeWeb3Worker} from '../web3'
@@ -86,5 +86,5 @@ test('WalletRestore', async () => {
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
   userEvent.click(cancelButton)
-  await wait(() => expect(cancel).toHaveBeenCalled())
+  await waitFor(() => expect(cancel).toBeCalled())
 })

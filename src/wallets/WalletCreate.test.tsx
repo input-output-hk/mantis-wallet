@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, wait} from '@testing-library/react'
+import {render, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
@@ -57,19 +57,21 @@ test('WalletCreate `Define` step', async () => {
   userEvent.type(passwordInput, password)
   userEvent.type(rePasswordInput, password.slice(0, 1)) // Type first character
   expect(getByText("Passwords don't match")).toBeInTheDocument()
-  userEvent.type(rePasswordInput, password) // Type full password
+  userEvent.type(rePasswordInput, password.slice(1)) // Type rest of the password
 
   // Click Next
-  const nextButton = getByText('Next →')
+  const nextButton = getByTestId('right-button')
   expect(nextButton).toBeInTheDocument()
+  expect(nextButton).toBeEnabled()
   userEvent.click(nextButton)
-  await wait(() => expect(next).toHaveBeenCalledWith(walletName, password))
+  await waitFor(() => expect(next).toBeCalledWith(walletName, password))
 
   // Click Cancel
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
+  expect(cancelButton).toBeEnabled()
   userEvent.click(cancelButton)
-  await wait(() => expect(cancel).toHaveBeenCalled())
+  await waitFor(() => expect(cancel).toBeCalled())
 })
 
 test('WalletCreate `Security` step', async () => {
@@ -92,20 +94,20 @@ test('WalletCreate `Security` step', async () => {
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
   userEvent.click(cancelButton)
-  await wait(() => expect(cancel).toHaveBeenCalled())
+  await waitFor(() => expect(cancel).toBeCalled())
 
   // Click Next
   const nextButton = getByText('Next →')
   expect(nextButton).toBeInTheDocument()
   userEvent.click(nextButton)
-  await wait(() => expect(next).toHaveBeenCalled())
+  await waitFor(() => expect(next).toBeCalled())
 })
 
 test('WalletCreate `Display Recovery` step', async () => {
   const back = jest.fn()
   const next = jest.fn()
 
-  const {getByText} = render(
+  const {getByText, getByLabelText} = render(
     <WalletCreateDisplayRecoveryStep back={back} next={next} seedPhrase={seedPhrase} />,
   )
 
@@ -116,30 +118,31 @@ test('WalletCreate `Display Recovery` step', async () => {
   const backButton = getByText('Back')
   expect(backButton).toBeInTheDocument()
   userEvent.click(backButton)
-  expect(back).toHaveBeenCalled()
+  expect(back).toBeCalled()
 
   // Click Next
   const nextButton = getByText('Next →')
   expect(nextButton).toBeInTheDocument()
   userEvent.click(nextButton)
   // Next button should be disabled
-  expect(next).not.toHaveBeenCalled()
+  expect(nextButton).toBeDisabled()
+  expect(next).not.toBeCalled()
 
   // Confirm
-  const approveText = getByText('Yes, I have written it down.')
-  expect(approveText).toBeInTheDocument()
-  userEvent.click(approveText)
+  const writtenDownCheckbox = getByLabelText('Yes, I have written it down.')
+  expect(writtenDownCheckbox).toBeInTheDocument()
+  userEvent.click(writtenDownCheckbox)
 
   // Button should be enabled afteer confirmation
   userEvent.click(nextButton)
-  await wait(() => expect(next).toHaveBeenCalled())
+  await waitFor(() => expect(next).toBeCalled())
 })
 
 test('WalletCreate `Verify Recovery` step', async () => {
   const back = jest.fn()
   const finish = jest.fn()
 
-  const {getByText} = render(
+  const {getByText, getByLabelText} = render(
     <WalletCreateVerifyRecoveryStep
       back={back}
       finish={finish}
@@ -161,27 +164,27 @@ test('WalletCreate `Verify Recovery` step', async () => {
   expect(finishButton).toBeInTheDocument()
   userEvent.click(finishButton)
   // Button is still disabled
-  expect(finish).not.toHaveBeenCalled()
+  expect(finish).not.toBeCalled()
 
   // Click Back
   const backButton = getByText('Back')
   expect(backButton).toBeInTheDocument()
   userEvent.click(backButton)
-  await wait(() => expect(back).toHaveBeenCalled())
+  await waitFor(() => expect(back).toBeCalled())
 
   // Accept conditions
-  const label1 = getByText(
+  const checkbox1 = getByLabelText(
     'I understand that my wallet and tokens are held securely on this device only and not on any servers',
   )
-  const label2 = getByText(
+  const checkbox2 = getByLabelText(
     'I understand that if this application is moved to another device or is deleted, my wallet can only be recovered with the backup phrase I have written down and stored securely',
   )
-  expect(label1).toBeInTheDocument()
-  expect(label2).toBeInTheDocument()
-  userEvent.click(label1)
-  userEvent.click(label2)
+  expect(checkbox1).toBeInTheDocument()
+  expect(checkbox2).toBeInTheDocument()
+  userEvent.click(checkbox1)
+  userEvent.click(checkbox2)
 
   // Click Finish
   userEvent.click(finishButton)
-  await wait(() => expect(finish).toHaveBeenCalled())
+  await waitFor(() => expect(finish).toBeCalled())
 })

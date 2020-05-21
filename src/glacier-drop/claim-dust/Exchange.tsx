@@ -57,17 +57,19 @@ const _Exchange = ({
       </Asset>
       <DialogShowDust amount={minimumDustAmount}>You are eligible for at least</DialogShowDust>
       <DialogApproval
-        autoFocus
+        id="confirm-balance"
         description={`Confirm ${chain.symbol} Balance OK`}
         checked={extrernalBalanceConfirmed}
         onChange={setExternalBalanceConfirmed}
+        autoFocus
       />
       <DialogDropdown
-        label="Midnight Address"
+        label="Midnight Transparent Address"
         options={transparentAddresses}
         onChange={setTransparentAddress}
       />
       <DialogApproval
+        id="confirm-fee"
         description="I understand"
         checked={midnightBalanceConfirmed}
         onChange={setMidnightBalanceConfirmed}

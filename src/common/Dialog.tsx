@@ -94,8 +94,8 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="dialog-children">{children}</div>
         <div className={classnames('actions', buttonDisplayMode)}>
-          {!doNotRenderLeft && <Button {...leftButtonPropsToUse} />}
-          {!doNotRenderRight && <Button {...rightButtonPropsToUse} />}
+          {!doNotRenderLeft && <Button data-testid="left-button" {...leftButtonPropsToUse} />}
+          {!doNotRenderRight && <Button data-testid="right-button" {...rightButtonPropsToUse} />}
         </div>
       </form>
       {(footer || errorMessage) && (

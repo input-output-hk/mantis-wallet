@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {render, wait, RenderResult} from '@testing-library/react'
+import {render, waitFor, RenderResult} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
@@ -21,7 +21,6 @@ const {ETH_TESTNET} = CHAINS
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('../config/renderer.ts')
-jest.mock('react-inlinesvg')
 
 test('Burn Centre shows correct burn balances and its buttons work as expected', async () => {
   const registerAuction = jest.fn()
@@ -64,13 +63,13 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
   const burnCoinsButton = getByText('Burn Coins')
   expect(burnCoinsButton).toBeInTheDocument()
   userEvent.click(burnCoinsButton)
-  await wait(() => expect(burnCoins).toHaveBeenCalled())
+  await waitFor(() => expect(burnCoins).toBeCalled())
 
   // Click Register for Auction
   const registerAuctionButton = getByText('Register for Auction')
   expect(registerAuctionButton).toBeInTheDocument()
   userEvent.click(registerAuctionButton)
-  await wait(() => expect(burnCoins).toHaveBeenCalled())
+  await waitFor(() => expect(burnCoins).toBeCalled())
 
   // Check Burn Balances
   expect(getByText('Available')).toBeInTheDocument()

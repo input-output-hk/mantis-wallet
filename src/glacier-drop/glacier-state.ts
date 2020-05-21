@@ -113,7 +113,7 @@ export type TransactionStatus = TransactionPending | TransactionFailed | Transac
 
 // Glacier Store
 
-interface GlacierData {
+export interface GlacierData {
   // Constants
   constants: Option<GlacierConstants>
 

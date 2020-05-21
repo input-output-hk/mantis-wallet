@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, wait} from '@testing-library/react'
+import {render, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {CHAINS} from './chains'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
@@ -10,7 +10,6 @@ import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 const {ETH_TESTNET, BTC_TESTNET} = CHAINS
 
 jest.mock('../config/renderer.ts')
-jest.mock('react-inlinesvg')
 
 const provers = [
   {
@@ -30,7 +29,7 @@ test('Burn Coins - Choose Tokens step', () => {
     const tokenChooser = getByText(`Burn ${chain.name} for M-${chain.symbol}`)
     expect(tokenChooser).toBeInTheDocument()
     userEvent.click(tokenChooser)
-    expect(chooseChain).toHaveBeenCalledWith(chain)
+    expect(chooseChain).toBeCalledWith(chain)
   })
 })
 
@@ -39,7 +38,7 @@ test('Burn Coins - Generate Address step', async () => {
   const generateBurnAddress = jest.fn()
 
   const chain = ETH_TESTNET
-  const {getByText} = render(
+  const {getByText, getByRole} = render(
     <BurnCoinsGenerateAddress
       chain={chain}
       provers={provers}
@@ -56,61 +55,23 @@ test('Burn Coins - Generate Address step', async () => {
   expect(getByText('http://test-prover', {exact: false})).toBeInTheDocument()
   expect(getByText(`Assign reward in M-${chain.symbol} for your prover`)).toBeInTheDocument()
 
-  const approvalCheckbox = getByText(
-    `The Burn process is irreversible and the ${chain.name} Tokens burned will be unspendable forever.`,
-    {exact: false},
-  )
+  const generateBurnAddressButton = getByText(`Generate ${chain.symbol} Address`)
+
+  const approvalCheckbox = getByRole('checkbox')
   expect(approvalCheckbox).toBeInTheDocument()
   userEvent.click(approvalCheckbox)
+  await waitFor(() => expect(generateBurnAddressButton).toBeEnabled())
 
   const cancelButton = getByText('Cancel')
   expect(cancelButton).toBeInTheDocument()
+  expect(cancel).not.toBeCalled()
   userEvent.click(cancelButton)
-  await wait(() => expect(cancel).toHaveBeenCalled())
+  await waitFor(() => expect(cancel).toBeCalled())
 
-  const generateBurnAddressButton = getByText(`Generate ${chain.symbol} Address`)
   expect(generateBurnAddressButton).toBeInTheDocument()
+  expect(generateBurnAddress).not.toBeCalled()
   userEvent.click(generateBurnAddressButton)
-  await wait(() => expect(generateBurnAddress).toHaveBeenCalled())
-})
-
-test('Burn Coins - Generate Address step', async () => {
-  const cancel = jest.fn()
-  const generateBurnAddress = jest.fn()
-
-  const chain = ETH_TESTNET
-  const {getByText} = render(
-    <BurnCoinsGenerateAddress
-      chain={chain}
-      provers={provers}
-      transparentAddresses={['transparent-address-1']}
-      cancel={cancel}
-      generateBurnAddress={generateBurnAddress}
-    />,
-  )
-
-  expect(getByText('Token Exchange Rate', {exact: false})).toBeInTheDocument()
-  expect(getByText('Select Receive Address', {exact: false})).toBeInTheDocument()
-  expect(getByText('transparent-address-1')).toBeInTheDocument()
-  expect(getByText('Test-Prover', {exact: false})).toBeInTheDocument()
-  expect(getByText('http://test-prover', {exact: false})).toBeInTheDocument()
-  expect(getByText(`Assign reward in M-${chain.symbol} for your prover`)).toBeInTheDocument()
-
-  const approvalCheckbox = getByText(
-    `The Burn process is irreversible and the ${chain.name} Tokens burned will be unspendable forever.`,
-  )
-  expect(approvalCheckbox).toBeInTheDocument()
-  userEvent.click(approvalCheckbox)
-
-  const cancelButton = getByText('Cancel')
-  expect(cancelButton).toBeInTheDocument()
-  userEvent.click(cancelButton)
-  await wait(() => expect(cancel).toHaveBeenCalled())
-
-  const generateBurnAddressButton = getByText(`Generate ${chain.symbol} Address`)
-  expect(generateBurnAddressButton).toBeInTheDocument()
-  userEvent.click(generateBurnAddressButton)
-  await wait(() => expect(generateBurnAddress).toHaveBeenCalled())
+  await waitFor(() => expect(generateBurnAddress).toBeCalled())
 })
 
 test('Burn Coins - Show Address step', async () => {
@@ -129,5 +90,5 @@ test('Burn Coins - Show Address step', async () => {
   const goBackButton = getByText('← Go Back')
   expect(goBackButton).toBeInTheDocument()
   userEvent.click(goBackButton)
-  await wait(() => expect(goBack).toHaveBeenCalled())
+  await waitFor(() => expect(goBack).toBeCalled())
 })

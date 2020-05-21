@@ -16,7 +16,6 @@ const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-jest.mock('react-inlinesvg')
 jest.mock('../config/renderer.ts')
 
 const tx1: Transaction = {
