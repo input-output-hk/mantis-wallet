@@ -49,7 +49,7 @@
 
     @include themify($themes) {
       background-color: themed('error-background-color');
-      color: themed('error-color');
+      color: themed('error-dialog-color');
     }
   }
 }

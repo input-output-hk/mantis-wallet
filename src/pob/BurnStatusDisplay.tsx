@@ -181,21 +181,6 @@ const isRedeemDone = (
   )
 }
 
-const DisplayError = ({errorMessage}: {errorMessage?: string}): JSX.Element => {
-  if (errorMessage) {
-    return (
-      <div className="error">
-        Information about burn progress might be out-dated. Gathering burn activity from the prover
-        failed with the following error:
-        <br />
-        {errorMessage}
-      </div>
-    )
-  }
-
-  return <></>
-}
-
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   address,
   syncStatus,
@@ -300,7 +285,15 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <ProvingConfirmed progress={progress.confirm} />
         </div>
       </div>
-      <DisplayError errorMessage={errorMessage} />
+      {burnStatus.fail_reason && <div className="error">{burnStatus.fail_reason}</div>}
+      {errorMessage && (
+        <div className="error">
+          Information about burn progress might be out-dated. Gathering burn activity from the
+          prover failed with the following error:
+          <br />
+          {errorMessage}
+        </div>
+      )}
     </div>
   )
 }
