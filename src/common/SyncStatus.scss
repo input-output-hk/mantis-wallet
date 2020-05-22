@@ -3,7 +3,6 @@
 .SyncStatus {
   font-size: 12px;
   font-weight: bold;
-  cursor: pointer;
 
   @include themify($themes) {
     color: themed('inactive-text-color');
