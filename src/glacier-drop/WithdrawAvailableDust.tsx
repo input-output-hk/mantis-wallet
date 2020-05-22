@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_PRICE, DEFAULT_GAS_LIMIT} from './glacier-config'
 import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
 import {validateAmount, isGreaterOrEqual} from '../common/util'
-import {ModalOnCancel, wrapWithModal, ModalLocker} from '../common/LunaModal'
+import {wrapWithModal, ModalLocker} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogColumns} from '../common/dialog/DialogColumns'
@@ -12,12 +12,13 @@ import {DialogShowDust} from '../common/dialog/DialogShowDust'
 import {getUnfrozenAmount, getNumberOfEpochsForClaim, getCurrentEpoch} from './Period'
 import './WithdrawAvailableDust.scss'
 
-interface WithdrawAvailableDustProps extends ModalOnCancel {
+interface WithdrawAvailableDustProps {
   claim: Claim
   currentBlock: number
   periodConfig: PeriodConfig
   showEpochs: () => void
   onNext: (withdrawTxHash: string) => void
+  onCancel: () => void
 }
 
 const _WithdrawAvailableDust = ({
@@ -94,7 +95,7 @@ const _WithdrawAvailableDust = ({
       <div
         className="more-info"
         onClick={() => {
-          close()
+          onCancel()
           showEpochs()
         }}
       >
