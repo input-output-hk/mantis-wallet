@@ -4,6 +4,8 @@ import {Button} from 'antd'
 import {ETC_CHAIN} from '../glacier-config'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
+import {Link} from '../../common/Link'
+import {LINKS} from '../../external-link-config'
 import {DisplayChain} from '../../pob/chains'
 import './SelectMethod.scss'
 
@@ -44,7 +46,9 @@ export const SelectMethod = ({
             </Button>
           </div>
           <div className="actions grid">
-            <div className="more-info">read more on website</div>
+            <div className="more-info">
+              <Link href={LINKS.aboutGlacier}>read more on website</Link>
+            </div>
           </div>
         </div>
         <div className="section">

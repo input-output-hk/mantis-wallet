@@ -114,7 +114,7 @@ const getOrd = ({direction, property}: SortBy): Ord<Transaction> => {
 }
 
 export const transactionTableStyle = {
-  gridTemplateColumns: `repeat(${columns.length}, 1fr)`,
+  gridTemplateColumns: `repeat(${columns.length}, auto)`,
 }
 
 export const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element => {

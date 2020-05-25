@@ -12,6 +12,8 @@ import dustIconLight from '../assets/light/dust.png'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
 import './WalletOverview.scss'
+import {Link} from '../common/Link'
+import {LINKS} from '../external-link-config'
 
 interface WalletOverviewProps {
   pending: BigNumber
@@ -70,6 +72,9 @@ export const WalletOverview = ({
           <div className="box-amount">
             <img src={dustIcon} alt="dust" className="dust" />
             <ShortNumber big={confidential} />
+          </div>
+          <div className="get-dust">
+            <Link href={LINKS.faucet}>Where to get Dust?</Link>
           </div>
         </div>
         <div className="transparent" onClick={goToAccounts}>

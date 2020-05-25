@@ -1,19 +1,29 @@
 import React from 'react'
+import _ from 'lodash'
 import {shell} from 'electron'
+import {Popover} from 'antd'
+import classnames from 'classnames'
 import './Link.scss'
 
 interface LinkProps {
   href: string
+  className?: string
+  styled?: boolean
 }
 
-export const Link = ({children, href}: React.PropsWithChildren<LinkProps>): JSX.Element => (
+export const Link = ({
+  children,
+  href,
+  className = '',
+  styled = false,
+}: React.PropsWithChildren<LinkProps>): JSX.Element => (
   <span
-    className="Link"
+    className={classnames('Link', className, {styled: styled})}
     onClick={(event) => {
       event.preventDefault()
       shell.openExternal(href)
     }}
   >
-    {children}
+    <Popover content={_.truncate(href, {length: 40})}>{children}</Popover>
   </span>
 )

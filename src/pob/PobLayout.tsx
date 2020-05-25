@@ -1,5 +1,7 @@
 import React from 'react'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
+import {LINKS} from '../external-link-config'
+import {Link} from '../common/Link'
 import './PobLayout.scss'
 
 interface PobLayoutProps {
@@ -14,7 +16,9 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
     <div className="PobLayout">
       <HeaderWithSyncStatus>
         {title}
-        <div className="link">Learn more about Proof of Burn</div>
+        <div className="link">
+          <Link href={LINKS.aboutPoB}>Learn more about Proof of Burn</Link>
+        </div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>

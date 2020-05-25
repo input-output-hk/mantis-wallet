@@ -1,5 +1,9 @@
 @import '../partial';
 
 .Link {
-  @extend %link;
+  cursor: pointer;
+
+  &.styled {
+    @extend %link;
+  }
 }
