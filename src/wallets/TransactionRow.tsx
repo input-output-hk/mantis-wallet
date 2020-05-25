@@ -9,6 +9,7 @@ import {Transaction, TxStatusString} from '../web3'
 import {ThemeState} from '../theme-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
+import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
 import {WalletState} from '../common/wallet-state'
 import {formatDate, abbreviateAmount} from '../common/formatters'
@@ -222,7 +223,7 @@ export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element 
       <div>
         Transaction ID: <span className="monospace">{hash}</span>
         <br />
-        <Link href={`https://explorer.testnet-pupa.project42.iohkdev.io/transaction/${hash}`}>
+        <Link href={`${LINKS.explorer}/transaction/${hash}`} styled>
           View in Explorer
         </Link>
       </div>

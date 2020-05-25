@@ -8,6 +8,8 @@ import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {Chain} from '../chains'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
+import {LINKS} from '../../external-link-config'
+import {Link} from '../../common/Link'
 import {validateAmount, hasAtMostDecimalPlaces, isGreaterOrEqual} from '../../common/util'
 import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
@@ -107,7 +109,13 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           onChange={(e) => setFee(e.target.value)}
           errorMessage={feeError}
         />
-        <DialogMessage description="www.prover_list_metrics" />
+        <DialogMessage
+          description={
+            <Link href={LINKS.proverListMetrics} styled>
+              See Prover List Metrics
+            </Link>
+          }
+        />
         <DialogApproval
           checked={approval}
           onChange={setApproval}

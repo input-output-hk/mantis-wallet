@@ -10,6 +10,8 @@ import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 import {StatusModal} from '../common/StatusModal'
+import {LINKS} from '../external-link-config'
+import {Link} from '../common/Link'
 import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
 import lightLogo from '../assets/light/logo.png'
@@ -100,12 +102,20 @@ export const Sidebar = (): JSX.Element => {
       </div>
       <div className="footer">
         <div>
-          Support |{' '}
+          <Link href={LINKS.support} className="footer-link">
+            Support
+          </Link>{' '}
+          |{' '}
+          <Link href={LINKS.feedback} className="footer-link">
+            Feedback
+          </Link>
+        </div>
+        <div>
           <span className="footer-link" onClick={() => setShowStatusModal(true)}>
             Status
-          </span>
+          </span>{' '}
+          | {logOut}
         </div>
-        <div>{logOut}</div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal

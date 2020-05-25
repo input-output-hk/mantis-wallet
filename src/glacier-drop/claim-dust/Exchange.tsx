@@ -8,6 +8,8 @@ import {Dialog} from '../../common/Dialog'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {LINKS} from '../../external-link-config'
+import {Link} from '../../common/Link'
 import {Asset} from './Asset'
 import {ETC_CHAIN} from '../glacier-config'
 import './Exchange.scss'
@@ -81,7 +83,9 @@ const _Exchange = ({
           </span>
         </div>
       </DialogApproval>
-      <div className="get-dust">get dust</div>
+      <div className="get-dust">
+        <Link href={LINKS.faucet}>get dust</Link>
+      </div>
     </Dialog>
   )
 }

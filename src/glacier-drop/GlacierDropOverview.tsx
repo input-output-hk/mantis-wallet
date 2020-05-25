@@ -19,6 +19,8 @@ import {useInterval} from '../common/hook-utils'
 import {makeDesktopNotification} from '../common/notify'
 import {Token} from '../common/Token'
 import {Loading} from '../common/Loading'
+import {LINKS} from '../external-link-config'
+import {Link} from '../common/Link'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {NoWallet} from '../wallets/NoWallet'
 import {
@@ -73,8 +75,8 @@ const ClaimHistory = ({
                 periodConfig={periodConfig}
                 period={period}
                 showEpochs={showEpochs}
-                onSubmitPuzzle={(claim: Claim): void => setClaimToSubmit(claim)}
-                onWithdrawDust={(claim: Claim): void => setClaimToWithdraw(claim)}
+                onSubmitPuzzle={setClaimToSubmit}
+                onWithdrawDust={setClaimToWithdraw}
               />
             ))}
           </div>
@@ -110,7 +112,9 @@ const GlacierDropWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JS
     <div className="GlacierDropOverview">
       <HeaderWithSyncStatus>
         Glacier Drop
-        <div className="link">Learn more about Glacier Drop</div>
+        <div className="link">
+          <Link href={LINKS.aboutGlacier}>Learn more about Glacier Drop</Link>
+        </div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>

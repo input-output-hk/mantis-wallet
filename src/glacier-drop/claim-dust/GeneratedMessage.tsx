@@ -4,6 +4,8 @@ import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {copyToClipboard} from '../../common/clipboard'
+import {Link} from '../../common/Link'
+import {LINKS} from '../../external-link-config'
 import {normalizeAddress} from '../glacier-state'
 import './GeneratedMessage.scss'
 
@@ -40,7 +42,9 @@ export const GeneratedMessage = ({
         type="dark"
       >
         <DialogInput label="Generated Message" value={msg} disabled={true} />
-        <div className="more-info">view compatible wallets & software</div>
+        <div className="more-info">
+          <Link href={LINKS.aboutGlacier}>view compatible wallets & software</Link>
+        </div>
       </Dialog>
     </LunaModal>
   )
