@@ -40,8 +40,8 @@ test('WalletCreate `Define` step', async () => {
   expect(walletNameInput).toBeInTheDocument()
   userEvent.type(walletNameInput, walletName)
 
-  // Click spending password switch
-  expect(getByText('Spending password')).toBeInTheDocument()
+  // Click wallet password switch
+  expect(getByText('Wallet password')).toBeInTheDocument()
   const spendingPasswordSwitch = getByRole('switch')
   expect(spendingPasswordSwitch).toBeInTheDocument()
   userEvent.click(spendingPasswordSwitch)
@@ -53,7 +53,7 @@ test('WalletCreate `Define` step', async () => {
   const rePasswordInput = getByTestId('rePassword')
   expect(rePasswordInput).toBeInTheDocument()
 
-  // Enter spending password
+  // Enter wallet password
   userEvent.type(passwordInput, password)
   userEvent.type(rePasswordInput, password.slice(0, 1)) // Type first character
   expect(getByText("Passwords don't match")).toBeInTheDocument()

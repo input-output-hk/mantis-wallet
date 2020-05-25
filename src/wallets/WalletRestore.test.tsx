@@ -64,7 +64,7 @@ test('WalletRestore', async () => {
   fireEvent.change(recoveryPhraseInput, {target: {value: recoveryPhrase}})
 
   // Enable password
-  expect(getByText('Spending password')).toBeInTheDocument()
+  expect(getByText('Wallet password')).toBeInTheDocument()
   const spendingPasswordSwitch = getByRole('switch')
   expect(spendingPasswordSwitch).toBeInTheDocument()
   userEvent.click(spendingPasswordSwitch)
@@ -76,7 +76,7 @@ test('WalletRestore', async () => {
   const rePasswordInput = getByTestId('rePassword')
   expect(rePasswordInput).toBeInTheDocument()
 
-  // Enter spending password
+  // Enter wallet password
   fireEvent.change(passwordInput, {target: {value: password}})
   fireEvent.change(rePasswordInput, {target: {value: '...'}}) // Type wrong second password
   expect(getByText("Passwords don't match")).toBeInTheDocument()

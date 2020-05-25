@@ -39,8 +39,8 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
       />
       <DialogSwitch
         key="use-password-switch"
-        label="Spending password"
-        description="Keep your private keys encrypted by adding a spending password"
+        label="Wallet password"
+        description="Keep your private keys encrypted by adding a wallet password"
         checked={usePassphrase}
         onChange={setUsePassphrase}
       />
