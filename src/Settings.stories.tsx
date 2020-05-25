@@ -15,5 +15,5 @@ export default {
 export const settings = (): JSX.Element => <Settings />
 
 export const restartPrompt = (): JSX.Element => (
-  <RestartPrompt onCancel={action('onCancel')} onRestart={action('onRestart')} visible={true} />
+  <RestartPrompt onCancel={action('onCancel')} onRestart={action('onRestart')} visible />
 )

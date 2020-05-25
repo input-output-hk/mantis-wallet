@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import {fromRpcSig, bufferToHex} from 'ethereumjs-util'
 import {ETC_CHAIN} from '../glacier-config'
 import {AuthorizationSignature} from '../glacier-state'
+import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DisplayChain} from '../../pob/chains'
@@ -47,7 +48,7 @@ const _ClaimWithMessage = ({
     <Dialog
       title="Claim Dust with Signed Message"
       rightButtonProps={{
-        children: 'Unlock and initiate proof of Work puzzle',
+        children: UNLOCK_BUTTON_TEXT,
         type: 'default',
         onClick: () => {
           const authSignature = signedMessageToAuthSignature(signedMessage)
@@ -77,7 +78,8 @@ const _ClaimWithMessage = ({
       </DialogShowDust>
       <DialogMessage label="Destination Address" description={transparentAddress} />
       <DialogApproval
-        description="I’m aware that I have to keep my Luna wallet open during unlocking "
+        id="should-keep-open-checkbox"
+        description={SHOULD_KEEP_OPEN_TEXT}
         checked={checked}
         onChange={setChecked}
       />

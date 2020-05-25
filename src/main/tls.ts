@@ -199,11 +199,11 @@ export function registerCertificateValidationHandler(
   app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isCertValid = verifyCertificate(tlsData, expectedUrl)(url, certificate)
     if (isCertValid) {
-      console.log('Self-signed cert verification passed. Accepting')
+      console.info('Self-signed cert verification passed. Accepting')
       event.preventDefault()
       callback(true)
     } else {
-      console.log('Rejecting unknown certificate')
+      console.info('Rejecting unknown certificate')
       callback(false)
     }
   })

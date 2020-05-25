@@ -16,7 +16,6 @@ const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-jest.mock('react-inlinesvg')
 jest.mock('../config/renderer.ts')
 
 const tx1: Transaction = {
@@ -144,7 +143,6 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 test('Send modal shows up', () => {
   const {getByTestId, getAllByText} = renderTransactionHistory([tx1, tx2])
   const sendButton = getByTestId('send-button')
-  expect(sendButton).toBeInTheDocument()
   userEvent.click(sendButton)
 
   expect(getAllByText('Recipient')).toHaveLength(2)
@@ -153,7 +151,6 @@ test('Send modal shows up', () => {
 test('Receive modal shows up', () => {
   const {getByTestId, getByText} = renderTransactionHistory([tx1, tx2])
   const receiveButton = getByTestId('receive-button')
-  expect(receiveButton).toBeInTheDocument()
   userEvent.click(receiveButton)
 
   expect(getByText('Your private address')).toBeInTheDocument()

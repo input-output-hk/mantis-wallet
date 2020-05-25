@@ -21,7 +21,7 @@ export default {
 
 export const burnCoins = (): JSX.Element => <BurnCoins />
 
-export const transparentAddress = (): JSX.Element => (
+export const generateTansparentAddress = (): JSX.Element => (
   <BurnCoinsTransparentAddress
     cancel={action('on-cancel')}
     generateTransparentAddress={asyncAction('on-generate-transparent-address')}

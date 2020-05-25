@@ -1,13 +1,14 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {render, wait, RenderResult} from '@testing-library/react'
+import {render, RenderResult} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
 import {UNITS} from '../common/units'
 import {abbreviateAmount, formatPercentage} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
+import {expectCalledOnClick} from '../common/test-helpers'
 import {BurnActivity} from './BurnActivity'
 import {BurnStatusType} from './api/prover'
 import {makeWeb3Worker} from '../web3'
@@ -21,7 +22,6 @@ const {ETH_TESTNET} = CHAINS
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
 jest.mock('../config/renderer.ts')
-jest.mock('react-inlinesvg')
 
 test('Burn Centre shows correct burn balances and its buttons work as expected', async () => {
   const registerAuction = jest.fn()
@@ -61,16 +61,10 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
   )
 
   // Click Burn Coins
-  const burnCoinsButton = getByText('Burn Coins')
-  expect(burnCoinsButton).toBeInTheDocument()
-  userEvent.click(burnCoinsButton)
-  await wait(() => expect(burnCoins).toHaveBeenCalled())
+  await expectCalledOnClick(() => getByText('Burn Coins'), burnCoins)
 
   // Click Register for Auction
-  const registerAuctionButton = getByText('Register for Auction')
-  expect(registerAuctionButton).toBeInTheDocument()
-  userEvent.click(registerAuctionButton)
-  await wait(() => expect(burnCoins).toHaveBeenCalled())
+  await expectCalledOnClick(() => getByText('Register for Auction'), registerAuction)
 
   // Check Burn Balances
   expect(getByText('Available')).toBeInTheDocument()
@@ -89,7 +83,6 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
 
   // Adding Burn Tx Manually
   const addBurnTxLink = getByText('Manual Burn')
-  expect(addBurnTxLink).toBeInTheDocument()
   userEvent.click(addBurnTxLink)
   expect(getByText('Burn Transaction Id')).toBeInTheDocument()
 })
@@ -201,7 +194,6 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
 
   // check if search works correctly
   const searchField = getByPlaceholderText('Burn Tx ID')
-  expect(searchField).toBeInTheDocument()
   expect(queryByText('burn-transaction-id-2', {exact: false})).toBeInTheDocument()
   userEvent.type(searchField, 'burn-transaction-id-1')
   expect(queryByText('burn-transaction-id-2', {exact: false})).not.toBeInTheDocument()

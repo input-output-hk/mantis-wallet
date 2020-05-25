@@ -1,3 +1,4 @@
+/* eslint-disable fp/no-mutation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -9,10 +10,14 @@ class MockWorker {
   dispatchEvent() {
     return false
   }
-  onmessage() {}
+  onmessage(e: any) {}
   onerror() {}
-  postMessage() {}
-  addEventListener() {}
+  postMessage(msg: any) {
+    this.onmessage(msg)
+  }
+  addEventListener(name: string, callback: (e: any) => void) {
+    this.onmessage = callback
+  }
   removeEventListener() {}
   terminate() {}
 }

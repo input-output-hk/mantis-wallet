@@ -117,6 +117,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           }
         />
         <DialogApproval
+          id="i-understand-the-process-checkbox"
           checked={approval}
           onChange={setApproval}
           description={

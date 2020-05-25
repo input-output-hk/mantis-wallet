@@ -45,7 +45,7 @@ export const DialogDropdown = <T extends string>({
   return (
     <div className={classnames('DialogDropdown', type)}>
       <Dropdown overlay={menu} overlayClassName="DialogDropdownOverlay">
-        <span className="label">{label} ▼ </span>
+        <span className="label">{label} ▼</span>
       </Dropdown>
       {activeOption ? (
         <div className="active-option">{activeOption.label}</div>

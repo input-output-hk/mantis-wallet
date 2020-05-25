@@ -96,8 +96,8 @@ export function validateEthAddress(rawInput: string): string {
 const MAX_KEY_VALUE = new BigNumber(
   '0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141',
 )
-const INVALID_PRIVATE_KEY_MSG = 'Invalid private key'
-const PRIVATE_KEY_MUST_BE_SET_MSG = 'Private Key must be set'
+export const PRIVATE_KEY_INVALID_MSG = 'Invalid private key'
+export const PRIVATE_KEY_MUST_BE_SET_MSG = 'Private Key must be set'
 
 export function validateEthPrivateKey(privateKey: string): string {
   if (privateKey.length === 0) {
@@ -106,10 +106,10 @@ export function validateEthPrivateKey(privateKey: string): string {
   try {
     const k = new BigNumber(privateKey)
     if (!k.isFinite() || k.isZero() || k.isGreaterThan(MAX_KEY_VALUE)) {
-      return INVALID_PRIVATE_KEY_MSG
+      return PRIVATE_KEY_INVALID_MSG
     }
   } catch (e) {
-    return INVALID_PRIVATE_KEY_MSG
+    return PRIVATE_KEY_INVALID_MSG
   }
   return ''
 }

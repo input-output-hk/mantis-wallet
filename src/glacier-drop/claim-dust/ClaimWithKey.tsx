@@ -9,8 +9,9 @@ import {DisplayChain} from '../../pob/chains'
 import {wrapWithModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {Asset} from './Asset'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
+import {Asset} from './Asset'
 import './ClaimWith.scss'
 
 interface ClaimWithKeyProps {
@@ -42,7 +43,7 @@ const _ClaimWithKey = ({
     <Dialog
       title="Claim Dust with Private Key"
       rightButtonProps={{
-        children: 'Unlock and initiate proof of Work puzzle',
+        children: UNLOCK_BUTTON_TEXT,
         type: 'default',
         onClick: async () => {
           const signature = await authorizationSign(transparentAddress, etcPrivateKey)
@@ -58,10 +59,11 @@ const _ClaimWithKey = ({
       buttonDisplayMode="natural"
     >
       <DialogInput
-        autoFocus
+        id="private-key-input"
         label={`${chain.symbol} Private Key from your ${chain.symbol} Wallet `}
         onChange={(e): void => setEtcPrivateKey(e.target.value.toLowerCase())}
         errorMessage={privateKeyError}
+        autoFocus
       />
       <Asset amount={externalAmount} chain={chain}>
         Asset
@@ -71,7 +73,8 @@ const _ClaimWithKey = ({
       </DialogShowDust>
       <DialogMessage label="Destination Address" description={transparentAddress} />
       <DialogApproval
-        description="I’m aware that I have to keep my Luna wallet open during unlocking "
+        id="should-keep-open-checkbox"
+        description={SHOULD_KEEP_OPEN_TEXT}
         checked={checked}
         onChange={setChecked}
       />
