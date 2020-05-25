@@ -74,4 +74,4 @@ export const CHAINS: Record<ChainId, Chain> = {
 }
 
 // FIXME: refactor chains for general usage (including ETC and DUST)
-export const DUST_SYMBOL = 'DT'
+export const DUST_SYMBOL = 'DST'
