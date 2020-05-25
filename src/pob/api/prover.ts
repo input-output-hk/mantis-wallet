@@ -52,6 +52,7 @@ const BurnApiStatus = t.type({
   processing_start_height: t.union([t.number, t.null]),
   commitment_txid: t.union([t.string, t.null]),
   redeem_txid: t.union([t.string, t.null]),
+  fail_reason: notRequired(t.string),
   chain: notRequired(chainType),
   last_tag_height: notRequired(t.number),
 })

@@ -35,6 +35,7 @@ export interface BurnAddressInfo {
 
 export interface RealBurnStatus extends BurnApiStatus {
   burnAddressInfo: BurnAddressInfo
+  prover: ProverConfig
   commitment_txid_height: number | null
   redeem_txid_height: number | null
 }
@@ -162,6 +163,7 @@ function useProofOfBurnState(
               return {
                 ...s,
                 burnAddressInfo: burnAddresses[burnWatcher.burnAddress],
+                prover: burnWatcher.prover,
                 commitment_txid_height: await getTransactionHeight(s.commitment_txid),
                 redeem_txid_height: await getTransactionHeight(s.redeem_txid),
               }

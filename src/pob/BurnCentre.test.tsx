@@ -14,6 +14,7 @@ import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {RealBurnStatus, BurnAddressInfo} from './pob-state'
+import {ProverConfig} from '../config/type'
 
 const {ETH_TESTNET} = CHAINS
 
@@ -109,9 +110,15 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
     reward: 1e16,
   }
 
+  const prover: ProverConfig = {
+    name: 'Test Prover',
+    address: 'http://test-prover',
+  }
+
   const lastStatuses: RealBurnStatus[] = [
     {
       burnAddressInfo,
+      prover,
       status: 'tx_found',
       txid: 'source-chain-burn-transaction-id-1',
       chain: 'BTC_TESTNET',
@@ -119,6 +126,7 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       commitment_txid_height: 10,
       redeem_txid: null,
       redeem_txid_height: null,
+      fail_reason: null,
       burn_tx_height: 1,
       current_source_height: 1,
       processing_start_height: 1,
@@ -127,6 +135,7 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
     },
     {
       burnAddressInfo,
+      prover,
       status: 'tx_found',
       txid: 'source-chain-burn-transaction-id-2',
       chain: 'BTC_TESTNET',
@@ -134,6 +143,7 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       commitment_txid_height: 10,
       redeem_txid: null,
       redeem_txid_height: null,
+      fail_reason: null,
       burn_tx_height: 1,
       current_source_height: 1,
       processing_start_height: 1,
@@ -210,6 +220,10 @@ const burnStatus = {
     chainId: 'BTC_TESTNET',
     autoConversion: false,
     reward: 1e16,
+  },
+  prover: {
+    name: 'Test Prover',
+    address: 'http://test-prover',
   },
   txid: 'source-chain-burn-transaction-id-1',
   chain: 'BTC_TESTNET',
