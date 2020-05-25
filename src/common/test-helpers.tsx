@@ -21,14 +21,12 @@ export const glacierWrappedRender = (ui: React.ReactElement): RenderResult =>
   render(ui, {wrapper: WithGlacierProviders})
 
 export const expectCalledOnClick = async (
-  buttonText: string,
-  fn: CallableFunction,
-  getByText: CallableFunction,
+  getter: () => HTMLElement,
+  toBeCalledFn: CallableFunction,
 ): Promise<void> => {
-  expect(fn).not.toBeCalled()
-  const button = getByText(buttonText)
-  expect(button).toBeInTheDocument()
+  expect(toBeCalledFn).not.toBeCalled()
+  const button = getter()
   expect(button).toBeEnabled()
   await act(async () => userEvent.click(button))
-  await waitFor(() => expect(fn).toBeCalled())
+  await waitFor(() => expect(toBeCalledFn).toBeCalled())
 }

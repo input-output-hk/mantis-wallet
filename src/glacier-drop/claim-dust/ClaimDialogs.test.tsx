@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {fireEvent, waitFor, act} from '@testing-library/react'
+import {fireEvent, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import ethereumLogo from '../../assets/icons/chains/ethereum.svg'
@@ -52,7 +52,6 @@ test('Enter External Address', async () => {
 
   // Find Public Address field
   const publicAddressInput = getByLabelText(`${fooChain.symbol} Public Address`)
-  expect(publicAddressInput).toBeInTheDocument()
 
   // Find Proceed Button
   const submitButton = getByText('Proceed')
@@ -73,11 +72,7 @@ test('Enter External Address', async () => {
   expect(submitButton).toBeDisabled()
 
   // Cancel works any time
-  const cancelButton = getByText('Cancel')
-  await act(async () => {
-    userEvent.click(cancelButton)
-  })
-  expect(onCancel).toBeCalled()
+  await expectCalledOnClick(() => getByText('Cancel'), onCancel)
 
   // Finally, we expect no errors when we enter a valid address
   fireEvent.change(publicAddressInput, {
@@ -110,7 +105,6 @@ test('Exchange', async () => {
 
   // Find Submit Button
   const submitButton = getByText('Go to Unlocking')
-  expect(submitButton).toBeInTheDocument()
   expect(submitButton).toBeDisabled()
 
   // External Balance shown
@@ -132,7 +126,6 @@ test('Exchange', async () => {
 
   // Toggle address dropdown
   const dropdownTrigger = getByText('Midnight Transparent Address ▼')
-  expect(dropdownTrigger).toBeInTheDocument()
   fireEvent.mouseEnter(dropdownTrigger)
 
   // Midnight transparent addresses are shown in the dropdown
@@ -176,14 +169,13 @@ test('Select Claim Method', async () => {
   ).toBeInTheDocument()
 
   // Link to website is shown
-  // TODO: make it a real link
   const websiteLink = getByText('read more on website')
   expect(websiteLink).toBeInTheDocument()
 
   // Buttons correctly call the callbacks
-  await expectCalledOnClick('Continue', onPrivateKey, getByText)
-  await expectCalledOnClick('Create', onMessageCreate, getByText)
-  await expectCalledOnClick('Use Signed', onMessageUseSigned, getByText)
+  await expectCalledOnClick(() => getByText('Continue'), onPrivateKey)
+  await expectCalledOnClick(() => getByText('Create'), onMessageCreate)
+  await expectCalledOnClick(() => getByText('Use Signed'), onMessageUseSigned)
 })
 
 test('Verify Address', async () => {
@@ -201,8 +193,8 @@ test('Verify Address', async () => {
   )
 
   // Next & Cancel buttons work
-  await expectCalledOnClick('Generate Message', onNext, getByText)
-  await expectCalledOnClick('Cancel', onCancel, getByText)
+  await expectCalledOnClick(() => getByText('Generate Message'), onNext)
+  await expectCalledOnClick(() => getByText('Cancel'), onCancel)
 
   // Info is shown
   expect(getByText(ETC_ADDRESS)).toBeInTheDocument()
@@ -221,7 +213,7 @@ test('Generated Message', async () => {
     />,
   )
 
-  await expectCalledOnClick('Confirm', onNext, getByText)
+  await expectCalledOnClick(() => getByText('Confirm'), onNext)
 })
 
 test('Claim with Private Key', () => {

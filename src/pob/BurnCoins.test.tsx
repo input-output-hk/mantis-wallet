@@ -3,6 +3,7 @@ import React from 'react'
 import {render, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {CHAINS} from './chains'
+import {expectCalledOnClick} from '../common/test-helpers'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
@@ -27,7 +28,6 @@ test('Burn Coins - Choose Tokens step', () => {
 
   chainsUsed.map((chain) => {
     const tokenChooser = getByText(`Burn ${chain.name} for M-${chain.symbol}`)
-    expect(tokenChooser).toBeInTheDocument()
     userEvent.click(tokenChooser)
     expect(chooseChain).toBeCalledWith(chain)
   })
@@ -58,17 +58,11 @@ test('Burn Coins - Generate Address step', async () => {
   const generateBurnAddressButton = getByText(`Generate ${chain.symbol} Address`)
 
   const approvalCheckbox = getByRole('checkbox')
-  expect(approvalCheckbox).toBeInTheDocument()
   userEvent.click(approvalCheckbox)
   await waitFor(() => expect(generateBurnAddressButton).toBeEnabled())
 
-  const cancelButton = getByText('Cancel')
-  expect(cancelButton).toBeInTheDocument()
-  expect(cancel).not.toBeCalled()
-  userEvent.click(cancelButton)
-  await waitFor(() => expect(cancel).toBeCalled())
+  await expectCalledOnClick(() => getByText('Cancel'), cancel)
 
-  expect(generateBurnAddressButton).toBeInTheDocument()
   expect(generateBurnAddress).not.toBeCalled()
   userEvent.click(generateBurnAddressButton)
   await waitFor(() => expect(generateBurnAddress).toBeCalled())
@@ -87,8 +81,5 @@ test('Burn Coins - Show Address step', async () => {
   expect(getByText(burnAddress)).toBeInTheDocument()
   expect(getByText('Copy Code')).toBeInTheDocument()
 
-  const goBackButton = getByText('← Go Back')
-  expect(goBackButton).toBeInTheDocument()
-  userEvent.click(goBackButton)
-  await waitFor(() => expect(goBack).toBeCalled())
+  await expectCalledOnClick(() => getByText('← Go Back'), goBack)
 })

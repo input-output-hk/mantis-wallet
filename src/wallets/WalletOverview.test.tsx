@@ -45,13 +45,11 @@ test('WalletOverview shows properly formatted balance', () => {
   })
 
   numbers.map((formattedNumber) => {
-    const numberElem = getByText(formattedNumber)
     // abbreviated numbers are present
-    expect(numberElem).toBeInTheDocument()
+    expect(getByText(formattedNumber)).toBeInTheDocument()
   })
 
   const transparentBalance = getByText('Transparent', {exact: false})
-  expect(transparentBalance).toBeInTheDocument()
   userEvent.click(transparentBalance)
   expect(setViewType).toBeCalled()
 })

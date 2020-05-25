@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import {expectCalledOnClick} from '../common/test-helpers'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
@@ -37,21 +38,17 @@ test('WalletCreate `Define` step', async () => {
   // Enter wallet name
   expect(getByText("Name shouldn't be empty")).toBeInTheDocument()
   const walletNameInput = getByLabelText('Wallet name')
-  expect(walletNameInput).toBeInTheDocument()
   userEvent.type(walletNameInput, walletName)
 
   // Click wallet password switch
   expect(getByText('Wallet password')).toBeInTheDocument()
   const spendingPasswordSwitch = getByRole('switch')
-  expect(spendingPasswordSwitch).toBeInTheDocument()
   userEvent.click(spendingPasswordSwitch)
 
   // Verify password fields
   expect(getByText('Enter Password')).toBeInTheDocument()
   const passwordInput = getByTestId('password')
-  expect(passwordInput).toBeInTheDocument()
   const rePasswordInput = getByTestId('rePassword')
-  expect(rePasswordInput).toBeInTheDocument()
 
   // Enter wallet password
   userEvent.type(passwordInput, password)
@@ -61,17 +58,12 @@ test('WalletCreate `Define` step', async () => {
 
   // Click Next
   const nextButton = getByTestId('right-button')
-  expect(nextButton).toBeInTheDocument()
   expect(nextButton).toBeEnabled()
   userEvent.click(nextButton)
   await waitFor(() => expect(next).toBeCalledWith(walletName, password))
 
   // Click Cancel
-  const cancelButton = getByText('Cancel')
-  expect(cancelButton).toBeInTheDocument()
-  expect(cancelButton).toBeEnabled()
-  userEvent.click(cancelButton)
-  await waitFor(() => expect(cancel).toBeCalled())
+  expectCalledOnClick(() => getByText('Cancel'), cancel)
 })
 
 test('WalletCreate `Security` step', async () => {
@@ -85,22 +77,15 @@ test('WalletCreate `Security` step', async () => {
 
   // Show spending key
   const spendingKeySwitch = getByRole('switch')
-  expect(spendingKeySwitch).toBeInTheDocument()
   userEvent.click(spendingKeySwitch)
   expect(getByText(spendingKey)).toBeInTheDocument()
   expect(getByText('Download.txt')).toBeInTheDocument()
 
   // Click Cancel
-  const cancelButton = getByText('Cancel')
-  expect(cancelButton).toBeInTheDocument()
-  userEvent.click(cancelButton)
-  await waitFor(() => expect(cancel).toBeCalled())
+  await expectCalledOnClick(() => getByText('Cancel'), cancel)
 
   // Click Next
-  const nextButton = getByText('Next →')
-  expect(nextButton).toBeInTheDocument()
-  userEvent.click(nextButton)
-  await waitFor(() => expect(next).toBeCalled())
+  await expectCalledOnClick(() => getByText('Next →'), next)
 })
 
 test('WalletCreate `Display Recovery` step', async () => {
@@ -115,14 +100,10 @@ test('WalletCreate `Display Recovery` step', async () => {
   seedPhrase.map((word: string) => expect(getByText(word)).toBeInTheDocument())
 
   // Click Back
-  const backButton = getByText('Back')
-  expect(backButton).toBeInTheDocument()
-  userEvent.click(backButton)
-  expect(back).toBeCalled()
+  await expectCalledOnClick(() => getByText('Back'), back)
 
   // Click Next
   const nextButton = getByText('Next →')
-  expect(nextButton).toBeInTheDocument()
   userEvent.click(nextButton)
   // Next button should be disabled
   expect(nextButton).toBeDisabled()
@@ -130,7 +111,6 @@ test('WalletCreate `Display Recovery` step', async () => {
 
   // Confirm
   const writtenDownCheckbox = getByLabelText('Yes, I have written it down.')
-  expect(writtenDownCheckbox).toBeInTheDocument()
   userEvent.click(writtenDownCheckbox)
 
   // Button should be enabled afteer confirmation
@@ -161,16 +141,12 @@ test('WalletCreate `Verify Recovery` step', async () => {
 
   // Click Finish (disabled)
   const finishButton = getByText('Finish')
-  expect(finishButton).toBeInTheDocument()
   userEvent.click(finishButton)
   // Button is still disabled
   expect(finish).not.toBeCalled()
 
   // Click Back
-  const backButton = getByText('Back')
-  expect(backButton).toBeInTheDocument()
-  userEvent.click(backButton)
-  await waitFor(() => expect(back).toBeCalled())
+  await expectCalledOnClick(() => getByText('Back'), back)
 
   // Accept conditions
   const checkbox1 = getByLabelText(
@@ -179,8 +155,6 @@ test('WalletCreate `Verify Recovery` step', async () => {
   const checkbox2 = getByLabelText(
     'I understand that if this application is moved to another device or is deleted, my wallet can only be recovered with the backup phrase I have written down and stored securely',
   )
-  expect(checkbox1).toBeInTheDocument()
-  expect(checkbox2).toBeInTheDocument()
   userEvent.click(checkbox1)
   userEvent.click(checkbox2)
 
