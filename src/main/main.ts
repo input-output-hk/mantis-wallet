@@ -14,8 +14,13 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {LunaManagedConfigPaths} from '../shared/ipc-types'
-import {ClientName, SettingsPerClient} from '../config/type'
-import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
+import {ClientName, SettingsPerClient, ProcessConfig} from '../config/type'
+import {
+  MidnightProcess,
+  processExecutablePath,
+  SpawnedMidnightProcess,
+  isWin,
+} from './MidnightProcess'
 import {
   configToParams,
   registerCertificateValidationHandler,
@@ -215,16 +220,33 @@ if (!config.runClients) {
 // Handle client child processes with TLS
 //
 if (config.runClients) {
-  const tlsDataPromise = setupOwnTLS(processExecutablePath(config.clientConfigs.node))
-    .then((tlsData) => ({tlsData, tlsParams: configToParams(tlsData)}))
-    .catch((error): never => {
-      console.error(error)
-      dialog.showErrorBox('Luna startup error', error.message)
+  async function checkJavaVersion(walletBackendConfig: ProcessConfig): Promise<void> {
+    const scriptName = `java_check.${isWin ? 'bat' : 'sh'}`
+    const scriptPath = path.resolve(walletBackendConfig.packageDirectory, 'bin', scriptName)
+    try {
+      const {stdout, stderr} = await promisify(exec)(scriptPath, {
+        cwd: walletBackendConfig.packageDirectory,
+      })
+      console.info(stdout)
+      console.error(stderr)
+    } catch (e) {
+      dialog.showErrorBox('Java version problem', e.stdout)
       app.exit(1)
-      // Little trick to make typechecker see that this promise cannot contain undefined
-      // Because always an error is thrown
-      throw new Error('exiting')
-    })
+    }
+  }
+
+  const tlsDataPromise = checkJavaVersion(config.clientConfigs.wallet).then(() =>
+    setupOwnTLS(processExecutablePath(config.clientConfigs.node))
+      .then((tlsData) => ({tlsData, tlsParams: configToParams(tlsData)}))
+      .catch((error): never => {
+        console.error(error)
+        dialog.showErrorBox('Luna startup error', error.message)
+        app.exit(1)
+        // Little trick to make typechecker see that this promise cannot contain undefined
+        // Because always an error is thrown
+        throw new Error('exiting')
+      }),
+  )
 
   let runningClients: SpawnedMidnightProcess[] | null = null
 

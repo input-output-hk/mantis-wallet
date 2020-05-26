@@ -1,4 +1,3 @@
-import * as path from 'path'
 import {resolve} from 'path'
 import * as childProcess from 'child_process'
 import * as os from 'os'
@@ -13,7 +12,7 @@ import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
 import {readableToObservable} from './streamUtils'
 import {setProcessStatus} from './status'
 
-const isWin = os.platform() === 'win32'
+export const isWin = os.platform() === 'win32'
 
 // @types/node's ChildProcess is missing exitCode property documented below:
 // https://nodejs.org/api/child_process.html#child_process_subprocess_exitcode
@@ -84,7 +83,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   processConfig: ProcessConfig,
 ) => {
   const executablePath = processExecutablePath(processConfig)
-  const processDataDir = path.resolve(dataDir, processConfig.dataDir.directoryName)
+  const processDataDir = resolve(dataDir, processConfig.dataDir.directoryName)
 
   return {
     name,
@@ -94,7 +93,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
           ...processConfig.additionalSettings,
           ...additionalConfig,
           [processConfig.dataDir.settingName]: processDataDir,
-          LOGS_DIR: path.resolve(processDataDir, 'logs'),
+          LOGS_DIR: resolve(processDataDir, 'logs'),
         },
         Object.entries,
         array.map(([key, value]) => `-D${key}=${value}`),
