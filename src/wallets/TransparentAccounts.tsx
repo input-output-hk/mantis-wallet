@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Button} from 'antd'
+import {Button, message} from 'antd'
 import {ThemeState} from '../theme-state'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
@@ -119,7 +119,19 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
         <div className="main-title">Transparent Accounts</div>
         <div className="line"></div>
         <div>
-          <Button type="primary" className="action" onClick={generateAddress}>
+          <Button
+            type="primary"
+            className="action"
+            onClick={async (): Promise<void> => {
+              try {
+                await generateAddress()
+                message.success('New transparent address was generated')
+              } catch (e) {
+                console.error(e)
+                message.error(<div style={{width: '500px', float: 'right'}}>{e.message}</div>, 10)
+              }
+            }}
+          >
             Generate New Address
           </Button>
           <Button type="primary" className="action secondary" onClick={backToTransactions}>
