@@ -11,7 +11,7 @@ export const dummyTransactions: Transaction[] = [
     txDetails: {
       txType: 'call',
       transparentTransactionHash: '123456',
-      usedTransparentAccountIndexes: [1],
+      usedTransparentAccountIndexes: [0],
       transparentTransaction: {
         nonce: '0x1',
         gasPrice: '0x123',
@@ -106,6 +106,33 @@ export const dummyTransactions: Transaction[] = [
     txValue: {
       value: '0x20ea4388',
       fee: '0x53bcf60',
+    },
+  },
+  {
+    hash: '9',
+    txStatus: {
+      status: 'confirmed',
+      atBlock: '0xb70ef8',
+      timestamp: 1585118004,
+    },
+    txDetails: {
+      txType: 'call',
+      transparentTransactionHash: '1234567',
+      usedTransparentAccountIndexes: [0, 2],
+      transparentTransaction: {
+        nonce: '0x1',
+        gasPrice: '0x123',
+        gasLimit: '0x1185920',
+        sendingAddress: 'third-transparent-address',
+        receivingAddress: 'first-transparent-address',
+        value: '1230',
+        payload: '0xPAYLOAD',
+      },
+    },
+    txDirection: 'outgoing',
+    txValue: {
+      value: '0x2cc4d205',
+      fee: '0x1708f6e',
     },
   },
 ]

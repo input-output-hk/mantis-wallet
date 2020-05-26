@@ -64,9 +64,20 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
         {transactionsVisible && transactions.length > 0 && (
           <div className="transactions-container">
             <div className="transactions" style={transactionTableStyle}>
-              {transactions.map((tx: Transaction) => (
-                <TransactionRow transaction={tx} key={tx.hash} />
-              ))}
+              {transactions
+                .map(
+                  (tx: Transaction): Transaction =>
+                    // this is necessary for txs between a single user's accounts
+                    // where it is always shown as outgoing
+                    tx.txDetails.txType === 'call' &&
+                    tx.txDirection === 'outgoing' &&
+                    tx.txDetails.transparentTransaction.receivingAddress === account.address
+                      ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
+                      : tx,
+                )
+                .map((tx: Transaction) => (
+                  <TransactionRow transaction={tx} key={tx.hash} />
+                ))}
             </div>
           </div>
         )}
@@ -141,7 +152,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
                     (txDetails.txType === 'redeem' &&
                       a.index === txDetails.usedTransparentAccountIndex) ||
                     (txDetails.txType === 'call' &&
-                      a.address === txDetails.transparentTransaction.sendingAddress),
+                      txDetails.usedTransparentAccountIndexes.includes(a.index)),
                 )}
               />
             ))}

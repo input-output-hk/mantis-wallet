@@ -61,14 +61,19 @@ export const transparentAccounts = (): JSX.Element => (
     generateAddress={action('generate-address')}
     transparentAccounts={[
       {
-        address: 'first-transparent-address',
-        index: 1,
-        balance: dust('First account balance', 1234),
+        address: 'third-transparent-address',
+        index: 2,
+        balance: dust('Third account balance', 0),
       },
       {
         address: 'second-transparent-address',
-        index: 2,
+        index: 1,
         balance: dust('Second account balance', 0),
+      },
+      {
+        address: 'first-transparent-address',
+        index: 0,
+        balance: dust('First account balance', 1234),
       },
     ]}
     redeem={asyncAction('on-redeem')}
