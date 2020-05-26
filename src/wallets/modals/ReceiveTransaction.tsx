@@ -18,6 +18,7 @@ interface ReceivePrivateTransactionProps {
 interface ReceivePublicTransactionProps {
   transparentAddress?: TransparentAddress
   onGenerateNew: () => Promise<void>
+  onSetLoading: (isLoading: boolean) => void
 }
 
 interface ReceiveTransactionProps
@@ -51,12 +52,18 @@ const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransacti
 const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransactionProps> = ({
   transparentAddress,
   onGenerateNew,
+  onSetLoading,
 }: ReceivePublicTransactionProps) => {
   const modalLocker = ModalLocker.useContainer()
 
   const title = transparentAddress
     ? `Receive Account ${transparentAddress.index}`
     : 'No known addresses'
+
+  const handleLoading = (isLoading: boolean): void => {
+    onSetLoading(isLoading)
+    modalLocker.setLocked(isLoading)
+  }
 
   return (
     <Dialog
@@ -75,7 +82,7 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
         children: 'Generate new →',
         onClick: onGenerateNew,
       }}
-      onSetLoading={modalLocker.setLocked}
+      onSetLoading={handleLoading}
       type="dark"
     >
       <div className="title">{title}</div>
@@ -105,6 +112,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
   const [mode, setMode] = useState<'transparent' | 'confidential'>('confidential')
+  const [isLoading, setLoading] = useState(false)
 
   const newestAddress = _.head(transparentAddresses)
 
@@ -118,14 +126,15 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
             <CopyableLongText content={address} showQrCode />
           </div>
         ))}
-        <div
-          onClick={() => {
-            const modalLocker = ModalLocker.useContainer()
-            if (!modalLocker.isLocked) goToAccounts()
-          }}
-        >
-          <span className="link">See all Transparent Addresseses</span>
-        </div>
+        {transparentAddresses.length > 6 && (
+          <div
+            onClick={() => {
+              if (!isLoading) goToAccounts()
+            }}
+          >
+            <span className="link">See all Transparent Addresses</span>
+          </div>
+        )}
       </div>
     )
 
@@ -151,6 +160,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
         <ReceivePublicTransaction
           transparentAddress={newestAddress}
           onGenerateNew={onGenerateNew}
+          onSetLoading={setLoading}
         />
       )}
     </LunaModal>
