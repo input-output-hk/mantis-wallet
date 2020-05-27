@@ -3,17 +3,18 @@ import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {Popover} from 'antd'
+import {LUNA_EDITION} from '../shared/version'
 import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
-import {OverviewGraph} from './OverviewGraph'
+import {Link} from '../common/Link'
+import {LINKS} from '../external-link-config'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
+import {OverviewGraph} from './OverviewGraph'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
 import './WalletOverview.scss'
-import {Link} from '../common/Link'
-import {LINKS} from '../external-link-config'
 
 interface WalletOverviewProps {
   pending: BigNumber
@@ -47,6 +48,7 @@ export const WalletOverview = ({
     <div className="WalletOverview">
       <div className="header">
         <HeaderWithSyncStatus>Wallet Overview</HeaderWithSyncStatus>
+        <div>{LUNA_EDITION}</div>
       </div>
       <div className="balances">
         <div className="total">

@@ -1,7 +1,7 @@
 /* eslint-disable fp/no-mutation */
 import os from 'os'
-import {app} from 'electron'
 import {ClientName} from '../config/type'
+import {LUNA_VERSION} from '../shared/version'
 
 const progressForDAG = [/Generating DAG \d+%/, /Loading DAG from file \d+%/] as const
 
@@ -33,7 +33,7 @@ export const status: LunaStatus = {
     cpu: os.cpus()[0].model,
     memory: os.totalmem(),
 
-    lunaVersion: app.getVersion(),
+    lunaVersion: LUNA_VERSION,
     mainPid: process.pid,
   },
 }

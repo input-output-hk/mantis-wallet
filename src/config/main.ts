@@ -367,8 +367,6 @@ export const loadLunaManagedConfig = (): LunaManagedConfig => {
   const lunaManagedConfigGetter = convict(lunaManagedConfigSchema)
   if (fs.existsSync(lunaManagedConfigPath)) {
     lunaManagedConfigGetter.loadFile(lunaManagedConfigPath)
-  } else {
-    console.info(`Luna managed config doesn't exist at path: ${lunaManagedConfigPath}`)
   }
   lunaManagedConfigGetter.validate()
   return lunaManagedConfigGetter.getProperties()

@@ -33,6 +33,7 @@ import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config
 import {buildMenu, buildRemixMenu} from './menu'
 import {ipcListen} from './util'
 import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
+import {LUNA_VERSION} from '../shared/version'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -85,6 +86,7 @@ function createWindow(): void {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
+    title: `Luna Wallet — ${LUNA_VERSION}`,
     width,
     height,
     icon: path.join(__dirname, '/../icon.png'),

@@ -5,15 +5,16 @@ import classnames from 'classnames'
 import {ThemeState} from '../theme-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
+import {LUNA_VERSION} from '../shared/version'
+import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
+import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
+import {Link} from '../common/Link'
+import {StatusModal} from '../common/StatusModal'
 import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
-import {StatusModal} from '../common/StatusModal'
 import {LINKS} from '../external-link-config'
-import {Link} from '../common/Link'
-import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
-import {useInterval} from '../common/hook-utils'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
@@ -116,6 +117,7 @@ export const Sidebar = (): JSX.Element => {
           </span>{' '}
           | {logOut}
         </div>
+        <div className="version">{LUNA_VERSION}</div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal
