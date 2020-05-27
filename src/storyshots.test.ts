@@ -39,7 +39,7 @@ const getMatchOptions = (theme: Theme) => ({
 
 const beforeScreenshot = (theme: Theme) => (page: Page): Promise<void> => {
   return page
-    .goto(`${page.url()}&theme=${theme}`)
+    .goto(`${page.url()}&theme=${theme}&disable-animations=true`)
     .then(() => new Promise((resolve) => setTimeout(resolve, delay)))
 }
 
