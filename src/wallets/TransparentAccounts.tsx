@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Button} from 'antd'
+import {Button, message} from 'antd'
 import {ThemeState} from '../theme-state'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
@@ -64,9 +64,20 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
         {transactionsVisible && transactions.length > 0 && (
           <div className="transactions-container">
             <div className="transactions" style={transactionTableStyle}>
-              {transactions.map((tx: Transaction) => (
-                <TransactionRow transaction={tx} key={tx.hash} />
-              ))}
+              {transactions
+                .map(
+                  (tx: Transaction): Transaction =>
+                    // this is necessary for txs between a single user's accounts
+                    // where it is always shown as outgoing
+                    tx.txDetails.txType === 'call' &&
+                    tx.txDirection === 'outgoing' &&
+                    tx.txDetails.transparentTransaction.receivingAddress === account.address
+                      ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
+                      : tx,
+                )
+                .map((tx: Transaction) => (
+                  <TransactionRow transaction={tx} key={tx.hash} />
+                ))}
             </div>
           </div>
         )}
@@ -108,7 +119,19 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
         <div className="main-title">Transparent Accounts</div>
         <div className="line"></div>
         <div>
-          <Button type="primary" className="action" onClick={generateAddress}>
+          <Button
+            type="primary"
+            className="action"
+            onClick={async (): Promise<void> => {
+              try {
+                await generateAddress()
+                message.success('New transparent address was generated')
+              } catch (e) {
+                console.error(e)
+                message.error(<div style={{width: '500px', float: 'right'}}>{e.message}</div>, 10)
+              }
+            }}
+          >
             Generate New Address
           </Button>
           <Button type="primary" className="action secondary" onClick={backToTransactions}>
@@ -141,7 +164,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
                     (txDetails.txType === 'redeem' &&
                       a.index === txDetails.usedTransparentAccountIndex) ||
                     (txDetails.txType === 'call' &&
-                      a.address === txDetails.transparentTransaction.sendingAddress),
+                      txDetails.usedTransparentAccountIndexes.includes(a.index)),
                 )}
               />
             ))}
