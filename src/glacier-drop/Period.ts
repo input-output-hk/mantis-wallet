@@ -9,7 +9,10 @@ export const getCurrentEpoch = (
   {unfreezingStartBlock, epochLength, numberOfEpochs}: PeriodConfig,
 ): number => {
   if (currentBlock < unfreezingStartBlock) return 0
-  return Math.min(Math.ceil((currentBlock - unfreezingStartBlock) / epochLength), numberOfEpochs)
+  return Math.min(
+    Math.ceil((currentBlock + 1 - unfreezingStartBlock) / epochLength),
+    numberOfEpochs,
+  )
 }
 
 export const getSecondsUntilNextEpoch = (

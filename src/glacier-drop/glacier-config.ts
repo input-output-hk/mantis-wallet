@@ -15,7 +15,7 @@ export const ETC_CHAIN: DisplayChain = {
 }
 
 export const BLOCK_TIME_SECONDS = 3.9 * 60
-// FIXME: when sum of ETC in snapshot is available from contract call (waiting on backend)
+// FIXME: PM-1968 - when sum of ETC in snapshot is available from contract call (waiting on backend)
 export const TOTAL_ETHER_IN_SNAPSHOT = new BigNumber('99987579302527058980101585')
 
 // Contract Addresses
