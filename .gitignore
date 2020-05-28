@@ -35,3 +35,10 @@ yarn-error.log*
 
 .envrc
 .python-version
+
+# nix
+result
+result-*
+
+# electron-builder
+/.log

@@ -137,7 +137,7 @@ convict.addFormats({
 
 const defaultDataDir = path.resolve(homedir(), '.luna')
 const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'midnight-dist')
-const midnightVersion = 'v0.11.0'
+// const midnightVersion = 'v0.11.0'
 
 const clientConfig = (
   name: ClientName,
@@ -233,7 +233,7 @@ const configGetter = convict({
     doc: 'Whether to run wallet backend and Midnight node on its own or not',
   },
   distPackagesDir: {
-    default: path.resolve(__dirname, '..', '..', '..', 'midnight-dist'),
+    default: defaultDistPackagesDir,
     arg: 'dist-packages-dir',
     env: 'LUNA_DIST_PACKAGES_DIR',
     doc: 'Directory, which contains distribution packages of node and wallet',
@@ -241,10 +241,11 @@ const configGetter = convict({
   },
   clientConfigs: {
     node: clientConfig('node', {
-      packageDirectory: path.resolve(
-        defaultDistPackagesDir,
-        `midnight-node-moth-pupa-${midnightVersion}`,
-      ),
+      // packageDirectory: path.resolve(
+      //   defaultDistPackagesDir,
+      //   `midnight-node-moth-pupa-${midnightVersion}`,
+      // ),
+      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-node'),
       executableName: 'midnight-node',
       dataDir: {
         settingName: 'midnight.datadir',
@@ -255,10 +256,11 @@ const configGetter = convict({
       },
     }),
     wallet: clientConfig('wallet', {
-      packageDirectory: path.resolve(
-        defaultDistPackagesDir,
-        `midnight-wallet-moth-pupa-${midnightVersion}`,
-      ),
+      // packageDirectory: path.resolve(
+      //   defaultDistPackagesDir,
+      //   `midnight-wallet-moth-pupa-${midnightVersion}`,
+      // ),
+      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-wallet'),
       executableName: 'midnight-wallet',
       dataDir: {
         settingName: 'wallet.datadir',
