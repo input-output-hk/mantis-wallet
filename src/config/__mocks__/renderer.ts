@@ -31,7 +31,7 @@ export const loadLunaStatus = (): LunaStatus => ({
 })
 
 export const loadLunaManagedConfig = (): LunaManagedConfig => ({
-  selectedNetwork: 'development',
+  selectedNetwork: 'testnet',
   miningEnabled: false,
   pkd: '',
   ovk: '',
@@ -39,8 +39,8 @@ export const loadLunaManagedConfig = (): LunaManagedConfig => ({
 })
 
 export const getContractAddresses = (): Record<string, ContractConfigItem> => ({
-  development: {
-    networkName: 'development',
+  testnet: {
+    networkName: 'testnet',
     glacierDrop: '',
     constantsRepo: '',
   },

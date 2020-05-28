@@ -13,6 +13,7 @@ interface DialogDropdownProps<T> {
   type?: 'normal' | 'small'
   label: string
   options: Array<DialogDropdownOption<T> | T>
+  defaultOptionIndex?: number
   onChange?: (option: T) => void
 }
 
@@ -20,12 +21,13 @@ export const DialogDropdown = <T extends string>({
   type = 'normal',
   label,
   options,
+  defaultOptionIndex = 0,
   onChange,
 }: DialogDropdownProps<T>): JSX.Element => {
   const trueOptions: Array<DialogDropdownOption<T>> = options.map((option) =>
     _.isString(option) ? {key: option, label: option} : option,
   )
-  const [activeOption, setActiveOption] = useState(trueOptions[0])
+  const [activeOption, setActiveOption] = useState(trueOptions[defaultOptionIndex])
 
   const handleClick = (option: DialogDropdownOption<T>) => () => {
     setActiveOption(option)

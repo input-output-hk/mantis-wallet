@@ -11,8 +11,8 @@ import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
+import {loadCurrentContractAddresses} from './glacier-config'
 import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse} from '../web3'
-import {GLACIER_DROP_ADDRESS, CONSTANTS_REPO_ADDRESS} from './glacier-config'
 import {Period} from './Period'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
@@ -20,12 +20,9 @@ import constantsRepositoryContractABI from '../assets/contracts/ConstantsReposit
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
 // Contracts
-
 const web3sync = new Web3()
-const GlacierDropContract = web3sync.eth.contract(glacierDropContractABI).at(GLACIER_DROP_ADDRESS)
-const ConstantsRepositoryContract = web3sync.eth
-  .contract(constantsRepositoryContractABI)
-  .at(CONSTANTS_REPO_ADDRESS)
+const GlacierDropContract = web3sync.eth.contract(glacierDropContractABI).at()
+const ConstantsRepositoryContract = web3sync.eth.contract(constantsRepositoryContractABI).at()
 
 // Claim types
 
@@ -201,6 +198,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const [totalUnlockedEtherCache, setTotalUnlockedEtherCache] = useState<Option<BigNumber>>(none)
 
+  const contractAddresses = loadCurrentContractAddresses()
+
   //
   // Constants
   //
@@ -221,7 +220,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     parse: (raw: string) => T,
   ): Promise<T> => {
     const data = ConstantsRepositoryContract[contractFunction].getData()
-    const response = await simulateTransaction(CONSTANTS_REPO_ADDRESS, data)
+    const response = await simulateTransaction(contractAddresses.constantsRepo, data)
     return parse(response)
   }
 
@@ -248,7 +247,9 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   }
 
   useEffect((): void => {
-    loadConstants().then((c) => setConstants(some(c)))
+    loadConstants()
+      .then((c) => setConstants(some(c)))
+      .catch((e) => console.error(e))
   }, [])
 
   //
@@ -262,7 +263,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     } else {
       // Get value via tx simulation
       const data = GlacierDropContract.getTotalUnlockedEther.getData()
-      const response = await simulateTransaction(GLACIER_DROP_ADDRESS, data)
+      const response = await simulateTransaction(contractAddresses.glacierDrop, data)
       const totalUnlockedEther = new BigNumber(response)
       setTotalUnlockedEtherCache(some(totalUnlockedEther))
       return totalUnlockedEther
@@ -287,7 +288,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const data = GlacierDropContract.getNumberOfEpochsForFullUnfreeze.getData(
       normalizeAddress(externalAddress),
     )
-    const response = await simulateTransaction(GLACIER_DROP_ADDRESS, data)
+    const response = await simulateTransaction(contractAddresses.glacierDrop, data)
     return parseInt(response, 16)
   }
 
@@ -528,7 +529,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
     const unlockTxHash = await wallet.callContract({
       from: ['Wallet', transparentAddress],
-      to: GLACIER_DROP_ADDRESS,
+      to: contractAddresses.glacierDrop,
       value: '0',
       gasLimit: gasLimit.toString(),
       gasPrice: gasPrice.toString(),
@@ -566,7 +567,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
     const withdrawTxHash = await wallet.callContract({
       from: ['Wallet', transparentAddress],
-      to: GLACIER_DROP_ADDRESS,
+      to: contractAddresses.glacierDrop,
       value: '0',
       gasLimit: gasLimit.toString(),
       gasPrice: gasPrice.toString(),

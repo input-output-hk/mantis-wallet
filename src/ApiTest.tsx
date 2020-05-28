@@ -8,7 +8,7 @@ import {
   Account,
   RawSynchronizationStatus,
 } from './web3'
-import {getContractAddresses} from './config/renderer'
+import {getContractAddresses, loadLunaManagedConfig} from './config/renderer'
 import {WalletState} from './common/wallet-state'
 import {GlacierState} from './glacier-drop/glacier-state'
 import {updateSelectedNetworkConfig} from './common/ipc-util'
@@ -21,9 +21,13 @@ const wallet = web3.midnight.wallet
 
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
-  const contractAddresses = getContractAddresses()
   const walletState = WalletState.useContainer()
   const glacierState = GlacierState.useContainer()
+
+  const contractAddresses = getContractAddresses()
+  const networks = Object.keys(contractAddresses)
+  const {selectedNetwork} = loadLunaManagedConfig()
+  const selectedNetworkIndex = networks.indexOf(selectedNetwork)
 
   const [message, setMessage] = useState<string>('')
 
@@ -101,11 +105,12 @@ export const ApiTest = (): JSX.Element => {
           />
         </div>
 
-        {Object.keys(contractAddresses).length > 1 && (
+        {networks.length > 1 && (
           <div>
             <DialogDropdown
               label="Selected Network"
-              options={Object.keys(contractAddresses)}
+              options={networks}
+              defaultOptionIndex={selectedNetworkIndex}
               onChange={updateSelectedNetworkConfig}
             />
           </div>

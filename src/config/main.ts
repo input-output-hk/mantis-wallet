@@ -8,6 +8,7 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
+import {DEFAULT_CONTRACT_ADDRESSES} from '../shared/config'
 import {
   ClientName,
   Config,
@@ -273,13 +274,7 @@ const configGetter = convict({
   contractConfig: {
     doc: 'A collection of contract address configs',
     format: 'contract-config',
-    default: [
-      {
-        networkName: 'development',
-        glacierDrop: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95',
-        constantsRepo: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5gzg0gy',
-      },
-    ],
+    default: [DEFAULT_CONTRACT_ADDRESSES],
   },
 })
 
@@ -343,7 +338,7 @@ const lunaManagedConfigSchema = {
   selectedNetwork: {
     doc: 'Name of the network to which Luna is connected',
     format: String,
-    default: 'development',
+    default: 'testnet',
   },
   miningEnabled: {
     doc: 'Whether mining is enabled or not',
