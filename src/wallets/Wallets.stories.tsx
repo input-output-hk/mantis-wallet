@@ -5,10 +5,11 @@ import {withTheme} from '../storybook-util/theme-switcher'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
-import {dummyTransactions} from '../storybook-util/dummies'
+import {dummyTransactions, estimateFeesWithRandomDelay} from '../storybook-util/dummies'
 import {WalletListSidebar} from './WalletListSidebar'
 import {TransparentAccounts} from './TransparentAccounts'
 import {NoWallet} from './NoWallet'
+import {RedeemModal} from './modals/RedeemModal'
 
 export default {
   title: 'Wallets',
@@ -51,6 +52,7 @@ export const noTransparentAccounts = (): JSX.Element => (
     generateAddress={action('generate-address')}
     transparentAccounts={[]}
     redeem={asyncAction('on-redeem')}
+    estimateRedeemFee={estimateFeesWithRandomDelay}
     backToTransactions={action('back-to-transactions')}
     transactions={[]}
   />
@@ -77,7 +79,22 @@ export const transparentAccounts = (): JSX.Element => (
       },
     ]}
     redeem={asyncAction('on-redeem')}
+    estimateRedeemFee={estimateFeesWithRandomDelay}
     backToTransactions={action('back-to-transactions')}
     transactions={dummyTransactions}
+  />
+)
+
+export const redeemModal = (): JSX.Element => (
+  <RedeemModal
+    redeem={asyncAction('on-redeem')}
+    estimateRedeemFee={estimateFeesWithRandomDelay}
+    transparentAccount={{
+      address: 'transparent-address',
+      index: 1,
+      balance: dust('Account balance', 1234),
+    }}
+    onCancel={action('on-cancel')}
+    visible
   />
 )

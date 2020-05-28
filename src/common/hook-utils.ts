@@ -1,4 +1,12 @@
-import {RefObject, useEffect, useRef, useState, Dispatch, SetStateAction} from 'react'
+import {
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+  Dispatch,
+  SetStateAction,
+  DependencyList,
+} from 'react'
 import {Store} from './store'
 
 export const useIsMounted = (): RefObject<boolean> => {
@@ -41,6 +49,38 @@ export function useInterval(callback: Callback, delay: number): void {
       return (): void => clearInterval(id)
     }
   }, [delay])
+}
+
+export function useAsyncUpdate<T>(
+  update: () => Promise<T>,
+  dependencies?: DependencyList,
+): [T | undefined, Error | string | null, boolean] {
+  const [value, setValue] = useState<T>()
+  const [progress, setProgress] = useState({error: null, isPending: true})
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    let isSubscribed = true
+    update()
+      .then((res) => {
+        if (isSubscribed) {
+          setValue(res)
+          setProgress({error: null, isPending: false})
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        if (isSubscribed) {
+          setProgress({error, isPending: false})
+        }
+      })
+    return () => {
+      // eslint-disable-next-line
+      isSubscribed = false
+    }
+  }, dependencies)
+
+  return [value, progress.error, progress.isPending]
 }
 
 /**

@@ -187,6 +187,9 @@ export type GetMiningStateResponse = MiningInProgress | MiningSuccessful
 
 export type PaginatedCallable<T> = (count: number, drop: number) => T[]
 
+export const allFeeLevels = ['low', 'medium', 'high'] as const
+export type FeeLevel = typeof allFeeLevels[number]
+
 export interface WalletAPI {
   // wallet basic actions
   create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase
@@ -205,6 +208,16 @@ export interface WalletAPI {
   sendTransaction(recipient: string, amount: number, fee: number): string
   getTransactionHistory: PaginatedCallable<Transaction>
   callContract(callParams: CallParams): string
+  estimateFees: {
+    (txType: 'CallTx', callParams: CallParams): Record<FeeLevel, string>
+    (txType: 'RedeemTx' | 'TransferTx', amount: number): Record<FeeLevel, string>
+    // The following definition shouldn't be needed, but since WalletAPI is wrapped
+    // into Comlink.Remote type, it cannot handle overloads and takes only the last type
+    (txType: 'RedeemTx' | 'TransferTx' | 'CallTx', amountOrParams: number | CallParams): Record<
+      FeeLevel,
+      string
+    >
+  }
 
   // transparent addresses
   listTransparentAddresses: PaginatedCallable<TransparentAddress>
@@ -259,6 +272,7 @@ export interface EthApi {
   getTransactionReceipt(transactionHash: string): TransactionReceipt | null
   // used to get constant values from contracts:
   call(callParams: Partial<CallParams>, version: 'latest'): string
+  getGasPriceEstimation(): Record<FeeLevel, number>
 }
 
 export interface Web3API {

@@ -11,8 +11,13 @@ import {
   bigSum,
   bech32toHex,
   hexToBech32,
+  isLowerOrEqual,
+  areFundsEnough,
 } from './util'
 import {BigNumberJSON} from '../web3'
+import {UNITS} from './units'
+
+const toDust = (v: BigNumber.Value): BigNumber => UNITS.Dust.toBasic(new BigNumber(v))
 
 it('deserializes BigNumber correctly', () => {
   ;[2, -2, 2.3, 23.4].map((n: number): void => {
@@ -33,6 +38,10 @@ it('validates amount correctly', () => {
   assert.equal(validateAmount('342423'), '')
   assert.equal(validateAmount('5', [isGreaterOrEqual(5)]), '')
   assert.equal(validateAmount('4.99', [isGreaterOrEqual(5)]), 'Must be at least 5')
+  assert.equal(validateAmount('5', [isLowerOrEqual(5)]), '')
+  assert.equal(validateAmount('5.1', [isLowerOrEqual(5)]), 'Must be at most 5')
+  assert.equal(validateAmount('5', [areFundsEnough(toDust(5))]), '')
+  assert.equal(validateAmount('5.1', [areFundsEnough(toDust(5))]), 'Insufficient funds')
 })
 
 it('sums bignumbers', () => {

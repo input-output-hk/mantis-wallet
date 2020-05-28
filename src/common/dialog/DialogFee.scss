@@ -1,0 +1,146 @@
+@import '../../themify', '../../partial';
+
+.DialogFee {
+  margin-bottom: 20px;
+
+  .ant-input {
+    @include themify($themes) {
+      background-color: themed('normal-color');
+      color: themed('text-color');
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .options .button.inactive {
+    opacity: $secondary-opacity;
+
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+      color: themed('text-color');
+    }
+  }
+
+  .dark & {
+    .ant-input {
+      @include themify($themes) {
+        background-color: themed('dialog-dark-input-bg');
+        color: themed('secondary-text-color');
+      }
+    }
+
+    .options .button.inactive {
+      @include themify($themes) {
+        background-color: themed('tertiary-background');
+      }
+    }
+
+    .custom.input {
+      @include themify($themes) {
+        background-color: themed('quaternary-background');
+        color: themed('secondary-text-color');
+      }
+
+      svg {
+        @include themify($themes) {
+          stroke: themed('text-color');
+          fill: themed('text-color');
+        }
+      }
+    }
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 0 1fr 1fr 1fr 1fr;
+    height: 47px;
+
+    .button {
+      height: 100%;
+      padding: 0;
+      font-size: 12px;
+      text-align: center;
+
+      &.inactive:not(:disabled) {
+        &:hover,
+        &:focus {
+          opacity: 1;
+
+          @include themify($themes) {
+            background-color: themed('quinary-background');
+          }
+        }
+      }
+
+      .fee-amount {
+        font-size: 10px;
+      }
+    }
+
+    .input {
+      display: hidden;
+      height: 100%;
+      padding: 0;
+      border: 0;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+
+    &.custom-mode {
+      display: grid;
+      grid-template-columns: 9fr 0 auto auto auto;
+
+      .input {
+        display: block;
+        margin-right: 5px;
+        padding: 4px 11px;
+      }
+
+      .button {
+        transition: none;
+      }
+
+      .button.custom {
+        visibility: hidden;
+        padding: 0;
+      }
+    }
+  }
+
+  &.hideCustom .options {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .icon {
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
+  }
+
+  .label {
+    @extend %dialog-label;
+    display: block;
+  }
+
+  .loading {
+    height: 47px;
+    text-align: center;
+  }
+
+  .invalid .options {
+    @include themify($themes) {
+      border: 1px solid themed('error-color');
+    }
+  }
+}
