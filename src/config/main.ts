@@ -249,7 +249,9 @@ const configGetter = convict({
         settingName: 'midnight.datadir',
         directoryName: 'node',
       },
-      additionalSettings: {},
+      additionalSettings: {
+        'akka.loglevel': 'INFO',
+      },
     }),
     wallet: clientConfig('wallet', {
       packageDirectory: path.resolve(
@@ -264,6 +266,7 @@ const configGetter = convict({
       additionalSettings: {
         // FIXME: https://github.com/mozilla/node-convict/issues/250
         'midnight.network.rpc.http.cors-allowed-origins': '*', // Make it possible for Luna to access Wallet's RPC
+        'akka.loglevel': 'INFO',
       },
     }),
   },
