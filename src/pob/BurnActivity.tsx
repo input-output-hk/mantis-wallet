@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
-import {Icon} from 'antd'
+import {SearchOutlined} from '@ant-design/icons'
 import {BurnStatus, RealBurnStatus} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
@@ -44,12 +44,16 @@ export const _BurnActivity = ({
       <div className="toolbar">
         <div className="main-title">Burn Activity</div>
         <div className="line"></div>
-        <BorderlessInput
-          className="search"
-          prefix={<Icon type="search" />}
-          placeholder="Burn Tx ID"
-          onChange={(e) => setSearchTxId(e.target.value)}
-        />
+        <div className="search">
+          <SearchOutlined />
+          {
+            <BorderlessInput
+              className="search-input"
+              placeholder="Burn Tx ID"
+              onChange={(e) => setSearchTxId(e.target.value)}
+            />
+          }
+        </div>
       </div>
       {noBurnObserved.length > 0 &&
         noBurnObserved.map(([address, {errorMessage}]) => (

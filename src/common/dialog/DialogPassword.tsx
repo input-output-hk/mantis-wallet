@@ -46,7 +46,6 @@ export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
             className="input"
             data-testid="password"
             forceInvalid={!!errorMessage}
-            visibilityToggle={false}
             onChange={(e): void => {
               const newPassword = e.target.value
               setPassword(newPassword)
@@ -62,7 +61,6 @@ export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
             className="input"
             data-testid="rePassword"
             forceInvalid={!!errorMessage}
-            visibilityToggle={false}
             onChange={(e): void => {
               const newRepassword = e.target.value
               setRepassword(newRepassword)

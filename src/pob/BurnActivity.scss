@@ -13,12 +13,10 @@
     }
 
     .search {
-      display: inline-block;
       position: relative;
-      top: -14px;
+      top: -11px;
       width: 253px;
-      height: 22px;
-      padding-bottom: 4px;
+      height: 28px;
       opacity: $secondary-opacity;
       font-size: 10px;
 
@@ -29,6 +27,7 @@
       }
 
       .anticon {
+        margin: 2px;
         font-size: 16px;
 
         @include themify($themes) {
@@ -36,17 +35,18 @@
         }
       }
 
-      .ant-input {
-        height: 14px;
-        font-size: 10px;
+      .BorderlessInput {
+        display: inline-block;
+      }
+
+      .search-input {
+        width: 230px;
+        height: 22px;
+        font-size: 12px;
 
         @include themify($themes) {
           background-color: themed('component-background');
         }
-      }
-
-      .ant-input-prefix {
-        left: 2px;
       }
     }
   }

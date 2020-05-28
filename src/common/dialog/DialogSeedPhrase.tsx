@@ -2,10 +2,10 @@ import React, {useState, Ref, forwardRef} from 'react'
 import _ from 'lodash'
 import * as bip39 from 'bip39'
 import {AutoComplete} from 'antd'
-import {SelectValue} from 'antd/lib/select'
+import Select, {SelectValue} from 'antd/lib/select'
+import {BorderlessInput} from '../BorderlessInput'
 import './DialogSeedPhrase.scss'
 
-const {Option} = AutoComplete
 const wordlist = bip39.wordlists.english
 
 interface DialogSeedPhraseProps {
@@ -18,12 +18,12 @@ const filterResults = (searchValue: string, results = 5, fromIndex = 0): string[
   return i < 0 ? [] : [wordlist[i], ...filterResults(searchValue, results - 1, i + 1)]
 }
 
-const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPhraseProps> = (
-  {onChange}: DialogSeedPhraseProps,
-  ref: Ref<AutoComplete>,
-) => {
+const _DialogSeedPhrase: React.RefForwardingComponent<
+  Select<SelectValue>,
+  DialogSeedPhraseProps
+> = ({onChange}: DialogSeedPhraseProps, ref: Ref<Select<SelectValue>>) => {
   const [phrase, setPhrase] = useState<string>('')
-  const [results, setResults] = useState<string[]>([])
+  const [options, setOptions] = useState<Array<{value: string}>>([])
 
   const handleChange = (selectValue: SelectValue): void => {
     const phrase = selectValue.toString()
@@ -35,7 +35,7 @@ const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPh
     const words = fullPhrase.split(' ')
     const currentWord = words[words.length - 1]
     const results = currentWord.length === 0 ? [] : filterResults(currentWord.toLowerCase())
-    setResults(results)
+    setOptions(results.map((value) => ({value})))
   }
 
   const handleSelect = (selection: SelectValue): void => {
@@ -48,15 +48,15 @@ const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPh
   return (
     <div className="DialogSeedPhrase">
       <AutoComplete
+        className="select"
         value={phrase}
         onChange={handleChange}
         onSearch={handleSearch}
         onSelect={handleSelect}
+        options={options}
         ref={ref}
       >
-        {results.map((result: string) => (
-          <Option key={result}>{result}</Option>
-        ))}
+        <BorderlessInput />
       </AutoComplete>
     </div>
   )

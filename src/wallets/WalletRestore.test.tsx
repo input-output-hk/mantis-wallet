@@ -57,7 +57,10 @@ test('WalletRestore', async () => {
   userEvent.click(recoverySwitch)
 
   // Enter recovery phrase
-  const recoveryPhraseInput = document.getElementsByClassName('ant-select-search__field')[0]
+  const recoveryPhraseInput = document
+    .getElementsByClassName('DialogSeedPhrase')[0]
+    .getElementsByTagName('input')[0]
+  expect(recoveryPhraseInput).toBeInTheDocument()
   fireEvent.change(recoveryPhraseInput, {target: {value: recoveryPhrase}})
 
   // Verify password fields

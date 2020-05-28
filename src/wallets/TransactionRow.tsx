@@ -4,7 +4,8 @@ import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {fromUnixTime} from 'date-fns'
 import classnames from 'classnames'
-import {Icon, Popover} from 'antd'
+import {RightOutlined} from '@ant-design/icons'
+import {Popover} from 'antd'
 import {Transaction, TxStatusString} from '../web3'
 import {ThemeState} from '../theme-state'
 import {UNITS} from '../common/units'
@@ -53,7 +54,7 @@ export const TxStatusCell = ({transaction: {txStatus}}: TransactionCellProps): J
         <SVG className={status} title={capitalizedStatus} src={iconSrc} />
       </span>
       <Popover content={description} placement="bottom">
-        {capitalizedStatus}
+        <span>{capitalizedStatus}</span>
       </Popover>
     </>
   )
@@ -78,7 +79,7 @@ export const TxTypeCell = ({
   return (
     <>
       <div className="collapse-icon">
-        <Icon type="right" />
+        <RightOutlined />
       </div>
       <span className="icon">
         <SVG src={icon} className="svg" title={typeText} />

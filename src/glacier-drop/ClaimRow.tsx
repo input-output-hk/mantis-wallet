@@ -2,7 +2,8 @@ import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {toAscii} from 'web3/lib/utils/utils.js'
-import {Icon, Button, Popover} from 'antd'
+import {CloseOutlined} from '@ant-design/icons'
+import {Button, Popover} from 'antd'
 import {ETC_CHAIN} from './glacier-config'
 import {
   Claim,
@@ -23,8 +24,8 @@ import './ClaimRow.scss'
 
 const PROGRESS_ICONS: Record<string, ReactNode> = {
   CHECKED: <SVG src={checkIcon} className="checked icon" />,
-  UNKNOWN: <Icon type="close" className="unknown icon" />,
-  FAIL: <Icon type="close" className="fail icon" />,
+  UNKNOWN: <CloseOutlined className="unknown icon" />,
+  FAIL: <CloseOutlined className="fail icon" />,
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" />,
 }
 
@@ -62,7 +63,7 @@ const PuzzleProgress = ({claim, period, onSubmitPuzzle}: PuzzleProgressProps): J
           <div>Solving Puzzle</div>
           <div>
             <Popover content="Estimation" placement="bottom">
-              Total time to unlock:
+              <span>Total time to unlock:</span>
             </Popover>
             <span className="time-left">{toDurationString(claim.puzzleDuration)}</span>
           </div>
@@ -94,7 +95,7 @@ const PuzzleProgress = ({claim, period, onSubmitPuzzle}: PuzzleProgressProps): J
           <div className="pow-status">PoW Puzzle Submitted</div>
           <div className="action-link">
             <Popover content={claim.unlockTxHash} placement="bottom">
-              view unlock txn-id
+              <span>view unlock txn-id</span>
             </Popover>
           </div>
         </>
@@ -192,7 +193,7 @@ const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
       </div>
       <div className="action-link">
         <Popover content={withdrawTxHashes[withdrawTxHashes.length - 1]} placement="bottom">
-          view latest withdrawal txn-id
+          <span>view latest withdrawal txn-id</span>
         </Popover>
       </div>
     </>
@@ -274,12 +275,14 @@ export const ClaimRow = ({
         </div>
         <div className="external-address">
           <Popover content={externalAddress} placement="bottom">
-            {ETC_CHAIN.symbol} Address: {externalAddress}
+            <span>
+              {ETC_CHAIN.symbol} Address: {externalAddress}
+            </span>
           </Popover>
         </div>
         <div className="midnight-address">
           <Popover content={transparentAddress} placement="bottom">
-            Transparent Midnight Address: {transparentAddress}
+            <span>Transparent Midnight Address: {transparentAddress}</span>
           </Popover>
         </div>
       </div>

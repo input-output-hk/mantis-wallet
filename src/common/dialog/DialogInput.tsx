@@ -2,9 +2,12 @@ import React, {Ref, forwardRef} from 'react'
 import classnames from 'classnames'
 import {Input} from 'antd'
 import Password from 'antd/lib/input/Password'
-import {InputProps, PasswordProps} from 'antd/lib/input'
-import {BorderlessInput, BorderlessInputPassword} from '../BorderlessInput'
-import {InlineErrorProps} from '../InlineError'
+import {
+  BorderlessInput,
+  BorderlessInputPassword,
+  BorderlessInputPasswordProps,
+  BorderlessInputProps,
+} from '../BorderlessInput'
 import {DialogState} from '../Dialog'
 import './DialogInput.scss'
 
@@ -32,8 +35,11 @@ const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
 
 const _DialogInputPassword: React.RefForwardingComponent<
   Password,
-  InlineErrorProps & PasswordProps & DialogInputProps
-> = ({label, onChange, ...props}: DialogInputProps & PasswordProps, ref: Ref<Password>) => {
+  BorderlessInputPasswordProps & DialogInputProps
+> = (
+  {label, onChange, ...props}: BorderlessInputPasswordProps & DialogInputProps,
+  ref: Ref<Password>,
+) => {
   const {setErrorMessage} = DialogState.useContainer()
 
   const onChangeWithDialogReset = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -55,10 +61,10 @@ const _DialogInputPassword: React.RefForwardingComponent<
 
 export const DialogInputPassword = forwardRef(_DialogInputPassword)
 
-const _DialogInput: React.RefForwardingComponent<
-  Input,
-  InlineErrorProps & InputProps & DialogInputProps
-> = ({label, onChange, ...props}: DialogInputProps & InputProps, ref: Ref<Input>) => {
+const _DialogInput: React.RefForwardingComponent<Input, BorderlessInputProps & DialogInputProps> = (
+  {label, onChange, ...props}: BorderlessInputProps & DialogInputProps,
+  ref: Ref<Input>,
+) => {
   const {setErrorMessage} = DialogState.useContainer()
 
   const onChangeWithDialogReset = (e: React.ChangeEvent<HTMLInputElement>): void => {

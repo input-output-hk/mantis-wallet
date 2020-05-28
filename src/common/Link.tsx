@@ -24,6 +24,8 @@ export const Link = ({
       shell.openExternal(href)
     }}
   >
-    <Popover content={_.truncate(href, {length: 40})}>{children}</Popover>
+    <Popover content={_.truncate(href, {length: 40})}>
+      <span>{children}</span>
+    </Popover>
   </span>
 )

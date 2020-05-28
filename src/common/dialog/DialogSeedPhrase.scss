@@ -3,44 +3,29 @@
 .DialogSeedPhrase {
   margin-bottom: 20px;
 
-  .ant-select {
+  .select {
     width: 100%;
   }
 
-  .ant-select-auto-complete.ant-select .ant-input {
+  .select .ant-input {
     height: 47px;
-    border: 0;
-    font-size: 14px;
-
-    @include themify($themes) {
-      background-color: themed('normal-color');
-      color: themed('text-color');
-    }
-
-    &:hover {
-      border: 0;
-    }
-
-    &:focus {
-      box-shadow: none;
-    }
   }
 }
 
-.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
+.ant-select-item-option:hover:not(.ant-select-item-option-disabled) {
   @include themify($themes) {
     background-color: themed('secondary-background');
     color: themed('text-color');
   }
 }
 
-.ant-select-dropdown-menu-item-active {
+.ant-select-item-option-active {
   @include themify($themes) {
     background-color: themed('secondary-background');
     color: themed('text-color');
   }
 
-  &:not(.ant-select-dropdown-menu-item-disabled) {
+  &:not(.ant-select-item-option-disabled) {
     @include themify($themes) {
       background-color: themed('secondary-background');
       color: themed('text-color');

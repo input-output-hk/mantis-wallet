@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 import classnames from 'classnames'
-import {Input, AutoComplete} from 'antd'
+import {Input, Select} from 'antd'
+import {SelectValue} from 'antd/lib/select'
 import {DialogInput} from './DialogInput'
 import {DialogSeedPhrase} from './DialogSeedPhrase'
 import './DialogSecrets.scss'
@@ -27,7 +28,7 @@ export const DialogSecrets: React.FunctionComponent<DialogSecrets> = ({
   const isInitialMount = useRef(true)
   const inputRefs = {
     [RecoveryMethod.SpendingKey]: useRef<Input>(null),
-    [RecoveryMethod.SeedPhrase]: useRef<AutoComplete>(null),
+    [RecoveryMethod.SeedPhrase]: useRef<Select<SelectValue>>(null),
   }
 
   useEffect(() => {

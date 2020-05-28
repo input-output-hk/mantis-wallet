@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
+import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
+import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
 import * as record from 'fp-ts/lib/Record'
 import {sort, map} from 'fp-ts/lib/Array'
@@ -7,7 +9,6 @@ import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
 import {pipe} from 'fp-ts/lib/pipeable'
 import classnames from 'classnames'
 import InfiniteScroll from 'react-infinite-scroller'
-import {Button, Dropdown, Menu, Icon} from 'antd'
 import {Transaction, TransparentAddress, Account} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
@@ -172,9 +173,8 @@ export const TransactionHistory = ({
       {record.keys(orderConfigs).map((name) => {
         return (
           <Menu.Item key={name} onClick={changeOrder(name)}>
-            {sortBy.property === name && (
-              <Icon type={sortBy.direction === 'asc' ? 'caret-up' : 'caret-down'} />
-            )}
+            {sortBy.property === name &&
+              (sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}
             {_.capitalize(name)}
           </Menu.Item>
         )
@@ -190,9 +190,8 @@ export const TransactionHistory = ({
     ) : (
       <div onClick={changeOrder(property as SortableProperty)} className="sortable">
         <span className="label">{label}</span>
-        {sortBy.property === property && (
-          <Icon type={sortBy.direction === 'asc' ? 'caret-up' : 'caret-down'} />
-        )}
+        {sortBy.property === property &&
+          (sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}
       </div>
     )
   }
