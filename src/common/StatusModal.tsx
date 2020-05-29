@@ -104,7 +104,7 @@ export const StatusModal = ({
             <div className="info-value">Testnet</div>
           </div>
           <div className="info-item">
-            <div>Sapling params fetching:</div>
+            <div>Sonics params fetching:</div>
             <div className="info-value">{visibleStatus[status.fetchParams.status]}</div>
           </div>
           <div className="info-item">
