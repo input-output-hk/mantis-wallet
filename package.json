@@ -9,7 +9,8 @@
   "build": {
     "appId": "io.iohkdev.project42.luna-wallet",
     "linux": {
-      "maintainer": "Shay Bergmann <shay.bergmann@iohk.io>"
+      "maintainer": "Shay Bergmann <shay.bergmann@iohk.io>",
+      "executableName": "Luna"
     }
   },
   "main": "build/main/main.js",
