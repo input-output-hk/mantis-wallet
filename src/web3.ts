@@ -209,11 +209,11 @@ export interface WalletAPI {
   getTransactionHistory: PaginatedCallable<Transaction>
   callContract(callParams: CallParams): string
   estimateFees: {
-    (txType: 'CallTx', callParams: CallParams): Record<FeeLevel, string>
-    (txType: 'RedeemTx' | 'TransferTx', amount: number): Record<FeeLevel, string>
+    (txType: 'Call', callParams: CallParams): Record<FeeLevel, string>
+    (txType: 'Redeem' | 'Transfer', amount: number): Record<FeeLevel, string>
     // The following definition shouldn't be needed, but since WalletAPI is wrapped
     // into Comlink.Remote type, it cannot handle overloads and takes only the last type
-    (txType: 'RedeemTx' | 'TransferTx' | 'CallTx', amountOrParams: number | CallParams): Record<
+    (txType: 'Redeem' | 'Transfer' | 'Call', amountOrParams: number | CallParams): Record<
       FeeLevel,
       string
     >
