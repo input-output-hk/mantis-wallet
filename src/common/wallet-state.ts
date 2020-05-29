@@ -7,7 +7,7 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
-import {deserializeBigNumber, loadAll, bigSum} from '../common/util'
+import {deserializeBigNumber, loadAll, bigSum, toHex} from '../common/util'
 import {Chain} from '../pob/chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
@@ -174,9 +174,9 @@ const getPublicTransactionParams = (
 ): CallParams => ({
   from: 'Wallet',
   to,
-  value: amount.toString(16),
-  gasPrice: gasPrice.toString(16),
-  gasLimit: TRANSFER_GAS_LIMIT.toString(16),
+  value: toHex(amount),
+  gasPrice: gasPrice.toString(10),
+  gasLimit: toHex(TRANSFER_GAS_LIMIT),
 })
 
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
