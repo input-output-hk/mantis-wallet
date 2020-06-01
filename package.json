@@ -30,7 +30,6 @@
     "prettier": "prettier --no-editorconfig --write \"**/*.{js,ts,tsx,scss}\"",
     "storybook": "start-storybook -s ./public -p 6006",
     "build-storybook": "build-storybook",
-    "dist": "electron-builder",
     "electron": "electron ./build/main/main.js",
     "electron-dev": "wait-on http://localhost:3000 && cross-env ELECTRON_START_URL=http://localhost:3000 electron ./build/main/main.js",
     "electron-dev:hot": "wait-on http://localhost:3000 && cross-env ELECTRON_START_URL=http://localhost:3000 nodemon --exec electron ./build/main/main.js",
