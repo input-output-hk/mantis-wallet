@@ -6,6 +6,13 @@
   "engines": {
     "node": "^12.13.0"
   },
+  "build": {
+    "appId": "io.iohkdev.project42.luna-wallet",
+    "linux": {
+      "maintainer": "Shay Bergmann <shay.bergmann@iohk.io>",
+      "executableName": "Luna"
+    }
+  },
   "main": "build/main/main.js",
   "homepage": "./",
   "scripts": {
@@ -31,9 +38,14 @@
     "copy-remix": "yarn copyfiles -u 2 \"midnight-remix/dist/**/*\" build/remix-ide",
     "build-all": "yarn build-renderer && yarn build-main && yarn copy-remix",
     "package": "ts-node --project tsconfig.bin.json ./bin/package.ts",
-    "package-win": "ts-node --project ./tsconfig.bin.json ./bin/package-win.ts",
+    "package-linux": "ts-node --project tsconfig.bin.json ./bin/package-linux.ts",
+    "package-darwin": "ts-node --project tsconfig.bin.json ./bin/package-darwin.ts",
+    "package-win": "ts-node --project ./tsconfig.bin.json ./bin/package-win.ts && electron-builder --win --x64 --prepackaged dist/Luna-win32-x64",
     "build-dist": "yarn build-all && yarn package",
-    "build-dist-win": "yarn build-all && yarn package-win"
+    "build-dist-x86_64-linux": "yarn build-all && yarn package-linux",
+    "build-dist-x86_64-darwin": "yarn build-all && yarn package-darwin",
+    "build-dist-win": "yarn build-all && yarn package-win",
+    "make-dmg": "electron-installer-dmg --out=dist dist/${npm_package_productName}-darwin-x64/${npm_package_productName}.app ${npm_package_productName}"
   },
   "husky": {
     "hooks": {
@@ -87,10 +99,11 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
-    "luna-wallet-loader": "git+ssh://git@github.com:input-output-hk/luna-wallet-loader.git#1315f47ca9a9414a9f72a6c2068dbc858e08cfe7",
+    "luna-wallet-loader": "git+ssh://git@github.com/input-output-hk/luna-wallet-loader.git#1315f47ca9a9414a9f72a6c2068dbc858e08cfe7",
     "node-forge": "^0.9.1",
     "ps-tree": "^1.2.0",
     "qrcode.react": "^1.0.0",
+    "raw-loader": "^4.0.0",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.12.0",
@@ -100,7 +113,7 @@
     "rxjs": "^6.5.4",
     "typescript": "3.8.3",
     "unstated-next": "^1.1.0",
-    "web3": "git+ssh://git@github.com:input-output-hk/midnight-web3.git#aabcfc25fa3474d1d114ef82fb3b9488715d20aa"
+    "web3": "git+ssh://git@github.com/input-output-hk/midnight-web3.git#aabcfc25fa3474d1d114ef82fb3b9488715d20aa"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
@@ -134,7 +147,9 @@
     "copyfiles": "^2.2.0",
     "cross-env": "^7.0.0",
     "electron": "^8.0.1",
-    "electron-packager": "^14.2.0",
+    "electron-installer-dmg": "^3.0.0",
+    "electron-packager": "git+ssh://git@github.com/electron/electron-packager",
+    "electron-builder": "^22.6.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-fp": "^2.3.0",
@@ -144,6 +159,7 @@
     "eslint-plugin-react": "^7.17.0",
     "husky": "^3.1.0",
     "jest-canvas-mock": "^2.2.0",
+    "node-gyp": "^6.1.0",
     "node-sass": "^4.13.1",
     "nodemon": "^2.0.3",
     "prettier": "^1.19.1",
