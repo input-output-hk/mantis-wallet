@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogPassword} from '../../common/dialog/DialogPassword'
 
 interface WalletCreateDefineStepProps {
@@ -16,7 +15,6 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
   errors,
 }: WalletCreateDefineStepProps) => {
   const [walletName, setWalletName] = useState('')
-  const [usePassphrase, setUsePassphrase] = useState(false)
   const [passphrase, setPassphrase] = useState('')
   const [isPassphraseValid, setPassphraseValid] = useState(true)
 
@@ -25,8 +23,8 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
       title="Create wallet"
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
-        onClick: async (): Promise<void> => next(walletName, usePassphrase ? passphrase : ''),
-        disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
+        onClick: async (): Promise<void> => next(walletName, passphrase),
+        disabled: walletName.length === 0 || !isPassphraseValid,
       }}
       footer={errors}
     >
@@ -37,14 +35,7 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
         onChange={(e): void => setWalletName(e.target.value)}
         errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
       />
-      <DialogSwitch
-        key="use-password-switch"
-        label="Wallet password"
-        description="Keep your private keys encrypted by adding a wallet password"
-        checked={usePassphrase}
-        onChange={setUsePassphrase}
-      />
-      {usePassphrase && <DialogPassword onChange={setPassphrase} setValid={setPassphraseValid} />}
+      <DialogPassword onChange={setPassphrase} setValid={setPassphraseValid} />
     </Dialog>
   )
 }
