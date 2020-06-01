@@ -31,7 +31,7 @@ test('WalletCreate `Define` step', async () => {
   const cancel = jest.fn()
   const next = jest.fn()
 
-  const {getByLabelText, getByText, getByRole, getByTestId} = render(
+  const {getByLabelText, getByText, getByTestId} = render(
     <WalletCreateDefineStep cancel={cancel} next={next} />,
   )
 
@@ -39,11 +39,6 @@ test('WalletCreate `Define` step', async () => {
   expect(getByText("Name shouldn't be empty")).toBeInTheDocument()
   const walletNameInput = getByLabelText('Wallet name')
   userEvent.type(walletNameInput, walletName)
-
-  // Click wallet password switch
-  expect(getByText('Wallet password')).toBeInTheDocument()
-  const spendingPasswordSwitch = getByRole('switch')
-  userEvent.click(spendingPasswordSwitch)
 
   // Verify password fields
   expect(getByText('Enter Password')).toBeInTheDocument()

@@ -3,7 +3,6 @@ import {NoWalletState} from '../common/wallet-state'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
-import {DialogSwitch} from '../common/dialog/DialogSwitch'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogError} from '../common/dialog/DialogError'
 import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
@@ -23,21 +22,18 @@ const _WalletRestore = ({
   const [seedPhraseString, setSeedPhrase] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>(RecoveryMethod.SpendingKey)
-  const [usePassphrase, setUsePassphrase] = useState(false)
   const [isPassphraseValid, setPassphraseValid] = useState(true)
 
   const [walletRestoreError, setWalletRestoreError] = useState('')
   const footer = walletRestoreError ? <DialogError>{walletRestoreError}</DialogError> : null
 
   const restore = async (): Promise<boolean> => {
-    const usedPassphrase = usePassphrase ? passphrase : ''
-
     switch (recoveryMethod) {
       case RecoveryMethod.SpendingKey:
-        return walletState.restoreFromSpendingKey({passphrase: usedPassphrase, spendingKey})
+        return walletState.restoreFromSpendingKey({passphrase, spendingKey})
       case RecoveryMethod.SeedPhrase:
         const seedPhrase = seedPhraseString.split(' ')
-        return walletState.restoreFromSeedPhrase({passphrase: usedPassphrase, seedPhrase})
+        return walletState.restoreFromSeedPhrase({passphrase, seedPhrase})
     }
   }
 
@@ -46,7 +42,7 @@ const _WalletRestore = ({
       title="Restore wallet"
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
-        disabled: walletName.length === 0 || (usePassphrase && !isPassphraseValid),
+        disabled: walletName.length === 0 || !isPassphraseValid,
         onClick: async (): Promise<void> => {
           setWalletRestoreError('')
           try {
@@ -75,14 +71,7 @@ const _WalletRestore = ({
         onSpendingKeyChange={setSpendingKey}
         onSeedPhraseChange={setSeedPhrase}
       />
-      <DialogSwitch
-        key="use-password-switch"
-        label="Wallet password"
-        description="Keep your private keys encrypted by adding a wallet password"
-        checked={usePassphrase}
-        onChange={setUsePassphrase}
-      />
-      {usePassphrase && <DialogPassword onChange={setPassphrase} setValid={setPassphraseValid} />}
+      <DialogPassword onChange={setPassphrase} setValid={setPassphraseValid} />
     </Dialog>
   )
 }
