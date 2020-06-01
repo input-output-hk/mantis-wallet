@@ -431,17 +431,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       .getGasPriceEstimation()
       .then((res) => _.mapValues<number, BigNumber>((v) => new BigNumber(v))(res) as FeeEstimates)
 
-  const estimateFees = (
-    txType: 'RedeemTx' | 'TransferTx',
-    amount: BigNumber,
-  ): Promise<FeeEstimates> =>
+  const estimateFees = (txType: 'Redeem' | 'Transfer', amount: BigNumber): Promise<FeeEstimates> =>
     wallet.estimateFees(txType, amount.toNumber()).then((res) => tPromise.decode(FeeEstimates, res))
 
   const estimateRedeemFee = (amount: BigNumber): Promise<FeeEstimates> =>
-    estimateFees('RedeemTx', amount)
+    estimateFees('Redeem', amount)
 
   const estimateTransactionFee = (amount: BigNumber): Promise<FeeEstimates> =>
-    estimateFees('TransferTx', amount)
+    estimateFees('Transfer', amount)
 
   const estimatePublicTransactionFee = (
     amount: BigNumber,
@@ -449,7 +446,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   ): Promise<FeeEstimates> =>
     wallet
       .estimateFees(
-        'CallTx',
+        'Call',
         getPublicTransactionParams(amount, new BigNumber(0), recipient ? recipient : undefined),
       )
       .then((res) => tPromise.decode(FeeEstimates, res))
