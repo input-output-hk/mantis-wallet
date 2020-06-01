@@ -71,23 +71,15 @@ export const _BurnActivity = ({
         <div className="no-activity">No burn activity to show.</div>
       )}
       {filteredStatuses.length > 0 && (
-        <>
-          <div className="list-header">
-            <div>Burn Address</div>
-            <div>Burn Amount / CCY</div>
-            <div>Midnight Transaction Id</div>
-            <div className="last">Source Transaction Id</div>
-          </div>
-          <div>
-            {filteredStatuses.map((status) => (
-              <BurnStatusDisplay
-                key={`${status.address}-${status.burnStatus.txid}`}
-                syncStatus={walletState.syncStatus}
-                {...status}
-              />
-            ))}
-          </div>
-        </>
+        <div>
+          {filteredStatuses.map((status) => (
+            <BurnStatusDisplay
+              key={`${status.address}-${status.burnStatus.txid}`}
+              syncStatus={walletState.syncStatus}
+              {...status}
+            />
+          ))}
+        </div>
       )}
     </div>
   )

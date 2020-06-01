@@ -26,7 +26,6 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   return (
     <div className="BurnActions">
       <div className="toolbar">
-        <div className="wallet">Wallet 01</div>
         <div>
           {!_.isEmpty(burnAddresses) && (
             <Popover content="Enter burn transaction manually">

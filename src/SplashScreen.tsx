@@ -12,7 +12,7 @@ const getStatusMessage = (lunaStatus: LunaStatus): string => {
   if (lunaStatus.fetchParams.status === 'not-running') {
     return 'Initializing Luna'
   } else if (lunaStatus.fetchParams.status === 'running') {
-    return 'Sapling params fetching'
+    return 'Sonics params fetching'
   } else if (lunaStatus.fetchParams.status === 'finished') {
     return 'Starting Midnight node'
   } else if (lunaStatus.node.status === 'running' && lunaStatus.wallet.status === 'running') {

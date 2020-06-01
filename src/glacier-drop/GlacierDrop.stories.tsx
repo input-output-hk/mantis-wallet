@@ -147,19 +147,16 @@ export const withdrawAvailableDust = (): JSX.Element => (
 export const epochs = (): JSX.Element => {
   const epochRows: EpochRow[] = [
     {
-      walletId: number('Wallet ID', 1),
       transparentAddress: text('Address', MIDNIGHT_ADDRESS),
       dustAmount: new BigNumber(number('Amount', EXAMPLE_AMOUNT)),
       numberOfEpochs: number('Number of Epochs For Full Unfreeze', 5),
     },
     {
-      walletId: 2,
       transparentAddress: 'm-main-uns-ABCDjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
       dustAmount: new BigNumber(9876543219876543212),
       numberOfEpochs: 10,
     },
     {
-      walletId: 3,
       transparentAddress: 'm-main-uns-DEFGjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',
       dustAmount: new BigNumber(6789876789876),
       numberOfEpochs: 3,
