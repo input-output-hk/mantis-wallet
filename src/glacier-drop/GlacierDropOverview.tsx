@@ -250,7 +250,6 @@ const _GlacierDropOverview = ({
             const {transparentAddress, dustAmount} = claim
             const numberOfEpochs = getNumberOfEpochsForClaim(claim, periodConfig)
             return {
-              walletId: 1, // FIXME: [PM-1555] Refactor WalletState for Multiple Wallets
               numberOfEpochs,
               transparentAddress,
               dustAmount,

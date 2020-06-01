@@ -13,7 +13,6 @@ export const BurnCoinsChooseToken: React.FunctionComponent<BurnCoinsChooseTokenP
   chooseChain,
 }: BurnCoinsChooseTokenProps) => (
   <div className="BurnCoinsChooseToken">
-    <div className="main-title">Wallet 01</div>
     <div className="tokens">
       {chains.map((chain) => (
         <Token chain={chain} chooseChain={chooseChain} key={chain.id}>

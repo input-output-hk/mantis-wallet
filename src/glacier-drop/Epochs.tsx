@@ -14,7 +14,6 @@ import {getCurrentEpoch, getSecondsUntilNextEpoch, getUnfrozenAmount} from './Pe
 import './Epochs.scss'
 
 export interface EpochRow {
-  walletId: number
   transparentAddress: string
   dustAmount: BigNumber
   numberOfEpochs: number
@@ -40,7 +39,7 @@ export const Epochs = ({
 
   const epochIndices = _.range(1, maximumNumberOfEpochs + 1)
   const tableStyle = {
-    gridTemplateColumns: `1fr 2fr 1fr repeat(${maximumNumberOfEpochs}, 1fr)`,
+    gridTemplateColumns: `2fr 1fr repeat(${maximumNumberOfEpochs}, 1fr)`,
     width: `${maximumNumberOfEpochs * 175}px`,
   }
 
@@ -58,7 +57,6 @@ export const Epochs = ({
       <div className="table-container">
         <div className="epochs-table" style={tableStyle}>
           {/* Epochs Header */}
-          <div className="header wallet-id">Wallet ID</div>
           <div className="header">Midnight Address</div>
           <div className="header">Total Dust</div>
           {epochIndices.map((epochNum) => (
@@ -73,10 +71,9 @@ export const Epochs = ({
 
           {/* Epoch Rows */}
           {epochRows.map((epochRow, epochRowIndex) => {
-            const {walletId, transparentAddress, dustAmount} = epochRow
+            const {transparentAddress, dustAmount} = epochRow
             return (
               <React.Fragment key={epochRowIndex}>
-                <div>Wallet #{walletId}</div>
                 <div className="address">{transparentAddress}</div>
                 <div className="dust-amount">
                   <ShortNumber big={dustAmount} />
