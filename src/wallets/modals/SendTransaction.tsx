@@ -7,13 +7,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {Account, FeeLevel} from '../../web3'
-import {
-  validateAmount,
-  hasAtMostDecimalPlaces,
-  isGreaterOrEqual,
-  validateTxAmount,
-  validateFee,
-} from '../../common/util'
+import {validateAmount, isGreaterOrEqual, validateTxAmount, validateFee} from '../../common/util'
 import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
@@ -136,7 +130,7 @@ const SendToTransparentDialog = ({
 
   const modalLocker = ModalLocker.useContainer()
 
-  const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual(), hasAtMostDecimalPlaces(0)])
+  const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual()])
   const amountError = validateTxAmount(amount, availableAmount)
 
   const [feeEstimates, feeEstimateError, isPending] = useAsyncUpdate((): Promise<FeeEstimates> => {

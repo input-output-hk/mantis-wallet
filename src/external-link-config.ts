@@ -1,8 +1,8 @@
 export const LINKS = {
-  aboutPoB: 'https://www.testnet-pupa.project42.iohkdev.io/',
-  aboutGlacier: 'https://www.testnet-pupa.project42.iohkdev.io/',
-  proverListMetrics: 'https://www.testnet-pupa.project42.iohkdev.io/',
-  faucet: 'https://www.testnet-pupa.project42.iohkdev.io/tools/faucet/',
+  aboutPoB: 'https://www.testnet-pupa.project42.iohkdev.io/en/get-started/proof-of-burn/',
+  aboutGlacier: 'https://www.testnet-pupa.project42.iohkdev.io/en/get-started/glacier-drop/',
+  proverListMetrics: 'https://www.testnet-pupa.project42.iohkdev.io//en/get-started/proof-of-burn/',
+  faucet: 'https://www.testnet-pupa.project42.iohkdev.io/en/tools/faucet/',
   explorer: 'https://explorer.testnet-pupa.project42.iohkdev.io',
   support: 'https://input-output-rnd.slack.com/archives/C013F4GFSTX',
   feedback:

@@ -59,19 +59,4 @@
     margin: 20px auto;
     text-align: center;
   }
-
-  .list-header {
-    display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
-    margin-top: 40px;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 1.95px;
-    text-transform: uppercase;
-    overflow-wrap: break-word;
-
-    :first-child {
-      padding-left: 14px;
-    }
-  }
 }

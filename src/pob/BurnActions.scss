@@ -5,15 +5,8 @@
 
   .toolbar {
     display: grid;
-    grid-template-columns: 1fr auto;
-
-    .wallet {
-      margin: 0;
-      overflow: hidden;
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 0.46px;
-    }
+    grid-template-columns: auto;
+    justify-items: end;
 
     .link {
       @extend %link;
