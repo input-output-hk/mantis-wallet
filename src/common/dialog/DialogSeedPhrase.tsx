@@ -8,6 +8,8 @@ import './DialogSeedPhrase.scss'
 
 const wordlist = bip39.wordlists.english
 
+const FIRST_FIVE_WORDS = _.take(wordlist, 5).map((value) => ({value}))
+
 interface DialogSeedPhraseProps {
   onChange(newPhrase: string): void
 }
@@ -23,7 +25,7 @@ const _DialogSeedPhrase: React.RefForwardingComponent<
   DialogSeedPhraseProps
 > = ({onChange}: DialogSeedPhraseProps, ref: Ref<Select<SelectValue>>) => {
   const [phrase, setPhrase] = useState<string>('')
-  const [options, setOptions] = useState<Array<{value: string}>>([])
+  const [options, setOptions] = useState<Array<{value: string}>>(FIRST_FIVE_WORDS)
 
   const handleChange = (selectValue: SelectValue): void => {
     const phrase = selectValue.toString()
@@ -34,8 +36,11 @@ const _DialogSeedPhrase: React.RefForwardingComponent<
   const handleSearch = (fullPhrase: string): void => {
     const words = fullPhrase.split(' ')
     const currentWord = words[words.length - 1]
-    const results = currentWord.length === 0 ? [] : filterResults(currentWord.toLowerCase())
-    setOptions(results.map((value) => ({value})))
+    const results =
+      currentWord.length === 0
+        ? FIRST_FIVE_WORDS
+        : filterResults(currentWord.toLowerCase()).map((value) => ({value}))
+    if (results.length > 0) setOptions(results)
   }
 
   const handleSelect = (selection: SelectValue): void => {
@@ -46,7 +51,7 @@ const _DialogSeedPhrase: React.RefForwardingComponent<
   }
 
   return (
-    <div className="DialogSeedPhrase">
+    <div className="DialogSeedPhrase" data-testid="seed-phrase">
       <AutoComplete
         className="select"
         value={phrase}
@@ -54,6 +59,7 @@ const _DialogSeedPhrase: React.RefForwardingComponent<
         onSearch={handleSearch}
         onSelect={handleSelect}
         options={options}
+        defaultActiveFirstOption
         ref={ref}
       >
         <BorderlessInput />
