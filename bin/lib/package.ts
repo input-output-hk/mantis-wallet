@@ -12,9 +12,11 @@ export const packageLuna = (
     electronZipDir: process.env['ELECTRON_ZIP_DIR'],
     extraResource:
       process.env['LUNA_DIST_PACKAGES_DIR'] || path.resolve(appDir, '..', 'midnight-dist'),
-    // the icon's extension is normalized inside electron-packager per platform
-    // for windows it will use icon.ico, for mac it will use icon.icns
-    icon: path.resolve(appDir, 'public/icon.png'),
+    // The icon's extension is normalized inside electron-packager per platform
+    // for windows it will use icon.ico, for mac it will use icon.icns,
+    // but only if you leave out the file extension.
+    // For Linux: you should use BrowserWindow({icon}) to set it. It should be a png.
+    icon: path.resolve(appDir, 'public/icon'),
     // FIXME PM-1837 don't include package.json as it is in dist package
     ignore: /^\/(?!build|package.json).*/,
     out: path.resolve(appDir, 'dist'),
