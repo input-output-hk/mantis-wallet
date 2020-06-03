@@ -56,7 +56,7 @@ const _ClaimWithKey = ({
       }}
       onSetLoading={modalLocker.setLocked}
       type="dark"
-      buttonDisplayMode="natural"
+      buttonDisplayMode="wide"
     >
       <DialogInput
         id="private-key-input"

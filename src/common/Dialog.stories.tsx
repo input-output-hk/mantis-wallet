@@ -32,16 +32,18 @@ export default {
 export const InteractiveDialog: React.FunctionComponent<{}> = () => (
   <Dialog
     title={text('Dialog title', 'Dialog title')}
-    buttonDisplayMode={select('Button display mode', ['natural', 'grid'], 'grid')}
+    buttonDisplayMode={select('Button display mode', ['natural', 'grid', 'wide'], 'grid')}
     leftButtonProps={{
-      children: text('Cancel button label', 'Cancel'),
-      onClick: action('prev-button-click'),
-      disabled: boolean('Disable Prev button', false),
+      children: text('Left button label', 'Cancel'),
+      onClick: action('left-button-click'),
+      disabled: boolean('Disable Left button', false),
+      doNotRender: boolean('Do not render Left button', false),
     }}
     rightButtonProps={{
-      children: text('Next button label', 'Next'),
-      onClick: action('next-button-click'),
-      disabled: boolean('Disable Next button', true),
+      children: text('Right button label', 'Next'),
+      onClick: action('right-button-click'),
+      disabled: boolean('Disable Right button', true),
+      doNotRender: boolean('Do not render Right button', false),
     }}
     footer={text('Footer', 'footer text')}
   >

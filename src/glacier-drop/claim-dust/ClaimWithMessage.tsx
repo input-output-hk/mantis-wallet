@@ -60,7 +60,7 @@ const _ClaimWithMessage = ({
         doNotRender: true,
       }}
       type="dark"
-      buttonDisplayMode="natural"
+      buttonDisplayMode="wide"
     >
       <DialogInput
         autoFocus

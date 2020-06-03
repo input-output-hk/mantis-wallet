@@ -22,7 +22,7 @@ export const _DialogApproval: React.RefForwardingComponent<Checkbox, DialogAppro
       {...rest}
       ref={ref}
     >
-      <label htmlFor={id}>{description}</label>
+      {description}
     </Checkbox>
   </div>
 )
