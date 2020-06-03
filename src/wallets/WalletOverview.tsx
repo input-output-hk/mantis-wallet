@@ -81,17 +81,19 @@ export const WalletOverview = ({
         </div>
         <div className="transparent" onClick={goToAccounts}>
           <Popover content={transparentTooltip}>
-            <div className="box-text">
-              <div className="box-info">i</div>
-              <span className="box-icon">
-                &nbsp;
-                <SVG src={transparentIcon} className="svg" />
-              </span>
-              Transparent
-            </div>
-            <div className="box-amount">
-              <img src={dustIcon} alt="dust" className="dust" />
-              <ShortNumber big={transparent} />
+            <div>
+              <div className="box-text">
+                <div className="box-info">i</div>
+                <span className="box-icon">
+                  &nbsp;
+                  <SVG src={transparentIcon} className="svg" />
+                </span>
+                Transparent
+              </div>
+              <div className="box-amount">
+                <img src={dustIcon} alt="dust" className="dust" />
+                <ShortNumber big={transparent} />
+              </div>
             </div>
           </Popover>
         </div>

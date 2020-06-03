@@ -1,6 +1,7 @@
 import React, {ReactNode, useState} from 'react'
 import SVG from 'react-inlinesvg'
-import {Icon, Popover} from 'antd'
+import {CloseOutlined, LoadingOutlined, RightOutlined} from '@ant-design/icons'
+import {Popover} from 'antd'
 import _ from 'lodash'
 import classnames from 'classnames'
 import {CHAINS} from './chains'
@@ -69,8 +70,8 @@ const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
 
 const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   CHECKED: <SVG src={checkIcon} className="checked icon" title="Checked" />,
-  UNKNOWN: <Icon type="close" className="unknown icon" title="Unknown" />,
-  FAILED: <Icon type="close" className="fail icon" title="Failed" />,
+  UNKNOWN: <CloseOutlined className="unknown icon" title="Unknown" />,
+  FAILED: <CloseOutlined className="fail icon" title="Failed" />,
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" title="In progress" />,
 }
 
@@ -78,7 +79,7 @@ type DisplayProgressRatio = number | 'unknown'
 
 const DisplayProgress = ({ratio}: {ratio: DisplayProgressRatio}): JSX.Element => (
   <div className="percentage">
-    {ratio === 'unknown' && <Icon type="loading" style={{fontSize: 12}} spin />}
+    {ratio === 'unknown' && <LoadingOutlined style={{fontSize: 12}} spin />}
     {ratio !== 'unknown' && `${formatPercentage(_.clamp(ratio, 0, 0.99))}%`}
   </div>
 )
@@ -106,7 +107,7 @@ const ProvingProgressLabel = ({
         content={progress === 'IN_PROGRESS' ? inProgressMessage : checkedMessage}
         placement="top"
       >
-        {labelWithIcon}
+        <span>{labelWithIcon}</span>
       </Popover>
     )
   } else {
@@ -165,7 +166,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         onClick={() => setDetailsShown(!detailsShown)}
       >
         <div className="collapse-icon">
-          <Icon type="right" />
+          <RightOutlined />
         </div>
         <span>Burn Amount / Midnight Token: </span>
         {burnStatus.tx_value && (
@@ -183,7 +184,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             content="Your burn transaction has been found on source blockchain."
             placement="top"
           >
-            {PROGRESS_ICONS['CHECKED']} Found Transaction
+            <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
           </Popover>
         </div>
         <div className="line">

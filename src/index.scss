@@ -117,6 +117,7 @@ div#root {
   &:hover {
     @include themify($themes) {
       background-color: lighten(themed('btn-default-bg'), 10);
+      color: themed('secondary-background');
     }
   }
 }
@@ -132,6 +133,7 @@ div#root {
   &:hover {
     @include themify($themes) {
       background-color: lighten(themed('primary-color'), 5);
+      color: #fff;
     }
   }
 
@@ -145,6 +147,7 @@ div#root {
     &:focus {
       @include themify($themes) {
         background-color: themed('quinary-background');
+        color: themed('text-color');
       }
     }
   }
@@ -181,15 +184,10 @@ div#root {
   }
 }
 
-// antd Popover arrow theme overrides
-.ant-popover-placement-bottom > .ant-popover-content > .ant-popover-arrow,
-.ant-popover-placement-bottomLeft > .ant-popover-content > .ant-popover-arrow,
-.ant-popover-placement-bottomRight > .ant-popover-content > .ant-popover-arrow {
-  top: 7px;
-
+.ant-popover-arrow {
   @include themify($themes) {
-    border-top-color: themed('text-color');
-    border-left-color: themed('text-color');
+    border-color: themed('text-color') !important;
+    background: themed('text-color') !important;
   }
 }
 

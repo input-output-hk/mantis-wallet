@@ -57,8 +57,9 @@ test('WalletRestore', async () => {
   userEvent.click(recoverySwitch)
 
   // Enter recovery phrase
-  const recoveryPhraseInput = document.getElementsByClassName('ant-select-search__field')[0]
-  fireEvent.change(recoveryPhraseInput, {target: {value: recoveryPhrase}})
+  const recoveryPhraseInput = getByTestId('seed-phrase').getElementsByTagName('input')
+  expect(recoveryPhraseInput.length).toBe(1)
+  fireEvent.change(recoveryPhraseInput[0], {target: {value: recoveryPhrase}})
 
   // Verify password fields
   expect(getByText('Enter Password')).toBeInTheDocument()

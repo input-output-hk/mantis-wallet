@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Icon} from 'antd'
+import {LoadingOutlined} from '@ant-design/icons'
 import _ from 'lodash/fp'
 import {LunaWalletLoader} from 'luna-wallet-loader'
 import {config, loadLunaManagedConfig, loadLunaStatus} from './config/renderer'
@@ -47,7 +47,7 @@ export const SplashScreen: React.FunctionComponent<{}> = () => {
       <LunaWalletLoader className="logo" mode={theme} />
       <div className="title">Luna</div>
       <div className="spinner">
-        <Icon type="loading" spin />
+        <LoadingOutlined spin />
       </div>
       <div className="loading">{message}</div>
       <div className="details" onClick={() => setShowStatus(true)}>
