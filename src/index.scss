@@ -117,6 +117,7 @@ div#root {
   &:hover {
     @include themify($themes) {
       background-color: lighten(themed('btn-default-bg'), 10);
+      color: themed('secondary-background');
     }
   }
 }
@@ -132,6 +133,7 @@ div#root {
   &:hover {
     @include themify($themes) {
       background-color: lighten(themed('primary-color'), 5);
+      color: #fff;
     }
   }
 
@@ -145,6 +147,7 @@ div#root {
     &:focus {
       @include themify($themes) {
         background-color: themed('quinary-background');
+        color: themed('text-color');
       }
     }
   }
