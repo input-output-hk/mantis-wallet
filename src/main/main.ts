@@ -2,6 +2,7 @@
 /* eslint-disable fp/no-let, fp/no-mutation */
 import path from 'path'
 import url from 'url'
+import os from 'os'
 import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
 import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
@@ -35,6 +36,9 @@ import {ipcListen} from './util'
 import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
 import {LUNA_VERSION} from '../shared/version'
 
+const IS_LINUX = os.type() == 'Linux'
+const LINUX_ICON = path.join(__dirname, '/../icon.png')
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,9 +52,9 @@ function createRemixWindow(): void {
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
 
   const remixWindow = new BrowserWindow({
+    icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
-    icon: path.join(__dirname, '/../icon.png'),
   })
 
   const remixUrl = url.format({
@@ -87,9 +91,9 @@ function createWindow(): void {
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
     title: `Luna Wallet — ${LUNA_VERSION}`,
+    icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
-    icon: path.join(__dirname, '/../icon.png'),
     minWidth: 1200,
     minHeight: 700,
     webPreferences: {
