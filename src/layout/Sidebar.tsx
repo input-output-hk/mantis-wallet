@@ -5,7 +5,6 @@ import classnames from 'classnames'
 import {ThemeState} from '../theme-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
-import {LUNA_VERSION} from '../shared/version'
 import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
@@ -45,7 +44,11 @@ const UpdatingStatusModal = ({
   )
 }
 
-export const Sidebar = (): JSX.Element => {
+interface SidebarProps {
+  version: string
+}
+
+export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
 
@@ -117,7 +120,7 @@ export const Sidebar = (): JSX.Element => {
           </span>{' '}
           | {logOut}
         </div>
-        <div className="version">{LUNA_VERSION}</div>
+        <div className="version">{version}</div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal
