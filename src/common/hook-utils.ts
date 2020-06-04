@@ -51,9 +51,12 @@ export function useInterval(callback: Callback, delay: number): void {
   }, [delay])
 }
 
+const SKIP_UPDATE = 'SKIP UPDATE'
+
 export function useAsyncUpdate<T>(
   update: () => Promise<T>,
   dependencies?: DependencyList,
+  skipUpdate: () => Promise<void> = () => Promise.resolve(),
 ): [T | undefined, Error | string | null, boolean] {
   const [value, setValue] = useState<T>()
   const [progress, setProgress] = useState({error: null, isPending: true})
@@ -61,7 +64,9 @@ export function useAsyncUpdate<T>(
   useEffect(() => {
     // eslint-disable-next-line
     let isSubscribed = true
-    update()
+    skipUpdate()
+      .catch(() => Promise.reject(SKIP_UPDATE))
+      .then(update)
       .then((res) => {
         if (isSubscribed) {
           setValue(res)
@@ -69,9 +74,11 @@ export function useAsyncUpdate<T>(
         }
       })
       .catch((error) => {
-        console.error(error)
-        if (isSubscribed) {
-          setProgress({error, isPending: false})
+        if (error !== SKIP_UPDATE) {
+          console.error(error)
+          if (isSubscribed) {
+            setProgress({error, isPending: false})
+          }
         }
       })
     return () => {

@@ -109,8 +109,8 @@ export function hexToBech32(hexAddress: string, prefix = 'm-test-uns-ad'): strin
 export const EMPTY_ADDRESS_MSG = 'Address must be set'
 export const INVALID_ADDRESS_MSG = 'Invalid address'
 
-export function validateEthAddress(rawInput: string): string {
-  if (rawInput.length === 0) return EMPTY_ADDRESS_MSG
+export function validateEthAddress(rawInput?: string): string {
+  if (rawInput == null || rawInput.length === 0) return EMPTY_ADDRESS_MSG
   try {
     if (!isChecksumAddress(rawInput)) return INVALID_ADDRESS_MSG
   } catch (e) {
@@ -150,3 +150,8 @@ export function toAntValidator(
     },
   }
 }
+
+export const createTxAmountValidator = (
+  availableAmount: BigNumber,
+): {validator: (rule: Rule, value: StoreValue) => Promise<void>} =>
+  toAntValidator((amount?: string): string => validateTxAmount(amount || '', availableAmount))

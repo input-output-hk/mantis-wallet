@@ -4,14 +4,14 @@ import {TransparentAccount, FeeEstimates} from '../../common/wallet-state'
 import {ModalLocker, wrapWithModal, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {validateTxAmount, validateFee} from '../../common/util'
+import {validateFee, createTxAmountValidator} from '../../common/util'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {UNITS} from '../../common/units'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {DialogFee} from '../../common/dialog/DialogFee'
-import {INVALID_AMOUNT_FOR_FEE_ESTIMATION, COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
+import {COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
 
 const {Dust} = UNITS
 
@@ -32,24 +32,19 @@ const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
   const modalLocker = ModalLocker.useContainer()
 
   const feeError = validateFee(fee)
-  const amountError = validateTxAmount(amount, transparentAccount.balance)
+  const txAmountValidator = createTxAmountValidator(transparentAccount.balance)
 
-  const [feeEstimates, feeEstimateError, isPending] = useAsyncUpdate((): Promise<FeeEstimates> => {
-    // let's provide some default for zero amount
-    if (amountError === '' || amount === '0') {
-      return estimateRedeemFee(Dust.toBasic(new BigNumber(amount)))
-    } else {
-      return Promise.reject(INVALID_AMOUNT_FOR_FEE_ESTIMATION)
-    }
-  }, [amount])
+  const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
+    (): Promise<FeeEstimates> => estimateRedeemFee(Dust.toBasic(new BigNumber(amount))),
+    [amount],
+    () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
+  )
 
-  const disableRedeem = !!feeError || !!amountError || isPending
+  const disableRedeem = !!feeError || isFeeEstimationPending
 
   // FIXME PM-2050 Fix error handling when amount is too big to estimate
   const footer =
-    !feeEstimates ||
-    feeEstimateError == null ||
-    feeEstimateError === INVALID_AMOUNT_FOR_FEE_ESTIMATION ? (
+    !feeEstimates || feeEstimateError == null ? (
       <></>
     ) : (
       <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
@@ -79,16 +74,19 @@ const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
       <DialogShowDust amount={transparentAccount.balance}>Available Amount</DialogShowDust>
       <DialogInput
         label="Amount"
-        defaultValue={amount}
         onChange={(e): void => setAmount(e.target.value)}
-        errorMessage={amountError}
+        formItem={{
+          name: 'confidential-tx-amount',
+          initialValue: amount,
+          rules: [txAmountValidator],
+        }}
       />
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
         defaultValue={fee}
         onChange={(fee: string): void => setFee(fee)}
-        isPending={isPending}
+        isPending={isFeeEstimationPending}
         errorMessage={feeError}
       />
       <DialogMessage

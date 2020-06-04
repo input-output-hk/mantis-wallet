@@ -7,7 +7,12 @@ import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {Account, FeeLevel} from '../../web3'
-import {validateAmount, isGreaterOrEqual, validateTxAmount, validateFee} from '../../common/util'
+import {
+  validateAmount,
+  isGreaterOrEqual,
+  validateFee,
+  createTxAmountValidator,
+} from '../../common/util'
 import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
@@ -16,7 +21,7 @@ import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
-import {INVALID_AMOUNT_FOR_FEE_ESTIMATION, COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
+import {COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
 
 const {Dust} = UNITS
 
@@ -51,24 +56,19 @@ const SendToConfidentialDialog = ({
   const modalLocker = ModalLocker.useContainer()
 
   const feeError = validateFee(fee)
-  const amountError = validateTxAmount(amount, availableAmount)
+  const txAmountValidator = createTxAmountValidator(availableAmount)
 
-  const [feeEstimates, feeEstimateError, isPending] = useAsyncUpdate((): Promise<FeeEstimates> => {
-    // let's provide some default for zero amount
-    if (amountError === '' || amount === '0') {
-      return estimateTransactionFee(Dust.toBasic(new BigNumber(amount)))
-    } else {
-      return Promise.reject(INVALID_AMOUNT_FOR_FEE_ESTIMATION)
-    }
-  }, [amount])
+  const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
+    (): Promise<FeeEstimates> => estimateTransactionFee(Dust.toBasic(new BigNumber(amount))),
+    [amount],
+    () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
+  )
 
-  const disableSend = !!feeError || !!amountError || recipient.length === 0 || isPending
+  const disableSend = !!feeError || isFeeEstimationPending
 
   // FIXME PM-2050 Fix error handling when amount is too big to estimate
   const footer =
-    !feeEstimates ||
-    feeEstimateError == null ||
-    feeEstimateError === INVALID_AMOUNT_FOR_FEE_ESTIMATION ? (
+    !feeEstimates || feeEstimateError == null ? (
       <></>
     ) : (
       <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
@@ -95,20 +95,26 @@ const SendToConfidentialDialog = ({
         autoFocus
         label="Recipient"
         onChange={(e): void => setRecipient(e.target.value)}
-        errorMessage={recipient.length === 0 ? 'Recipient must be set' : ''}
+        formItem={{
+          name: 'confidential-recipient-name',
+          rules: [{required: true, message: 'Recipient must be set'}],
+        }}
       />
       <DialogInput
         label="Amount"
-        defaultValue={amount}
         onChange={(e): void => setAmount(e.target.value)}
-        errorMessage={amountError}
+        formItem={{
+          name: 'confidential-tx-amount',
+          initialValue: amount,
+          rules: [txAmountValidator],
+        }}
       />
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
         defaultValue={fee}
         onChange={(fee: string): void => setFee(fee)}
-        isPending={isPending}
+        isPending={isFeeEstimationPending}
         errorMessage={feeError}
       />
     </Dialog>
@@ -130,16 +136,14 @@ const SendToTransparentDialog = ({
   const modalLocker = ModalLocker.useContainer()
 
   const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual()])
-  const amountError = validateTxAmount(amount, availableAmount)
+  const txAmountValidator = createTxAmountValidator(availableAmount)
 
-  const [feeEstimates, feeEstimateError, isPending] = useAsyncUpdate((): Promise<FeeEstimates> => {
-    // let's provide some default for zero amount
-    if (amountError === '' || amount === '0') {
-      return estimatePublicTransactionFee(Dust.toBasic(new BigNumber(amount)), recipient)
-    } else {
-      return Promise.reject(INVALID_AMOUNT_FOR_FEE_ESTIMATION)
-    }
-  }, [amount, recipient])
+  const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
+    (): Promise<FeeEstimates> =>
+      estimatePublicTransactionFee(Dust.toBasic(new BigNumber(amount)), recipient),
+    [amount, recipient],
+    () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
+  )
 
   const [gasPriceEstimates, gasPriceEstimateError, isGasPricePending] = useAsyncUpdate(
     estimateGasPrice,
@@ -147,18 +151,11 @@ const SendToTransparentDialog = ({
   )
 
   const disableSend =
-    !!gasPriceError ||
-    !!amountError ||
-    recipient.length === 0 ||
-    !!gasPriceEstimateError ||
-    isGasPricePending ||
-    isPending
+    !!gasPriceError || !!gasPriceEstimateError || isGasPricePending || isFeeEstimationPending
 
   // FIXME PM-2050 Fix error handling when amount is too big to estimate
   const footer =
-    !feeEstimates ||
-    feeEstimateError == null ||
-    feeEstimateError === INVALID_AMOUNT_FOR_FEE_ESTIMATION ? (
+    !feeEstimates || feeEstimateError == null ? (
       <></>
     ) : (
       <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
@@ -188,13 +185,19 @@ const SendToTransparentDialog = ({
       <DialogInput
         label="Recipient"
         onChange={(e): void => setRecipient(e.target.value)}
-        errorMessage={recipient.length === 0 ? 'Recipient must be set' : ''}
+        formItem={{
+          name: 'transparent-recipient-name',
+          rules: [{required: true, message: 'Recipient must be set'}],
+        }}
       />
       <DialogInput
         label="Amount"
-        defaultValue={amount}
         onChange={(e): void => setAmount(e.target.value)}
-        errorMessage={amountError}
+        formItem={{
+          name: 'transparent-tx-amount',
+          initialValue: amount,
+          rules: [txAmountValidator],
+        }}
       />
       <DialogFee
         label="Fee"
@@ -210,7 +213,7 @@ const SendToTransparentDialog = ({
           }
         }}
         errorMessage={gasPriceError}
-        isPending={isPending || isGasPricePending}
+        isPending={isFeeEstimationPending || isGasPricePending}
         hideCustom
       />
       <DialogApproval

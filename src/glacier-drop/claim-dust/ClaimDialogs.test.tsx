@@ -57,20 +57,23 @@ test('Enter External Address', async () => {
   // Find Proceed Button
   const submitButton = getByText('Proceed')
 
-  // Initially we expect an empty address error msg
-  expect(getByText(EMPTY_ADDRESS_MSG)).toBeInTheDocument()
-  expect(submitButton).toBeDisabled()
+  // Submit button can be clicked but it shows a dialog validation error
+  expect(submitButton).toBeEnabled()
+  userEvent.click(submitButton)
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
+
+  // At this point we expect an empty address error msg
+  await waitFor(() => expect(getByText(EMPTY_ADDRESS_MSG)).toBeInTheDocument())
 
   // We expect invalid address msgs in these cases
   fireEvent.change(publicAddressInput, {target: {value: 'invalid address'}})
-  expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument()
+  await waitFor(() => expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument())
 
   // Almost valid public address (checksum fails)
   fireEvent.change(publicAddressInput, {
     target: {value: '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Bb'},
   })
-  expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument()
-  expect(submitButton).toBeDisabled()
+  await waitFor(() => expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument())
 
   // Cancel works any time
   await expectCalledOnClick(() => getByText('Cancel'), onCancel)
@@ -79,7 +82,7 @@ test('Enter External Address', async () => {
   fireEvent.change(publicAddressInput, {
     target: {value: '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Ba'},
   })
-  expect(queryByText(INVALID_ADDRESS_MSG)).not.toBeInTheDocument()
+  await waitFor(() => expect(queryByText(INVALID_ADDRESS_MSG)).not.toBeInTheDocument())
 
   // Now submit is enabled
   expect(submitButton).toBeEnabled()
