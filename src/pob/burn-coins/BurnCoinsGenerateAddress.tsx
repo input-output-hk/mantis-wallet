@@ -40,7 +40,6 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const minValue = UNITS[chain.unitType].fromBasic(new BigNumber(1))
   const [fee, setFee] = useState(defaultFee.toString(10))
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const [approval, setApproval] = useState(false)
   const noCompatibleProvers = compatibleProvers.length === 0
 
   const feeError = validateAmount(fee, [
@@ -48,7 +47,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
     hasAtMostDecimalPlaces(minValue.dp()),
   ])
 
-  const disableGenerate = !!feeError || !approval || noCompatibleProvers
+  const disableGenerate = !!feeError || noCompatibleProvers
 
   const title = (
     <>
@@ -118,8 +117,6 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
         />
         <DialogApproval
           id="i-understand-the-process-checkbox"
-          checked={approval}
-          onChange={setApproval}
           description={
             <>
               This will generate a {chain.name} Address to which you can send {chain.name} to be

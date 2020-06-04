@@ -2,6 +2,8 @@ import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import * as bech32 from 'bech32-buffer'
 import _ from 'lodash'
+import {Rule} from 'antd/lib/form'
+import {StoreValue} from 'antd/lib/form/interface'
 import {isChecksumAddress} from 'web3/lib/utils/utils.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
@@ -123,8 +125,8 @@ const MAX_KEY_VALUE = new BigNumber(
 export const PRIVATE_KEY_INVALID_MSG = 'Invalid private key'
 export const PRIVATE_KEY_MUST_BE_SET_MSG = 'Private Key must be set'
 
-export function validateEthPrivateKey(privateKey: string): string {
-  if (privateKey.length === 0) {
+export function validateEthPrivateKey(privateKey?: string): string {
+  if (privateKey == null || privateKey.length === 0) {
     return PRIVATE_KEY_MUST_BE_SET_MSG
   }
   try {
@@ -136,4 +138,15 @@ export function validateEthPrivateKey(privateKey: string): string {
     return PRIVATE_KEY_INVALID_MSG
   }
   return ''
+}
+
+export function toAntValidator(
+  validate: (value?: string) => string,
+): {validator: (rule: Rule, value: StoreValue) => Promise<void>} {
+  return {
+    validator: (_rule, value) => {
+      const possibleError = validate(value)
+      return possibleError === '' ? Promise.resolve() : Promise.reject(possibleError)
+    },
+  }
 }

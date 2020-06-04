@@ -10,6 +10,9 @@ import {DialogError} from './dialog/DialogError'
 import {waitUntil} from '../shared/utils'
 import './Dialog.scss'
 
+export const DIALOG_VALIDATION_ERROR =
+  'Some fields require additional action before you can continue.'
+
 interface DialogButtonProps {
   doNotRender?: boolean
   skipValidation?: boolean
@@ -80,7 +83,10 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
           await waitUntil(() =>
             _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
           )
-          await dialogForm.validateFields()
+          await dialogForm.validateFields().catch((e) => {
+            console.error(e)
+            return Promise.reject(new Error(DIALOG_VALIDATION_ERROR))
+          })
         }
         await onClick(event)
       } catch (e) {
@@ -114,7 +120,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   return (
     <div className={classnames('Dialog', type)}>
       {title && <div className="title">{title}</div>}
-      <Form form={dialogForm}>
+      <Form form={dialogForm} onValuesChange={() => setErrorMessage('')}>
         <div className="dialog-children">{children}</div>
         <div className={classnames('actions', buttonDisplayMode)}>
           {!doNotRenderLeft && <Button data-testid="left-button" {...leftButtonPropsToUse} />}

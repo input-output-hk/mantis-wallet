@@ -126,7 +126,6 @@ const SendToTransparentDialog = ({
   const [amount, setAmount] = useState('0')
   const [gasPrice, setGasPrice] = useState('1')
   const [recipient, setRecipient] = useState('')
-  const [approval, setApproval] = useState(false)
 
   const modalLocker = ModalLocker.useContainer()
 
@@ -151,7 +150,6 @@ const SendToTransparentDialog = ({
     !!gasPriceError ||
     !!amountError ||
     recipient.length === 0 ||
-    !approval ||
     !!gasPriceEstimateError ||
     isGasPricePending ||
     isPending
@@ -216,8 +214,7 @@ const SendToTransparentDialog = ({
         hideCustom
       />
       <DialogApproval
-        checked={approval}
-        onChange={setApproval}
+        id="no-longer-confidential-warning"
         description={
           <>
             <b>Warning:</b> I understand that the funds included in this transaction will no longer

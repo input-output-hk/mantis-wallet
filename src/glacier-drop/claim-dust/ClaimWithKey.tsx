@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {GlacierState, AuthorizationSignature} from '../glacier-state'
 import {ETC_CHAIN} from '../glacier-config'
-import {validateEthPrivateKey} from '../../common/util'
+import {validateEthPrivateKey, toAntValidator} from '../../common/util'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DisplayChain} from '../../pob/chains'
@@ -32,12 +32,8 @@ const _ClaimWithKey = ({
   const {authorizationSign} = GlacierState.useContainer()
 
   const [etcPrivateKey, setEtcPrivateKey] = useState<string>('')
-  const [checked, setChecked] = useState<boolean>(false)
 
   const modalLocker = ModalLocker.useContainer()
-
-  const privateKeyError = validateEthPrivateKey(etcPrivateKey)
-  const disabled = privateKeyError !== '' || !checked
 
   return (
     <Dialog
@@ -49,7 +45,6 @@ const _ClaimWithKey = ({
           const signature = await authorizationSign(transparentAddress, etcPrivateKey)
           onNext(signature)
         },
-        disabled,
       }}
       leftButtonProps={{
         doNotRender: true,
@@ -62,7 +57,10 @@ const _ClaimWithKey = ({
         id="private-key-input"
         label={`${chain.symbol} Private Key from your ${chain.symbol} Wallet `}
         onChange={(e): void => setEtcPrivateKey(e.target.value.toLowerCase())}
-        errorMessage={privateKeyError}
+        formItem={{
+          name: 'private-key-input',
+          rules: [toAntValidator(validateEthPrivateKey)],
+        }}
         autoFocus
       />
       <Asset amount={externalAmount} chain={chain}>
@@ -72,12 +70,7 @@ const _ClaimWithKey = ({
         Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
       </DialogShowDust>
       <DialogMessage label="Destination Address" description={transparentAddress} />
-      <DialogApproval
-        id="should-keep-open-checkbox"
-        description={SHOULD_KEEP_OPEN_TEXT}
-        checked={checked}
-        onChange={setChecked}
-      />
+      <DialogApproval id="should-keep-open-checkbox" description={SHOULD_KEEP_OPEN_TEXT} />
     </Dialog>
   )
 }

@@ -1,18 +1,21 @@
 @import '../../themify', '../../vars';
 
+$padding-v: 21px;
+$padding-h: 13px;
+
 .DialogApproval {
   margin-bottom: 20px;
-  padding: 20px 13px;
-  font-size: 13px;
 
-  @include themify($themes) {
-    background-color: themed('normal-color');
-    color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
-  }
-
-  .dark & {
+  .checkbox-wrapper {
     @include themify($themes) {
-      background-color: themed('dialog-dark-input-bg');
+      background-color: themed('normal-color');
+      color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+    }
+
+    .dark & {
+      @include themify($themes) {
+        background-color: themed('dialog-dark-input-bg');
+      }
     }
   }
 
@@ -20,6 +23,7 @@
     display: grid;
     grid-column-gap: 5px;
     grid-template-columns: auto 1fr;
+    padding: $padding-v $padding-h;
     font-size: 13px;
 
     @include themify($themes) {
@@ -32,6 +36,24 @@
   }
 
   .extra {
-    margin-bottom: 20px;
+    padding: $padding-v $padding-h 0;
+  }
+
+  .ant-form-item-has-error .checkbox-wrapper {
+    @include themify($themes) {
+      border: 1px solid themed('error-color');
+    }
+
+    .checkbox {
+      padding: $padding-v - 1px $padding-h - 1px;
+    }
+
+    .extra {
+      padding: $padding-v - 1px $padding-h - 1px 1px;
+    }
+  }
+
+  .approval-form-item .ant-form-item-explain {
+    display: none;
   }
 }

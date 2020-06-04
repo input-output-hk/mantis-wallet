@@ -1,12 +1,12 @@
 import React, {Ref, forwardRef} from 'react'
-import {Checkbox} from 'antd'
+import {Checkbox, Form} from 'antd'
 import {CheckboxProps} from 'antd/lib/checkbox'
 import './DialogApproval.scss'
 
 interface DialogApprovalProps extends Omit<CheckboxProps, 'onChange'> {
   id?: string
   description: React.ReactNode
-  onChange: (checked: boolean) => void
+  onChange?: (checked: boolean) => void
 }
 
 export const _DialogApproval: React.RefForwardingComponent<Checkbox, DialogApprovalProps> = (
@@ -14,16 +14,31 @@ export const _DialogApproval: React.RefForwardingComponent<Checkbox, DialogAppro
   ref: Ref<Checkbox>,
 ): JSX.Element => (
   <div className="DialogApproval">
-    {children && <div className="extra">{children}</div>}
-    <Checkbox
-      id={id}
-      className="checkbox"
-      onChange={(e): void => onChange(e.target.checked)}
-      {...rest}
-      ref={ref}
+    <Form.Item
+      className="approval-form-item"
+      name={id}
+      valuePropName="checked"
+      rules={[
+        {
+          validator: (_, value) => {
+            return value ? Promise.resolve() : Promise.reject('Checkbox not checked')
+          },
+        },
+      ]}
     >
-      {description}
-    </Checkbox>
+      <div className="checkbox-wrapper">
+        {children && <div className="extra">{children}</div>}
+        <Checkbox
+          id={id}
+          className="checkbox"
+          onChange={(e): void => onChange?.(e.target.checked)}
+          {...rest}
+          ref={ref}
+        >
+          {description}
+        </Checkbox>
+      </div>
+    </Form.Item>
   </div>
 )
 

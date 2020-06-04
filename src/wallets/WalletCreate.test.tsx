@@ -7,6 +7,7 @@ import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
+import {DIALOG_VALIDATION_ERROR} from '../common/Dialog'
 
 jest.mock('../config/renderer.ts')
 
@@ -100,10 +101,11 @@ test('WalletCreate `Display Recovery` step', async () => {
 
   // Click Next
   const nextButton = getByText('Next →')
+  // Next button should be enabled
+  expect(nextButton).toBeEnabled()
+  // Clicking it should stop with an error
   userEvent.click(nextButton)
-  // Next button should be disabled
-  expect(nextButton).toBeDisabled()
-  expect(next).not.toBeCalled()
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 
   // Confirm
   const writtenDownCheckbox = getByLabelText('Yes, I have written it down.')
