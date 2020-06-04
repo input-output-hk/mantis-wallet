@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, waitFor} from '@testing-library/react'
+import {render, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {expectCalledOnClick} from '../common/test-helpers'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
@@ -31,12 +31,12 @@ test('WalletCreate `Define` step', async () => {
   const cancel = jest.fn()
   const next = jest.fn()
 
-  const {getByLabelText, getByText, getByTestId} = render(
+  const {getByLabelText, getByText, queryByText, getByTestId} = render(
     <WalletCreateDefineStep cancel={cancel} next={next} />,
   )
 
   // Enter wallet name
-  expect(getByText("Name shouldn't be empty")).toBeInTheDocument()
+  expect(queryByText("Name shouldn't be empty")).not.toBeInTheDocument()
   const walletNameInput = getByLabelText('Wallet name')
   userEvent.type(walletNameInput, walletName)
 
@@ -48,8 +48,9 @@ test('WalletCreate `Define` step', async () => {
   // Enter wallet password
   userEvent.type(passwordInput, password)
   userEvent.type(rePasswordInput, password.slice(0, 1)) // Type first character
-  expect(getByText("Passwords don't match")).toBeInTheDocument()
+  await waitFor(() => expect(getByText("Passwords don't match")).toBeInTheDocument())
   userEvent.type(rePasswordInput, password.slice(1)) // Type rest of the password
+  await waitForElementToBeRemoved(() => getByText("Passwords don't match"))
 
   // Click Next
   const nextButton = getByTestId('right-button')

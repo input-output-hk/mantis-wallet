@@ -20,7 +20,8 @@
     }
   }
 
-  &.invalid {
+  &.invalid,
+  .ant-form-item-has-error & {
     .ant-input {
       @include themify($themes) {
         border: 1px solid themed('error-color');

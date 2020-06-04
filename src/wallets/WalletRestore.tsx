@@ -4,7 +4,6 @@ import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-gua
 import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogInput} from '../common/dialog/DialogInput'
-import {DialogError} from '../common/dialog/DialogError'
 import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
 
 interface WalletRestoreProps {
@@ -17,15 +16,11 @@ const _WalletRestore = ({
   finish,
   walletState,
 }: PropsWithWalletState<WalletRestoreProps, NoWalletState>): JSX.Element => {
-  const [walletName, setWalletName] = useState('')
+  const [, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>(RecoveryMethod.SpendingKey)
-  const [isPassphraseValid, setPassphraseValid] = useState(false)
-
-  const [walletRestoreError, setWalletRestoreError] = useState('')
-  const footer = walletRestoreError ? <DialogError>{walletRestoreError}</DialogError> : null
 
   const restore = async (): Promise<boolean> => {
     switch (recoveryMethod) {
@@ -42,36 +37,31 @@ const _WalletRestore = ({
       title="Restore wallet"
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
-        disabled: walletName.length === 0 || !isPassphraseValid,
         onClick: async (): Promise<void> => {
-          setWalletRestoreError('')
-          try {
-            const isRestored = await restore()
-            if (isRestored) {
-              finish()
-            } else {
-              setWalletRestoreError("Couldn't restore wallet with the provided information")
-            }
-          } catch (e) {
-            setWalletRestoreError(e.message)
+          const isRestored = await restore()
+          if (!isRestored) {
+            throw Error("Couldn't restore wallet with the provided information")
           }
+          finish()
         },
       }}
-      footer={footer}
     >
       <DialogInput
         autoFocus
         label="Wallet name"
         id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
-        errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
+        formItem={{
+          name: 'wallet-name',
+          rules: [{required: true, message: "Name shouldn't be empty"}],
+        }}
       />
       <DialogSecrets
         onMethodChange={setRecoveryMethod}
         onSpendingKeyChange={setSpendingKey}
         onSeedPhraseChange={setSeedPhrase}
       />
-      <DialogPassword onChange={setPassphrase} setValid={setPassphraseValid} />
+      <DialogPassword onChange={setPassphrase} />
     </Dialog>
   )
 }

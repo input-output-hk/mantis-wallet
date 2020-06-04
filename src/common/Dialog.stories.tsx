@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
-import {Option, none, some} from 'fp-ts/lib/Option'
 import {withKnobs, text, boolean, array, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
@@ -155,11 +154,14 @@ export const InteractivePassword: React.FunctionComponent<{}> = () => (
       criteriaMessage={text('Password criteria', 'Password should be at least 4 characters')}
       setValid={action('set-valid-password')}
       onChange={action('on-change-password')}
-      getValidationError={(value: string): Option<string> => {
-        return value.length < 4
-          ? some(text('Inline error', 'Password should be at least 4 characters'))
-          : none
-      }}
+      rules={[
+        {
+          validator: (_rule, value) =>
+            !value || value.length < 4
+              ? Promise.reject(text('Inline error', 'Password should be at least 4 characters'))
+              : Promise.resolve(),
+        },
+      ]}
     />
   </Dialog>
 )

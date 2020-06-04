@@ -50,4 +50,18 @@ $dialog-width: 508px;
       }
     }
   }
+
+  .ant-form-item-explain {
+    position: absolute;
+    top: -25px;
+    right: 0;
+    width: $dialog-width;
+    height: 20px;
+    font-size: 10px;
+    text-align: right;
+
+    @include themify($themes) {
+      color: themed('error-color');
+    }
+  }
 }

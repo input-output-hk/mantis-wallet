@@ -1,76 +1,82 @@
-import React, {useState} from 'react'
-import {Option, none, some, getOrElse, isNone, getFirstMonoid} from 'fp-ts/lib/Option'
+import React from 'react'
+import {Form} from 'antd'
+import {Rule} from 'antd/lib/form'
+import {StoreValue} from 'antd/lib/form/interface'
 import {BorderlessInputPassword} from '../BorderlessInput'
+import {DialogState} from '../Dialog'
 import {DialogColumns} from './DialogColumns'
-import {InlineError} from '../InlineError'
 import './DialogPassword.scss'
 
 interface DialogPasswordProps {
   onChange?: (value: string) => void
   setValid?: (valid: boolean) => void
-  getValidationError?: (value: string) => Option<string>
+  rules?: Rule[]
   criteriaMessage?: string
 }
 
-export const hasAllNeededCharacters = (value: string): Option<string> =>
-  !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(value)
-    ? some('Password needs to have at least 1 uppercase, 1 lowercase and 1 number character')
-    : none
+export const hasAllNeededCharacters = {
+  validator: (_rule: Rule, value: StoreValue): Promise<void> =>
+    !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(value)
+      ? Promise.reject(
+          'Password needs to have at least 1 uppercase, 1 lowercase and 1 number character',
+        )
+      : Promise.resolve(),
+}
 
-const isAtleast8Characeters = (value: string): Option<string> =>
-  value.length < 8 ? some('Password needs to be at least 8 characters') : none
+const isAtLeast8Characters = {
+  validator: (_rule: Rule, value: StoreValue): Promise<void> =>
+    !value || value.length < 8
+      ? Promise.reject('Password needs to be at least 8 characters')
+      : Promise.resolve(),
+}
+
+const PASSWORD_FIELD = 'password'
+const REPASSWORD_FIELD = 're-password'
 
 export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
   onChange,
-  setValid,
-  getValidationError = (value: string): Option<string> =>
-    getFirstMonoid<string>().concat(hasAllNeededCharacters(value), isAtleast8Characeters(value)),
+  rules = [hasAllNeededCharacters, isAtLeast8Characters],
   criteriaMessage = 'Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number',
 }: DialogPasswordProps) => {
-  const [password, setPassword] = useState('')
-  const [repassword, setRepassword] = useState('')
-
-  const isValidAndMatch = (password: string, repassword: string): boolean =>
-    isNone(getValidationError(password)) && password === repassword
-
-  const errorMessage = getOrElse((): string =>
-    password === repassword ? '' : "Passwords don't match",
-  )(getValidationError(password))
+  const {dialogForm} = DialogState.useContainer()
 
   return (
     <div className="DialogPassword">
       <div className="label">Enter Password</div>
-      <InlineError errorMessage={errorMessage}>
-        <DialogColumns>
+      <DialogColumns>
+        <Form.Item name={PASSWORD_FIELD} rules={rules} validateFirst className="password-form-item">
           <BorderlessInputPassword
             className="input"
             data-testid="password"
-            forceInvalid={!!errorMessage}
-            onChange={(e): void => {
-              const newPassword = e.target.value
-              setPassword(newPassword)
-              if (onChange) {
-                onChange(newPassword)
-              }
-              if (setValid) {
-                setValid(isValidAndMatch(newPassword, repassword))
-              }
+            onChange={(e) => {
+              onChange?.(e.target.value)
+              dialogForm.validateFields([REPASSWORD_FIELD])
             }}
           />
-          <BorderlessInputPassword
-            className="input"
-            data-testid="rePassword"
-            forceInvalid={!!errorMessage}
-            onChange={(e): void => {
-              const newRepassword = e.target.value
-              setRepassword(newRepassword)
-              if (setValid) {
-                setValid(isValidAndMatch(password, newRepassword))
-              }
-            }}
-          />
-        </DialogColumns>
-      </InlineError>
+        </Form.Item>
+        <Form.Item
+          name={REPASSWORD_FIELD}
+          dependencies={[PASSWORD_FIELD]}
+          rules={[
+            ({getFieldValue, validateFields, getFieldError}) => ({
+              validator: (_rule, value) =>
+                validateFields([PASSWORD_FIELD])
+                  .catch(() =>
+                    getFieldError(PASSWORD_FIELD)[0]
+                      ? Promise.reject(getFieldError(PASSWORD_FIELD)[0])
+                      : Promise.resolve(),
+                  )
+                  .then(() =>
+                    !value || getFieldValue(PASSWORD_FIELD) !== value
+                      ? Promise.reject("Passwords don't match")
+                      : Promise.resolve(),
+                  ),
+            }),
+          ]}
+        >
+          <BorderlessInputPassword className="input" data-testid="rePassword" />
+        </Form.Item>
+      </DialogColumns>
       {criteriaMessage && <div className="criteria">{criteriaMessage}</div>}
     </div>
   )
