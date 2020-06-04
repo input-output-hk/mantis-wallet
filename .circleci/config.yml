@@ -138,6 +138,11 @@ workflows:
       - submodules
       - node_modules
       - midnight-dist:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
           requires:
             - submodules
       - test:
@@ -148,6 +153,11 @@ workflows:
             - submodules
             - node_modules
       - package:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
           requires:
             - build
             - submodules
