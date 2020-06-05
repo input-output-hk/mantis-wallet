@@ -4,6 +4,7 @@ import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletRestore} from './WalletRestore'
 import {WalletCreate} from './WalletCreate'
@@ -14,7 +15,7 @@ import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecover
 
 export default {
   title: 'Wallet Setup',
-  decorators: [withWalletState, withTheme, withRouterState, withKnobs],
+  decorators: [withWalletState, withTheme, withRouterState, withKnobs, withBuildJobState],
   parameters: {withWalletState: {walletStatus: 'NO_WALLET'}},
 }
 

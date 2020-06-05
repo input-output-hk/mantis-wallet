@@ -4,6 +4,7 @@ import {render, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {expectCalledOnClick} from '../common/test-helpers'
 import {WalletState, WalletStatus} from '../common/wallet-state'
+import {BuildJobState} from '../common/build-job-state'
 import {makeWeb3Worker} from '../web3'
 import {WalletRestore} from './WalletRestore'
 import {mockWeb3Worker} from '../web3-mock'
@@ -38,9 +39,11 @@ test('WalletRestore', async () => {
 
   const initialState = {walletStatus: 'NO_WALLET' as WalletStatus, web3}
   const {getByLabelText, getByText, getByTestId} = render(
-    <WalletState.Provider initialState={initialState}>
-      <WalletRestore cancel={cancel} finish={finish} />
-    </WalletState.Provider>,
+    <BuildJobState.Provider initialState={{web3}}>
+      <WalletState.Provider initialState={initialState}>
+        <WalletRestore cancel={cancel} finish={finish} />
+      </WalletState.Provider>
+    </BuildJobState.Provider>,
   )
 
   // Enter wallet name
@@ -57,8 +60,9 @@ test('WalletRestore', async () => {
   userEvent.click(recoverySwitch)
 
   // Enter recovery phrase
-  const recoveryPhraseInput = document.getElementsByClassName('ant-select-search__field')[0]
-  fireEvent.change(recoveryPhraseInput, {target: {value: recoveryPhrase}})
+  const recoveryPhraseInput = getByTestId('seed-phrase').getElementsByTagName('input')
+  expect(recoveryPhraseInput.length).toBe(1)
+  fireEvent.change(recoveryPhraseInput[0], {target: {value: recoveryPhrase}})
 
   // Verify password fields
   expect(getByText('Enter Password')).toBeInTheDocument()

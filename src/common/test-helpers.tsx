@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import {mockWeb3Worker} from '../web3-mock'
 import {makeWeb3Worker} from '../web3'
 import {GlacierState} from '../glacier-drop/glacier-state'
+import {BuildJobState} from '../common/build-job-state'
 import {ThemeState} from '../theme-state'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
@@ -12,7 +13,9 @@ const web3 = makeWeb3Worker(mockWeb3Worker)
 const WithGlacierProviders: FunctionComponent = ({children}: {children?: React.ReactNode}) => {
   return (
     <ThemeState.Provider>
-      <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
+      <BuildJobState.Provider initialState={{web3}}>
+        <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
+      </BuildJobState.Provider>
     </ThemeState.Provider>
   )
 }

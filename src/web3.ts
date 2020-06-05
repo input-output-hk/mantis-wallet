@@ -101,6 +101,41 @@ interface OutgoingTransaction extends BaseTransaction {
 
 export type Transaction = IncomingTransaction | OutgoingTransaction
 
+// Tx Build Jobs
+
+export interface AsyncTxResponse {
+  message: 'transactionScheduledToBuild'
+  jobHash: string
+}
+
+type JobStatusTxType = 'transfer' | 'call' | 'redeem'
+
+interface JobStatusNoSuchJob {
+  status: 'noSuchJob'
+  hash: string // hash of build job, used as an identifier here
+}
+
+interface JobStatusBuilding {
+  status: 'building'
+  hash: string
+  txType: JobStatusTxType
+}
+
+interface JobStatusBuilt {
+  status: 'built'
+  hash: string // hash of built transaction
+  txType: JobStatusTxType
+  txHash: string
+}
+
+interface JobStatusFailed {
+  status: 'failed'
+  hash: string
+  reason: string // error message, present if build job failed
+}
+
+export type JobStatus = JobStatusNoSuchJob | JobStatusBuilding | JobStatusBuilt | JobStatusFailed
+
 // Contracts
 
 export interface CallParams {
@@ -204,10 +239,21 @@ export interface WalletAPI {
   getTransparentWalletBalance(address: string): string // returns hex string
 
   // transactions
-  redeemValue(address: string, amount: number, fee: number): string
-  sendTransaction(recipient: string, amount: number, fee: number): string
+  redeemValue(
+    address: string,
+    amount: number,
+    fee: number,
+    nonce: number | null,
+    waitForBuild: false,
+  ): AsyncTxResponse
+  sendTransaction(
+    recipient: string,
+    amount: number,
+    fee: number,
+    waitForBuild: false,
+  ): AsyncTxResponse
+  callContract(callParams: CallParams, waitForBuild: false): AsyncTxResponse
   getTransactionHistory: PaginatedCallable<Transaction>
-  callContract(callParams: CallParams): string
   estimateFees: {
     (txType: 'Call', callParams: CallParams): Record<FeeLevel, string>
     (txType: 'Redeem' | 'Transfer', amount: number): Record<FeeLevel, string>
@@ -218,6 +264,8 @@ export interface WalletAPI {
       string
     >
   }
+  getTransactionBuildJobStatus(jobHash: string): JobStatus
+  getAllTransactionBuildJobStatuses(): JobStatus[]
 
   // transparent addresses
   listTransparentAddresses: PaginatedCallable<TransparentAddress>

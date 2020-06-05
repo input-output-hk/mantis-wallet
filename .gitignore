@@ -1,7 +1,8 @@
+# IDE config
 .vscode
 .idea
 
-# local config
+# local
 config.json5
 
 # dependencies

@@ -22,6 +22,8 @@ import {
   GetMiningStateResponse,
   WalletAPI,
   FeeLevel,
+  JobStatus,
+  AsyncTxResponse,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -33,6 +35,15 @@ const ADDRESS =
 const TRANSPARENT_ADDRESS: TransparentAddress = {
   address: 'm-test-uns-ad17upzkhnpmuenuhk3lnrc64q5kr0l3ez44g8u7r',
   index: 0,
+}
+const JOB_STATUS: JobStatus = {
+  status: 'building',
+  hash: 'job_hash',
+  txType: 'transfer',
+}
+const ASYNC_TX_RESPONSE: AsyncTxResponse = {
+  message: 'transactionScheduledToBuild',
+  jobHash: 'abcdef',
 }
 
 class MockWallet implements WalletAPI {
@@ -94,7 +105,7 @@ class MockWallet implements WalletAPI {
   }
 
   // transactions
-  sendTransaction(recipient: string, amount: number, fee: number): string {
+  sendTransaction(recipient: string, amount: number, fee: number): AsyncTxResponse {
     this._lockGuard()
     this.transactions.push({
       hash: this.transactions.length.toString(),
@@ -108,16 +119,24 @@ class MockWallet implements WalletAPI {
         txType: 'transfer',
       },
     })
-    return ''
+    return ASYNC_TX_RESPONSE
   }
+
+  redeemValue(): AsyncTxResponse {
+    this._lockGuard()
+    return ASYNC_TX_RESPONSE
+  }
+
+  callContract(_contractParams: CallParams): AsyncTxResponse {
+    this._lockGuard()
+    return ASYNC_TX_RESPONSE
+  }
+
   getTransactionHistory(): Transaction[] {
     this._lockGuard()
     return this.transactions
   }
-  callContract(_contractParams: CallParams): string {
-    this._lockGuard()
-    return 'contract-result'
-  }
+
   estimateFees(_txType: string, _amount: number | CallParams): Record<FeeLevel, string> {
     return {
       low: '0x100',
@@ -126,11 +145,16 @@ class MockWallet implements WalletAPI {
     }
   }
 
-  // transparent addresses
-  redeemValue(): string {
-    this._lockGuard()
-    return '0x67a31ad21ac9ccf29e579adbf4e7b1fc61c4eb13dc9fe3a4e607f5db2e6ca57c'
+  // build job statuses
+
+  getTransactionBuildJobStatus(jobHash: string): JobStatus {
+    return {...JOB_STATUS, hash: jobHash}
   }
+  getAllTransactionBuildJobStatuses(): JobStatus[] {
+    return [JOB_STATUS]
+  }
+
+  // transparent addresses
 
   listTransparentAddresses(): TransparentAddress[] {
     this._lockGuard()

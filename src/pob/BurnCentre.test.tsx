@@ -1,13 +1,14 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {render, RenderResult} from '@testing-library/react'
+import {render, RenderResult, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
 import {UNITS} from '../common/units'
 import {abbreviateAmount, formatPercentage} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
+import {BuildJobState} from '../common/build-job-state'
 import {expectCalledOnClick} from '../common/test-helpers'
 import {BurnActivity} from './BurnActivity'
 import {BurnStatusType} from './api/prover'
@@ -83,7 +84,7 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
 
   // Adding Burn Tx Manually
   const addBurnTxLink = getByText('Manual Burn')
-  userEvent.click(addBurnTxLink)
+  await act(async () => userEvent.click(addBurnTxLink))
   expect(getByText('Burn Transaction Id')).toBeInTheDocument()
 })
 
@@ -147,23 +148,25 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {queryByText, getByText, getByPlaceholderText, getAllByText} = render(
-    <WalletState.Provider initialState={initialState}>
-      <BurnActivity
-        burnStatuses={{
-          [burnAddress1]: {
-            lastStatuses: [],
-          },
-          [burnAddress2]: {
-            lastStatuses: [],
-            errorMessage: errorForBurnAddress2,
-          },
-          [burnAddress3]: {
-            lastStatuses,
-            errorMessage: errorForBurnAddress3,
-          },
-        }}
-      />
-    </WalletState.Provider>,
+    <BuildJobState.Provider initialState={{web3}}>
+      <WalletState.Provider initialState={initialState}>
+        <BurnActivity
+          burnStatuses={{
+            [burnAddress1]: {
+              lastStatuses: [],
+            },
+            [burnAddress2]: {
+              lastStatuses: [],
+              errorMessage: errorForBurnAddress2,
+            },
+            [burnAddress3]: {
+              lastStatuses,
+              errorMessage: errorForBurnAddress3,
+            },
+          }}
+        />
+      </WalletState.Provider>
+    </BuildJobState.Provider>,
   )
 
   // all Burn Addresses are in the document

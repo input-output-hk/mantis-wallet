@@ -5,6 +5,7 @@ import {render} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
+import {BuildJobState} from '../common/build-job-state'
 import {ThemeState} from '../theme-state'
 import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
@@ -34,9 +35,11 @@ test('WalletOverview shows properly formatted balance', () => {
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {getByText} = render(
     <ThemeState.Provider>
-      <WalletState.Provider initialState={initialState}>
-        <WalletOverview {...balance} goToAccounts={setViewType} />
-      </WalletState.Provider>
+      <BuildJobState.Provider initialState={{web3}}>
+        <WalletState.Provider initialState={initialState}>
+          <WalletOverview {...balance} goToAccounts={setViewType} />
+        </WalletState.Provider>
+      </BuildJobState.Provider>
     </ThemeState.Provider>,
   )
 

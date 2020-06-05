@@ -1,5 +1,6 @@
 import React from 'react'
-import {Icon, Popover} from 'antd'
+import {CopyOutlined, QrcodeOutlined} from '@ant-design/icons'
+import {Popover} from 'antd'
 import QRCode from 'qrcode.react'
 import {copyToClipboard} from './clipboard'
 import './CopyableLongText.scss'
@@ -19,14 +20,14 @@ export const CopyableLongText = ({
     <div className="CopyableLongText">
       {showQrCode && (
         <Popover content={<QRCode value={content} />} placement="top">
-          <Icon type="qrcode" className="clickable" />
+          <QrcodeOutlined className="clickable" />
         </Popover>
       )}
       <Popover content="Click to copy to clipboard" placement="top">
-        <Icon type="copy" className="clickable" onClick={() => copyToClipboard(content)} />
+        <CopyOutlined className="clickable" onClick={() => copyToClipboard(content)} />
       </Popover>
       <Popover content={content} placement="top">
-        {content}
+        <span>{content}</span>
       </Popover>
     </div>
   ) : (

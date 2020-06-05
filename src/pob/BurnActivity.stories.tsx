@@ -2,13 +2,14 @@ import React from 'react'
 import {withKnobs, select, text, number} from '@storybook/addon-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnActivity} from './BurnActivity'
 import {burnStatus} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Activity',
-  decorators: [withWalletState, withTheme, withKnobs],
+  decorators: [withWalletState, withTheme, withBuildJobState, withKnobs],
 }
 
 export const burnActivity = (): JSX.Element => (

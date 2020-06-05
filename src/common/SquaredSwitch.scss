@@ -7,24 +7,28 @@
     background-color: themed('normal-color');
   }
 
+  .ant-switch-handle {
+    top: 1px;
+    left: 1px;
+    width: $switch-height - 2px;
+    height: $switch-height - 2px;
+
+    &::before {
+      border-radius: 0;
+
+      @include themify($themes) {
+        background-color: themed('text-color');
+      }
+    }
+  }
+
   &.ant-switch-checked {
     @include themify($themes) {
       background-color: themed('primary-color');
     }
 
-    &::after {
-      margin-left: 0;
-    }
-  }
-
-  &::after {
-    top: 0px;
-    width: $switch-height - 2px;
-    height: $switch-height - 2px;
-    border-radius: 0;
-
-    @include themify($themes) {
-      background-color: themed('text-color');
+    .ant-switch-handle {
+      left: $switch-height + 1px;
     }
   }
 }

@@ -1,7 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
-import {Input, Button, Icon, Popover} from 'antd'
+import {Input, Button, Popover} from 'antd'
+import {LoadingOutlined} from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 import {InlineError, InlineErrorProps} from '../InlineError'
 import {DialogState} from '../Dialog'
@@ -87,7 +88,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
         {label && <label className="label">{label}</label>}
         {isPending ? (
           <div className="loading">
-            <Icon type="loading" spin />
+            <LoadingOutlined spin />
             <br />
             <span>Loading estimates</span>
           </div>
@@ -141,7 +142,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
                     </span>
                   }
                 >
-                  {feeLevelIcons[level]}
+                  <span>{feeLevelIcons[level]}</span>
                 </Popover>
               ) : (
                 <span>

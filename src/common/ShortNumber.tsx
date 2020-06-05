@@ -23,8 +23,10 @@ export const ShortNumber = ({
 
   return (
     <Popover content={content ? content : relaxed} placement="bottom">
-      {prefix}
-      {strict}
+      <span>
+        {prefix}
+        {strict}
+      </span>
     </Popover>
   )
 }

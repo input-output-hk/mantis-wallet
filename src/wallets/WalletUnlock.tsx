@@ -40,7 +40,6 @@ export const WalletUnlock = (): JSX.Element => {
             autoFocus
             label="Enter Password"
             errorMessage={errorMessage}
-            visibilityToggle={false}
             onChange={(e): void => setPassphrase(e.target.value)}
           />
         </Dialog>

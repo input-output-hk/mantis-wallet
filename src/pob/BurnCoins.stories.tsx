@@ -8,6 +8,7 @@ import {BurnCoins} from './BurnCoins'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
 import {CHAINS} from './chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
@@ -16,7 +17,14 @@ import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddr
 
 export default {
   title: 'Burn Coins',
-  decorators: [withTheme, withKnobs, withWalletState, withPobState, withRouterState],
+  decorators: [
+    withTheme,
+    withKnobs,
+    withWalletState,
+    withPobState,
+    withRouterState,
+    withBuildJobState,
+  ],
 }
 
 export const burnCoins = (): JSX.Element => <BurnCoins />

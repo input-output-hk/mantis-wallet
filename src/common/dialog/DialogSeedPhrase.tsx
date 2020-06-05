@@ -2,11 +2,13 @@ import React, {useState, Ref, forwardRef} from 'react'
 import _ from 'lodash'
 import * as bip39 from 'bip39'
 import {AutoComplete} from 'antd'
-import {SelectValue} from 'antd/lib/select'
+import Select, {SelectValue} from 'antd/lib/select'
+import {BorderlessInput} from '../BorderlessInput'
 import './DialogSeedPhrase.scss'
 
-const {Option} = AutoComplete
 const wordlist = bip39.wordlists.english
+
+const FIRST_FIVE_WORDS = _.take(wordlist, 5).map((value) => ({value}))
 
 interface DialogSeedPhraseProps {
   onChange(newPhrase: string): void
@@ -18,12 +20,12 @@ const filterResults = (searchValue: string, results = 5, fromIndex = 0): string[
   return i < 0 ? [] : [wordlist[i], ...filterResults(searchValue, results - 1, i + 1)]
 }
 
-const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPhraseProps> = (
-  {onChange}: DialogSeedPhraseProps,
-  ref: Ref<AutoComplete>,
-) => {
+const _DialogSeedPhrase: React.RefForwardingComponent<
+  Select<SelectValue>,
+  DialogSeedPhraseProps
+> = ({onChange}: DialogSeedPhraseProps, ref: Ref<Select<SelectValue>>) => {
   const [phrase, setPhrase] = useState<string>('')
-  const [results, setResults] = useState<string[]>([])
+  const [options, setOptions] = useState<Array<{value: string}>>(FIRST_FIVE_WORDS)
 
   const handleChange = (selectValue: SelectValue): void => {
     const phrase = selectValue.toString()
@@ -34,8 +36,11 @@ const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPh
   const handleSearch = (fullPhrase: string): void => {
     const words = fullPhrase.split(' ')
     const currentWord = words[words.length - 1]
-    const results = currentWord.length === 0 ? [] : filterResults(currentWord.toLowerCase())
-    setResults(results)
+    const results =
+      currentWord.length === 0
+        ? FIRST_FIVE_WORDS
+        : filterResults(currentWord.toLowerCase()).map((value) => ({value}))
+    if (results.length > 0) setOptions(results)
   }
 
   const handleSelect = (selection: SelectValue): void => {
@@ -46,17 +51,18 @@ const _DialogSeedPhrase: React.RefForwardingComponent<AutoComplete, DialogSeedPh
   }
 
   return (
-    <div className="DialogSeedPhrase">
+    <div className="DialogSeedPhrase" data-testid="seed-phrase">
       <AutoComplete
+        className="select"
         value={phrase}
         onChange={handleChange}
         onSearch={handleSearch}
         onSelect={handleSelect}
+        options={options}
+        defaultActiveFirstOption
         ref={ref}
       >
-        {results.map((result: string) => (
-          <Option key={result}>{result}</Option>
-        ))}
+        <BorderlessInput />
       </AutoComplete>
     </div>
   )

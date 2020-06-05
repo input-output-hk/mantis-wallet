@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-import {Modal, Icon, message} from 'antd'
+import {CloseOutlined} from '@ant-design/icons'
+import {Modal, message} from 'antd'
 import {ModalProps} from 'antd/lib/modal'
 import {createContainer} from 'unstated-next'
 import './LunaModal.scss'
@@ -45,7 +46,7 @@ const _LunaModal: React.FunctionComponent<ModalProps> = ({onCancel, ...props}: M
       width={'auto'}
       footer={null}
       className="LunaModal"
-      closeIcon={<Icon type="close" style={{fontSize: '40px', ...closeIconStyle}} />}
+      closeIcon={<CloseOutlined style={{fontSize: '40px', ...closeIconStyle}} />}
       centered
       destroyOnClose
       onCancel={onCancelWithLock}
