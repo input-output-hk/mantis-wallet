@@ -4,6 +4,7 @@ import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
 import {dummyTransactions, estimateFeesWithRandomDelay} from '../storybook-util/dummies'
 import {WalletListSidebar} from './WalletListSidebar'
@@ -13,7 +14,7 @@ import {RedeemModal} from './modals/RedeemModal'
 
 export default {
   title: 'Wallets',
-  decorators: [withRouterState, withWalletState, withTheme, withKnobs],
+  decorators: [withRouterState, withWalletState, withTheme, withKnobs, withBuildJobState],
 }
 
 // `useState` cannot be used in stories

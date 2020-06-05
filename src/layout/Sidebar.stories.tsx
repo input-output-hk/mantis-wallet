@@ -5,6 +5,7 @@ import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
 import {withGlacierState} from '../storybook-util/glacier-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {RouterState} from '../router-state'
 import {Sidebar} from './Sidebar'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
@@ -13,7 +14,15 @@ import {toFullScreen} from '../storybook-util/full-screen-decorator'
 
 export default {
   title: 'Sidebar',
-  decorators: [withWalletState, withTheme, withPobState, withGlacierState, withKnobs, toFullScreen],
+  decorators: [
+    withWalletState,
+    withTheme,
+    withPobState,
+    withGlacierState,
+    withBuildJobState,
+    withKnobs,
+    toFullScreen,
+  ],
 }
 
 export const sidebar = (): JSX.Element => (

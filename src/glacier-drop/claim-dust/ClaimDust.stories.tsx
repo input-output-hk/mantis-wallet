@@ -4,6 +4,7 @@ import {action} from '@storybook/addon-actions'
 import {withKnobs, array, number, text} from '@storybook/addon-knobs'
 import {withTheme} from '../../storybook-util/theme-switcher'
 import {withGlacierState} from '../../storybook-util/glacier-state-decorator'
+import {withBuildJobState} from '../../storybook-util/build-job-state-decorator'
 import {EnterAddress} from './EnterAddress'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
@@ -19,7 +20,7 @@ const EXAMPLE_AMOUNT = 123456789123456789124
 
 export default {
   title: 'Glacier Drop Claim Dust',
-  decorators: [withTheme, withKnobs, withGlacierState],
+  decorators: [withTheme, withKnobs, withGlacierState, withBuildJobState],
 }
 
 export const enterAddress = (): JSX.Element => (

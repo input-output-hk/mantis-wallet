@@ -23,6 +23,7 @@ import {
   FeeLevel,
   CallParams,
 } from '../web3'
+import {BuildJobState} from './build-job-state'
 
 // API Types
 
@@ -183,6 +184,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const wallet = _initialState.web3.midnight.wallet
   const eth = _initialState.web3.eth
+  const buildJobState = BuildJobState.useContainer()
 
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(_initialState.walletStatus)
@@ -363,9 +365,17 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     amount: number,
     fee: number,
   ): Promise<string> => {
-    const result = await wallet.sendTransaction(recipient, amount, fee)
+    const {jobHash} = await wallet.sendTransaction(recipient, amount, fee, false)
+    await buildJobState.submitJob(jobHash)
     load()
-    return result
+    return jobHash
+  }
+
+  const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
+    const {jobHash} = await wallet.redeemValue(address, amount, fee, null, false)
+    await buildJobState.submitJob(jobHash)
+    load()
+    return jobHash
   }
 
   const sendTxToTransparent = async (
@@ -373,17 +383,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     amount: BigNumber,
     gasPrice: BigNumber,
   ): Promise<string> => {
-    const result = await wallet.callContract(
+    const {jobHash} = await wallet.callContract(
       getPublicTransactionParams(amount, gasPrice, recipient),
+      false,
     )
+    await buildJobState.submitJob(jobHash)
     load()
-    return result
-  }
-
-  const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
-    const result = await wallet.redeemValue(address, amount, fee)
-    load()
-    return result
+    return jobHash
   }
 
   const restoreFromSpendingKey = async (

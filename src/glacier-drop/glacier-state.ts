@@ -11,6 +11,7 @@ import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
+import {BuildJobState} from '../common/build-job-state'
 import {loadCurrentContractAddresses} from './glacier-config'
 import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse} from '../web3'
 import {Period} from './Period'
@@ -47,6 +48,8 @@ export interface BaseClaim {
   // unfreezing
   numberOfEpochsForFullUnfreeze: number | null
   withdrawnDustAmount: BigNumber
+  // etc
+  txBuildInProgress: boolean
 }
 
 export interface SolvingClaim extends BaseClaim {
@@ -192,6 +195,7 @@ const DEFAULT_STATE = {
 function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierData {
   const {web3, store} = _.merge(DEFAULT_STATE)(initialState)
   const {wallet, glacierDrop: gd} = web3.midnight
+  const buildJobState = BuildJobState.useContainer()
 
   const [claims, setClaims] = usePersistedState(store, ['glacierDrop', 'claims'])
   const [constants, setConstants] = useState<Option<GlacierConstants>>(none)
@@ -527,26 +531,34 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
     console.info({unlockData: data})
 
-    const unlockTxHash = await wallet.callContract({
-      from: ['Wallet', transparentAddress],
-      to: contractAddresses.glacierDrop,
-      value: '0',
-      gasLimit: gasLimit.toString(),
-      gasPrice: gasPrice.toString(),
-      data,
-    })
-
-    updateClaim({
-      ...claim,
-      puzzleStatus: 'submitted',
-      unlockTxHash,
-      txStatuses: {
-        ...claim.txStatuses,
-        [unlockTxHash]: {status: 'TransactionPending', atBlock: currentBlock},
+    const {jobHash} = await wallet.callContract(
+      {
+        from: ['Wallet', transparentAddress],
+        to: contractAddresses.glacierDrop,
+        value: '0',
+        gasLimit: gasLimit.toString(),
+        gasPrice: gasPrice.toString(),
+        data,
       },
+      false,
+    )
+
+    await buildJobState.submitJob(jobHash, (unlockTxHash: string) => {
+      updateClaim({
+        ...claim,
+        txBuildInProgress: false,
+        puzzleStatus: 'submitted',
+        unlockTxHash,
+        txStatuses: {
+          ...claim.txStatuses,
+          [unlockTxHash]: {status: 'TransactionPending', atBlock: currentBlock},
+        },
+      })
     })
 
-    return unlockTxHash
+    updateClaim({...claim, txBuildInProgress: true})
+
+    return jobHash
   }
 
   const withdraw = async (
@@ -565,26 +577,34 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
     console.info({withdrawData: data})
 
-    const withdrawTxHash = await wallet.callContract({
-      from: ['Wallet', transparentAddress],
-      to: contractAddresses.glacierDrop,
-      value: '0',
-      gasLimit: gasLimit.toString(),
-      gasPrice: gasPrice.toString(),
-      data,
-    })
-
-    updateClaim({
-      ...claim,
-      withdrawTxHashes: [...claim.withdrawTxHashes, withdrawTxHash],
-      withdrawnDustAmount: unfrozenDustAmount,
-      txStatuses: {
-        ...claim.txStatuses,
-        [withdrawTxHash]: {status: 'TransactionPending', atBlock: currentBlock},
+    const {jobHash} = await wallet.callContract(
+      {
+        from: ['Wallet', transparentAddress],
+        to: contractAddresses.glacierDrop,
+        value: '0',
+        gasLimit: gasLimit.toString(),
+        gasPrice: gasPrice.toString(),
+        data,
       },
+      false,
+    )
+
+    await buildJobState.submitJob(jobHash, (withdrawTxHash: string) => {
+      updateClaim({
+        ...claim,
+        txBuildInProgress: false,
+        withdrawTxHashes: [...claim.withdrawTxHashes, withdrawTxHash],
+        withdrawnDustAmount: unfrozenDustAmount,
+        txStatuses: {
+          ...claim.txStatuses,
+          [withdrawTxHash]: {status: 'TransactionPending', atBlock: currentBlock},
+        },
+      })
     })
 
-    return withdrawTxHash
+    updateClaim({...claim, txBuildInProgress: true})
+
+    return jobHash
   }
 
   const claimList = _.sortBy((c: Claim) => c.added)(Object.values(claims))

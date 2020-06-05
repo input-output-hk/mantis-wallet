@@ -5,13 +5,14 @@ import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {SyncStatusContent} from '../common/SyncStatus'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {WalletOverview} from './WalletOverview'
 
 export default {
   title: 'Wallet Overview',
-  decorators: [withWalletState, withTheme, withKnobs],
+  decorators: [withWalletState, withTheme, withKnobs, withBuildJobState],
 }
 
 export const withZeroBalance = (): JSX.Element => (

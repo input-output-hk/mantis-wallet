@@ -8,12 +8,13 @@ import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {CHAINS} from './chains'
 import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {UNITS} from '../common/units'
 
 export default {
   title: 'Burn Actions',
-  decorators: [withTheme, withKnobs, withWalletState],
+  decorators: [withTheme, withKnobs, withWalletState, withBuildJobState],
 }
 
 const {BTC_TESTNET, ETH_TESTNET} = CHAINS

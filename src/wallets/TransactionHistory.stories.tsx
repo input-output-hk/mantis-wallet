@@ -5,6 +5,7 @@ import {withKnobs, object, text} from '@storybook/addon-knobs'
 import {Transaction, Account} from '../web3'
 import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
 import {dummyTransactions, estimateFeesWithRandomDelay} from '../storybook-util/dummies'
@@ -14,7 +15,7 @@ import {TransactionHistory} from './TransactionHistory'
 
 export default {
   title: 'Transaction History',
-  decorators: [withWalletState, withTheme, withKnobs],
+  decorators: [withWalletState, withTheme, withKnobs, withBuildJobState],
 }
 
 const accounts: Account[] = [

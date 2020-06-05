@@ -6,6 +6,8 @@ import {ThemeState} from './theme-state'
 import {ProofOfBurnState} from './pob/pob-state'
 import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
+import {BuildJobState} from './common/build-job-state'
+import {JobStatus} from './common/JobStatus'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
@@ -38,18 +40,21 @@ const App: React.FC = () => {
       {isBackendRunning ? (
         <div className="App">
           <RouterState.Provider>
-            <WalletState.Provider>
-              <ProofOfBurnState.Provider initialState={{store, web3}}>
-                <GlacierState.Provider initialState={{store}}>
-                  <header>
-                    <Sidebar />
-                  </header>
-                  <main id="main">
-                    <Router />
-                  </main>
-                </GlacierState.Provider>
-              </ProofOfBurnState.Provider>
-            </WalletState.Provider>
+            <BuildJobState.Provider initialState={{web3}}>
+              <WalletState.Provider>
+                <ProofOfBurnState.Provider initialState={{store, web3}}>
+                  <GlacierState.Provider initialState={{store}}>
+                    <header>
+                      <Sidebar />
+                    </header>
+                    <main id="main">
+                      <Router />
+                    </main>
+                    <JobStatus />
+                  </GlacierState.Provider>
+                </ProofOfBurnState.Provider>
+              </WalletState.Provider>
+            </BuildJobState.Provider>
           </RouterState.Provider>
           <RemoteSettingsManager />
         </div>

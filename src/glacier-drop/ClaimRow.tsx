@@ -76,7 +76,12 @@ const PuzzleProgress = ({claim, period, onSubmitPuzzle}: PuzzleProgressProps): J
           <div className="pow-status">Puzzle Solved</div>
           <div>
             {period === 'Unlocking' ? (
-              <Button type="primary" className="small-button" onClick={() => onSubmitPuzzle(claim)}>
+              <Button
+                type="primary"
+                className="small-button"
+                onClick={() => onSubmitPuzzle(claim)}
+                disabled={claim.txBuildInProgress}
+              >
                 Submit Proof of Unlock
               </Button>
             ) : (
@@ -159,7 +164,7 @@ const UnfreezeDetail = ({
           type="primary"
           className="small-button"
           onClick={() => onWithdrawDust(claim)}
-          disabled={cannotWithdrawMore}
+          disabled={cannotWithdrawMore || claim.txBuildInProgress}
         >
           Withdraw Available Dust
         </Button>

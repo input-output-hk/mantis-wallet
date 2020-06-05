@@ -80,6 +80,7 @@ export const ClaimController = ({
       txStatuses: {},
       isFinalDustAmount: false,
       numberOfEpochsForFullUnfreeze: null,
+      txBuildInProgress: false,
     }
   }
 

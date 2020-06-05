@@ -5,6 +5,7 @@ import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withGlacierState} from '../storybook-util/glacier-state-decorator'
+import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {Claim, PeriodConfig} from './glacier-state'
 import {GlacierDropOverview} from './GlacierDropOverview'
@@ -15,7 +16,14 @@ import {Epochs, EpochRow} from './Epochs'
 
 export default {
   title: 'Glacier Drop',
-  decorators: [withTheme, withKnobs, withWalletState, withGlacierState, withRouterState],
+  decorators: [
+    withTheme,
+    withKnobs,
+    withWalletState,
+    withGlacierState,
+    withBuildJobState,
+    withRouterState,
+  ],
 }
 
 const MIDNIGHT_ADDRESS = 'm-main-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk'
@@ -44,6 +52,7 @@ const baseClaim = {
   withdrawTxHashes: [],
   txStatuses: {},
   numberOfEpochsForFullUnfreeze: 15,
+  txBuildInProgress: false,
 }
 
 const unsubmittedClaim: Claim = {
