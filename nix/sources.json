@@ -26,15 +26,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "midnight": {
-        "branch": "luna-sonic-test-release",
+        "branch": "sonic-develop",
         "description": null,
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "midnight",
-        "rev": "1abbe54cd9dff2c8763bbba4804d186b86c5646e",
-        "sha256": "0p0dd6bxry7ka2xikc7y42f982k7wshajnxblimk97zm8zzcfznq",
+        "rev": "ef3cd97cf78a22106f90928d4282263ae451e7ad",
+        "sha256": "1x6z00m7385zdzxiihdyf1nrjd70p5qr5vasljl04ayvwaxy10sf",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/midnight/archive/1abbe54cd9dff2c8763bbba4804d186b86c5646e.tar.gz",
+        "url": "https://github.com/input-output-hk/midnight/archive/ef3cd97cf78a22106f90928d4282263ae451e7ad.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
