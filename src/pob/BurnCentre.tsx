@@ -7,15 +7,14 @@ import {PobLayout} from './PobLayout'
 import {RouterState} from '../router-state'
 import {NoWallet} from '../wallets/NoWallet'
 import {withStatusGuard} from '../common/wallet-status-guard'
+import {PROVER_POLLING_RATE} from './pob-config'
 import './BurnCentre.scss'
-
-const refreshRate = 2000
 
 export const _BurnCentre = (): JSX.Element => {
   const pobState = ProofOfBurnState.useContainer()
   const routerState = RouterState.useContainer()
 
-  useInterval(pobState.refresh, refreshRate)
+  useInterval(pobState.refresh, PROVER_POLLING_RATE)
 
   return (
     <PobLayout title="Burn Centre">

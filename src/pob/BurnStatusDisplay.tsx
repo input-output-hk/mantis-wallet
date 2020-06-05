@@ -15,6 +15,7 @@ import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {InfoIcon} from '../common/InfoIcon'
+import {NUMBER_OF_BLOCKS_TO_SUCCESS, NUMBER_OF_BLOCKS_TO_CONFIRM} from './pob-config'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
@@ -114,9 +115,6 @@ const ProvingProgressLabel = ({
     return labelWithIcon
   }
 }
-
-const NUMBER_OF_BLOCKS_TO_SUCCESS = 10
-const NUMBER_OF_BLOCKS_TO_CONFIRM = 4
 
 const startedProgress = (current: number, tx: number | null, start: number | null): number =>
   start && tx && start !== tx ? (current - tx) / (start - tx) : 0
