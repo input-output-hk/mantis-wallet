@@ -24,10 +24,10 @@ jobs:
   # TODO: don't build midnight from scratch
   midnight-dist:
     environment:
-      - SBT: "sbt -v -mem 1024 -J-Xmx2g"
-      - LC_ALL: "en_US.UTF-8"
-      - LANG: "en_US.UTF-8"
-      - LANGUAGE: "en_US.UTF-8"
+      SBT: "sbt -v -mem 1024 -J-Xmx2g"
+      LC_ALL: "en_US.UTF-8"
+      LANG: "en_US.UTF-8"
+      LANGUAGE: "en_US.UTF-8"
     executor: scala
     working_directory: ~/project/luna-wallet/midnight
     steps:
@@ -138,6 +138,11 @@ workflows:
       - submodules
       - node_modules
       - midnight-dist:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
           requires:
             - submodules
       - test:
@@ -148,6 +153,11 @@ workflows:
             - submodules
             - node_modules
       - package:
+          filters:
+            branches:
+              only:
+                - develop
+                - /release\/.*/
           requires:
             - build
             - submodules
