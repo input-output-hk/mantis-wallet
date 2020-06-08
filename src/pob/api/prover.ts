@@ -86,7 +86,7 @@ export type ChainInfo = t.TypeOf<typeof ChainInfo>
 
 type RequestMode = 'observer' | 'submitter'
 
-const REQUEST_MODE_PORT: Record<RequestMode, number> = {
+export const REQUEST_MODE_PORT: Record<RequestMode, number> = {
   observer: 5000,
   submitter: 5047,
 }
@@ -124,17 +124,9 @@ const httpRequest = async (
   mode: RequestMode,
   path: string,
   config: RequestInit = {},
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params?: any,
 ): Promise<unknown> => {
   const url = `${proverConfig.address}:${REQUEST_MODE_PORT[mode]}${path}`
-  const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: params && JSON.stringify(params),
-    ...config,
-  })
+  const res = await fetch(url, config)
 
   if (!res.ok) {
     const response = await res.json()
@@ -156,16 +148,31 @@ const httpRequest = async (
   return res.json()
 }
 
-export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
-  return httpRequest(
-    prover,
-    'submitter',
-    '/api/v1/status',
-    {method: 'POST'},
-    {
-      burn_address: burnAddress,
+const httpPostRequest = async (
+  prover: ProverConfig,
+  mode: RequestMode,
+  path: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: any,
+): Promise<unknown> =>
+  httpRequest(prover, mode, path, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  ).then(tPromise.decode(BurnApiStatuses))
+    body: JSON.stringify(params),
+  })
+
+const httpGetRequest = async (
+  prover: ProverConfig,
+  mode: RequestMode,
+  path: string,
+): Promise<unknown> => httpRequest(prover, mode, path, {method: 'GET'})
+
+export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
+  return httpPostRequest(prover, 'submitter', '/api/v1/status', {
+    burn_address: burnAddress,
+  }).then(tPromise.decode(BurnApiStatuses))
 }
 
 export const createBurn = async (
@@ -175,18 +182,12 @@ export const createBurn = async (
   fee: number,
   autoConversion: boolean,
 ): Promise<string> => {
-  return httpRequest(
-    prover,
-    'observer',
-    '/api/v1/observe',
-    {method: 'POST'},
-    {
-      midnight_address: address,
-      chain: chainId,
-      fee,
-      auto_exchange: autoConversion,
-    },
-  )
+  return httpPostRequest(prover, 'observer', '/api/v1/observe', {
+    midnight_address: address,
+    chain: chainId,
+    fee,
+    auto_exchange: autoConversion,
+  })
     .then(tPromise.decode(BurnType))
     .then((burnType) => burnType.burn_address)
 }
@@ -196,22 +197,16 @@ export const proveTransaction = async (
   txid: string,
   burnAddress: string,
 ): Promise<void> => {
-  await httpRequest(
-    prover,
-    'observer',
-    '/api/v1/prove',
-    {method: 'POST'},
-    {
-      txid,
-      burn_address: burnAddress,
-    },
-  )
+  await httpPostRequest(prover, 'observer', '/api/v1/prove', {
+    txid,
+    burn_address: burnAddress,
+  })
 }
 
 export const getInfo = async (
   prover: ProverConfig,
 ): Promise<Partial<Record<ChainId, ChainInfo>>> => {
-  return httpRequest(prover, 'submitter', '/api/v1/info', {method: 'GET'})
+  return httpGetRequest(prover, 'submitter', '/api/v1/info')
     .then(tPromise.decode(ProverInfo))
     .then(({chains}) => chains)
 }
