@@ -1,8 +1,19 @@
-import {assert} from 'chai'
+import chai, {assert} from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import fetchMock, {enableFetchMocks} from 'jest-fetch-mock'
 import {ProverConfig} from '../../config/type'
 import {getStatuses, REQUEST_MODE_PORT, createBurn, proveTransaction, getInfo} from './prover'
 import {wait} from '../../shared/utils'
+
+jest.mock('../pob-config', () => {
+  const pobConfig = jest.requireActual('../pob-config')
+  return {
+    ...pobConfig,
+    PROVER_API_REQUEST_TIMEOUT: 100,
+  }
+})
+
+chai.use(chaiAsPromised)
 
 enableFetchMocks()
 
@@ -147,5 +158,23 @@ it('creates correct request for getting prover info', async () => {
       method: 'GET',
       signal: new AbortController().signal,
     },
+  )
+})
+
+it('respects timeout if there is no timely response', async () => {
+  fetchMock.mockResponse(
+    (): Promise<string> =>
+      wait(300).then(() =>
+        JSON.stringify({
+          burn_address: '0xb0434DD0eb1Dd3bb477144FD65bD30391D86276e',
+          observe_start_height: 8051129,
+        }),
+      ),
+  )
+
+  await assert.isRejected(
+    createBurn(dummyProver, testMidnightAddress, testChainId, testFee, testAutoExchange),
+    'Request to prover timed out.',
+    'Should throw timeout error',
   )
 })

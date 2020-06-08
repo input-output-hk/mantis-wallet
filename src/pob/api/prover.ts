@@ -6,6 +6,8 @@ import {ExtendableError} from '../../common/extendable-error'
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
 import {ChainId} from '../chains'
+import {wait} from '../../shared/utils'
+import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
 
 function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
   return t.union([type, t.null, t.undefined])
@@ -125,8 +127,18 @@ const httpRequest = async (
   path: string,
   config: RequestInit = {},
 ): Promise<unknown> => {
+  const timeoutController = new AbortController()
+  wait(PROVER_API_REQUEST_TIMEOUT).then(() => timeoutController.abort())
   const url = `${proverConfig.address}:${REQUEST_MODE_PORT[mode]}${path}`
-  const res = await fetch(url, config)
+  const res = await fetch(url, {
+    ...config,
+    signal: timeoutController.signal,
+  }).catch((e: Error) => {
+    if (e.name === 'AbortError') {
+      throw new ProverApiError('Request to prover timed out.', {})
+    }
+    throw e
+  })
 
   if (!res.ok) {
     const response = await res.json()
@@ -142,7 +154,11 @@ const httpRequest = async (
         }),
       ),
     )
-    throw new ProverApiError(`Couldn't process request: ${errorMessage}`, response, errorCode)
+    throw new ProverApiError(
+      `Couldn't process request, the prover responded with: ${errorMessage}`,
+      response,
+      errorCode,
+    )
   }
 
   return res.json()
