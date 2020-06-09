@@ -13,7 +13,7 @@ import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
 import {RemoteSettingsManager} from './RemoteSettingsManager'
-import {LUNA_VERSION} from './shared/version'
+import {LUNA_EDITION, LUNA_VERSION} from './shared/version'
 import './App.scss'
 
 const web3 = makeWeb3Worker()
@@ -48,7 +48,7 @@ const App: React.FC = () => {
                   <GlacierState.Provider initialState={{store}}>
                     <MiningState.Provider initialState={{web3}}>
                       <header>
-                        <Sidebar version={LUNA_VERSION} />
+                        <Sidebar version={[LUNA_VERSION, LUNA_EDITION]} />
                       </header>
                       <main id="main">
                         <Router />

@@ -14,6 +14,7 @@ import {ClaimRow} from './ClaimRow'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
 import {Epochs, EpochRow} from './Epochs'
+import {dust} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Glacier Drop',
@@ -67,7 +68,7 @@ const unsubmittedClaim: Claim = {
 const submittedClaim: Claim = {
   ...baseClaim,
   puzzleStatus: 'submitted',
-  withdrawnDustAmount: new BigNumber(number('withdrawn dust', 0)),
+  withdrawnDustAmount: new BigNumber(0),
   unlockTxHash: '0xc41',
   txStatuses: {'0xc41': {status: 'TransactionPending', atBlock: 1}},
   powNonce: 1,
@@ -121,7 +122,7 @@ export const claimUnsubmitted = (): JSX.Element => {
 export const claimSubmitted = (): JSX.Element => {
   return (
     <ClaimRow
-      claim={submittedClaim}
+      claim={{...submittedClaim, withdrawnDustAmount: dust('withdrawn dust', 0)}}
       index={1}
       currentBlock={6}
       periodConfig={PERIOD_CONFIG}
@@ -146,7 +147,7 @@ export const submitProofOfUnlock = (): JSX.Element => (
 export const withdrawAvailableDust = (): JSX.Element => (
   <WithdrawAvailableDust
     visible
-    claim={submittedClaim}
+    claim={{...submittedClaim, withdrawnDustAmount: dust('withdrawn dust', 0)}}
     currentBlock={10}
     periodConfig={PERIOD_CONFIG}
     showEpochs={action('showEpochs')}
