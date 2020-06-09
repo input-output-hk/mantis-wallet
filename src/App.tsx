@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {makeWeb3Worker} from './web3'
 import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
+import {MiningState} from './common/mining-state'
 import {ThemeState} from './theme-state'
 import {ProofOfBurnState} from './pob/pob-state'
 import {GlacierState} from './glacier-drop/glacier-state'
@@ -45,13 +46,15 @@ const App: React.FC = () => {
               <WalletState.Provider>
                 <ProofOfBurnState.Provider initialState={{store, web3}}>
                   <GlacierState.Provider initialState={{store}}>
-                    <header>
-                      <Sidebar version={LUNA_VERSION} />
-                    </header>
-                    <main id="main">
-                      <Router />
-                    </main>
-                    <JobStatus />
+                    <MiningState.Provider initialState={{web3}}>
+                      <header>
+                        <Sidebar version={LUNA_VERSION} />
+                      </header>
+                      <main id="main">
+                        <Router />
+                      </main>
+                      <JobStatus />
+                    </MiningState.Provider>
                   </GlacierState.Provider>
                 </ProofOfBurnState.Provider>
               </WalletState.Provider>

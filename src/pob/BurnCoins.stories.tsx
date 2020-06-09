@@ -6,6 +6,7 @@ import {selectChain, prover, asyncAction} from '../storybook-util/custom-knobs'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {BurnCoins} from './BurnCoins'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withMiningState} from '../storybook-util/mining-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -21,6 +22,7 @@ export default {
     withTheme,
     withKnobs,
     withWalletState,
+    withMiningState,
     withPobState,
     withRouterState,
     withBuildJobState,

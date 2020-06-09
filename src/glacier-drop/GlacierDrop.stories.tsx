@@ -4,6 +4,7 @@ import {withKnobs, number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
+import {withMiningState} from '../storybook-util/mining-state-decorator'
 import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
@@ -20,6 +21,7 @@ export default {
     withTheme,
     withKnobs,
     withWalletState,
+    withMiningState,
     withGlacierState,
     withBuildJobState,
     withRouterState,

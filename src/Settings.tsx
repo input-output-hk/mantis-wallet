@@ -23,13 +23,13 @@ const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.E
 
 const _Settings = (): JSX.Element => {
   const themeState = ThemeState.useContainer()
+
   const [lunaManagedConfig, setLunaManagedConfig] = useState<LunaManagedConfig>(
     loadLunaManagedConfig(),
   )
   const [miningConfigModalShown, setMiningConfigModalShown] = useState<boolean>(false)
 
   const reloadConfig = (): void => setLunaManagedConfig(loadLunaManagedConfig())
-
   const reloadTriggers: IPCToRendererChannelName[] = ['disable-mining-success']
 
   useEffect(() => {

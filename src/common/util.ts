@@ -2,6 +2,7 @@ import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import * as bech32 from 'bech32-buffer'
 import _ from 'lodash'
+import fileSize from 'filesize'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
 import {isChecksumAddress} from 'web3/lib/utils/utils.js'
@@ -16,6 +17,13 @@ export const toHex = (n: number | BigNumber): string => {
   const asString = n.toString(16)
   if (asString.startsWith('-')) throw Error('n must be positive')
   return `0x${asString}`
+}
+
+const HASHRATE_SUFFIX = ['hash/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s', 'EH/s', 'ZH/s', 'YH/s']
+
+export function toHumanReadableHashrate(hashrate: number): string {
+  if (hashrate < 0) return 'Invalid hashrate'
+  return fileSize(hashrate, {fullform: true, fullforms: HASHRATE_SUFFIX})
 }
 
 export const loadAll = async <T>(

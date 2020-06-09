@@ -3,9 +3,10 @@ import {Modal} from 'antd'
 import filesize from 'filesize'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
-import {CopyableLongText} from './CopyableLongText'
 import {Config, LunaManagedConfig} from '../config/type'
 import {SynchronizationStatus} from './wallet-state'
+import {MiningStatus} from './MiningStatus'
+import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
 import './StatusModal.scss'
 
@@ -130,12 +131,17 @@ export const StatusModal = ({
             </div>
           </div>
           <div className="info-item">
-            <div>Mining:</div>
+            <div>Mining enabled:</div>
             <div className="info-value">
               <span className={classnames('status', {success: managedConfig.miningEnabled})}>
-                {/* FIXME PM-1966 show eth_mining or eth_hashrate */}
-                {managedConfig.miningEnabled ? 'On' : 'Off'}
+                {managedConfig.miningEnabled ? 'Yes' : 'No'}
               </span>
+            </div>
+          </div>
+          <div className="info-item">
+            <div>Mining status:</div>
+            <div className="info-value">
+              <MiningStatus />
             </div>
           </div>
           <div className="info-item">

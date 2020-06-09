@@ -1,0 +1,10 @@
+@import '../themify';
+
+.MiningStatus {
+  font-size: 12px;
+  font-weight: bold;
+
+  @include themify($themes) {
+    color: themed('inactive-text-color');
+  }
+}
