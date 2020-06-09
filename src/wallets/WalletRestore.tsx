@@ -22,7 +22,7 @@ const _WalletRestore = ({
   const [seedPhraseString, setSeedPhrase] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>(RecoveryMethod.SpendingKey)
-  const [isPassphraseValid, setPassphraseValid] = useState(true)
+  const [isPassphraseValid, setPassphraseValid] = useState(false)
 
   const [walletRestoreError, setWalletRestoreError] = useState('')
   const footer = walletRestoreError ? <DialogError>{walletRestoreError}</DialogError> : null
