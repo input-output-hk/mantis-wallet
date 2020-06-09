@@ -366,15 +366,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: number,
   ): Promise<string> => {
     const {jobHash} = await wallet.sendTransaction(recipient, amount, fee, false)
-    await buildJobState.submitJob(jobHash)
-    load()
+    await buildJobState.submitJob(jobHash, load)
     return jobHash
   }
 
   const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
     const {jobHash} = await wallet.redeemValue(address, amount, fee, null, false)
-    await buildJobState.submitJob(jobHash)
-    load()
+    await buildJobState.submitJob(jobHash, load)
     return jobHash
   }
 

@@ -89,7 +89,7 @@ const ClaimHistory = ({
           claim={claimToSubmit}
           currentBlock={currentBlock}
           onCancel={() => setClaimToSubmit(null)}
-          onNext={(_unlockTxId) => setClaimToSubmit(null)}
+          onNext={() => setClaimToSubmit(null)}
         />
       )}
       {claimToWithdraw && (
@@ -265,8 +265,6 @@ const _GlacierDropOverview = ({
 
 export const GlacierDropOverview = withStatusGuard(_GlacierDropOverview, 'LOADED', () => (
   <GlacierDropWrapper>
-    <div className="no-wallet-container">
-      <NoWallet />
-    </div>
+    <NoWallet />
   </GlacierDropWrapper>
 ))

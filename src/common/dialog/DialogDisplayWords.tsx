@@ -11,7 +11,7 @@ export const DialogDisplayWords: React.FunctionComponent<DialogDisplayWordsProps
   <div className="DialogDisplayWords">
     {words.map((word, i) => (
       <div key={i} className="word">
-        {word}
+        <span className="index">{i + 1}.</span> {word}
       </div>
     ))}
   </div>

@@ -84,7 +84,23 @@ export const InteractiveColumns: React.FunctionComponent<{}> = () => (
 
 export const InteractiveDisplayWords: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Display Words">
-    <DialogDisplayWords words={array('Displayed words', ['First', 'Second', 'Third', 'Fourth'])} />
+    <DialogDisplayWords
+      words={array('Displayed words', [
+        // max length words with "m"
+        'champion',
+        'cinnamon',
+        'december',
+        'document',
+        'mechanic',
+        'midnight',
+        'mosquito',
+        'mountain',
+        'mushroom',
+        'remember',
+        'resemble',
+        'tomorrow',
+      ])}
+    />
   </Dialog>
 )
 

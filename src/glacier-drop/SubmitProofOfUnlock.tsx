@@ -14,7 +14,7 @@ import './SubmitProofOfUnlock.scss'
 interface SubmitProofOfUnlockProps extends ModalOnCancel {
   claim: Claim
   currentBlock: number
-  onNext: (unlockResult: string) => void
+  onNext: () => void
 }
 
 const _SubmitProofOfUnlock = ({
@@ -47,8 +47,8 @@ const _SubmitProofOfUnlock = ({
             gasLimit: new BigNumber(gasLimit),
             gasPrice: new BigNumber(gasPrice),
           }
-          const response = await unlock(claim, callParams, currentBlock)
-          onNext(response)
+          await unlock(claim, callParams, currentBlock)
+          onNext()
         },
         disabled,
       }}

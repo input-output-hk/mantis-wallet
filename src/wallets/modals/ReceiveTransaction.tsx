@@ -33,7 +33,7 @@ const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransacti
 }: ReceivePrivateTransactionProps) => (
   <Dialog
     leftButtonProps={{
-      children: 'Copy Code',
+      children: 'Copy Address',
       autoFocus: true,
       onClick: (): void => {
         copyToClipboard(privateAddress)
@@ -68,7 +68,7 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
   return (
     <Dialog
       leftButtonProps={{
-        children: 'Copy Code',
+        children: 'Copy Address',
         autoFocus: true,
         onClick: (): void => {
           if (transparentAddress) {

@@ -82,8 +82,6 @@ const _Settings = (): JSX.Element => {
 
 export const Settings = withStatusGuard(_Settings, 'LOADED', () => (
   <SettingsWrapper>
-    <div className="no-wallet-container">
-      <NoWallet />
-    </div>
+    <NoWallet />
   </SettingsWrapper>
 ))
