@@ -80,6 +80,11 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
                   <TransactionRow transaction={tx} key={tx.hash} />
                 ))}
             </div>
+            <div className="transactions-footer">
+              <span className="transactions-collapse" onClick={() => setTransactionVisible(false)}>
+                Collapse transactions
+              </span>
+            </div>
           </div>
         )}
       </div>

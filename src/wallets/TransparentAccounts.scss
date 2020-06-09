@@ -134,7 +134,24 @@
 
           .transactions {
             @extend %transactions-grid;
-            padding: 0 1em 1em;
+            padding: 0 1em;
+
+            @include themify($themes) {
+              background-color: themed('secondary-background');
+            }
+          }
+
+          .transactions-footer {
+            padding: 0 1em 0.5em;
+            text-align: center;
+
+            .transactions-collapse {
+              @extend %link;
+              font-size: 13px;
+              font-weight: bold;
+              text-decoration: none;
+              text-transform: uppercase;
+            }
 
             @include themify($themes) {
               background-color: themed('secondary-background');
