@@ -1,17 +1,22 @@
 import React from 'react'
+import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
 import {ShortNumber} from '../common/ShortNumber'
 import clockIcon from '../assets/icons/clock.svg'
 import sumIcon from '../assets/icons/sum.svg'
-import {BurnBalance} from './pob-state'
+import {Chain} from './chains'
 import './BurnBalanceDisplay.scss'
 
 interface BurnBalanceDisplayProps {
-  balance: BurnBalance
+  chain: Chain
+  pending: BigNumber
+  available: BigNumber
 }
 
 export const BurnBalanceDisplay: React.FunctionComponent<BurnBalanceDisplayProps> = ({
-  balance: {chain, available, pending},
+  chain,
+  available,
+  pending,
 }: BurnBalanceDisplayProps) => {
   const tokenSymbol = `M-${chain.symbol}`
   return (

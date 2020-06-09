@@ -1,27 +1,45 @@
 import React, {useState} from 'react'
+import BigNumber from 'bignumber.js'
 import {Button, Popover} from 'antd'
-import _ from 'lodash'
+import _ from 'lodash/fp'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {ProofOfBurnData} from './pob-state'
 import {ProverConfig} from '../config/type'
+import {TransparentAccount} from '../common/wallet-state'
+import {CHAINS_TO_USE_IN_POB} from './pob-config'
+import {prop} from '../shared/utils'
+import {ChainId} from './chains'
 import './BurnActions.scss'
 
 interface BurnActionsProps
-  extends Pick<ProofOfBurnData, 'burnBalances' | 'burnAddresses' | 'provers' | 'addTx'> {
+  extends Pick<ProofOfBurnData, 'burnAddresses' | 'provers' | 'addTx' | 'pendingBalances'> {
   onBurnCoins?: () => void
   onRegisterAuction?: () => void
+  transparentAccounts: TransparentAccount[]
 }
 
 export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   onBurnCoins,
   onRegisterAuction,
-  burnBalances,
+  transparentAccounts,
+  pendingBalances,
   burnAddresses,
   provers,
   addTx,
 }: BurnActionsProps) => {
   const [showAddTxModal, setShowAddTxModal] = useState(false)
+
+  const availableBalances = transparentAccounts.map(prop('midnightTokens')).reduce(
+    _.mergeWith((a: BigNumber, b: BigNumber) => (a ? a.plus(b) : b)),
+    {},
+  ) as Partial<Record<ChainId, BigNumber>>
+
+  const burnBalances = CHAINS_TO_USE_IN_POB.map((chain) => ({
+    chain,
+    available: availableBalances[chain.id] || new BigNumber(0),
+    pending: pendingBalances[chain.id] || new BigNumber(0),
+  })).filter(({available, pending}) => !available.isZero() || !pending.isZero())
 
   return (
     <div className="BurnActions">
@@ -53,7 +71,7 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
         <div className="balances">
           <div className="scroller">
             {burnBalances.map((balance) => (
-              <BurnBalanceDisplay key={balance.chain.id} balance={balance} />
+              <BurnBalanceDisplay key={balance.chain.id} {...balance} />
             ))}
           </div>
         </div>

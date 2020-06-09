@@ -67,16 +67,19 @@ export const transparentAccounts = (): JSX.Element => (
         address: 'third-transparent-address',
         index: 2,
         balance: dust('Third account balance', 0),
+        midnightTokens: {},
       },
       {
         address: 'second-transparent-address',
         index: 1,
         balance: dust('Second account balance', 0),
+        midnightTokens: {},
       },
       {
         address: 'first-transparent-address',
         index: 0,
         balance: dust('First account balance', 1234),
+        midnightTokens: {},
       },
     ]}
     redeem={asyncAction('on-redeem')}
@@ -94,6 +97,7 @@ export const redeemModal = (): JSX.Element => (
       address: 'transparent-address',
       index: 1,
       balance: dust('Account balance', 1234),
+      midnightTokens: {},
     }}
     onCancel={action('on-cancel')}
     visible

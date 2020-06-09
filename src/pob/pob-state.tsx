@@ -13,12 +13,11 @@ import {
   prettyErrorMessage,
   BurnStatusType,
 } from './api/prover'
-import {Chain, ChainId, CHAINS} from './chains'
+import {Chain, ChainId} from './chains'
 import {ProverConfig} from '../config/type'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {Web3API, makeWeb3Worker} from '../web3'
-import {deserializeBigNumber, bigSum, bech32toHex} from '../common/util'
 import {config} from '../config/renderer'
 
 export interface BurnWatcher {
@@ -49,12 +48,6 @@ export interface Prover extends ProverConfig {
   rewards: Partial<Record<ChainId, number>>
 }
 
-export type BurnBalance = {
-  chain: Chain
-  pending: BigNumber
-  available: BigNumber
-}
-
 export interface ProofOfBurnData {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
   observeBurnAddress: (
@@ -67,7 +60,7 @@ export interface ProofOfBurnData {
   ) => Promise<void>
   burnStatuses: Record<string, BurnStatus>
   refresh: () => Promise<void>
-  burnBalances: BurnBalance[]
+  pendingBalances: Partial<Record<ChainId, BigNumber>>
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
@@ -111,7 +104,6 @@ function useProofOfBurnState(
   const [burnWatchers, setBurnWatchers] = usePersistedState(store, ['pob', 'burnWatchers'])
   const [burnAddresses, setBurnAddresses] = usePersistedState(store, ['pob', 'burnAddresses'])
   const [burnStatuses, setBurnStatuses] = useState<Record<string, BurnStatus>>({})
-  const [burnBalances, setBurnBalances] = useState<BurnBalance[]>([])
   const [provers, setProvers] = useState(config.provers.map((p): Prover => ({...p, rewards: {}})))
 
   useEffect(() => {
@@ -187,50 +179,7 @@ function useProofOfBurnState(
     setBurnStatuses(_.fromPairs(newBurnStatuses))
   }
 
-  const refreshBurnBalances = async (): Promise<void> => {
-    const midnightAddressesByChain: Array<[ChainId, string[]]> = _.pipe(
-      _.values,
-      _.groupBy('chainId'),
-      _.mapValues((v: Array<{midnightAddress: string}>) =>
-        _.uniq(v.map(({midnightAddress}) => midnightAddress)),
-      ),
-      _.toPairs,
-    )(burnAddresses)
-
-    const getBurnBalance = async (chainId: ChainId, addresses: string[]): Promise<BurnBalance> => {
-      const allAvailable = await Promise.all(
-        addresses.map((midnightAddress) =>
-          web3.erc20[chainId]
-            .balanceOf(bech32toHex(midnightAddress))
-            .then((balance) => deserializeBigNumber(balance))
-            .catch((err) => {
-              console.error(err)
-              return new BigNumber(0)
-            }),
-        ),
-      )
-
-      const allPending = _.values(burnStatuses)
-        .flatMap(({lastStatuses}) => lastStatuses)
-        .filter(({status, chain}) => chain === chainId && !FINISHED_BURN_STATUSES.includes(status))
-        .map((status) => new BigNumber(status.tx_value || 0))
-
-      return {
-        chain: CHAINS[chainId],
-        available: bigSum(allAvailable),
-        pending: bigSum(allPending),
-      }
-    }
-
-    const newBurnBalances: BurnBalance[] = await Promise.all(
-      midnightAddressesByChain.map(([chainId, addresses]) => getBurnBalance(chainId, addresses)),
-    )
-    setBurnBalances(newBurnBalances)
-  }
-
-  const refresh = async (): Promise<void> => {
-    await Promise.all([refreshBurnStatus(), refreshBurnBalances()])
-  }
+  const refresh = async (): Promise<void> => refreshBurnStatus()
 
   const observeBurnAddress = async (
     burnAddress: string,
@@ -268,12 +217,19 @@ function useProofOfBurnState(
     setBurnStatuses({})
   }
 
+  const pendingBalances = _.fromPairs(
+    _.values(burnStatuses)
+      .flatMap(({lastStatuses}) => lastStatuses)
+      .filter(({status}) => !FINISHED_BURN_STATUSES.includes(status))
+      .map((status) => [status.chain, new BigNumber(status.tx_value || 0)]),
+  )
+
   return {
     addBurnWatcher,
     burnStatuses,
     refresh,
     observeBurnAddress,
-    burnBalances,
+    pendingBalances,
     reset,
     burnAddresses,
     addTx: proveTransaction,

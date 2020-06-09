@@ -7,8 +7,8 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from './errors'
-import {deserializeBigNumber, loadAll, bigSum, toHex} from './util'
-import {Chain} from '../pob/chains'
+import {deserializeBigNumber, loadAll, bigSum, toHex, bech32toHex} from './util'
+import {Chain, ChainId} from '../pob/chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
   makeWeb3Worker,
@@ -24,6 +24,7 @@ import {
   CallParams,
 } from '../web3'
 import {BuildJobState} from './build-job-state'
+import {CHAINS_TO_USE_IN_POB} from '../pob/pob-config'
 
 // API Types
 
@@ -52,7 +53,10 @@ const TRANSFER_GAS_LIMIT = 21000
 
 export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
 
-export type TransparentAccount = TransparentAddress & {balance: BigNumber}
+export type TransparentAccount = TransparentAddress & {
+  balance: BigNumber
+  midnightTokens: Partial<Record<ChainId, BigNumber>>
+}
 
 export type FeeEstimates = t.TypeOf<typeof FeeEstimates>
 
@@ -184,6 +188,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const wallet = _initialState.web3.midnight.wallet
   const eth = _initialState.web3.eth
+  const erc20 = _initialState.web3.erc20
   const buildJobState = BuildJobState.useContainer()
 
   // wallet status
@@ -292,8 +297,20 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       _.reverse(transparentAddresses).map(
         async (address: TransparentAddress): Promise<TransparentAccount> => {
           const balance = await wallet.getTransparentWalletBalance(address.address)
+          const midnightTokens = await Promise.all(
+            CHAINS_TO_USE_IN_POB.map(({id}) =>
+              erc20[id]
+                .balanceOf(bech32toHex(address.address))
+                .then((balance) => [id, deserializeBigNumber(balance)])
+                .catch((err) => {
+                  console.error(err)
+                  return [id, new BigNumber(0)]
+                }),
+            ),
+          )
           return {
             balance: new BigNumber(balance),
+            midnightTokens: _.fromPairs(midnightTokens),
             ...address,
           }
         },
