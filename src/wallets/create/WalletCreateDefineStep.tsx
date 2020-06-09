@@ -16,7 +16,7 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
 }: WalletCreateDefineStepProps) => {
   const [walletName, setWalletName] = useState('')
   const [passphrase, setPassphrase] = useState('')
-  const [isPassphraseValid, setPassphraseValid] = useState(true)
+  const [isPassphraseValid, setPassphraseValid] = useState(false)
 
   return (
     <Dialog

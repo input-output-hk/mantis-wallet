@@ -1,9 +1,23 @@
 @import '../vars', '../partial';
 
 .PobLayout {
+  position: relative;
   height: 100%;
 
   .content {
     padding: 64px;
+  }
+
+  .warning {
+    position: absolute;
+    left: 50%;
+
+    .warning-content {
+      @extend %error;
+      position: relative;
+      left: -50%;
+      padding: 0.5em 1em;
+      text-align: center;
+    }
   }
 }

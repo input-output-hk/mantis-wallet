@@ -1,0 +1,1 @@
+export const PROVER_API_REQUEST_TIMEOUT = 10000
