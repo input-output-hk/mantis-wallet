@@ -34,7 +34,7 @@ import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config
 import {buildMenu, buildRemixMenu} from './menu'
 import {ipcListen} from './util'
 import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
-import {LUNA_VERSION} from '../shared/version'
+import {LUNA_FULL_VERSION} from '../shared/version'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -90,11 +90,11 @@ function createWindow(): void {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
-    title: `Luna Wallet — ${LUNA_VERSION}`,
+    title: `Luna Wallet — ${LUNA_FULL_VERSION}`,
     icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
-    minWidth: 1200,
+    minWidth: 1000,
     minHeight: 700,
     webPreferences: {
       nodeIntegration: true,

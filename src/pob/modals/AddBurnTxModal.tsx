@@ -25,8 +25,6 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
   const [prover, setProver] = useState(provers[0])
   const modalLocker = ModalLocker.useContainer()
 
-  const txErrorMessage = !burnTx ? 'Burn transaction must be set' : ''
-
   return (
     <Dialog
       title="Enter burn transaction manually"
@@ -36,7 +34,7 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
       }}
       rightButtonProps={{
         children: 'Process Burn',
-        disabled: !!txErrorMessage || !burnAddresses[burnAddress],
+        disabled: !burnAddresses[burnAddress],
         onClick: async (): Promise<void> => {
           if (prover) {
             await onAddTx(prover, burnTx, burnAddress)
@@ -52,7 +50,10 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
         label="Burn Transaction Id"
         value={burnTx}
         onChange={(e): void => setBurnTx(e.target.value)}
-        errorMessage={txErrorMessage}
+        formItem={{
+          name: 'burn-tx-id',
+          rules: [{required: true, message: 'Burn transaction must be set'}],
+        }}
       />
       <DialogDropdown
         label="Prover"

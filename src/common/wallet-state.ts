@@ -6,8 +6,8 @@ import * as tPromise from 'io-ts-promise'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
-import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from '../common/errors'
-import {deserializeBigNumber, loadAll, bigSum, toHex} from '../common/util'
+import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from './errors'
+import {deserializeBigNumber, loadAll, bigSum, toHex} from './util'
 import {Chain} from '../pob/chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
@@ -366,15 +366,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: number,
   ): Promise<string> => {
     const {jobHash} = await wallet.sendTransaction(recipient, amount, fee, false)
-    await buildJobState.submitJob(jobHash)
-    load()
+    await buildJobState.submitJob(jobHash, load)
     return jobHash
   }
 
   const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
     const {jobHash} = await wallet.redeemValue(address, amount, fee, null, false)
-    await buildJobState.submitJob(jobHash)
-    load()
+    await buildJobState.submitJob(jobHash, load)
     return jobHash
   }
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
@@ -15,8 +15,6 @@ export const WalletCreateDisplayRecoveryStep: React.FunctionComponent<WalletCrea
   next,
   seedPhrase,
 }: WalletCreateDisplayRecoveryStepProps) => {
-  const [isRecoveryPhraseWritten, setRecoveryPhraseWritten] = useState(false)
-
   return (
     <Dialog
       title="Recovery Phrase"
@@ -26,19 +24,12 @@ export const WalletCreateDisplayRecoveryStep: React.FunctionComponent<WalletCrea
       }}
       rightButtonProps={{
         onClick: next,
-        disabled: !isRecoveryPhraseWritten,
       }}
     >
       <DialogMessage description="This is your wallet backup phrase. It can be entered into any version of Luna Wallet in order to restore your wallet" />
       <DialogMessage description="The phrase is case sensitive. Please, make sure you write down and save your recovery phrase. You will need this phrase to use and restore your wallet" />
       <DialogDisplayWords words={seedPhrase} />
-      <DialogApproval
-        id="written-down"
-        description="Yes, I have written it down."
-        checked={isRecoveryPhraseWritten}
-        onChange={setRecoveryPhraseWritten}
-        autoFocus
-      />
+      <DialogApproval id="written-down" description="Yes, I have written it down." autoFocus />
     </Dialog>
   )
 }

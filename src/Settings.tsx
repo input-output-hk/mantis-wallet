@@ -23,13 +23,13 @@ const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.E
 
 const _Settings = (): JSX.Element => {
   const themeState = ThemeState.useContainer()
+
   const [lunaManagedConfig, setLunaManagedConfig] = useState<LunaManagedConfig>(
     loadLunaManagedConfig(),
   )
   const [miningConfigModalShown, setMiningConfigModalShown] = useState<boolean>(false)
 
   const reloadConfig = (): void => setLunaManagedConfig(loadLunaManagedConfig())
-
   const reloadTriggers: IPCToRendererChannelName[] = ['disable-mining-success']
 
   useEffect(() => {
@@ -82,8 +82,6 @@ const _Settings = (): JSX.Element => {
 
 export const Settings = withStatusGuard(_Settings, 'LOADED', () => (
   <SettingsWrapper>
-    <div className="no-wallet-container">
-      <NoWallet />
-    </div>
+    <NoWallet />
   </SettingsWrapper>
 ))

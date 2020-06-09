@@ -1,6 +1,10 @@
 @import '../themify', '../vars';
 
 .Sidebar {
+  $link-font-weight: 300;
+  $link-letter-spacing: 0.96px;
+  $normal-left-padding: 45px;
+
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   width: $sidebar-width;
@@ -12,6 +16,7 @@
 
   .logo img {
     display: block;
+    width: $sidebar-width;
     margin: 1rem auto 0;
   }
 
@@ -19,13 +24,13 @@
     width: 100%;
     height: 100px;
     margin: 0;
-    padding-left: 152px;
-    font-size: 54px;
+    padding-left: $normal-left-padding + 36px;
+    font-size: 34px;
     font-weight: bold;
     letter-spacing: -0.81px;
 
     @include themify($themes) {
-      color: themed('primary-color');
+      color: themed('text-color');
     }
   }
 
@@ -35,21 +40,23 @@
 
     .link {
       display: block;
+      z-index: $zindex-sidebar;
       outline: 0;
-      font-size: 30px;
-      font-weight: 300;
-      letter-spacing: 0.96px;
-      line-height: 66px;
+      font-size: 18px;
+      font-weight: $link-font-weight;
+      letter-spacing: $link-letter-spacing;
+      line-height: 40px;
       text-decoration: none;
       cursor: pointer;
 
       .prefix {
         display: inline-block;
-        width: 116px;
+        width: $normal-left-padding;
       }
 
       &.active {
         font-weight: bold;
+        letter-spacing: 0.2px;
 
         .prefix {
           @include themify($themes) {
@@ -90,6 +97,13 @@
     text-align: center;
     text-transform: uppercase;
 
+    .support,
+    .status {
+      margin-right: 8px;
+      padding-right: 7px;
+      border-right: 1px solid #fff;
+    }
+
     .footer-link {
       cursor: pointer;
 
@@ -120,16 +134,19 @@
   }
 
   @media screen and #{$sidebar-collapse-query} {
-    $mini-left-padding: 73px;
+    $mini-left-padding: 33px;
+
     width: $sidebar-collapsed-width;
 
     .title {
-      padding-left: $mini-left-padding;
-      font-size: 24px;
+      width: 100%;
+      padding-left: 0;
+      font-size: 18px;
+      text-align: center;
     }
 
     .logo img {
-      width: 150px;
+      width: $sidebar-collapsed-width;
     }
 
     .navigation {
@@ -138,7 +155,8 @@
         z-index: $zindex-sidebar;
 
         &.active {
-          font-weight: normal;
+          font-weight: $link-font-weight;
+          letter-spacing: $link-letter-spacing;
         }
 
         .prefix {
@@ -150,9 +168,9 @@
           position: absolute;
           top: 0;
           left: 0;
-          margin-left: 120px;
-          padding: 0 20px 0 10px;
-          font-size: 24px;
+          margin-left: $sidebar-collapsed-width;
+          padding: 0 1em;
+          font-size: 18px;
           white-space: nowrap;
 
           @include themify($themes) {
@@ -170,6 +188,23 @@
 
     .footer {
       font-size: 10px;
+
+      .footer-link {
+        display: inline-block;
+        margin-bottom: 0.5em;
+        letter-spacing: 1px;
+      }
+
+      .support,
+      .status {
+        margin-right: 0;
+        padding-right: 0;
+        border-right: none;
+      }
+
+      .edition {
+        display: none;
+      }
     }
   }
 

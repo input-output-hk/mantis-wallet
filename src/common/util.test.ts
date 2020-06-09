@@ -13,6 +13,7 @@ import {
   hexToBech32,
   isLowerOrEqual,
   areFundsEnough,
+  toHumanReadableHashrate,
 } from './util'
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
@@ -194,4 +195,16 @@ it('validates ethereum address', () => {
     validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC8'),
     INVALID_ADDRESS_MSG,
   )
+})
+
+it('converts hashrates ot human readable format correctly', () => {
+  assert.equal(toHumanReadableHashrate(0), '0 hash/s')
+  assert.equal(toHumanReadableHashrate(1024), '1 kH/s')
+  assert.equal(toHumanReadableHashrate(1024 + 512), '1.5 kH/s')
+  assert.equal(toHumanReadableHashrate(2048), '2 kH/s')
+  assert.equal(toHumanReadableHashrate(1024 * 1024), '1 MH/s')
+  assert.equal(toHumanReadableHashrate(1024 * 1024 * 1.5), '1.5 MH/s')
+  assert.equal(toHumanReadableHashrate(1024 * 1024 * 1024), '1 GH/s')
+
+  assert.equal(toHumanReadableHashrate(-1), 'Invalid hashrate')
 })

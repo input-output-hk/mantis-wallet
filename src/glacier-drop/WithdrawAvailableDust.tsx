@@ -17,7 +17,7 @@ interface WithdrawAvailableDustProps {
   currentBlock: number
   periodConfig: PeriodConfig
   showEpochs: () => void
-  onNext: (withdrawTxHash: string) => void
+  onNext: () => void
   onCancel: () => void
 }
 
@@ -50,8 +50,7 @@ const _WithdrawAvailableDust = ({
   const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual(0)])
   const gasLimitError = validateAmount(gasLimit, [isGreaterOrEqual(65536)])
 
-  const disabled =
-    gasPriceError !== '' || gasLimitError !== '' || estimatedWithdrawableDust.isEqualTo(0)
+  const disabled = gasPriceError !== '' || gasLimitError !== ''
 
   return (
     <Dialog
@@ -64,8 +63,8 @@ const _WithdrawAvailableDust = ({
             gasLimit: new BigNumber(gasLimit),
             gasPrice: new BigNumber(gasPrice),
           }
-          const withdrawTxHash = await withdraw(claim, callParams, currentBlock, unfrozenDustAmount)
-          onNext(withdrawTxHash)
+          await withdraw(claim, callParams, currentBlock, unfrozenDustAmount)
+          onNext()
         },
         disabled,
       }}

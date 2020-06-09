@@ -39,10 +39,6 @@ const _ClaimWithMessage = ({
   chain = ETC_CHAIN,
 }: ClaimWithMessageProps): JSX.Element => {
   const [signedMessage, setSignedMessage] = useState<string>('')
-  const [checked, setChecked] = useState<boolean>(false)
-
-  const signedMessageError = signedMessage.length === 0 ? 'Message must be set' : ''
-  const disabled = signedMessageError !== '' || !checked
 
   return (
     <Dialog
@@ -54,13 +50,12 @@ const _ClaimWithMessage = ({
           const authSignature = signedMessageToAuthSignature(signedMessage)
           onNext(authSignature)
         },
-        disabled,
       }}
       leftButtonProps={{
         doNotRender: true,
       }}
       type="dark"
-      buttonDisplayMode="natural"
+      buttonDisplayMode="wide"
     >
       <DialogInput
         autoFocus
@@ -68,7 +63,10 @@ const _ClaimWithMessage = ({
         onChange={(e): void => {
           setSignedMessage(e.target.value)
         }}
-        errorMessage={signedMessageError}
+        formItem={{
+          name: 'signed-message',
+          rules: [{required: true, message: 'Message must be set'}],
+        }}
       />
       <Asset amount={externalAmount} chain={chain}>
         Asset
@@ -77,12 +75,7 @@ const _ClaimWithMessage = ({
         Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
       </DialogShowDust>
       <DialogMessage label="Destination Address" description={transparentAddress} />
-      <DialogApproval
-        id="should-keep-open-checkbox"
-        description={SHOULD_KEEP_OPEN_TEXT}
-        checked={checked}
-        onChange={setChecked}
-      />
+      <DialogApproval id="should-keep-open-checkbox" description={SHOULD_KEEP_OPEN_TEXT} />
     </Dialog>
   )
 }

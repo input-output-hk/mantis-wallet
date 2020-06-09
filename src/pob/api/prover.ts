@@ -6,6 +6,8 @@ import {ExtendableError} from '../../common/extendable-error'
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
 import {ChainId} from '../chains'
+import {wait} from '../../shared/utils'
+import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
 
 function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
   return t.union([type, t.null, t.undefined])
@@ -86,7 +88,7 @@ export type ChainInfo = t.TypeOf<typeof ChainInfo>
 
 type RequestMode = 'observer' | 'submitter'
 
-const REQUEST_MODE_PORT: Record<RequestMode, number> = {
+export const REQUEST_MODE_PORT: Record<RequestMode, number> = {
   observer: 5000,
   submitter: 5047,
 }
@@ -124,16 +126,18 @@ const httpRequest = async (
   mode: RequestMode,
   path: string,
   config: RequestInit = {},
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params?: any,
 ): Promise<unknown> => {
+  const timeoutController = new AbortController()
+  wait(PROVER_API_REQUEST_TIMEOUT).then(() => timeoutController.abort())
   const url = `${proverConfig.address}:${REQUEST_MODE_PORT[mode]}${path}`
   const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: params && JSON.stringify(params),
     ...config,
+    signal: timeoutController.signal,
+  }).catch((e: Error) => {
+    if (e.name === 'AbortError') {
+      throw new ProverApiError('Request to prover timed out.', {})
+    }
+    throw e
   })
 
   if (!res.ok) {
@@ -150,22 +154,41 @@ const httpRequest = async (
         }),
       ),
     )
-    throw new ProverApiError(`Couldn't process request: ${errorMessage}`, response, errorCode)
+    throw new ProverApiError(
+      `Couldn't process request, the prover responded with: ${errorMessage}`,
+      response,
+      errorCode,
+    )
   }
 
   return res.json()
 }
 
-export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
-  return httpRequest(
-    prover,
-    'submitter',
-    '/api/v1/status',
-    {method: 'POST'},
-    {
-      burn_address: burnAddress,
+const httpPostRequest = async (
+  prover: ProverConfig,
+  mode: RequestMode,
+  path: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: any,
+): Promise<unknown> =>
+  httpRequest(prover, mode, path, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  ).then(tPromise.decode(BurnApiStatuses))
+    body: JSON.stringify(params),
+  })
+
+const httpGetRequest = async (
+  prover: ProverConfig,
+  mode: RequestMode,
+  path: string,
+): Promise<unknown> => httpRequest(prover, mode, path, {method: 'GET'})
+
+export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<AllApiStatus[]> => {
+  return httpPostRequest(prover, 'submitter', '/api/v1/status', {
+    burn_address: burnAddress,
+  }).then(tPromise.decode(BurnApiStatuses))
 }
 
 export const createBurn = async (
@@ -175,18 +198,12 @@ export const createBurn = async (
   fee: number,
   autoConversion: boolean,
 ): Promise<string> => {
-  return httpRequest(
-    prover,
-    'observer',
-    '/api/v1/observe',
-    {method: 'POST'},
-    {
-      midnight_address: address,
-      chain: chainId,
-      fee,
-      auto_exchange: autoConversion,
-    },
-  )
+  return httpPostRequest(prover, 'observer', '/api/v1/observe', {
+    midnight_address: address,
+    chain: chainId,
+    fee,
+    auto_exchange: autoConversion,
+  })
     .then(tPromise.decode(BurnType))
     .then((burnType) => burnType.burn_address)
 }
@@ -196,22 +213,16 @@ export const proveTransaction = async (
   txid: string,
   burnAddress: string,
 ): Promise<void> => {
-  await httpRequest(
-    prover,
-    'observer',
-    '/api/v1/prove',
-    {method: 'POST'},
-    {
-      txid,
-      burn_address: burnAddress,
-    },
-  )
+  await httpPostRequest(prover, 'observer', '/api/v1/prove', {
+    txid,
+    burn_address: burnAddress,
+  })
 }
 
 export const getInfo = async (
   prover: ProverConfig,
 ): Promise<Partial<Record<ChainId, ChainInfo>>> => {
-  return httpRequest(prover, 'submitter', '/api/v1/info', {method: 'GET'})
+  return httpGetRequest(prover, 'submitter', '/api/v1/info')
     .then(tPromise.decode(ProverInfo))
     .then(({chains}) => chains)
 }

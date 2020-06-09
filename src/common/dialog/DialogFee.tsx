@@ -9,7 +9,7 @@ import {DialogState} from '../Dialog'
 import {DUST_SYMBOL} from '../../pob/chains'
 import {FeeEstimates} from '../wallet-state'
 import {abbreviateAmount} from '../formatters'
-import {UNITS} from '../../common/units'
+import {UNITS} from '../units'
 import speedLow from '../../assets/icons/speed-low.svg'
 import speedMedium from '../../assets/icons/speed-medium.svg'
 import speedHigh from '../../assets/icons/speed-high.svg'
@@ -53,7 +53,6 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   feeEstimates,
   defaultValue = '0',
   errorMessage,
-  forceInvalid,
   hideCustom = false,
   isPending = false,
 }: DialogFeeProps & InlineErrorProps) => {
@@ -102,7 +101,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   return (
     <div className={classnames('DialogFee', {hideCustom}, className)}>
       {label && <label className="label">{label}</label>}
-      <InlineError errorMessage={errorMessage} forceInvalid={forceInvalid}>
+      <InlineError errorMessage={errorMessage}>
         <div className={classnames('options', {'custom-mode': isCustom})}>
           {!hideCustom && (
             <>

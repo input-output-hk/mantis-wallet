@@ -32,9 +32,7 @@ const _Exchange = ({
   chain = ETC_CHAIN,
 }: ExchangeProps & ModalProps): JSX.Element => {
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const [extrernalBalanceConfirmed, setExternalBalanceConfirmed] = useState<boolean>(false)
-  const [midnightBalanceConfirmed, setMidnightBalanceConfirmed] = useState<boolean>(false)
-  const disabled = !extrernalBalanceConfirmed || !midnightBalanceConfirmed || !transparentAddress
+  const disabled = !transparentAddress
 
   return (
     <Dialog
@@ -59,8 +57,6 @@ const _Exchange = ({
       <DialogApproval
         id="confirm-balance"
         description={`Confirm ${chain.symbol} Balance OK`}
-        checked={extrernalBalanceConfirmed}
-        onChange={setExternalBalanceConfirmed}
         autoFocus
       />
       <DialogDropdown
@@ -68,12 +64,7 @@ const _Exchange = ({
         options={transparentAddresses}
         onChange={setTransparentAddress}
       />
-      <DialogApproval
-        id="confirm-fee"
-        description="I understand"
-        checked={midnightBalanceConfirmed}
-        onChange={setMidnightBalanceConfirmed}
-      >
+      <DialogApproval id="confirm-fee" description="I understand">
         <div className="dust-balance">
           <div className="message">
             To complete the Unlocking of Dust and 1 Withdrawal Transaction, you will require est 0.5

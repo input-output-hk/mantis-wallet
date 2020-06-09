@@ -5,7 +5,6 @@ import classnames from 'classnames'
 import {ThemeState} from '../theme-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
-import {LUNA_VERSION} from '../shared/version'
 import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
@@ -45,7 +44,11 @@ const UpdatingStatusModal = ({
   )
 }
 
-export const Sidebar = (): JSX.Element => {
+interface SidebarProps {
+  version: [string, string] // [version, edition]
+}
+
+export const Sidebar = ({version: [version, edition]}: SidebarProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
 
@@ -103,21 +106,23 @@ export const Sidebar = (): JSX.Element => {
       </div>
       <div className="footer">
         <div>
-          <Link href={LINKS.support} className="footer-link">
+          <Link href={LINKS.support} popoverPlacement="right" className="footer-link support">
             Support
-          </Link>{' '}
-          |{' '}
-          <Link href={LINKS.feedback} className="footer-link">
+          </Link>
+          <Link href={LINKS.feedback} popoverPlacement="right" className="footer-link feedback">
             Feedback
           </Link>
         </div>
         <div>
-          <span className="footer-link" onClick={() => setShowStatusModal(true)}>
+          <span onClick={() => setShowStatusModal(true)} className="footer-link status">
             Status
-          </span>{' '}
-          | {logOut}
+          </span>
+          {logOut}
         </div>
-        <div className="version">{LUNA_VERSION}</div>
+        <div className="version">
+          {version}
+          <span className="edition"> — {edition}</span>
+        </div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal

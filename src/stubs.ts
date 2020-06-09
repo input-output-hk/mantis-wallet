@@ -11,6 +11,7 @@ class MockWorker {
     return false
   }
   onmessage(e: any) {}
+  onmessageerror(e: any) {}
   onerror() {}
   postMessage(msg: any) {
     this.onmessage(msg)

@@ -1,15 +1,17 @@
 import React from 'react'
 import {withKnobs, text, number, boolean} from '@storybook/addon-knobs'
+import {withMiningState} from '../storybook-util/mining-state-decorator'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
 import {ShortNumber} from './ShortNumber'
 import {Loading} from './Loading'
 import {CopyableLongText} from './CopyableLongText'
 import {StatusModal} from './StatusModal'
+import {MiningStatus} from './MiningStatus'
 
 export default {
   title: 'Common',
-  decorators: [withTheme, withKnobs],
+  decorators: [withTheme, withMiningState, withKnobs],
 }
 
 export const shortNumber = (): JSX.Element => (
@@ -63,3 +65,5 @@ export const statusModal = (): JSX.Element => (
     visible
   />
 )
+
+export const miningStatus = (): JSX.Element => <MiningStatus />

@@ -1,5 +1,5 @@
 import React from 'react'
-import {withKnobs} from '@storybook/addon-knobs'
+import {withKnobs, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
@@ -27,7 +27,7 @@ export default {
 
 export const sidebar = (): JSX.Element => (
   <RouterState.Provider>
-    <Sidebar />
+    <Sidebar version={[text('Version', 'v0.11.1'), text('Edition', 'testnet edition')]} />
   </RouterState.Provider>
 )
 

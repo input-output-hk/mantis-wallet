@@ -1,20 +1,27 @@
 import React, {useState} from 'react'
 import classnames from 'classnames'
-import {Button} from 'antd'
+import _ from 'lodash'
+import {Button, Form} from 'antd'
 import {ButtonProps} from 'antd/lib/button'
+import {FormInstance} from 'antd/lib/form'
 import {createContainer} from 'unstated-next'
 import {useIsMounted} from './hook-utils'
 import {DialogError} from './dialog/DialogError'
+import {waitUntil} from '../shared/utils'
 import './Dialog.scss'
+
+export const DIALOG_VALIDATION_ERROR =
+  'Some fields require additional action before you can continue.'
 
 interface DialogButtonProps {
   doNotRender?: boolean
+  skipValidation?: boolean
 }
 
 interface DialogProps {
   title?: React.ReactNode
   type?: 'normal' | 'dark'
-  buttonDisplayMode?: 'natural' | 'grid'
+  buttonDisplayMode?: 'natural' | 'grid' | 'wide'
   leftButtonProps?: ButtonProps & DialogButtonProps
   rightButtonProps?: ButtonProps & DialogButtonProps
   onSetLoading?: (loading: boolean) => void
@@ -22,6 +29,7 @@ interface DialogProps {
 }
 
 export interface DialogState {
+  dialogForm: FormInstance
   errorMessage: string
   setErrorMessage: (errorMessage: string) => void
 }
@@ -29,9 +37,12 @@ export interface DialogState {
 export const DialogState = createContainer(() => {
   const [errorMessage, setErrorMessage] = useState('')
 
+  const [dialogForm] = Form.useForm()
+
   return {
     errorMessage,
     setErrorMessage,
+    dialogForm,
   }
 })
 
@@ -39,13 +50,21 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   title,
   type = 'normal',
   buttonDisplayMode = 'grid',
-  rightButtonProps: {doNotRender: doNotRenderRight = false, ...rightButtonProps} = {},
-  leftButtonProps: {doNotRender: doNotRenderLeft = false, ...leftButtonProps} = {},
+  rightButtonProps: {
+    doNotRender: doNotRenderRight = false,
+    skipValidation: skipValidationRight = false,
+    ...rightButtonProps
+  } = {},
+  leftButtonProps: {
+    doNotRender: doNotRenderLeft = false,
+    skipValidation: skipValidationLeft = true,
+    ...leftButtonProps
+  } = {},
   children,
   onSetLoading,
   footer,
 }: React.PropsWithChildren<DialogProps>) => {
-  const {errorMessage, setErrorMessage} = DialogState.useContainer()
+  const {errorMessage, setErrorMessage, dialogForm} = DialogState.useContainer()
 
   const [leftInProgress, setLeftInProgress] = useState(false)
   const [rightInProgress, setRightInProgress] = useState(false)
@@ -54,11 +73,21 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   const createHandleClick = (
     {onClick}: ButtonProps,
     setInProgress: (inProgress: boolean) => void,
+    skipValidation: boolean,
   ) => async (event: React.MouseEvent<HTMLElement, MouseEvent>): Promise<void> => {
     if (onClick) {
       setInProgress(true)
       onSetLoading?.(true)
       try {
+        if (!skipValidation) {
+          await waitUntil(() =>
+            _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
+          )
+          await dialogForm.validateFields().catch((e) => {
+            console.error(e)
+            return Promise.reject(new Error(DIALOG_VALIDATION_ERROR))
+          })
+        }
         await onClick(event)
       } catch (e) {
         console.error(e)
@@ -75,7 +104,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
     loading: leftInProgress,
     children: 'Cancel',
     ...leftButtonProps,
-    onClick: createHandleClick(leftButtonProps, setLeftInProgress),
+    onClick: createHandleClick(leftButtonProps, setLeftInProgress, skipValidationLeft),
   }
 
   const rightButtonPropsToUse: ButtonProps = {
@@ -85,19 +114,19 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
     children: 'Next →',
     loading: rightInProgress,
     ...rightButtonProps,
-    onClick: createHandleClick(rightButtonProps, setRightInProgress),
+    onClick: createHandleClick(rightButtonProps, setRightInProgress, skipValidationRight),
   }
 
   return (
     <div className={classnames('Dialog', type)}>
       {title && <div className="title">{title}</div>}
-      <form onSubmit={(e) => e.preventDefault()}>
+      <Form form={dialogForm} onValuesChange={() => setErrorMessage('')}>
         <div className="dialog-children">{children}</div>
         <div className={classnames('actions', buttonDisplayMode)}>
           {!doNotRenderLeft && <Button data-testid="left-button" {...leftButtonPropsToUse} />}
           {!doNotRenderRight && <Button data-testid="right-button" {...rightButtonPropsToUse} />}
         </div>
-      </form>
+      </Form>
       {(footer || errorMessage) && (
         <div className="footer">
           {footer}

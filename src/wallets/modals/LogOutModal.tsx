@@ -13,7 +13,6 @@ const LogOutDialog: React.FunctionComponent<LogOutModalProps> = ({
   onLogOut,
   onCancel,
 }: LogOutModalProps) => {
-  const [approve, setApprove] = useState(false)
   const [passphrase, setPassphrase] = useState('')
   const modalLocker = ModalLocker.useContainer()
 
@@ -26,7 +25,6 @@ const LogOutDialog: React.FunctionComponent<LogOutModalProps> = ({
       }}
       rightButtonProps={{
         onClick: (): Promise<void> => onLogOut(passphrase),
-        disabled: !approve,
         children: 'Log Out',
       }}
       onSetLoading={modalLocker.setLocked}
@@ -34,8 +32,7 @@ const LogOutDialog: React.FunctionComponent<LogOutModalProps> = ({
       <DialogMessage description="Enter your password to log out." />
       <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
       <DialogApproval
-        checked={approve}
-        onChange={setApprove}
+        id="delete-data-warning"
         description="I understand that all my Burn Addresses and Glacier Drop Claims will be deleted from this machine."
       />
     </Dialog>

@@ -11,6 +11,7 @@ import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {abbreviateAmount} from '../common/formatters'
 import {UNITS} from '../common/units'
+import {MiningState} from '../common/mining-state'
 
 const {Dust} = UNITS
 
@@ -37,7 +38,9 @@ test('WalletOverview shows properly formatted balance', () => {
     <ThemeState.Provider>
       <BuildJobState.Provider initialState={{web3}}>
         <WalletState.Provider initialState={initialState}>
-          <WalletOverview {...balance} goToAccounts={setViewType} />
+          <MiningState.Provider initialState={{web3}}>
+            <WalletOverview {...balance} goToAccounts={setViewType} />
+          </MiningState.Provider>
         </WalletState.Provider>
       </BuildJobState.Provider>
     </ThemeState.Provider>,

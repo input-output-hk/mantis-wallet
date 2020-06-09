@@ -11,11 +11,17 @@
     font-size: 13px;
     font-weight: bold;
     line-height: 30px;
-    text-align: center;
     user-select: none;
+    overflow-wrap: break-word;
 
     @include themify($themes) {
       background-color: themed('secondary-background');
+    }
+
+    .index {
+      width: 38px;
+      padding-left: 1em;
+      float: left;
     }
   }
 }

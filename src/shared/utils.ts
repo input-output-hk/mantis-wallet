@@ -70,3 +70,13 @@ export const optionZip = <A, B>(maybeA: Option<A>, maybeB: Option<B>): Option<[A
  * A promise which waits for the given miliseconds
  */
 export const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Retry until condition is met
+ */
+export const waitUntil = async (condition: () => boolean, ms = 100): Promise<void> => {
+  if (!condition()) {
+    await wait(ms)
+    await waitUntil(condition, ms)
+  }
+}
