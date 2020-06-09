@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Button, message} from 'antd'
+import {Button, message, Switch} from 'antd'
 import BigNumber from 'bignumber.js'
 import {ThemeState} from '../theme-state'
 import {CopyableLongText} from '../common/CopyableLongText'
@@ -110,6 +110,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
   transactions,
 }: TransparentAccountsProps) => {
   const [showRedeem, setShowRedeem] = useState(false)
+  const [hideEmpty, setHideEmpty] = useState(false)
   const [transparentAccount, setTransparentAccount] = useState<TransparentAccount | null>(null)
 
   const handleRedeem = (transparentAccount: TransparentAccount): void => {
@@ -160,22 +161,29 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
               <div>Account</div>
               <div>Asset</div>
               <div>Amount</div>
-              <div></div>
+              <div className="hide-empty">
+                <span className="hide-empty-label" onClick={() => setHideEmpty(!hideEmpty)}>
+                  Hide empty accounts
+                </span>
+                <Switch title="Hide empty accounts" checked={hideEmpty} onChange={setHideEmpty} />
+              </div>
             </div>
-            {transparentAccounts.map((a) => (
-              <ShowTransparentAccount
-                account={a}
-                key={a.address}
-                redeem={() => handleRedeem(a)}
-                transactions={transparentTransactions.filter(
-                  ({txDetails}) =>
-                    (txDetails.txType === 'redeem' &&
-                      a.index === txDetails.usedTransparentAccountIndex) ||
-                    (txDetails.txType === 'call' &&
-                      txDetails.usedTransparentAccountIndexes.includes(a.index)),
-                )}
-              />
-            ))}
+            {transparentAccounts
+              .filter((a) => !hideEmpty || !a.balance.isZero())
+              .map((a) => (
+                <ShowTransparentAccount
+                  account={a}
+                  key={a.address}
+                  redeem={() => handleRedeem(a)}
+                  transactions={transparentTransactions.filter(
+                    ({txDetails}) =>
+                      (txDetails.txType === 'redeem' &&
+                        a.index === txDetails.usedTransparentAccountIndex) ||
+                      (txDetails.txType === 'call' &&
+                        txDetails.usedTransparentAccountIndexes.includes(a.index)),
+                  )}
+                />
+              ))}
           </div>
         )}
       </div>

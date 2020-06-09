@@ -67,6 +67,15 @@
         @include themify($themes) {
           background-color: themed('component-background');
         }
+
+        .hide-empty {
+          justify-self: end;
+
+          .hide-empty-label {
+            padding: 0 1em;
+            cursor: pointer;
+          }
+        }
       }
 
       .transparent-account {
