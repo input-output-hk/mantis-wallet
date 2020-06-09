@@ -45,10 +45,10 @@ const UpdatingStatusModal = ({
 }
 
 interface SidebarProps {
-  version: string
+  version: [string, string] // [version, edition]
 }
 
-export const Sidebar = ({version}: SidebarProps): JSX.Element => {
+export const Sidebar = ({version: [version, edition]}: SidebarProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
 
@@ -106,21 +106,23 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
       </div>
       <div className="footer">
         <div>
-          <Link href={LINKS.support} className="footer-link">
+          <Link href={LINKS.support} popoverPlacement="right" className="footer-link support">
             Support
-          </Link>{' '}
-          |{' '}
-          <Link href={LINKS.feedback} className="footer-link">
+          </Link>
+          <Link href={LINKS.feedback} popoverPlacement="right" className="footer-link feedback">
             Feedback
           </Link>
         </div>
         <div>
-          <span className="footer-link" onClick={() => setShowStatusModal(true)}>
+          <span onClick={() => setShowStatusModal(true)} className="footer-link status">
             Status
-          </span>{' '}
-          | {logOut}
+          </span>
+          {logOut}
         </div>
-        <div className="version">{version}</div>
+        <div className="version">
+          {version}
+          <span className="edition"> — {edition}</span>
+        </div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <LogOutModal

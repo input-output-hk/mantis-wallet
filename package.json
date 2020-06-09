@@ -22,7 +22,7 @@
     "test": "cross-env EXTEND_ESLINT=true react-app-rewired test --env=jest-environment-jsdom-sixteen \"^((?!storyshots).)*$\"",
     "test:coverage": "react-app-rewired test --coverage",
     "storyshots": "cross-env EXTEND_ESLINT=true react-app-rewired test \"storyshots.*\"",
-    "eject": "react-scripts eject",
+    "storyshots:update": "yarn storyshots --updateSnapshot && echo -ne '\\007'",
     "lint": "yarn prettier-check && yarn eslint && yarn stylelint",
     "eslint": "eslint src --ext .js,.ts,.tsx",
     "stylelint": "stylelint \"**/*.scss\"",

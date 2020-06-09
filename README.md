@@ -61,7 +61,7 @@ Launches the test runner in interactive watch mode. See the section about [runni
 
 Launches the test runner for the storybook screenshot tests in interactive watch mode.
 
-:information_source: You can use the interactive mode to update the snapshots (`u` command) or you can run `yarn storyshots --updateSnapshot`.
+:information_source: You can use the interactive mode to update the snapshots (`u` command) or you can run `yarn storyshots:update`.
 
 :warning: Since these tests use Storybook, [`yarn storybook`](#yarn-storybook) must be running while you run this command.
 

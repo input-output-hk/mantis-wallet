@@ -27,7 +27,7 @@ export default {
 
 export const sidebar = (): JSX.Element => (
   <RouterState.Provider>
-    <Sidebar version={text('Version', 'v0.11.1 — testnet edition')} />
+    <Sidebar version={[text('Version', 'v0.11.1'), text('Edition', 'testnet edition')]} />
   </RouterState.Provider>
 )
 
