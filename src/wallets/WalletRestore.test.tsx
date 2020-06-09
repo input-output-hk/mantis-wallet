@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, fireEvent} from '@testing-library/react'
+import {render, fireEvent, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {expectCalledOnClick} from '../common/test-helpers'
 import {WalletState, WalletStatus} from '../common/wallet-state'
@@ -38,7 +38,7 @@ test('WalletRestore', async () => {
   const finish = jest.fn()
 
   const initialState = {walletStatus: 'NO_WALLET' as WalletStatus, web3}
-  const {getByLabelText, getByText, getByTestId} = render(
+  const {getByLabelText, getByText, queryByText, getByTestId} = render(
     <BuildJobState.Provider initialState={{web3}}>
       <WalletState.Provider initialState={initialState}>
         <WalletRestore cancel={cancel} finish={finish} />
@@ -47,7 +47,7 @@ test('WalletRestore', async () => {
   )
 
   // Enter wallet name
-  expect(getByText("Name shouldn't be empty")).toBeInTheDocument()
+  expect(queryByText("Name shouldn't be empty")).not.toBeInTheDocument()
   const walletNameInput = getByLabelText('Wallet name')
   fireEvent.change(walletNameInput, {target: {value: walletName}})
 
@@ -72,8 +72,9 @@ test('WalletRestore', async () => {
   // Enter wallet password
   fireEvent.change(passwordInput, {target: {value: password}})
   fireEvent.change(rePasswordInput, {target: {value: '...'}}) // Type wrong second password
-  expect(getByText("Passwords don't match")).toBeInTheDocument()
+  await waitFor(() => expect(getByText("Passwords don't match")).toBeInTheDocument())
   fireEvent.change(rePasswordInput, {target: {value: password}}) // Type correct password
+  await waitForElementToBeRemoved(() => getByText("Passwords don't match"))
 
   // Click Cancel
   await expectCalledOnClick(() => getByText('Cancel'), cancel)

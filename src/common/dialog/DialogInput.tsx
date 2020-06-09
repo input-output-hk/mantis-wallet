@@ -1,7 +1,8 @@
 import React, {Ref, forwardRef} from 'react'
 import classnames from 'classnames'
-import {Input} from 'antd'
+import {Input, Form} from 'antd'
 import Password from 'antd/lib/input/Password'
+import {FormItemProps} from 'antd/lib/form'
 import {
   BorderlessInput,
   BorderlessInputPassword,
@@ -15,12 +16,14 @@ interface DialogInputProps {
   id?: string
   label?: string
   className?: string
+  formItem?: Omit<FormItemProps, 'children'>
 }
 
 const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
   children,
   label,
   id,
+  formItem,
   className,
 }: React.PropsWithChildren<DialogInputProps>) => (
   <div className={classnames('DialogInput', className)}>
@@ -29,7 +32,9 @@ const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
         {label}
       </label>
     )}
-    {children}
+    <Form.Item validateFirst {...formItem}>
+      {children}
+    </Form.Item>
   </div>
 )
 
@@ -37,7 +42,7 @@ const _DialogInputPassword: React.RefForwardingComponent<
   Password,
   BorderlessInputPasswordProps & DialogInputProps
 > = (
-  {label, onChange, ...props}: BorderlessInputPasswordProps & DialogInputProps,
+  {label, onChange, formItem, ...props}: BorderlessInputPasswordProps & DialogInputProps,
   ref: Ref<Password>,
 ) => {
   const {setErrorMessage} = DialogState.useContainer()
@@ -48,7 +53,12 @@ const _DialogInputPassword: React.RefForwardingComponent<
   }
 
   return (
-    <AbstractDialogInput label={label} id={props.id} className="DialogInputPassword">
+    <AbstractDialogInput
+      label={label}
+      id={props.id}
+      className="DialogInputPassword"
+      formItem={formItem}
+    >
       <BorderlessInputPassword
         className="input"
         onChange={onChangeWithDialogReset}
@@ -62,7 +72,7 @@ const _DialogInputPassword: React.RefForwardingComponent<
 export const DialogInputPassword = forwardRef(_DialogInputPassword)
 
 const _DialogInput: React.RefForwardingComponent<Input, BorderlessInputProps & DialogInputProps> = (
-  {label, onChange, ...props}: BorderlessInputProps & DialogInputProps,
+  {label, onChange, formItem, ...props}: BorderlessInputProps & DialogInputProps,
   ref: Ref<Input>,
 ) => {
   const {setErrorMessage} = DialogState.useContainer()
@@ -73,7 +83,7 @@ const _DialogInput: React.RefForwardingComponent<Input, BorderlessInputProps & D
   }
 
   return (
-    <AbstractDialogInput label={label} id={props.id}>
+    <AbstractDialogInput label={label} id={props.id} formItem={formItem}>
       <BorderlessInput className="input" onChange={onChangeWithDialogReset} {...props} ref={ref} />
     </AbstractDialogInput>
   )

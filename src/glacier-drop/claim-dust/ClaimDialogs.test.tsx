@@ -21,6 +21,7 @@ import {Exchange} from './Exchange'
 import {EnterAddress} from './EnterAddress'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
+import {DIALOG_VALIDATION_ERROR} from '../../common/Dialog'
 
 jest.mock('../../config/renderer.ts')
 
@@ -56,20 +57,23 @@ test('Enter External Address', async () => {
   // Find Proceed Button
   const submitButton = getByText('Proceed')
 
-  // Initially we expect an empty address error msg
-  expect(getByText(EMPTY_ADDRESS_MSG)).toBeInTheDocument()
-  expect(submitButton).toBeDisabled()
+  // Submit button can be clicked but it shows a dialog validation error
+  expect(submitButton).toBeEnabled()
+  userEvent.click(submitButton)
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
+
+  // At this point we expect an empty address error msg
+  await waitFor(() => expect(getByText(EMPTY_ADDRESS_MSG)).toBeInTheDocument())
 
   // We expect invalid address msgs in these cases
   fireEvent.change(publicAddressInput, {target: {value: 'invalid address'}})
-  expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument()
+  await waitFor(() => expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument())
 
   // Almost valid public address (checksum fails)
   fireEvent.change(publicAddressInput, {
     target: {value: '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Bb'},
   })
-  expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument()
-  expect(submitButton).toBeDisabled()
+  await waitFor(() => expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument())
 
   // Cancel works any time
   await expectCalledOnClick(() => getByText('Cancel'), onCancel)
@@ -78,7 +82,7 @@ test('Enter External Address', async () => {
   fireEvent.change(publicAddressInput, {
     target: {value: '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Ba'},
   })
-  expect(queryByText(INVALID_ADDRESS_MSG)).not.toBeInTheDocument()
+  await waitFor(() => expect(queryByText(INVALID_ADDRESS_MSG)).not.toBeInTheDocument())
 
   // Now submit is enabled
   expect(submitButton).toBeEnabled()
@@ -105,7 +109,11 @@ test('Exchange', async () => {
 
   // Find Submit Button
   const submitButton = getByText('Go to Unlocking')
-  expect(submitButton).toBeDisabled()
+
+  // Submit button can be clicked but it shows a dialog validation error
+  expect(submitButton).toBeEnabled()
+  userEvent.click(submitButton)
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 
   // External Balance shown
   expect(getByText(`${fooChain.symbol} Balance`)).toBeInTheDocument()
@@ -118,7 +126,6 @@ test('Exchange', async () => {
   // Submit is disabled without confirmation
   const confirmCheckbox = getByLabelText(`Confirm ${fooChain.symbol} Balance OK`)
   userEvent.click(confirmCheckbox)
-  expect(submitButton).toBeDisabled()
 
   // First transparent address is selected by default
   expect(getByText(transparentAddresses[0])).toBeInTheDocument()
@@ -141,10 +148,8 @@ test('Exchange', async () => {
   await waitFor(() => expect(getAllByText(otherAddress).length).toBe(2))
 
   // Click "I understand" and finally enable submisson
-  expect(submitButton).toBeDisabled()
   const iUnderstandCheckbox = getByLabelText('I understand')
   userEvent.click(iUnderstandCheckbox)
-  expect(submitButton).toBeEnabled()
 })
 
 test('Select Claim Method', async () => {
@@ -216,7 +221,7 @@ test('Generated Message', async () => {
   await expectCalledOnClick(() => getByText('Confirm'), onNext)
 })
 
-test('Claim with Private Key', () => {
+test('Claim with Private Key', async () => {
   const onNext = jest.fn()
   const onCancel = jest.fn()
 
@@ -257,9 +262,12 @@ test('Claim with Private Key', () => {
     `${fooChain.symbol} Private Key from your ${fooChain.symbol} Wallet`,
   )
 
+  // Submit button can be clicked but it shows a dialog validation error
+  userEvent.click(submitButton)
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
+
   // Message is shown that the key must be set
   expect(getByText(PRIVATE_KEY_MUST_BE_SET_MSG)).toBeInTheDocument()
-  expect(submitButton).toBeDisabled()
 
   // Enter invalid private key
   fireEvent.change(privateKeyInput, {
@@ -267,8 +275,7 @@ test('Claim with Private Key', () => {
   })
 
   // Message is shown that the key is invalid
-  expect(getByText(PRIVATE_KEY_INVALID_MSG)).toBeInTheDocument()
-  expect(submitButton).toBeDisabled()
+  await waitFor(() => expect(getByText(PRIVATE_KEY_INVALID_MSG)).toBeInTheDocument())
 
   // Enter valid private key
   fireEvent.change(privateKeyInput, {
@@ -276,11 +283,8 @@ test('Claim with Private Key', () => {
   })
 
   // Error messages are not shown
-  expect(queryByText(PRIVATE_KEY_MUST_BE_SET_MSG)).not.toBeInTheDocument()
-  expect(queryByText(PRIVATE_KEY_INVALID_MSG)).not.toBeInTheDocument()
-
-  // Doesn't let the user submit without accepting the warning
-  expect(submitButton).toBeDisabled()
+  await waitFor(() => expect(queryByText(PRIVATE_KEY_MUST_BE_SET_MSG)).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByText(PRIVATE_KEY_INVALID_MSG)).not.toBeInTheDocument())
 
   // Accept warning
   const shouldKeepOpenCheckbox = getByLabelText(
@@ -288,6 +292,7 @@ test('Claim with Private Key', () => {
   )
   userEvent.click(shouldKeepOpenCheckbox)
 
-  // Finally, the submit button is enabled
-  expect(submitButton).toBeEnabled()
+  // After clicking Submit button no dialog validation error should show up
+  userEvent.click(submitButton)
+  await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).not.toBeInTheDocument())
 })

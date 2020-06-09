@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {render, RenderResult, act} from '@testing-library/react'
+import {render, RenderResult, waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
@@ -85,7 +85,7 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
   // Adding Burn Tx Manually
   const addBurnTxLink = getByText('Manual Burn')
   await act(async () => userEvent.click(addBurnTxLink))
-  expect(getByText('Burn Transaction Id')).toBeInTheDocument()
+  await waitFor(() => expect(getByText('Burn Transaction Id')).toBeInTheDocument())
 })
 
 test('Burn Activity list shows correct errors and burn statuses', async () => {

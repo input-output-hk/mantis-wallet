@@ -1,12 +1,13 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import {render, waitFor} from '@testing-library/react'
+import {render, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {expectCalledOnClick} from '../common/test-helpers'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
+import {DIALOG_VALIDATION_ERROR} from '../common/Dialog'
 
 jest.mock('../config/renderer.ts')
 
@@ -31,12 +32,12 @@ test('WalletCreate `Define` step', async () => {
   const cancel = jest.fn()
   const next = jest.fn()
 
-  const {getByLabelText, getByText, getByTestId} = render(
+  const {getByLabelText, getByText, queryByText, getByTestId} = render(
     <WalletCreateDefineStep cancel={cancel} next={next} />,
   )
 
   // Enter wallet name
-  expect(getByText("Name shouldn't be empty")).toBeInTheDocument()
+  expect(queryByText("Name shouldn't be empty")).not.toBeInTheDocument()
   const walletNameInput = getByLabelText('Wallet name')
   userEvent.type(walletNameInput, walletName)
 
@@ -48,8 +49,9 @@ test('WalletCreate `Define` step', async () => {
   // Enter wallet password
   userEvent.type(passwordInput, password)
   userEvent.type(rePasswordInput, password.slice(0, 1)) // Type first character
-  expect(getByText("Passwords don't match")).toBeInTheDocument()
+  await waitFor(() => expect(getByText("Passwords don't match")).toBeInTheDocument())
   userEvent.type(rePasswordInput, password.slice(1)) // Type rest of the password
+  await waitForElementToBeRemoved(() => getByText("Passwords don't match"))
 
   // Click Next
   const nextButton = getByTestId('right-button')
@@ -99,10 +101,11 @@ test('WalletCreate `Display Recovery` step', async () => {
 
   // Click Next
   const nextButton = getByText('Next →')
+  // Next button should be enabled
+  expect(nextButton).toBeEnabled()
+  // Clicking it should stop with an error
   userEvent.click(nextButton)
-  // Next button should be disabled
-  expect(nextButton).toBeDisabled()
-  expect(next).not.toBeCalled()
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 
   // Confirm
   const writtenDownCheckbox = getByLabelText('Yes, I have written it down.')

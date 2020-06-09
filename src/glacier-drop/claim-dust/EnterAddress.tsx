@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {validateEthAddress} from '../../common/util'
+import {validateEthAddress, toAntValidator} from '../../common/util'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -19,9 +19,8 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
 
   const modalLocker = ModalLocker.useContainer()
 
-  const addressClaimedError = claimedAddresses.includes(address) ? 'Already claimed' : ''
-  const addressError = validateEthAddress(address) || addressClaimedError
-  const isDisabled = addressError !== ''
+  const isAlreadyClaimed = (address?: string): string =>
+    address && claimedAddresses.includes(address) ? 'Already claimed' : ''
 
   return (
     <Dialog
@@ -33,7 +32,6 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
           const balanceWithProof = await getEtcSnapshotBalanceWithProof(address)
           onNext(address, balanceWithProof)
         },
-        disabled: isDisabled,
       }}
       leftButtonProps={{
         onClick: onCancel,
@@ -48,7 +46,10 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
         onChange={(e): void => {
           setAddress(e.target.value)
         }}
-        errorMessage={addressError}
+        formItem={{
+          name: 'public-address',
+          rules: [toAntValidator(isAlreadyClaimed), toAntValidator(validateEthAddress)],
+        }}
         autoFocus
       />
     </Dialog>

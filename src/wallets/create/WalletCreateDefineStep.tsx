@@ -16,7 +16,6 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
 }: WalletCreateDefineStepProps) => {
   const [walletName, setWalletName] = useState('')
   const [passphrase, setPassphrase] = useState('')
-  const [isPassphraseValid, setPassphraseValid] = useState(false)
 
   return (
     <Dialog
@@ -24,7 +23,6 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
         onClick: async (): Promise<void> => next(walletName, passphrase),
-        disabled: walletName.length === 0 || !isPassphraseValid,
       }}
       footer={errors}
     >
@@ -33,9 +31,12 @@ export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineS
         label="Wallet name"
         id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
-        errorMessage={walletName.length === 0 ? "Name shouldn't be empty" : ''}
+        formItem={{
+          name: 'wallet-name',
+          rules: [{required: true, message: "Name shouldn't be empty"}],
+        }}
       />
-      <DialogPassword onChange={setPassphrase} setValid={setPassphraseValid} />
+      <DialogPassword onChange={setPassphrase} />
     </Dialog>
   )
 }

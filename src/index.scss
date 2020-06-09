@@ -232,4 +232,8 @@ div#root {
       padding-left: $sidebar-collapsed-width;
     }
   }
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
 }

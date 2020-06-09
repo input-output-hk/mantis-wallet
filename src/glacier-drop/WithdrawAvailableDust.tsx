@@ -50,8 +50,7 @@ const _WithdrawAvailableDust = ({
   const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual(0)])
   const gasLimitError = validateAmount(gasLimit, [isGreaterOrEqual(65536)])
 
-  const disabled =
-    gasPriceError !== '' || gasLimitError !== '' || estimatedWithdrawableDust.isEqualTo(0)
+  const disabled = gasPriceError !== '' || gasLimitError !== ''
 
   return (
     <Dialog

@@ -1,17 +1,23 @@
-import {isSome, isNone} from 'fp-ts/lib/Option'
-import {assert} from 'chai'
+import chai, {assert} from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import {hasAllNeededCharacters} from './DialogPassword'
 
-it('checks password validity correctly', () => {
-  assert.isTrue(isSome(hasAllNeededCharacters('')), 'Empty string is invalid')
-  assert.isTrue(isSome(hasAllNeededCharacters('abcdefghIJKLMNOP')), 'String is missing numbers')
-  assert.isTrue(
-    isSome(hasAllNeededCharacters('0123456789QRSTUVWXYZ')),
+chai.use(chaiAsPromised)
+
+it('checks password validity correctly', async (): Promise<void> => {
+  const validate = (v: string): Promise<void> => hasAllNeededCharacters.validator({}, v)
+
+  await assert.isRejected(validate(''), /.*/, 'Empty string is invalid')
+  await assert.isRejected(validate('abcdefghIJKLMNOP'), /.*/, 'String is missing numbers')
+  await assert.isRejected(
+    validate('0123456789QRSTUVWXYZ'),
+    /.*/,
     'String is missing lowercase characters',
   )
-  assert.isTrue(
-    isSome(hasAllNeededCharacters('0123456789qrstuvwxyz')),
+  await assert.isRejected(
+    validate('0123456789qrstuvwxyz'),
+    /.*/,
     'String is missing uppercase characters',
   )
-  assert.isTrue(isNone(hasAllNeededCharacters('0aA')), 'String should be valid')
+  await assert.isFulfilled(validate('0aA'), 'String should be valid')
 })

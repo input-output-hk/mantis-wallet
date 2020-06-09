@@ -53,7 +53,6 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   feeEstimates,
   defaultValue = '0',
   errorMessage,
-  forceInvalid,
   hideCustom = false,
   isPending = false,
 }: DialogFeeProps & InlineErrorProps) => {
@@ -102,7 +101,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   return (
     <div className={classnames('DialogFee', {hideCustom}, className)}>
       {label && <label className="label">{label}</label>}
-      <InlineError errorMessage={errorMessage} forceInvalid={forceInvalid}>
+      <InlineError errorMessage={errorMessage}>
         <div className={classnames('options', {'custom-mode': isCustom})}>
           {!hideCustom && (
             <>
