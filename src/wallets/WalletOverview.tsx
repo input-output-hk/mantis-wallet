@@ -86,7 +86,6 @@ export const WalletOverview = ({
           <Popover content={transparentTooltip}>
             <div>
               <div className="box-text">
-                <div className="box-info">i</div>
                 <span className="box-icon">
                   &nbsp;
                   <SVG src={transparentIcon} className="svg" />

@@ -92,25 +92,6 @@ $balance-min-width: 285px;
       margin-right: 0.5em;
     }
 
-    .box-info {
-      width: 20px;
-      height: 20px;
-      float: right;
-      border-radius: 50%;
-      font-family: Georgia, serif;
-      font-size: 12px;
-      font-style: italic;
-      font-weight: bold;
-      line-height: 20px;
-      text-align: center;
-      text-transform: lowercase;
-
-      @include themify($themes) {
-        background-color: themed('tertiary-background');
-        color: #fff;
-      }
-    }
-
     .box-amount {
       position: relative;
       z-index: 10;
