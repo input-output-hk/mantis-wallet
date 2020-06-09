@@ -35,6 +35,8 @@
   }
 
   .accounts {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
     margin-top: 1em;
 
     .no-accounts-text {
@@ -48,19 +50,19 @@
     }
 
     .list-accounts {
+      display: contents;
+
       .header {
-        display: grid;
-        position: sticky;
-        z-index: 100;
-        top: 0;
-        grid-template-columns: 20% 20% 20% 40%;
-        margin-bottom: 1em;
+        display: contents;
         font-size: 13px;
         font-weight: bold;
         letter-spacing: 1.95px;
-        line-height: 40px;
         text-align: left;
         text-transform: uppercase;
+
+        & > * {
+          margin-top: 1.5em;
+        }
 
         @include themify($themes) {
           background-color: themed('component-background');
@@ -68,16 +70,10 @@
       }
 
       .transparent-account {
-        margin-bottom: 3em;
-        padding: 1em 0;
-
-        @include themify($themes) {
-          background-color: themed('normal-color');
-        }
+        display: contents;
 
         .info {
-          display: grid;
-          grid-template-columns: 20% 20% 20% 40%;
+          display: contents;
           min-height: 73px;
           font-size: 13px;
           letter-spacing: 0.3px;
@@ -85,7 +81,12 @@
           vertical-align: middle;
 
           & > * {
-            margin: auto 0;
+            margin: 2em 0 0;
+            padding: 1.5em 0;
+
+            @include themify($themes) {
+              background-color: themed('normal-color');
+            }
           }
 
           & > :first-child {
@@ -124,14 +125,20 @@
         }
 
         .transactions-container {
-          margin: 1em 2em;
+          grid-column: 1 / -1;
           padding: 0 1em 1em;
+
           @include themify($themes) {
-            background-color: themed('secondary-background');
+            background-color: themed('normal-color');
           }
 
           .transactions {
             @extend %transactions-grid;
+            padding: 0 1em 1em;
+
+            @include themify($themes) {
+              background-color: themed('secondary-background');
+            }
           }
         }
       }
