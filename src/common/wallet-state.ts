@@ -292,11 +292,20 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       wallet.listTransparentAddresses,
     )
 
+    const getLastKnownBalance = (index: number): BigNumber =>
+      transparentAccounts[transparentAccounts.length - 1 - index]?.balance || new BigNumber(0)
+
     return Promise.all(
       // eslint-disable-next-line
       _.reverse(transparentAddresses).map(
         async (address: TransparentAddress): Promise<TransparentAccount> => {
-          const balance = await wallet.getTransparentWalletBalance(address.address)
+          const balance = await wallet
+            .getTransparentWalletBalance(address.address)
+            .catch((e) =>
+              e.message === WALLET_IS_OFFLINE
+                ? getLastKnownBalance(address.index)
+                : Promise.reject(e),
+            )
           const midnightTokens = await Promise.all(
             CHAINS_TO_USE_IN_POB.map(({id}) =>
               erc20[id]
@@ -342,14 +351,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
         setTransparentAccounts(some(transparentAccounts))
         setTransparentBalance(some(bigSum(transparentAccounts.map(({balance}) => balance))))
       })
-      .catch((e: Error) => {
-        if (e.message === WALLET_IS_OFFLINE) {
-          setTransparentBalance(some(new BigNumber(0)))
-          setTransparentAccounts(some([]))
-          return
-        }
-        handleError(e)
-      })
+      .catch(handleError)
 
     wallet
       .listAccounts()
