@@ -209,6 +209,7 @@ export const TransactionHistory = ({
             data-testid="send-button"
             type="primary"
             className="action"
+            disabled={availableBalance.isZero()}
             onClick={(): void => setShowSendModal(true)}
           >
             Send

@@ -402,8 +402,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       getPublicTransactionParams(amount, gasPrice, recipient),
       false,
     )
-    await buildJobState.submitJob(jobHash)
-    load()
+    await buildJobState.submitJob(jobHash, load)
     return jobHash
   }
 
