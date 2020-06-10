@@ -1,12 +1,12 @@
 import React from 'react'
 import {makeDecorator, StoryContext, StoryGetter, StoryWrapper} from '@storybook/addons'
-import {MiningState} from '../common/mining-state'
+import {BackendState} from '../common/backend-state'
 import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-const WithMiningState: StoryWrapper = (
+const WithBackendState: StoryWrapper = (
   storyFn: StoryGetter,
   context: StoryContext,
   {parameters},
@@ -14,11 +14,11 @@ const WithMiningState: StoryWrapper = (
   const content = storyFn(context)
   const initialState = {web3, ...parameters}
 
-  return <MiningState.Provider initialState={initialState}>{content}</MiningState.Provider>
+  return <BackendState.Provider initialState={initialState}>{content}</BackendState.Provider>
 }
 
-export const withMiningState = makeDecorator({
-  name: 'withMiningState',
-  parameterName: 'withMiningState',
-  wrapper: WithMiningState,
+export const withBackendState = makeDecorator({
+  name: 'withBackendState',
+  parameterName: 'withBackendState',
+  wrapper: WithBackendState,
 })

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {makeWeb3Worker} from './web3'
 import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
-import {MiningState} from './common/mining-state'
+import {BackendState} from './common/backend-state'
 import {ThemeState} from './theme-state'
 import {ProofOfBurnState} from './pob/pob-state'
 import {GlacierState} from './glacier-drop/glacier-state'
@@ -39,7 +39,7 @@ const App: React.FC = () => {
 
   return (
     <ThemeState.Provider initialState={store}>
-      <MiningState.Provider initialState={{web3}}>
+      <BackendState.Provider initialState={{web3}}>
         {isBackendRunning ? (
           <div className="App">
             <RouterState.Provider>
@@ -64,7 +64,7 @@ const App: React.FC = () => {
         ) : (
           <SplashScreen />
         )}
-      </MiningState.Provider>
+      </BackendState.Provider>
     </ThemeState.Provider>
   )
 }

@@ -5,25 +5,25 @@ import {none, some, Option} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {makeWeb3Worker, Web3API} from '../web3'
 
-export interface MiningState {
+export interface BackendState {
   refresh(): Promise<void>
   hashrate: Option<number>
   isMining: Option<boolean>
 }
 
-interface MiningStateParams {
+interface BackendStateParams {
   web3: Remote<Web3API>
   hashrate: Option<number>
   isMining: Option<boolean>
 }
 
-const DEFAULT_STATE: MiningStateParams = {
+const DEFAULT_STATE: BackendStateParams = {
   web3: makeWeb3Worker(),
   hashrate: none,
   isMining: none,
 }
 
-function useMiningState(initialState?: Partial<MiningStateParams>): MiningState {
+function useBackendState(initialState?: Partial<BackendStateParams>): BackendState {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const {eth} = _initialState.web3
 
@@ -54,4 +54,4 @@ function useMiningState(initialState?: Partial<MiningStateParams>): MiningState 
   }
 }
 
-export const MiningState = createContainer(useMiningState)
+export const BackendState = createContainer(useBackendState)
