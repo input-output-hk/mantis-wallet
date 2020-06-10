@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {message} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {isNone, getOrElse} from 'fp-ts/lib/Option'
+import {isNone, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {DisplayChain} from '../pob/chains'
 import {ETC_CHAIN, MINING_STATUS_CHECK_INTERVAL, DEFAULT_GLACIER_CONSTANTS} from './glacier-config'
 import {
@@ -129,6 +129,8 @@ const _GlacierDropOverview = ({
     addClaim,
     getMiningState,
     constants,
+    constantsError,
+    refreshConstants,
     updateTxStatuses,
     updateUnfreezingClaimData,
     updateDustAmounts,
@@ -173,7 +175,21 @@ const _GlacierDropOverview = ({
 
   useEffect(() => {
     update().catch(console.error)
+
+    if (isSome(constantsError)) {
+      refreshConstants()
+    }
   }, [currentBlock])
+
+  // Show message on problem with constant loading
+
+  if (isSome(constantsError)) {
+    return (
+      <GlacierDropWrapper>
+        <div className="error">{constantsError.value}</div>
+      </GlacierDropWrapper>
+    )
+  }
 
   // Wait for constants to be loaded
 

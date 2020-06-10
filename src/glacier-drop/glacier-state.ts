@@ -116,6 +116,8 @@ export type TransactionStatus = TransactionPending | TransactionFailed | Transac
 export interface GlacierData {
   // Constants
   constants: Option<GlacierConstants>
+  constantsError: Option<string>
+  refreshConstants(): Promise<void>
 
   // Claims
   claims: Claim[]
@@ -199,6 +201,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const [claims, setClaims] = usePersistedState(store, ['glacierDrop', 'claims'])
   const [constants, setConstants] = useState<Option<GlacierConstants>>(none)
+  const [constantsError, setConstantsError] = useState<Option<string>>(none)
 
   const [totalUnlockedEtherCache, setTotalUnlockedEtherCache] = useState<Option<BigNumber>>(none)
 
@@ -250,10 +253,21 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     }
   }
 
-  useEffect((): void => {
+  const refreshConstants = async (): Promise<void> => {
+    console.info('Attempting to load Glacier Drop constants')
     loadConstants()
-      .then((c) => setConstants(some(c)))
-      .catch((e) => console.error(e))
+      .then((c) => {
+        setConstants(some(c))
+        setConstantsError(none)
+      })
+      .catch((e) => {
+        console.error(e.message)
+        setConstantsError(some(e.message))
+      })
+  }
+
+  useEffect((): void => {
+    refreshConstants()
   }, [])
 
   //
@@ -612,6 +626,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   return {
     constants,
+    constantsError,
+    refreshConstants,
     claims: claimList,
     claimedAddresses,
     addClaim,
