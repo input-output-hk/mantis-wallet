@@ -33,13 +33,17 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
   const available = UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(600))
   const {getByText} = render(
     <BurnActions
-      burnBalances={[
+      transparentAccounts={[
         {
-          chain: ETH_TESTNET,
-          pending,
-          available,
+          address: 'first-transparent-address',
+          index: 0,
+          balance: new BigNumber(0),
+          midnightTokens: {
+            ETH_TESTNET: available,
+          },
         },
       ]}
+      pendingBalances={{ETH_TESTNET: pending}}
       provers={[
         {
           name: 'Test Prover',

@@ -2,8 +2,8 @@
 import Web3 from 'web3'
 import * as Comlink from 'comlink'
 import _ from 'lodash'
-import erc20json from './assets/contracts/ERC20.json'
-import {CHAINS} from './pob/chains.ts'
+import erc20abi from './assets/contracts/ERC20.json'
+import {MIDNIGHT_TOKEN_CONTRACTS} from './pob/pob-config'
 
 const web3 = new Web3()
 
@@ -13,9 +13,9 @@ onmessage = (message) => {
   }
 }
 
-const erc20ContractFactory = web3.eth.contract(erc20json.abi)
-const erc20Contracts = _.values(CHAINS).map(({id, contractAddress}) => [
-  id,
+const erc20ContractFactory = web3.eth.contract(erc20abi)
+const erc20Contracts = _.toPairs(MIDNIGHT_TOKEN_CONTRACTS).map(([chainId, contractAddress]) => [
+  chainId,
   erc20ContractFactory.at(contractAddress),
 ])
 

@@ -14,6 +14,7 @@ import {validateAmount, hasAtMostDecimalPlaces, isGreaterOrEqual} from '../../co
 import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import {UNITS} from '../../common/units'
+import {DEFAULT_PROVER_FEE} from '../pob-config'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
@@ -23,8 +24,6 @@ interface BurnCoinsGenerateAddressProps {
   cancel: () => void
   generateBurnAddress: (prover: Prover, midnightAddress: string, fee: number) => Promise<void>
 }
-
-const DEFAULT_FEE = 0.0001
 
 export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerateAddressProps> = ({
   chain,
@@ -36,7 +35,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const compatibleProvers = provers.filter((p) => p.rewards[chain.id] !== undefined)
   const [prover, setProver] = useState(compatibleProvers[0])
   const minFee = UNITS[chain.unitType].fromBasic(new BigNumber(prover?.rewards[chain.id] || 0))
-  const defaultFee = minFee.isLessThan(DEFAULT_FEE) ? DEFAULT_FEE : minFee
+  const defaultFee = minFee.isLessThan(DEFAULT_PROVER_FEE) ? DEFAULT_PROVER_FEE : minFee
   const minValue = UNITS[chain.unitType].fromBasic(new BigNumber(1))
   const [fee, setFee] = useState(defaultFee.toString(10))
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
