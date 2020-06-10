@@ -111,6 +111,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
 }: TransparentAccountsProps) => {
   const [showRedeem, setShowRedeem] = useState(false)
   const [hideEmpty, setHideEmpty] = useState(false)
+  const [addressGenerationInProgress, setAddressGenerationInProgress] = useState(false)
   const [transparentAccount, setTransparentAccount] = useState<TransparentAccount | null>(null)
 
   const handleRedeem = (transparentAccount: TransparentAccount): void => {
@@ -131,13 +132,17 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
           <Button
             type="primary"
             className="action"
+            loading={addressGenerationInProgress}
             onClick={async (): Promise<void> => {
+              setAddressGenerationInProgress(true)
               try {
                 await generateAddress()
                 message.success('New transparent address was generated')
               } catch (e) {
                 console.error(e)
                 message.error(<div style={{width: '500px', float: 'right'}}>{e.message}</div>, 10)
+              } finally {
+                setAddressGenerationInProgress(false)
               }
             }}
           >
