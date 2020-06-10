@@ -39,14 +39,14 @@ const App: React.FC = () => {
 
   return (
     <ThemeState.Provider initialState={store}>
-      {isBackendRunning ? (
-        <div className="App">
-          <RouterState.Provider>
-            <BuildJobState.Provider initialState={{web3}}>
-              <WalletState.Provider>
-                <ProofOfBurnState.Provider initialState={{store, web3}}>
-                  <GlacierState.Provider initialState={{store}}>
-                    <MiningState.Provider initialState={{web3}}>
+      <MiningState.Provider initialState={{web3}}>
+        {isBackendRunning ? (
+          <div className="App">
+            <RouterState.Provider>
+              <BuildJobState.Provider initialState={{web3}}>
+                <WalletState.Provider>
+                  <ProofOfBurnState.Provider initialState={{store, web3}}>
+                    <GlacierState.Provider initialState={{store}}>
                       <header>
                         <Sidebar version={[LUNA_VERSION, LUNA_EDITION]} />
                       </header>
@@ -54,17 +54,17 @@ const App: React.FC = () => {
                         <Router />
                       </main>
                       <JobStatus />
-                    </MiningState.Provider>
-                  </GlacierState.Provider>
-                </ProofOfBurnState.Provider>
-              </WalletState.Provider>
-            </BuildJobState.Provider>
-          </RouterState.Provider>
-          <RemoteSettingsManager />
-        </div>
-      ) : (
-        <SplashScreen />
-      )}
+                    </GlacierState.Provider>
+                  </ProofOfBurnState.Provider>
+                </WalletState.Provider>
+              </BuildJobState.Provider>
+            </RouterState.Provider>
+            <RemoteSettingsManager />
+          </div>
+        ) : (
+          <SplashScreen />
+        )}
+      </MiningState.Provider>
     </ThemeState.Provider>
   )
 }
