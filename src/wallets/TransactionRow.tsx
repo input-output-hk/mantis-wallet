@@ -157,17 +157,34 @@ export const TxAssetCell = ({}: TransactionCellProps): JSX.Element => {
   )
 }
 
-const TxDetailsTypeSpecific = ({transaction: {txDetails}}: TransactionCellProps): JSX.Element => {
-  const typeLabel = `${_.capitalize(txDetails.txType)} Transaction`
-  switch (txDetails.txType) {
-    case 'transfer': {
-      return <div className="type-label">{typeLabel}</div>
-    }
-    case 'coinbase': {
-      return <div className="type-label">{typeLabel}</div>
-    }
+const DESCRIPTION_PER_TX_TYPE: Record<Transaction['txDetails']['txType'], string> = {
+  redeem: 'A transfer transaction from a transparent address to a confidential address',
+  call: 'A smart contract call transaction',
+  transfer: 'A fully confidential transfer of funds',
+  coinbase: 'A transfer of mining rewards',
+}
+
+const TxTypeLabel = ({
+  transaction: {
+    txDetails: {txType},
+  },
+}: TransactionCellProps): JSX.Element => {
+  const typeLabel = `${_.capitalize(txType)} Transaction`
+  return (
+    <div className="type-label">
+      <Popover content={DESCRIPTION_PER_TX_TYPE[txType]} placement="right">
+        <span>{typeLabel}</span>
+      </Popover>
+    </div>
+  )
+}
+
+const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element => {
+  switch (transaction.txDetails.txType) {
+    case 'transfer':
+    case 'coinbase':
     case 'redeem': {
-      return <div className="type-label">{typeLabel}</div>
+      return <TxTypeLabel transaction={transaction} />
     }
     case 'call': {
       const {
@@ -175,10 +192,10 @@ const TxDetailsTypeSpecific = ({transaction: {txDetails}}: TransactionCellProps)
         receivingAddress,
         gasLimit,
         gasPrice,
-      } = txDetails.transparentTransaction
+      } = transaction.txDetails.transparentTransaction
       return (
         <div>
-          <div className="type-label">{typeLabel}</div>
+          <TxTypeLabel transaction={transaction} />
           <div className="call-details two-col-table">
             <div>From:</div>
             <div className="monospace">{sendingAddress}</div>
