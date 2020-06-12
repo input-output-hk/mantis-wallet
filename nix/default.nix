@@ -14,11 +14,8 @@ let
   nodejs = pkgs.nodejs-12_x;
   yarn = pkgs.yarn.override { inherit nodejs; };
 
-  midnight = (import sources.midnight {
-    src = sources.midnight;
-    inherit system;
-  }).override { impure = system == "x86_64-darwin"; };
-
+  midnight =
+    (import (sources.midnight + "/release.nix") { }).midnight-embedded-jvm;
 in {
   inherit pkgs nodejs yarn midnight;
 
@@ -34,14 +31,31 @@ in {
     cp ${electron.${system}} $out/$(stripHash ${electron.${system}})
   '';
 
-  midnight-dist = let
-  in pkgs.runCommand "midnight-dist" { } ''
-    mkdir -p $out/midnight-dist
-    cd $_
-    cp --recursive --dereference ${midnight} midnight
-    ln -s midnight midnight-node
-    ln -s midnight midnight-wallet
-  '';
+  midnight-dist = {
+    x86_64-linux = pkgs.runCommand "midnight-dist-x86_64-linux" { } ''
+      mkdir -p $out/midnight-dist
+      cd $_
+      cp --recursive --dereference ${midnight.x86_64-linux} midnight
+      ln -s midnight midnight-node
+      ln -s midnight midnight-wallet
+    '';
+
+    x86_64-darwin = pkgs.runCommand "midnight-dist-x86_64-darwin" { } ''
+      mkdir -p $out/midnight-dist
+      cd $_
+      cp --recursive --dereference ${midnight.x86_64-darwin} midnight
+      ln -s midnight midnight-node
+      ln -s midnight midnight-wallet
+    '';
+
+    x86_64-win = pkgs.runCommand "midnight-darwin-x86_64-win" { } ''
+      mkdir -p $out/midnight-dist
+      cd $_
+      cp --recursive --dereference ${midnight.x86_64-win} midnight
+      ln -s midnight midnight-node
+      ln -s midnight midnight-wallet
+    '';
+  };
 
   nodeHeaders = pkgs.fetchurl {
     url =

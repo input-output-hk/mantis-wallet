@@ -26,15 +26,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "midnight": {
-        "branch": "develop",
+        "branch": "embed-jvm",
         "description": null,
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "midnight",
-        "rev": "b4cd1edfded1cacdc7108fc3acd3505a6168b7b4",
-        "sha256": "0pwbzj68nalmy2njrd05d69v8v0w73m2z920xv1rhnfl43w8c88l",
+        "rev": "6b60130b5724b49fb7f64e1ea732e4cc55f41ce3",
+        "sha256": "0viqs0v1b5izb5viy7r1p9hgg1d5z66nxz49brjlcz0rk8sbkhk3",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/midnight/archive/b4cd1edfded1cacdc7108fc3acd3505a6168b7b4.tar.gz",
+        "url": "https://github.com/input-output-hk/midnight/archive/6b60130b5724b49fb7f64e1ea732e4cc55f41ce3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
@@ -59,6 +59,18 @@
         "sha256": "1fpqyzi80h2mhl9ngdlb6bp3skzj2g7wxk2wdgqy6yiay4a0mjbv",
         "type": "tarball",
         "url": "https://github.com/ariutta/nix-bundle-macos/archive/7f75a7ec233f9ad3a5c1e0831d819ca65d59cd21.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixkite": {
+        "branch": "master",
+        "description": "Nixkite is a Buildkite pipeline generation tool using the NixOS module system",
+        "homepage": null,
+        "owner": "johnae",
+        "repo": "nixkite",
+        "rev": "17a89b5f8e6c7c299af37504c28a8ec04dbc223f",
+        "sha256": "0jw51knbywzv9h38y5ivmlg77a5f3bpj8w14xag6rijck6mladjx",
+        "type": "tarball",
+        "url": "https://github.com/johnae/nixkite/archive/17a89b5f8e6c7c299af37504c28a8ec04dbc223f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {

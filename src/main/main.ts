@@ -15,13 +15,8 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {LunaManagedConfigPaths} from '../shared/ipc-types'
-import {ClientName, SettingsPerClient, ProcessConfig} from '../config/type'
-import {
-  MidnightProcess,
-  processExecutablePath,
-  SpawnedMidnightProcess,
-  isWin,
-} from './MidnightProcess'
+import {ClientName, SettingsPerClient} from '../config/type'
+import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
 import {
   configToParams,
   registerCertificateValidationHandler,
@@ -32,8 +27,8 @@ import {flatTap, prop, wait} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
-import {ipcListen, getTitle} from './util'
-import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
+import {getTitle, ipcListen} from './util'
+import {inspectLineForDAGStatus, setFetchParamsStatus, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 
 const IS_LINUX = os.type() == 'Linux'
@@ -229,23 +224,7 @@ if (!config.runClients) {
 // Handle client child processes with TLS
 //
 if (config.runClients) {
-  async function checkJavaVersion(walletBackendConfig: ProcessConfig): Promise<void> {
-    const scriptName = `java_check.${isWin ? 'bat' : 'sh'}`
-    const scriptPath = path.resolve(walletBackendConfig.packageDirectory, 'bin', scriptName)
-    try {
-      const {stdout, stderr} = await promisify(exec)(scriptPath, {
-        cwd: walletBackendConfig.packageDirectory,
-      })
-      console.info(stdout)
-      console.error(stderr)
-    } catch (e) {
-      dialog.showErrorBox('Java version problem', e.stdout)
-      app.exit(1)
-    }
-  }
-
-  const initializationPromise = checkJavaVersion(config.clientConfigs.wallet)
-    .then(checkDatadirCompatibility)
+  const initializationPromise = checkDatadirCompatibility()
     .then(openLuna)
     .then(() =>
       setupOwnTLS(processExecutablePath(config.clientConfigs.node)).then((tlsData) => ({
