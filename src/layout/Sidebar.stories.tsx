@@ -11,10 +11,12 @@ import {Sidebar} from './Sidebar'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 import {asyncAction} from '../storybook-util/custom-knobs'
 import {toFullScreen} from '../storybook-util/full-screen-decorator'
+import {withBackendState} from '../storybook-util/backend-state-decorator'
 
 export default {
   title: 'Sidebar',
   decorators: [
+    withBackendState,
     withWalletState,
     withTheme,
     withPobState,
@@ -27,7 +29,7 @@ export default {
 
 export const sidebar = (): JSX.Element => (
   <RouterState.Provider>
-    <Sidebar version={[text('Version', 'v0.11.1'), text('Edition', 'testnet edition')]} />
+    <Sidebar version={text('Version', 'v0.11.1')} />
   </RouterState.Provider>
 )
 

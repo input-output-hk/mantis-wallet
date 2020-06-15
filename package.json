@@ -83,6 +83,7 @@
     "@types/vfile-message": "^2.0.0",
     "antd": "^4.3.0",
     "antd-scss-theme-plugin": "^1.0.8",
+    "async-validator": "^3.3.0",
     "babel-plugin-import": "^1.13.0",
     "bech32-buffer": "^0.1.2",
     "bignumber.js": "^9.0.0",
@@ -117,7 +118,7 @@
     "rxjs": "^6.5.4",
     "typescript": "3.8.3",
     "unstated-next": "^1.1.0",
-    "web3": "git+ssh://git@github.com/input-output-hk/midnight-web3.git#215d89d4ef23169da35419c0bfd937874322383e"
+    "web3": "git+ssh://git@github.com/input-output-hk/midnight-web3.git#2f95bd7289d937c0da68af3c48f01dbe62a6283e"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",

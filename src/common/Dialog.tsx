@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import classnames from 'classnames'
 import _ from 'lodash'
+import Schema from 'async-validator'
 import {Button, Form} from 'antd'
 import {ButtonProps} from 'antd/lib/button'
 import {FormInstance} from 'antd/lib/form'
@@ -9,6 +10,11 @@ import {useIsMounted} from './hook-utils'
 import {DialogError} from './dialog/DialogError'
 import {waitUntil} from '../shared/utils'
 import './Dialog.scss'
+
+// https://github.com/yiminghe/async-validator/#how-to-avoid-warning
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+Schema.warning = () => undefined // eslint-disable-line fp/no-mutation
 
 export const DIALOG_VALIDATION_ERROR =
   'Some fields require additional action before you can continue.'
@@ -81,7 +87,9 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
       try {
         if (!skipValidation) {
           await waitUntil(() =>
-            _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
+            Promise.resolve(
+              _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
+            ),
           )
           await dialogForm.validateFields().catch((e) => {
             console.error(e)

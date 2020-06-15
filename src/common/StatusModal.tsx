@@ -3,11 +3,14 @@ import {Modal} from 'antd'
 import filesize from 'filesize'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
+import {isNone} from 'fp-ts/lib/Option'
 import {Config, LunaManagedConfig} from '../config/type'
 import {SynchronizationStatus} from './wallet-state'
 import {MiningStatus} from './MiningStatus'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
+import {BackendState} from './backend-state'
+import {NETWORK_CONSTANTS} from '../shared/version'
 import './StatusModal.scss'
 
 const visibleStatus: Record<ProcessStatus, React.ReactNode> = {
@@ -50,6 +53,8 @@ export const StatusModal = ({
   syncStatus,
   ...props
 }: StatusModalProps): JSX.Element => {
+  const {networkTag} = BackendState.useContainer()
+
   return (
     <Modal
       width="auto"
@@ -102,7 +107,9 @@ export const StatusModal = ({
           <div className="title">Midnight backend</div>
           <div className="info-item">
             <div>Network:</div>
-            <div className="info-value">Testnet</div>
+            <div className="info-value">
+              {isNone(networkTag) ? 'Loading' : NETWORK_CONSTANTS[networkTag.value].name}
+            </div>
           </div>
           <div className="info-item">
             <div>Sonics params fetching:</div>

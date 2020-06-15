@@ -3,7 +3,6 @@ import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {Popover} from 'antd'
-import {LUNA_EDITION} from '../shared/version'
 import {ThemeState} from '../theme-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {Link} from '../common/Link'
@@ -14,6 +13,8 @@ import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
+import {isTestnet, TESTNET_EDITION} from '../shared/version'
+import {BackendState} from '../common/backend-state'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
@@ -30,6 +31,8 @@ export const WalletOverview = ({
   goToAccounts,
 }: WalletOverviewProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
+
+  const {networkTag} = BackendState.useContainer()
   const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
   const available = confidential.plus(transparent)
   const total = pending.plus(available)
@@ -48,7 +51,7 @@ export const WalletOverview = ({
     <div className="WalletOverview">
       <div className="header">
         <HeaderWithSyncStatus>Wallet Overview</HeaderWithSyncStatus>
-        <div>{LUNA_EDITION}</div>
+        {isTestnet(networkTag) && <div>{TESTNET_EDITION}</div>}
       </div>
       <div className="balances">
         <div className="total">

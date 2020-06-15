@@ -3911,7 +3911,7 @@ async-limiter@~1.0.0:
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
 
-async-validator@^3.0.3:
+async-validator@^3.0.3, async-validator@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/async-validator/-/async-validator-3.3.0.tgz#1d92193bbe60d6d6c8b246692c7005e9ed14a8ee"
   integrity sha512-cAHGD9EL8aCqWXjnb44q94MWiDFzUo1tMhvLb2WzcpWqGiKugsjWG9cvl+jPgkPca7asNbsBU3fa0cwkI/P+Xg==
@@ -18428,9 +18428,9 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
-"web3@git+ssh://git@github.com/input-output-hk/midnight-web3.git#215d89d4ef23169da35419c0bfd937874322383e":
+"web3@git+ssh://git@github.com/input-output-hk/midnight-web3.git#2f95bd7289d937c0da68af3c48f01dbe62a6283e":
   version "0.20.6"
-  resolved "git+ssh://git@github.com/input-output-hk/midnight-web3.git#215d89d4ef23169da35419c0bfd937874322383e"
+  resolved "git+ssh://git@github.com/input-output-hk/midnight-web3.git#2f95bd7289d937c0da68af3c48f01dbe62a6283e"
   dependencies:
     bignumber.js "9.0.0"
     crypto-js "3.1.4"

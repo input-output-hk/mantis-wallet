@@ -14,12 +14,11 @@ import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {LogOutModal} from '../wallets/modals/LogOutModal'
 import {LINKS} from '../external-link-config'
+import {BackendState} from '../common/backend-state'
+import {isTestnet, TESTNET_EDITION} from '../shared/version'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
-
-const DEV_MODE = true // FIXME: [PM-1966] add config option to enable "hack mode"
-// const DEV_MODE = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -45,10 +44,10 @@ const UpdatingStatusModal = ({
 }
 
 interface SidebarProps {
-  version: [string, string] // [version, edition]
+  version: string
 }
 
-export const Sidebar = ({version: [version, edition]}: SidebarProps): JSX.Element => {
+export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
   const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
 
@@ -56,6 +55,7 @@ export const Sidebar = ({version: [version, edition]}: SidebarProps): JSX.Elemen
   const routerState = RouterState.useContainer()
   const pobState = ProofOfBurnState.useContainer()
   const glacierState = GlacierState.useContainer()
+  const {networkTag} = BackendState.useContainer()
 
   const [showLogOutModal, setShowLogOutModal] = useState(false)
   const [showStatusModal, setShowStatusModal] = useState(false)
@@ -73,7 +73,7 @@ export const Sidebar = ({version: [version, edition]}: SidebarProps): JSX.Elemen
 
   return (
     <div className="Sidebar">
-      {DEV_MODE && (
+      {isTestnet(networkTag) && (
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
       )}
       <div className="logo">
@@ -121,7 +121,7 @@ export const Sidebar = ({version: [version, edition]}: SidebarProps): JSX.Elemen
         </div>
         <div className="version">
           {version}
-          <span className="edition"> — {edition}</span>
+          {isTestnet(networkTag) && <span className="edition"> — {TESTNET_EDITION}</span>}
         </div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (

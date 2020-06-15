@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {withMiningState} from '../storybook-util/mining-state-decorator'
+import {withBackendState} from '../storybook-util/backend-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {SyncStatusContent} from '../common/SyncStatus'
 import {SynchronizationStatus} from '../common/wallet-state'
@@ -13,7 +13,7 @@ import {WalletOverview} from './WalletOverview'
 
 export default {
   title: 'Wallet Overview',
-  decorators: [withWalletState, withMiningState, withTheme, withKnobs, withBuildJobState],
+  decorators: [withWalletState, withBackendState, withTheme, withKnobs, withBuildJobState],
 }
 
 export const withZeroBalance = (): JSX.Element => (

@@ -1,6 +1,6 @@
 import React from 'react'
 import {withKnobs, text, number, boolean} from '@storybook/addon-knobs'
-import {withMiningState} from '../storybook-util/mining-state-decorator'
+import {withBackendState} from '../storybook-util/backend-state-decorator'
 import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
 import {ShortNumber} from './ShortNumber'
@@ -11,7 +11,7 @@ import {MiningStatus} from './MiningStatus'
 
 export default {
   title: 'Common',
-  decorators: [withTheme, withMiningState, withKnobs],
+  decorators: [withTheme, withBackendState, withKnobs],
 }
 
 export const shortNumber = (): JSX.Element => (

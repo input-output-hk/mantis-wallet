@@ -2,7 +2,7 @@ import url from 'url'
 import React, {PropsWithChildren, useEffect} from 'react'
 import addons, {makeDecorator, StoryContext, StoryGetter} from '@storybook/addons'
 import {ThemeState} from '../theme-state'
-import {THEME_SWITHER_CHANGE} from './theme-switcher-constants'
+import {THEME_SWITCHER_CHANGE} from './shared-constants'
 import {createInMemoryStore, defaultSettingsData} from '../common/store'
 
 const store = createInMemoryStore(defaultSettingsData)
@@ -13,8 +13,8 @@ const ThemeSwitcher: React.FunctionComponent<{}> = ({children}: PropsWithChildre
 
   useEffect(() => {
     const changeTheme = themeState.switchTheme
-    channel.on(THEME_SWITHER_CHANGE, changeTheme)
-    return () => channel.removeListener(THEME_SWITHER_CHANGE, changeTheme)
+    channel.on(THEME_SWITCHER_CHANGE, changeTheme)
+    return () => channel.removeListener(THEME_SWITCHER_CHANGE, changeTheme)
   }, [])
 
   return <>{children}</>

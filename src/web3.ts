@@ -108,7 +108,7 @@ export interface AsyncTxResponse {
   jobHash: string
 }
 
-type JobStatusTxType = 'transfer' | 'call' | 'redeem'
+type TxType = 'transfer' | 'call' | 'redeem'
 
 interface JobStatusNoSuchJob {
   status: 'noSuchJob'
@@ -118,13 +118,13 @@ interface JobStatusNoSuchJob {
 interface JobStatusBuilding {
   status: 'building'
   hash: string
-  txType: JobStatusTxType
+  txType: TxType
 }
 
 interface JobStatusBuilt {
   status: 'built'
   hash: string // hash of built transaction
-  txType: JobStatusTxType
+  txType: TxType
   txHash: string
 }
 
@@ -255,14 +255,11 @@ export interface WalletAPI {
   callContract(callParams: CallParams, waitForBuild: false): AsyncTxResponse
   getTransactionHistory: PaginatedCallable<Transaction>
   estimateFees: {
-    (txType: 'Call', callParams: CallParams): Record<FeeLevel, string>
-    (txType: 'Redeem' | 'Transfer', amount: number): Record<FeeLevel, string>
+    (txType: 'call', callParams: CallParams): Record<FeeLevel, string>
+    (txType: 'redeem' | 'transfer', amount: number): Record<FeeLevel, string>
     // The following definition shouldn't be needed, but since WalletAPI is wrapped
     // into Comlink.Remote type, it cannot handle overloads and takes only the last type
-    (txType: 'Redeem' | 'Transfer' | 'Call', amountOrParams: number | CallParams): Record<
-      FeeLevel,
-      string
-    >
+    (txType: TxType, amountOrParams: number | CallParams): Record<FeeLevel, string>
   }
   getTransactionBuildJobStatus(jobHash: string): JobStatus
   getAllTransactionBuildJobStatuses(): JobStatus[]
@@ -326,6 +323,10 @@ export interface EthApi {
   hashrate: number
 }
 
+export interface ConfigApi {
+  getNetworkTag(): {networkTag: NetworkTag}
+}
+
 export interface Web3API {
   eth: EthApi
   midnight: {
@@ -335,6 +336,7 @@ export interface Web3API {
   version: {
     ethereum: string
   }
+  config: ConfigApi
   erc20: Record<ChainId, ERC20Contract>
 }
 
