@@ -3,6 +3,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
+import {DialogApproval} from '../../common/dialog/DialogApproval'
 
 interface WalletCreateSecurityStepProps {
   cancel: () => void
@@ -26,6 +27,10 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
       <DialogMessage
         label="Recovery Phrase"
         description="On the following Screen you will see a 12 Word Phrase. This is your wallet backup phrase. It can be entered in any version of Luna in order to restore your wallet."
+      />
+      <DialogApproval
+        id="pk-needed-for-mining"
+        description="I understand that I need to save my private key to enable mining in the future."
       />
       <DialogSwitch
         autoFocus
