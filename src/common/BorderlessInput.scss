@@ -18,6 +18,14 @@
     &:focus {
       box-shadow: none;
     }
+
+    &:hover,
+    &:focus {
+      @include themify($themes) {
+        background-color: themed('normal-color');
+        color: themed('text-color');
+      }
+    }
   }
 
   &.invalid,
