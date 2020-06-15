@@ -122,7 +122,7 @@ const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Ele
 
 export const TxAmountCell = ({transaction}: TransactionCellProps): JSX.Element => {
   const {txValue, txDirection} = transaction
-  const {totalValue} = processAmount(txValue)
+  const {totalValue, fee} = processAmount(txValue)
   const displayValue = txDirection === 'incoming' ? totalValue : totalValue.multipliedBy(-1)
 
   return (
@@ -130,7 +130,11 @@ export const TxAmountCell = ({transaction}: TransactionCellProps): JSX.Element =
       <ShortNumber
         big={displayValue}
         showSign={true}
-        content={txDirection === 'outgoing' && <DetailedAmount transaction={transaction} />}
+        content={
+          txDirection === 'outgoing' && !fee.isZero() ? (
+            <DetailedAmount transaction={transaction} />
+          ) : null
+        }
       />
     </span>
   )

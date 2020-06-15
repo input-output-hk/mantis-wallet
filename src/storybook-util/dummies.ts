@@ -40,7 +40,7 @@ export const dummyTransactions: Transaction[] = [
     txDirection: 'outgoing',
     txValue: {
       value: '0x4f5ab6c',
-      fee: '0x4f35875',
+      fee: '0x0',
     },
   },
   {
