@@ -12,6 +12,7 @@ import {ThemeState} from '../theme-state'
 import {abbreviateAmount} from '../common/formatters'
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
+import {BackendState} from '../common/backend-state'
 
 const {Dust} = UNITS
 
@@ -73,9 +74,11 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
 
   return (
     <ThemeState.Provider>
-      <BuildJobState.Provider initialState={{web3}}>
-        <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
-      </BuildJobState.Provider>
+      <BackendState.Provider initialState={{web3}}>
+        <BuildJobState.Provider initialState={{web3}}>
+          <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
+        </BuildJobState.Provider>
+      </BackendState.Provider>
     </ThemeState.Provider>
   )
 }

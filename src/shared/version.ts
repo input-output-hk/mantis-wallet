@@ -3,14 +3,17 @@ import {version} from '../../package.json'
 
 interface NetworkConstants {
   name: string
+  shortTag: string
 }
 
 export const NETWORK_CONSTANTS: Record<NetworkTag, NetworkConstants> = {
   mainnet: {
     name: 'Mainnet',
+    shortTag: 'main',
   },
   testnet: {
     name: 'Testnet',
+    shortTag: 'test',
   },
 }
 
