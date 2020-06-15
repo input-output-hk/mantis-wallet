@@ -2,6 +2,7 @@ import React, {Ref, forwardRef} from 'react'
 import classnames from 'classnames'
 import {Input, Form} from 'antd'
 import Password from 'antd/lib/input/Password'
+import Button, {ButtonProps} from 'antd/lib/button'
 import {FormItemProps} from 'antd/lib/form'
 import {
   BorderlessInput,
@@ -17,6 +18,7 @@ interface DialogInputProps {
   label?: string
   className?: string
   formItem?: Omit<FormItemProps, 'children'>
+  fillButton?: ButtonProps & {fillWith: () => string}
 }
 
 const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
@@ -24,19 +26,36 @@ const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
   label,
   id,
   formItem,
+  fillButton,
   className,
-}: React.PropsWithChildren<DialogInputProps>) => (
-  <div className={classnames('DialogInput', className)}>
-    {label && (
-      <label className="label" htmlFor={id}>
-        {label}
-      </label>
-    )}
-    <Form.Item validateFirst {...formItem}>
-      {children}
-    </Form.Item>
-  </div>
-)
+}: React.PropsWithChildren<DialogInputProps>) => {
+  const {dialogForm} = DialogState.useContainer()
+
+  return (
+    <div className={classnames('DialogInput', {withButton: !!fillButton}, className)}>
+      {label && (
+        <label className="label" htmlFor={id}>
+          {label}
+        </label>
+      )}
+      {fillButton && (
+        <Button
+          className="fill-button"
+          {...fillButton}
+          onClick={(e) => {
+            if (formItem?.name) {
+              dialogForm.setFieldsValue({[formItem.name.toString()]: fillButton.fillWith()})
+            }
+            fillButton.onClick?.(e)
+          }}
+        />
+      )}
+      <Form.Item validateFirst {...formItem}>
+        {children}
+      </Form.Item>
+    </div>
+  )
+}
 
 const _DialogInputPassword: React.RefForwardingComponent<
   Password,
@@ -72,7 +91,7 @@ const _DialogInputPassword: React.RefForwardingComponent<
 export const DialogInputPassword = forwardRef(_DialogInputPassword)
 
 const _DialogInput: React.RefForwardingComponent<Input, BorderlessInputProps & DialogInputProps> = (
-  {label, onChange, formItem, ...props}: BorderlessInputProps & DialogInputProps,
+  {label, onChange, formItem, fillButton, ...props}: BorderlessInputProps & DialogInputProps,
   ref: Ref<Input>,
 ) => {
   const {setErrorMessage} = DialogState.useContainer()
@@ -83,7 +102,7 @@ const _DialogInput: React.RefForwardingComponent<Input, BorderlessInputProps & D
   }
 
   return (
-    <AbstractDialogInput label={label} id={props.id} formItem={formItem}>
+    <AbstractDialogInput label={label} id={props.id} formItem={formItem} fillButton={fillButton}>
       <BorderlessInput className="input" onChange={onChangeWithDialogReset} {...props} ref={ref} />
     </AbstractDialogInput>
   )
