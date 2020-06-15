@@ -38,6 +38,10 @@ export const updateMiningConfig = (spendingKey: string | null): void => {
   ipcSend('update-mining-config', spendingKey)
 }
 
+export const updateNetworkTag = (networkTag: NetworkTag): void => {
+  ipcSend('update-network-tag', networkTag)
+}
+
 export const updateSelectedNetworkConfig = (selectedNetwork: string): void => {
   const contractAddresses = getContractAddresses()
   if (!(selectedNetwork in contractAddresses)) {

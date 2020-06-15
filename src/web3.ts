@@ -326,6 +326,10 @@ export interface EthApi {
   hashrate: number
 }
 
+export interface ConfigApi {
+  getNetworkTag(): {networkTag: NetworkTag}
+}
+
 export interface Web3API {
   eth: EthApi
   midnight: {
@@ -335,6 +339,7 @@ export interface Web3API {
   version: {
     ethereum: string
   }
+  config: ConfigApi
   erc20: Record<ChainId, ERC20Contract>
 }
 

@@ -1,7 +1,22 @@
+import {Option, isNone} from 'fp-ts/lib/Option'
 import {version} from '../../package.json'
+
+interface NetworkConstants {
+  name: string
+}
+
+export const NETWORK_CONSTANTS: Record<NetworkTag, NetworkConstants> = {
+  mainnet: {
+    name: 'Mainnet',
+  },
+  testnet: {
+    name: 'Testnet',
+  },
+}
 
 export const TESTNET_EDITION = 'Testnet Edition'
 
-export const LUNA_EDITION = TESTNET_EDITION
 export const LUNA_VERSION = `v${version}`
-export const LUNA_FULL_VERSION = `${LUNA_VERSION} — ${LUNA_EDITION.toLowerCase()}`
+
+export const isTestnet = (networkTag: Option<NetworkTag>): boolean =>
+  !isNone(networkTag) && networkTag.value === 'testnet'

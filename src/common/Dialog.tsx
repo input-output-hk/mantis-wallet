@@ -87,7 +87,9 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
       try {
         if (!skipValidation) {
           await waitUntil(() =>
-            _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
+            Promise.resolve(
+              _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
+            ),
           )
           await dialogForm.validateFields().catch((e) => {
             console.error(e)

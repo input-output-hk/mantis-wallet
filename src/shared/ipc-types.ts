@@ -11,5 +11,6 @@ export type IPCFromRendererChannelName =
   | 'restart-clients'
   | 'update-config'
   | 'update-mining-config'
+  | 'update-network-tag'
 
 export type LunaManagedConfigPaths = 'selectedNetwork'

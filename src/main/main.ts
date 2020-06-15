@@ -32,16 +32,14 @@ import {flatTap, prop, wait} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
-import {ipcListen} from './util'
+import {ipcListen, getTitle} from './util'
 import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
-import {LUNA_FULL_VERSION} from '../shared/version'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let mainWindowHandle: BrowserWindow | null = null
 
 let remixWindowHandle: BrowserWindow | null = null
@@ -90,7 +88,7 @@ function createWindow(): void {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
-    title: `Luna Wallet — ${LUNA_FULL_VERSION}`,
+    title: getTitle(),
     icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
@@ -201,6 +199,10 @@ ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
     event.reply('enable-mining-success')
     event.reply('update-config-success')
   }
+})
+
+ipcListen('update-network-tag', (_event, networkTag: NetworkTag) => {
+  mainWindowHandle?.setTitle(getTitle(networkTag))
 })
 
 //Handle TLS from external config

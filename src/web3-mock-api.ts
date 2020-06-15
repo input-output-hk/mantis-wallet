@@ -273,5 +273,8 @@ export const Web3MockApi: Web3API = {
   version: {
     ethereum: 'mocked',
   },
+  config: {
+    getNetworkTag: () => ({networkTag: 'testnet'}),
+  },
   erc20: _.fromPairs(mockErc20Contracts) as Record<ChainId, ERC20Contract>,
 }

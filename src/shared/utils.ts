@@ -74,9 +74,10 @@ export const wait = (ms: number): Promise<void> => new Promise((resolve) => setT
 /**
  * Retry until condition is met
  */
-export const waitUntil = async (condition: () => boolean, ms = 100): Promise<void> => {
-  if (!condition()) {
+export const waitUntil = async (conditionFn: () => Promise<boolean>, ms = 100): Promise<void> => {
+  const condition = await conditionFn()
+  if (!condition) {
     await wait(ms)
-    await waitUntil(condition, ms)
+    await waitUntil(conditionFn, ms)
   }
 }

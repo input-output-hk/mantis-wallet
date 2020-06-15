@@ -1,5 +1,7 @@
 type ProcessStatus = 'not-running' | 'running' | 'finished' | 'failed'
 
+type NetworkTag = 'mainnet' | 'testnet'
+
 interface LunaStatus {
   fetchParams: {
     status: ProcessStatus

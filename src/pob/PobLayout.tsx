@@ -2,7 +2,8 @@ import React from 'react'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
-import {LUNA_EDITION, TESTNET_EDITION} from '../shared/version'
+import {BackendState} from '../common/backend-state'
+import {isTestnet} from '../shared/version'
 import './PobLayout.scss'
 
 interface PobLayoutProps {
@@ -23,9 +24,11 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
   title,
   children,
 }: React.PropsWithChildren<PobLayoutProps>) => {
+  const {networkTag} = BackendState.useContainer()
+
   return (
     <div className="PobLayout">
-      {LUNA_EDITION === TESTNET_EDITION && <TestnetWarning />}
+      {isTestnet(networkTag) && <TestnetWarning />}
       <HeaderWithSyncStatus>
         {title}
         <div className="link">
