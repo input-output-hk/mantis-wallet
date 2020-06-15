@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {none, some, Option} from 'fp-ts/lib/Option'
+import {none, some, Option, isNone} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {makeWeb3Worker, Web3API} from '../web3'
 import {waitUntil} from '../shared/utils'
@@ -62,7 +62,7 @@ function useBackendState(initialState?: Partial<BackendStateParams>): BackendSta
 
   useEffect(() => {
     refresh()
-    waitUntil(loadNetworkTag, 1000)
+    if (isNone(networkTag)) waitUntil(loadNetworkTag, 1000)
   }, [])
 
   return {
