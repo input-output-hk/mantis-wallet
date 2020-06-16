@@ -1,9 +1,9 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {withKnobs, number, text} from '@storybook/addon-knobs'
+import {number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {prover, asyncAction} from '../storybook-util/custom-knobs'
-import {withTheme} from '../storybook-util/theme-switcher'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {CHAINS} from './chains'
 import {BurnActions} from './BurnActions'
@@ -14,7 +14,7 @@ import {UNITS} from '../common/units'
 
 export default {
   title: 'Burn Actions',
-  decorators: [withTheme, withKnobs, withWalletState, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
 }
 
 const {BTC_TESTNET, ETH_TESTNET} = CHAINS

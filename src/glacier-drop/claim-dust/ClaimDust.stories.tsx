@@ -1,8 +1,8 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, array, number, text} from '@storybook/addon-knobs'
-import {withTheme} from '../../storybook-util/theme-switcher'
+import {array, number, text} from '@storybook/addon-knobs'
+import {ESSENTIAL_DECORATORS} from '../../storybook-util/essential-decorators'
 import {withGlacierState} from '../../storybook-util/glacier-state-decorator'
 import {withBuildJobState} from '../../storybook-util/build-job-state-decorator'
 import {EnterAddress} from './EnterAddress'
@@ -20,7 +20,7 @@ const EXAMPLE_AMOUNT = 123456789123456789124
 
 export default {
   title: 'Glacier Drop Claim Dust',
-  decorators: [withTheme, withKnobs, withGlacierState, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withGlacierState, withBuildJobState],
 }
 
 export const enterAddress = (): JSX.Element => (

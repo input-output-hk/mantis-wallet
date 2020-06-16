@@ -1,24 +1,15 @@
 import React from 'react'
-import {withKnobs} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import {withTheme} from './storybook-util/theme-switcher'
+import {ESSENTIAL_DECORATORS} from './storybook-util/essential-decorators'
 import {withWalletState} from './storybook-util/wallet-state-decorator'
 import {withRouterState} from './storybook-util/router-state-decorator'
-import {withBackendState} from './storybook-util/backend-state-decorator'
 import {withBuildJobState} from './storybook-util/build-job-state-decorator'
 import {Settings} from './Settings'
 import {RestartPrompt} from './RemoteSettingsManager'
 
 export default {
   title: 'Settings',
-  decorators: [
-    withTheme,
-    withBackendState,
-    withWalletState,
-    withRouterState,
-    withKnobs,
-    withBuildJobState,
-  ],
+  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withRouterState, withBuildJobState],
 }
 
 export const settings = (): JSX.Element => <Settings />

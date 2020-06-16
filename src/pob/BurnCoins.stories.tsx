@@ -1,12 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
 import {action} from '@storybook/addon-actions'
-import {withKnobs, text, array} from '@storybook/addon-knobs'
+import {text, array} from '@storybook/addon-knobs'
 import {selectChain, prover, asyncAction} from '../storybook-util/custom-knobs'
-import {withTheme} from '../storybook-util/theme-switcher'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {BurnCoins} from './BurnCoins'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {withBackendState} from '../storybook-util/backend-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -19,10 +18,8 @@ import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddr
 export default {
   title: 'Burn Coins',
   decorators: [
-    withTheme,
-    withKnobs,
+    ...ESSENTIAL_DECORATORS,
     withWalletState,
-    withBackendState,
     withPobState,
     withRouterState,
     withBuildJobState,

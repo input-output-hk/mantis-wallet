@@ -1,8 +1,8 @@
 import React from 'react'
 import {StoryGetter, StoryContext} from '@storybook/addons'
-import {withKnobs, number} from '@storybook/addon-knobs'
-import {withTheme} from '../storybook-util/theme-switcher'
+import {number} from '@storybook/addon-knobs'
 import {OverviewGraph} from './OverviewGraph'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 
 const graphDecorator = (storyFn: StoryGetter, context: StoryContext): JSX.Element => (
   <div style={{width: '400px'}}>{storyFn(context)}</div>
@@ -10,7 +10,7 @@ const graphDecorator = (storyFn: StoryGetter, context: StoryContext): JSX.Elemen
 
 export default {
   title: 'Overview Graph',
-  decorators: [withTheme, withKnobs, graphDecorator],
+  decorators: [...ESSENTIAL_DECORATORS, graphDecorator],
 }
 
 export const withZeroBalance = (): JSX.Element => (

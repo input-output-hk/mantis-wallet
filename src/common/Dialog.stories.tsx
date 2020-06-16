@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
-import {withKnobs, text, boolean, array, select} from '@storybook/addon-knobs'
+import {text, boolean, array, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import {withTheme} from '../storybook-util/theme-switcher'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {Dialog} from './Dialog'
 import {DialogApproval} from './dialog/DialogApproval'
 import {DialogInput} from './dialog/DialogInput'
@@ -25,7 +25,7 @@ import {DialogFee} from './dialog/DialogFee'
 
 export default {
   title: 'Dialog',
-  decorators: [withTheme, withKnobs],
+  decorators: ESSENTIAL_DECORATORS,
 }
 
 export const InteractiveDialog: React.FunctionComponent<{}> = () => (
