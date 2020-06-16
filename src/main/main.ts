@@ -34,6 +34,7 @@ import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config
 import {buildMenu, buildRemixMenu} from './menu'
 import {ipcListen, getTitle} from './util'
 import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
+import {checkDatadirCompatibility} from './compatibility-check'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -243,18 +244,24 @@ if (config.runClients) {
     }
   }
 
-  const tlsDataPromise = checkJavaVersion(config.clientConfigs.wallet).then(() =>
-    setupOwnTLS(processExecutablePath(config.clientConfigs.node))
-      .then((tlsData) => ({tlsData, tlsParams: configToParams(tlsData)}))
-      .catch((error): never => {
-        console.error(error)
-        dialog.showErrorBox('Luna startup error', error.message)
+  const initializationPromise = checkJavaVersion(config.clientConfigs.wallet)
+    .then(checkDatadirCompatibility)
+    .then(() =>
+      setupOwnTLS(processExecutablePath(config.clientConfigs.node)).then((tlsData) => ({
+        tlsData,
+        tlsParams: configToParams(tlsData),
+      })),
+    )
+    .catch(
+      async (e): Promise<never> => {
+        console.error(e)
+        await dialog.showErrorBox('Luna startup error', e.message)
         app.exit(1)
         // Little trick to make typechecker see that this promise cannot contain undefined
         // Because always an error is thrown
         throw new Error('exiting')
-      }),
-  )
+      },
+    )
 
   let runningClients: SpawnedMidnightProcess[] | null = null
 
@@ -334,7 +341,7 @@ if (config.runClients) {
   }
 
   const startClients = (): Promise<void> =>
-    Promise.all([getMiningParams(), tlsDataPromise.then(prop('tlsParams'))])
+    Promise.all([getMiningParams(), initializationPromise.then(prop('tlsParams'))])
       .then(_.mergeAll)
       .then(spawnClients)
       .catch((error) => {
@@ -359,8 +366,8 @@ if (config.runClients) {
     }
   }
 
-  tlsDataPromise.then(flatTap(() => fetchParams())).then(startClients)
-  tlsDataPromise.then(({tlsData}) => {
+  initializationPromise.then(flatTap(() => fetchParams())).then(startClients)
+  initializationPromise.then(({tlsData}) => {
     registerCertificateValidationHandler(app, tlsData, config.rpcAddress)
   })
 
