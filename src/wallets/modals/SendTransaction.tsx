@@ -12,6 +12,8 @@ import {
   isGreaterOrEqual,
   validateFee,
   createTxAmountValidator,
+  createConfidentialAddressValidator,
+  createTransparentAddressValidator,
 } from '../../common/util'
 import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
@@ -22,6 +24,7 @@ import {FeeEstimates} from '../../common/wallet-state'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
+import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 
 const {Dust} = UNITS
 
@@ -54,9 +57,11 @@ const SendToConfidentialDialog = ({
   const [recipient, setRecipient] = useState('')
 
   const modalLocker = ModalLocker.useContainer()
+  const {networkTag} = BackendState.useContainer()
 
   const feeError = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(availableAmount)
+  const addressValidator = createConfidentialAddressValidator(getNetworkTagOrTestnet(networkTag))
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> => estimateTransactionFee(Dust.toBasic(new BigNumber(amount))),
@@ -97,7 +102,7 @@ const SendToConfidentialDialog = ({
         onChange={(e): void => setRecipient(e.target.value)}
         formItem={{
           name: 'confidential-recipient-name',
-          rules: [{required: true, message: 'Recipient must be set'}],
+          rules: [{required: true, message: 'Recipient must be set'}, addressValidator],
         }}
       />
       <DialogInput
@@ -134,15 +139,22 @@ const SendToTransparentDialog = ({
   const [recipient, setRecipient] = useState('')
 
   const modalLocker = ModalLocker.useContainer()
+  const {networkTag} = BackendState.useContainer()
 
   const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual()])
   const txAmountValidator = createTxAmountValidator(availableAmount)
+  const addressValidator = createTransparentAddressValidator(getNetworkTagOrTestnet(networkTag))
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> =>
       estimatePublicTransactionFee(Dust.toBasic(new BigNumber(amount)), recipient),
     [amount, recipient],
-    () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
+    () =>
+      recipient === '' && amount === '0'
+        ? Promise.resolve()
+        : txAmountValidator
+            .validator({}, amount)
+            .then(() => addressValidator.validator({}, recipient)),
   )
 
   const [gasPriceEstimates, gasPriceEstimateError, isGasPricePending] = useAsyncUpdate(
@@ -187,7 +199,7 @@ const SendToTransparentDialog = ({
         onChange={(e): void => setRecipient(e.target.value)}
         formItem={{
           name: 'transparent-recipient-name',
-          rules: [{required: true, message: 'Recipient must be set'}],
+          rules: [{required: true, message: 'Recipient must be set'}, addressValidator],
         }}
       />
       <DialogInput

@@ -91,14 +91,13 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
               _.isEmpty(dialogForm.getFieldsValue(true, ({validating}) => validating)),
             ),
           )
-          await dialogForm.validateFields().catch((e) => {
-            console.error(e)
+          await dialogForm.validateFields().catch(() => {
             return Promise.reject(new Error(DIALOG_VALIDATION_ERROR))
           })
         }
         await onClick(event)
       } catch (e) {
-        console.error(e)
+        if (e?.message !== DIALOG_VALIDATION_ERROR) console.error(e)
         if (mounted.current) setErrorMessage(e.message)
       } finally {
         if (mounted.current) setInProgress(false)

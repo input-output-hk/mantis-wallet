@@ -80,6 +80,10 @@ const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
           initialValue: amount,
           rules: [txAmountValidator],
         }}
+        fillButton={{
+          fillWith: () => Dust.fromBasic(transparentAccount.balance).toString(10),
+          children: 'Full Amount',
+        }}
       />
       <DialogFee
         label="Fee"

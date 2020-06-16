@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {none, some, Option, isNone} from 'fp-ts/lib/Option'
+import {none, some, Option, isNone, getOrElse} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {makeWeb3Worker, Web3API} from '../web3'
 import {waitUntil} from '../shared/utils'
@@ -27,6 +27,10 @@ const DEFAULT_STATE: BackendStateParams = {
   isMining: none,
   networkTag: none,
 }
+
+export const getNetworkTagOrTestnet: (networkTag: Option<NetworkTag>) => NetworkTag = getOrElse(
+  (): NetworkTag => 'testnet',
+)
 
 function useBackendState(initialState?: Partial<BackendStateParams>): BackendState {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)

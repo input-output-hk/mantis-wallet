@@ -8,6 +8,7 @@ import {StoreValue} from 'antd/lib/form/interface'
 import {isChecksumAddress} from 'web3/lib/utils/utils.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
+import {NETWORK_CONSTANTS} from '../shared/version'
 
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
@@ -148,9 +149,11 @@ export function validateEthPrivateKey(privateKey?: string): string {
   return ''
 }
 
-export function toAntValidator(
-  validate: (value?: string) => string,
-): {validator: (rule: Rule, value: StoreValue) => Promise<void>} {
+type AntValidator = {
+  validator: (rule: Rule, value: StoreValue) => Promise<void>
+}
+
+export function toAntValidator(validate: (value?: string) => string): AntValidator {
   return {
     validator: (_rule, value) => {
       const possibleError = validate(value)
@@ -159,7 +162,37 @@ export function toAntValidator(
   }
 }
 
-export const createTxAmountValidator = (
-  availableAmount: BigNumber,
-): {validator: (rule: Rule, value: StoreValue) => Promise<void>} =>
+export const createTxAmountValidator = (availableAmount: BigNumber): AntValidator =>
   toAntValidator((amount?: string): string => validateTxAmount(amount || '', availableAmount))
+
+const createAddressValidator = (
+  prefix: string,
+  length: number,
+  message = 'Invalid address',
+): AntValidator => ({
+  validator: (_rule: Rule, value?: string): Promise<void> => {
+    if (!value) {
+      return Promise.reject('Address must be set')
+    }
+    try {
+      const decoded = bech32.decode(value)
+      if (prefix !== decoded.prefix || decoded.data.length !== length) {
+        return Promise.reject(message)
+      }
+    } catch (e) {
+      return Promise.reject(message)
+    }
+
+    return Promise.resolve()
+  },
+})
+
+export const createTransparentAddressValidator = (networkTag: NetworkTag): AntValidator => {
+  const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-uns-ad`
+  return createAddressValidator(prefix, 20, 'Invalid transparent address')
+}
+
+export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntValidator => {
+  const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-shl-ad`
+  return createAddressValidator(prefix, 43, 'Invalid confidential address')
+}

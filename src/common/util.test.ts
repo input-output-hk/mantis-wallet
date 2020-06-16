@@ -1,4 +1,5 @@
-import {assert} from 'chai'
+import chai, {assert} from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import BigNumber from 'bignumber.js'
 import {
   deserializeBigNumber,
@@ -14,9 +15,13 @@ import {
   isLowerOrEqual,
   areFundsEnough,
   toHumanReadableHashrate,
+  createTransparentAddressValidator,
+  createConfidentialAddressValidator,
 } from './util'
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
+
+chai.use(chaiAsPromised)
 
 const toDust = (v: BigNumber.Value): BigNumber => UNITS.Dust.toBasic(new BigNumber(v))
 
@@ -207,4 +212,58 @@ it('converts hashrates ot human readable format correctly', () => {
   assert.equal(toHumanReadableHashrate(1024 * 1024 * 1024), '1 GH/s')
 
   assert.equal(toHumanReadableHashrate(-1), 'Invalid hashrate')
+})
+
+it('validates addresses correctly', async () => {
+  const validateTransparentOnTestnet = (v?: string): Promise<void> =>
+    createTransparentAddressValidator('testnet').validator({}, v)
+  const validateTransparentOnMainnet = (v?: string): Promise<void> =>
+    createTransparentAddressValidator('mainnet').validator({}, v)
+  const validateConfidentialOnTestnet = (v?: string): Promise<void> =>
+    createConfidentialAddressValidator('testnet').validator({}, v)
+
+  await assert.isRejected(validateTransparentOnTestnet(), /.*/, 'Empty string is invalid')
+  await assert.isRejected(validateTransparentOnTestnet('any-non-address-string'))
+  await assert.isRejected(
+    validateTransparentOnTestnet(
+      'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5',
+    ),
+    /.*/,
+    'Confidential address for transparent is invalid',
+  )
+  await assert.isRejected(
+    validateTransparentOnTestnet('m-main-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6gcfzcl'),
+    /.*/,
+    'Transparent mainnet address for testnet is rejected',
+  )
+
+  await assert.isRejected(
+    validateTransparentOnMainnet('m-test-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6rt4y4h'),
+    /.*/,
+    'Transparent testnet address for mainnet is rejected',
+  )
+
+  await assert.isRejected(validateConfidentialOnTestnet(), /.*/, 'Empty string is invalid')
+  await assert.isRejected(
+    validateConfidentialOnTestnet('any-non-address-string'),
+    /.*/,
+    'Invalid address for confidential is rejected',
+  )
+  await assert.isRejected(
+    validateConfidentialOnTestnet('m-main-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6gcfzcl'),
+    /.*/,
+    'Transparent address for confidential is invalid',
+  )
+
+  await assert.isFulfilled(
+    validateTransparentOnTestnet('m-test-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6rt4y4h'),
+  )
+  await assert.isFulfilled(
+    validateTransparentOnMainnet('m-main-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6gcfzcl'),
+  )
+  await assert.isFulfilled(
+    validateConfidentialOnTestnet(
+      'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5',
+    ),
+  )
 })
