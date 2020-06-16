@@ -66,40 +66,6 @@
 
   .transactions-container {
     margin-top: 30px;
-
-    .transactions {
-      @extend %transactions-grid;
-
-      .header {
-        display: contents;
-        position: sticky;
-        top: 0;
-        padding-left: 12px;
-        font-size: 13px;
-        font-weight: bold;
-        letter-spacing: 1.95px;
-        line-height: 40px;
-        text-align: left;
-        text-transform: uppercase;
-
-        .sortable {
-          cursor: pointer;
-          user-select: none;
-
-          .label {
-            margin-right: 0.5em;
-
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-        }
-      }
-
-      .body {
-        display: contents;
-      }
-    }
   }
 }
 

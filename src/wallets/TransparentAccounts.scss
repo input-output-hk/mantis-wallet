@@ -141,9 +141,8 @@
             background-color: themed('normal-color');
           }
 
-          .transactions {
-            @extend %transactions-grid;
-            padding: 1em 1em 0;
+          .TransactionList {
+            padding: 0 1em;
 
             @include themify($themes) {
               background-color: themed('secondary-background');

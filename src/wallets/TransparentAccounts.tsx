@@ -9,7 +9,7 @@ import {RedeemModal} from './modals/RedeemModal'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import {Transaction} from '../web3'
-import {TransactionRow, transactionTableStyle} from './TransactionHistory'
+import {TransactionList} from './TransactionList'
 import './TransparentAccounts.scss'
 
 interface ShowAccountProps {
@@ -64,22 +64,18 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
         </div>
         {transactionsVisible && transactions.length > 0 && (
           <div className="transactions-container">
-            <div className="transactions" style={transactionTableStyle}>
-              {transactions
-                .map(
-                  (tx: Transaction): Transaction =>
-                    // this is necessary for txs between a single user's accounts
-                    // where it is always shown as outgoing
-                    tx.txDetails.txType === 'call' &&
-                    tx.txDirection === 'outgoing' &&
-                    tx.txDetails.transparentTransaction.receivingAddress === account.address
-                      ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
-                      : tx,
-                )
-                .map((tx: Transaction) => (
-                  <TransactionRow transaction={tx} key={tx.hash} />
-                ))}
-            </div>
+            <TransactionList
+              transactions={transactions.map(
+                (tx: Transaction): Transaction =>
+                  // this is necessary for txs between a single user's accounts
+                  // where it is always shown as outgoing
+                  tx.txDetails.txType === 'call' &&
+                  tx.txDirection === 'outgoing' &&
+                  tx.txDetails.transparentTransaction.receivingAddress === account.address
+                    ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
+                    : tx,
+              )}
+            />
             <div className="transactions-footer">
               <span className="transactions-collapse" onClick={() => setTransactionVisible(false)}>
                 Collapse transactions
