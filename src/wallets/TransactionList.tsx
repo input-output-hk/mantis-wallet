@@ -5,7 +5,7 @@ import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {sort, map} from 'fp-ts/lib/Array'
 import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
-import {Transaction} from '../web3'
+import {Transaction, TxStatusString} from '../web3'
 import {
   TransactionCellProps,
   TxAmountCell,
@@ -81,6 +81,13 @@ const columns: ColumnConfig[] = [
   },
 ]
 
+const TX_STATUS_ORDER: Record<TxStatusString, number> = {
+  failed: 0,
+  pending: 1,
+  confirmed: 2,
+  persisted: 3,
+} as const
+
 const orderConfigs: Record<SortableProperty, Ord<Transaction>> = {
   type: ord.contramap(ordString, ({txDetails}: Transaction) => txDetails.txType),
   amount: ord.contramap(ordNumber, ({txDirection, txValue}: Transaction) => {
@@ -96,9 +103,10 @@ const orderConfigs: Record<SortableProperty, Ord<Transaction>> = {
       return parseInt(txStatus.atBlock, 16)
     }
   }),
-  // FIXME: do not order as string, but semantically: failed - pending - confirmed - persisted
-  status: ord.contramap(ordString, ({txStatus}: Transaction) =>
-    typeof txStatus === 'string' ? txStatus : txStatus.status,
+  status: ord.contramap(
+    ordNumber,
+    ({txStatus}: Transaction) =>
+      TX_STATUS_ORDER[typeof txStatus === 'string' ? txStatus : txStatus.status],
   ),
 }
 
