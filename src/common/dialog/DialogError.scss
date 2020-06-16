@@ -10,4 +10,9 @@
     background-color: themed('error-background-color');
     color: themed('error-dialog-color');
   }
+
+  .help {
+    padding-left: 3px;
+    font-weight: bold;
+  }
 }

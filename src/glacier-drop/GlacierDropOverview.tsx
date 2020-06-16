@@ -19,9 +19,9 @@ import {useInterval} from '../common/hook-utils'
 import {makeDesktopNotification} from '../common/notify'
 import {Token} from '../common/Token'
 import {Loading} from '../common/Loading'
+import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
-import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {NoWallet} from '../wallets/NoWallet'
 import {
   getCurrentPeriod,
@@ -113,7 +113,9 @@ const GlacierDropWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JS
       <HeaderWithSyncStatus>
         Glacier Drop
         <div className="link">
-          <Link href={LINKS.aboutGlacier}>Learn more about Glacier Drop</Link>
+          <Link href={LINKS.aboutGlacier} popoverPlacement="right">
+            Learn more about Glacier Drop
+          </Link>
         </div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
@@ -138,6 +140,7 @@ const _GlacierDropOverview = ({
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
   const [epochsShown, showEpochs] = useState<boolean>(false)
+  const [claimDisabled, setClaimDisabled] = useState<boolean>(false)
 
   const {currentBlock, mode} = walletState.syncStatus
 
@@ -160,7 +163,7 @@ const _GlacierDropOverview = ({
 
   // Bookkeeping of values which depend on block progression
 
-  const {periodConfig, totalDustDistributed} = getOrElse(
+  const {periodConfig, totalDustDistributed, minimumThreshold} = getOrElse(
     (): GlacierConstants => DEFAULT_GLACIER_CONSTANTS,
   )(constants)
 
@@ -214,8 +217,22 @@ const _GlacierDropOverview = ({
   }
 
   const chooseChain = (_chain: DisplayChain): void => {
+    if (claimDisabled) return
+
     if (walletState.transparentAccounts.length === 0) {
-      message.error('You must create a transparent address first.')
+      // Generate first transparent address
+      setClaimDisabled(true)
+      walletState
+        .generateNewAddress()
+        .then(() => {
+          message.info('We generated your first transparent address.', 5)
+          setActiveModal('EnterAddress')
+          setClaimDisabled(false)
+        })
+        .catch((e) => {
+          message.error(e.message)
+          setClaimDisabled(false)
+        })
     } else {
       setActiveModal('EnterAddress')
     }
@@ -247,6 +264,7 @@ const _GlacierDropOverview = ({
       <ClaimController
         walletState={walletState}
         totalDustDistributed={totalDustDistributed}
+        minimumThreshold={minimumThreshold}
         onFinish={startPuzzle}
         activeModal={activeModal}
         setActiveModal={setActiveModal}

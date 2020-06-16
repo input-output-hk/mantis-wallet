@@ -153,6 +153,7 @@ export interface GlacierData {
 export interface GlacierConstants {
   periodConfig: PeriodConfig
   totalDustDistributed: BigNumber
+  minimumThreshold: BigNumber
 }
 
 export interface PeriodConfig {
@@ -250,6 +251,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         numberOfEpochs: await loadConstant('getNumberOfEpochs', toNumber),
       },
       totalDustDistributed: await loadConstant('getTotalDustDistributed', toBigNumber),
+      minimumThreshold: await loadConstant('getMinimumThreshold', toBigNumber),
     }
   }
 

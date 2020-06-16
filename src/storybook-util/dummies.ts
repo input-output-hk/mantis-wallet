@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import {Transaction} from '../web3'
 import {wait} from '../shared/utils'
 import {FeeEstimates} from '../common/wallet-state'
+import {PeriodConfig} from '../glacier-drop/glacier-state'
 
 export const dummyTransactions: Transaction[] = [
   {
@@ -148,3 +149,11 @@ export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEsti
       high: new BigNumber(7).times(amount && !amount.isEqualTo(0) ? amount : 1),
     }),
   )
+
+export const DUMMY_PERIOD_CONFIG: PeriodConfig = {
+  unlockingStartBlock: 100,
+  unlockingEndBlock: 200,
+  unfreezingStartBlock: 300,
+  numberOfEpochs: 10,
+  epochLength: 10,
+}

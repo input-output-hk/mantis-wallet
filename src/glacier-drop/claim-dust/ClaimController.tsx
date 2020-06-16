@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import _ from 'lodash/fp'
 import BigNumber from 'bignumber.js'
 import {Option, none, some, getOrElse} from 'fp-ts/lib/Option'
 import {LoadedState} from '../../common/wallet-state'
@@ -11,6 +10,7 @@ import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
 import {ClaimWithKey} from './ClaimWithKey'
 import {ClaimWithMessage} from './ClaimWithMessage'
+import {prop} from '../../shared/utils'
 
 export type ModalId =
   | 'none'
@@ -25,6 +25,7 @@ export type ModalId =
 interface ClaimControllerProps {
   walletState: LoadedState
   totalDustDistributed: BigNumber
+  minimumThreshold: BigNumber
   activeModal: ModalId
   setActiveModal(modalId: ModalId): void
   onFinish(claim: IncompleteClaim): void
@@ -32,6 +33,7 @@ interface ClaimControllerProps {
 
 export const ClaimController = ({
   walletState,
+  minimumThreshold,
   activeModal,
   setActiveModal,
   onFinish,
@@ -105,9 +107,10 @@ export const ClaimController = ({
       <Exchange
         visible={activeModal === 'Exchange'}
         externalAmount={balanceWithProof.balance}
+        minimumThreshold={minimumThreshold}
         minimumDustAmount={minimumDustAmount}
         availableDust={availableBalance}
-        transparentAddresses={transparentAccounts.map((a) => _.get('address')(a))}
+        transparentAddresses={transparentAccounts.map(prop('address'))}
         onNext={(transparentAddress: string) => {
           setTransparentAddress(transparentAddress)
           setActiveModal('SelectMethod')

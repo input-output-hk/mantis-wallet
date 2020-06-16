@@ -11,15 +11,24 @@ import {wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {LINKS} from '../../external-link-config'
 import {Asset} from './Asset'
 import './ClaimWith.scss'
 
+export const INVALID_SIGNED_MESSAGE_TEXT = 'Invalid signed message'
+export const MESSAGE_MUST_BE_SET_TEXT = 'Message must be set'
+
 const signedMessageToAuthSignature = (signedMessage: string): AuthorizationSignature => {
-  const {v, r, s} = fromRpcSig(signedMessage)
-  return {
-    v,
-    r: bufferToHex(r),
-    s: bufferToHex(s),
+  try {
+    const {v, r, s} = fromRpcSig(signedMessage)
+    return {
+      v,
+      r: bufferToHex(r),
+      s: bufferToHex(s),
+    }
+  } catch (e) {
+    console.error(e)
+    throw Error(INVALID_SIGNED_MESSAGE_TEXT)
   }
 }
 
@@ -56,16 +65,18 @@ const _ClaimWithMessage = ({
       }}
       type="dark"
       buttonDisplayMode="wide"
+      helpURL={LINKS.aboutGlacier}
     >
       <DialogInput
         autoFocus
+        id="signed-message"
         label={`Input Signed Message`}
         onChange={(e): void => {
           setSignedMessage(e.target.value)
         }}
         formItem={{
           name: 'signed-message',
-          rules: [{required: true, message: 'Message must be set'}],
+          rules: [{required: true, message: MESSAGE_MUST_BE_SET_TEXT}],
         }}
       />
       <Asset amount={externalAmount} chain={chain}>

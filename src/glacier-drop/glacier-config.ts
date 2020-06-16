@@ -5,15 +5,24 @@ import {ContractConfigItem} from '../config/type'
 import {DisplayChain} from '../pob/chains'
 import ethereumLogo from '../assets/icons/chains/ethereum.svg'
 import ethereumClippedLogo from '../assets/icons/chains/ethereum-clipped.svg'
-import ethereumBurnLogo from '../assets/icons/chains/m-eth.svg'
+import midnightChainLogo from '../assets/icons/chains/dust.svg'
 
 export const ETC_CHAIN: DisplayChain = {
   symbol: 'ETC',
   name: 'Ethereum Classic',
   logo: ethereumLogo,
   clippedLogo: ethereumClippedLogo,
-  burnLogo: ethereumBurnLogo,
+  burnLogo: ethereumClippedLogo,
   unitType: 'Ether',
+}
+
+export const MIDNIGHT_CHAIN: DisplayChain = {
+  symbol: 'DST',
+  name: 'Dust',
+  logo: midnightChainLogo,
+  clippedLogo: midnightChainLogo,
+  burnLogo: midnightChainLogo,
+  unitType: 'Dust',
 }
 
 export const BLOCK_TIME_SECONDS = 43
@@ -48,4 +57,5 @@ export const DEFAULT_GLACIER_CONSTANTS = {
     numberOfEpochs: 1,
   },
   totalDustDistributed: new BigNumber(1),
+  minimumThreshold: new BigNumber(1),
 }

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
+import {fromWei} from 'web3/lib/utils/utils.js'
 import {DisplayChain, DUST_SYMBOL} from '../../pob/chains'
 import {wrapWithModal} from '../../common/LunaModal'
 import {ShortNumber} from '../../common/ShortNumber'
@@ -8,13 +9,15 @@ import {Dialog} from '../../common/Dialog'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {DialogError} from '../../common/dialog/DialogError'
 import {LINKS} from '../../external-link-config'
 import {Link} from '../../common/Link'
-import {Asset} from './Asset'
 import {ETC_CHAIN} from '../glacier-config'
+import {Asset} from './Asset'
 import './Exchange.scss'
 
 interface ExchangeProps {
+  minimumThreshold: BigNumber
   externalAmount: BigNumber
   minimumDustAmount: BigNumber
   availableDust: BigNumber
@@ -24,6 +27,7 @@ interface ExchangeProps {
 }
 
 const _Exchange = ({
+  minimumThreshold,
   externalAmount,
   minimumDustAmount,
   availableDust,
@@ -32,7 +36,18 @@ const _Exchange = ({
   chain = ETC_CHAIN,
 }: ExchangeProps & ModalProps): JSX.Element => {
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const disabled = !transparentAddress
+
+  const externalBalanceTooLowError = externalAmount.isLessThan(minimumThreshold)
+    ? `${chain.symbol} account balance should be at least ${fromWei(minimumThreshold)} ${
+        chain.symbol
+      }`
+    : ''
+
+  const globalErrorElem = externalBalanceTooLowError && (
+    <DialogError>{externalBalanceTooLowError}</DialogError>
+  )
+
+  const disabled = !transparentAddress || externalBalanceTooLowError !== ''
 
   return (
     <Dialog
@@ -49,6 +64,8 @@ const _Exchange = ({
         doNotRender: true,
       }}
       type="dark"
+      helpURL={LINKS.aboutGlacier}
+      footer={globalErrorElem}
     >
       <Asset amount={externalAmount} chain={chain}>
         {chain.symbol} Balance

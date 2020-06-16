@@ -32,7 +32,9 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
       <HeaderWithSyncStatus>
         {title}
         <div className="link">
-          <Link href={LINKS.aboutPoB}>Learn more about Proof of Burn</Link>
+          <Link href={LINKS.aboutPoB} popoverPlacement="right">
+            Learn more about Proof of Burn
+          </Link>
         </div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>

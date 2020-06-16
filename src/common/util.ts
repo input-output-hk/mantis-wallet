@@ -5,7 +5,6 @@ import _ from 'lodash'
 import fileSize from 'filesize'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
-import {isChecksumAddress} from 'web3/lib/utils/utils.js'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
 import {NETWORK_CONSTANTS} from '../shared/version'
@@ -115,16 +114,15 @@ export function hexToBech32(hexAddress: string, prefix = 'm-test-uns-ad'): strin
   return bech32.encode(prefix, new Uint8Array([...trailingZeros, ...data]))
 }
 
+const ETC_ADDRESS_REGEX = new RegExp('^0x[a-fA-F0-9]{40}$')
+
 export const EMPTY_ADDRESS_MSG = 'Address must be set'
 export const INVALID_ADDRESS_MSG = 'Invalid address'
 
 export function validateEthAddress(rawInput?: string): string {
   if (rawInput == null || rawInput.length === 0) return EMPTY_ADDRESS_MSG
-  try {
-    if (!isChecksumAddress(rawInput)) return INVALID_ADDRESS_MSG
-  } catch (e) {
-    return INVALID_ADDRESS_MSG
-  }
+  // Note: use isChecksumAddress for checksum check
+  if (!ETC_ADDRESS_REGEX.test(rawInput)) return INVALID_ADDRESS_MSG
   return ''
 }
 

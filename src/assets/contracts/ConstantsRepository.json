@@ -41,6 +41,18 @@
 }, {
     "constant": true,
     "inputs": [],
+    "name": "getMinimumThreshold",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [],
     "name": "getNumberOfEpochs",
     "outputs": [{
         "internalType": "uint256",
@@ -54,18 +66,6 @@
     "constant": true,
     "inputs": [],
     "name": "getPoWBaseTarget",
-    "outputs": [{
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "getRevealMaxAge",
     "outputs": [{
         "internalType": "uint256",
         "name": "",

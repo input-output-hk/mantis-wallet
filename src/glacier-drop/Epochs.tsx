@@ -33,7 +33,7 @@ export const Epochs = ({
 }: EpochsProps & ModalProps): JSX.Element => {
   const {numberOfEpochs: maximumNumberOfEpochs} = periodConfig
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
-  const secondsUntilNextEpoch = getSecondsUntilNextEpoch(currentBlock, periodConfig, currentEpoch)
+  const secondsUntilNextEpoch = getSecondsUntilNextEpoch(currentBlock, periodConfig)
 
   const isEpochPending = (shownEpoch: number): boolean => shownEpoch > currentEpoch
 

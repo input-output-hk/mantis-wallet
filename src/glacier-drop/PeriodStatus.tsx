@@ -1,5 +1,6 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
+import _ from 'lodash/fp'
 import {BLOCK_TIME_SECONDS} from './glacier-config'
 import {PeriodConfig} from './glacier-state'
 import {toDurationString} from '../common/formatters'
@@ -31,7 +32,7 @@ const getCurrentPeriodDetailText = (
 ): string => {
   const {unlockingStartBlock, unlockingEndBlock, unfreezingStartBlock} = periodConfig
 
-  const t = (block: number): string => timeUntilBlock(currentBlock, block)
+  const t = (block: number): string => _.capitalize(timeUntilBlock(currentBlock, block))
 
   switch (period) {
     case 'UnlockingNotStarted':

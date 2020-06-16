@@ -196,10 +196,6 @@ it('validates ethereum address', () => {
   assert.equal(validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC7'), '')
   assert.equal(validateEthAddress(''), EMPTY_ADDRESS_MSG)
   assert.equal(validateEthAddress('foobar'), INVALID_ADDRESS_MSG)
-  assert.equal(
-    validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC8'),
-    INVALID_ADDRESS_MSG,
-  )
 })
 
 it('converts hashrates ot human readable format correctly', () => {

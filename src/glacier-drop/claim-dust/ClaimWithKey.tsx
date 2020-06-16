@@ -10,6 +10,7 @@ import {wrapWithModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {LINKS} from '../../external-link-config'
 import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
 import {Asset} from './Asset'
 import './ClaimWith.scss'
@@ -52,6 +53,7 @@ const _ClaimWithKey = ({
       onSetLoading={modalLocker.setLocked}
       type="dark"
       buttonDisplayMode="wide"
+      helpURL={LINKS.aboutGlacier}
     >
       <DialogInput
         id="private-key-input"

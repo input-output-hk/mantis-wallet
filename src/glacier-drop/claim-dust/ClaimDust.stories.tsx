@@ -1,5 +1,6 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
+import {toWei} from 'web3/lib/utils/utils.js'
 import {action} from '@storybook/addon-actions'
 import {array, number, text} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../../storybook-util/essential-decorators'
@@ -71,6 +72,7 @@ export const claimWithMessage = (): JSX.Element => (
 export const exchange = (): JSX.Element => (
   <Exchange
     visible
+    minimumThreshold={new BigNumber(toWei(1))}
     externalAmount={new BigNumber(number('external amount', EXAMPLE_AMOUNT))}
     minimumDustAmount={new BigNumber(number('midnight amount', EXAMPLE_AMOUNT))}
     availableDust={new BigNumber(number('available dust', EXAMPLE_AMOUNT))}

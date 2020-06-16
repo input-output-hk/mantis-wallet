@@ -20,7 +20,7 @@
     "build-renderer": "cross-env EXTEND_ESLINT=true react-app-rewired build",
     "build-main": "webpack --config webpack.main.config.js",
     "test": "cross-env EXTEND_ESLINT=true react-app-rewired test --env=jest-environment-jsdom-sixteen \"^((?!storyshots).)*$\"",
-    "test:coverage": "react-app-rewired test --coverage",
+    "test:coverage": "yarn test --coverage",
     "storyshots": "cross-env EXTEND_ESLINT=true react-app-rewired test \"storyshots.*\"",
     "storyshots:update": "yarn storyshots --updateSnapshot && echo -ne '\\007'",
     "lint": "yarn prettier-check && yarn eslint && yarn stylelint",

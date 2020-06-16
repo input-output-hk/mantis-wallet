@@ -3,6 +3,7 @@ import React from 'react'
 import {fireEvent, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
+import {toWei} from 'web3/lib/utils/utils.js'
 import ethereumLogo from '../../assets/icons/chains/ethereum.svg'
 import ethereumClippedLogo from '../../assets/icons/chains/ethereum-clipped.svg'
 import ethereumBurnLogo from '../../assets/icons/chains/m-eth.svg'
@@ -16,12 +17,19 @@ import {expectCalledOnClick, glacierWrappedRender} from '../../common/test-helpe
 import {UNLOCK_BUTTON_TEXT} from './claim-with-strings'
 import {DisplayChain} from '../../pob/chains'
 import {ClaimWithKey} from './ClaimWithKey'
+import {
+  ClaimWithMessage,
+  MESSAGE_MUST_BE_SET_TEXT,
+  INVALID_SIGNED_MESSAGE_TEXT,
+} from './ClaimWithMessage'
 import {SelectMethod} from './SelectMethod'
 import {Exchange} from './Exchange'
 import {EnterAddress} from './EnterAddress'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
 import {DIALOG_VALIDATION_ERROR} from '../../common/Dialog'
+import {ClaimController, ModalId} from './ClaimController'
+import {WalletState, LoadedState} from '../../common/wallet-state'
 
 jest.mock('../../config/renderer.ts')
 
@@ -97,6 +105,7 @@ test('Exchange', async () => {
   const {getByLabelText, getByText, queryByText, getAllByText} = glacierWrappedRender(
     <Exchange
       visible
+      minimumThreshold={new BigNumber(toWei(1))}
       externalAmount={EXTERNAL_AMOUNT}
       minimumDustAmount={DUST_AMOUNT}
       availableDust={new BigNumber(1000000)}
@@ -150,6 +159,28 @@ test('Exchange', async () => {
   // Click "I understand" and finally enable submisson
   const iUnderstandCheckbox = getByLabelText('I understand')
   userEvent.click(iUnderstandCheckbox)
+})
+
+test('Exchange - too low external amount', async () => {
+  const onNext = jest.fn()
+  const onCancel = jest.fn()
+
+  const transparentAddresses = [TRANSPARENT_ADDRESS_1, TRANSPARENT_ADDRESS_2]
+
+  const {getByText} = glacierWrappedRender(
+    <Exchange
+      visible
+      minimumThreshold={new BigNumber(toWei(1))}
+      externalAmount={new BigNumber(0)}
+      minimumDustAmount={DUST_AMOUNT}
+      availableDust={new BigNumber(1000000)}
+      transparentAddresses={transparentAddresses}
+      onNext={onNext}
+      onCancel={onCancel}
+    />,
+  )
+
+  expect(getByText('ETC account balance should be at least 1 ETC')).toBeInTheDocument()
 })
 
 test('Select Claim Method', async () => {
@@ -295,4 +326,114 @@ test('Claim with Private Key', async () => {
   // After clicking Submit button no dialog validation error should show up
   userEvent.click(submitButton)
   await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).not.toBeInTheDocument())
+})
+
+test('Claim with Message', async () => {
+  const signedMessage =
+    '0x69c65b149b6b7a9aa8c1f7c48e795501f4186c12ec6f43385dcb04dc222600ed3120d38ddd006f96bd83c749a2f42ddd51f77f12395b3a4feb6ffbb6fe1ded261c'
+
+  const onNext = jest.fn()
+  const onCancel = jest.fn()
+
+  const {getByLabelText, getByText, queryByText} = glacierWrappedRender(
+    <ClaimWithMessage
+      visible
+      externalAmount={EXTERNAL_AMOUNT}
+      minimumDustAmount={DUST_AMOUNT}
+      transparentAddress={TRANSPARENT_ADDRESS_1}
+      onNext={onNext}
+      onCancel={onCancel}
+      chain={fooChain}
+    />,
+  )
+
+  // Find Submit Button
+  const submitButton = getByText(UNLOCK_BUTTON_TEXT)
+
+  // External asset is shown
+  expect(getByText(EXTERNAL_AS_SRT)).toBeInTheDocument()
+
+  // Estimated dust reward is shown
+  expect(getByText('Estimated Dust')).toBeInTheDocument()
+  expect(getByText(DUST_AS_STR)).toBeInTheDocument()
+
+  // Note is shown that it's only the minimum amount
+  expect(getByText('(The minimum amount of Dust you’ll get)')).toBeInTheDocument()
+
+  // Destination transparent address is shown
+  expect(getByText(TRANSPARENT_ADDRESS_1)).toBeInTheDocument()
+
+  //
+  // Signed message validation works correctly
+  //
+
+  // Find Signed Message Input
+  const signedMessageInput = getByLabelText('Input Signed Message')
+
+  // Submit button can be clicked but it shows a dialog validation error
+  userEvent.click(submitButton)
+  await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
+
+  // Message is shown that the signed message must be set
+  expect(getByText(MESSAGE_MUST_BE_SET_TEXT)).toBeInTheDocument()
+
+  // Enter invalid private key
+  fireEvent.change(signedMessageInput, {
+    target: {value: 'AN INVALID MESSAGE'},
+  })
+  userEvent.click(submitButton)
+
+  // Accept warning
+  const shouldKeepOpenCheckbox = getByLabelText(
+    'I’m aware that I have to keep my Luna wallet open during unlocking',
+  )
+  userEvent.click(shouldKeepOpenCheckbox)
+
+  // Message is shown that the key is invalid
+  await waitFor(() => expect(getByText(INVALID_SIGNED_MESSAGE_TEXT)).toBeInTheDocument())
+
+  // Enter valid signed message
+  fireEvent.change(signedMessageInput, {
+    target: {value: signedMessage},
+  })
+
+  // After clicking Submit button no dialog validation error should show up
+  userEvent.click(submitButton)
+  await waitFor(() => expect(queryByText(MESSAGE_MUST_BE_SET_TEXT)).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByText(INVALID_SIGNED_MESSAGE_TEXT)).not.toBeInTheDocument())
+})
+
+test('ClaimController - basic render', async () => {
+  const setActiveModal = jest.fn()
+  const onFinish = jest.fn()
+
+  const WrappedClaimController = ({activeModal}: {activeModal: ModalId}): JSX.Element => {
+    const walletState = WalletState.useContainer() as LoadedState
+
+    return (
+      <ClaimController
+        walletState={walletState}
+        totalDustDistributed={new BigNumber(2)}
+        minimumThreshold={new BigNumber(1)}
+        activeModal={activeModal}
+        setActiveModal={setActiveModal}
+        onFinish={onFinish}
+      />
+    )
+  }
+
+  const modalIds: ModalId[] = [
+    'none',
+    'EnterAddress',
+    'Exchange',
+    'SelectMethod',
+    'VerifyAddress',
+    'GeneratedMessage',
+    'ClaimWithKey',
+    'ClaimWithMessage',
+  ]
+
+  modalIds.map((activeModal) =>
+    glacierWrappedRender(<WrappedClaimController activeModal={activeModal} />),
+  )
 })

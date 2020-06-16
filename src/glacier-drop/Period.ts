@@ -17,10 +17,12 @@ export const getCurrentEpoch = (
 
 export const getSecondsUntilNextEpoch = (
   currentBlock: number,
-  {unfreezingStartBlock, epochLength}: PeriodConfig,
-  currentEpoch: number,
-): number =>
-  (unfreezingStartBlock + (epochLength * currentEpoch + 1) - currentBlock) * BLOCK_TIME_SECONDS
+  periodConfig: PeriodConfig,
+): number => {
+  const {unfreezingStartBlock, epochLength} = periodConfig
+  const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
+  return (unfreezingStartBlock + epochLength * currentEpoch - currentBlock) * BLOCK_TIME_SECONDS
+}
 
 export const getCurrentPeriod = (
   currentBlock: number,

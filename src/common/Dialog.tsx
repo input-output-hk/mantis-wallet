@@ -32,6 +32,7 @@ interface DialogProps {
   rightButtonProps?: ButtonProps & DialogButtonProps
   onSetLoading?: (loading: boolean) => void
   footer?: React.ReactNode
+  helpURL?: string | null
 }
 
 export interface DialogState {
@@ -69,6 +70,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   children,
   onSetLoading,
   footer,
+  helpURL = null,
 }: React.PropsWithChildren<DialogProps>) => {
   const {errorMessage, setErrorMessage, dialogForm} = DialogState.useContainer()
 
@@ -137,7 +139,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
       {(footer || errorMessage) && (
         <div className="footer">
           {footer}
-          {errorMessage && <DialogError>{errorMessage}</DialogError>}
+          {errorMessage && <DialogError helpURL={helpURL}>{errorMessage}</DialogError>}
         </div>
       )}
     </div>

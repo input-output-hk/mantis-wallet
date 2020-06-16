@@ -6,6 +6,7 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DisplayChain} from '../../pob/chains'
 import {GlacierState, BalanceWithProof} from '../glacier-state'
 import {ETC_CHAIN} from '../glacier-config'
+import {LINKS} from '../../external-link-config'
 
 interface EnterAddressProps extends ModalOnCancel {
   onNext: (address: string, balanceWithProof: BalanceWithProof) => void
@@ -13,11 +14,10 @@ interface EnterAddressProps extends ModalOnCancel {
 }
 
 const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps): JSX.Element => {
+  const modalLocker = ModalLocker.useContainer()
   const {getEtcSnapshotBalanceWithProof, claimedAddresses} = GlacierState.useContainer()
 
   const [address, setAddress] = useState<string>('')
-
-  const modalLocker = ModalLocker.useContainer()
 
   const isAlreadyClaimed = (address?: string): string =>
     address && claimedAddresses.includes(address) ? 'Already claimed' : ''
@@ -38,6 +38,7 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
         disabled: modalLocker.isLocked,
       }}
       type="dark"
+      helpURL={LINKS.aboutGlacier}
     >
       <DialogInput
         id="public-address"
