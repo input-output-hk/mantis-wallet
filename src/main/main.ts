@@ -145,7 +145,7 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+const openLuna = (): Promise<void> => app.whenReady().then(createWindow)
 
 //
 // Configuration
@@ -246,6 +246,7 @@ if (config.runClients) {
 
   const initializationPromise = checkJavaVersion(config.clientConfigs.wallet)
     .then(checkDatadirCompatibility)
+    .then(openLuna)
     .then(() =>
       setupOwnTLS(processExecutablePath(config.clientConfigs.node)).then((tlsData) => ({
         tlsData,
@@ -383,4 +384,6 @@ if (config.runClients) {
       event.reply('restart-clients-failure', e.message)
     }
   })
+} else {
+  openLuna()
 }
