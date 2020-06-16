@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import {withKnobs, text} from '@storybook/addon-knobs'
+import {text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import {withTheme} from '../storybook-util/theme-switcher'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -14,7 +14,7 @@ import {RedeemModal} from './modals/RedeemModal'
 
 export default {
   title: 'Wallets',
-  decorators: [withRouterState, withWalletState, withTheme, withKnobs, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withRouterState, withWalletState, withBuildJobState],
 }
 
 // `useState` cannot be used in stories

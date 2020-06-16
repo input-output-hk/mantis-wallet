@@ -1,7 +1,7 @@
 import React from 'react'
-import {withKnobs, text, array} from '@storybook/addon-knobs'
+import {text, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import {withTheme} from '../storybook-util/theme-switcher'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -15,7 +15,7 @@ import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecover
 
 export default {
   title: 'Wallet Setup',
-  decorators: [withWalletState, withTheme, withRouterState, withKnobs, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withRouterState, withBuildJobState],
   parameters: {withWalletState: {walletStatus: 'NO_WALLET'}},
 }
 

@@ -1,19 +1,18 @@
 import React from 'react'
-import {withKnobs, select} from '@storybook/addon-knobs'
+import {select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import BigNumber from 'bignumber.js'
-import {withTheme} from '../storybook-util/theme-switcher'
 import {dust} from '../storybook-util/custom-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {withBackendState} from '../storybook-util/backend-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {SyncStatusContent} from '../common/SyncStatus'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {WalletOverview} from './WalletOverview'
+import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 
 export default {
   title: 'Wallet Overview',
-  decorators: [withWalletState, withBackendState, withTheme, withKnobs, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
 }
 
 export const withZeroBalance = (): JSX.Element => (
