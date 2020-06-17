@@ -1,4 +1,4 @@
-@import '../../themify', '../../partial';
+@import '../../themify', '../../partial', '../../vars';
 
 .DialogFee {
   margin-bottom: 20px;
@@ -57,7 +57,7 @@
   .options {
     display: grid;
     grid-template-columns: 0 1fr 1fr 1fr 1fr;
-    height: 47px;
+    height: $dialog-component-height;
 
     .button {
       height: 100%;
@@ -134,7 +134,7 @@
   }
 
   .loading {
-    height: 47px;
+    height: $dialog-component-height;
     text-align: center;
   }
 
