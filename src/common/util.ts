@@ -8,7 +8,6 @@ import {StoreValue} from 'antd/lib/form/interface'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
 import {NETWORK_CONSTANTS} from '../shared/version'
-import {FeeEstimates} from './wallet-state'
 
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
@@ -208,15 +207,4 @@ export const createTransparentAddressValidator = (networkTag: NetworkTag): AntVa
 export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntValidator => {
   const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-shl-ad`
   return createAddressValidator(prefix, 43, 'Invalid confidential address')
-}
-
-// FIXME PM-2251 remove this temporary fix
-export const sortFeeEstimates = (feeEstimates: FeeEstimates): FeeEstimates => {
-  // eslint-disable-next-line fp/no-mutating-methods
-  const fees = Object.values(feeEstimates).sort((a, b) => a.toNumber() - b.toNumber())
-  return {
-    low: fees[0],
-    medium: fees[1],
-    high: fees[2],
-  }
 }
