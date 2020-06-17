@@ -7,7 +7,7 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from './errors'
-import {deserializeBigNumber, loadAll, bigSum, toHex, bech32toHex} from './util'
+import {deserializeBigNumber, loadAll, bigSum, toHex, bech32toHex, sortFeeEstimates} from './util'
 import {Chain, ChainId} from '../pob/chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
@@ -454,7 +454,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       .then((res) => _.mapValues<number, BigNumber>((v) => new BigNumber(v))(res) as FeeEstimates)
 
   const estimateFees = (txType: 'redeem' | 'transfer', amount: BigNumber): Promise<FeeEstimates> =>
-    wallet.estimateFees(txType, amount.toNumber()).then((res) => tPromise.decode(FeeEstimates, res))
+    wallet
+      .estimateFees(txType, amount.toNumber())
+      .then((res) => tPromise.decode(FeeEstimates, res))
+      .then(sortFeeEstimates)
 
   const estimateRedeemFee = (amount: BigNumber): Promise<FeeEstimates> =>
     estimateFees('redeem', amount)
@@ -472,6 +475,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
         getPublicTransactionParams(amount, new BigNumber(0), recipient ? recipient : undefined),
       )
       .then((res) => tPromise.decode(FeeEstimates, res))
+      .then(sortFeeEstimates)
 
   return {
     walletStatus,
