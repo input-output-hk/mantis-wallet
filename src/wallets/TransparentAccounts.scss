@@ -40,13 +40,7 @@
     margin-top: 1em;
 
     .no-accounts-text {
-      margin-top: 2em;
-      opacity: 0.16;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1.8px;
-      text-align: center;
-      text-transform: uppercase;
+      @extend %empty-list-message;
     }
 
     .list-accounts {

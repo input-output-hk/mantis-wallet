@@ -120,7 +120,7 @@ export const TransactionHistory = ({
       </div>
       {transactions.length === 0 ? (
         <div className="no-transactions">
-          <div className="no-transactions-text">You haven&apos;t made a transaction</div>
+          You haven&apos;t made a transaction
         </div>
       ) : (
         <div className="transactions-container">
