@@ -27,6 +27,7 @@ interface DialogFeeProps {
   onChange: (value: string, feeLevel: FeeLevel | null) => void
   feeEstimates?: FeeEstimates
   hideCustom?: boolean
+  forceCustom?: boolean
   isPending?: boolean
 }
 
@@ -54,8 +55,13 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   defaultValue = '0',
   errorMessage,
   hideCustom = false,
+  forceCustom = false,
   isPending = false,
 }: DialogFeeProps & InlineErrorProps) => {
+  if (forceCustom && hideCustom) {
+    console.error(Error('Both forceCustom and hideCustom flags were set.'))
+  }
+
   const [value, setValue] = useState<string>(defaultValue)
   const [feeLevel, setFeeLevel] = useState<FeeLevel | null>(
     defaultValue === '0' || hideCustom ? 'medium' : null,
@@ -73,6 +79,12 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   useEffect(() => {
     if (feeEstimates) onChange(value, feeLevel)
   }, [value])
+
+  useEffect(() => {
+    if (feeLevel !== null && forceCustom) {
+      setFeeLevel(null)
+    }
+  }, [forceCustom])
 
   const onChangeWithDialogReset = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setErrorMessage('')
@@ -126,6 +138,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
           )}
           {allFeeLevels.map((level) => (
             <Button
+              disabled={forceCustom}
               className={classnames('button', {inactive: feeLevel !== level})}
               onClick={() => {
                 setValue(fieldDisplayAmount(feeEstimates[level]))

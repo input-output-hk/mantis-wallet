@@ -4,33 +4,13 @@
   position: relative;
   margin-bottom: 20px;
 
-  &.withButton {
-    display: grid;
-    grid-template-columns: auto 1fr;
-  }
-
   .label {
     @extend %dialog-label;
     display: block;
-    grid-column: 1 / -1;
   }
 
   .input {
     height: $dialog-component-height;
-  }
-
-  .fill-button {
-    height: $dialog-component-height;
-    opacity: $secondary-opacity;
-
-    @include themify($themes) {
-      background-color: themed('secondary-background');
-      color: themed('text-color');
-    }
-
-    &:hover {
-      opacity: 1;
-    }
   }
 
   .dark & {
