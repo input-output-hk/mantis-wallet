@@ -13,6 +13,8 @@ $sidebar-width: 240px;
 $sidebar-collapsed-width: 80px;
 $sidebar-collapse-query: '(max-width: 1300px), (max-height: 800px)';
 
+$dialog-component-height: 47px;
+
 // antd uses z-index of 10xx for modals, tooltips, etc
 // let's keep sidebar under them
 $zindex-sidebar: 900;

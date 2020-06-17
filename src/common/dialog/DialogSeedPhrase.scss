@@ -1,4 +1,4 @@
-@import '../../themify';
+@import '../../themify', '../../vars';
 
 .DialogSeedPhrase {
   margin-bottom: 20px;
@@ -8,7 +8,7 @@
   }
 
   .select .ant-input {
-    height: 47px;
+    height: $dialog-component-height;
   }
 }
 
