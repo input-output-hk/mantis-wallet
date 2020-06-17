@@ -143,7 +143,7 @@
 
           .transactions {
             @extend %transactions-grid;
-            padding: 0 1em;
+            padding: 1em 1em 0;
 
             @include themify($themes) {
               background-color: themed('secondary-background');
@@ -151,7 +151,7 @@
           }
 
           .transactions-footer {
-            padding: 0 1em 0.5em;
+            padding: 0.5em 1em;
             text-align: center;
 
             .transactions-collapse {
