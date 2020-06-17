@@ -131,10 +131,12 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
       {title && <div className="title">{title}</div>}
       <Form form={dialogForm} onValuesChange={() => setErrorMessage('')}>
         <div className="dialog-children">{children}</div>
-        <div className={classnames('actions', buttonDisplayMode)}>
-          {!doNotRenderLeft && <Button data-testid="left-button" {...leftButtonPropsToUse} />}
-          {!doNotRenderRight && <Button data-testid="right-button" {...rightButtonPropsToUse} />}
-        </div>
+        {(!doNotRenderLeft || !doNotRenderRight) && (
+          <div className={classnames('actions', buttonDisplayMode)}>
+            {!doNotRenderLeft && <Button data-testid="left-button" {...leftButtonPropsToUse} />}
+            {!doNotRenderRight && <Button data-testid="right-button" {...rightButtonPropsToUse} />}
+          </div>
+        )}
       </Form>
       {(footer || errorMessage) && (
         <div className="footer">

@@ -26,6 +26,7 @@ interface ReceiveTransactionProps
     Pick<ReceivePublicTransactionProps, 'onGenerateNew'> {
   transparentAddresses: TransparentAddress[]
   goToAccounts: () => void
+  defaultMode?: 'transparent' | 'confidential'
 }
 
 const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransactionProps> = ({
@@ -109,9 +110,10 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
   transparentAddresses,
   onGenerateNew,
   goToAccounts,
+  defaultMode = 'confidential',
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
-  const [mode, setMode] = useState<'transparent' | 'confidential'>('confidential')
+  const [mode, setMode] = useState(defaultMode)
   const [isLoading, setLoading] = useState(false)
 
   const newestAddress = _.head(transparentAddresses)
@@ -139,7 +141,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
     )
 
   return (
-    <LunaModal footer={usedAddresses} {...props}>
+    <LunaModal footer={usedAddresses} wrapClassName="ReceiveModal" {...props}>
       <Dialog
         leftButtonProps={{
           doNotRender: true,
@@ -149,6 +151,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
         }}
       >
         <DialogTextSwitch
+          buttonClassName="mode-switch"
           defaultMode={mode}
           left={{label: 'Confidential', type: 'confidential'}}
           right={{label: 'Transparent', type: 'transparent'}}

@@ -157,3 +157,37 @@ export const DUMMY_PERIOD_CONFIG: PeriodConfig = {
   numberOfEpochs: 10,
   epochLength: 10,
 }
+
+export const CONFIDENTIAL_ADDRESS =
+  'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5'
+
+export const TRANSPARENT_ADDRESSES = [
+  {
+    address: 'm-test-uns-ad1j7ty84rlktw82amh99ls8rjpxht7k592kpd25v',
+    index: 6,
+  },
+  {
+    address: 'm-test-uns-ad170ygzstqc4rcfl7m0ap9yfnkrw83s73q2tnq28',
+    index: 5,
+  },
+  {
+    address: 'm-test-uns-ad1slvftjj2zrl3mr9mlgcxlq5n9v4dhnmdwlkztg',
+    index: 4,
+  },
+  {
+    address: 'm-test-uns-ad16t52pjs3llcjeykuhu3hw9s44txp3z2map09gq',
+    index: 3,
+  },
+  {
+    address: 'm-test-uns-ad1pz4h6hzmg8xtkdy5jg592umjer8hc8tyduzd2s',
+    index: 2,
+  },
+  {
+    address: 'm-test-uns-ad18r8gdnwae96ugqlzdw0py57qw70lpacr6mff8e',
+    index: 1,
+  },
+  {
+    address: 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v7',
+    index: 0,
+  },
+]

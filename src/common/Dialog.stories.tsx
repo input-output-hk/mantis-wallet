@@ -255,6 +255,7 @@ export const InteractiveTextSwitch: React.FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Text Switch">
       <DialogTextSwitch
+        label={text('Switch label', 'Label')}
         left={{label: text('Left label', 'Left'), type: 'left'}}
         right={{label: text('Right label', 'Right'), type: 'right'}}
         disabled={boolean('Is disabled', false)}

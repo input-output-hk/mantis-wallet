@@ -8,7 +8,7 @@ import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
-import {dummyTransactions, estimateFeesWithRandomDelay} from '../storybook-util/dummies'
+import {dummyTransactions, estimateFeesWithRandomDelay, CONFIDENTIAL_ADDRESS, TRANSPARENT_ADDRESSES} from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
@@ -135,12 +135,12 @@ export const interactive = (): JSX.Element => {
   )
 }
 
-export const sendTransactionModal = (): JSX.Element => (
+export const sendConfidentialTransaction = (): JSX.Element => (
   <SendTransaction
     accounts={[
       {
         wallet: 'wallet 1',
-        address: text('First address', 'first-address'),
+        address: text('First address', CONFIDENTIAL_ADDRESS),
         locked: false,
       },
       {
@@ -156,37 +156,69 @@ export const sendTransactionModal = (): JSX.Element => (
     estimateGasPrice={estimateFeesWithRandomDelay}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
+    defaultMode="confidential"
     visible
   />
 )
 
-export const receiveTransactionModal = (): JSX.Element => (
-  <ReceiveTransaction
-    privateAddress={text('Private address', 'private-address')}
-    transparentAddresses={[
+export const sendTransparentTransaction = (): JSX.Element => (
+  <SendTransaction
+    accounts={[
       {
-        address: text('New address', 'new-address'),
-        index: 1,
+        wallet: 'wallet 1',
+        address: text('First address', CONFIDENTIAL_ADDRESS),
+        locked: false,
       },
       {
-        address: text('Old address', 'old-address'),
-        index: 0,
+        wallet: 'wallet 2',
+        address: text('Second address', 'second-address'),
+        locked: false,
       },
     ]}
-    onCancel={action('receive-transaction-cancelled')}
-    onGenerateNew={asyncAction('generate-new')}
-    goToAccounts={action('on-go-to-accounts')}
+    availableAmount={dust('Available Amount', 123.456)}
+    onCancel={action('send-transaction-cancelled')}
+    onSend={asyncAction('on-send')}
+    onSendToTransparent={asyncAction('on-send-to-transparent')}
+    estimateGasPrice={estimateFeesWithRandomDelay}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
+    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
+    defaultMode="transparent"
     visible
   />
 )
 
-export const emptyTransactionModal = (): JSX.Element => (
+export const receiveConfidentialTransaction = (): JSX.Element => (
   <ReceiveTransaction
-    privateAddress={text('Private address', 'private-address')}
+    privateAddress={text('Private address', CONFIDENTIAL_ADDRESS)}
     transparentAddresses={[]}
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNew={asyncAction('generate-new')}
     goToAccounts={action('on-go-to-accounts')}
+    defaultMode="confidential"
+    visible
+  />
+)
+
+export const receiveTransparentTransaction = (): JSX.Element => (
+  <ReceiveTransaction
+    privateAddress={text('Private address', CONFIDENTIAL_ADDRESS)}
+    transparentAddresses={TRANSPARENT_ADDRESSES}
+    onCancel={action('receive-transaction-cancelled')}
+    onGenerateNew={asyncAction('generate-new')}
+    goToAccounts={action('on-go-to-accounts')}
+    defaultMode="transparent"
+    visible
+  />
+)
+
+export const receiveTransparentTransactionEmptyModal = (): JSX.Element => (
+  <ReceiveTransaction
+    privateAddress={text('Private address', CONFIDENTIAL_ADDRESS)}
+    transparentAddresses={[]}
+    onCancel={action('receive-transaction-cancelled')}
+    onGenerateNew={asyncAction('generate-new')}
+    goToAccounts={action('on-go-to-accounts')}
+    defaultMode="transparent"
     visible
   />
 )

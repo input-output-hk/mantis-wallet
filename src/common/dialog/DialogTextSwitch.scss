@@ -1,54 +1,75 @@
-@import '../../themify', '../../vars';
+@import '../../themify', '../../vars', '../../partial';
 
 .DialogTextSwitch {
   margin: 20px auto;
-  text-align: center;
 
-  .button {
-    width: 172px;
-    height: 30px !important; // FIXME PM-1812 make button sizes consistent
-    transition: color 0.6s, background-color 0.6s;
-    text-align: center;
+  .label {
+    @extend %dialog-label;
+  }
 
-    &.inactive {
-      opacity: $secondary-opacity;
+  .switch-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
 
-      @include themify($themes) {
-        background-color: themed('secondary-background');
-        color: themed('text-color');
+    .button {
+      height: 30px !important; // FIXME PM-1812 make button sizes consistent
+      transition: color 0.6s, background-color 0.6s;
+      text-align: center;
+
+      &.inactive {
+        opacity: $secondary-opacity;
+
+        @include themify($themes) {
+          background-color: themed('secondary-background');
+          color: themed('text-color');
+        }
+
+        &:not(:disabled) {
+          &:hover,
+          &:focus {
+            opacity: 1;
+
+            @include themify($themes) {
+              background-color: themed('quinary-background');
+            }
+          }
+        }
       }
 
-      &:not(:disabled) {
-        &:hover,
-        &:focus {
-          opacity: 1;
+      &.left {
+        justify-self: right;
+      }
 
+      &.right {
+        justify-self: left;
+
+        &.active {
           @include themify($themes) {
-            background-color: themed('quinary-background');
+            background-color: themed('primary-color');
+            color: #fff;
+          }
+
+          &:disabled {
+            @include themify($themes) {
+              background-color: rgba(themed('primary-color'), 0.5);
+            }
+          }
+
+          &:not(:disabled) {
+            &:hover,
+            &:focus {
+              @include themify($themes) {
+                background-color: lighten(themed('primary-color'), 5);
+              }
+            }
           }
         }
       }
     }
 
-    &.right {
-      @include themify($themes) {
-        background-color: themed('primary-color');
-        color: #fff;
-      }
-
-      &:disabled {
-        @include themify($themes) {
-          background-color: rgba(themed('primary-color'), 0.5);
-        }
-      }
-
-      &:not(:disabled) {
-        &:hover,
-        &:focus {
-          @include themify($themes) {
-            background-color: lighten(themed('primary-color'), 5);
-          }
-        }
+    &.with-label {
+      .button {
+        width: 100%;
       }
     }
   }
