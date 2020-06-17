@@ -31,10 +31,10 @@
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "midnight",
-        "rev": "637fec9e309112a178cbcd8fa4dc624d85d6aac1",
-        "sha256": "10hyz50l0js9nmzwhpgb8xxq9fw4mcgby5vn6k1xaxlqyhh4h1yh",
+        "rev": "b4cd1edfded1cacdc7108fc3acd3505a6168b7b4",
+        "sha256": "0pwbzj68nalmy2njrd05d69v8v0w73m2z920xv1rhnfl43w8c88l",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/midnight/archive/637fec9e309112a178cbcd8fa4dc624d85d6aac1.tar.gz",
+        "url": "https://github.com/input-output-hk/midnight/archive/b4cd1edfded1cacdc7108fc3acd3505a6168b7b4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
