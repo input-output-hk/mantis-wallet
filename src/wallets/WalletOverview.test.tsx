@@ -2,7 +2,6 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
 import {render} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
@@ -25,8 +24,6 @@ test('WalletOverview shows properly formatted balance', () => {
   const pending = Dust.toBasic(new BigNumber(3456789))
   const total = confidential.plus(transparent).plus(pending)
 
-  const setViewType = jest.fn()
-
   const balance = {
     confidential,
     transparent,
@@ -39,7 +36,7 @@ test('WalletOverview shows properly formatted balance', () => {
       <BuildJobState.Provider initialState={{web3}}>
         <WalletState.Provider initialState={initialState}>
           <BackendState.Provider initialState={{web3}}>
-            <WalletOverview {...balance} goToAccounts={setViewType} />
+            <WalletOverview {...balance} />
           </BackendState.Provider>
         </WalletState.Provider>
       </BuildJobState.Provider>
@@ -54,8 +51,4 @@ test('WalletOverview shows properly formatted balance', () => {
     // abbreviated numbers are present
     expect(getByText(formattedNumber)).toBeInTheDocument()
   })
-
-  const transparentBalance = getByText('Transparent', {exact: false})
-  userEvent.click(transparentBalance)
-  expect(setViewType).toBeCalled()
 })

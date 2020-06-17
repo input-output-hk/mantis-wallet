@@ -21,14 +21,12 @@ interface WalletOverviewProps {
   pending: BigNumber
   confidential: BigNumber
   transparent: BigNumber
-  goToAccounts: () => void
 }
 
 export const WalletOverview = ({
   pending,
   confidential,
   transparent,
-  goToAccounts,
 }: WalletOverviewProps): JSX.Element => {
   const themeState = ThemeState.useContainer()
 
@@ -38,12 +36,11 @@ export const WalletOverview = ({
   const total = pending.plus(available)
 
   const transparentTooltip = (
-    <p>
-      These funds are transparent and can be visible to other Midnight users,
+    <p style={{width: '350px'}}>
+      These funds are transparent and can be visible to other Midnight users, we recommend you move
+      them to a confidential address.
       <br />
-      we recommened you move them to a confidental address.
-      <br />
-      <b>To view your Transparent balances, click here.</b>
+      <b>To view your transparent balances, click the Transparent Accounts button below.</b>
     </p>
   )
 
@@ -82,7 +79,7 @@ export const WalletOverview = ({
             <Link href={LINKS.faucet}>Where to get Dust?</Link>
           </div>
         </div>
-        <div className="transparent" onClick={goToAccounts}>
+        <div className="transparent">
           <Popover content={transparentTooltip}>
             <div>
               <div className="box-text">

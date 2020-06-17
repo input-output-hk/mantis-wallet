@@ -87,6 +87,14 @@ export const TransactionHistory = ({
           >
             Receive
           </Button>
+          <Button
+            type="primary"
+            disabled={transparentAddresses.length === 0}
+            className="action secondary"
+            onClick={goToAccounts}
+          >
+            Transparent Accounts
+          </Button>
           <SendTransaction
             visible={showSendModal}
             accounts={accounts}
@@ -119,9 +127,7 @@ export const TransactionHistory = ({
         </div>
       </div>
       {transactions.length === 0 ? (
-        <div className="no-transactions">
-          You haven&apos;t made a transaction
-        </div>
+        <div className="no-transactions">You haven&apos;t made a transaction</div>
       ) : (
         <div className="transactions-container">
           <InfiniteScroll

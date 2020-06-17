@@ -8,7 +8,12 @@ import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
-import {dummyTransactions, estimateFeesWithRandomDelay, CONFIDENTIAL_ADDRESS, TRANSPARENT_ADDRESSES} from '../storybook-util/dummies'
+import {
+  dummyTransactions,
+  estimateFeesWithRandomDelay,
+  CONFIDENTIAL_ADDRESS,
+  TRANSPARENT_ADDRESSES,
+} from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'

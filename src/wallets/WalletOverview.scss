@@ -65,14 +65,9 @@ $balance-min-width: 285px;
       justify-self: left;
       margin-left: 20px;
       border-radius: 20px;
-      cursor: pointer;
 
       @include themify($themes) {
         background-color: themed('secondary-background');
-
-        &:hover {
-          box-shadow: 0px 0px 3px 0px themed('text-color');
-        }
       }
     }
 

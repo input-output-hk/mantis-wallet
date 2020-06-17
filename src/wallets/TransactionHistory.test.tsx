@@ -90,23 +90,35 @@ const estimateFees = (): Promise<FeeEstimates> =>
     high: new BigNumber(300),
   })
 
-const renderTransactionHistory = (transactions: Transaction[]): RenderResult =>
-  render(
-    <TransactionHistory
-      transactions={transactions}
-      transparentAddresses={[]}
-      accounts={accounts}
-      availableBalance={new BigNumber(1000)}
-      sendTransaction={jest.fn()}
-      sendTxToTransparent={jest.fn()}
-      estimateGasPrice={estimateFees}
-      estimateTransactionFee={estimateFees}
-      estimatePublicTransactionFee={estimateFees}
-      generateAddress={jest.fn()}
-      goToAccounts={jest.fn()}
-    />,
-    {wrapper: WithProviders},
-  )
+const renderTransactionHistory = (
+  transactions: Transaction[],
+): RenderResult & {goToAccounts: ReturnType<typeof jest.fn>} => {
+  const goToAccounts = jest.fn()
+  return {
+    goToAccounts,
+    ...render(
+      <TransactionHistory
+        transactions={transactions}
+        transparentAddresses={[
+          {
+            address: 'transparent-address',
+            index: 0,
+          },
+        ]}
+        accounts={accounts}
+        availableBalance={new BigNumber(1000)}
+        sendTransaction={jest.fn()}
+        sendTxToTransparent={jest.fn()}
+        estimateGasPrice={estimateFees}
+        estimateTransactionFee={estimateFees}
+        estimatePublicTransactionFee={estimateFees}
+        generateAddress={jest.fn()}
+        goToAccounts={goToAccounts}
+      />,
+      {wrapper: WithProviders},
+    ),
+  }
+}
 
 test('TransactionHistory shows proper message with empty tx list', () => {
   const {getByText} = renderTransactionHistory([])
@@ -170,4 +182,13 @@ test('Receive modal shows up', () => {
   userEvent.click(receiveButton)
 
   expect(getByText('Your private address')).toBeInTheDocument()
+})
+
+// Navigation
+test('Should navigation to accounts', async () => {
+  const {getByText, goToAccounts} = renderTransactionHistory([tx1, tx2])
+  const transparentAccounts = getByText('Transparent Accounts')
+  userEvent.click(transparentAccounts)
+
+  expect(goToAccounts).toBeCalled()
 })
