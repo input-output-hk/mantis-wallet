@@ -38,3 +38,9 @@ export const expectCalledOnClick = async (
   await act(async () => userEvent.click(button))
   await waitFor(() => expect(toBeCalledFn).toBeCalled())
 }
+
+export const findExactlyOneByTag = (element: HTMLElement, tagName: string): Element => {
+  const possibleElementsByTag = element.getElementsByTagName(tagName)
+  expect(possibleElementsByTag).toHaveLength(1)
+  return possibleElementsByTag[0]
+}

@@ -42,12 +42,14 @@ interface SendToTransparentDialogProps extends ModalOnCancel {
   availableAmount: BigNumber
 }
 
-interface SendTransactionProps extends SendToConfidentialDialogProps, SendToTransparentDialogProps {
+export interface SendTransactionProps
+  extends SendToConfidentialDialogProps,
+    SendToTransparentDialogProps {
   accounts: Account[]
   defaultMode?: 'transparent' | 'confidential'
 }
 
-const SendToConfidentialDialog = ({
+export const SendToConfidentialDialog = ({
   estimateTransactionFee,
   onSend,
   availableAmount,
@@ -101,6 +103,7 @@ const SendToConfidentialDialog = ({
       <DialogInput
         autoFocus
         label="Recipient"
+        id="confidential-recipient-name"
         onChange={(e): void => setRecipient(e.target.value)}
         formItem={{
           name: 'confidential-recipient-name',
@@ -109,6 +112,7 @@ const SendToConfidentialDialog = ({
       />
       <DialogInput
         label="Amount"
+        id="confidential-tx-amount"
         onChange={(e): void => setAmount(e.target.value)}
         formItem={{
           name: 'confidential-tx-amount',
@@ -198,6 +202,7 @@ const SendToTransparentDialog = ({
       {children}
       <DialogInput
         label="Recipient"
+        id="transparent-recipient-name"
         onChange={(e): void => setRecipient(e.target.value)}
         formItem={{
           name: 'transparent-recipient-name',
@@ -206,6 +211,7 @@ const SendToTransparentDialog = ({
       />
       <DialogInput
         label="Amount"
+        id="transparent-tx-amount"
         onChange={(e): void => setAmount(e.target.value)}
         formItem={{
           name: 'transparent-tx-amount',

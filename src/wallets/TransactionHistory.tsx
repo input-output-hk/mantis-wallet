@@ -11,7 +11,7 @@ import {FeeEstimates} from '../common/wallet-state'
 import {TransactionList, updateSorting, SORTABLE_PROPERTIES, SortBy} from './TransactionList'
 import './TransactionHistory.scss'
 
-interface TransactionHistoryProps {
+export interface TransactionHistoryProps {
   transactions: Transaction[]
   transparentAddresses: TransparentAddress[]
   accounts: Account[]

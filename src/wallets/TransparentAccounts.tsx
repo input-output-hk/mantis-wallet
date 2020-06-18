@@ -45,6 +45,7 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
           </div>
           <div className="actions">
             <Button
+              data-testid="redeem-button"
               type="primary"
               className="action"
               onClick={redeem}
@@ -53,6 +54,7 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
               Apply Confidentiality
             </Button>
             <Button
+              data-testid="txs-button"
               type="primary"
               className="action secondary"
               onClick={() => setTransactionVisible(!transactionsVisible)}
@@ -78,7 +80,7 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
             />
             <div className="transactions-footer">
               <span className="transactions-collapse" onClick={() => setTransactionVisible(false)}>
-                Collapse transactions
+                Collapse Transactions
               </span>
             </div>
           </div>

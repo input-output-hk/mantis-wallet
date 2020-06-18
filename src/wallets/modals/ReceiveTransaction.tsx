@@ -45,7 +45,7 @@ const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransacti
     }}
     type="dark"
   >
-    <div className="title">Your private address</div>
+    <div className="title">Your confidential address</div>
     <DialogQRCode content={privateAddress} />
   </Dialog>
 )

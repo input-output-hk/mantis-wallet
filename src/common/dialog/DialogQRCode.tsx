@@ -16,7 +16,7 @@ export const DialogQRCode: React.FunctionComponent<DialogQRCodeProps> = ({
   <div className="DialogQRCode">
     <div className="display">
       <div className="qr-code">
-        <QRCode value={content} />
+        <QRCode data-testid="qr-code" value={content} />
       </div>
       <div className="qr-content">{content}</div>
     </div>
