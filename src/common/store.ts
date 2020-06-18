@@ -3,14 +3,38 @@ import {set as mutatingSet} from 'lodash'
 // eslint-disable-next-line import/default
 import ElectronStore from 'electron-store'
 import BigNumber from 'bignumber.js'
-import {StoreSettingsData, defaultSettingsData} from '../settings-state'
+import {gt} from 'semver'
+import {StoreSettingsData, defaultSettingsData, migrationsForSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
 import {StorePobData, defaultPobData} from '../pob/pob-state'
 import {Claim, StoreGlacierData, defaultGlacierData} from '../glacier-drop/glacier-state'
+import {DATADIR_VERSION} from '../shared/version'
 
 export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData
 
 const defaultData: StoreData = _.mergeAll([defaultSettingsData, defaultPobData, defaultGlacierData])
+
+const mergeMigrations = _.mergeAllWith(
+  (
+    objValue: undefined | ((store: Store<StoreData>) => void),
+    srcValue: (store: Store<StoreData>) => void,
+  ) => {
+    if (objValue === undefined) {
+      return srcValue
+    } else {
+      return (store: Store<StoreData>): void => {
+        objValue.call(undefined, store)
+        srcValue.call(undefined, store)
+      }
+    }
+  },
+)
+
+const migrations = mergeMigrations([migrationsForSettingsData])
+
+const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
+
+const projectVersion = getMaxVersion('0.14.0-alpha.1', DATADIR_VERSION)
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]
@@ -70,6 +94,11 @@ export function createPersistentStore(): Store<StoreData> {
   const store = new ElectronStore({
     defaults: defaultData,
     cwd: config.dataDir,
+    migrations,
+    // See https://github.com/sindresorhus/electron-store/issues/123
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    projectVersion,
     deserialize: (text: string) =>
       _.update(['glacierDrop', 'claims'], (v) => {
         return _.mapValues(deserializeClaim)(v)

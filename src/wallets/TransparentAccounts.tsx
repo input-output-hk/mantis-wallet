@@ -106,9 +106,13 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
   transactions,
 }: TransparentAccountsProps) => {
   const [showRedeem, setShowRedeem] = useState(false)
-  const [hideEmpty, setHideEmpty] = useState(false)
   const [addressGenerationInProgress, setAddressGenerationInProgress] = useState(false)
   const [transparentAccount, setTransparentAccount] = useState<TransparentAccount | null>(null)
+
+  const {
+    areEmptyTransparentAccountsHidden: areEmptyHidden,
+    hideEmptyTransparentAccounts: hideEmpty,
+  } = SettingsState.useContainer()
 
   const handleRedeem = (transparentAccount: TransparentAccount): void => {
     setTransparentAccount(transparentAccount)
@@ -163,14 +167,14 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
               <div>Asset</div>
               <div>Amount</div>
               <div className="hide-empty">
-                <span className="hide-empty-label" onClick={() => setHideEmpty(!hideEmpty)}>
-                  Hide empty accounts
+                <span className="hide-empty-label" onClick={() => hideEmpty(!areEmptyHidden)}>
+                  Hide Empty Accounts
                 </span>
-                <Switch title="Hide empty accounts" checked={hideEmpty} onChange={setHideEmpty} />
+                <Switch title="Hide empty accounts" checked={areEmptyHidden} onChange={hideEmpty} />
               </div>
             </div>
             {transparentAccounts
-              .filter((a) => !hideEmpty || !a.balance.isZero())
+              .filter((a) => !areEmptyHidden || !a.balance.isZero())
               .map((a) => (
                 <ShowTransparentAccount
                   account={a}

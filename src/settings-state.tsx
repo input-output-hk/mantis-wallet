@@ -8,17 +8,21 @@ export type Theme = 'dark' | 'light'
 interface SettingsState {
   theme: Theme
   switchTheme(newTheme: Theme): void
+  areEmptyTransparentAccountsHidden: boolean
+  hideEmptyTransparentAccounts(hide: boolean): void
 }
 
 export type StoreSettingsData = {
   settings: {
     theme: Theme
+    areEmptyTransparentAccountsHidden: boolean
   }
 }
 
 export const defaultSettingsData: StoreSettingsData = {
   settings: {
     theme: 'dark',
+    areEmptyTransparentAccountsHidden: false,
   },
 }
 
@@ -26,6 +30,10 @@ function useSettingsState(
   store: Store<StoreSettingsData> = createInMemoryStore(defaultSettingsData),
 ): SettingsState {
   const [theme, switchTheme] = usePersistedState(store, ['settings', 'theme'])
+  const [areEmptyTransparentAccountsHidden, hideEmptyTransparentAccounts] = usePersistedState(
+    store,
+    ['settings', 'areEmptyTransparentAccountsHidden'],
+  )
 
   useEffect(() => {
     document.body.classList.forEach((className) => {
@@ -37,7 +45,18 @@ function useSettingsState(
   return {
     theme,
     switchTheme,
+    areEmptyTransparentAccountsHidden,
+    hideEmptyTransparentAccounts,
   }
 }
 
 export const SettingsState = createContainer(useSettingsState)
+
+export const migrationsForSettingsData = {
+  '0.14.0-alpha.1': (store: Store<StoreSettingsData>) => {
+    store.set('settings', {
+      ...store.get('settings'),
+      areEmptyTransparentAccountsHidden: false,
+    })
+  },
+}
