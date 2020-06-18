@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Button, message, Switch} from 'antd'
 import BigNumber from 'bignumber.js'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
 import {TransparentAccount, FeeEstimates} from '../common/wallet-state'
@@ -23,8 +23,8 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
   redeem,
   transactions,
 }: ShowAccountProps) => {
-  const themeState = ThemeState.useContainer()
-  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
+  const {theme} = SettingsState.useContainer()
+  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
   const [transactionsVisible, setTransactionVisible] = useState(false)
 
   return (

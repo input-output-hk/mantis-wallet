@@ -3,7 +3,7 @@ import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {Popover} from 'antd'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
@@ -28,10 +28,9 @@ export const WalletOverview = ({
   confidential,
   transparent,
 }: WalletOverviewProps): JSX.Element => {
-  const themeState = ThemeState.useContainer()
-
+  const {theme} = SettingsState.useContainer()
   const {networkTag} = BackendState.useContainer()
-  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
+  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
   const available = confidential.plus(transparent)
   const total = pending.plus(available)
 

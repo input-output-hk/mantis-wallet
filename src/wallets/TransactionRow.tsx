@@ -7,7 +7,7 @@ import classnames from 'classnames'
 import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString} from '../web3'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
@@ -150,8 +150,8 @@ export const TxTimeCell = ({transaction: {txStatus}}: TransactionCellProps): JSX
 }
 
 export const TxAssetCell = ({}: TransactionCellProps): JSX.Element => {
-  const themeState = ThemeState.useContainer()
-  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
+  const {theme} = SettingsState.useContainer()
+  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
 
   return (
     <>

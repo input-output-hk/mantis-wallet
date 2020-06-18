@@ -3,7 +3,7 @@ import {makeWeb3Worker} from './web3'
 import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
-import {ThemeState} from './theme-state'
+import {SettingsState} from './settings-state'
 import {ProofOfBurnState} from './pob/pob-state'
 import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
@@ -38,7 +38,7 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <ThemeState.Provider initialState={store}>
+    <SettingsState.Provider initialState={store}>
       <BackendState.Provider initialState={{web3}}>
         {isBackendRunning ? (
           <div className="App">
@@ -65,7 +65,7 @@ const App: React.FC = () => {
           <SplashScreen />
         )}
       </BackendState.Provider>
-    </ThemeState.Provider>
+    </SettingsState.Provider>
   )
 }
 

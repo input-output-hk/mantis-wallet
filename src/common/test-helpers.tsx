@@ -6,7 +6,7 @@ import {mockWeb3Worker} from '../web3-mock'
 import {makeWeb3Worker} from '../web3'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {BuildJobState} from '../common/build-job-state'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {WalletState, WalletStatus} from './wallet-state'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
@@ -15,13 +15,13 @@ const WithGlacierProviders: FunctionComponent = ({children}: {children?: React.R
   const initialWalletState = {walletStatus: 'LOADED' as WalletStatus, web3}
 
   return (
-    <ThemeState.Provider>
+    <SettingsState.Provider>
       <BuildJobState.Provider initialState={{web3}}>
         <WalletState.Provider initialState={initialWalletState}>
           <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
         </WalletState.Provider>
       </BuildJobState.Provider>
-    </ThemeState.Provider>
+    </SettingsState.Provider>
   )
 }
 

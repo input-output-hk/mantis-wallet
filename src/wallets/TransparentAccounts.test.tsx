@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event'
 import {FeeEstimates} from '../common/wallet-state'
 import {RedeemModal} from './modals/RedeemModal'
 import {UNITS} from '../common/units'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 
 const {Dust} = UNITS
 
@@ -28,7 +28,7 @@ test('Redeem works with Full Amount button', async () => {
   const cancel = jest.fn()
 
   const {getByText, getAllByText, queryByText} = render(
-    <ThemeState.Provider>
+    <SettingsState.Provider>
       <RedeemModal
         redeem={redeem}
         estimateRedeemFee={estimateFees}
@@ -41,7 +41,7 @@ test('Redeem works with Full Amount button', async () => {
         onCancel={cancel}
         visible
       />
-    </ThemeState.Provider>,
+    </SettingsState.Provider>,
   )
 
   // First we wait for the estimates to be loaded

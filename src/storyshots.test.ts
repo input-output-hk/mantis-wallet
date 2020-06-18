@@ -4,7 +4,7 @@ import {MatchImageSnapshotOptions} from 'jest-image-snapshot'
 import {imageSnapshot, Context} from '@storybook/addon-storyshots-puppeteer'
 import puppeteer, {Browser, Page, Base64ScreenShotOptions} from 'puppeteer'
 import _ from 'lodash'
-import {Theme} from './theme-state'
+import {Theme} from './settings-state'
 
 jest.mock('./config/renderer.ts')
 

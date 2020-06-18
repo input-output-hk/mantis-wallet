@@ -5,7 +5,7 @@ import {render} from '@testing-library/react'
 import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {abbreviateAmount} from '../common/formatters'
@@ -32,7 +32,7 @@ test('WalletOverview shows properly formatted balance', () => {
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {getByText} = render(
-    <ThemeState.Provider>
+    <SettingsState.Provider>
       <BuildJobState.Provider initialState={{web3}}>
         <WalletState.Provider initialState={initialState}>
           <BackendState.Provider initialState={{web3}}>
@@ -40,7 +40,7 @@ test('WalletOverview shows properly formatted balance', () => {
           </BackendState.Provider>
         </WalletState.Provider>
       </BuildJobState.Provider>
-    </ThemeState.Provider>,
+    </SettingsState.Provider>,
   )
 
   const numbers = [confidential, transparent, total].map((big) => {

@@ -8,7 +8,7 @@ import {Transaction, Account, makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {abbreviateAmount} from '../common/formatters'
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
@@ -73,13 +73,13 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
   }
 
   return (
-    <ThemeState.Provider>
+    <SettingsState.Provider>
       <BackendState.Provider initialState={{web3}}>
         <BuildJobState.Provider initialState={{web3}}>
           <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
         </BuildJobState.Provider>
       </BackendState.Provider>
-    </ThemeState.Provider>
+    </SettingsState.Provider>
   )
 }
 

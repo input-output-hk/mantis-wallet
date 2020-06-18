@@ -3,22 +3,10 @@ import {set as mutatingSet} from 'lodash'
 // eslint-disable-next-line import/default
 import ElectronStore from 'electron-store'
 import BigNumber from 'bignumber.js'
-import {Theme} from '../theme-state'
+import {StoreSettingsData, defaultSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
 import {StorePobData, defaultPobData} from '../pob/pob-state'
 import {Claim, StoreGlacierData, defaultGlacierData} from '../glacier-drop/glacier-state'
-
-export type StoreSettingsData = {
-  settings: {
-    theme: Theme
-  }
-}
-
-export const defaultSettingsData: StoreSettingsData = {
-  settings: {
-    theme: 'dark',
-  },
-}
 
 export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData
 

@@ -1,14 +1,14 @@
 import url from 'url'
 import React, {PropsWithChildren, useEffect} from 'react'
 import addons, {makeDecorator, StoryContext, StoryGetter} from '@storybook/addons'
-import {ThemeState} from '../theme-state'
+import {createInMemoryStore} from '../common/store'
+import {SettingsState, defaultSettingsData} from '../settings-state'
 import {THEME_SWITCHER_CHANGE} from './shared-constants'
-import {createInMemoryStore, defaultSettingsData} from '../common/store'
 
 const store = createInMemoryStore(defaultSettingsData)
 
 const ThemeSwitcher: React.FunctionComponent<{}> = ({children}: PropsWithChildren<{}>) => {
-  const themeState = ThemeState.useContainer()
+  const themeState = SettingsState.useContainer()
   const channel = addons.getChannel()
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const ThemeSwitcher: React.FunctionComponent<{}> = ({children}: PropsWithChildre
   return <>{children}</>
 }
 
-const WithTheme = (storyFn: StoryGetter, context: StoryContext): JSX.Element => {
+const WithSettings = (storyFn: StoryGetter, context: StoryContext): JSX.Element => {
   const content = storyFn(context)
 
   const currentURL = url.parse(window.location.href, true)
@@ -29,14 +29,14 @@ const WithTheme = (storyFn: StoryGetter, context: StoryContext): JSX.Element => 
   }
 
   return (
-    <ThemeState.Provider initialState={store}>
+    <SettingsState.Provider initialState={store}>
       <ThemeSwitcher>{content}</ThemeSwitcher>
-    </ThemeState.Provider>
+    </SettingsState.Provider>
   )
 }
 
-export const withTheme = makeDecorator({
-  name: 'withTheme',
-  parameterName: 'theme',
-  wrapper: WithTheme,
+export const withSettings = makeDecorator({
+  name: 'withSettings',
+  parameterName: 'settings',
+  wrapper: WithSettings,
 })
