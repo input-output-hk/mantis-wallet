@@ -21,40 +21,9 @@ with cfg.steps.commands; {
         )
         tar czf midnight-dist.tgz midnight-dist
       '';
-
       artifactPaths = [ "midnight-dist.tgz" ];
-
-      # agents.system = "x86_64-darwin";
       agents.queue = "project42";
     };
-
-    #   midnight-dist = {
-    #     label = ":clock12::darwin::linux::windows:";
-    #     command = ''
-    #       (cd midnight; nix-shell --pure --run '$SBT dist')
-
-    #       nix-build nix -A midnight-dist.x86_64-darwin
-    #       cp -r result/midnight-dist .
-    #       chmod -R +w midnight-dist
-    #       tar czf midnight-dist-darwin.tgz midnight-dist
-    #       rm -rf $_
-
-    #       nix-build nix -A midnight-dist.x86_64-win
-    #       cp -r result/midnight-dist .
-    #       chmod -R +w midnight-dist
-    #       tar czf midnight-dist-win.tgz midnight-dist
-    #       rm -rf $_
-
-    #       nix-build nix -A midnight-dist.x86_64-linux
-    #       cp -r result/midnight-dist .
-    #       chmod -R +w midnight-dist
-    #       tar czf midnight-dist-linux.tgz midnight-dist
-    #       rm -rf $_
-    #     '';
-
-    #     artifactPaths = [ "midnight-dist-*.tgz" ];
-    #     agents.system = "x86_64-darwin";
-    #   };
 
     node_modules = {
       label = ":yarn:";
@@ -62,9 +31,7 @@ with cfg.steps.commands; {
         nix-shell --pure --keep SSH_AUTH_SOCK --run yarn
         tar czf node_modules.tgz node_modules
       '';
-
       artifactPaths = [ "node_modules.tgz" ];
-      # agents.system = "x86_64-darwin";
       agents.queue = "project42";
     };
 
@@ -77,7 +44,6 @@ with cfg.steps.commands; {
         rm node_modules.tgz
         nix-shell --pure --run "yarn lint"
       '';
-      # agents.system = "x86_64-darwin";
       agents.queue = "project42";
     };
 
@@ -90,7 +56,6 @@ with cfg.steps.commands; {
         rm node_modules.tgz
         nix-shell --pure --run "yarn test --ci --no-cache"
       '';
-      # agents.system = "x86_64-darwin";
       agents.queue = "project42";
     };
 
@@ -104,10 +69,7 @@ with cfg.steps.commands; {
         nix-shell --pure --run "yarn build-all"
         tar czf build.tgz build
       '';
-
       artifactPaths = [ "build.tgz" ];
-
-      # agents.system = "x86_64-darwin";
       agents.queue = "project42";
     };
 
@@ -129,8 +91,6 @@ with cfg.steps.commands; {
         tar xzf OpenJDK8*.tar.gz
         rm OpenJDK8*.tar.gz
         mv *-jre/Contents/Home midnight-dist/jre
-        (cd midnight-dist/midnight-node; ln -s ../jre)
-        (cd midnight-dist/midnight-wallet; ln -s ../jre)
 
         nix-shell --pure --keep SSH_AUTH_SOCK --run yarn
         nix-shell --keep LUNA_DIST_PACKAGES_DIR --pure --run "yarn package-darwin"
@@ -138,7 +98,6 @@ with cfg.steps.commands; {
       '';
 
       artifactPaths = [ "dist/*.dmg" ];
-
       agents.system = "x86_64-darwin";
     };
 
@@ -160,8 +119,6 @@ with cfg.steps.commands; {
         tar xzf OpenJDK8*.tar.gz
         rm OpenJDK8*.tar.gz
         mv *-jre midnight-dist/jre
-        (cd midnight-dist/midnight-node; ln -s ../jre)
-        (cd midnight-dist/midnight-wallet; ln -s ../jre)
 
         nix-shell --keep LUNA_DIST_PACKAGES_DIR --pure --run "yarn package-linux"
         nix-shell --pure --run "npx electron-builder --publish never --prepackaged dist/Luna-linux-x64 --linux AppImage"
@@ -191,15 +148,12 @@ with cfg.steps.commands; {
         unzip OpenJDK8*.zip
         rm OpenJDK8*.zip
         mv *-jre midnight-dist/jre
-        (cd midnight-dist/midnight-node; ln -s ../jre)
-        (cd midnight-dist/midnight-wallet; ln -s ../jre)
 
         nix-shell --keep LUNA_DIST_PACKAGES_DIR --pure --run "yarn package-win"
         nix-shell --pure --run "npx electron-builder --publish never --prepackaged dist/Luna-win32-x64 --win --x64"
       '';
 
       artifactPaths = [ "dist/*.exe" ];
-
       agents.queue = "project42";
     };
   };
