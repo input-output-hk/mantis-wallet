@@ -5,18 +5,23 @@ import url from 'url'
 import os from 'os'
 import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
-import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
-import {asapScheduler, scheduled} from 'rxjs'
-import {pipe} from 'fp-ts/lib/pipeable'
-import * as rxop from 'rxjs/operators'
-import {mergeAll} from 'rxjs/operators'
-import * as record from 'fp-ts/lib/Record'
-import * as array from 'fp-ts/lib/Array'
-import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
+import * as _ from 'lodash/fp'
+import * as array from 'fp-ts/lib/Array'
+import * as record from 'fp-ts/lib/Record'
+import {mergeAll} from 'rxjs/operators'
+import * as rxop from 'rxjs/operators'
+import {pipe} from 'fp-ts/lib/pipeable'
+import {asapScheduler, scheduled} from 'rxjs'
+import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
 import {LunaManagedConfigPaths} from '../shared/ipc-types'
 import {ClientName, SettingsPerClient} from '../config/type'
-import {MidnightProcess, processExecutablePath, SpawnedMidnightProcess} from './MidnightProcess'
+import {
+  MidnightProcess,
+  processEnv,
+  processExecutablePath,
+  SpawnedMidnightProcess,
+} from './MidnightProcess'
 import {
   configToParams,
   registerCertificateValidationHandler,
@@ -226,12 +231,11 @@ if (!config.runClients) {
 if (config.runClients) {
   const initializationPromise = checkDatadirCompatibility()
     .then(openLuna)
-    .then(() =>
-      setupOwnTLS(processExecutablePath(config.clientConfigs.node)).then((tlsData) => ({
-        tlsData,
-        tlsParams: configToParams(tlsData),
-      })),
-    )
+    .then(() => setupOwnTLS(config.clientConfigs.node))
+    .then((tlsData) => ({
+      tlsData,
+      tlsParams: configToParams(tlsData),
+    }))
     .catch(
       async (e): Promise<never> => {
         console.error(e)
@@ -251,6 +255,7 @@ if (config.runClients) {
     const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
       cwd: config.clientConfigs.node.packageDirectory,
+      env: processEnv(config.clientConfigs.node),
     })
       .then(({stdout, stderr}) => {
         setFetchParamsStatus('finished')
