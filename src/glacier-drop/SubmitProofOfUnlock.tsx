@@ -2,19 +2,24 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_PRICE, DEFAULT_GAS_LIMIT} from './glacier-config'
 import {GlacierState, Claim} from './glacier-state'
+import {LoadedState, FeeEstimates} from '../common/wallet-state'
 import {validateAmount, isGreaterOrEqual} from '../common/util'
+import {useAsyncUpdate} from '../common/hook-utils'
+import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../common/fee-estimate-strings'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
-import {DialogInput} from '../common/dialog/DialogInput'
-import {DialogColumns} from '../common/dialog/DialogColumns'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {DialogShowDust} from '../common/dialog/DialogShowDust'
+import {DialogFee, handleGasPriceUpdate} from '../common/dialog/DialogFee'
+import {DialogError} from '../common/dialog/DialogError'
 import './SubmitProofOfUnlock.scss'
 
 interface SubmitProofOfUnlockProps extends ModalOnCancel {
   claim: Claim
   currentBlock: number
   onNext: () => void
+  estimateCallFee: LoadedState['estimateCallFee']
+  estimateGasPrice: LoadedState['estimateGasPrice']
 }
 
 const _SubmitProofOfUnlock = ({
@@ -22,19 +27,38 @@ const _SubmitProofOfUnlock = ({
   currentBlock,
   onNext,
   onCancel,
+  estimateCallFee,
+  estimateGasPrice,
 }: SubmitProofOfUnlockProps): JSX.Element => {
-  const {unlock} = GlacierState.useContainer()
-  const {transparentAddress, dustAmount} = claim
-
-  const [gasPrice, setGasPrice] = useState<string>(DEFAULT_GAS_PRICE)
-  const [gasLimit, setGasLimit] = useState<string>(DEFAULT_GAS_LIMIT)
-
+  const {unlock, getUnlockCallParams} = GlacierState.useContainer()
   const modalLocker = ModalLocker.useContainer()
 
-  const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual(0)])
-  const gasLimitError = validateAmount(gasLimit, [isGreaterOrEqual(65536)])
+  const {transparentAddress, dustAmount} = claim
+  const [gasPrice, setGasPrice] = useState<string>(DEFAULT_GAS_PRICE)
+  const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual()])
 
-  const disabled = gasPriceError !== '' || gasLimitError !== ''
+  const [gasPriceEstimates, gasPriceEstimateError, isGasPricePending] = useAsyncUpdate(
+    estimateGasPrice,
+    [],
+  )
+
+  const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
+    (): Promise<FeeEstimates> =>
+      estimateCallFee(
+        getUnlockCallParams(claim, {gasPrice: new BigNumber(0), gasLimit: new BigNumber(0)}),
+      ),
+    [],
+  )
+
+  const disabled =
+    !!gasPriceEstimateError || !!feeEstimateError || isGasPricePending || isFeeEstimationPending
+
+  const footer =
+    !feeEstimates || feeEstimateError == null ? (
+      <></>
+    ) : (
+      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
+    )
 
   return (
     <Dialog
@@ -43,11 +67,11 @@ const _SubmitProofOfUnlock = ({
         children: 'Submit',
         type: 'default',
         onClick: async () => {
-          const callParams = {
-            gasLimit: new BigNumber(gasLimit),
+          const gasParams = {
+            gasLimit: new BigNumber(DEFAULT_GAS_LIMIT),
             gasPrice: new BigNumber(gasPrice),
           }
-          await unlock(claim, callParams, currentBlock)
+          await unlock(claim, gasParams, currentBlock)
           onNext()
         },
         disabled,
@@ -58,24 +82,19 @@ const _SubmitProofOfUnlock = ({
       }}
       onSetLoading={modalLocker.setLocked}
       type="dark"
+      footer={footer}
     >
       <DialogMessage label="Midnight Transparent Address" description={transparentAddress} />
       <DialogShowDust amount={dustAmount}>Eligible Amount</DialogShowDust>
-      <DialogColumns>
-        <DialogInput
-          autoFocus
-          label="Gas Price"
-          defaultValue={gasPrice}
-          onChange={(e): void => setGasPrice(e.target.value)}
-          errorMessage={gasPriceError}
-        />
-        <DialogInput
-          label="Gas Limit"
-          defaultValue={gasLimit}
-          onChange={(e): void => setGasLimit(e.target.value)}
-          errorMessage={gasLimitError}
-        />
-      </DialogColumns>
+      <DialogFee
+        label="Fee"
+        // show loading screen until gasPrices are loaded
+        feeEstimates={gasPriceEstimates ? feeEstimates : undefined}
+        onChange={handleGasPriceUpdate(setGasPrice, gasPriceEstimates)}
+        errorMessage={gasPriceError}
+        isPending={isFeeEstimationPending || isGasPricePending}
+        hideCustom
+      />
     </Dialog>
   )
 }

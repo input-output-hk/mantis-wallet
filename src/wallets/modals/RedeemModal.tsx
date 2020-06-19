@@ -13,7 +13,7 @@ import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogError} from '../../common/dialog/DialogError'
 import {DialogFee} from '../../common/dialog/DialogFee'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
+import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../../common/fee-estimate-strings'
 import './RedeemModal.scss'
 
 const {Dust} = UNITS
