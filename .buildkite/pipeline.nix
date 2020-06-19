@@ -18,10 +18,6 @@ with cfg.steps.commands; {
           rm node.zip wallet.zip
           mv midnight-node-* midnight-node
           mv midnight-wallet-* midnight-wallet
-
-          for component in node wallet; do
-            echo '-java-home ''${app_home}/../jre' >> midnight-$component/conf/application.ini
-          done
         )
         tar czf midnight-dist.tgz midnight-dist
       '';
