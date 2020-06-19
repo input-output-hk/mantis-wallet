@@ -21,11 +21,11 @@ export const BurnCoinsShowAddress: React.FunctionComponent<BurnCoinsShowAddressP
       <Dialog
         title={`${chain.name} Burn Address`}
         leftButtonProps={{
-          children: '← Go Back',
+          children: '← Go Back to Burn Centre',
           onClick: cancel,
         }}
         rightButtonProps={{
-          children: 'Copy Code',
+          children: 'Copy Address',
           autoFocus: true,
           onClick: () => copyToClipboard(burnAddress),
         }}

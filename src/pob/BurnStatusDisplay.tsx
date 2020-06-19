@@ -16,6 +16,8 @@ import {RealBurnStatus} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {InfoIcon} from '../common/InfoIcon'
 import {NUMBER_OF_BLOCKS_TO_SUCCESS, NUMBER_OF_BLOCKS_TO_CONFIRM} from './pob-config'
+import {Link} from '../common/Link'
+import {LINKS} from '../external-link-config'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
@@ -285,7 +287,14 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           </div>
         </div>
       </div>
-      {burnStatus.fail_reason && <div className="error">{burnStatus.fail_reason}</div>}
+      {burnStatus.fail_reason && (
+        <div className="error">
+          {burnStatus.fail_reason}{' '}
+          <Link href={LINKS.aboutPoB} className="help">
+            Learn more
+          </Link>
+        </div>
+      )}
       {errorMessage && (
         <div className="error">
           Information about burn progress might be outdated. Gathering burn activity from the prover

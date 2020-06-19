@@ -15,6 +15,7 @@
     display: block;
     height: 42%;
     margin: 21% auto;
+    transition-duration: $transition-duration;
 
     @include themify($themes) {
       stroke: themed('text-color');
@@ -40,11 +41,15 @@
     }
   }
 
-  &:hover .footer {
-    transition: background-color $transition-duration;
+  &:hover {
+    .footer {
+      @include themify($themes) {
+        background-color: lighten(themed('primary-color'), 5%);
+      }
+    }
 
-    @include themify($themes) {
-      background-color: darken(themed('primary-color'), 5%);
+    .logo {
+      transform: scale(110%, 110%);
     }
   }
 }

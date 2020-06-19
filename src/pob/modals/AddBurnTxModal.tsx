@@ -66,6 +66,7 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
           const prover = provers.find(({address}) => proverAddress === address)
           if (prover) setProver(prover)
         }}
+        noOptionsMessage="No available provers."
       />
       <DialogDropdown
         label="Burn Address"

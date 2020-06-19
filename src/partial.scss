@@ -132,6 +132,10 @@
 }
 
 %error {
+  padding: 1em;
+  font-size: 13px;
+  text-align: center;
+
   @include themify($themes) {
     background-color: themed('error-background-color');
     color: themed('error-dialog-color');

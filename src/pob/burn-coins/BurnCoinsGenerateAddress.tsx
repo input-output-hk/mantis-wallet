@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {Dialog} from '../../common/Dialog'
-import {DialogError} from '../../common/dialog/DialogError'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {Chain} from '../chains'
@@ -39,14 +38,13 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const minValue = UNITS[chain.unitType].fromBasic(new BigNumber(1))
   const [fee, setFee] = useState(defaultFee.toString(10))
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
-  const noCompatibleProvers = compatibleProvers.length === 0
 
   const feeError = validateAmount(fee, [
     isGreaterOrEqual(minFee),
     hasAtMostDecimalPlaces(minValue.dp()),
   ])
 
-  const disableGenerate = !!feeError || noCompatibleProvers
+  const disableGenerate = !!feeError || compatibleProvers.length === 0
 
   const title = (
     <>
@@ -59,7 +57,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
     <div className="BurnCoinsGenerateAddress">
       <Dialog
         title={title}
-        leftButtonProps={{onClick: cancel}}
+        leftButtonProps={{children: '← Go Back', onClick: cancel}}
         rightButtonProps={{
           children: `Generate ${chain.symbol} Address`,
           onClick: async (): Promise<void> => {
@@ -73,15 +71,9 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
               throw new Error('No prover was selected.')
             }
           },
+          name: 'generate-burn',
           disabled: disableGenerate,
         }}
-        footer={
-          noCompatibleProvers && (
-            <DialogError>
-              No compatible provers found. Please, select a different token.
-            </DialogError>
-          )
-        }
       >
         <DialogDropdown
           label="Select Receive Address"
@@ -99,9 +91,11 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
             const prover = compatibleProvers.find(({address}) => proverAddress === address)
             if (prover) setProver(prover)
           }}
+          noOptionsMessage="No available provers for this token at the moment."
         />
         <DialogInput
           autoFocus
+          id="generate-burn-fee"
           label={`Assign reward in M-${chain.symbol} for your prover`}
           value={fee}
           onChange={(e) => setFee(e.target.value)}

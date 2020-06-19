@@ -52,7 +52,8 @@
   }
 
   .burn-address-error {
-    margin: 20px auto;
+    @extend %error;
+    margin: 1.5em auto;
   }
 
   .no-activity {

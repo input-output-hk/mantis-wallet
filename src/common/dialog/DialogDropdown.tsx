@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import classnames from 'classnames'
 import {Dropdown, Menu} from 'antd'
+import {DialogError} from './DialogError'
 import './DialogDropdown.scss'
 
 interface DialogDropdownOption<T> {
@@ -15,6 +16,7 @@ interface DialogDropdownProps<T> {
   options: Array<DialogDropdownOption<T> | T>
   defaultOptionIndex?: number
   onChange?: (option: T) => void
+  noOptionsMessage?: string
 }
 
 export const DialogDropdown = <T extends string>({
@@ -23,6 +25,7 @@ export const DialogDropdown = <T extends string>({
   options,
   defaultOptionIndex = 0,
   onChange,
+  noOptionsMessage = 'No available options',
 }: DialogDropdownProps<T>): JSX.Element => {
   const trueOptions: Array<DialogDropdownOption<T>> = options.map((option) =>
     _.isString(option) ? {key: option, label: option} : option,
@@ -49,11 +52,13 @@ export const DialogDropdown = <T extends string>({
       <Dropdown overlay={menu} overlayClassName="DialogDropdownOverlay">
         <span className="label">{label} ▼</span>
       </Dropdown>
-      {activeOption ? (
+      {trueOptions.length > 0 && activeOption && (
         <div className="active-option">{activeOption.label}</div>
-      ) : (
+      )}
+      {trueOptions.length > 0 && !activeOption && (
         <div className="active-option no-option">Choose from list...</div>
       )}
+      {trueOptions.length === 0 && <DialogError>{noOptionsMessage}</DialogError>}
     </div>
   )
 }

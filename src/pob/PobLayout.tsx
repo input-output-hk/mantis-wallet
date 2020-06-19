@@ -15,7 +15,7 @@ const TestnetWarning = (): JSX.Element => (
     <div className="warning-content">
       <b>Warning:</b> This is a Testnet edition.
       <br />
-      Do <b>NOT</b> burn real ETC or BTC for Proof of Burn.
+      Do <b>NOT</b> burn real ETH or BTC for Proof of Burn.
     </div>
   </div>
 )
