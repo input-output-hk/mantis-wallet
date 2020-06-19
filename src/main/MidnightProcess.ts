@@ -2,15 +2,17 @@ import {resolve} from 'path'
 import * as childProcess from 'child_process'
 import * as os from 'os'
 import {promisify} from 'util'
+import * as fs from 'fs'
 import psTree from 'ps-tree'
 import * as rxop from 'rxjs/operators'
 import {EMPTY, fromEvent, generate, merge, Observable} from 'rxjs'
 import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
-import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
-import {readableToObservable} from './streamUtils'
+import _ from 'lodash/fp'
 import {setProcessStatus} from './status'
+import {readableToObservable} from './streamUtils'
+import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
 
 export const isWin = os.platform() === 'win32'
 
@@ -77,6 +79,21 @@ export const processExecutablePath = (processConfig: ProcessConfig): string => {
   return isWin ? `"${thePath}.bat"` : thePath
 }
 
+export const processEnv = _.memoize(
+  (processConfig: ProcessConfig): NodeJS.ProcessEnv => {
+    const jrePath = resolve(processConfig.packageDirectory, '..', 'jre')
+    const isJreBundled: boolean = (() => {
+      try {
+        return fs.statSync(jrePath).isDirectory()
+      } catch (e) {
+        return false
+      }
+    })()
+
+    return isJreBundled ? {...process.env, JAVA_HOME: jrePath} : process.env
+  },
+)
+
 export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   name: ClientName,
   dataDir: string,
@@ -109,6 +126,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
           cwd: processConfig.packageDirectory,
           detached: false,
           shell: isWin,
+          env: processEnv(processConfig),
         }) as ChildProcess,
       )
     },
