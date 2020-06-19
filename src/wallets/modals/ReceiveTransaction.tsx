@@ -3,7 +3,7 @@ import _ from 'lodash/fp'
 import {ModalProps} from 'antd/lib/modal'
 import {LunaModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
-import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
+import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {TransparentAddress} from '../../web3'
 import {copyToClipboard} from '../../common/clipboard'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
@@ -46,7 +46,7 @@ const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransacti
     type="dark"
   >
     <div className="title">Your private address</div>
-    <DialogPrivateKey privateKey={privateAddress} />
+    <DialogQRCode content={privateAddress} />
   </Dialog>
 )
 
@@ -89,7 +89,7 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
       <div className="title">{title}</div>
       {transparentAddress && (
         <>
-          <DialogPrivateKey privateKey={transparentAddress.address} />
+          <DialogQRCode content={transparentAddress.address} />
           <DialogMessage
             description={
               <>
