@@ -26,15 +26,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "midnight": {
-        "branch": "embed-jvm",
+        "branch": "hotfix-testnet-sonic",
         "description": null,
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "midnight",
-        "rev": "13ad381b0b6d128db2633c8254a8e60a41b3ca5c",
-        "sha256": "052pj3bgisbk56q6yhpp5hpji1kh1dzqf9v1a750ikw900hf4grl",
+        "rev": "8876225110e54d2e32dfde281823c99330e32f25",
+        "sha256": "010y5xnb5mshdarfc9jrzhlhwbksi1hb2mn4w3ydknl0plqhmy30",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/midnight/archive/13ad381b0b6d128db2633c8254a8e60a41b3ca5c.tar.gz",
+        "url": "https://github.com/input-output-hk/midnight/archive/8876225110e54d2e32dfde281823c99330e32f25.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
