@@ -9,8 +9,15 @@ import * as forge from 'node-forge'
 import {array, option} from 'fp-ts'
 import * as T from 'io-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {ClientName, clientNames, ClientSettings, SettingsPerClient} from '../config/type'
+import {processEnv, processExecutablePath} from './MidnightProcess'
 import {optionZip, prop, through} from '../shared/utils'
+import {
+  ClientName,
+  clientNames,
+  ClientSettings,
+  ProcessConfig,
+  SettingsPerClient,
+} from '../config/type'
 
 const keyStoreFilename = 'midnightCA.p12'
 const passwordFilename = 'password'
@@ -143,9 +150,9 @@ export const extractCertData = (password: string) => (
 
 /**
  * Set ups TLS keys for use with node
- * @param nodeExecutablePath Path to node executable in order to run certificate creation
+ * @param nodeConfig Configuration of node needed to run keytool
  */
-export async function setupOwnTLS(nodeExecutablePath: string): Promise<TLSData> {
+export async function setupOwnTLS(nodeConfig: ProcessConfig): Promise<TLSData> {
   const password = generatePassword({length: 16})
   const issuer = `luna-${generatePassword({length: 16})}`
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'luna'))
@@ -163,7 +170,10 @@ export async function setupOwnTLS(nodeExecutablePath: string): Promise<TLSData> 
     `-keysize 4096`,
     `-validity 9999`,
   ]
-  await promisify(childProcess.exec)(`${nodeExecutablePath} keytool ${keytoolOptions.join(' ')}`)
+  await promisify(childProcess.exec)(
+    `${processExecutablePath(nodeConfig)} keytool ${keytoolOptions.join(' ')}`,
+    {env: processEnv(nodeConfig)},
+  )
   await fs.writeFile(passwordPath, password)
 
   const config: TLSConfig = {keyStorePath, passwordPath}

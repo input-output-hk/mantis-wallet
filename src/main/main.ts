@@ -5,22 +5,22 @@ import url from 'url'
 import os from 'os'
 import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
-import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
-import {asapScheduler, scheduled} from 'rxjs'
-import {pipe} from 'fp-ts/lib/pipeable'
-import * as rxop from 'rxjs/operators'
-import {mergeAll} from 'rxjs/operators'
-import * as record from 'fp-ts/lib/Record'
-import * as array from 'fp-ts/lib/Array'
-import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
+import * as _ from 'lodash/fp'
+import * as array from 'fp-ts/lib/Array'
+import * as record from 'fp-ts/lib/Record'
+import {mergeAll} from 'rxjs/operators'
+import * as rxop from 'rxjs/operators'
+import {pipe} from 'fp-ts/lib/pipeable'
+import {asapScheduler, scheduled} from 'rxjs'
+import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
 import {LunaManagedConfigPaths} from '../shared/ipc-types'
-import {ClientName, SettingsPerClient, ProcessConfig} from '../config/type'
+import {ClientName, SettingsPerClient} from '../config/type'
 import {
   MidnightProcess,
+  processEnv,
   processExecutablePath,
   SpawnedMidnightProcess,
-  isWin,
 } from './MidnightProcess'
 import {
   configToParams,
@@ -32,8 +32,8 @@ import {flatTap, prop, wait} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
-import {ipcListen, getTitle} from './util'
-import {status, setFetchParamsStatus, inspectLineForDAGStatus} from './status'
+import {getTitle, ipcListen} from './util'
+import {inspectLineForDAGStatus, setFetchParamsStatus, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 
 const IS_LINUX = os.type() == 'Linux'
@@ -229,30 +229,13 @@ if (!config.runClients) {
 // Handle client child processes with TLS
 //
 if (config.runClients) {
-  async function checkJavaVersion(walletBackendConfig: ProcessConfig): Promise<void> {
-    const scriptName = `java_check.${isWin ? 'bat' : 'sh'}`
-    const scriptPath = path.resolve(walletBackendConfig.packageDirectory, 'bin', scriptName)
-    try {
-      const {stdout, stderr} = await promisify(exec)(scriptPath, {
-        cwd: walletBackendConfig.packageDirectory,
-      })
-      console.info(stdout)
-      console.error(stderr)
-    } catch (e) {
-      dialog.showErrorBox('Java version problem', e.stdout)
-      app.exit(1)
-    }
-  }
-
-  const initializationPromise = checkJavaVersion(config.clientConfigs.wallet)
-    .then(checkDatadirCompatibility)
+  const initializationPromise = checkDatadirCompatibility()
     .then(openLuna)
-    .then(() =>
-      setupOwnTLS(processExecutablePath(config.clientConfigs.node)).then((tlsData) => ({
-        tlsData,
-        tlsParams: configToParams(tlsData),
-      })),
-    )
+    .then(() => setupOwnTLS(config.clientConfigs.node))
+    .then((tlsData) => ({
+      tlsData,
+      tlsParams: configToParams(tlsData),
+    }))
     .catch(
       async (e): Promise<never> => {
         console.error(e)
@@ -272,6 +255,7 @@ if (config.runClients) {
     const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
       cwd: config.clientConfigs.node.packageDirectory,
+      env: processEnv(config.clientConfigs.node),
     })
       .then(({stdout, stderr}) => {
         setFetchParamsStatus('finished')

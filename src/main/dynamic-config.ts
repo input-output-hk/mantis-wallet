@@ -2,7 +2,7 @@ import {promisify} from 'util'
 import {promises as fs} from 'fs'
 import {exec} from 'child_process'
 import * as _ from 'lodash/fp'
-import {processExecutablePath} from './MidnightProcess'
+import {processEnv, processExecutablePath} from './MidnightProcess'
 import {LunaManagedConfig, ProcessConfig, SettingsPerClient} from '../config/type'
 import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
 
@@ -18,6 +18,7 @@ export async function getCoinbaseParams(
   try {
     const {stdout, stderr} = await promisify(exec)(command, {
       cwd: walletBackendConfig.packageDirectory,
+      env: processEnv(walletBackendConfig),
     })
     console.info(stdout)
     console.error(stderr)
