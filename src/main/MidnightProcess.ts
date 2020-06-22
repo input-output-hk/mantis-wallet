@@ -81,7 +81,7 @@ export const processExecutablePath = (processConfig: ProcessConfig): string => {
 
 export const processEnv = _.memoize(
   (processConfig: ProcessConfig): NodeJS.ProcessEnv => {
-    const jrePath = resolve(processConfig.packageDirectory, '..', 'jre')
+    const jrePath = resolve(processConfig.packageDirectory, '..', '..', 'jre')
     const isJreBundled: boolean = (() => {
       try {
         return fs.statSync(jrePath).isDirectory()
