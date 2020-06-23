@@ -115,6 +115,20 @@ export function hexToBech32(hexAddress: string, prefix = 'm-test-uns-ad'): strin
   return bech32.encode(prefix, new Uint8Array([...trailingZeros, ...data]))
 }
 
+export function returnDataToHumanReadable(hex: string): string {
+  // Converts contract return data to human-readable ASCII
+  // Replacement for web3.toAscii
+  const toParse = hex.substring(0, 2) === '0x' ? hex.substring(10) : hex.substring(8)
+  return _.chunk(toParse, 2)
+    .map((chunk) => {
+      const code = parseInt(chunk.join(''), 16)
+      // Valid chars: from space to tilde
+      return code >= 32 && code <= 126 ? String.fromCharCode(code) : ''
+    })
+    .join('')
+    .trim()
+}
+
 const ETC_ADDRESS_REGEX = new RegExp('^0x[a-fA-F0-9]{40}$')
 
 export const EMPTY_ADDRESS_MSG = 'Address must be set'

@@ -18,6 +18,7 @@ import {
   createTransparentAddressValidator,
   createConfidentialAddressValidator,
   sortFeeEstimates,
+  returnDataToHumanReadable,
 } from './util'
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
@@ -191,6 +192,24 @@ it('converts number/BigNumber to hex correctly', () => {
   t(16, '0x10')
   t(100000, '0x186a0')
   assert.throw(() => toHex(-1))
+})
+
+it('converts contract return data to human-readable ASCII', () => {
+  const testReturnData =
+    '08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001c5472616e73666572206f662077697468647261776e206661696c656400000000'
+  const expectedMsg = 'Transfer of withdrawn failed'
+
+  // Without 0x prefix
+  assert.equal(returnDataToHumanReadable(testReturnData), expectedMsg)
+
+  // With 0x prefix
+  assert.equal(returnDataToHumanReadable(`0x${testReturnData}`), expectedMsg)
+
+  // Extra testcase
+  const testReturnData2 =
+    '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001f496e76616c696420617574686f72697a6174696f6e207369676e617475726500'
+  const expectedMsg2 = 'Invalid authorization signature'
+  assert.equal(returnDataToHumanReadable(testReturnData2), expectedMsg2)
 })
 
 it('validates ethereum address', () => {

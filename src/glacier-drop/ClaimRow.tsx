@@ -1,7 +1,6 @@
 import React, {ReactNode} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
-import {toAscii} from 'web3/lib/utils/utils.js'
 import {CloseOutlined} from '@ant-design/icons'
 import {Button, Popover} from 'antd'
 import {ETC_CHAIN} from './glacier-config'
@@ -14,6 +13,7 @@ import {
   isUnlocked,
 } from './glacier-state'
 import {formatPercentage, toDurationString} from '../common/formatters'
+import {returnDataToHumanReadable} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {DUST_SYMBOL} from '../pob/chains'
 import {getUnfrozenAmount, getCurrentEpoch, Period, getNumberOfEpochsForClaim} from './Period'
@@ -40,7 +40,7 @@ const TxStatusText = ({txStatus}: TxStatusTextProps): JSX.Element => {
     return <>Transaction is pending</>
   } else if (txStatus.status === 'TransactionFailed') {
     return (
-      <Popover content={toAscii(txStatus.returnData)} placement="bottom">
+      <Popover content={returnDataToHumanReadable(txStatus.returnData)} placement="bottom">
         <span className="fail">Transaction failed</span>
       </Popover>
     )
