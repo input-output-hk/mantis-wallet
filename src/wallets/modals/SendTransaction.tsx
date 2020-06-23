@@ -6,7 +6,7 @@ import {ModalLocker, ModalOnCancel, wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {Account, FeeLevel} from '../../web3'
+import {Account} from '../../web3'
 import {
   validateAmount,
   isGreaterOrEqual,
@@ -19,11 +19,11 @@ import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
-import {DialogFee} from '../../common/dialog/DialogFee'
+import {DialogFee, handleGasPriceUpdate} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from './tx-strings'
+import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../../common/fee-estimate-strings'
 import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 
 const {Dust} = UNITS
@@ -215,15 +215,7 @@ const SendToTransparentDialog = ({
         label="Fee"
         // show loading screen until gasPrices are loaded
         feeEstimates={gasPriceEstimates ? feeEstimates : undefined}
-        onChange={(_fee: string, feeLevel: FeeLevel | null): void => {
-          if (gasPriceEstimates && feeLevel) {
-            setGasPrice(gasPriceEstimates[feeLevel].toString(10))
-          } else {
-            if (!gasPriceEstimates)
-              console.warn(`gasPriceEstimates should be set, got ${gasPriceEstimates}`)
-            if (!feeLevel) console.warn('feeLevel should be set, got null')
-          }
-        }}
+        onChange={handleGasPriceUpdate(setGasPrice, gasPriceEstimates)}
         errorMessage={gasPriceError}
         isPending={isFeeEstimationPending || isGasPricePending}
         hideCustom

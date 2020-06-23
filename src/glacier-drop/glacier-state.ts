@@ -13,7 +13,7 @@ import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
 import {loadCurrentContractAddresses} from './glacier-config'
-import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse} from '../web3'
+import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse, CallParams} from '../web3'
 import {Period} from './Period'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
@@ -141,10 +141,12 @@ export interface GlacierData {
   getMiningState(claim: Claim): Promise<GetMiningStateResponse>
 
   // GlacierDrop Contract Calls
-  unlock(claim: Claim, callParams: ContractParams, currentBlock: number): Promise<string>
+  getUnlockCallParams(claim: Claim, gasParams: GasParams): CallParams
+  getWithdrawCallParams(claim: Claim, gasParams: GasParams): CallParams
+  unlock(claim: Claim, gasParams: GasParams, currentBlock: number): Promise<string>
   withdraw(
     claim: Claim,
-    callParams: ContractParams,
+    gasParams: GasParams,
     currentBlock: number,
     unfrozenDustAmount: BigNumber,
   ): Promise<string>
@@ -180,7 +182,7 @@ export const defaultGlacierData: StoreGlacierData = {
 
 // Params
 
-interface ContractParams {
+interface GasParams {
   gasLimit: BigNumber
   gasPrice: BigNumber
 }
@@ -516,23 +518,17 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   // Contract Call Methods
   //
 
-  const unlock = async (
+  const getUnlockCallParams = (
     claim: UnsubmittedClaim,
-    {gasLimit, gasPrice}: ContractParams,
-    currentBlock: number,
-  ): Promise<string> => {
+    {gasLimit, gasPrice}: GasParams,
+  ): CallParams => {
     const {
       authSignature: {v, r, s},
       inclusionProof,
       powNonce,
-      puzzleStatus,
       transparentAddress,
       externalAddress,
     } = claim
-
-    if (!powNonce || puzzleStatus !== 'unsubmitted') {
-      throw Error('Puzzle is not solved yet.')
-    }
 
     // See GlacierDrop.sol unlock function
     const data = GlacierDropContract.unlock.getData(
@@ -545,19 +541,31 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
       powNonce,
     )
 
-    console.info({unlockData: data})
+    return {
+      from: ['Wallet', transparentAddress],
+      to: contractAddresses.glacierDrop,
+      value: '0',
+      gasLimit: gasLimit.toString(),
+      gasPrice: gasPrice.toString(),
+      data,
+    }
+  }
 
-    const {jobHash} = await wallet.callContract(
-      {
-        from: ['Wallet', transparentAddress],
-        to: contractAddresses.glacierDrop,
-        value: '0',
-        gasLimit: gasLimit.toString(),
-        gasPrice: gasPrice.toString(),
-        data,
-      },
-      false,
-    )
+  const unlock = async (
+    claim: UnsubmittedClaim,
+    {gasLimit, gasPrice}: GasParams,
+    currentBlock: number,
+  ): Promise<string> => {
+    const {powNonce, puzzleStatus} = claim
+
+    if (!powNonce || puzzleStatus !== 'unsubmitted') {
+      throw Error('Puzzle is not solved yet.')
+    }
+
+    const unlockCallParams = getUnlockCallParams(claim, {gasLimit, gasPrice})
+    console.info({unlockCallParams})
+
+    const {jobHash} = await wallet.callContract(unlockCallParams, false)
 
     await buildJobState.submitJob(jobHash, (unlockTxHash: string) => {
       updateClaim({
@@ -577,33 +585,37 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     return jobHash
   }
 
+  const getWithdrawCallParams = (claim: Claim, {gasLimit, gasPrice}: GasParams): CallParams => {
+    const {transparentAddress} = claim
+
+    const data = GlacierDropContract.withdraw.getData(normalizeAddress(claim.externalAddress))
+
+    return {
+      from: ['Wallet', transparentAddress],
+      to: contractAddresses.glacierDrop,
+      value: '0',
+      gasLimit: gasLimit.toString(),
+      gasPrice: gasPrice.toString(),
+      data,
+    }
+  }
+
   const withdraw = async (
     claim: Claim,
-    {gasLimit, gasPrice}: ContractParams,
+    {gasLimit, gasPrice}: GasParams,
     currentBlock: number,
     unfrozenDustAmount: BigNumber,
   ): Promise<string> => {
-    const {puzzleStatus, transparentAddress} = claim
+    const {puzzleStatus} = claim
 
     if (puzzleStatus !== 'submitted') {
       throw Error('Puzzle is in invalid status')
     }
 
-    const data = GlacierDropContract.withdraw.getData(normalizeAddress(claim.externalAddress))
+    const withdrawCallParams = getWithdrawCallParams(claim, {gasLimit, gasPrice})
+    console.info({withdrawCallParams})
 
-    console.info({withdrawData: data})
-
-    const {jobHash} = await wallet.callContract(
-      {
-        from: ['Wallet', transparentAddress],
-        to: contractAddresses.glacierDrop,
-        value: '0',
-        gasLimit: gasLimit.toString(),
-        gasPrice: gasPrice.toString(),
-        data,
-      },
-      false,
-    )
+    const {jobHash} = await wallet.callContract(withdrawCallParams, false)
 
     await buildJobState.submitJob(jobHash, (withdrawTxHash: string) => {
       updateClaim({
@@ -637,6 +649,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     getEtcSnapshotBalanceWithProof,
     authorizationSign,
     getMiningState,
+    getUnlockCallParams,
+    getWithdrawCallParams,
     unlock,
     withdraw,
     updateTxStatuses,

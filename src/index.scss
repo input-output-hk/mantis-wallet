@@ -10,16 +10,19 @@
   font-family: 'Helvetica Neue';
   font-weight: 300;
   src: url('./assets/fonts/HelveticaNeue-Light.otf') format('opentype');
+  font-display: swap;
 }
 @font-face {
   font-family: 'Helvetica Neue';
   font-weight: normal;
   src: url('./assets/fonts/HelveticaNeue.otf') format('opentype');
+  font-display: swap;
 }
 @font-face {
   font-family: 'Helvetica Neue';
   font-weight: bold;
   src: url('./assets/fonts/HelveticaNeue-Bold.otf') format('opentype');
+  font-display: swap;
 }
 
 //

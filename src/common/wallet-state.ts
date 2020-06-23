@@ -88,6 +88,7 @@ export interface LoadedState {
   ) => Promise<string>
   redeemValue: (address: string, amount: number, fee: number) => Promise<string>
   estimatePublicTransactionFee(amount: BigNumber, recipient: string): Promise<FeeEstimates>
+  estimateCallFee(callParams: CallParams): Promise<FeeEstimates>
   estimateTransactionFee(amount: BigNumber): Promise<FeeEstimates>
   estimateRedeemFee(amount: BigNumber): Promise<FeeEstimates>
   estimateGasPrice(): Promise<FeeEstimates>
@@ -477,6 +478,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       .then((res) => tPromise.decode(FeeEstimates, res))
       .then(sortFeeEstimates)
 
+  const estimateCallFee = (callParams: CallParams): Promise<FeeEstimates> =>
+    wallet.estimateFees('call', callParams).then((res) => tPromise.decode(FeeEstimates, res))
+
   return {
     walletStatus,
     errorMsg,
@@ -488,6 +492,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     sendTransaction,
     sendTxToTransparent,
     estimatePublicTransactionFee,
+    estimateCallFee,
     estimateTransactionFee,
     estimateRedeemFee,
     estimateGasPrice,

@@ -7,13 +7,14 @@ import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
+import {dust} from '../storybook-util/custom-knobs'
+import {estimateFeesWithRandomDelay} from '../storybook-util/dummies'
 import {Claim, PeriodConfig} from './glacier-state'
 import {GlacierDropOverview} from './GlacierDropOverview'
 import {ClaimRow} from './ClaimRow'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
 import {Epochs, EpochRow} from './Epochs'
-import {dust} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Glacier Drop',
@@ -138,6 +139,8 @@ export const submitProofOfUnlock = (): JSX.Element => (
     claim={unsubmittedClaim}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
+    estimateCallFee={() => estimateFeesWithRandomDelay()}
+    estimateGasPrice={estimateFeesWithRandomDelay}
   />
 )
 
@@ -150,6 +153,8 @@ export const withdrawAvailableDust = (): JSX.Element => (
     showEpochs={action('showEpochs')}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
+    estimateCallFee={() => estimateFeesWithRandomDelay()}
+    estimateGasPrice={estimateFeesWithRandomDelay}
   />
 )
 

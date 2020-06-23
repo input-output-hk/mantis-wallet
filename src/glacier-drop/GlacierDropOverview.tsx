@@ -44,6 +44,8 @@ interface ClaimHistoryProps {
   currentBlock: number
   periodConfig: PeriodConfig
   showEpochs(): void
+  estimateCallFee: LoadedState['estimateCallFee']
+  estimateGasPrice: LoadedState['estimateGasPrice']
 }
 
 const ClaimHistory = ({
@@ -51,6 +53,8 @@ const ClaimHistory = ({
   currentBlock,
   periodConfig,
   showEpochs,
+  estimateCallFee,
+  estimateGasPrice,
 }: ClaimHistoryProps): JSX.Element => {
   const [claimToSubmit, setClaimToSubmit] = useState<Claim | null>(null)
   const [claimToWithdraw, setClaimToWithdraw] = useState<Claim | null>(null)
@@ -90,6 +94,8 @@ const ClaimHistory = ({
           currentBlock={currentBlock}
           onCancel={() => setClaimToSubmit(null)}
           onNext={() => setClaimToSubmit(null)}
+          estimateCallFee={estimateCallFee}
+          estimateGasPrice={estimateGasPrice}
         />
       )}
       {claimToWithdraw && (
@@ -101,6 +107,8 @@ const ClaimHistory = ({
           showEpochs={() => showEpochs()}
           onCancel={() => setClaimToWithdraw(null)}
           onNext={() => setClaimToWithdraw(null)}
+          estimateCallFee={estimateCallFee}
+          estimateGasPrice={estimateGasPrice}
         />
       )}
     </>
@@ -142,6 +150,7 @@ const _GlacierDropOverview = ({
   const [epochsShown, showEpochs] = useState<boolean>(false)
   const [claimDisabled, setClaimDisabled] = useState<boolean>(false)
 
+  const {estimateCallFee, estimateGasPrice} = walletState
   const {currentBlock, mode} = walletState.syncStatus
 
   const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
@@ -260,6 +269,8 @@ const _GlacierDropOverview = ({
         currentBlock={currentBlock}
         periodConfig={periodConfig}
         showEpochs={() => showEpochs(true)}
+        estimateCallFee={estimateCallFee}
+        estimateGasPrice={estimateGasPrice}
       />
       <ClaimController
         walletState={walletState}

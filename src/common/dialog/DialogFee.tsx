@@ -172,3 +172,16 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
     </div>
   )
 }
+
+export const handleGasPriceUpdate = (
+  setGasPrice: React.Dispatch<React.SetStateAction<string>>,
+  gasPriceEstimates?: FeeEstimates,
+) => (_fee: string, feeLevel: FeeLevel | null): void => {
+  if (gasPriceEstimates && feeLevel) {
+    setGasPrice(gasPriceEstimates[feeLevel].toString(10))
+  } else {
+    if (!gasPriceEstimates)
+      console.warn(`gasPriceEstimates should be set, got ${gasPriceEstimates}`)
+    if (!feeLevel) console.warn('feeLevel should be set, got null')
+  }
+}
