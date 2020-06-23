@@ -8,7 +8,7 @@ import {DialogApproval} from './dialog/DialogApproval'
 import {DialogInput} from './dialog/DialogInput'
 import {DialogMessage} from './dialog/DialogMessage'
 import {DialogPassword} from './dialog/DialogPassword'
-import {DialogPrivateKey} from './dialog/DialogPrivateKey'
+import {DialogQRCode} from './dialog/DialogQRCode'
 import {DialogRecoveryPhrase} from './dialog/DialogRecoveryPhrase'
 import {DialogSwitch} from './dialog/DialogSwitch'
 import {DialogDropdown} from './dialog/DialogDropdown'
@@ -190,8 +190,8 @@ export const InteractiveRestoreSeedPhrase: React.FunctionComponent<{}> = () => (
 
 export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Private Key">
-    <DialogPrivateKey
-      privateKey={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
+    <DialogQRCode
+      content={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
       downloadFileName={text('Download file name', 'your-private-key')}
     />
   </Dialog>
@@ -255,6 +255,7 @@ export const InteractiveTextSwitch: React.FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Text Switch">
       <DialogTextSwitch
+        label={text('Switch label', 'Label')}
         left={{label: text('Left label', 'Left'), type: 'left'}}
         right={{label: text('Right label', 'Right'), type: 'right'}}
         disabled={boolean('Is disabled', false)}

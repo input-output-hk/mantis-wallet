@@ -1,5 +1,5 @@
 import {withKnobs} from '@storybook/addon-knobs'
-import {withTheme} from './theme-switcher'
+import {withSettings} from './settings-state-decorator'
 import {withBackendState} from './backend-state-decorator'
 
-export const ESSENTIAL_DECORATORS = [withTheme, withBackendState, withKnobs] as const
+export const ESSENTIAL_DECORATORS = [withSettings, withBackendState, withKnobs] as const

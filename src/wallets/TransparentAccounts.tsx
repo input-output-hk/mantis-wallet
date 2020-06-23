@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Button, message, Switch} from 'antd'
 import BigNumber from 'bignumber.js'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
 import {TransparentAccount, FeeEstimates} from '../common/wallet-state'
@@ -9,7 +9,7 @@ import {RedeemModal} from './modals/RedeemModal'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import {Transaction} from '../web3'
-import {TransactionRow, transactionTableStyle} from './TransactionHistory'
+import {TransactionList} from './TransactionList'
 import './TransparentAccounts.scss'
 
 interface ShowAccountProps {
@@ -23,8 +23,8 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
   redeem,
   transactions,
 }: ShowAccountProps) => {
-  const themeState = ThemeState.useContainer()
-  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
+  const {theme} = SettingsState.useContainer()
+  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
   const [transactionsVisible, setTransactionVisible] = useState(false)
 
   return (
@@ -45,6 +45,7 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
           </div>
           <div className="actions">
             <Button
+              data-testid="redeem-button"
               type="primary"
               className="action"
               onClick={redeem}
@@ -53,6 +54,7 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
               Apply Confidentiality
             </Button>
             <Button
+              data-testid="txs-button"
               type="primary"
               className="action secondary"
               onClick={() => setTransactionVisible(!transactionsVisible)}
@@ -64,25 +66,21 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
         </div>
         {transactionsVisible && transactions.length > 0 && (
           <div className="transactions-container">
-            <div className="transactions" style={transactionTableStyle}>
-              {transactions
-                .map(
-                  (tx: Transaction): Transaction =>
-                    // this is necessary for txs between a single user's accounts
-                    // where it is always shown as outgoing
-                    tx.txDetails.txType === 'call' &&
-                    tx.txDirection === 'outgoing' &&
-                    tx.txDetails.transparentTransaction.receivingAddress === account.address
-                      ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
-                      : tx,
-                )
-                .map((tx: Transaction) => (
-                  <TransactionRow transaction={tx} key={tx.hash} />
-                ))}
-            </div>
+            <TransactionList
+              transactions={transactions.map(
+                (tx: Transaction): Transaction =>
+                  // this is necessary for txs between a single user's accounts
+                  // where it is always shown as outgoing
+                  tx.txDetails.txType === 'call' &&
+                  tx.txDirection === 'outgoing' &&
+                  tx.txDetails.transparentTransaction.receivingAddress === account.address
+                    ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
+                    : tx,
+              )}
+            />
             <div className="transactions-footer">
               <span className="transactions-collapse" onClick={() => setTransactionVisible(false)}>
-                Collapse transactions
+                Collapse Transactions
               </span>
             </div>
           </div>
@@ -110,9 +108,13 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
   transactions,
 }: TransparentAccountsProps) => {
   const [showRedeem, setShowRedeem] = useState(false)
-  const [hideEmpty, setHideEmpty] = useState(false)
   const [addressGenerationInProgress, setAddressGenerationInProgress] = useState(false)
   const [transparentAccount, setTransparentAccount] = useState<TransparentAccount | null>(null)
+
+  const {
+    areEmptyTransparentAccountsHidden: areEmptyHidden,
+    hideEmptyTransparentAccounts: hideEmpty,
+  } = SettingsState.useContainer()
 
   const handleRedeem = (transparentAccount: TransparentAccount): void => {
     setTransparentAccount(transparentAccount)
@@ -167,14 +169,14 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
               <div>Asset</div>
               <div>Amount</div>
               <div className="hide-empty">
-                <span className="hide-empty-label" onClick={() => setHideEmpty(!hideEmpty)}>
-                  Hide empty accounts
+                <span className="hide-empty-label" onClick={() => hideEmpty(!areEmptyHidden)}>
+                  Hide Empty Accounts
                 </span>
-                <Switch title="Hide empty accounts" checked={hideEmpty} onChange={setHideEmpty} />
+                <Switch title="Hide empty accounts" checked={areEmptyHidden} onChange={hideEmpty} />
               </div>
             </div>
             {transparentAccounts
-              .filter((a) => !hideEmpty || !a.balance.isZero())
+              .filter((a) => !areEmptyHidden || !a.balance.isZero())
               .map((a) => (
                 <ShowTransparentAccount
                   account={a}

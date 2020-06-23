@@ -9,6 +9,7 @@ type SwitchMode<T> = {
 }
 
 export interface DialogTextSwitchProps<T> {
+  label?: string
   defaultMode?: T
   left: SwitchMode<T>
   right: SwitchMode<T>
@@ -18,6 +19,7 @@ export interface DialogTextSwitchProps<T> {
 }
 
 export const DialogTextSwitch = <T extends string>({
+  label,
   defaultMode,
   left,
   right,
@@ -34,24 +36,33 @@ export const DialogTextSwitch = <T extends string>({
 
   return (
     <div className="DialogTextSwitch">
-      <Button
-        onClick={() => handleChange(left.type)}
-        className={classnames('button', buttonClassName, mode === left.type ? 'left' : 'inactive')}
-        disabled={disabled}
-      >
-        {left.label}
-      </Button>
-      <Button
-        onClick={() => handleChange(right.type)}
-        className={classnames(
-          'button',
-          buttonClassName,
-          mode === right.type ? 'right' : 'inactive',
-        )}
-        disabled={disabled}
-      >
-        {right.label}
-      </Button>
+      {label && <div className="label">{label}</div>}
+      <div className={classnames('switch-container', {'with-label': !!label})}>
+        <Button
+          onClick={() => handleChange(left.type)}
+          className={classnames(
+            'button',
+            'left',
+            buttonClassName,
+            mode === left.type ? 'active' : 'inactive',
+          )}
+          disabled={disabled}
+        >
+          {left.label}
+        </Button>
+        <Button
+          onClick={() => handleChange(right.type)}
+          className={classnames(
+            'button',
+            'right',
+            buttonClassName,
+            mode === right.type ? 'active' : 'inactive',
+          )}
+          disabled={disabled}
+        >
+          {right.label}
+        </Button>
+      </div>
     </div>
   )
 }

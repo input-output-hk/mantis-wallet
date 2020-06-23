@@ -1,6 +1,6 @@
 @import '../../partial';
 
-.DialogPrivateKey {
+.DialogQRCode {
   margin-bottom: 20px;
 
   .display {
@@ -10,7 +10,7 @@
     margin-bottom: 10px;
   }
 
-  .private-key {
+  .qr-content {
     @extend %monospace;
   }
 

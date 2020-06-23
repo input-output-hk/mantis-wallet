@@ -49,6 +49,7 @@ const AmountInput = ({
 
   return (
     <DialogInput
+      data-testid={TX_AMOUNT_FIELD}
       onChange={(e): void => {
         setValue(e.target.value)
         onChange(e.target.value)
@@ -127,6 +128,7 @@ const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
       <div className="amount-container">
         <div className="label">Amount</div>
         <Button
+          data-testid="full-amount"
           className={classnames('full-amount', {inactive: !useFullAmount})}
           onClick={() => {
             setUseFullAmount(!useFullAmount)

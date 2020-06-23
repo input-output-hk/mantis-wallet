@@ -3,7 +3,7 @@ import {LoadingOutlined} from '@ant-design/icons'
 import _ from 'lodash/fp'
 import {LunaWalletLoader} from 'luna-wallet-loader'
 import {config, loadLunaManagedConfig, loadLunaStatus} from './config/renderer'
-import {ThemeState} from './theme-state'
+import {SettingsState} from './settings-state'
 import {useInterval} from './common/hook-utils'
 import {StatusModal} from './common/StatusModal'
 import './SplashScreen.scss'
@@ -26,7 +26,7 @@ const getStatusMessage = (lunaStatus: LunaStatus): string => {
 }
 
 export const SplashScreen: React.FunctionComponent<{}> = () => {
-  const {theme} = ThemeState.useContainer()
+  const {theme} = SettingsState.useContainer()
 
   const [showStatus, setShowStatus] = useState(false)
   const [lunaStatus, setLunaStatus] = useState(loadLunaStatus)

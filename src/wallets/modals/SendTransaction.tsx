@@ -25,6 +25,7 @@ import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../../common/fee-estimate-strings'
 import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
+import './SendTransaction.scss'
 
 const {Dust} = UNITS
 
@@ -41,11 +42,14 @@ interface SendToTransparentDialogProps extends ModalOnCancel {
   availableAmount: BigNumber
 }
 
-interface SendTransactionProps extends SendToConfidentialDialogProps, SendToTransparentDialogProps {
+export interface SendTransactionProps
+  extends SendToConfidentialDialogProps,
+    SendToTransparentDialogProps {
   accounts: Account[]
+  defaultMode?: 'transparent' | 'confidential'
 }
 
-const SendToConfidentialDialog = ({
+export const SendToConfidentialDialog = ({
   estimateTransactionFee,
   onSend,
   availableAmount,
@@ -99,6 +103,7 @@ const SendToConfidentialDialog = ({
       <DialogInput
         autoFocus
         label="Recipient"
+        id="confidential-recipient-name"
         onChange={(e): void => setRecipient(e.target.value)}
         formItem={{
           name: 'confidential-recipient-name',
@@ -107,6 +112,7 @@ const SendToConfidentialDialog = ({
       />
       <DialogInput
         label="Amount"
+        id="confidential-tx-amount"
         onChange={(e): void => setAmount(e.target.value)}
         formItem={{
           name: 'confidential-tx-amount',
@@ -196,6 +202,7 @@ const SendToTransparentDialog = ({
       {children}
       <DialogInput
         label="Recipient"
+        id="transparent-recipient-name"
         onChange={(e): void => setRecipient(e.target.value)}
         formItem={{
           name: 'transparent-recipient-name',
@@ -204,6 +211,7 @@ const SendToTransparentDialog = ({
       />
       <DialogInput
         label="Amount"
+        id="transparent-tx-amount"
         onChange={(e): void => setAmount(e.target.value)}
         formItem={{
           name: 'transparent-tx-amount',
@@ -241,14 +249,18 @@ export const _SendTransaction: React.FunctionComponent<SendTransactionProps & Mo
   estimateGasPrice,
   estimatePublicTransactionFee,
   onSendToTransparent,
+  defaultMode = 'confidential',
   ...props
 }: SendTransactionProps & ModalProps) => {
-  const [mode, setMode] = useState<'transparent' | 'confidential'>('confidential')
+  const [mode, setMode] = useState(defaultMode)
   const modalLocker = ModalLocker.useContainer()
+
+  const title = `Confidential → ${_.capitalize(mode)}`
 
   return (
     <>
       <Dialog
+        title={title}
         leftButtonProps={{
           doNotRender: true,
         }}
@@ -256,18 +268,21 @@ export const _SendTransaction: React.FunctionComponent<SendTransactionProps & Mo
           doNotRender: true,
         }}
       >
+        <DialogDropdown
+          label="Select Account"
+          type="small"
+          options={accounts.map(({address}) => address).filter(_.isString)}
+        />
+        <DialogShowDust amount={availableAmount}>Available Amount</DialogShowDust>
         <DialogTextSwitch
+          label="Transaction Type"
           defaultMode={mode}
+          buttonClassName="mode-switch"
           left={{label: 'Confidential', type: 'confidential'}}
           right={{label: 'Transparent', type: 'transparent'}}
           disabled={modalLocker.isLocked}
           onChange={setMode}
         />
-        <DialogDropdown
-          label="Select Account"
-          options={accounts.map(({address}) => address).filter(_.isString)}
-        />
-        <DialogShowDust amount={availableAmount}>Available Amount</DialogShowDust>
       </Dialog>
       <div style={{display: mode === 'confidential' ? 'block' : 'none'}}>
         <SendToConfidentialDialog
@@ -290,4 +305,4 @@ export const _SendTransaction: React.FunctionComponent<SendTransactionProps & Mo
   )
 }
 
-export const SendTransaction = wrapWithModal(_SendTransaction)
+export const SendTransaction = wrapWithModal(_SendTransaction, 'SendTransactionModal')

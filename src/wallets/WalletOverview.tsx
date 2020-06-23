@@ -3,7 +3,7 @@ import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
 import {Popover} from 'antd'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {ShortNumber} from '../common/ShortNumber'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
@@ -21,29 +21,25 @@ interface WalletOverviewProps {
   pending: BigNumber
   confidential: BigNumber
   transparent: BigNumber
-  goToAccounts: () => void
 }
 
 export const WalletOverview = ({
   pending,
   confidential,
   transparent,
-  goToAccounts,
 }: WalletOverviewProps): JSX.Element => {
-  const themeState = ThemeState.useContainer()
-
+  const {theme} = SettingsState.useContainer()
   const {networkTag} = BackendState.useContainer()
-  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
+  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
   const available = confidential.plus(transparent)
   const total = pending.plus(available)
 
   const transparentTooltip = (
-    <p>
-      These funds are transparent and can be visible to other Midnight users,
+    <p style={{width: '350px'}}>
+      These funds are transparent and can be visible to other Midnight users, we recommend you move
+      them to a confidential address.
       <br />
-      we recommened you move them to a confidental address.
-      <br />
-      <b>To view your Transparent balances, click here.</b>
+      <b>To view your transparent balances, click the Transparent Accounts button below.</b>
     </p>
   )
 
@@ -82,7 +78,7 @@ export const WalletOverview = ({
             <Link href={LINKS.faucet}>Where to get Dust?</Link>
           </div>
         </div>
-        <div className="transparent" onClick={goToAccounts}>
+        <div className="transparent">
           <Popover content={transparentTooltip}>
             <div>
               <div className="box-text">

@@ -111,7 +111,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   }
 
   return (
-    <div className={classnames('DialogFee', {hideCustom}, className)}>
+    <div className={classnames('DialogFee', {hideCustom}, className)} data-testid="dialog-fee">
       {label && <label className="label">{label}</label>}
       <InlineError errorMessage={errorMessage}>
         <div className={classnames('options', {'custom-mode': isCustom})}>

@@ -210,7 +210,7 @@ export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntV
   return createAddressValidator(prefix, 43, 'Invalid confidential address')
 }
 
-// FIXME PM-2206 remove this temporary fix
+// FIXME PM-2251 remove this temporary fix
 export const sortFeeEstimates = (feeEstimates: FeeEstimates): FeeEstimates => {
   // eslint-disable-next-line fp/no-mutating-methods
   const fees = Object.values(feeEstimates).sort((a, b) => a.toNumber() - b.toNumber())

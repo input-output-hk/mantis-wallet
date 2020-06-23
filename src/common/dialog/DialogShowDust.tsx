@@ -1,6 +1,6 @@
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {ThemeState} from '../../theme-state'
+import {SettingsState} from '../../settings-state'
 import {ShortNumber} from '../ShortNumber'
 import {DUST_SYMBOL} from '../../pob/chains'
 import dustIconDark from '../../assets/dark/dust.png'
@@ -15,8 +15,8 @@ export const DialogShowDust = ({
   amount,
   children,
 }: React.PropsWithChildren<DialogShowDustProps>): JSX.Element => {
-  const themeState = ThemeState.useContainer()
-  const dustIcon = themeState.theme === 'dark' ? dustIconDark : dustIconLight
+  const {theme} = SettingsState.useContainer()
+  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
 
   return (
     <div className="DialogShowDust">

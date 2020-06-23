@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render, fireEvent, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {expectCalledOnClick} from '../common/test-helpers'
+import {expectCalledOnClick, findExactlyOneByTag} from '../common/test-helpers'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
 import {makeWeb3Worker} from '../web3'
@@ -60,9 +60,8 @@ test('WalletRestore', async () => {
   userEvent.click(recoverySwitch)
 
   // Enter recovery phrase
-  const recoveryPhraseInput = getByTestId('seed-phrase').getElementsByTagName('input')
-  expect(recoveryPhraseInput.length).toBe(1)
-  fireEvent.change(recoveryPhraseInput[0], {target: {value: recoveryPhrase}})
+  const recoveryPhraseInput = findExactlyOneByTag(getByTestId('seed-phrase'), 'input')
+  fireEvent.change(recoveryPhraseInput, {target: {value: recoveryPhrase}})
 
   // Verify password fields
   expect(getByText('Enter Password')).toBeInTheDocument()

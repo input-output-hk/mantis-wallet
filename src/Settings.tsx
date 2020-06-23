@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {ThemeState} from './theme-state'
+import {SettingsState} from './settings-state'
 import {IPCToRendererChannelName} from './shared/ipc-types'
 import {withStatusGuard} from './common/wallet-status-guard'
 import {updateMiningConfig, ipcRemoveAllListeners, ipcListen} from './common/ipc-util'
@@ -22,7 +22,7 @@ const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.E
 }
 
 const _Settings = (): JSX.Element => {
-  const themeState = ThemeState.useContainer()
+  const {theme, switchTheme} = SettingsState.useContainer()
 
   const [lunaManagedConfig, setLunaManagedConfig] = useState<LunaManagedConfig>(
     loadLunaManagedConfig(),
@@ -54,8 +54,8 @@ const _Settings = (): JSX.Element => {
         <div className="settings-label">Enable Dark Mode</div>
         <div className="settings-input">
           <Switch
-            checked={themeState.theme === 'dark'}
-            onChange={() => themeState.switchTheme(themeState.theme === 'dark' ? 'light' : 'dark')}
+            checked={theme === 'dark'}
+            onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
           />
         </div>
       </div>

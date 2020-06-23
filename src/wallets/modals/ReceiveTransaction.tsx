@@ -3,7 +3,7 @@ import _ from 'lodash/fp'
 import {ModalProps} from 'antd/lib/modal'
 import {LunaModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
-import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
+import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {TransparentAddress} from '../../web3'
 import {copyToClipboard} from '../../common/clipboard'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
@@ -26,6 +26,7 @@ interface ReceiveTransactionProps
     Pick<ReceivePublicTransactionProps, 'onGenerateNew'> {
   transparentAddresses: TransparentAddress[]
   goToAccounts: () => void
+  defaultMode?: 'transparent' | 'confidential'
 }
 
 const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransactionProps> = ({
@@ -44,8 +45,8 @@ const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransacti
     }}
     type="dark"
   >
-    <div className="title">Your private address</div>
-    <DialogPrivateKey privateKey={privateAddress} />
+    <div className="title">Your confidential address</div>
+    <DialogQRCode content={privateAddress} />
   </Dialog>
 )
 
@@ -88,7 +89,7 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
       <div className="title">{title}</div>
       {transparentAddress && (
         <>
-          <DialogPrivateKey privateKey={transparentAddress.address} />
+          <DialogQRCode content={transparentAddress.address} />
           <DialogMessage
             description={
               <>
@@ -109,9 +110,10 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
   transparentAddresses,
   onGenerateNew,
   goToAccounts,
+  defaultMode = 'confidential',
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
-  const [mode, setMode] = useState<'transparent' | 'confidential'>('confidential')
+  const [mode, setMode] = useState(defaultMode)
   const [isLoading, setLoading] = useState(false)
 
   const newestAddress = _.head(transparentAddresses)
@@ -139,7 +141,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
     )
 
   return (
-    <LunaModal footer={usedAddresses} {...props}>
+    <LunaModal footer={usedAddresses} wrapClassName="ReceiveModal" {...props}>
       <Dialog
         leftButtonProps={{
           doNotRender: true,
@@ -149,6 +151,7 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
         }}
       >
         <DialogTextSwitch
+          buttonClassName="mode-switch"
           defaultMode={mode}
           left={{label: 'Confidential', type: 'confidential'}}
           right={{label: 'Transparent', type: 'transparent'}}

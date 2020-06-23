@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
-import {DialogPrivateKey} from '../../common/dialog/DialogPrivateKey'
+import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 
 interface WalletCreateSecurityStepProps {
@@ -41,7 +41,7 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
         onChange={setUseSpendingKey}
       />
       {useSpendingKey && (
-        <DialogPrivateKey privateKey={spendingKey} downloadFileName="Luna-wallet-spending-key" />
+        <DialogQRCode content={spendingKey} downloadFileName="Luna-wallet-spending-key" />
       )}
     </Dialog>
   )

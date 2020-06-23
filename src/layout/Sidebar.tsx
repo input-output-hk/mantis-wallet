@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
-import {ThemeState} from '../theme-state'
+import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
 import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
@@ -48,8 +48,8 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({version}: SidebarProps): JSX.Element => {
-  const themeState = ThemeState.useContainer()
-  const logo = themeState.theme === 'dark' ? darkLogo : lightLogo
+  const {theme} = SettingsState.useContainer()
+  const logo = theme === 'dark' ? darkLogo : lightLogo
 
   const walletState = WalletState.useContainer()
   const routerState = RouterState.useContainer()

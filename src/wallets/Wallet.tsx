@@ -27,7 +27,6 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
         pending={pendingBalance}
         confidential={availableBalance}
         transparent={transparentBalance}
-        goToAccounts={() => setViewType('accounts')}
       />
       {viewType === 'transactions' && (
         <TransactionHistory

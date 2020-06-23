@@ -34,7 +34,7 @@
 
     .action {
       display: inline-block;
-      width: 126px;
+      min-width: 126px;
       height: 30px;
       margin-left: 19px;
       font-size: 12px;
@@ -47,59 +47,11 @@
   }
 
   .no-transactions {
-    position: relative;
-
-    .no-transactions-text {
-      position: absolute;
-      top: 50%;
-      bottom: 50%;
-      width: 100%;
-      opacity: 0.16;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1.8px;
-      text-align: center;
-      text-transform: uppercase;
-      vertical-align: middle;
-    }
+    @extend %empty-list-message;
   }
 
   .transactions-container {
     margin-top: 30px;
-
-    .transactions {
-      @extend %transactions-grid;
-
-      .header {
-        display: contents;
-        position: sticky;
-        top: 0;
-        padding-left: 12px;
-        font-size: 13px;
-        font-weight: bold;
-        letter-spacing: 1.95px;
-        line-height: 40px;
-        text-align: left;
-        text-transform: uppercase;
-
-        .sortable {
-          cursor: pointer;
-          user-select: none;
-
-          .label {
-            margin-right: 0.5em;
-
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-        }
-      }
-
-      .body {
-        display: contents;
-      }
-    }
   }
 }
 
