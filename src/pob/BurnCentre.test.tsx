@@ -9,7 +9,7 @@ import {UNITS} from '../common/units'
 import {abbreviateAmount, formatPercentage} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {expectCalledOnClick} from '../common/test-helpers'
+import {expectCalledOnClick, createBurnStatus} from '../common/test-helpers'
 import {BurnActivity} from './BurnActivity'
 import {BurnStatusType} from './api/prover'
 import {makeWeb3Worker} from '../web3'
@@ -25,7 +25,6 @@ const web3 = makeWeb3Worker(mockWeb3Worker)
 jest.mock('../config/renderer.ts')
 
 test('Burn Centre shows correct burn balances and its buttons work as expected', async () => {
-  const registerAuction = jest.fn()
   const burnCoins = jest.fn()
   const addTx = jest.fn()
 
@@ -43,7 +42,11 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
           },
         },
       ]}
-      pendingBalances={{ETH_TESTNET: pending}}
+      burnStatuses={{
+        'burn-address': {
+          lastStatuses: [createBurnStatus('tx_found', pending.toNumber(), 'ETH_TESTNET')],
+        },
+      }}
       provers={[
         {
           name: 'Test Prover',
@@ -61,15 +64,11 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
       }}
       addTx={addTx}
       onBurnCoins={burnCoins}
-      onRegisterAuction={registerAuction}
     />,
   )
 
   // Click Burn Coins
   await expectCalledOnClick(() => getByText('Burn Coins'), burnCoins)
-
-  // Click Register for Auction
-  await expectCalledOnClick(() => getByText('Register for Auction'), registerAuction)
 
   // Check Burn Balances
   expect(getByText('Available')).toBeInTheDocument()
@@ -281,9 +280,3 @@ test('Burn Status - Display proving successful status', async () => {
   expect(getAllByTitle('Checked')).toHaveLength(3)
   expect(getAllByTitle('In progress')).toHaveLength(1)
 })
-
-// test('Burn Status - Display proving confirmed status', async () => {
-//   const {getAllByTitle} = renderBurnStatusDisplay('REVEAL_CONFIRMED')
-
-//   expect(getAllByTitle('Checked')).toHaveLength(4)
-// })

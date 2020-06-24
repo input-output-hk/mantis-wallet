@@ -60,7 +60,6 @@ export interface ProofOfBurnData {
   ) => Promise<void>
   burnStatuses: Record<string, BurnStatus>
   refresh: () => Promise<void>
-  pendingBalances: Partial<Record<ChainId, BigNumber>>
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
@@ -88,6 +87,16 @@ const FINISHED_BURN_STATUSES: BurnStatusType[] = [
   'commitment_fail',
   'redeem_fail',
 ]
+
+export const getPendingBalance = (
+  burnStatuses: Record<string, BurnStatus>,
+): Partial<Record<ChainId, BigNumber>> =>
+  _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s))(
+    _.values(burnStatuses)
+      .flatMap(({lastStatuses}) => lastStatuses)
+      .filter(({status}) => !FINISHED_BURN_STATUSES.includes(status))
+      .map((status) => ({[status.burnAddressInfo.chainId]: new BigNumber(status.tx_value || 0)})),
+  )
 
 function useProofOfBurnState(
   {
@@ -217,19 +226,11 @@ function useProofOfBurnState(
     setBurnStatuses({})
   }
 
-  const pendingBalances = _.fromPairs(
-    _.values(burnStatuses)
-      .flatMap(({lastStatuses}) => lastStatuses)
-      .filter(({status}) => !FINISHED_BURN_STATUSES.includes(status))
-      .map((status) => [status.chain, new BigNumber(status.tx_value || 0)]),
-  )
-
   return {
     addBurnWatcher,
     burnStatuses,
     refresh,
     observeBurnAddress,
-    pendingBalances,
     reset,
     burnAddresses,
     addTx: proveTransaction,

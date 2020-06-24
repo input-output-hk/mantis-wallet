@@ -4,7 +4,6 @@ import {SearchOutlined} from '@ant-design/icons'
 import {BurnStatus, RealBurnStatus} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
-import {DialogError} from '../common/dialog/DialogError'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
 import './BurnActivity.scss'
@@ -58,17 +57,15 @@ export const _BurnActivity = ({
       {noBurnObserved.length > 0 &&
         noBurnObserved.map(([address, {errorMessage}]) => (
           <div className="burn-address-error" key={address}>
-            <DialogError>
-              {errorMessage && (
-                <>
-                  Gathering burn activity for {address} from the prover failed with the following
-                  error:
-                  <br />
-                  {errorMessage}
-                </>
-              )}
-              {!errorMessage && `No burn transactions observed for burn address ${address}.`}
-            </DialogError>
+            {errorMessage && (
+              <>
+                Gathering burn activity for {address} from the prover failed with the following
+                error:
+                <br />
+                {errorMessage}
+              </>
+            )}
+            {!errorMessage && `No burn transactions observed for burn address ${address}.`}
           </div>
         ))}
       {filteredStatuses.length === 0 && (

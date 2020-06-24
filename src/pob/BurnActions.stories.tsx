@@ -2,7 +2,7 @@ import React from 'react'
 import BigNumber from 'bignumber.js'
 import {number, text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
-import {prover, asyncAction} from '../storybook-util/custom-knobs'
+import {prover, asyncAction, burnStatus} from '../storybook-util/custom-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {CHAINS} from './chains'
@@ -22,14 +22,13 @@ const {BTC_TESTNET, ETH_TESTNET} = CHAINS
 export const emptyBurnActions = (): JSX.Element => (
   <BurnActions
     transparentAccounts={[]}
-    pendingBalances={{}}
+    burnStatuses={{}}
     provers={[prover('First')]}
     burnAddresses={{}}
     addTx={async (...args): Promise<void> => {
       action('on-generate-address')(args)
     }}
     onBurnCoins={action('on-burn-coins')}
-    onRegisterAuction={action('on-register-auction')}
   />
 )
 
@@ -46,8 +45,20 @@ export const dummyBurnActions = (): JSX.Element => (
         },
       },
     ]}
-    pendingBalances={{
-      ETH_TESTNET: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(12.345)),
+    burnStatuses={{
+      'burn-address': {
+        lastStatuses: [
+          burnStatus('Burn #1', {
+            burnAddressInfo: {
+              midnightAddress: 'midnight-address',
+              chainId: 'ETH_TESTNET',
+              reward: 1,
+              autoConversion: false,
+            },
+            tx_value: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(12.345)).toNumber(),
+          }),
+        ],
+      },
     }}
     onBurnCoins={action('on-burn-coins')}
     provers={[prover('First')]}
@@ -68,7 +79,6 @@ export const dummyBurnActions = (): JSX.Element => (
     addTx={async (...args): Promise<void> => {
       action('on-generate-address')(args)
     }}
-    onRegisterAuction={action('on-register-auction')}
   />
 )
 

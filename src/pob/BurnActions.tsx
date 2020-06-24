@@ -4,7 +4,7 @@ import {Button, Popover} from 'antd'
 import _ from 'lodash/fp'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
-import {ProofOfBurnData} from './pob-state'
+import {ProofOfBurnData, getPendingBalance} from './pob-state'
 import {ProverConfig} from '../config/type'
 import {TransparentAccount} from '../common/wallet-state'
 import {CHAINS_TO_USE_IN_POB} from './pob-config'
@@ -13,17 +13,15 @@ import {ChainId} from './chains'
 import './BurnActions.scss'
 
 interface BurnActionsProps
-  extends Pick<ProofOfBurnData, 'burnAddresses' | 'provers' | 'addTx' | 'pendingBalances'> {
+  extends Pick<ProofOfBurnData, 'burnAddresses' | 'provers' | 'addTx' | 'burnStatuses'> {
   onBurnCoins?: () => void
-  onRegisterAuction?: () => void
   transparentAccounts: TransparentAccount[]
 }
 
 export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
   onBurnCoins,
-  onRegisterAuction,
   transparentAccounts,
-  pendingBalances,
+  burnStatuses,
   burnAddresses,
   provers,
   addTx,
@@ -34,6 +32,8 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
     _.mergeWith((a: BigNumber, b: BigNumber) => (a ? a.plus(b) : b)),
     {},
   ) as Partial<Record<ChainId, BigNumber>>
+
+  const pendingBalances = getPendingBalance(burnStatuses)
 
   const burnBalances = CHAINS_TO_USE_IN_POB.map((chain) => ({
     chain,
@@ -54,9 +54,6 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
           )}
           <Button type="primary" className="action" onClick={onBurnCoins}>
             Burn Coins
-          </Button>
-          <Button type="primary" className="action secondary" onClick={onRegisterAuction}>
-            Register for Auction
           </Button>
         </div>
       </div>

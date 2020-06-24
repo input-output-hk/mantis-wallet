@@ -64,6 +64,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
                 chain,
               })
             }}
+            cancel={cancel}
           />
         </PobLayout>
       )
@@ -75,7 +76,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
             chain={chain}
             provers={provers}
             transparentAddresses={walletState.transparentAccounts.map(({address}) => address)}
-            cancel={cancel}
+            cancel={() => setBurnState({step: 'CHOOSE_TOKEN'})}
             generateBurnAddress={async (prover, transparentAddress, fee): Promise<void> => {
               const burnAddress = await walletState.getBurnAddress(
                 transparentAddress,

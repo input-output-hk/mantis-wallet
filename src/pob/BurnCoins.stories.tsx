@@ -36,7 +36,11 @@ export const generateTansparentAddress = (): JSX.Element => (
 )
 
 export const chooseToken = (): JSX.Element => (
-  <BurnCoinsChooseToken chains={_.values(CHAINS)} chooseChain={action('choose-chain')} />
+  <BurnCoinsChooseToken
+    chains={_.values(CHAINS)}
+    chooseChain={action('choose-chain')}
+    cancel={action('on-cancel')}
+  />
 )
 
 export const generateAddress = (): JSX.Element => (

@@ -1,4 +1,5 @@
 import React from 'react'
+import {Button} from 'antd'
 import {Chain} from '../chains'
 import {Token} from '../../common/Token'
 import './BurnCoinsChooseToken.scss'
@@ -6,11 +7,13 @@ import './BurnCoinsChooseToken.scss'
 interface BurnCoinsChooseTokenProps {
   chains: Chain[]
   chooseChain: (chain: Chain) => void
+  cancel: () => void
 }
 
 export const BurnCoinsChooseToken: React.FunctionComponent<BurnCoinsChooseTokenProps> = ({
   chains,
   chooseChain,
+  cancel,
 }: BurnCoinsChooseTokenProps) => (
   <div className="BurnCoinsChooseToken">
     <div className="tokens">
@@ -20,5 +23,6 @@ export const BurnCoinsChooseToken: React.FunctionComponent<BurnCoinsChooseTokenP
         </Token>
       ))}
     </div>
+    <Button onClick={cancel}>← Go Back</Button>
   </div>
 )
