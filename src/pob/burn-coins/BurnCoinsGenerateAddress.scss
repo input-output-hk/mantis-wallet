@@ -1,4 +1,4 @@
-@import '../../themify';
+@import '../../themify', '../../vars', '../../partial';
 
 .BurnCoinsGenerateAddress {
   margin-top: 100px;
@@ -9,6 +9,30 @@
     @include themify($themes) {
       stroke: themed('text-color');
       fill: themed('text-color');
+    }
+  }
+
+  .fee-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    .label {
+      @extend %dialog-label;
+      grid-column: 1 / -1;
+    }
+
+    .change-reward {
+      height: $dialog-component-height;
+      margin-left: 8px;
+
+      &.inactive {
+        opacity: $secondary-opacity;
+
+        @include themify($themes) {
+          background-color: themed('tertiary-background');
+          color: themed('text-color');
+        }
+      }
     }
   }
 }

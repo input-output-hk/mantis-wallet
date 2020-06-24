@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import BigNumber from 'bignumber.js'
-import {render, waitFor, act, fireEvent} from '@testing-library/react'
+import {render, waitFor, act, fireEvent, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {CHAINS} from './chains'
 import {expectCalledOnClick} from '../common/test-helpers'
@@ -45,9 +45,10 @@ test('Burn Coins - Generate Address step', async () => {
     address: 'http://test-prover',
     rewards: {BTC_TESTNET: 200},
   }
+  const proverMinFee = Bitcoin.fromBasic(new BigNumber(prover.rewards.BTC_TESTNET)).toString(10)
   const usedReward = new BigNumber(0.01)
 
-  const {getByText, getByRole, getByLabelText, queryByText} = render(
+  const {getByText, getByRole, getByLabelText, queryByText, findByText} = render(
     <BurnCoinsGenerateAddress
       chain={chain}
       provers={[prover]}
@@ -64,33 +65,29 @@ test('Burn Coins - Generate Address step', async () => {
   expect(getByText(prover.name, {exact: false})).toBeInTheDocument()
   expect(getByText(prover.address, {exact: false})).toBeInTheDocument()
 
-  // Reward field is set to minimum default, which is 0.0001
-  const rewardField = getByLabelText(`Assign reward in M-${chain.symbol} for your prover`)
-  expect(rewardField).toHaveAttribute('value', '0.0001')
+  // Reward field is preset to the prover's reward and it is disabled
+  const rewardField = getByLabelText(`Assign reward in M-${chain.symbol} for your prover`, {
+    exact: false,
+  })
+  await waitFor(() => expect(rewardField).toHaveAttribute('value', proverMinFee))
+  expect(rewardField).toBeDisabled()
+
+  // To change the reward, the user has to confirm he understands the risks
+  const changeRewardButton = getByText('Change Reward')
+  act(() => userEvent.click(changeRewardButton))
+  const iUnderstandButton = await findByText('I understand')
+  act(() => userEvent.click(iUnderstandButton))
+  await waitForElementToBeRemoved(() => queryByText('I understand'))
 
   // Low reward should throw error
   const lowReward = Bitcoin.fromBasic(new BigNumber(prover.rewards.BTC_TESTNET - 10))
   fireEvent.change(rewardField, {target: {value: lowReward.toString(10)}})
-  await waitFor(() =>
-    expect(
-      getByText(
-        `Must be at least ${Bitcoin.fromBasic(new BigNumber(prover.rewards.BTC_TESTNET)).toString(
-          10,
-        )}`,
-      ),
-    ).toBeInTheDocument(),
-  )
+  await waitFor(() => expect(getByText(`Must be at least ${proverMinFee}`)).toBeInTheDocument())
 
   // Change to valid reward
   fireEvent.change(rewardField, {target: {value: usedReward.toString(10)}})
   await waitFor(() =>
-    expect(
-      queryByText(
-        `Must be at least ${Bitcoin.fromBasic(new BigNumber(prover.rewards.BTC_TESTNET)).toString(
-          10,
-        )}`,
-      ),
-    ).not.toBeInTheDocument(),
+    expect(queryByText(`Must be at least ${proverMinFee}`)).not.toBeInTheDocument(),
   )
 
   const generateBurnAddressButton = getByText(`Generate ${chain.symbol} Address`)

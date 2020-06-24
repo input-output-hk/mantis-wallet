@@ -6,7 +6,6 @@ export const PROVER_POLLING_RATE = 2000
 
 export const CHAINS_TO_USE_IN_POB: Chain[] = [CHAINS.BTC_TESTNET, CHAINS.ETH_TESTNET]
 
-export const DEFAULT_PROVER_FEE = 0.0001
 export const AUTO_DUST_CONVERSION = false
 
 export const NUMBER_OF_BLOCKS_TO_SUCCESS = 10
