@@ -101,13 +101,11 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           onChange={(e) => setFee(e.target.value)}
           errorMessage={feeError}
         />
-        <DialogMessage
-          description={
-            <Link href={LINKS.proverListMetrics} styled>
-              See Prover List Metrics
-            </Link>
-          }
-        />
+        <DialogMessage>
+          <Link href={LINKS.proverListMetrics} styled>
+            See Prover List Metrics
+          </Link>
+        </DialogMessage>
         <DialogApproval
           id="i-understand-the-process-checkbox"
           description={

@@ -76,8 +76,8 @@ export const InteractiveApproval: React.FunctionComponent<{}> = () => {
 export const InteractiveColumns: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Columns">
     <DialogColumns>
-      <DialogMessage description={text('First column', 'First column')} />
-      <DialogMessage description={text('Second column', 'Second column')} />
+      <DialogMessage>{text('First column', 'First column')}</DialogMessage>
+      <DialogMessage>{text('Second column', 'Second column')}</DialogMessage>
     </DialogColumns>
   </Dialog>
 )
@@ -157,10 +157,9 @@ export const InteractiveInput: React.FunctionComponent<{}> = () => (
 
 export const InteractiveMessage: React.FunctionComponent<{}> = () => (
   <Dialog title="Dialog Message">
-    <DialogMessage
-      description={text('Message text', 'This is a message in a dialog')}
-      type={select('Input type', ['default', 'highlight'], 'default')}
-    />
+    <DialogMessage type={select('Input type', ['default', 'highlight'], 'default')}>
+      {text('Message text', 'This is a message in a dialog')}
+    </DialogMessage>
   </Dialog>
 )
 

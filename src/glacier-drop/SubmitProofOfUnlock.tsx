@@ -84,7 +84,7 @@ const _SubmitProofOfUnlock = ({
       type="dark"
       footer={footer}
     >
-      <DialogMessage label="Midnight Transparent Address" description={transparentAddress} />
+      <DialogMessage label="Midnight Transparent Address">{transparentAddress}</DialogMessage>
       <DialogShowDust amount={dustAmount}>Eligible Amount</DialogShowDust>
       <DialogFee
         label="Fee"

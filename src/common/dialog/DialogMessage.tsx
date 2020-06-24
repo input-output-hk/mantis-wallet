@@ -4,17 +4,16 @@ import './DialogMessage.scss'
 
 interface DialogMessageProps {
   label?: string
-  description: React.ReactNode
   type?: 'default' | 'highlight'
 }
 
 export const DialogMessage: React.FunctionComponent<DialogMessageProps> = ({
   label,
-  description,
+  children,
   type = 'default',
-}: DialogMessageProps) => (
+}: React.PropsWithChildren<DialogMessageProps>) => (
   <div className={classnames('DialogMessage', type)}>
     {label && <div className="label">{label}</div>}
-    <div className="description">{description}</div>
+    <div className="description">{children}</div>
   </div>
 )
