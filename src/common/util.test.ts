@@ -17,7 +17,6 @@ import {
   toHumanReadableHashrate,
   createTransparentAddressValidator,
   createConfidentialAddressValidator,
-  sortFeeEstimates,
   returnDataToHumanReadable,
 } from './util'
 import {BigNumberJSON} from '../web3'
@@ -281,20 +280,5 @@ it('validates addresses correctly', async () => {
     validateConfidentialOnTestnet(
       'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5',
     ),
-  )
-})
-
-it('sort fee estimates', () => {
-  assert.deepEqual(
-    sortFeeEstimates({low: new BigNumber(0), medium: new BigNumber(0), high: new BigNumber(1)}),
-    {low: new BigNumber(0), medium: new BigNumber(0), high: new BigNumber(1)},
-  )
-  assert.deepEqual(
-    sortFeeEstimates({
-      low: new BigNumber(0.01),
-      medium: new BigNumber(0.1),
-      high: new BigNumber(0.0004),
-    }),
-    {low: new BigNumber(0.0004), medium: new BigNumber(0.01), high: new BigNumber(0.1)},
   )
 })
