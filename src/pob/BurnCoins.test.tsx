@@ -16,7 +16,7 @@ const Bitcoin = UNITS.Bitcoin
 
 jest.mock('../config/renderer.ts')
 
-test('Burn Coins - Choose Tokens step', () => {
+test('Burn Coins - Choose Tokens step', async () => {
   const chooseChain = jest.fn()
   const cancel = jest.fn()
 
@@ -31,7 +31,7 @@ test('Burn Coins - Choose Tokens step', () => {
     expect(chooseChain).toBeCalledWith(chain)
   })
 
-  expectCalledOnClick(() => getByText('← Go Back'), cancel)
+  await expectCalledOnClick(() => getByText('← Go Back'), cancel)
 })
 
 test('Burn Coins - Generate Address step', async () => {
@@ -74,7 +74,7 @@ test('Burn Coins - Generate Address step', async () => {
 
   // To change the reward, the user has to confirm he understands the risks
   const changeRewardButton = getByText('Change Reward')
-  act(() => userEvent.click(changeRewardButton))
+  await act(async () => userEvent.click(changeRewardButton))
   const iUnderstandButton = await findByText('I understand')
   act(() => userEvent.click(iUnderstandButton))
   await waitForElementToBeRemoved(() => queryByText('I understand'))
@@ -93,13 +93,13 @@ test('Burn Coins - Generate Address step', async () => {
   const generateBurnAddressButton = getByText(`Generate ${chain.symbol} Address`)
 
   const approvalCheckbox = getByRole('checkbox')
-  act(() => userEvent.click(approvalCheckbox))
+  await act(async () => userEvent.click(approvalCheckbox))
   await waitFor(() => expect(generateBurnAddressButton).toBeEnabled())
 
   await expectCalledOnClick(() => getByText('← Go Back'), cancel)
 
   expect(generateBurnAddress).not.toBeCalled()
-  act(() => userEvent.click(generateBurnAddressButton))
+  await act(async () => userEvent.click(generateBurnAddressButton))
   await waitFor(() =>
     expect(generateBurnAddress).toBeCalledWith(
       prover,
@@ -141,6 +141,6 @@ test('Burn Coins - Show Address step', async () => {
   await expectCalledOnClick(() => getByText('← Go Back to Burn Centre'), goBack)
 
   const copyAddressButton = getByText('Copy Address')
-  act(() => userEvent.click(copyAddressButton))
+  await act(async () => userEvent.click(copyAddressButton))
   await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(burnAddress))
 })
