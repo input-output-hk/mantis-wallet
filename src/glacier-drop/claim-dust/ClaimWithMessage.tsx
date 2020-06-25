@@ -85,7 +85,7 @@ const _ClaimWithMessage = ({
       <DialogShowDust amount={minimumDustAmount}>
         Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
       </DialogShowDust>
-      <DialogMessage label="Destination Address" description={transparentAddress} />
+      <DialogMessage label="Destination Address">{transparentAddress}</DialogMessage>
       <DialogApproval id="should-keep-open-checkbox" description={SHOULD_KEEP_OPEN_TEXT} />
     </Dialog>
   )

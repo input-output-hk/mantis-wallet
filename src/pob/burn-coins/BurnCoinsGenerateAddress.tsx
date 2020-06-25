@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
+import {Popover, Button, Input} from 'antd'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
@@ -9,11 +10,16 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {LINKS} from '../../external-link-config'
 import {Link} from '../../common/Link'
-import {validateAmount, hasAtMostDecimalPlaces, isGreaterOrEqual} from '../../common/util'
+import {
+  validateAmount,
+  hasAtMostDecimalPlaces,
+  isGreaterOrEqual,
+  isGreater,
+} from '../../common/util'
 import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import {UNITS} from '../../common/units'
-import {DEFAULT_PROVER_FEE} from '../pob-config'
+import {LunaModal} from '../../common/LunaModal'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
@@ -24,6 +30,35 @@ interface BurnCoinsGenerateAddressProps {
   generateBurnAddress: (prover: Prover, midnightAddress: string, fee: number) => Promise<void>
 }
 
+const feeTooltip =
+  'This is a fee in Midnight Tokens that is the Prover reward and will be taken from your total burned amount.'
+
+const ApproveChangeReward = ({
+  visible,
+  onCancel,
+  onApprove,
+}: {
+  visible: boolean
+  onCancel: () => void
+  onApprove: () => void
+}): JSX.Element => (
+  <LunaModal visible={visible} onCancel={onCancel}>
+    <Dialog
+      title="Change Prover Reward"
+      leftButtonProps={{onClick: onCancel}}
+      rightButtonProps={{children: 'I understand', onClick: onApprove}}
+    >
+      <DialogMessage type="highlight">
+        {feeTooltip}
+        <br />
+        <br />
+        <b>Warning:</b> If the fee is larger than burn amount, the burn will fail and cannot be
+        recovered. Under such conditions, <b>you will lose your source fund</b>.
+      </DialogMessage>
+    </Dialog>
+  </LunaModal>
+)
+
 export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerateAddressProps> = ({
   chain,
   provers,
@@ -33,13 +68,23 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
 }: BurnCoinsGenerateAddressProps) => {
   const compatibleProvers = provers.filter((p) => p.rewards[chain.id] !== undefined)
   const [prover, setProver] = useState(compatibleProvers[0])
+
+  const feeInputRef = useRef<Input>(null)
+  const [isApproveChangeRewardVisible, setApproveChangeRewardVisible] = useState(false)
+  const [isFeeDisabled, setFeeDisabled] = useState(true)
+
   const minFee = UNITS[chain.unitType].fromBasic(new BigNumber(prover?.rewards[chain.id] || 0))
-  const defaultFee = minFee.isLessThan(DEFAULT_PROVER_FEE) ? DEFAULT_PROVER_FEE : minFee
   const minValue = UNITS[chain.unitType].fromBasic(new BigNumber(1))
-  const [fee, setFee] = useState(defaultFee.toString(10))
+  const [fee, setFee] = useState('')
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
 
+  if (minFee.isZero()) {
+    console.error('Something went wrong, the prover has 0 reward set.')
+    console.error(prover)
+  }
+
   const feeError = validateAmount(fee, [
+    isGreater(0), // 0 reward might be a sign of error, let's prevent user to continue in such case
     isGreaterOrEqual(minFee),
     hasAtMostDecimalPlaces(minValue.dp()),
   ])
@@ -52,6 +97,10 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
       {chain.symbol}
     </>
   )
+
+  useEffect(() => {
+    if (isFeeDisabled) setFee(minFee.toString(10))
+  }, [prover])
 
   return (
     <div className="BurnCoinsGenerateAddress">
@@ -93,22 +142,36 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           }}
           noOptionsMessage="No available provers for this token at the moment."
         />
-        <DialogInput
-          autoFocus
-          id="generate-burn-fee"
-          label={`Assign reward in M-${chain.symbol} for your prover`}
-          value={fee}
-          onChange={(e) => setFee(e.target.value)}
-          errorMessage={feeError}
-        />
-        <DialogMessage
-          description={
-            <Link href={LINKS.proverListMetrics} styled>
-              See Prover List Metrics
-            </Link>
-          }
-        />
+        <div className="fee-container">
+          <label className="label" htmlFor="generate-burn-fee">
+            <Popover content={feeTooltip}>
+              <span>
+                Assign reward in M-{chain.symbol} for your prover{' '}
+                <span style={{textTransform: 'none'}}>(Whats this?)</span>
+              </span>
+            </Popover>
+          </label>
+          <DialogInput
+            disabled={isFeeDisabled}
+            id="generate-burn-fee"
+            value={fee}
+            onChange={(e) => setFee(e.target.value)}
+            errorMessage={feeError}
+            ref={feeInputRef}
+          />
+          {isFeeDisabled && (
+            <Button className="change-reward" onClick={() => setApproveChangeRewardVisible(true)}>
+              Change Reward
+            </Button>
+          )}
+        </div>
+        <DialogMessage>
+          <Link href={LINKS.proverListMetrics} styled>
+            See Prover List Metrics
+          </Link>
+        </DialogMessage>
         <DialogApproval
+          autoFocus
           id="i-understand-the-process-checkbox"
           description={
             <>
@@ -125,6 +188,15 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
           }
         />
       </Dialog>
+      <ApproveChangeReward
+        onCancel={() => setApproveChangeRewardVisible(false)}
+        onApprove={() => {
+          setApproveChangeRewardVisible(false)
+          setFeeDisabled(false)
+          feeInputRef.current?.focus()
+        }}
+        visible={isApproveChangeRewardVisible}
+      />
     </div>
   )
 }

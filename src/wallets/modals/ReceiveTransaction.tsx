@@ -90,15 +90,10 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
       {transparentAddress && (
         <>
           <DialogQRCode content={transparentAddress.address} />
-          <DialogMessage
-            description={
-              <>
-                <b>Warning:</b> By using a transparent address your transaction will not stay
-                confidential.
-              </>
-            }
-            type="highlight"
-          />
+          <DialogMessage type="highlight">
+            <b>Warning:</b> By using a transparent address your transaction will not stay
+            confidential.
+          </DialogMessage>
         </>
       )}
     </Dialog>

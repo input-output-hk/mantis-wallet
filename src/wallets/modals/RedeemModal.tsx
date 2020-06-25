@@ -154,10 +154,10 @@ const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
         errorMessage={feeError}
         forceCustom={useFullAmount}
       />
-      <DialogMessage
-        description="This transaction will move selected funds to a confidential address which will remove their visibility from the Midnight Blockchain."
-        type="highlight"
-      />
+      <DialogMessage type="highlight">
+        This transaction will move selected funds to a confidential address which will remove their
+        visibility from the Midnight Blockchain.
+      </DialogMessage>
     </Dialog>
   )
 }

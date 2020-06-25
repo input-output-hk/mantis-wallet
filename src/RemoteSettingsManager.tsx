@@ -62,16 +62,12 @@ const _MiningConfigModal = ({onCancel, onFinish}: MiningConfigModalProps): JSX.E
       footer={footer}
     >
       <div className="MiningConfigModal">
-        <DialogMessage
-          description={
-            <>
-              By setting a private key, you&apos;ll enable mining on your computer.
-              <br />
-              It&apos;s crucial that your node is fully synced when mining, otherwise it won&apos;t
-              work.
-            </>
-          }
-        />
+        <DialogMessage>
+          By setting a private key, you&apos;ll enable mining on your computer.
+          <br />
+          It&apos;s crucial that your node is fully synced when mining, otherwise it won&apos;t
+          work.
+        </DialogMessage>
         <DialogInput
           label="Private key for mining rewards"
           value={spendingKey}

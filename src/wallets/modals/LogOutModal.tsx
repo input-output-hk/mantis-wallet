@@ -29,7 +29,7 @@ const LogOutDialog: React.FunctionComponent<LogOutModalProps> = ({
       }}
       onSetLoading={modalLocker.setLocked}
     >
-      <DialogMessage description="Enter your password to log out." />
+      <DialogMessage>Enter your password to log out.</DialogMessage>
       <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
       <DialogApproval
         id="delete-data-warning"

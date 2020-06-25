@@ -24,10 +24,10 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
       leftButtonProps={{onClick: cancel, children: 'Cancel'}}
       rightButtonProps={{onClick: next}}
     >
-      <DialogMessage
-        label="Recovery Phrase"
-        description="On the following Screen you will see a 12 Word Phrase. This is your wallet backup phrase. It can be entered in any version of Luna in order to restore your wallet."
-      />
+      <DialogMessage label="Recovery Phrase">
+        On the following Screen you will see a 12 Word Phrase. This is your wallet backup phrase. It
+        can be entered in any version of Luna in order to restore your wallet.
+      </DialogMessage>
       <DialogApproval
         id="pk-needed-for-mining"
         description="I understand that I need to save my private key to enable mining in the future."
