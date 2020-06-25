@@ -4,7 +4,7 @@ import {message} from 'antd'
 import {IPCToRendererChannelName} from './shared/ipc-types'
 import {wrapWithModal} from './common/LunaModal'
 import {Dialog} from './common/Dialog'
-import {ipcListen, restartClients, updateMiningConfig} from './common/ipc-util'
+import {ipcListenToMain, restartClients, updateMiningConfig} from './common/ipc-util'
 import {DialogInput} from './common/dialog/DialogInput'
 import {DialogError} from './common/dialog/DialogError'
 import {DialogMessage} from './common/dialog/DialogMessage'
@@ -25,14 +25,14 @@ const _MiningConfigModal = ({onCancel, onFinish}: MiningConfigModalProps): JSX.E
   )
 
   useEffect(() => {
-    ipcListen('enable-mining-success', () => {
+    ipcListenToMain('enable-mining-success', () => {
       setResponse(some('ok'))
       setLoading(false)
       onFinish()
       onCancel()
     })
 
-    ipcListen('enable-mining-failure', (_event, errorMsg: string): void => {
+    ipcListenToMain('enable-mining-failure', (_event, errorMsg: string): void => {
       setResponse(some({errorMsg}))
       setLoading(false)
     })
@@ -120,16 +120,16 @@ export const RemoteSettingsManager = (): JSX.Element => {
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
-    ipcListen('update-config-success', () => {
+    ipcListenToMain('update-config-success', () => {
       setModalOpen(true)
     })
 
-    ipcListen('update-config-failure', (_event, msg: string) => {
+    ipcListenToMain('update-config-failure', (_event, msg: string) => {
       message.error(`Configuration update failed. Error: ${msg}`)
       console.error(msg)
     })
 
-    ipcListen('restart-clients-failure', (_event, msg: string) => {
+    ipcListenToMain('restart-clients-failure', (_event, msg: string) => {
       message.error(`Backend restart failed. Error: ${msg}`)
       console.error(msg)
     })

@@ -9,7 +9,7 @@ import {getContractAddresses} from '../config/renderer'
 
 // General typed wrappers
 
-export const ipcListen = (
+export const ipcListenToMain = (
   channel: IPCToRendererChannelName,
   listener: Parameters<typeof ipcRenderer.on>[1],
 ): void => {
@@ -50,4 +50,8 @@ export const updateSelectedNetworkConfig = (selectedNetwork: string): void => {
     )
   }
   updateConfig('selectedNetwork', selectedNetwork)
+}
+
+export const saveDebugLogs = (): void => {
+  ipcSend('save-debug-logs')
 }

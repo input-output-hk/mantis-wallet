@@ -4,7 +4,7 @@ import {EmptyProps} from 'antd/lib/empty'
 import {SettingsState} from './settings-state'
 import {IPCToRendererChannelName} from './shared/ipc-types'
 import {withStatusGuard} from './common/wallet-status-guard'
-import {updateMiningConfig, ipcRemoveAllListeners, ipcListen} from './common/ipc-util'
+import {updateMiningConfig, ipcRemoveAllListeners, ipcListenToMain} from './common/ipc-util'
 import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
 import {NoWallet} from './wallets/NoWallet'
 import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
@@ -34,7 +34,7 @@ const _Settings = (): JSX.Element => {
 
   useEffect(() => {
     // subscribe on mount
-    reloadTriggers.forEach((channel) => ipcListen(channel, reloadConfig))
+    reloadTriggers.forEach((channel) => ipcListenToMain(channel, reloadConfig))
 
     // unsubscribe on unmount
     return () => reloadTriggers.forEach(ipcRemoveAllListeners)
