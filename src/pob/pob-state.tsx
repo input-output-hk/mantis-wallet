@@ -88,6 +88,9 @@ const FINISHED_BURN_STATUSES: BurnStatusType[] = [
   'redeem_fail',
 ]
 
+const getBurnStatusKey = ({burnAddress, prover: {address}}: BurnWatcher): string =>
+  `${burnAddress} ${address}`
+
 export const getPendingBalance = (
   burnStatuses: BurnStatus[],
   burnAddresses: Record<string, BurnAddressInfo>,
@@ -95,12 +98,17 @@ export const getPendingBalance = (
   _.pipe(
     _.flatMap(({lastStatuses, burnWatcher: {burnAddress}}: BurnStatus) =>
       lastStatuses.map((status) => ({
+        burnAddress,
+        txId: status.txid,
         chainId: burnAddresses[burnAddress].chainId,
         status: status.status,
         txValue: status.tx_value,
       })),
     ),
     _.filter(({status, txValue}) => !FINISHED_BURN_STATUSES.includes(status) && txValue != null),
+    _.uniqWith(
+      (arrVal, othVal) => arrVal.burnAddress === othVal.burnAddress && arrVal.txId === othVal.txId,
+    ),
     _.map(({chainId, txValue}) => ({[chainId]: new BigNumber(txValue || 0)})),
     _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s)),
   )(burnStatuses)
@@ -163,6 +171,7 @@ function useProofOfBurnState(
 
   const refreshBurnStatus = async (): Promise<void> => {
     const getBurnStatuses = async (burnWatcher: BurnWatcher): Promise<[string, BurnStatus]> => {
+      const burnStatusKey = getBurnStatusKey(burnWatcher)
       try {
         const statuses = await getStatuses(burnWatcher)
         const statusesWithTxidHeight: RealBurnStatus[] = await Promise.all(
@@ -176,14 +185,13 @@ function useProofOfBurnState(
             },
           ),
         )
-        return [burnWatcher.burnAddress, {burnWatcher, lastStatuses: statusesWithTxidHeight}]
+        return [burnStatusKey, {burnWatcher, lastStatuses: statusesWithTxidHeight}]
       } catch (error) {
-        const {burnAddress} = burnWatcher
         return [
-          burnAddress,
+          burnStatusKey,
           {
             burnWatcher,
-            lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
+            lastStatuses: burnStatuses[burnStatusKey]?.lastStatuses || [],
             errorMessage: prettyErrorMessage(error),
           },
         ]

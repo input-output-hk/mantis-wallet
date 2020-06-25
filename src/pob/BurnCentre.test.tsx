@@ -187,12 +187,16 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
 
   // no burn observed error is shown for Burn Address #1
   expect(
-    getByText(`No burn transactions observed for burn address ${burnAddress1}.`),
+    getByText(
+      `No burn transactions observed for burn address ${burnAddress1} by prover "${prover.name}".`,
+    ),
   ).toBeInTheDocument()
 
   // error with no burn statuses is shown for Burn Address #2
   expect(
-    getByText(`Gathering burn activity for ${burnAddress2} from the prover failed`, {exact: false}),
+    getByText(`Gathering burn activity for ${burnAddress2} from prover "${prover.name}" failed`, {
+      exact: false,
+    }),
   ).toBeInTheDocument()
   expect(getByText(errorForBurnAddress2, {exact: false})).toBeInTheDocument()
 

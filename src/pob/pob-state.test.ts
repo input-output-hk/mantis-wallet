@@ -21,14 +21,14 @@ it('gathers pending balance correctly', () => {
     autoConversion: false,
     reward: 1e16,
   }
-  const B1_TX_FOUND = createBurnStatus('tx_found', 1)
-  const B1_PROOF_FAIL = createBurnStatus('proof_fail', 2)
-  const B1_COMM_SUBMITTED = createBurnStatus('commitment_submitted', 4)
-  const B1_COMM_APPEARED = createBurnStatus('commitment_appeared', 8)
-  const B1_COMM_FAILED = createBurnStatus('commitment_fail', 16)
-  const B1_REDEEM_APPEARED = createBurnStatus('redeem_appeared', 32)
-  const B1_REDEEM_BY_OTHER = createBurnStatus('redeem_another_prover', 64)
-  const B1_REDEEM_FAILED = createBurnStatus('redeem_fail', 128)
+  const B1_TX_FOUND = createBurnStatus('tx_found', 1, 'b1-tx-found')
+  const B1_PROOF_FAIL = createBurnStatus('proof_fail', 2, 'b1-proof-fail')
+  const B1_COMM_SUBMITTED = createBurnStatus('commitment_submitted', 4, 'b1-comm-submitted')
+  const B1_COMM_APPEARED = createBurnStatus('commitment_appeared', 8, 'b1-comm-appeared')
+  const B1_COMM_FAILED = createBurnStatus('commitment_fail', 16, 'b1-comm-failed')
+  const B1_REDEEM_APPEARED = createBurnStatus('redeem_appeared', 32, 'b1-redeem-appeared')
+  const B1_REDEEM_BY_OTHER = createBurnStatus('redeem_another_prover', 64, 'b1-redeem-by-other')
+  const B1_REDEEM_FAILED = createBurnStatus('redeem_fail', 128, 'b1-redeem-failed')
 
   const burnAddresses = {[burnAddress1]: burnAddressInfo}
 
@@ -69,11 +69,32 @@ it('gathers pending balance correctly', () => {
     {},
   )
 
+  // watching burn on the same prover should show it only once
+  const prover2 = {
+    name: 'Different prover',
+    address: 'http://test.diff-prover.address',
+  }
+  assert.deepEqual(
+    getPendingBalance(
+      [
+        {burnWatcher, lastStatuses: [B1_TX_FOUND]},
+        {
+          burnWatcher: {burnAddress: burnAddress1, prover: prover2},
+          lastStatuses: [B1_TX_FOUND],
+        },
+      ],
+      burnAddresses,
+    ),
+    {
+      BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value),
+    },
+  )
+
   // check everything together
   const burnAddress2 = 'burn-address-2'
-  const B2_TX_FOUND = createBurnStatus('tx_found', 256)
+  const B2_TX_FOUND = createBurnStatus('tx_found', 256, 'b2-tx-found')
   const burnAddress3 = 'burn-address-3'
-  const B3_ETH_TX_FOUND = createBurnStatus('tx_found', 521)
+  const B3_ETH_TX_FOUND = createBurnStatus('tx_found', 521, 'b3-eth-tx-found')
 
   const allBurnStatuses: BurnStatus[] = [
     {
@@ -88,6 +109,10 @@ it('gathers pending balance correctly', () => {
         B1_REDEEM_BY_OTHER,
         B1_REDEEM_FAILED,
       ],
+    },
+    {
+      burnWatcher: {burnAddress: burnAddress1, prover: prover2},
+      lastStatuses: [B1_TX_FOUND],
     },
     {
       burnWatcher: {burnAddress: burnAddress2, prover},

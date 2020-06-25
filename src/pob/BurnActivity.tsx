@@ -54,17 +54,18 @@ export const _BurnActivity = ({
         </div>
       </div>
       {noBurnObserved.length > 0 &&
-        noBurnObserved.map(({burnWatcher: {burnAddress}, errorMessage}) => (
+        noBurnObserved.map(({burnWatcher: {burnAddress, prover: {name}}, errorMessage}) => (
           <div className="burn-address-error" key={burnAddress}>
             {errorMessage && (
               <>
-                Gathering burn activity for {burnAddress} from the prover failed with the following
-                error:
+                Gathering burn activity for {burnAddress} from prover &#34;{name}&#34; failed
+                with the following error:
                 <br />
                 {errorMessage}
               </>
             )}
-            {!errorMessage && `No burn transactions observed for burn address ${burnAddress}.`}
+            {!errorMessage &&
+              `No burn transactions observed for burn address ${burnAddress} by prover "${name}".`}
           </div>
         ))}
       {filteredStatuses.length === 0 && (
@@ -74,7 +75,7 @@ export const _BurnActivity = ({
         <div>
           {filteredStatuses.map((status) => (
             <BurnStatusDisplay
-              key={`${status.burnWatcher.burnAddress}-${status.burnStatus.txid}`}
+              key={`${status.burnWatcher.burnAddress} ${status.burnWatcher.prover.address} ${status.burnStatus.txid}`}
               syncStatus={walletState.syncStatus}
               {...status}
             />

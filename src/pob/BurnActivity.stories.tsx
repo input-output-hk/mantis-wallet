@@ -13,7 +13,7 @@ export default {
 }
 
 export const burnActivity = (): JSX.Element => {
-  const someProver = prover('Prover')
+  const someProver = prover('Test')
   const burnAddress1 = text('Burn address #1', 'Burn address #1')
   const burnAddress2 = text('Burn address #2', 'Burn address #2')
   const burnAddress3 = text('Burn address #3', 'Burn address #3')
@@ -77,7 +77,7 @@ export const burnStatusDisplay = (): JSX.Element => (
       burnAddressInfo={burnAddressInfo()}
       burnWatcher={{
         burnAddress: text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z'),
-        prover: prover('Prover'),
+        prover: prover('Test'),
       }}
       burnStatus={burnStatus()}
       syncStatus={{

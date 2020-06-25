@@ -299,8 +299,8 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
       )}
       {errorMessage && (
         <div className="error">
-          Information about burn progress might be outdated. Gathering burn activity from the prover
-          failed with the following error:
+          Information about burn progress might be outdated. Gathering burn activity from prover
+          &#34;{burnWatcher.prover.name}&#34; failed with the following error:
           <br />
           {errorMessage}
         </div>

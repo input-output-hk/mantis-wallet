@@ -50,11 +50,12 @@ export const findExactlyOneByTag = (element: HTMLElement, tagName: string): Elem
 export const createBurnStatus = (
   status: BurnStatusType,
   txValue: number,
+  txid = 'source-chain-burn-transaction-id',
 ): RealBurnStatus & {tx_value: number} => ({
   status,
-  txid: 'source-chain-burn-transaction-id-1',
+  txid,
   chain: null,
-  commitment_txid: 'midnight-transaction-id-1',
+  commitment_txid: 'midnight-transaction-id',
   commitment_txid_height: 10,
   redeem_txid: null,
   redeem_txid_height: null,
