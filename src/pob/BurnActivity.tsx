@@ -1,32 +1,31 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {SearchOutlined} from '@ant-design/icons'
-import {BurnStatus, RealBurnStatus} from './pob-state'
+import {BurnStatus, RealBurnStatus, ProofOfBurnData} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
 import './BurnActivity.scss'
 
-interface BurnActivityProps {
-  burnStatuses: Record<string, BurnStatus>
-}
+type BurnActivityProps = Pick<ProofOfBurnData, 'burnAddresses' | 'burnStatuses'>
 
 export const _BurnActivity = ({
   burnStatuses,
+  burnAddresses,
   walletState,
 }: PropsWithWalletState<BurnActivityProps, LoadedState>): JSX.Element => {
   const [searchTxId, setSearchTxId] = useState('')
 
-  const [noBurnObserved, existingBurnStatuses]: Array<Array<[string, BurnStatus]>> = _.pipe(
-    _.toPairs,
-    _.partition(([, {lastStatuses}]: [string, BurnStatus]) => lastStatuses.length === 0),
+  const [noBurnObserved, existingBurnStatuses]: BurnStatus[][] = _.partition(
+    ({lastStatuses}: BurnStatus) => lastStatuses.length === 0,
   )(burnStatuses)
 
   const filteredStatuses = existingBurnStatuses
-    .flatMap(([address, {lastStatuses, errorMessage}]) =>
+    .flatMap(({lastStatuses, burnWatcher, errorMessage}) =>
       lastStatuses.map((lastStatus: RealBurnStatus) => ({
-        address,
+        burnWatcher,
+        burnAddressInfo: burnAddresses[burnWatcher.burnAddress],
         errorMessage,
         burnStatus: lastStatus,
       })),
@@ -55,17 +54,17 @@ export const _BurnActivity = ({
         </div>
       </div>
       {noBurnObserved.length > 0 &&
-        noBurnObserved.map(([address, {errorMessage}]) => (
-          <div className="burn-address-error" key={address}>
+        noBurnObserved.map(({burnWatcher: {burnAddress}, errorMessage}) => (
+          <div className="burn-address-error" key={burnAddress}>
             {errorMessage && (
               <>
-                Gathering burn activity for {address} from the prover failed with the following
+                Gathering burn activity for {burnAddress} from the prover failed with the following
                 error:
                 <br />
                 {errorMessage}
               </>
             )}
-            {!errorMessage && `No burn transactions observed for burn address ${address}.`}
+            {!errorMessage && `No burn transactions observed for burn address ${burnAddress}.`}
           </div>
         ))}
       {filteredStatuses.length === 0 && (
@@ -75,7 +74,7 @@ export const _BurnActivity = ({
         <div>
           {filteredStatuses.map((status) => (
             <BurnStatusDisplay
-              key={`${status.address}-${status.burnStatus.txid}`}
+              key={`${status.burnWatcher.burnAddress}-${status.burnStatus.txid}`}
               syncStatus={walletState.syncStatus}
               {...status}
             />

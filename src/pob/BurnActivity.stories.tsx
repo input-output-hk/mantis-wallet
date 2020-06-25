@@ -5,40 +5,80 @@ import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {BurnActivity} from './BurnActivity'
-import {burnStatus} from '../storybook-util/custom-knobs'
+import {burnStatus, prover, burnAddressInfo} from '../storybook-util/custom-knobs'
 
 export default {
   title: 'Burn Activity',
   decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
 }
 
-export const burnActivity = (): JSX.Element => (
-  <div>
-    <BurnActivity
-      burnStatuses={{
-        [text('Burn address #1', 'Burn address #1')]: {
-          lastStatuses: [burnStatus('Burn #1')],
-        },
-        [text('Burn address #2', 'Burn address #2')]: {
-          lastStatuses: [burnStatus('Burn #2')],
-          errorMessage: text('An error message #2', 'This is an error message for Burn Address #2'),
-        },
-        [text('Burn address #3', 'Burn address #3')]: {
-          lastStatuses: [],
-          errorMessage: text('An error message #3', 'This is an error message for Burn Address #3'),
-        },
-        [text('Burn address #4', 'Burn address #4')]: {
-          lastStatuses: [],
-        },
-      }}
-    />
-  </div>
-)
+export const burnActivity = (): JSX.Element => {
+  const someProver = prover('Prover')
+  const burnAddress1 = text('Burn address #1', 'Burn address #1')
+  const burnAddress2 = text('Burn address #2', 'Burn address #2')
+  const burnAddress3 = text('Burn address #3', 'Burn address #3')
+  const burnAddress4 = text('Burn address #4', 'Burn address #4')
+
+  return (
+    <div>
+      <BurnActivity
+        burnAddresses={{
+          [burnAddress1]: burnAddressInfo('Burn Address #1 Info'),
+          [burnAddress2]: burnAddressInfo('Burn Address #2 Info'),
+          [burnAddress3]: burnAddressInfo('Burn Address #3 Info'),
+          [burnAddress4]: burnAddressInfo('Burn Address #4 Info'),
+        }}
+        burnStatuses={[
+          {
+            burnWatcher: {
+              burnAddress: burnAddress1,
+              prover: someProver,
+            },
+            lastStatuses: [burnStatus('Burn #1')],
+          },
+          {
+            burnWatcher: {
+              burnAddress: burnAddress2,
+              prover: someProver,
+            },
+            lastStatuses: [burnStatus('Burn #2')],
+            errorMessage: text(
+              'An error message #2',
+              'This is an error message for Burn Address #2',
+            ),
+          },
+          {
+            burnWatcher: {
+              burnAddress: burnAddress3,
+              prover: someProver,
+            },
+            lastStatuses: [],
+            errorMessage: text(
+              'An error message #3',
+              'This is an error message for Burn Address #3',
+            ),
+          },
+          {
+            burnWatcher: {
+              burnAddress: burnAddress4,
+              prover: someProver,
+            },
+            lastStatuses: [],
+          },
+        ]}
+      />
+    </div>
+  )
+}
 
 export const burnStatusDisplay = (): JSX.Element => (
   <div>
     <BurnStatusDisplay
-      address={text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z')}
+      burnAddressInfo={burnAddressInfo()}
+      burnWatcher={{
+        burnAddress: text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z'),
+        prover: prover('Prover'),
+      }}
       burnStatus={burnStatus()}
       syncStatus={{
         mode: select('Sync status type', ['online', 'offline'], 'online'),

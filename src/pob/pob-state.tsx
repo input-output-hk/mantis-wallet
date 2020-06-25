@@ -33,13 +33,12 @@ export interface BurnAddressInfo {
 }
 
 export interface RealBurnStatus extends BurnApiStatus {
-  burnAddressInfo: BurnAddressInfo
-  prover: ProverConfig
   commitment_txid_height: number | null
   redeem_txid_height: number | null
 }
 
 export type BurnStatus = {
+  burnWatcher: BurnWatcher
   lastStatuses: RealBurnStatus[]
   errorMessage?: string
 }
@@ -58,12 +57,13 @@ export interface ProofOfBurnData {
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
-  burnStatuses: Record<string, BurnStatus>
+  burnStatuses: BurnStatus[]
   refresh: () => Promise<void>
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
   provers: Prover[]
+  pendingBalances: Partial<Record<ChainId, BigNumber>>
 }
 
 export type StorePobData = {
@@ -89,14 +89,21 @@ const FINISHED_BURN_STATUSES: BurnStatusType[] = [
 ]
 
 export const getPendingBalance = (
-  burnStatuses: Record<string, BurnStatus>,
+  burnStatuses: BurnStatus[],
+  burnAddresses: Record<string, BurnAddressInfo>,
 ): Partial<Record<ChainId, BigNumber>> =>
-  _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s))(
-    _.values(burnStatuses)
-      .flatMap(({lastStatuses}) => lastStatuses)
-      .filter(({status}) => !FINISHED_BURN_STATUSES.includes(status))
-      .map((status) => ({[status.burnAddressInfo.chainId]: new BigNumber(status.tx_value || 0)})),
-  )
+  _.pipe(
+    _.flatMap(({lastStatuses, burnWatcher: {burnAddress}}: BurnStatus) =>
+      lastStatuses.map((status) => ({
+        chainId: burnAddresses[burnAddress].chainId,
+        status: status.status,
+        txValue: status.tx_value,
+      })),
+    ),
+    _.filter(({status, txValue}) => !FINISHED_BURN_STATUSES.includes(status) && txValue != null),
+    _.map(({chainId, txValue}) => ({[chainId]: new BigNumber(txValue || 0)})),
+    _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s)),
+  )(burnStatuses)
 
 function useProofOfBurnState(
   {
@@ -163,20 +170,19 @@ function useProofOfBurnState(
             async (s: BurnApiStatus): Promise<RealBurnStatus> => {
               return {
                 ...s,
-                burnAddressInfo: burnAddresses[burnWatcher.burnAddress],
-                prover: burnWatcher.prover,
                 commitment_txid_height: await getTransactionHeight(s.commitment_txid),
                 redeem_txid_height: await getTransactionHeight(s.redeem_txid),
               }
             },
           ),
         )
-        return [burnWatcher.burnAddress, {lastStatuses: statusesWithTxidHeight}]
+        return [burnWatcher.burnAddress, {burnWatcher, lastStatuses: statusesWithTxidHeight}]
       } catch (error) {
         const {burnAddress} = burnWatcher
         return [
           burnAddress,
           {
+            burnWatcher,
             lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
             errorMessage: prettyErrorMessage(error),
           },
@@ -228,7 +234,8 @@ function useProofOfBurnState(
 
   return {
     addBurnWatcher,
-    burnStatuses,
+    burnStatuses: _.values(burnStatuses),
+    pendingBalances: getPendingBalance(_.values(burnStatuses), burnAddresses),
     refresh,
     observeBurnAddress,
     reset,

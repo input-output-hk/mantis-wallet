@@ -83,8 +83,6 @@ export const burnStatus = (
 ): RealBurnStatus => {
   const mergedValue: RealBurnStatus = _.merge(
     {
-      burnAddressInfo: {},
-      prover: {},
       status: 'tx_found',
       txid: `${_.kebabCase(name)}-source-chain-transaction-id`,
       chain: null,
@@ -103,8 +101,6 @@ export const burnStatus = (
   )
 
   return {
-    burnAddressInfo: burnAddressInfo(name, mergedValue.burnAddressInfo),
-    prover: prover(name, mergedValue.prover),
     status: selectBurnStatusType(`${name} status`, mergedValue.status),
     txid: text(`${name} transaction`, mergedValue.txid),
     chain: null,

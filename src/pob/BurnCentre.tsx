@@ -27,7 +27,7 @@ export const _BurnCentre = ({
         transparentAccounts={walletState.transparentAccounts}
         {...pobState}
       />
-      <BurnActivity burnStatuses={pobState.burnStatuses} />
+      <BurnActivity {...pobState} />
     </PobLayout>
   )
 }

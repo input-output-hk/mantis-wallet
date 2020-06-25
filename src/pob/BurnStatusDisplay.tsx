@@ -12,7 +12,7 @@ import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
-import {RealBurnStatus} from './pob-state'
+import {RealBurnStatus, BurnWatcher, BurnAddressInfo} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {InfoIcon} from '../common/InfoIcon'
 import {NUMBER_OF_BLOCKS_TO_SUCCESS, NUMBER_OF_BLOCKS_TO_CONFIRM} from './pob-config'
@@ -29,7 +29,8 @@ interface AllProgress {
 }
 
 interface BurnStatusDisplayProps {
-  address: string
+  burnWatcher: BurnWatcher
+  burnAddressInfo: BurnAddressInfo
   syncStatus: SynchronizationStatus
   burnStatus: RealBurnStatus
   errorMessage?: string
@@ -143,14 +144,15 @@ const isRedeemDone = (
 }
 
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
-  address,
+  burnWatcher,
+  burnAddressInfo,
   syncStatus,
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
   const [detailsShown, setDetailsShown] = useState(false)
 
-  const chain = CHAINS[burnStatus.burnAddressInfo.chainId]
+  const chain = CHAINS[burnAddressInfo.chainId]
   const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
     ? {
         started: 'CHECKED',
@@ -250,20 +252,20 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         <div className="burn-details-info">
           <div>Burn address:</div>
           <div>
-            <CopyableLongText content={address} />
+            <CopyableLongText content={burnWatcher.burnAddress} />
           </div>
           <div>Associated midnight address:</div>
           <div>
-            <CopyableLongText content={burnStatus.burnAddressInfo.midnightAddress} />
+            <CopyableLongText content={burnAddressInfo.midnightAddress} />
           </div>
           <div>Prover&apos;s reward:</div>
           <div>
-            <ShortNumber big={burnStatus.burnAddressInfo.reward} unit={chain.unitType} /> M-
+            <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
             {chain.symbol}
           </div>
           <div>Prover:</div>
           <div>
-            {burnStatus.prover.name} ({burnStatus.prover.address})
+            {burnWatcher.prover.name} ({burnWatcher.prover.address})
           </div>
         </div>
         <div className="burn-details-info">
