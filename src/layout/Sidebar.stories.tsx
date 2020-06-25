@@ -8,7 +8,8 @@ import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {RouterState} from '../router-state'
 import {Sidebar} from './Sidebar'
-import {LogOutModal} from '../wallets/modals/LogOutModal'
+import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
+import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {asyncAction} from '../storybook-util/custom-knobs'
 import {toFullScreen} from '../storybook-util/full-screen-decorator'
 
@@ -30,6 +31,19 @@ export const sidebar = (): JSX.Element => (
   </RouterState.Provider>
 )
 
-export const logOutModal = (): JSX.Element => (
-  <LogOutModal visible onCancel={action('on-cancel')} onLogOut={asyncAction('on-log-out')} />
+export const removeWalletModal = (): JSX.Element => (
+  <RemoveWalletModal
+    visible
+    onCancel={action('on-cancel')}
+    onRemoveWallet={asyncAction('on-log-out')}
+  />
+)
+
+export const lockWalletModal = (): JSX.Element => (
+  <LockWalletModal
+    visible
+    onCancel={action('on-cancel')}
+    lock={asyncAction('on-lock')}
+    toRemoveWallet={action('to-remove-wallet')}
+  />
 )

@@ -12,13 +12,16 @@ import {Link} from '../common/Link'
 import {StatusModal} from '../common/StatusModal'
 import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
-import {LogOutModal} from '../wallets/modals/LogOutModal'
+import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
+import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
 import {isTestnet, TESTNET_EDITION} from '../shared/version'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
+
+type ModalId = 'none' | 'LockWallet' | 'RemoveWallet'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -57,17 +60,20 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const glacierState = GlacierState.useContainer()
   const {networkTag} = BackendState.useContainer()
 
-  const [showLogOutModal, setShowLogOutModal] = useState(false)
   const [showStatusModal, setShowStatusModal] = useState(false)
+  const [activeModal, setActiveModal] = useState<ModalId>('none')
 
-  const logOut =
-    canRemoveWallet(walletState) && !routerState.isLocked ? (
-      <span className="footer-link" onClick={() => setShowLogOutModal(true)}>
-        Log Out
-      </span>
-    ) : (
-      <span className={classnames('footer-link', 'disabled')}>Log Out</span>
-    )
+  const LogOutButton = (): JSX.Element => {
+    if (walletState.walletStatus === 'LOADED' && !routerState.isLocked) {
+      return (
+        <span className="footer-link" onClick={() => setActiveModal('LockWallet')}>
+          Log Out
+        </span>
+      )
+    } else {
+      return <span className={classnames('footer-link', 'disabled')}>Log Out</span>
+    }
+  }
 
   const handleMenuClick = (menuId: MenuId): void => routerState.navigate(MENU[menuId].route)
 
@@ -117,26 +123,40 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           <span onClick={() => setShowStatusModal(true)} className="footer-link status">
             Status
           </span>
-          {logOut}
+          <LogOutButton />
         </div>
         <div className="version">
           {version}
           {isTestnet(networkTag) && <span className="edition"> — {TESTNET_EDITION}</span>}
         </div>
       </div>
+      {walletState.walletStatus === 'LOADED' && !routerState.isLocked && (
+        <LockWalletModal
+          visible={activeModal === 'LockWallet'}
+          toRemoveWallet={() => setActiveModal('RemoveWallet')}
+          lock={async (passphrase: string): Promise<void> => {
+            const isLocked = await walletState.lock({passphrase})
+            if (!isLocked) {
+              throw new Error("Couldn't lock the wallet.")
+            }
+            setActiveModal('none')
+          }}
+          onCancel={() => setActiveModal('none')}
+        />
+      )}
       {canRemoveWallet(walletState) && !routerState.isLocked && (
-        <LogOutModal
-          visible={showLogOutModal}
-          onLogOut={async (passphrase: string): Promise<void> => {
+        <RemoveWalletModal
+          visible={activeModal === 'RemoveWallet'}
+          onRemoveWallet={async (passphrase: string): Promise<void> => {
             const removed = await walletState.remove({passphrase})
             if (!removed) {
-              throw new Error('Log out was not successful.')
+              throw new Error("Couldn't remove the wallet.")
             }
             pobState.reset()
             glacierState.removeClaims()
-            setShowLogOutModal(false)
+            setActiveModal('none')
           }}
-          onCancel={() => setShowLogOutModal(false)}
+          onCancel={() => setActiveModal('none')}
         />
       )}
       {showStatusModal && (
