@@ -1,0 +1,15 @@
+@import '../../themify';
+
+.LockWalletModal {
+  font-size: 13px;
+
+  .remove-link {
+    margin-bottom: 20px;
+    text-decoration: underline;
+    cursor: pointer;
+
+    @include themify($themes) {
+      color: themed('error-color');
+    }
+  }
+}

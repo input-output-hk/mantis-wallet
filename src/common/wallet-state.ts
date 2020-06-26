@@ -78,6 +78,7 @@ export interface LoadedState {
   getOverviewProps: () => Overview
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
+  lock: (secrets: PassphraseSecrets) => Promise<boolean>
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
@@ -433,6 +434,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return response
   }
 
+  const lock = async (secrets: PassphraseSecrets): Promise<boolean> => {
+    const response = await wallet.lock(secrets)
+    if (response) reset()
+    return response
+  }
+
   const remove = async (secrets: PassphraseSecrets): Promise<boolean> => {
     const removed = await wallet.remove(secrets)
     if (removed) {
@@ -495,6 +502,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     redeemValue,
     create,
     unlock,
+    lock,
     restoreFromSpendingKey,
     restoreFromSeedPhrase,
     remove,
