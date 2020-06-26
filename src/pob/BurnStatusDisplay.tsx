@@ -1,6 +1,12 @@
 import React, {ReactNode, useState} from 'react'
 import SVG from 'react-inlinesvg'
-import {CloseOutlined, LoadingOutlined, RightOutlined} from '@ant-design/icons'
+import {
+  CloseOutlined,
+  LoadingOutlined,
+  RightOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+} from '@ant-design/icons'
 import {Popover} from 'antd'
 import _ from 'lodash'
 import classnames from 'classnames'
@@ -12,7 +18,7 @@ import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
-import {RealBurnStatus, BurnWatcher, BurnAddressInfo} from './pob-state'
+import {RealBurnStatus, BurnWatcher, BurnAddressInfo, ProofOfBurnData} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {InfoIcon} from '../common/InfoIcon'
 import {NUMBER_OF_BLOCKS_TO_SUCCESS, NUMBER_OF_BLOCKS_TO_CONFIRM} from './pob-config'
@@ -28,7 +34,7 @@ interface AllProgress {
   confirm: ProgressType
 }
 
-interface BurnStatusDisplayProps {
+interface BurnStatusDisplayProps extends Pick<ProofOfBurnData, 'hideBurnProcess'> {
   burnWatcher: BurnWatcher
   burnAddressInfo: BurnAddressInfo
   syncStatus: SynchronizationStatus
@@ -145,6 +151,7 @@ const isRedeemDone = (
 
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   burnWatcher,
+  hideBurnProcess,
   burnAddressInfo,
   syncStatus,
   burnStatus,
@@ -162,7 +169,21 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
     : STATUS_TO_PROGRESS[burnStatus.status]
 
   return (
-    <div className="BurnStatusDisplay">
+    <div className={classnames('BurnStatusDisplay', {hidden: burnStatus.isHidden})}>
+      <div className="actions">
+        <Popover
+          content={burnStatus.isHidden ? 'Unhide this burn process' : `Hide this burn process`}
+          placement="topRight"
+          align={{offset: [13, 0]}}
+        >
+          <span
+            className="toggle-hide"
+            onClick={() => hideBurnProcess(burnWatcher, burnStatus.txid, !burnStatus.isHidden)}
+          >
+            {burnStatus.isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+          </span>
+        </Popover>
+      </div>
       <div
         className={classnames('exchange-info', {open: detailsShown})}
         onClick={() => setDetailsShown(!detailsShown)}

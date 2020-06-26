@@ -1,5 +1,6 @@
 import React from 'react'
 import {select, text, number} from '@storybook/addon-knobs'
+import {action} from '@storybook/addon-actions'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -35,6 +36,7 @@ export const burnActivity = (): JSX.Element => {
               prover: someProver,
             },
             lastStatuses: [burnStatus('Burn #1')],
+            isHidden: false,
           },
           {
             burnWatcher: {
@@ -46,6 +48,7 @@ export const burnActivity = (): JSX.Element => {
               'An error message #2',
               'This is an error message for Burn Address #2',
             ),
+            isHidden: false,
           },
           {
             burnWatcher: {
@@ -57,6 +60,7 @@ export const burnActivity = (): JSX.Element => {
               'An error message #3',
               'This is an error message for Burn Address #3',
             ),
+            isHidden: false,
           },
           {
             burnWatcher: {
@@ -64,8 +68,11 @@ export const burnActivity = (): JSX.Element => {
               prover: someProver,
             },
             lastStatuses: [],
+            isHidden: false,
           },
         ]}
+        hideBurnWatcher={action('on-hide-burn-watcher')}
+        hideBurnProcess={action('on-hide-burn-process')}
       />
     </div>
   )
@@ -87,6 +94,7 @@ export const burnStatusDisplay = (): JSX.Element => (
         percentage: 100,
       }}
       errorMessage={text('An error message', 'This is a global error message for Burn Address')}
+      hideBurnProcess={action('on-hide-burn-process')}
     />
   </div>
 )

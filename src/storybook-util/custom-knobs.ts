@@ -1,4 +1,4 @@
-import {select, text, number} from '@storybook/addon-knobs'
+import {select, text, number, boolean} from '@storybook/addon-knobs'
 import {action, ActionOptions} from '@storybook/addon-actions'
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -96,6 +96,7 @@ export const burnStatus = (
       fail_reason: `This is an error message for ${name} transaction`,
       last_tag_height: 1,
       tx_value: 2,
+      isHidden: false,
     },
     value,
   )
@@ -123,6 +124,7 @@ export const burnStatus = (
     fail_reason: text(`${name} fail reason`, mergedValue.fail_reason || ''),
     last_tag_height: mergedValue.last_tag_height,
     tx_value: number(`${name} tokens sent`, mergedValue.tx_value || 1),
+    isHidden: boolean(`${name} is hidden`, mergedValue.isHidden),
   }
 }
 

@@ -19,6 +19,7 @@ import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {Web3API, makeWeb3Worker} from '../web3'
 import {config} from '../config/renderer'
+import {prop} from '../shared/utils'
 
 export interface BurnWatcher {
   burnAddress: string
@@ -35,12 +36,14 @@ export interface BurnAddressInfo {
 export interface RealBurnStatus extends BurnApiStatus {
   commitment_txid_height: number | null
   redeem_txid_height: number | null
+  isHidden: boolean
 }
 
 export type BurnStatus = {
   burnWatcher: BurnWatcher
   lastStatuses: RealBurnStatus[]
   errorMessage?: string
+  isHidden: boolean
 }
 
 export interface Prover extends ProverConfig {
@@ -49,6 +52,7 @@ export interface Prover extends ProverConfig {
 
 export interface ProofOfBurnData {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
+  hideBurnWatcher: (burnWatcher: BurnWatcher, hide: boolean) => void
   observeBurnAddress: (
     burnAddress: string,
     prover: ProverConfig,
@@ -58,6 +62,7 @@ export interface ProofOfBurnData {
     autoConversion: boolean,
   ) => Promise<void>
   burnStatuses: BurnStatus[]
+  hideBurnProcess: (burnWatcher: BurnWatcher, txId: string, hide: boolean) => void
   refresh: () => Promise<void>
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
@@ -70,6 +75,7 @@ export type StorePobData = {
   pob: {
     burnWatchers: BurnWatcher[]
     burnAddresses: Record<string, BurnAddressInfo>
+    hiddenBurnProcesses: Record<string, 'all' | string[]>
   }
 }
 
@@ -77,6 +83,7 @@ export const defaultPobData: StorePobData = {
   pob: {
     burnWatchers: [],
     burnAddresses: {},
+    hiddenBurnProcesses: {},
   },
 }
 
@@ -127,6 +134,10 @@ function useProofOfBurnState(
 ): ProofOfBurnData {
   const [burnWatchers, setBurnWatchers] = usePersistedState(store, ['pob', 'burnWatchers'])
   const [burnAddresses, setBurnAddresses] = usePersistedState(store, ['pob', 'burnAddresses'])
+  const [hiddenBurnProcesses, setHiddenBurnProcesses] = usePersistedState(store, [
+    'pob',
+    'hiddenBurnProcesses',
+  ])
   const [burnStatuses, setBurnStatuses] = useState<Record<string, BurnStatus>>({})
   const [provers, setProvers] = useState(config.provers.map((p): Prover => ({...p, rewards: {}})))
 
@@ -181,11 +192,21 @@ function useProofOfBurnState(
                 ...s,
                 commitment_txid_height: await getTransactionHeight(s.commitment_txid),
                 redeem_txid_height: await getTransactionHeight(s.redeem_txid),
+                isHidden:
+                  hiddenBurnProcesses[burnStatusKey] === 'all' ||
+                  (hiddenBurnProcesses[burnStatusKey] || []).includes(s.txid),
               }
             },
           ),
         )
-        return [burnStatusKey, {burnWatcher, lastStatuses: statusesWithTxidHeight}]
+        return [
+          burnStatusKey,
+          {
+            burnWatcher,
+            lastStatuses: statusesWithTxidHeight,
+            isHidden: hiddenBurnProcesses[burnStatusKey] === 'all',
+          },
+        ]
       } catch (error) {
         return [
           burnStatusKey,
@@ -193,6 +214,7 @@ function useProofOfBurnState(
             burnWatcher,
             lastStatuses: burnStatuses[burnStatusKey]?.lastStatuses || [],
             errorMessage: prettyErrorMessage(error),
+            isHidden: hiddenBurnProcesses[burnStatusKey] === 'all',
           },
         ]
       }
@@ -240,9 +262,61 @@ function useProofOfBurnState(
     setBurnStatuses({})
   }
 
+  const hideBurnWatcher = (burnWatcher: BurnWatcher, hide: boolean): void => {
+    const burnStatusKey = getBurnStatusKey(burnWatcher)
+    if (hide) {
+      setHiddenBurnProcesses({
+        ...hiddenBurnProcesses,
+        [burnStatusKey]: 'all',
+      })
+    } else {
+      setHiddenBurnProcesses(_.unset(burnStatusKey)(hiddenBurnProcesses))
+    }
+
+    const burnStatus = burnStatuses[burnStatusKey]
+    setBurnStatuses({
+      ...burnStatuses,
+      [burnStatusKey]: {
+        ...burnStatus,
+        isHidden: hide,
+        lastStatuses: burnStatus.lastStatuses.map((s) => ({...s, isHidden: hide})),
+      },
+    })
+  }
+
+  const hideBurnProcess = (burnWatcher: BurnWatcher, txId: string, hide: boolean): void => {
+    const burnStatusKey = getBurnStatusKey(burnWatcher)
+    const burnStatus = burnStatuses[burnStatusKey]
+
+    const hiddenByThisBurnWatcher =
+      hiddenBurnProcesses[burnStatusKey] === 'all'
+        ? burnStatus.lastStatuses.map(prop('txid'))
+        : hiddenBurnProcesses[burnStatusKey] || []
+
+    setHiddenBurnProcesses({
+      ...hiddenBurnProcesses,
+      [burnStatusKey]: hide
+        ? [...hiddenByThisBurnWatcher, txId]
+        : _.without([txId])(hiddenByThisBurnWatcher),
+    })
+
+    setBurnStatuses({
+      ...burnStatuses,
+      [burnStatusKey]: {
+        ...burnStatus,
+        isHidden: false,
+        lastStatuses: burnStatus.lastStatuses.map((s) =>
+          s.txid === txId ? {...s, isHidden: hide} : s,
+        ),
+      },
+    })
+  }
+
   return {
     addBurnWatcher,
+    hideBurnWatcher,
     burnStatuses: _.values(burnStatuses),
+    hideBurnProcess,
     pendingBalances: getPendingBalance(_.values(burnStatuses), burnAddresses),
     refresh,
     observeBurnAddress,
@@ -254,3 +328,12 @@ function useProofOfBurnState(
 }
 
 export const ProofOfBurnState = createContainer(useProofOfBurnState)
+
+export const migrationsForPobData = {
+  '0.14.0-alpha.2': (store: Store<StorePobData>) => {
+    store.set('pob', {
+      ...store.get('pob'),
+      hiddenBurnProcesses: {},
+    })
+  },
+}

@@ -33,39 +33,63 @@ it('gathers pending balance correctly', () => {
   const burnAddresses = {[burnAddress1]: burnAddressInfo}
 
   // check filtering by status one-by-one
-  assert.deepEqual(getPendingBalance([{burnWatcher, lastStatuses: [B1_TX_FOUND]}], burnAddresses), {
-    BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value),
-  })
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_PROOF_FAIL]}], burnAddresses),
+    getPendingBalance([{burnWatcher, lastStatuses: [B1_TX_FOUND], isHidden: false}], burnAddresses),
+    {
+      BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value),
+    },
+  )
+  assert.deepEqual(
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_PROOF_FAIL], isHidden: false}],
+      burnAddresses,
+    ),
     {},
   )
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_COMM_SUBMITTED]}], burnAddresses),
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_COMM_SUBMITTED], isHidden: false}],
+      burnAddresses,
+    ),
     {
       BTC_TESTNET: new BigNumber(B1_COMM_SUBMITTED.tx_value),
     },
   )
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_COMM_APPEARED]}], burnAddresses),
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_COMM_APPEARED], isHidden: false}],
+      burnAddresses,
+    ),
     {
       BTC_TESTNET: new BigNumber(B1_COMM_APPEARED.tx_value),
     },
   )
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_COMM_FAILED]}], burnAddresses),
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_COMM_FAILED], isHidden: false}],
+      burnAddresses,
+    ),
     {},
   )
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_REDEEM_APPEARED]}], burnAddresses),
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_REDEEM_APPEARED], isHidden: false}],
+      burnAddresses,
+    ),
     {},
   )
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_REDEEM_BY_OTHER]}], burnAddresses),
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_REDEEM_BY_OTHER], isHidden: false}],
+      burnAddresses,
+    ),
     {},
   )
   assert.deepEqual(
-    getPendingBalance([{burnWatcher, lastStatuses: [B1_REDEEM_FAILED]}], burnAddresses),
+    getPendingBalance(
+      [{burnWatcher, lastStatuses: [B1_REDEEM_FAILED], isHidden: false}],
+      burnAddresses,
+    ),
     {},
   )
 
@@ -77,10 +101,11 @@ it('gathers pending balance correctly', () => {
   assert.deepEqual(
     getPendingBalance(
       [
-        {burnWatcher, lastStatuses: [B1_TX_FOUND]},
+        {burnWatcher, lastStatuses: [B1_TX_FOUND], isHidden: false},
         {
           burnWatcher: {burnAddress: burnAddress1, prover: prover2},
           lastStatuses: [B1_TX_FOUND],
+          isHidden: false,
         },
       ],
       burnAddresses,
@@ -109,18 +134,22 @@ it('gathers pending balance correctly', () => {
         B1_REDEEM_BY_OTHER,
         B1_REDEEM_FAILED,
       ],
+      isHidden: false,
     },
     {
       burnWatcher: {burnAddress: burnAddress1, prover: prover2},
       lastStatuses: [B1_TX_FOUND],
+      isHidden: false,
     },
     {
       burnWatcher: {burnAddress: burnAddress2, prover},
       lastStatuses: [B2_TX_FOUND],
+      isHidden: false,
     },
     {
       burnWatcher: {burnAddress: burnAddress3, prover},
       lastStatuses: [B3_ETH_TX_FOUND],
+      isHidden: false,
     },
   ]
 

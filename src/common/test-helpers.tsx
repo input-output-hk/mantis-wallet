@@ -65,4 +65,5 @@ export const createBurnStatus = (
   processing_start_height: 1,
   last_tag_height: 1,
   tx_value: txValue,
+  isHidden: false,
 })

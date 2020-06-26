@@ -17,6 +17,7 @@ import {mockWeb3Worker} from '../web3-mock'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {RealBurnStatus, BurnAddressInfo} from './pob-state'
 import {ProverConfig} from '../config/type'
+import {SettingsState} from '../settings-state'
 
 const {ETH_TESTNET} = CHAINS
 
@@ -124,6 +125,7 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       processing_start_height: 1,
       last_tag_height: 1,
       tx_value: 20,
+      isHidden: false,
     },
     {
       status: 'tx_found',
@@ -139,37 +141,45 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       processing_start_height: 1,
       last_tag_height: 1,
       tx_value: 20,
+      isHidden: false,
     },
   ]
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {queryByText, getByText, getByPlaceholderText, getAllByText} = render(
     <BuildJobState.Provider initialState={{web3}}>
-      <WalletState.Provider initialState={initialState}>
-        <BurnActivity
-          burnAddresses={{
-            [burnAddress1]: burnAddressInfo,
-            [burnAddress2]: burnAddressInfo,
-            [burnAddress3]: burnAddressInfo,
-          }}
-          burnStatuses={[
-            {
-              burnWatcher: {burnAddress: burnAddress1, prover},
-              lastStatuses: [],
-            },
-            {
-              burnWatcher: {burnAddress: burnAddress2, prover},
-              lastStatuses: [],
-              errorMessage: errorForBurnAddress2,
-            },
-            {
-              burnWatcher: {burnAddress: burnAddress3, prover},
-              lastStatuses,
-              errorMessage: errorForBurnAddress3,
-            },
-          ]}
-        />
-      </WalletState.Provider>
+      <SettingsState.Provider>
+        <WalletState.Provider initialState={initialState}>
+          <BurnActivity
+            burnAddresses={{
+              [burnAddress1]: burnAddressInfo,
+              [burnAddress2]: burnAddressInfo,
+              [burnAddress3]: burnAddressInfo,
+            }}
+            burnStatuses={[
+              {
+                burnWatcher: {burnAddress: burnAddress1, prover},
+                lastStatuses: [],
+                isHidden: false,
+              },
+              {
+                burnWatcher: {burnAddress: burnAddress2, prover},
+                lastStatuses: [],
+                errorMessage: errorForBurnAddress2,
+                isHidden: false,
+              },
+              {
+                burnWatcher: {burnAddress: burnAddress3, prover},
+                lastStatuses,
+                errorMessage: errorForBurnAddress3,
+                isHidden: false,
+              },
+            ]}
+            hideBurnWatcher={jest.fn()}
+            hideBurnProcess={jest.fn()}
+          />
+        </WalletState.Provider>
+      </SettingsState.Provider>
     </BuildJobState.Provider>,
   )
 
@@ -253,6 +263,7 @@ const renderBurnStatusDisplay = (status: BurnStatusType): RenderResult =>
         },
       }}
       syncStatus={syncStatus}
+      hideBurnProcess={jest.fn()}
     />,
   )
 
