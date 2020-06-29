@@ -14,8 +14,8 @@ import speedLow from '../../assets/icons/speed-low.svg'
 import speedMedium from '../../assets/icons/speed-medium.svg'
 import speedHigh from '../../assets/icons/speed-high.svg'
 import {FeeLevel, allFeeLevels} from '../../web3'
-import './DialogFee.scss'
 import {DialogError} from './DialogError'
+import './DialogFee.scss'
 
 const {Dust} = UNITS
 
@@ -26,7 +26,6 @@ interface DialogFeeProps {
   defaultValue?: string
   onChange: (value: string, feeLevel: FeeLevel | null) => void
   feeEstimates?: FeeEstimates
-  hideCustom?: boolean
   forceCustom?: boolean
   isPending?: boolean
 }
@@ -54,18 +53,11 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   feeEstimates,
   defaultValue = '0',
   errorMessage,
-  hideCustom = false,
   forceCustom = false,
   isPending = false,
 }: DialogFeeProps & InlineErrorProps) => {
-  if (forceCustom && hideCustom) {
-    console.error(Error('Both forceCustom and hideCustom flags were set.'))
-  }
-
   const [value, setValue] = useState<string>(defaultValue)
-  const [feeLevel, setFeeLevel] = useState<FeeLevel | null>(
-    defaultValue === '0' || hideCustom ? 'medium' : null,
-  )
+  const [feeLevel, setFeeLevel] = useState<FeeLevel | null>(defaultValue === '0' ? 'medium' : null)
   const inputRef = useRef<Input>(null)
 
   const {setErrorMessage} = DialogState.useContainer()
@@ -111,31 +103,27 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
   }
 
   return (
-    <div className={classnames('DialogFee', {hideCustom}, className)} data-testid="dialog-fee">
+    <div className={classnames('DialogFee', className)} data-testid="dialog-fee">
       {label && <label className="label">{label}</label>}
       <InlineError errorMessage={errorMessage}>
         <div className={classnames('options', {'custom-mode': isCustom})}>
-          {!hideCustom && (
-            <>
-              <Input
-                value={value}
-                className="input"
-                onChange={onChangeWithDialogReset}
-                type="number"
-                ref={inputRef}
-              />
-              <Button
-                className={classnames('button', 'custom', {inactive: !isCustom})}
-                onClick={(e) => {
-                  e.preventDefault()
-                  setFeeLevel(null)
-                  inputRef.current?.focus()
-                }}
-              >
-                Custom
-              </Button>
-            </>
-          )}
+          <Input
+            value={value}
+            className="input"
+            onChange={onChangeWithDialogReset}
+            type="number"
+            ref={inputRef}
+          />
+          <Button
+            className={classnames('button', 'custom', {inactive: !isCustom})}
+            onClick={(e) => {
+              e.preventDefault()
+              setFeeLevel(null)
+              inputRef.current?.focus()
+            }}
+          >
+            Custom
+          </Button>
           {allFeeLevels.map((level) => (
             <Button
               disabled={forceCustom}
@@ -171,17 +159,4 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
       </InlineError>
     </div>
   )
-}
-
-export const handleGasPriceUpdate = (
-  setGasPrice: React.Dispatch<React.SetStateAction<string>>,
-  gasPriceEstimates?: FeeEstimates,
-) => (_fee: string, feeLevel: FeeLevel | null): void => {
-  if (gasPriceEstimates && feeLevel) {
-    setGasPrice(gasPriceEstimates[feeLevel].toString(10))
-  } else {
-    if (!gasPriceEstimates)
-      console.warn(`gasPriceEstimates should be set, got ${gasPriceEstimates}`)
-    if (!feeLevel) console.warn('feeLevel should be set, got null')
-  }
 }

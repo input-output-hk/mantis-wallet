@@ -261,6 +261,8 @@ export interface WalletAPI {
     // into Comlink.Remote type, it cannot handle overloads and takes only the last type
     (txType: TxType, amountOrParams: number | CallParams): Record<FeeLevel, string>
   }
+  // The signature is not complete, Luna doesn't use other cases for now
+  calculateGasPrice(txType: 'call', fee: number, callParams: CallParams): number
   getTransactionBuildJobStatus(jobHash: string): JobStatus
   getAllTransactionBuildJobStatuses(): JobStatus[]
 

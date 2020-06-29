@@ -18,8 +18,7 @@ export interface TransactionHistoryProps {
   availableBalance: BigNumber
   sendTransaction: (recipient: string, amount: number, fee: number) => Promise<void>
   estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
-  sendTxToTransparent: (recipient: string, amount: BigNumber, gasPrice: BigNumber) => Promise<void>
-  estimateGasPrice: () => Promise<FeeEstimates>
+  sendTxToTransparent: (recipient: string, amount: BigNumber, fee: BigNumber) => Promise<void>
   estimatePublicTransactionFee: (amount: BigNumber, recipient: string) => Promise<FeeEstimates>
   generateAddress: () => Promise<void>
   goToAccounts: () => void
@@ -32,7 +31,6 @@ export const TransactionHistory = ({
   sendTransaction,
   estimateTransactionFee,
   sendTxToTransparent,
-  estimateGasPrice,
   estimatePublicTransactionFee,
   generateAddress,
   transparentAddresses,
@@ -108,12 +106,11 @@ export const TransactionHistory = ({
             onSendToTransparent={async (
               recipient: string,
               amount: BigNumber,
-              gasPrice: BigNumber,
+              fee: BigNumber,
             ): Promise<void> => {
-              await sendTxToTransparent(recipient, amount, gasPrice)
+              await sendTxToTransparent(recipient, amount, fee)
               setShowSendModal(false)
             }}
-            estimateGasPrice={estimateGasPrice}
             estimatePublicTransactionFee={estimatePublicTransactionFee}
           />
           <ReceiveTransaction

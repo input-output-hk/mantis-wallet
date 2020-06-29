@@ -41,7 +41,7 @@ export const loadCurrentContractAddresses = (): ContractConfigItem => {
 }
 
 // Contract Call Defaults
-export const DEFAULT_GAS_PRICE = '0'
+export const DEFAULT_FEE = '0'
 export const DEFAULT_GAS_LIMIT = '1185920'
 
 // UI config

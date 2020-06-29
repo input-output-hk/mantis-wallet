@@ -44,11 +44,10 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
           sendTxToTransparent={async (
             recipient: string,
             amount: BigNumber,
-            gasPrice: BigNumber,
+            fee: BigNumber,
           ): Promise<void> => {
-            await walletState.sendTxToTransparent(recipient, amount, gasPrice)
+            await walletState.sendTxToTransparent(recipient, amount, fee)
           }}
-          estimateGasPrice={walletState.estimateGasPrice}
           estimateTransactionFee={walletState.estimateTransactionFee}
           estimatePublicTransactionFee={walletState.estimatePublicTransactionFee}
           generateAddress={walletState.generateNewAddress}

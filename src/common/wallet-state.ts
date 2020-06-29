@@ -88,11 +88,11 @@ export interface LoadedState {
     gasPrice: BigNumber,
   ) => Promise<string>
   redeemValue: (address: string, amount: number, fee: number) => Promise<string>
+  calculateGasPrice: (fee: number, callParams: CallParams) => Promise<number>
   estimatePublicTransactionFee(amount: BigNumber, recipient: string): Promise<FeeEstimates>
   estimateCallFee(callParams: CallParams): Promise<FeeEstimates>
   estimateTransactionFee(amount: BigNumber): Promise<FeeEstimates>
   estimateRedeemFee(amount: BigNumber): Promise<FeeEstimates>
-  estimateGasPrice(): Promise<FeeEstimates>
   getBurnAddress: (
     address: string,
     chain: Chain,
@@ -176,7 +176,7 @@ export const canRemoveWallet = (
 
 const getPublicTransactionParams = (
   amount: BigNumber,
-  gasPrice: BigNumber,
+  gasPrice: BigNumber | number,
   to?: string,
 ): CallParams => ({
   from: 'Wallet',
@@ -189,7 +189,6 @@ const getPublicTransactionParams = (
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const wallet = _initialState.web3.midnight.wallet
-  const eth = _initialState.web3.eth
   const erc20 = _initialState.web3.erc20
   const buildJobState = BuildJobState.useContainer()
 
@@ -397,11 +396,18 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return jobHash
   }
 
+  const calculateGasPrice = (fee: number, callParams: CallParams): Promise<number> =>
+    wallet.calculateGasPrice('call', fee, callParams)
+
   const sendTxToTransparent = async (
     recipient: string,
     amount: BigNumber,
-    gasPrice: BigNumber,
+    fee: BigNumber,
   ): Promise<string> => {
+    const gasPrice = await calculateGasPrice(
+      fee.toNumber(),
+      getPublicTransactionParams(amount, 0, recipient),
+    )
     const {jobHash} = await wallet.callContract(
       getPublicTransactionParams(amount, gasPrice, recipient),
       false,
@@ -456,11 +462,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     autoConversion: boolean,
   ): Promise<string> => wallet.getBurnAddress(address, chain.numericId, reward, autoConversion)
 
-  const estimateGasPrice = (): Promise<FeeEstimates> =>
-    eth
-      .getGasPriceEstimation()
-      .then((res) => _.mapValues<number, BigNumber>((v) => new BigNumber(v))(res) as FeeEstimates)
-
   const estimateFees = (txType: 'redeem' | 'transfer', amount: BigNumber): Promise<FeeEstimates> =>
     wallet.estimateFees(txType, amount.toNumber()).then((res) => tPromise.decode(FeeEstimates, res))
 
@@ -494,11 +495,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     refreshSyncStatus,
     sendTransaction,
     sendTxToTransparent,
+    calculateGasPrice,
     estimatePublicTransactionFee,
     estimateCallFee,
     estimateTransactionFee,
     estimateRedeemFee,
-    estimateGasPrice,
     redeemValue,
     create,
     unlock,

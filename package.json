@@ -125,7 +125,7 @@
     "semver": "^7.3.2",
     "typescript": "3.8.3",
     "unstated-next": "^1.1.0",
-    "web3": "git+ssh://git@github.com/input-output-hk/midnight-web3.git#2f95bd7289d937c0da68af3c48f01dbe62a6283e"
+    "web3": "git+ssh://git@github.com/input-output-hk/midnight-web3.git#b3d1a423c989aca60b14438e83b1e4a8a5fc3d24"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
