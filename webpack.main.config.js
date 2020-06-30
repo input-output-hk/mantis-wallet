@@ -1,4 +1,5 @@
 const path = require('path')
+const CopyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin')
 
 const mainConfig = {
   devtool: false,
@@ -10,6 +11,11 @@ const mainConfig = {
   resolve: {
     extensions: ['.js', '.json', '.ts', '.tsx'],
   },
+  plugins: [
+    new CopyPkgJsonPlugin({
+      remove: ['scripts', 'husky', 'jest', 'devDependencies', 'browserslist'],
+    }),
+  ],
   module: {
     rules: [
       {
