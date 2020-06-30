@@ -10,6 +10,7 @@ import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
 import {Link} from '../common/Link'
 import {StatusModal} from '../common/StatusModal'
+import {SupportModal} from '../common/SupportModal'
 import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
@@ -21,7 +22,7 @@ import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
-type ModalId = 'none' | 'LockWallet' | 'RemoveWallet'
+type ModalId = 'none' | 'LockWallet' | 'RemoveWallet' | 'Support' | 'Status'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -60,7 +61,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const glacierState = GlacierState.useContainer()
   const {networkTag} = BackendState.useContainer()
 
-  const [showStatusModal, setShowStatusModal] = useState(false)
   const [activeModal, setActiveModal] = useState<ModalId>('none')
 
   const LogOutButton = (): JSX.Element => {
@@ -112,15 +112,15 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
       </div>
       <div className="footer">
         <div>
-          <Link href={LINKS.support} popoverPlacement="right" className="footer-link support">
+          <span className="footer-link support" onClick={() => setActiveModal('Support')}>
             Support
-          </Link>
+          </span>
           <Link href={LINKS.feedback} popoverPlacement="right" className="footer-link feedback">
             Feedback
           </Link>
         </div>
         <div>
-          <span onClick={() => setShowStatusModal(true)} className="footer-link status">
+          <span onClick={() => setActiveModal('Status')} className="footer-link status">
             Status
           </span>
           <LogOutButton />
@@ -159,12 +159,13 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           onCancel={() => setActiveModal('none')}
         />
       )}
-      {showStatusModal && (
+      {activeModal === 'Status' && (
         <UpdatingStatusModal
           syncStatus={walletState.walletStatus === 'LOADED' ? walletState.syncStatus : undefined}
-          onCancel={() => setShowStatusModal(false)}
+          onCancel={() => setActiveModal('none')}
         />
       )}
+      <SupportModal visible={activeModal === 'Support'} onCancel={() => setActiveModal('none')} />
     </div>
   )
 }

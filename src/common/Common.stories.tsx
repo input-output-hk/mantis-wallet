@@ -6,6 +6,7 @@ import {ShortNumber} from './ShortNumber'
 import {Loading} from './Loading'
 import {CopyableLongText} from './CopyableLongText'
 import {StatusModal} from './StatusModal'
+import {SupportModal} from './SupportModal'
 import {MiningStatus} from './MiningStatus'
 
 export default {
@@ -66,3 +67,5 @@ export const statusModal = (): JSX.Element => (
 )
 
 export const miningStatus = (): JSX.Element => <MiningStatus />
+
+export const supportModal = (): JSX.Element => <SupportModal visible />

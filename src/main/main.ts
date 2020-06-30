@@ -5,8 +5,8 @@ import url from 'url'
 import os from 'os'
 import {exec, spawn} from 'child_process'
 import {promisify} from 'util'
-import {option} from 'fp-ts'
 import * as _ from 'lodash/fp'
+import {option} from 'fp-ts'
 import * as array from 'fp-ts/lib/Array'
 import * as record from 'fp-ts/lib/Record'
 import {mergeAll} from 'rxjs/operators'
@@ -32,9 +32,10 @@ import {flatTap, prop, wait} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
-import {getTitle, ipcListen} from './util'
+import {getTitle, ipcListenToRenderer} from './util'
 import {inspectLineForDAGStatus, setFetchParamsStatus, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
+import {saveLogsArchive} from './log-exporter'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -169,17 +170,20 @@ app.on('remote-get-global', (event, webContents, name) => {
   }
 })
 
-ipcListen('update-config', async (event, keyPath: LunaManagedConfigPaths, value: string) => {
-  try {
-    await updateConfig({[keyPath]: value})
-    event.reply('update-config-success')
-  } catch (e) {
-    console.error(e)
-    event.reply('update-config-failure', e.message)
-  }
-})
+ipcListenToRenderer(
+  'update-config',
+  async (event, keyPath: LunaManagedConfigPaths, value: string) => {
+    try {
+      await updateConfig({[keyPath]: value})
+      event.reply('update-config-success')
+    } catch (e) {
+      console.error(e)
+      event.reply('update-config-failure', e.message)
+    }
+  },
+)
 
-ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
+ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | null) => {
   if (!spendingKey) {
     console.info('Disabling mining')
     try {
@@ -202,11 +206,33 @@ ipcListen('update-mining-config', async (event, spendingKey: string | null) => {
   }
 })
 
-ipcListen('update-network-tag', (_event, networkTag: NetworkTag) => {
+ipcListenToRenderer('update-network-tag', (_event, networkTag: NetworkTag) => {
   mainWindowHandle?.setTitle(getTitle(networkTag))
 })
 
-//Handle TLS from external config
+ipcListenToRenderer('save-debug-logs', async (event) => {
+  const options = {
+    title: 'Save Debug Logs',
+    buttonLabel: 'Save Debug Logs',
+    defaultPath: `luna-debug-logs-${Date.now()}.zip`,
+    filters: [{name: 'Zip Archives', extensions: ['zip']}],
+  }
+
+  const {canceled, filePath} = await dialog.showSaveDialog(options)
+  if (canceled || !filePath) {
+    return event.reply('save-debug-logs-cancel')
+  }
+
+  try {
+    saveLogsArchive(filePath)
+    event.reply('save-debug-logs-success', filePath)
+  } catch (e) {
+    console.error(e)
+    event.reply('save-debug-logs-failure', e.message)
+  }
+})
+
+// Handle TLS from external config
 if (!config.runClients) {
   pipe(
     config.tls,
@@ -360,7 +386,7 @@ if (config.runClients) {
   app.on('will-quit', killAndQuit)
   app.on('window-all-closed', killAndQuit)
 
-  ipcListen('restart-clients', async (event) => {
+  ipcListenToRenderer('restart-clients', async (event) => {
     try {
       await killClients()
     } catch (e) {

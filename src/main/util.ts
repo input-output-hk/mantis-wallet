@@ -3,7 +3,7 @@ import {ipcMain} from 'electron'
 import {IPCFromRendererChannelName} from '../shared/ipc-types'
 import {LUNA_VERSION, TESTNET_EDITION} from '../shared/version'
 
-export function ipcListen(
+export function ipcListenToRenderer(
   channel: IPCFromRendererChannelName,
   listener: Parameters<typeof ipcMain.on>[1],
 ): void {

@@ -101,7 +101,10 @@
     .status {
       margin-right: 8px;
       padding-right: 7px;
-      border-right: 1px solid #fff;
+
+      @include themify($themes) {
+        border-right: 1px solid themed('text-color');
+      }
     }
 
     .footer-link {
@@ -199,7 +202,10 @@
       .status {
         margin-right: 0;
         padding-right: 0;
-        border-right: none;
+
+        @include themify($themes) {
+          border-right: 0px solid themed('text-color');
+        }
       }
 
       .edition {
