@@ -1,4 +1,5 @@
 import * as path from 'path'
+import {promises as fs} from 'fs'
 import * as electronPackager from 'electron-packager'
 import packager from 'electron-packager'
 
@@ -17,9 +18,17 @@ export const packageLuna = (
     // but only if you leave out the file extension.
     // For Linux: you should use BrowserWindow({icon}) to set it. It should be a png.
     icon: path.resolve(appDir, 'public/icon'),
-    // FIXME PM-1837 don't include package.json as it is in dist package
-    ignore: /^\/(?!build|package.json).*/,
+    ignore: /^\/(?!build).*/,
     out: path.resolve(appDir, 'dist'),
+    afterCopy: [
+      (buildPath, _electronVersion, _platform, _arch, callback) =>
+        fs
+          .rename(
+            path.resolve(buildPath, 'build/main', 'package.json'),
+            path.resolve(buildPath, 'package.json'),
+          )
+          .then(callback),
+    ],
     overwrite: true,
     ...options,
   })
