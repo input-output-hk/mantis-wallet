@@ -1,12 +1,13 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {shell} from 'electron'
 import {message} from 'antd'
+import {CheckCircleFilled} from '@ant-design/icons'
+import {LINKS} from '../external-link-config'
 import {IPCToRendererChannelName} from '../shared/ipc-types'
 import {saveDebugLogs, ipcListenToMain, ipcRemoveAllListeners} from './ipc-util'
 import {DialogMessage} from './dialog/DialogMessage'
 import {wrapWithModal, ModalLocker} from './LunaModal'
 import {Dialog} from './Dialog'
-import {LINKS} from '../external-link-config'
 
 const CHANNELS: IPCToRendererChannelName[] = [
   'save-debug-logs-success',
@@ -16,11 +17,18 @@ const CHANNELS: IPCToRendererChannelName[] = [
 
 export const SupportDialog = (): JSX.Element => {
   const {setLocked, isLocked} = ModalLocker.useContainer()
+  const [isDone, setDone] = useState(false)
 
   useEffect(() => {
-    ipcListenToMain('save-debug-logs-success', (): void => {
-      message.success('Debug logs saved successfully!', 5)
+    ipcListenToMain('save-debug-logs-success', (_event, path): void => {
+      message.success(
+        <span style={{cursor: 'pointer'}} onClick={() => shell.showItemInFolder(path)}>
+          Debug logs saved successfully! Click here to open the containing folder.
+        </span>,
+        10,
+      )
       setLocked(false)
+      setDone(true)
     })
 
     ipcListenToMain('save-debug-logs-cancel', () => {
@@ -48,6 +56,7 @@ export const SupportDialog = (): JSX.Element => {
         },
         children: 'Export Logs',
         disabled: isLocked,
+        icon: isDone && <CheckCircleFilled />,
       }}
       rightButtonProps={{
         onClick: async (): Promise<void> => shell.openExternal(LINKS.support),
@@ -62,7 +71,7 @@ export const SupportDialog = (): JSX.Element => {
           bug report.
         </p>
         <p>
-          You can easily save your logs by clicking the <b>Export Logs</b> button below.
+          You can save your logs easily by clicking the <b>Export Logs</b> button below.
         </p>
       </DialogMessage>
     </Dialog>

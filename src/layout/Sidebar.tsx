@@ -22,7 +22,7 @@ import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
-type ModalId = 'none' | 'LockWallet' | 'RemoveWallet' | 'Support'
+type ModalId = 'none' | 'LockWallet' | 'RemoveWallet' | 'Support' | 'Status'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -61,7 +61,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const glacierState = GlacierState.useContainer()
   const {networkTag} = BackendState.useContainer()
 
-  const [showStatusModal, setShowStatusModal] = useState(false)
   const [activeModal, setActiveModal] = useState<ModalId>('none')
 
   const LogOutButton = (): JSX.Element => {
@@ -121,7 +120,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           </Link>
         </div>
         <div>
-          <span onClick={() => setShowStatusModal(true)} className="footer-link status">
+          <span onClick={() => setActiveModal('Status')} className="footer-link status">
             Status
           </span>
           <LogOutButton />
@@ -160,10 +159,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           onCancel={() => setActiveModal('none')}
         />
       )}
-      {showStatusModal && (
+      {activeModal === 'Status' && (
         <UpdatingStatusModal
           syncStatus={walletState.walletStatus === 'LOADED' ? walletState.syncStatus : undefined}
-          onCancel={() => setShowStatusModal(false)}
+          onCancel={() => setActiveModal('none')}
         />
       )}
       <SupportModal visible={activeModal === 'Support'} onCancel={() => setActiveModal('none')} />

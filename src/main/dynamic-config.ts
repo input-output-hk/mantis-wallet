@@ -40,7 +40,7 @@ export async function updateConfig(toUpdate: Partial<LunaManagedConfig>): Promis
   const newConfig = _.merge(previousConfig)(toUpdate)
   console.info('Config changed')
   console.info({previousConfig, newConfig})
-  await fs.writeFile(lunaManagedConfigPath, JSON.stringify(newConfig, undefined, 2), 'utf8')
+  await fs.writeFile(lunaManagedConfigPath, JSON.stringify(newConfig, null, 2), 'utf8')
 }
 
 export async function getMiningParams(): Promise<SettingsPerClient> {

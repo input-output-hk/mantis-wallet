@@ -19,7 +19,7 @@ export const saveLogsArchive = (filePath: string): void => {
   const walletLogsPath = getLogPath('wallet', 'midnight-wallet.log')
   const lunaStatus = JSON.stringify(
     {config, status, lunaManagedConfig: loadLunaManagedConfig()},
-    undefined,
+    null,
     2,
   )
 

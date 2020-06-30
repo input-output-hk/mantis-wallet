@@ -225,14 +225,14 @@ ipcListenToRenderer('save-debug-logs', async (event) => {
 
   try {
     saveLogsArchive(filePath)
-    event.reply('save-debug-logs-success')
+    event.reply('save-debug-logs-success', filePath)
   } catch (e) {
     console.error(e)
     event.reply('save-debug-logs-failure', e.message)
   }
 })
 
-//Handle TLS from external config
+// Handle TLS from external config
 if (!config.runClients) {
   pipe(
     config.tls,
