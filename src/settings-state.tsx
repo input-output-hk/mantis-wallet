@@ -5,7 +5,14 @@ import {Store, createInMemoryStore} from './common/store'
 
 export type Theme = 'dark' | 'light'
 
+export type DateFormat = 'YYYY-MM-DD' | 'MM-DD-YYYY' | 'DD-MM-YYYY' | 'MM/DD/YYYY' | 'DD/MM/YYYY'
+export type TimeFormat = '24-hour' | '12-hour'
+
+export const DATE_FORMATS: DateFormat[] = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY']
+export const TIME_FORMATS: TimeFormat[] = ['24-hour', '12-hour']
+
 interface SettingsState {
+  // theme settings
   theme: Theme
   switchTheme(newTheme: Theme): void
   // wallet settings
@@ -14,6 +21,11 @@ interface SettingsState {
   // pob settings
   areHiddenBurnsVisible: boolean
   setHiddenBurnsVisible(visible: boolean): void
+  // datetime settings
+  dateFormat: DateFormat
+  setDateFormat(dateFormat: DateFormat): void
+  timeFormat: TimeFormat
+  setTimeFormat(timeFormat: TimeFormat): void
 }
 
 export type StoreSettingsData = {
@@ -21,6 +33,8 @@ export type StoreSettingsData = {
     theme: Theme
     areEmptyTransparentAccountsHidden: boolean
     areHiddenBurnsVisible: boolean
+    dateFormat: DateFormat
+    timeFormat: TimeFormat
   }
 }
 
@@ -29,6 +43,8 @@ export const defaultSettingsData: StoreSettingsData = {
     theme: 'dark',
     areEmptyTransparentAccountsHidden: false,
     areHiddenBurnsVisible: false,
+    dateFormat: 'MM/DD/YYYY',
+    timeFormat: '12-hour',
   },
 }
 
@@ -45,6 +61,10 @@ function useSettingsState(
     'areHiddenBurnsVisible',
   ])
 
+  // Datetime settings
+  const [dateFormat, setDateFormat] = usePersistedState(store, ['settings', 'dateFormat'])
+  const [timeFormat, setTimeFormat] = usePersistedState(store, ['settings', 'timeFormat'])
+
   useEffect(() => {
     document.body.classList.forEach((className) => {
       if (className.startsWith('theme-')) document.body.classList.remove(className)
@@ -59,6 +79,10 @@ function useSettingsState(
     hideEmptyTransparentAccounts,
     areHiddenBurnsVisible,
     setHiddenBurnsVisible,
+    dateFormat,
+    setDateFormat,
+    timeFormat,
+    setTimeFormat,
   }
 }
 
@@ -75,6 +99,8 @@ export const migrationsForSettingsData = {
     store.set('settings', {
       ...store.get('settings'),
       areHiddenBurnsVisible: false,
+      dateFormat: 'YYYY-MM-DD',
+      timeFormat: '24-hour',
     })
   },
 }

@@ -141,10 +141,12 @@ export const TxAmountCell = ({transaction}: TransactionCellProps): JSX.Element =
 }
 
 export const TxTimeCell = ({transaction: {txStatus}}: TransactionCellProps): JSX.Element => {
+  const {dateFormat, timeFormat} = SettingsState.useContainer()
+
   const dateString =
     txStatus === 'pending' || txStatus === 'failed'
       ? ''
-      : formatDate(fromUnixTime(txStatus.timestamp))
+      : formatDate(fromUnixTime(txStatus.timestamp), dateFormat, timeFormat)
 
   return <>{dateString}</>
 }

@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react'
+import _ from 'lodash/fp'
 import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {SettingsState} from './settings-state'
+import {SettingsState, TIME_FORMATS, DATE_FORMATS} from './settings-state'
 import {IPCToRendererChannelName} from './shared/ipc-types'
 import {withStatusGuard} from './common/wallet-status-guard'
 import {updateMiningConfig, ipcRemoveAllListeners, ipcListenToMain} from './common/ipc-util'
 import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
+import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {NoWallet} from './wallets/NoWallet'
 import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
 import {loadLunaManagedConfig} from './config/renderer'
@@ -22,7 +24,14 @@ const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.E
 }
 
 const _Settings = (): JSX.Element => {
-  const {theme, switchTheme} = SettingsState.useContainer()
+  const {
+    theme,
+    switchTheme,
+    timeFormat,
+    setTimeFormat,
+    dateFormat,
+    setDateFormat,
+  } = SettingsState.useContainer()
 
   const [lunaManagedConfig, setLunaManagedConfig] = useState<LunaManagedConfig>(
     loadLunaManagedConfig(),
@@ -67,6 +76,24 @@ const _Settings = (): JSX.Element => {
             onChange={(checked) => updateMiningState(checked)}
           />
         </div>
+      </div>
+      <div className="settings-item">
+        <DialogDropdown
+          label="Date Format"
+          options={DATE_FORMATS}
+          defaultOptionIndex={_.indexOf(dateFormat)(DATE_FORMATS)}
+          onChange={setDateFormat}
+          type="small"
+        />
+      </div>
+      <div className="settings-item">
+        <DialogDropdown
+          label="Time Format"
+          options={TIME_FORMATS}
+          defaultOptionIndex={_.indexOf(timeFormat)(TIME_FORMATS)}
+          onChange={setTimeFormat}
+          type="small"
+        />
       </div>
       <MiningConfigModal
         visible={miningConfigModalShown}
