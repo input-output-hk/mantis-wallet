@@ -12,16 +12,16 @@ export type DateFormat = typeof DATE_FORMATS[number]
 export type TimeFormat = typeof TIME_FORMATS[number]
 
 interface SettingsState {
-  // theme settings
+  // Theme settings
   theme: Theme
   switchTheme(newTheme: Theme): void
-  // wallet settings
+  // Wallet settings
   areEmptyTransparentAccountsHidden: boolean
   hideEmptyTransparentAccounts(hide: boolean): void
-  // pob settings
+  // PoB settings
   areHiddenBurnsVisible: boolean
   setHiddenBurnsVisible(visible: boolean): void
-  // datetime settings
+  // Locale settings
   dateFormat: DateFormat
   setDateFormat(dateFormat: DateFormat): void
   timeFormat: TimeFormat
@@ -51,17 +51,22 @@ export const defaultSettingsData: StoreSettingsData = {
 function useSettingsState(
   store: Store<StoreSettingsData> = createInMemoryStore(defaultSettingsData),
 ): SettingsState {
+  // Theme settings
   const [theme, switchTheme] = usePersistedState(store, ['settings', 'theme'])
+
+  // Wallet settings
   const [areEmptyTransparentAccountsHidden, hideEmptyTransparentAccounts] = usePersistedState(
     store,
     ['settings', 'areEmptyTransparentAccountsHidden'],
   )
+
+  // PoB settings
   const [areHiddenBurnsVisible, setHiddenBurnsVisible] = usePersistedState(store, [
     'settings',
     'areHiddenBurnsVisible',
   ])
 
-  // Datetime settings
+  // Locale settings
   const [dateFormat, setDateFormat] = usePersistedState(store, ['settings', 'dateFormat'])
   const [timeFormat, setTimeFormat] = usePersistedState(store, ['settings', 'timeFormat'])
 
@@ -92,15 +97,16 @@ export const migrationsForSettingsData = {
   '0.14.0-alpha.1': (store: Store<StoreSettingsData>) => {
     store.set('settings', {
       ...store.get('settings'),
-      areEmptyTransparentAccountsHidden: false,
+      areEmptyTransparentAccountsHidden:
+        defaultSettingsData.settings.areEmptyTransparentAccountsHidden,
     })
   },
   '0.14.0-alpha.2': (store: Store<StoreSettingsData>) => {
     store.set('settings', {
       ...store.get('settings'),
-      areHiddenBurnsVisible: false,
-      dateFormat: 'YYYY-MM-DD',
-      timeFormat: '24-hour',
+      areHiddenBurnsVisible: defaultSettingsData.settings.areHiddenBurnsVisible,
+      dateFormat: defaultSettingsData.settings.dateFormat,
+      timeFormat: defaultSettingsData.settings.timeFormat,
     })
   },
 }
