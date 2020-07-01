@@ -333,7 +333,7 @@ export const migrationsForPobData = {
   '0.14.0-alpha.2': (store: Store<StorePobData>) => {
     store.set('pob', {
       ...store.get('pob'),
-      hiddenBurnProcesses: {},
+      hiddenBurnProcesses: defaultPobData.pob.hiddenBurnProcesses,
     })
   },
 }

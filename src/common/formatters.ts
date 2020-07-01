@@ -1,18 +1,21 @@
 import BigNumber from 'bignumber.js'
 import formatDistance from 'date-fns/formatDistance'
 import {enUS} from 'date-fns/locale'
+import {format} from 'date-fns'
+import {DateFormat, TimeFormat} from '../settings-state'
 
 const LOCALE = 'en-US'
 const DATE_FNS_LOCALE = enUS
 
-const dateTimeFormatSettings = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-}
+// TODO: PM-2291
+// const dateTimeFormatSettings = {
+//   year: 'numeric',
+//   month: 'numeric',
+//   day: 'numeric',
+//   hour: 'numeric',
+//   minute: 'numeric',
+//   second: 'numeric',
+// }
 
 type FORMAT_AMOUNT_MODE = 'relaxed' | 'strict'
 
@@ -51,8 +54,18 @@ export const abbreviateAmount = (amount: BigNumber): {relaxed: string; strict: s
   }
 }
 
-export const formatDate = (d: Date): string =>
-  new Intl.DateTimeFormat(LOCALE, dateTimeFormatSettings).format(d)
+const TIME_FORMAT_TRANSLATIONS: Record<TimeFormat, string> = {
+  '12-hour': 'h:mm a',
+  '24-hour': 'H:mm',
+}
+
+const translateDateFormat = (dateFormat: DateFormat): string =>
+  dateFormat.replace('YYYY', 'yyyy').replace('DD', 'dd')
+
+export const formatDate = (date: Date, dateFormat: DateFormat, timeFormat: TimeFormat): string =>
+  format(date, `${translateDateFormat(dateFormat)}, ${TIME_FORMAT_TRANSLATIONS[timeFormat]}`, {
+    locale: DATE_FNS_LOCALE,
+  })
 
 export const toDurationString = (seconds: number): string =>
   formatDistance(0, seconds * 1000, {includeSeconds: true, locale: DATE_FNS_LOCALE})
