@@ -13,7 +13,7 @@ interface DialogDropdownOption<T> {
 interface DialogDropdownProps<T> {
   type?: 'normal' | 'small'
   label: string
-  options: Array<DialogDropdownOption<T> | T>
+  options: ReadonlyArray<T | DialogDropdownOption<T>>
   defaultOptionIndex?: number
   onChange?: (option: T) => void
   noOptionsMessage?: string
