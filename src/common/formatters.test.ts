@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import BigNumber from 'bignumber.js'
-import {abbreviateAmount, formatPercentage, formatAmount} from './formatters'
+import {abbreviateAmount, formatPercentage, formatAmount, formatDate} from './formatters'
 
 it('abbreviates numbers correctly', () => {
   const abbreviateBig = (n: number | string): [string, string] => {
@@ -40,4 +40,12 @@ it('formats percentage correctly', () => {
   assert.equal(formatPercentage(0.00005), '0.01')
   assert.equal(formatPercentage(0.000049), '0')
   assert.equal(formatPercentage(0.1), '10')
+})
+
+it('formats date correctly', () => {
+  const date = new Date('19 Jul 1994 6:12:00')
+  assert.equal(formatDate(date, 'MM/DD/YYYY', '12-hour'), '07/19/1994, 6:12 AM')
+  assert.equal(formatDate(date, 'YYYY-MM-DD', '24-hour'), '1994-07-19, 6:12')
+  assert.equal(formatDate(date, 'DD/MM/YYYY', '24-hour'), '19/07/1994, 6:12')
+  assert.equal(formatDate(date, 'DD-MM-YYYY', '24-hour'), '19-07-1994, 6:12')
 })

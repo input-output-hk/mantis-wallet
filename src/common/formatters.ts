@@ -55,8 +55,8 @@ export const abbreviateAmount = (amount: BigNumber): {relaxed: string; strict: s
 }
 
 const TIME_FORMAT_TRANSLATIONS: Record<TimeFormat, string> = {
-  '12-hour': 'hh:mm a',
-  '24-hour': 'HH:mm',
+  '12-hour': 'h:mm a',
+  '24-hour': 'H:mm',
 }
 
 const translateDateFormat = (dateFormat: DateFormat): string =>
