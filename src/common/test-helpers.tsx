@@ -9,7 +9,6 @@ import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
 import {WalletState, WalletStatus} from './wallet-state'
 import {BurnStatusType} from '../pob/api/prover'
-import {ChainId} from '../pob/chains'
 import {RealBurnStatus} from '../pob/pob-state'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
@@ -51,22 +50,12 @@ export const findExactlyOneByTag = (element: HTMLElement, tagName: string): Elem
 export const createBurnStatus = (
   status: BurnStatusType,
   txValue: number,
-  chainId: ChainId = 'BTC_TESTNET',
+  txid = 'source-chain-burn-transaction-id',
 ): RealBurnStatus & {tx_value: number} => ({
-  burnAddressInfo: {
-    midnightAddress: 'transparent-midnight-address',
-    chainId,
-    autoConversion: false,
-    reward: 1e16,
-  },
-  prover: {
-    name: 'Test Prover',
-    address: 'http://test-prover',
-  },
   status,
-  txid: 'source-chain-burn-transaction-id-1',
-  chain: chainId,
-  commitment_txid: 'midnight-transaction-id-1',
+  txid,
+  chain: null,
+  commitment_txid: 'midnight-transaction-id',
   commitment_txid_height: 10,
   redeem_txid: null,
   redeem_txid_height: null,
@@ -76,4 +65,5 @@ export const createBurnStatus = (
   processing_start_height: 1,
   last_tag_height: 1,
   tx_value: txValue,
+  isHidden: false,
 })

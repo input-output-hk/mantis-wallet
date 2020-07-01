@@ -8,14 +8,19 @@ export type Theme = 'dark' | 'light'
 interface SettingsState {
   theme: Theme
   switchTheme(newTheme: Theme): void
+  // wallet settings
   areEmptyTransparentAccountsHidden: boolean
   hideEmptyTransparentAccounts(hide: boolean): void
+  // pob settings
+  areHiddenBurnsVisible: boolean
+  setHiddenBurnsVisible(visible: boolean): void
 }
 
 export type StoreSettingsData = {
   settings: {
     theme: Theme
     areEmptyTransparentAccountsHidden: boolean
+    areHiddenBurnsVisible: boolean
   }
 }
 
@@ -23,6 +28,7 @@ export const defaultSettingsData: StoreSettingsData = {
   settings: {
     theme: 'dark',
     areEmptyTransparentAccountsHidden: false,
+    areHiddenBurnsVisible: false,
   },
 }
 
@@ -34,6 +40,10 @@ function useSettingsState(
     store,
     ['settings', 'areEmptyTransparentAccountsHidden'],
   )
+  const [areHiddenBurnsVisible, setHiddenBurnsVisible] = usePersistedState(store, [
+    'settings',
+    'areHiddenBurnsVisible',
+  ])
 
   useEffect(() => {
     document.body.classList.forEach((className) => {
@@ -47,6 +57,8 @@ function useSettingsState(
     switchTheme,
     areEmptyTransparentAccountsHidden,
     hideEmptyTransparentAccounts,
+    areHiddenBurnsVisible,
+    setHiddenBurnsVisible,
   }
 }
 
@@ -57,6 +69,12 @@ export const migrationsForSettingsData = {
     store.set('settings', {
       ...store.get('settings'),
       areEmptyTransparentAccountsHidden: false,
+    })
+  },
+  '0.14.0-alpha.2': (store: Store<StoreSettingsData>) => {
+    store.set('settings', {
+      ...store.get('settings'),
+      areHiddenBurnsVisible: false,
     })
   },
 }

@@ -9,7 +9,7 @@ import {UNITS} from '../common/units'
 import {abbreviateAmount, formatPercentage} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {expectCalledOnClick, createBurnStatus} from '../common/test-helpers'
+import {expectCalledOnClick} from '../common/test-helpers'
 import {BurnActivity} from './BurnActivity'
 import {BurnStatusType} from './api/prover'
 import {makeWeb3Worker} from '../web3'
@@ -17,6 +17,7 @@ import {mockWeb3Worker} from '../web3-mock'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {RealBurnStatus, BurnAddressInfo} from './pob-state'
 import {ProverConfig} from '../config/type'
+import {SettingsState} from '../settings-state'
 
 const {ETH_TESTNET} = CHAINS
 
@@ -30,6 +31,11 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
 
   const pending = UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(500))
   const available = UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(600))
+  const prover = {
+    name: 'Test Prover',
+    address: 'http://test-prover',
+    rewards: {},
+  }
   const {getByText} = render(
     <BurnActions
       transparentAccounts={[
@@ -42,18 +48,10 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
           },
         },
       ]}
-      burnStatuses={{
-        'burn-address': {
-          lastStatuses: [createBurnStatus('tx_found', pending.toNumber(), 'ETH_TESTNET')],
-        },
+      pendingBalances={{
+        ETH_TESTNET: pending,
       }}
-      provers={[
-        {
-          name: 'Test Prover',
-          address: 'http://test-prover',
-          rewards: {},
-        },
-      ]}
+      provers={[prover]}
       burnAddresses={{
         'burn-address': {
           midnightAddress: 'transparent-midnight-address',
@@ -114,8 +112,6 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
 
   const lastStatuses: RealBurnStatus[] = [
     {
-      burnAddressInfo,
-      prover,
       status: 'tx_found',
       txid: 'source-chain-burn-transaction-id-1',
       chain: 'BTC_TESTNET',
@@ -129,10 +125,9 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       processing_start_height: 1,
       last_tag_height: 1,
       tx_value: 20,
+      isHidden: false,
     },
     {
-      burnAddressInfo,
-      prover,
       status: 'tx_found',
       txid: 'source-chain-burn-transaction-id-2',
       chain: 'BTC_TESTNET',
@@ -146,29 +141,45 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       processing_start_height: 1,
       last_tag_height: 1,
       tx_value: 20,
+      isHidden: false,
     },
   ]
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {queryByText, getByText, getByPlaceholderText, getAllByText} = render(
     <BuildJobState.Provider initialState={{web3}}>
-      <WalletState.Provider initialState={initialState}>
-        <BurnActivity
-          burnStatuses={{
-            [burnAddress1]: {
-              lastStatuses: [],
-            },
-            [burnAddress2]: {
-              lastStatuses: [],
-              errorMessage: errorForBurnAddress2,
-            },
-            [burnAddress3]: {
-              lastStatuses,
-              errorMessage: errorForBurnAddress3,
-            },
-          }}
-        />
-      </WalletState.Provider>
+      <SettingsState.Provider>
+        <WalletState.Provider initialState={initialState}>
+          <BurnActivity
+            burnAddresses={{
+              [burnAddress1]: burnAddressInfo,
+              [burnAddress2]: burnAddressInfo,
+              [burnAddress3]: burnAddressInfo,
+            }}
+            burnStatuses={[
+              {
+                burnWatcher: {burnAddress: burnAddress1, prover},
+                lastStatuses: [],
+                isHidden: false,
+              },
+              {
+                burnWatcher: {burnAddress: burnAddress2, prover},
+                lastStatuses: [],
+                errorMessage: errorForBurnAddress2,
+                isHidden: false,
+              },
+              {
+                burnWatcher: {burnAddress: burnAddress3, prover},
+                lastStatuses,
+                errorMessage: errorForBurnAddress3,
+                isHidden: false,
+              },
+            ]}
+            hideBurnWatcher={jest.fn()}
+            hideBurnProcess={jest.fn()}
+          />
+        </WalletState.Provider>
+      </SettingsState.Provider>
     </BuildJobState.Provider>,
   )
 
@@ -178,20 +189,24 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
   expect(getAllByText(burnAddress3, {exact: false})).toHaveLength(2)
 
   // all valid statuses are shown
-  lastStatuses.map(({txid, commitment_txid: mTxid, burnAddressInfo: {chainId}}) => {
+  lastStatuses.map(({txid, commitment_txid: mTxid}) => {
     expect(getByText(txid)).toBeInTheDocument()
     mTxid && expect(getByText(txid)).toBeInTheDocument()
-    expect(getAllByText(CHAINS[chainId].symbol, {exact: false})).not.toHaveLength(0)
+    expect(getAllByText(CHAINS[burnAddressInfo.chainId].symbol, {exact: false})).not.toHaveLength(0)
   })
 
   // no burn observed error is shown for Burn Address #1
   expect(
-    getByText(`No burn transactions observed for burn address ${burnAddress1}.`),
+    getByText(
+      `No burn transactions observed for burn address ${burnAddress1} by prover "${prover.name}".`,
+    ),
   ).toBeInTheDocument()
 
   // error with no burn statuses is shown for Burn Address #2
   expect(
-    getByText(`Gathering burn activity for ${burnAddress2} from the prover failed`, {exact: false}),
+    getByText(`Gathering burn activity for ${burnAddress2} from prover "${prover.name}" failed`, {
+      exact: false,
+    }),
   ).toBeInTheDocument()
   expect(getByText(errorForBurnAddress2, {exact: false})).toBeInTheDocument()
 
@@ -213,16 +228,6 @@ const syncStatus: SynchronizationStatus = {
 }
 
 const burnStatus = {
-  burnAddressInfo: {
-    midnightAddress: 'transparent-midnight-address',
-    chainId: 'BTC_TESTNET',
-    autoConversion: false,
-    reward: 1e16,
-  },
-  prover: {
-    name: 'Test Prover',
-    address: 'http://test-prover',
-  },
   txid: 'source-chain-burn-transaction-id-1',
   chain: 'BTC_TESTNET',
   commitment_txid: 'midnight-transaction-id-1',
@@ -238,14 +243,27 @@ const burnStatus = {
 const renderBurnStatusDisplay = (status: BurnStatusType): RenderResult =>
   render(
     <BurnStatusDisplay
+      burnAddressInfo={{
+        midnightAddress: 'transparent-midnight-address',
+        chainId: 'BTC_TESTNET',
+        autoConversion: false,
+        reward: 1e16,
+      }}
       burnStatus={
         {
           status,
           ...burnStatus,
         } as RealBurnStatus
       }
-      address={'burnAddress'}
+      burnWatcher={{
+        burnAddress: 'burnAddress',
+        prover: {
+          name: 'Test Prover',
+          address: 'http://test-prover',
+        },
+      }}
       syncStatus={syncStatus}
+      hideBurnProcess={jest.fn()}
     />,
   )
 

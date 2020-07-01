@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import {gt} from 'semver'
 import {StoreSettingsData, defaultSettingsData, migrationsForSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
-import {StorePobData, defaultPobData} from '../pob/pob-state'
+import {StorePobData, defaultPobData, migrationsForPobData} from '../pob/pob-state'
 import {Claim, StoreGlacierData, defaultGlacierData} from '../glacier-drop/glacier-state'
 import {DATADIR_VERSION} from '../shared/version'
 
@@ -30,11 +30,11 @@ const mergeMigrations = _.mergeAllWith(
   },
 )
 
-const migrations = mergeMigrations([migrationsForSettingsData])
+const migrations = mergeMigrations([migrationsForSettingsData, migrationsForPobData])
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 
-const projectVersion = getMaxVersion('0.14.0-alpha.1', DATADIR_VERSION)
+const projectVersion = getMaxVersion('0.14.0-alpha.2', DATADIR_VERSION)
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]

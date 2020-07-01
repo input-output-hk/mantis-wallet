@@ -78,16 +78,19 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const [fee, setFee] = useState('')
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
 
-  if (minFee.isZero()) {
+  if (minFee.isZero() && compatibleProvers.length > 0) {
     console.error('Something went wrong, the prover has 0 reward set.')
     console.error(prover)
   }
 
-  const feeError = validateAmount(fee, [
-    isGreater(0), // 0 reward might be a sign of error, let's prevent user to continue in such case
-    isGreaterOrEqual(minFee),
-    hasAtMostDecimalPlaces(minValue.dp()),
-  ])
+  const feeError =
+    compatibleProvers.length === 0
+      ? '' // don't show fee errors when there are no available provers
+      : validateAmount(fee, [
+          isGreater(0), // 0 reward might be a sign of error, let's prevent user to continue in such case
+          isGreaterOrEqual(minFee),
+          hasAtMostDecimalPlaces(minValue.dp()),
+        ])
 
   const disableGenerate = !!feeError || compatibleProvers.length === 0
 

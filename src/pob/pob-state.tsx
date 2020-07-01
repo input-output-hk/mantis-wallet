@@ -19,6 +19,7 @@ import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {Web3API, makeWeb3Worker} from '../web3'
 import {config} from '../config/renderer'
+import {prop} from '../shared/utils'
 
 export interface BurnWatcher {
   burnAddress: string
@@ -33,15 +34,16 @@ export interface BurnAddressInfo {
 }
 
 export interface RealBurnStatus extends BurnApiStatus {
-  burnAddressInfo: BurnAddressInfo
-  prover: ProverConfig
   commitment_txid_height: number | null
   redeem_txid_height: number | null
+  isHidden: boolean
 }
 
 export type BurnStatus = {
+  burnWatcher: BurnWatcher
   lastStatuses: RealBurnStatus[]
   errorMessage?: string
+  isHidden: boolean
 }
 
 export interface Prover extends ProverConfig {
@@ -50,6 +52,7 @@ export interface Prover extends ProverConfig {
 
 export interface ProofOfBurnData {
   addBurnWatcher: (burnAddress: string, prover: ProverConfig) => boolean
+  hideBurnWatcher: (burnWatcher: BurnWatcher, hide: boolean) => void
   observeBurnAddress: (
     burnAddress: string,
     prover: ProverConfig,
@@ -58,18 +61,21 @@ export interface ProofOfBurnData {
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
-  burnStatuses: Record<string, BurnStatus>
+  burnStatuses: BurnStatus[]
+  hideBurnProcess: (burnWatcher: BurnWatcher, txId: string, hide: boolean) => void
   refresh: () => Promise<void>
   reset: () => void
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
   provers: Prover[]
+  pendingBalances: Partial<Record<ChainId, BigNumber>>
 }
 
 export type StorePobData = {
   pob: {
     burnWatchers: BurnWatcher[]
     burnAddresses: Record<string, BurnAddressInfo>
+    hiddenBurnProcesses: Record<string, 'all' | string[]>
   }
 }
 
@@ -77,6 +83,7 @@ export const defaultPobData: StorePobData = {
   pob: {
     burnWatchers: [],
     burnAddresses: {},
+    hiddenBurnProcesses: {},
   },
 }
 
@@ -88,15 +95,30 @@ const FINISHED_BURN_STATUSES: BurnStatusType[] = [
   'redeem_fail',
 ]
 
+const getBurnStatusKey = ({burnAddress, prover: {address}}: BurnWatcher): string =>
+  `${burnAddress} ${address}`
+
 export const getPendingBalance = (
-  burnStatuses: Record<string, BurnStatus>,
+  burnStatuses: BurnStatus[],
+  burnAddresses: Record<string, BurnAddressInfo>,
 ): Partial<Record<ChainId, BigNumber>> =>
-  _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s))(
-    _.values(burnStatuses)
-      .flatMap(({lastStatuses}) => lastStatuses)
-      .filter(({status}) => !FINISHED_BURN_STATUSES.includes(status))
-      .map((status) => ({[status.burnAddressInfo.chainId]: new BigNumber(status.tx_value || 0)})),
-  )
+  _.pipe(
+    _.flatMap(({lastStatuses, burnWatcher: {burnAddress}}: BurnStatus) =>
+      lastStatuses.map((status) => ({
+        burnAddress,
+        txId: status.txid,
+        chainId: burnAddresses[burnAddress].chainId,
+        status: status.status,
+        txValue: status.tx_value,
+      })),
+    ),
+    _.filter(({status, txValue}) => !FINISHED_BURN_STATUSES.includes(status) && txValue != null),
+    _.uniqWith(
+      (arrVal, othVal) => arrVal.burnAddress === othVal.burnAddress && arrVal.txId === othVal.txId,
+    ),
+    _.map(({chainId, txValue}) => ({[chainId]: new BigNumber(txValue || 0)})),
+    _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s)),
+  )(burnStatuses)
 
 function useProofOfBurnState(
   {
@@ -112,6 +134,10 @@ function useProofOfBurnState(
 ): ProofOfBurnData {
   const [burnWatchers, setBurnWatchers] = usePersistedState(store, ['pob', 'burnWatchers'])
   const [burnAddresses, setBurnAddresses] = usePersistedState(store, ['pob', 'burnAddresses'])
+  const [hiddenBurnProcesses, setHiddenBurnProcesses] = usePersistedState(store, [
+    'pob',
+    'hiddenBurnProcesses',
+  ])
   const [burnStatuses, setBurnStatuses] = useState<Record<string, BurnStatus>>({})
   const [provers, setProvers] = useState(config.provers.map((p): Prover => ({...p, rewards: {}})))
 
@@ -156,6 +182,7 @@ function useProofOfBurnState(
 
   const refreshBurnStatus = async (): Promise<void> => {
     const getBurnStatuses = async (burnWatcher: BurnWatcher): Promise<[string, BurnStatus]> => {
+      const burnStatusKey = getBurnStatusKey(burnWatcher)
       try {
         const statuses = await getStatuses(burnWatcher)
         const statusesWithTxidHeight: RealBurnStatus[] = await Promise.all(
@@ -163,22 +190,31 @@ function useProofOfBurnState(
             async (s: BurnApiStatus): Promise<RealBurnStatus> => {
               return {
                 ...s,
-                burnAddressInfo: burnAddresses[burnWatcher.burnAddress],
-                prover: burnWatcher.prover,
                 commitment_txid_height: await getTransactionHeight(s.commitment_txid),
                 redeem_txid_height: await getTransactionHeight(s.redeem_txid),
+                isHidden:
+                  hiddenBurnProcesses[burnStatusKey] === 'all' ||
+                  (hiddenBurnProcesses[burnStatusKey] || []).includes(s.txid),
               }
             },
           ),
         )
-        return [burnWatcher.burnAddress, {lastStatuses: statusesWithTxidHeight}]
-      } catch (error) {
-        const {burnAddress} = burnWatcher
         return [
-          burnAddress,
+          burnStatusKey,
           {
-            lastStatuses: burnStatuses[burnAddress]?.lastStatuses || [],
+            burnWatcher,
+            lastStatuses: statusesWithTxidHeight,
+            isHidden: hiddenBurnProcesses[burnStatusKey] === 'all',
+          },
+        ]
+      } catch (error) {
+        return [
+          burnStatusKey,
+          {
+            burnWatcher,
+            lastStatuses: burnStatuses[burnStatusKey]?.lastStatuses || [],
             errorMessage: prettyErrorMessage(error),
+            isHidden: hiddenBurnProcesses[burnStatusKey] === 'all',
           },
         ]
       }
@@ -226,9 +262,62 @@ function useProofOfBurnState(
     setBurnStatuses({})
   }
 
+  const hideBurnWatcher = (burnWatcher: BurnWatcher, hide: boolean): void => {
+    const burnStatusKey = getBurnStatusKey(burnWatcher)
+    if (hide) {
+      setHiddenBurnProcesses({
+        ...hiddenBurnProcesses,
+        [burnStatusKey]: 'all',
+      })
+    } else {
+      setHiddenBurnProcesses(_.unset(burnStatusKey)(hiddenBurnProcesses))
+    }
+
+    const burnStatus = burnStatuses[burnStatusKey]
+    setBurnStatuses({
+      ...burnStatuses,
+      [burnStatusKey]: {
+        ...burnStatus,
+        isHidden: hide,
+        lastStatuses: burnStatus.lastStatuses.map((s) => ({...s, isHidden: hide})),
+      },
+    })
+  }
+
+  const hideBurnProcess = (burnWatcher: BurnWatcher, txId: string, hide: boolean): void => {
+    const burnStatusKey = getBurnStatusKey(burnWatcher)
+    const burnStatus = burnStatuses[burnStatusKey]
+
+    const hiddenByThisBurnWatcher =
+      hiddenBurnProcesses[burnStatusKey] === 'all'
+        ? burnStatus.lastStatuses.map(prop('txid'))
+        : hiddenBurnProcesses[burnStatusKey] || []
+
+    setHiddenBurnProcesses({
+      ...hiddenBurnProcesses,
+      [burnStatusKey]: hide
+        ? [...hiddenByThisBurnWatcher, txId]
+        : _.without([txId])(hiddenByThisBurnWatcher),
+    })
+
+    setBurnStatuses({
+      ...burnStatuses,
+      [burnStatusKey]: {
+        ...burnStatus,
+        isHidden: false,
+        lastStatuses: burnStatus.lastStatuses.map((s) =>
+          s.txid === txId ? {...s, isHidden: hide} : s,
+        ),
+      },
+    })
+  }
+
   return {
     addBurnWatcher,
-    burnStatuses,
+    hideBurnWatcher,
+    burnStatuses: _.values(burnStatuses),
+    hideBurnProcess,
+    pendingBalances: getPendingBalance(_.values(burnStatuses), burnAddresses),
     refresh,
     observeBurnAddress,
     reset,
@@ -239,3 +328,12 @@ function useProofOfBurnState(
 }
 
 export const ProofOfBurnState = createContainer(useProofOfBurnState)
+
+export const migrationsForPobData = {
+  '0.14.0-alpha.2': (store: Store<StorePobData>) => {
+    store.set('pob', {
+      ...store.get('pob'),
+      hiddenBurnProcesses: {},
+    })
+  },
+}

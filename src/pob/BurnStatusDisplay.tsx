@@ -1,6 +1,12 @@
 import React, {ReactNode, useState} from 'react'
 import SVG from 'react-inlinesvg'
-import {CloseOutlined, LoadingOutlined, RightOutlined} from '@ant-design/icons'
+import {
+  CloseOutlined,
+  LoadingOutlined,
+  RightOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+} from '@ant-design/icons'
 import {Popover} from 'antd'
 import _ from 'lodash'
 import classnames from 'classnames'
@@ -12,7 +18,7 @@ import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
-import {RealBurnStatus} from './pob-state'
+import {RealBurnStatus, BurnWatcher, BurnAddressInfo, ProofOfBurnData} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {InfoIcon} from '../common/InfoIcon'
 import {NUMBER_OF_BLOCKS_TO_SUCCESS, NUMBER_OF_BLOCKS_TO_CONFIRM} from './pob-config'
@@ -28,8 +34,9 @@ interface AllProgress {
   confirm: ProgressType
 }
 
-interface BurnStatusDisplayProps {
-  address: string
+interface BurnStatusDisplayProps extends Pick<ProofOfBurnData, 'hideBurnProcess'> {
+  burnWatcher: BurnWatcher
+  burnAddressInfo: BurnAddressInfo
   syncStatus: SynchronizationStatus
   burnStatus: RealBurnStatus
   errorMessage?: string
@@ -143,14 +150,16 @@ const isRedeemDone = (
 }
 
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
-  address,
+  burnWatcher,
+  hideBurnProcess,
+  burnAddressInfo,
   syncStatus,
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
   const [detailsShown, setDetailsShown] = useState(false)
 
-  const chain = CHAINS[burnStatus.burnAddressInfo.chainId]
+  const chain = CHAINS[burnAddressInfo.chainId]
   const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
     ? {
         started: 'CHECKED',
@@ -160,7 +169,21 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
     : STATUS_TO_PROGRESS[burnStatus.status]
 
   return (
-    <div className="BurnStatusDisplay">
+    <div className={classnames('BurnStatusDisplay', {hidden: burnStatus.isHidden})}>
+      <div className="actions">
+        <Popover
+          content={burnStatus.isHidden ? 'Unhide this burn process' : `Hide this burn process`}
+          placement="topRight"
+          align={{offset: [13, 0]}}
+        >
+          <span
+            className="toggle-hide"
+            onClick={() => hideBurnProcess(burnWatcher, burnStatus.txid, !burnStatus.isHidden)}
+          >
+            {burnStatus.isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+          </span>
+        </Popover>
+      </div>
       <div
         className={classnames('exchange-info', {open: detailsShown})}
         onClick={() => setDetailsShown(!detailsShown)}
@@ -250,20 +273,20 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         <div className="burn-details-info">
           <div>Burn address:</div>
           <div>
-            <CopyableLongText content={address} />
+            <CopyableLongText content={burnWatcher.burnAddress} />
           </div>
           <div>Associated midnight address:</div>
           <div>
-            <CopyableLongText content={burnStatus.burnAddressInfo.midnightAddress} />
+            <CopyableLongText content={burnAddressInfo.midnightAddress} />
           </div>
           <div>Prover&apos;s reward:</div>
           <div>
-            <ShortNumber big={burnStatus.burnAddressInfo.reward} unit={chain.unitType} /> M-
+            <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
             {chain.symbol}
           </div>
           <div>Prover:</div>
           <div>
-            {burnStatus.prover.name} ({burnStatus.prover.address})
+            {burnWatcher.prover.name} ({burnWatcher.prover.address})
           </div>
         </div>
         <div className="burn-details-info">
@@ -297,8 +320,8 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
       )}
       {errorMessage && (
         <div className="error">
-          Information about burn progress might be outdated. Gathering burn activity from the prover
-          failed with the following error:
+          Information about burn progress might be outdated. Gathering burn activity from prover
+          &#34;{burnWatcher.prover.name}&#34; failed with the following error:
           <br />
           {errorMessage}
         </div>

@@ -8,6 +8,31 @@
     background-color: themed('input-bg');
   }
 
+  &.hidden {
+    opacity: $secondary-opacity;
+  }
+
+  .actions {
+    visibility: hidden;
+    margin: 1em;
+    float: right;
+    transition: visibility 0.5s;
+
+    .toggle-hide {
+      opacity: $secondary-opacity;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &:hover .actions,
+  &.hidden .actions {
+    visibility: visible;
+  }
+
   .exchange-info {
     padding: 15px;
     font-size: 14px;
