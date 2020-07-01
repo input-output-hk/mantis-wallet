@@ -110,13 +110,16 @@ export const getPendingBalance = (
         chainId: burnAddresses[burnAddress].chainId,
         status: status.status,
         txValue: status.tx_value,
+        proverReward: burnAddresses[burnAddress].reward,
       })),
     ),
     _.filter(({status, txValue}) => !FINISHED_BURN_STATUSES.includes(status) && txValue != null),
     _.uniqWith(
       (arrVal, othVal) => arrVal.burnAddress === othVal.burnAddress && arrVal.txId === othVal.txId,
     ),
-    _.map(({chainId, txValue}) => ({[chainId]: new BigNumber(txValue || 0)})),
+    _.map(({chainId, txValue, proverReward}) => ({
+      [chainId]: new BigNumber(txValue || 0).minus(proverReward),
+    })),
     _.mergeAllWith((v: BigNumber, s: BigNumber) => (v ? v.plus(s) : s)),
   )(burnStatuses)
 

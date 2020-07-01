@@ -1,4 +1,4 @@
-@import '../themify', '../partial';
+@import '../themify', '../partial', '../vars';
 
 .BurnStatusDisplay {
   margin-top: 30px;
@@ -63,6 +63,16 @@
     &.open .collapse-icon svg {
       transform: rotate(90deg);
       transition: transform 0.5s;
+    }
+
+    .final-amount {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .prover-reward {
+      opacity: $secondary-opacity;
+      white-space: nowrap;
     }
   }
 

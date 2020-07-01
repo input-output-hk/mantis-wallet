@@ -19,16 +19,16 @@ it('gathers pending balance correctly', () => {
     midnightAddress: 'transparent-midnight-address',
     chainId: 'BTC_TESTNET',
     autoConversion: false,
-    reward: 1e16,
+    reward: 1,
   }
-  const B1_TX_FOUND = createBurnStatus('tx_found', 1, 'b1-tx-found')
-  const B1_PROOF_FAIL = createBurnStatus('proof_fail', 2, 'b1-proof-fail')
-  const B1_COMM_SUBMITTED = createBurnStatus('commitment_submitted', 4, 'b1-comm-submitted')
-  const B1_COMM_APPEARED = createBurnStatus('commitment_appeared', 8, 'b1-comm-appeared')
-  const B1_COMM_FAILED = createBurnStatus('commitment_fail', 16, 'b1-comm-failed')
-  const B1_REDEEM_APPEARED = createBurnStatus('redeem_appeared', 32, 'b1-redeem-appeared')
-  const B1_REDEEM_BY_OTHER = createBurnStatus('redeem_another_prover', 64, 'b1-redeem-by-other')
-  const B1_REDEEM_FAILED = createBurnStatus('redeem_fail', 128, 'b1-redeem-failed')
+  const B1_TX_FOUND = createBurnStatus('tx_found', 2, 'b1-tx-found')
+  const B1_PROOF_FAIL = createBurnStatus('proof_fail', 4, 'b1-proof-fail')
+  const B1_COMM_SUBMITTED = createBurnStatus('commitment_submitted', 8, 'b1-comm-submitted')
+  const B1_COMM_APPEARED = createBurnStatus('commitment_appeared', 16, 'b1-comm-appeared')
+  const B1_COMM_FAILED = createBurnStatus('commitment_fail', 32, 'b1-comm-failed')
+  const B1_REDEEM_APPEARED = createBurnStatus('redeem_appeared', 64, 'b1-redeem-appeared')
+  const B1_REDEEM_BY_OTHER = createBurnStatus('redeem_another_prover', 128, 'b1-redeem-by-other')
+  const B1_REDEEM_FAILED = createBurnStatus('redeem_fail', 256, 'b1-redeem-failed')
 
   const burnAddresses = {[burnAddress1]: burnAddressInfo}
 
@@ -36,7 +36,7 @@ it('gathers pending balance correctly', () => {
   assert.deepEqual(
     getPendingBalance([{burnWatcher, lastStatuses: [B1_TX_FOUND], isHidden: false}], burnAddresses),
     {
-      BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value),
+      BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value - burnAddressInfo.reward),
     },
   )
   assert.deepEqual(
@@ -52,7 +52,7 @@ it('gathers pending balance correctly', () => {
       burnAddresses,
     ),
     {
-      BTC_TESTNET: new BigNumber(B1_COMM_SUBMITTED.tx_value),
+      BTC_TESTNET: new BigNumber(B1_COMM_SUBMITTED.tx_value - burnAddressInfo.reward),
     },
   )
   assert.deepEqual(
@@ -61,7 +61,7 @@ it('gathers pending balance correctly', () => {
       burnAddresses,
     ),
     {
-      BTC_TESTNET: new BigNumber(B1_COMM_APPEARED.tx_value),
+      BTC_TESTNET: new BigNumber(B1_COMM_APPEARED.tx_value - burnAddressInfo.reward),
     },
   )
   assert.deepEqual(
@@ -111,15 +111,15 @@ it('gathers pending balance correctly', () => {
       burnAddresses,
     ),
     {
-      BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value),
+      BTC_TESTNET: new BigNumber(B1_TX_FOUND.tx_value - burnAddressInfo.reward),
     },
   )
 
   // check everything together
   const burnAddress2 = 'burn-address-2'
-  const B2_TX_FOUND = createBurnStatus('tx_found', 256, 'b2-tx-found')
+  const B2_TX_FOUND = createBurnStatus('tx_found', 512, 'b2-tx-found')
   const burnAddress3 = 'burn-address-3'
-  const B3_ETH_TX_FOUND = createBurnStatus('tx_found', 521, 'b3-eth-tx-found')
+  const B3_ETH_TX_FOUND = createBurnStatus('tx_found', 1024, 'b3-eth-tx-found')
 
   const allBurnStatuses: BurnStatus[] = [
     {
@@ -161,12 +161,13 @@ it('gathers pending balance correctly', () => {
     }),
     {
       BTC_TESTNET: new BigNumber(
-        B1_TX_FOUND.tx_value +
-          B1_COMM_SUBMITTED.tx_value +
-          B1_COMM_APPEARED.tx_value +
-          B2_TX_FOUND.tx_value,
+        B1_TX_FOUND.tx_value -
+          burnAddressInfo.reward +
+          (B1_COMM_SUBMITTED.tx_value - burnAddressInfo.reward) +
+          (B1_COMM_APPEARED.tx_value - burnAddressInfo.reward) +
+          (B2_TX_FOUND.tx_value - burnAddressInfo.reward),
       ),
-      ETH_TESTNET: new BigNumber(B3_ETH_TX_FOUND.tx_value),
+      ETH_TESTNET: new BigNumber(B3_ETH_TX_FOUND.tx_value - burnAddressInfo.reward),
     },
   )
 })

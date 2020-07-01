@@ -1,4 +1,5 @@
 import React, {ReactNode, useState} from 'react'
+import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
 import {
   CloseOutlined,
@@ -196,8 +197,19 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <>
             <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
             <SVG src={exchangeIcon} className="exchange-icon" />{' '}
-            <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> M-
-            {chain.symbol}
+            <span className="final-amount">
+              <ShortNumber
+                big={new BigNumber(burnStatus.tx_value).minus(burnAddressInfo.reward)}
+                unit={chain.unitType}
+              />{' '}
+              M-
+              {chain.symbol}
+            </span>
+            <span className="prover-reward">
+              {' + '}
+              <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
+              {chain.symbol} (Prover&apos;s reward)
+            </span>
           </>
         )}
       </div>
@@ -278,11 +290,6 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <div>Associated midnight address:</div>
           <div>
             <CopyableLongText content={burnAddressInfo.midnightAddress} />
-          </div>
-          <div>Prover&apos;s reward:</div>
-          <div>
-            <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
-            {chain.symbol}
           </div>
           <div>Prover:</div>
           <div>
