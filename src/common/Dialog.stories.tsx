@@ -143,7 +143,6 @@ export const InteractiveFee: React.FunctionComponent<{}> = () => (
         medium: dust('Fee medium estimate', 0.02),
         high: dust('Fee high estimate', 0.03),
       }}
-      hideCustom={boolean('Hide custom', false)}
       onChange={action('on-change')}
     />
   </Dialog>

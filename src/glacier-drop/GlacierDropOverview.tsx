@@ -45,7 +45,7 @@ interface ClaimHistoryProps {
   periodConfig: PeriodConfig
   showEpochs(): void
   estimateCallFee: LoadedState['estimateCallFee']
-  estimateGasPrice: LoadedState['estimateGasPrice']
+  calculateGasPrice: LoadedState['calculateGasPrice']
 }
 
 const ClaimHistory = ({
@@ -54,7 +54,7 @@ const ClaimHistory = ({
   periodConfig,
   showEpochs,
   estimateCallFee,
-  estimateGasPrice,
+  calculateGasPrice,
 }: ClaimHistoryProps): JSX.Element => {
   const [claimToSubmit, setClaimToSubmit] = useState<Claim | null>(null)
   const [claimToWithdraw, setClaimToWithdraw] = useState<Claim | null>(null)
@@ -95,7 +95,7 @@ const ClaimHistory = ({
           onCancel={() => setClaimToSubmit(null)}
           onNext={() => setClaimToSubmit(null)}
           estimateCallFee={estimateCallFee}
-          estimateGasPrice={estimateGasPrice}
+          calculateGasPrice={calculateGasPrice}
         />
       )}
       {claimToWithdraw && (
@@ -108,7 +108,7 @@ const ClaimHistory = ({
           onCancel={() => setClaimToWithdraw(null)}
           onNext={() => setClaimToWithdraw(null)}
           estimateCallFee={estimateCallFee}
-          estimateGasPrice={estimateGasPrice}
+          calculateGasPrice={calculateGasPrice}
         />
       )}
     </>
@@ -150,7 +150,7 @@ const _GlacierDropOverview = ({
   const [epochsShown, showEpochs] = useState<boolean>(false)
   const [claimDisabled, setClaimDisabled] = useState<boolean>(false)
 
-  const {estimateCallFee, estimateGasPrice} = walletState
+  const {estimateCallFee, calculateGasPrice} = walletState
   const {currentBlock, mode} = walletState.syncStatus
 
   const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
@@ -270,7 +270,7 @@ const _GlacierDropOverview = ({
         periodConfig={periodConfig}
         showEpochs={() => showEpochs(true)}
         estimateCallFee={estimateCallFee}
-        estimateGasPrice={estimateGasPrice}
+        calculateGasPrice={calculateGasPrice}
       />
       <ClaimController
         walletState={walletState}

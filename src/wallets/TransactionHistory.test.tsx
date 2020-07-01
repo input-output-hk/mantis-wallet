@@ -108,7 +108,6 @@ const defaultProps: TransactionHistoryProps = {
   availableBalance: Dust.toBasic(new BigNumber(1234)),
   sendTransaction: jest.fn(),
   sendTxToTransparent: jest.fn(),
-  estimateGasPrice: estimateFees,
   estimateTransactionFee: estimateFees,
   estimatePublicTransactionFee: estimateFees,
   generateAddress: jest.fn(),
@@ -210,13 +209,7 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 test('Send modal shows up', async () => {
   const availableDust = new BigNumber(123)
 
-  const {
-    getByTestId,
-    getAllByText,
-    getByText,
-    queryByText,
-    queryAllByText,
-  } = renderTransactionHistory({
+  const {getByTestId, getAllByText, getByText, queryAllByText} = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
     accounts,
   })
@@ -231,8 +224,7 @@ test('Send modal shows up', async () => {
   await waitFor(() => expect(queryAllByText('Slow')).toHaveLength(2))
   await waitFor(() => expect(queryAllByText('Average')).toHaveLength(2))
   await waitFor(() => expect(queryAllByText('Fast')).toHaveLength(2))
-  // Custom options is available only for Confidential
-  await waitFor(() => expect(queryByText('Custom')).toBeInTheDocument())
+  await waitFor(() => expect(queryAllByText('Custom')).toHaveLength(2))
 
   // 'Select Account' field and its value is in the document
   expect(getByText(/Select Account.*/)).toBeInTheDocument()
@@ -369,14 +361,6 @@ test('Send transparent transaction works', async () => {
   const estimateFees = (amount: BigNumber): Promise<FeeEstimates> =>
     Promise.resolve(_.mapValues(mockEstimateCalculator(amount))(baseEstimates) as FeeEstimates)
 
-  const averageGasPriceEstimate = new BigNumber(654)
-  const estimateGasPrices = (): Promise<FeeEstimates> =>
-    Promise.resolve({
-      low: new BigNumber(321),
-      medium: averageGasPriceEstimate,
-      high: new BigNumber(987),
-    })
-
   const send = jest.fn()
 
   const {
@@ -390,7 +374,6 @@ test('Send transparent transaction works', async () => {
     availableBalance: Dust.toBasic(availableDust),
     accounts,
     estimatePublicTransactionFee: estimateFees,
-    estimateGasPrice: estimateGasPrices,
     sendTxToTransparent: send,
   })
   const openSendModalButton = getByTestId('send-button')
@@ -471,9 +454,7 @@ test('Send transparent transaction works', async () => {
     expect(send).toBeCalledWith(
       recipient,
       usedAtom,
-      // for transparent tx the fee is visible, however the gasPrice is used
-      // since it was not change the average estimate is used
-      averageGasPriceEstimate,
+      mockEstimateCalculator(usedAtom)(baseEstimates.medium),
     ),
   )
 })

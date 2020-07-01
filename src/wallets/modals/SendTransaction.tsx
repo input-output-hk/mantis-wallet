@@ -8,8 +8,6 @@ import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {Account} from '../../web3'
 import {
-  validateAmount,
-  isGreaterOrEqual,
   validateFee,
   createTxAmountValidator,
   createConfidentialAddressValidator,
@@ -19,7 +17,7 @@ import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
-import {DialogFee, handleGasPriceUpdate} from '../../common/dialog/DialogFee'
+import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
 import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
@@ -36,9 +34,8 @@ interface SendToConfidentialDialogProps extends ModalOnCancel {
 }
 
 interface SendToTransparentDialogProps extends ModalOnCancel {
-  estimateGasPrice: () => Promise<FeeEstimates>
   estimatePublicTransactionFee: (amount: BigNumber, recipient: string) => Promise<FeeEstimates>
-  onSendToTransparent: (recipient: string, amount: BigNumber, gasPrice: BigNumber) => Promise<void>
+  onSendToTransparent: (recipient: string, amount: BigNumber, fee: BigNumber) => Promise<void>
   availableAmount: BigNumber
 }
 
@@ -134,20 +131,19 @@ export const SendToConfidentialDialog = ({
 
 const SendToTransparentDialog = ({
   onSendToTransparent,
-  estimateGasPrice,
   estimatePublicTransactionFee,
   availableAmount,
   onCancel,
   children,
 }: PropsWithChildren<SendToTransparentDialogProps>): JSX.Element => {
   const [amount, setAmount] = useState('0')
-  const [gasPrice, setGasPrice] = useState('1')
+  const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
 
   const modalLocker = ModalLocker.useContainer()
   const {networkTag} = BackendState.useContainer()
 
-  const gasPriceError = validateAmount(gasPrice, [isGreaterOrEqual()])
+  const feeError = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(availableAmount)
   const addressValidator = createTransparentAddressValidator(getNetworkTagOrTestnet(networkTag))
 
@@ -163,13 +159,7 @@ const SendToTransparentDialog = ({
             .then(() => addressValidator.validator({}, recipient)),
   )
 
-  const [gasPriceEstimates, gasPriceEstimateError, isGasPricePending] = useAsyncUpdate(
-    estimateGasPrice,
-    [],
-  )
-
-  const disableSend =
-    !!gasPriceError || !!gasPriceEstimateError || isGasPricePending || isFeeEstimationPending
+  const disableSend = !!feeError || !!feeEstimateError || isFeeEstimationPending
 
   // FIXME PM-2050 Fix error handling when amount is too big to estimate
   const footer =
@@ -191,7 +181,7 @@ const SendToTransparentDialog = ({
           onSendToTransparent(
             recipient,
             new BigNumber(Dust.toBasic(amount)),
-            new BigNumber(gasPrice),
+            new BigNumber(Dust.toBasic(fee)),
           ),
         disabled: disableSend,
       }}
@@ -221,12 +211,10 @@ const SendToTransparentDialog = ({
       />
       <DialogFee
         label="Fee"
-        // show loading screen until gasPrices are loaded
-        feeEstimates={gasPriceEstimates ? feeEstimates : undefined}
-        onChange={handleGasPriceUpdate(setGasPrice, gasPriceEstimates)}
-        errorMessage={gasPriceError}
-        isPending={isFeeEstimationPending || isGasPricePending}
-        hideCustom
+        feeEstimates={feeEstimates}
+        onChange={setFee}
+        errorMessage={feeError}
+        isPending={isFeeEstimationPending}
       />
       <DialogApproval
         id="no-longer-confidential-warning"
@@ -246,7 +234,6 @@ export const _SendTransaction: React.FunctionComponent<SendTransactionProps & Mo
   availableAmount,
   estimateTransactionFee,
   onSend,
-  estimateGasPrice,
   estimatePublicTransactionFee,
   onSendToTransparent,
   defaultMode = 'confidential',
@@ -296,7 +283,6 @@ export const _SendTransaction: React.FunctionComponent<SendTransactionProps & Mo
         <SendToTransparentDialog
           onCancel={props.onCancel}
           onSendToTransparent={onSendToTransparent}
-          estimateGasPrice={estimateGasPrice}
           estimatePublicTransactionFee={estimatePublicTransactionFee}
           availableAmount={availableAmount}
         />

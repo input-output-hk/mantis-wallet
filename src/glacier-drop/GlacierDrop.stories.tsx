@@ -140,7 +140,7 @@ export const submitProofOfUnlock = (): JSX.Element => (
     onNext={action('onNext')}
     onCancel={action('onCancel')}
     estimateCallFee={() => estimateFeesWithRandomDelay()}
-    estimateGasPrice={estimateFeesWithRandomDelay}
+    calculateGasPrice={(fee) => Promise.resolve(fee)}
   />
 )
 
@@ -154,7 +154,7 @@ export const withdrawAvailableDust = (): JSX.Element => (
     onNext={action('onNext')}
     onCancel={action('onCancel')}
     estimateCallFee={() => estimateFeesWithRandomDelay()}
-    estimateGasPrice={estimateFeesWithRandomDelay}
+    calculateGasPrice={(fee) => Promise.resolve(fee)}
   />
 )
 

@@ -145,6 +145,10 @@ class MockWallet implements WalletAPI {
     }
   }
 
+  calculateGasPrice(_txType: string, _fee: number, _amount: CallParams): number {
+    return 100
+  }
+
   // build job statuses
 
   getTransactionBuildJobStatus(jobHash: string): JobStatus {

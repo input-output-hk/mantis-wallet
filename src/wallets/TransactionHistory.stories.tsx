@@ -39,7 +39,6 @@ export const withNoTransactions = (): JSX.Element => (
     availableBalance={new BigNumber(0)}
     sendTransaction={asyncAction('on-send-transaction')}
     sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
-    estimateGasPrice={estimateFeesWithRandomDelay}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
@@ -55,7 +54,6 @@ export const withDemoTransactions = (): JSX.Element => (
     availableBalance={dust('Available Balance', 1000)}
     sendTransaction={asyncAction('on-send-transaction')}
     sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
-    estimateGasPrice={estimateFeesWithRandomDelay}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
@@ -131,7 +129,6 @@ export const interactive = (): JSX.Element => {
       availableBalance={dust('Available Balance', 1000)}
       sendTransaction={asyncAction('on-send-transaction')}
       sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
-      estimateGasPrice={estimateFeesWithRandomDelay}
       estimateTransactionFee={estimateFeesWithRandomDelay}
       estimatePublicTransactionFee={estimateFeesWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
@@ -158,7 +155,6 @@ export const sendConfidentialTransaction = (): JSX.Element => (
     onCancel={action('send-transaction-cancelled')}
     onSend={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}
-    estimateGasPrice={estimateFeesWithRandomDelay}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     defaultMode="confidential"
@@ -184,7 +180,6 @@ export const sendTransparentTransaction = (): JSX.Element => (
     onCancel={action('send-transaction-cancelled')}
     onSend={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}
-    estimateGasPrice={estimateFeesWithRandomDelay}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     defaultMode="transparent"
