@@ -5,11 +5,11 @@ import {Store, createInMemoryStore} from './common/store'
 
 export type Theme = 'dark' | 'light'
 
-export type DateFormat = 'YYYY-MM-DD' | 'MM-DD-YYYY' | 'DD-MM-YYYY' | 'MM/DD/YYYY' | 'DD/MM/YYYY'
-export type TimeFormat = '24-hour' | '12-hour'
+export const DATE_FORMATS = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY'] as const
+export const TIME_FORMATS = ['24-hour', '12-hour'] as const
 
-export const DATE_FORMATS: DateFormat[] = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY']
-export const TIME_FORMATS: TimeFormat[] = ['24-hour', '12-hour']
+export type DateFormat = typeof DATE_FORMATS[number]
+export type TimeFormat = typeof TIME_FORMATS[number]
 
 interface SettingsState {
   // theme settings
