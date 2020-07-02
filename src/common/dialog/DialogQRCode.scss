@@ -1,7 +1,14 @@
-@import '../../partial';
+@import '../../partial', '../../vars';
 
 .DialogQRCode {
   margin-bottom: 20px;
+  transition: filter $transition-duration;
+
+  &.blurred {
+    transition: filter $transition-duration;
+    pointer-events: none;
+    filter: blur(4px);
+  }
 
   .display {
     display: grid;

@@ -125,12 +125,12 @@ export const RemoteSettingsManager = (): JSX.Element => {
     })
 
     ipcListenToMain('update-config-failure', (_event, msg: string) => {
-      message.error(`Configuration update failed. Error: ${msg}`)
+      message.error(`Configuration update failed. Error: ${msg}`, 10)
       console.error(msg)
     })
 
     ipcListenToMain('restart-clients-failure', (_event, msg: string) => {
-      message.error(`Backend restart failed. Error: ${msg}`)
+      message.error(`Backend restart failed. Error: ${msg}`, 10)
       console.error(msg)
     })
   }, [])

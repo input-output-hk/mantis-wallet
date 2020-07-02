@@ -6,6 +6,7 @@ import {withRouterState} from './storybook-util/router-state-decorator'
 import {withBuildJobState} from './storybook-util/build-job-state-decorator'
 import {Settings} from './Settings'
 import {RestartPrompt} from './RemoteSettingsManager'
+import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
 
 export default {
   title: 'Settings',
@@ -16,4 +17,12 @@ export const settings = (): JSX.Element => <Settings />
 
 export const restartPrompt = (): JSX.Element => (
   <RestartPrompt onCancel={action('onCancel')} onRestart={action('onRestart')} visible />
+)
+
+export const exportPrivateKeyModal = (): JSX.Element => (
+  <ExportPrivateKeyModal
+    getSpendingKey={async () => 'example-spending-key'}
+    onCancel={action('onCancel')}
+    visible
+  />
 )

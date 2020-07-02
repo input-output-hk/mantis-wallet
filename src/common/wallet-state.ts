@@ -78,6 +78,7 @@ export interface LoadedState {
   getOverviewProps: () => Overview
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
+  getSpendingKey: (secrets: PassphraseSecrets) => Promise<string>
   lock: (secrets: PassphraseSecrets) => Promise<boolean>
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
@@ -455,6 +456,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return removed
   }
 
+  const getSpendingKey = async (secrets: PassphraseSecrets): Promise<string> => {
+    const {spendingKey} = await wallet.getSpendingKey(secrets)
+    return spendingKey
+  }
+
   const getBurnAddress = async (
     address: string,
     chain: Chain,
@@ -507,6 +513,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     restoreFromSpendingKey,
     restoreFromSeedPhrase,
     remove,
+    getSpendingKey,
     getBurnAddress,
     transparentAccounts,
   }

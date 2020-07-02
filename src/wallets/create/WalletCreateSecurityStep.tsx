@@ -40,9 +40,11 @@ export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecur
         checked={useSpendingKey}
         onChange={setUseSpendingKey}
       />
-      {useSpendingKey && (
-        <DialogQRCode content={spendingKey} downloadFileName="Luna-wallet-spending-key" />
-      )}
+      <DialogQRCode
+        content={spendingKey}
+        downloadFileName="Luna-wallet-spending-key"
+        blurred={!useSpendingKey}
+      />
     </Dialog>
   )
 }

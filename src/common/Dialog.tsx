@@ -33,6 +33,7 @@ interface DialogProps {
   onSetLoading?: (loading: boolean) => void
   footer?: React.ReactNode
   helpURL?: string | null
+  className?: string
 }
 
 export interface DialogState {
@@ -71,6 +72,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   onSetLoading,
   footer,
   helpURL = null,
+  className = '',
 }: React.PropsWithChildren<DialogProps>) => {
   const {errorMessage, setErrorMessage, dialogForm} = DialogState.useContainer()
 
@@ -127,7 +129,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   }
 
   return (
-    <div className={classnames('Dialog', type)}>
+    <div className={classnames('Dialog', type, ...className)}>
       {title && <div className="title">{title}</div>}
       <Form form={dialogForm} onValuesChange={() => setErrorMessage('')}>
         <div className="dialog-children">{children}</div>

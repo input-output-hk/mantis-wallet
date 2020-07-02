@@ -232,6 +232,7 @@ export interface WalletAPI {
   lock(secrets: PassphraseSecrets): boolean
   restoreFromSeedPhrase(secrets: SeedPhrase & PassphraseSecrets): boolean
   restoreFromSpendingKey(secrets: SpendingKey & PassphraseSecrets): boolean
+  getSpendingKey(secrets: PassphraseSecrets): SpendingKey
   remove(secrets: PassphraseSecrets): boolean
 
   // balances

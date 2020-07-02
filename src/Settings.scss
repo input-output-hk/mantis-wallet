@@ -49,4 +49,9 @@
       padding: 0.5rem 0 0;
     }
   }
+
+  .export-private-key {
+    @extend %link;
+    font-size: 12px;
+  }
 }

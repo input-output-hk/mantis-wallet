@@ -4,15 +4,19 @@ import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {SettingsState, TIME_FORMATS, DATE_FORMATS} from './settings-state'
 import {IPCToRendererChannelName} from './shared/ipc-types'
-import {withStatusGuard} from './common/wallet-status-guard'
+import {LoadedState} from './common/wallet-state'
+import {withStatusGuard, PropsWithWalletState} from './common/wallet-status-guard'
 import {updateMiningConfig, ipcRemoveAllListeners, ipcListenToMain} from './common/ipc-util'
 import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {NoWallet} from './wallets/NoWallet'
+import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
 import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
 import {loadLunaManagedConfig} from './config/renderer'
 import {LunaManagedConfig} from './config/type'
 import './Settings.scss'
+
+type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
 
 const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
@@ -23,7 +27,7 @@ const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.E
   )
 }
 
-const _Settings = (): JSX.Element => {
+const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   const {
     theme,
     switchTheme,
@@ -33,32 +37,22 @@ const _Settings = (): JSX.Element => {
     setDateFormat,
   } = SettingsState.useContainer()
 
+  const [activeModal, setActiveModal] = useState<ModalId>('none')
+
   const [lunaManagedConfig, setLunaManagedConfig] = useState<LunaManagedConfig>(
     loadLunaManagedConfig(),
   )
-  const [miningConfigModalShown, setMiningConfigModalShown] = useState<boolean>(false)
-
   const reloadConfig = (): void => setLunaManagedConfig(loadLunaManagedConfig())
   const reloadTriggers: IPCToRendererChannelName[] = ['disable-mining-success']
 
   useEffect(() => {
-    // subscribe on mount
     reloadTriggers.forEach((channel) => ipcListenToMain(channel, reloadConfig))
-
-    // unsubscribe on unmount
     return () => reloadTriggers.forEach(ipcRemoveAllListeners)
   }, [])
 
-  const updateMiningState = (miningEnabled: boolean): void => {
-    if (!miningEnabled) {
-      updateMiningConfig(null)
-    } else {
-      setMiningConfigModalShown(true)
-    }
-  }
-
   return (
     <SettingsWrapper>
+      {/* Theme */}
       <div className="settings-item">
         <div className="settings-label">Enable Dark Mode</div>
         <div className="settings-input">
@@ -68,15 +62,25 @@ const _Settings = (): JSX.Element => {
           />
         </div>
       </div>
+
+      {/* Mining */}
       <div className="settings-item">
         <div className="settings-label">Enable Mining</div>
         <div className="settings-input">
           <Switch
             checked={lunaManagedConfig.miningEnabled}
-            onChange={(checked) => updateMiningState(checked)}
+            onChange={(miningEnabled) => {
+              if (miningEnabled) {
+                setActiveModal('MiningConfig')
+              } else {
+                updateMiningConfig(null)
+              }
+            }}
           />
         </div>
       </div>
+
+      {/* Datetime */}
       <div className="settings-item">
         <DialogDropdown
           label="Date Format"
@@ -95,11 +99,26 @@ const _Settings = (): JSX.Element => {
           type="small"
         />
       </div>
+      <div className="settings-item">
+        <div className="settings-label">Export</div>
+        <div className="settings-input">
+          <span className="export-private-key" onClick={() => setActiveModal('ExportPrivateKey')}>
+            Export Private Key
+          </span>
+        </div>
+      </div>
+
+      {/* Modals */}
+      <ExportPrivateKeyModal
+        visible={activeModal === 'ExportPrivateKey'}
+        getSpendingKey={walletState.getSpendingKey}
+        onCancel={() => setActiveModal('none')}
+      />
       <MiningConfigModal
-        visible={miningConfigModalShown}
+        visible={activeModal === 'MiningConfig'}
         onCancel={() => {
           miningConfigChannels.forEach(ipcRemoveAllListeners)
-          setMiningConfigModalShown(false)
+          setActiveModal('none')
         }}
         onFinish={reloadConfig}
       />

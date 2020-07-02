@@ -50,7 +50,7 @@ class MockWallet implements WalletAPI {
   currentBlock = 0
   walletExists = true
   isLocked = false
-  passphrase = ''
+  passphrase = 'Foobar1234'
   transactions: Transaction[] = []
 
   create(secrets: PassphraseSecrets): SpendingKey & SeedPhrase {
@@ -89,6 +89,13 @@ class MockWallet implements WalletAPI {
     this._existGuard()
     if (passphrase === this.passphrase) this.walletExists = false
     return !this.walletExists
+  }
+
+  getSpendingKey({passphrase}: PassphraseSecrets): SpendingKey {
+    this._existGuard()
+    this._lockGuard()
+    if (passphrase === this.passphrase) throw Error('Incorrect passowrd')
+    return {spendingKey: 'test-spending-key'}
   }
 
   // balances

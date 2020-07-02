@@ -191,6 +191,7 @@ export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
     <DialogQRCode
       content={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
       downloadFileName={text('Download file name', 'your-private-key')}
+      blurred={boolean('Blurred', false)}
     />
   </Dialog>
 )
