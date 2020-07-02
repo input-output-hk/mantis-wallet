@@ -1,12 +1,13 @@
 import {useEffect, useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {none, some, Option, isNone, getOrElse} from 'fp-ts/lib/Option'
+import {none, some, Option, isNone, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {makeWeb3Worker, Web3API} from '../web3'
 import {waitUntil} from '../shared/utils'
 import {updateNetworkTag} from './ipc-util'
 import {rendererLog} from './logger'
+import {optionHasValue} from './util'
 
 export interface BackendState {
   refresh(): Promise<void>
@@ -43,14 +44,22 @@ function useBackendState(initialState?: Partial<BackendStateParams>): BackendSta
 
   const refresh = async (): Promise<void> => {
     try {
-      const isMining = await eth.mining
-      const hashrate = await eth.hashrate
-      setMining(some(isMining))
-      setHashrate(some(hashrate))
+      const newIsMining = await eth.mining
+      const newHashrate = await eth.hashrate
+      if (!optionHasValue(isMining, newIsMining)) {
+        rendererLog.debug(`Updated mining status: ${newIsMining}`)
+        setMining(some(newIsMining))
+      }
+      if (!optionHasValue(isMining, newIsMining)) {
+        rendererLog.debug(`Updated mining hashrate: ${newHashrate}`)
+        setHashrate(some(newHashrate))
+      }
     } catch (e) {
       rendererLog.error(e)
-      setMining(none)
-      setHashrate(none)
+      if (isSome(isMining) || isSome(hashrate)) {
+        setMining(none)
+        setHashrate(none)
+      }
     }
   }
 

@@ -225,7 +225,13 @@ function useProofOfBurnState(
     }
 
     const newBurnStatuses = await Promise.all(burnWatchers.map(getBurnStatuses))
-    setBurnStatuses(_.fromPairs(newBurnStatuses))
+    const newBurnStatusesAsMap = _.fromPairs(newBurnStatuses)
+
+    // Avoid unnecessary updates
+    if (!_.isEqual(burnStatuses, newBurnStatusesAsMap)) {
+      rendererLog.debug('New burn statuses', newBurnStatusesAsMap)
+      setBurnStatuses(newBurnStatusesAsMap)
+    }
   }
 
   const refresh = async (): Promise<void> => refreshBurnStatus()

@@ -2,6 +2,8 @@ import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import * as bech32 from 'bech32-buffer'
 import _ from 'lodash'
+import {elem, Option} from 'fp-ts/lib/Option'
+import {fromEquals} from 'fp-ts/lib/Eq'
 import fileSize from 'filesize'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
@@ -208,3 +210,15 @@ export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntV
   const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-shl-ad`
   return createAddressValidator(prefix, 43, 'Invalid confidential address')
 }
+
+/**
+ * Return true if Option<T> contains value of type T
+ * e.g.
+ * ```
+ * optionHasValue(some(1), 1) === true
+ * optionHasValue(some(2), 1) === false
+ * optionHasValue(none, 1) === false
+ * ```
+ */
+export const optionHasValue = <T>(option: Option<T>, value: T): boolean =>
+  elem(fromEquals(_.isEqual))(value, option)

@@ -110,7 +110,7 @@ const orderConfigs: Record<SortableProperty, Ord<Transaction>> = {
   ),
 }
 
-const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element => {
+const _TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element => {
   const [detailsShown, setDetailsShown] = useState<boolean>(false)
 
   return (
@@ -130,6 +130,7 @@ const TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element 
     </div>
   )
 }
+const TransactionRow = React.memo(_TransactionRow, _.isEqual)
 
 const getOrd = ({direction, property}: SortBy): Ord<Transaction> => {
   return direction === 'asc' ? orderConfigs[property] : getDualOrd(orderConfigs[property])
