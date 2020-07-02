@@ -13,6 +13,7 @@ import _ from 'lodash/fp'
 import {setProcessStatus} from './status'
 import {readableToObservable} from './streamUtils'
 import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
+import {mainLog} from './logger'
 
 export const isWin = os.platform() === 'win32'
 
@@ -24,10 +25,10 @@ interface ChildProcess extends childProcess.ChildProcess {
 
 export class SpawnedMidnightProcess {
   constructor(public name: ClientName, private childProcess: ChildProcess) {
-    console.info(`Spawned ${name}, PID: ${childProcess.pid}`)
+    mainLog.info(`Spawned ${name}, PID: ${childProcess.pid}`)
     setProcessStatus(name, {pid: childProcess.pid, status: 'running'})
-    childProcess.on('close', (code) => console.info('exited with', code))
-    childProcess.on('error', (err) => console.error(err))
+    childProcess.on('close', (code) => mainLog.info('exited with', code))
+    childProcess.on('error', (err) => mainLog.error(err))
   }
 
   log$: Observable<string> = pipe(
@@ -44,18 +45,18 @@ export class SpawnedMidnightProcess {
     !this.childProcess.killed && this.childProcess.exitCode === null
 
   kill = async (): Promise<void> => {
-    console.info(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
+    mainLog.info(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
     if (isWin) {
       const javaPid = await promisify(psTree)(this.childProcess.pid).then(
         (children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID,
       )
       if (javaPid) {
-        console.info(`...killing Java process for ${this.name} on Win with PID ${javaPid}`)
+        mainLog.info(`...killing Java process for ${this.name} on Win with PID ${javaPid}`)
         process.kill(parseInt(javaPid))
       }
     }
     if (this.childProcess.exitCode !== null) {
-      console.info(`...already exited with exit code ${this.childProcess.exitCode}`)
+      mainLog.info(`...already exited with exit code ${this.childProcess.exitCode}`)
     }
     return generate({
       initialState: 0,
@@ -115,7 +116,7 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
         Object.entries,
         array.map(([key, value]) => `-D${key}=${value}`),
       )
-      console.info(
+      mainLog.info(
         `spawning ${name} (from ${
           processConfig.packageDirectory
         }): ${executablePath} ${settingsAsArguments.join(' ')}`,

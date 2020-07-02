@@ -1,6 +1,18 @@
+import log from 'electron-log'
 import {copyToClipboard} from './common/clipboard'
 
+const mockedLogger = (): log.ElectronLog => {
+  const mockedLogger = log.create('test-logger')
+
+  // eslint-disable-next-line fp/no-mutation
+  mockedLogger.transports.file.level = false
+
+  return mockedLogger
+}
+
 jest.mock('./common/clipboard', () => ({copyToClipboard: jest.fn()}))
+jest.mock('./common/logger', () => ({rendererLog: mockedLogger()}))
+jest.mock('./main/logger', () => ({mainLog: mockedLogger()}))
 
 // Workaround suggested by the official manual
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom

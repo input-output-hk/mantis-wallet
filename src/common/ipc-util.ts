@@ -6,6 +6,7 @@ import {
   LunaManagedConfigPaths,
 } from '../shared/ipc-types'
 import {getContractAddresses} from '../config/renderer'
+import {rendererLog} from './logger'
 
 // General typed wrappers
 
@@ -45,7 +46,7 @@ export const updateNetworkTag = (networkTag: NetworkTag): void => {
 export const updateSelectedNetworkConfig = (selectedNetwork: string): void => {
   const contractAddresses = getContractAddresses()
   if (!(selectedNetwork in contractAddresses)) {
-    return console.error(
+    return rendererLog.error(
       `Invalid network: "${selectedNetwork}". Valid networks: ${Object.keys(contractAddresses)}`,
     )
   }

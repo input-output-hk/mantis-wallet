@@ -2,6 +2,8 @@ import {pipe as rxPipe} from 'rxjs'
 import {Option} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {option} from 'fp-ts'
+import _ from 'lodash/fp'
+import log from 'electron-log'
 
 /**
  * Run a callback and return input. This function is really helpful for:
@@ -81,3 +83,36 @@ export const waitUntil = async (conditionFn: () => Promise<boolean>, ms = 100): 
     await waitUntil(conditionFn, ms)
   }
 }
+
+/**
+ * Create logger
+ */
+/* eslint-disable fp/no-mutation */
+export const createLogger = (
+  logId: string,
+  resolvePath: log.FileTransport['resolvePath'],
+): ReturnType<typeof log.create> => {
+  const logger = log.create(logId)
+
+  logger.transports.file.resolvePath = resolvePath
+  logger.transports.file.level = 'info'
+  logger.transports.file.depth = 10
+  logger.transports.file.format = (message) => {
+    return JSON.stringify({
+      time: message.date.getTime(),
+      level: message.level,
+      data: message.data.map((v) =>
+        _.isError(v)
+          ? {
+              name: v.name,
+              message: v.message,
+              stack: v.stack,
+            }
+          : v,
+      ),
+    })
+  }
+
+  return logger
+}
+/* eslint-enable fp/no-mutation  */

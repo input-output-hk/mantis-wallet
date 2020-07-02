@@ -4,6 +4,7 @@ import {createContainer} from 'unstated-next'
 import {Remote} from 'comlink'
 import {message} from 'antd'
 import {makeWeb3Worker, Web3API, JobStatus} from '../web3'
+import {rendererLog} from './logger'
 
 type BuiltCallback = (txHash: string) => void
 
@@ -63,7 +64,7 @@ function useBuildJobState(initialState?: Partial<BuildJobStateParams>): BuildJob
         callbacks[jobStatus.hash](jobStatus.txHash)
       } else if (jobStatus.status == 'failed') {
         message.error({content: jobStatus.reason, duration: 10}) // FIXME: handle in JobStatus component
-        console.error(jobStatus.reason)
+        rendererLog.error(jobStatus.reason)
       }
     })
   }

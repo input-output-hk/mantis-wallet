@@ -20,6 +20,7 @@ import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import {UNITS} from '../../common/units'
 import {LunaModal} from '../../common/LunaModal'
+import {rendererLog} from '../../common/logger'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
@@ -79,8 +80,8 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
 
   if (minFee.isZero() && compatibleProvers.length > 0) {
-    console.error('Something went wrong, the prover has 0 reward set.')
-    console.error(prover)
+    rendererLog.error('Something went wrong, the prover has 0 reward set.')
+    rendererLog.error(prover)
   }
 
   const feeError =

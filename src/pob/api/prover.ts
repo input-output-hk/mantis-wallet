@@ -8,6 +8,7 @@ import {BurnWatcher} from '../pob-state'
 import {ChainId} from '../chains'
 import {wait} from '../../shared/utils'
 import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
+import {rendererLog} from '../../common/logger'
 
 function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
   return t.union([type, t.null, t.undefined])
@@ -108,7 +109,7 @@ export const prettyErrorMessage = (
   error: Error,
   prettyApiError: (apiError: ProverApiError) => string = (e) => e.message,
 ): string => {
-  console.error(error)
+  rendererLog.error(error)
 
   if (tPromise.isDecodeError(error)) {
     return 'Unexpected response from prover.'

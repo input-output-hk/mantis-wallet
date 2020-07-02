@@ -17,6 +17,7 @@ import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse, CallPar
 import {Period} from './Period'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
+import {rendererLog} from '../common/logger'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -258,14 +259,14 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   }
 
   const refreshConstants = async (): Promise<void> => {
-    console.info('Attempting to load Glacier Drop constants')
+    rendererLog.info('Attempting to load Glacier Drop constants')
     loadConstants()
       .then((c) => {
         setConstants(some(c))
         setConstantsError(none)
       })
       .catch((e) => {
-        console.error(e.message)
+        rendererLog.error(e)
         setConstantsError(some(e.message))
       })
   }
@@ -563,7 +564,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     }
 
     const unlockCallParams = getUnlockCallParams(claim, {gasLimit, gasPrice})
-    console.info({unlockCallParams})
+    rendererLog.info({unlockCallParams})
 
     const {jobHash} = await wallet.callContract(unlockCallParams, false)
 
@@ -613,7 +614,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     }
 
     const withdrawCallParams = getWithdrawCallParams(claim, {gasLimit, gasPrice})
-    console.info({withdrawCallParams})
+    rendererLog.info({withdrawCallParams})
 
     const {jobHash} = await wallet.callContract(withdrawCallParams, false)
 

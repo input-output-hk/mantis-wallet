@@ -36,7 +36,7 @@ module.exports = {
     'camelcase': 0,
     'no-use-before-define': 0,
     'max-len': 0,
-    'no-console': 0,
+    'no-console': 'warn',
     'comma-dangle': 0,
     'guard-for-in': 0,
     'indent': 0,

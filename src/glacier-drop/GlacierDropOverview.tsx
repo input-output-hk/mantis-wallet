@@ -35,6 +35,7 @@ import {ClaimRow} from './ClaimRow'
 import {Epochs} from './Epochs'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
+import {rendererLog} from '../common/logger'
 import './GlacierDropOverview.scss'
 
 const availableChains: DisplayChain[] = [ETC_CHAIN]
@@ -166,7 +167,7 @@ const _GlacierDropOverview = ({
         makeDesktopNotification('PoW Puzzle Complete')
       }
     } catch (e) {
-      console.error(e)
+      rendererLog.error(e)
     }
   }, MINING_STATUS_CHECK_INTERVAL)
 
@@ -186,7 +187,7 @@ const _GlacierDropOverview = ({
   }
 
   useEffect(() => {
-    update().catch(console.error)
+    update().catch(rendererLog.error)
 
     if (isSome(constantsError)) {
       refreshConstants()
@@ -222,7 +223,7 @@ const _GlacierDropOverview = ({
   // Callbacks
 
   const startPuzzle = (claim: IncompleteClaim): void => {
-    addClaim(claim).then((addedClaim: SolvingClaim) => console.info({addedClaim}))
+    addClaim(claim).then((addedClaim: SolvingClaim) => rendererLog.info({addedClaim}))
   }
 
   const chooseChain = (_chain: DisplayChain): void => {

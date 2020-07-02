@@ -14,6 +14,7 @@ import {GlacierState} from './glacier-drop/glacier-state'
 import {updateSelectedNetworkConfig} from './common/ipc-util'
 import {BorderlessInput} from './common/BorderlessInput'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
+import {rendererLog} from './common/logger'
 import './ApiTest.scss'
 
 const web3 = makeWeb3Worker()
@@ -53,11 +54,11 @@ export const ApiTest = (): JSX.Element => {
 
     fn()
       .then((result: unknown) => {
-        console.info(result)
+        rendererLog.info(result)
         setMessage(JSON.stringify(result, null, 2))
       })
       .catch((e: Error) => {
-        console.error(e)
+        rendererLog.error(e)
         setMessage(e.message)
       })
   }

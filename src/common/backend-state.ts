@@ -6,6 +6,7 @@ import {Remote} from 'comlink'
 import {makeWeb3Worker, Web3API} from '../web3'
 import {waitUntil} from '../shared/utils'
 import {updateNetworkTag} from './ipc-util'
+import {rendererLog} from './logger'
 
 export interface BackendState {
   refresh(): Promise<void>
@@ -47,7 +48,7 @@ function useBackendState(initialState?: Partial<BackendStateParams>): BackendSta
       setMining(some(isMining))
       setHashrate(some(hashrate))
     } catch (e) {
-      console.error(e)
+      rendererLog.error(e)
       setMining(none)
       setHashrate(none)
     }

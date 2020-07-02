@@ -36,6 +36,7 @@ import {getTitle, ipcListenToRenderer} from './util'
 import {inspectLineForDAGStatus, setFetchParamsStatus, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 import {saveLogsArchive} from './log-exporter'
+import {mainLog} from './logger'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -80,12 +81,10 @@ function createRemixWindow(): void {
 }
 
 function createWindow(): void {
-  // Debug logs
-  const toLog = {
+  mainLog.info({
     versions: process.versions,
     config,
-  }
-  console.dir(toLog, {depth: 4})
+  })
 
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
@@ -177,7 +176,7 @@ ipcListenToRenderer(
       await updateConfig({[keyPath]: value})
       event.reply('update-config-success')
     } catch (e) {
-      console.error(e)
+      mainLog.error(e)
       event.reply('update-config-failure', e.message)
     }
   },
@@ -185,7 +184,7 @@ ipcListenToRenderer(
 
 ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | null) => {
   if (!spendingKey) {
-    console.info('Disabling mining')
+    mainLog.info('Disabling mining')
     try {
       await updateConfig({miningEnabled: false})
     } catch (e) {
@@ -194,7 +193,7 @@ ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | 
     event.reply('disable-mining-success')
     event.reply('update-config-success')
   } else {
-    console.info(`Enabling mining with spending key: ${spendingKey}`)
+    mainLog.info(`Enabling mining with spending key: ${spendingKey}`)
     try {
       const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
       await updateConfig({miningEnabled: true, ...coinbaseParams})
@@ -227,7 +226,7 @@ ipcListenToRenderer('save-debug-logs', async (event) => {
     saveLogsArchive(filePath)
     event.reply('save-debug-logs-success', filePath)
   } catch (e) {
-    console.error(e)
+    mainLog.error(e)
     event.reply('save-debug-logs-failure', e.message)
   }
 })
@@ -243,7 +242,7 @@ if (!config.runClients) {
         tlsDataPromise
           .then((tlsData) => registerCertificateValidationHandler(app, tlsData, config.rpcAddress))
           .catch((error) => {
-            console.error(error)
+            mainLog.error(error)
             dialog.showErrorBox('Luna startup error', error.message)
             app.exit(1)
           }),
@@ -264,7 +263,7 @@ if (config.runClients) {
     }))
     .catch(
       async (e): Promise<never> => {
-        console.error(e)
+        mainLog.error(e)
         await dialog.showErrorBox('Luna startup error', e.message)
         app.exit(1)
         // Little trick to make typechecker see that this promise cannot contain undefined
@@ -276,7 +275,7 @@ if (config.runClients) {
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
-    console.info('Fetching zkSNARK parameters')
+    mainLog.info('Fetching zkSNARK parameters')
     setFetchParamsStatus('running')
     const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
@@ -285,12 +284,12 @@ if (config.runClients) {
     })
       .then(({stdout, stderr}) => {
         setFetchParamsStatus('finished')
-        console.info(stdout)
-        console.error(stderr)
+        if (stdout) mainLog.info(stdout)
+        if (stderr) mainLog.error(stderr)
       })
       .catch((error) => {
         setFetchParamsStatus('failed')
-        console.error(error)
+        mainLog.error(error)
         dialog.showErrorBox('Luna startup error', 'Failed to fetch zkSNARK parameters')
         app.exit(1)
         return Promise.reject(error)
@@ -317,7 +316,7 @@ if (config.runClients) {
       }),
       (logs) => scheduled(logs, asapScheduler),
       mergeAll(),
-    ).subscribe(console.info)
+    ).subscribe(console.info) // eslint-disable-line no-console
   }
 
   function spawnClients(additionalSettings: SettingsPerClient): void {
@@ -356,13 +355,13 @@ if (config.runClients) {
       .then(_.mergeAll)
       .then(spawnClients)
       .catch((error) => {
-        console.error(error)
+        mainLog.error(error)
         return Promise.reject(error)
       })
 
   async function restartClients(): Promise<void> {
     if (!shuttingDown) {
-      console.info('restarting clients')
+      mainLog.info('restarting clients')
       return killClients()
         .then(() => wait(500))
         .then(startClients)
@@ -390,7 +389,7 @@ if (config.runClients) {
     try {
       await killClients()
     } catch (e) {
-      console.error(e)
+      mainLog.error(e)
       event.reply('restart-clients-failure', e.message)
     }
   })

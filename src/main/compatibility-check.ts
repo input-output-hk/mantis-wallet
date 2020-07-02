@@ -6,6 +6,7 @@ import rimraf from 'rimraf'
 import {app, dialog} from 'electron'
 import {DATADIR_VERSION, COMPATIBLE_VERSIONS} from '../shared/version'
 import {config} from '../config/main'
+import {mainLog} from './logger'
 
 const versionFilePath = path.resolve(config.dataDir, 'version.txt')
 
@@ -24,8 +25,8 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   try {
     const datadirVersion = (await fs.readFile(versionFilePath, 'utf8')).trim()
     const coercedVersion = coerce(datadirVersion)
-    console.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
-    console.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
+    mainLog.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
+    mainLog.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
     const isCompatible = satisfies(coercedVersion || datadirVersion, COMPATIBLE_VERSIONS)
 
     return {
@@ -33,7 +34,7 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
       datadirVersion,
     }
   } catch (e) {
-    console.error(e)
+    mainLog.error(e)
     if (e.code !== 'ENOENT') {
       // Abort in case the problem is not that it doesn't exist
       throw e

@@ -13,6 +13,7 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {LINKS} from '../../external-link-config'
 import {Asset} from './Asset'
+import {rendererLog} from '../../common/logger'
 import './ClaimWith.scss'
 
 export const INVALID_SIGNED_MESSAGE_TEXT = 'Invalid signed message'
@@ -27,7 +28,7 @@ const signedMessageToAuthSignature = (signedMessage: string): AuthorizationSigna
       s: bufferToHex(s),
     }
   } catch (e) {
-    console.error(e)
+    rendererLog.error(e)
     throw Error(INVALID_SIGNED_MESSAGE_TEXT)
   }
 }
