@@ -5,22 +5,10 @@ import {status} from './status'
 import {ClientName} from '../config/type'
 import {config, loadLunaManagedConfig} from '../config/main'
 
-const getBackendLogPath = (clientName: ClientName, filename: string): string =>
-  path.join(
-    config.dataDir,
-    config.clientConfigs[clientName].dataDir.directoryName,
-    'logs',
-    filename,
-  )
-
-const getLunaLogPath = (filename: string): string => path.join(config.dataDir, 'logs', filename)
+const getBackendLogPath = (clientName: ClientName): string =>
+  path.join(config.dataDir, config.clientConfigs[clientName].dataDir.directoryName, 'logs')
 
 export const saveLogsArchive = (filePath: string): void => {
-  // Collect logs
-  const nodeLogsPath = getBackendLogPath('node', 'midnight.log')
-  const walletLogsPath = getBackendLogPath('wallet', 'midnight-wallet.log')
-  const mainLogsPath = getLunaLogPath('main.log')
-  const rendererLogsPath = getLunaLogPath('renderer.log')
   const lunaStatus = JSON.stringify(
     {config, status, lunaManagedConfig: loadLunaManagedConfig()},
     null,
@@ -32,10 +20,9 @@ export const saveLogsArchive = (filePath: string): void => {
     zlib: {level: 9},
   })
 
-  archive.append(fs.createReadStream(nodeLogsPath), {name: 'midnight.log'})
-  archive.append(fs.createReadStream(walletLogsPath), {name: 'midnight-wallet.log'})
-  archive.append(fs.createReadStream(mainLogsPath), {name: 'luna-main.log'})
-  archive.append(fs.createReadStream(rendererLogsPath), {name: 'luna-renderer.log'})
+  archive.directory(getBackendLogPath('node'), false)
+  archive.directory(getBackendLogPath('wallet'), false)
+  archive.directory(path.join(config.dataDir, 'logs'), false)
   archive.append(lunaStatus, {name: 'luna-status.log'})
 
   const output = fs.createWriteStream(filePath)
