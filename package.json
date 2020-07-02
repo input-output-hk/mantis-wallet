@@ -1,7 +1,7 @@
 {
   "name": "luna-wallet",
   "productName": "Luna",
-  "version": "0.13.2",
+  "version": "0.13.3-rc0",
   "compatibleMidnightVersions": "0.13.x",
   "private": true,
   "engines": {
