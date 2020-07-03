@@ -54,7 +54,7 @@ interface RedeemTxDetails {
 
 interface TransparentTransaction {
   nonce: string // hex string
-  gasPrice: string // hex string
+  gasPrice: number
   gasLimit: string // hex string
   receivingAddress: string | null // bech32 string
   sendingAddress: string // bech32 string
