@@ -1,7 +1,7 @@
 import {promisify} from 'util'
 import path from 'path'
 import {promises as fs, constants as fsConstants} from 'fs'
-import {satisfies} from 'semver'
+import {satisfies, coerce} from 'semver'
 import rimraf from 'rimraf'
 import {app, dialog} from 'electron'
 import {DATADIR_VERSION, COMPATIBLE_VERSIONS} from '../shared/version'
@@ -23,10 +23,13 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   // Load dataDir version and check if it's compatible
   try {
     const datadirVersion = (await fs.readFile(versionFilePath, 'utf8')).trim()
-    console.info(`Data dir version: ${datadirVersion}`)
+    const coercedVersion = coerce(datadirVersion)
+    console.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
     console.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
+    const isCompatible = satisfies(coercedVersion || datadirVersion, COMPATIBLE_VERSIONS)
+
     return {
-      isCompatible: satisfies(datadirVersion, COMPATIBLE_VERSIONS),
+      isCompatible,
       datadirVersion,
     }
   } catch (e) {
