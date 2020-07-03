@@ -187,10 +187,10 @@ div#root {
   }
 }
 
-.ant-popover-arrow {
+.ant-popover > .ant-popover-content > .ant-popover-arrow {
   @include themify($themes) {
-    border-color: themed('text-color') !important;
-    background: themed('text-color') !important;
+    border-color: themed('text-color');
+    background: themed('text-color');
   }
 }
 

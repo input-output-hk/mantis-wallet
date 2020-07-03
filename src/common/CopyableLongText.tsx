@@ -19,7 +19,11 @@ export const CopyableLongText = ({
   content ? (
     <div className="CopyableLongText">
       {showQrCode && (
-        <Popover content={<QRCode value={content} />} placement="top">
+        <Popover
+          content={<QRCode value={content} />}
+          placement="top"
+          overlayClassName="qr-code-popover"
+        >
           <QrcodeOutlined className="clickable" />
         </Popover>
       )}
