@@ -1,0 +1,44 @@
+@import '../partial', '../themify';
+
+$group-margin: 1.5rem;
+
+.WalletError {
+  .header {
+    margin-bottom: $group-margin;
+  }
+
+  .error-msg {
+    @extend %monospace;
+    font-size: 18px;
+
+    @include themify($themes) {
+      color: themed('error-color');
+    }
+  }
+
+  .show-stacktrace {
+    @extend %link;
+
+    margin-bottom: $group-margin;
+    font-size: 12px;
+  }
+
+  .stacktrace {
+    @extend %monospace;
+
+    max-height: 250px;
+    margin: 0.5rem 0 $group-margin 0;
+    padding: 0.7em 1em;
+    overflow: auto;
+    white-space: pre;
+
+    @include themify($themes) {
+      border: 1px solid themed('border-color-base');
+      background-color: themed('quaternary-background');
+    }
+  }
+
+  .retry-countdown {
+    margin-bottom: 0.5rem;
+  }
+}
