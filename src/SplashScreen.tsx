@@ -6,6 +6,7 @@ import {config, loadLunaManagedConfig, loadLunaStatus} from './config/renderer'
 import {SettingsState} from './settings-state'
 import {useInterval} from './common/hook-utils'
 import {StatusModal} from './common/StatusModal'
+import {rendererLog} from './common/logger'
 import './SplashScreen.scss'
 
 const getStatusMessage = (lunaStatus: LunaStatus): string => {
@@ -20,8 +21,8 @@ const getStatusMessage = (lunaStatus: LunaStatus): string => {
   }
 
   // this is just a safe fallback, the code shouldn't get here
-  console.warn('Unexpected backend status...')
-  console.warn(lunaStatus)
+  rendererLog.warn('Unexpected backend status...')
+  rendererLog.warn(lunaStatus)
   return 'Loading'
 }
 

@@ -8,6 +8,7 @@ import {
   DependencyList,
 } from 'react'
 import {Store} from './store'
+import {rendererLog} from './logger'
 
 export const useIsMounted = (): RefObject<boolean> => {
   const isMounted = useRef(false)
@@ -75,7 +76,7 @@ export function useAsyncUpdate<T>(
       })
       .catch((error) => {
         if (error !== SKIP_UPDATE) {
-          console.error(error)
+          rendererLog.error(error)
           if (isSubscribed) {
             setProgress({error, isPending: false})
           }

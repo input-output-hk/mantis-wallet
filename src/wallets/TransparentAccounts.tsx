@@ -10,6 +10,7 @@ import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import {Transaction} from '../web3'
 import {TransactionList} from './TransactionList'
+import {rendererLog} from '../common/logger'
 import './TransparentAccounts.scss'
 
 interface ShowAccountProps {
@@ -141,7 +142,7 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
                 await generateAddress()
                 message.success('New transparent address was generated')
               } catch (e) {
-                console.error(e)
+                rendererLog.error(e)
                 message.error(<div style={{width: '500px', float: 'right'}}>{e.message}</div>, 10)
               } finally {
                 setAddressGenerationInProgress(false)

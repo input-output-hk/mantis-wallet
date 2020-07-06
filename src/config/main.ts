@@ -283,6 +283,8 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
     }))
     .forEach((configSource) => {
       if (!configSource.doesExist) {
+        // The path to log files is (might be) unknown at this moment, using logger is skipped
+        // eslint-disable-next-line no-console
         console.info(
           `Tried to load ${configSource.name}, (resolved to: ${configSource.path}) but it doesn't exist. Skipping`,
         )

@@ -18,6 +18,7 @@ import {
   ProcessConfig,
   SettingsPerClient,
 } from '../config/type'
+import {mainLog} from './logger'
 
 const keyStoreFilename = 'midnightCA.p12'
 const passwordFilename = 'password'
@@ -209,11 +210,11 @@ export function registerCertificateValidationHandler(
   app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isCertValid = verifyCertificate(tlsData, expectedUrl)(url, certificate)
     if (isCertValid) {
-      console.info('Self-signed cert verification passed. Accepting')
+      mainLog.info('Self-signed cert verification passed. Accepting')
       event.preventDefault()
       callback(true)
     } else {
-      console.info('Rejecting unknown certificate')
+      mainLog.info('Rejecting unknown certificate')
       callback(false)
     }
   })

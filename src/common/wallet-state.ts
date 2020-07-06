@@ -25,6 +25,7 @@ import {
 } from '../web3'
 import {BuildJobState} from './build-job-state'
 import {CHAINS_TO_USE_IN_POB} from '../pob/pob-config'
+import {rendererLog} from './logger'
 
 // API Types
 
@@ -281,7 +282,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     } else if (e.message === WALLET_DOES_NOT_EXIST) {
       setWalletStatus('NO_WALLET')
     } else {
-      console.error(e)
+      rendererLog.error(e)
       setErrorMsg(some(e.message))
       setWalletStatus('ERROR')
     }
@@ -314,7 +315,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
                 .balanceOf(bech32toHex(address.address))
                 .then((balance) => [id, deserializeBigNumber(balance)])
                 .catch((err) => {
-                  console.error(err)
+                  rendererLog.error(err)
                   return [id, new BigNumber(0)]
                 }),
             ),

@@ -8,6 +8,7 @@ import {ipcListenToMain, restartClients, updateMiningConfig} from './common/ipc-
 import {DialogInput} from './common/dialog/DialogInput'
 import {DialogError} from './common/dialog/DialogError'
 import {DialogMessage} from './common/dialog/DialogMessage'
+import {rendererLog} from './common/logger'
 import './RestartPrompt.scss'
 
 interface MiningConfigModalProps {
@@ -126,12 +127,12 @@ export const RemoteSettingsManager = (): JSX.Element => {
 
     ipcListenToMain('update-config-failure', (_event, msg: string) => {
       message.error(`Configuration update failed. Error: ${msg}`, 10)
-      console.error(msg)
+      rendererLog.error(msg)
     })
 
     ipcListenToMain('restart-clients-failure', (_event, msg: string) => {
       message.error(`Backend restart failed. Error: ${msg}`, 10)
-      console.error(msg)
+      rendererLog.error(msg)
     })
   }, [])
 

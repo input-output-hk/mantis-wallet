@@ -1,3 +1,5 @@
+import {rendererLog} from './logger'
+
 const DEFAULT_OPTIONS: NotificationOptions = {
   lang: 'en-US',
 }
@@ -8,8 +10,8 @@ export const makeDesktopNotification = (
   options: NotificationOptions = {},
 ): void => {
   if (body.length > 256) {
-    console.error('Notification body will be truncated on macOS (max 256 chars)')
-    console.info({notificationBody: body})
+    rendererLog.error('Notification body will be truncated on macOS (max 256 chars)')
+    rendererLog.info({notificationBody: body})
   }
 
   if (document.hasFocus()) {

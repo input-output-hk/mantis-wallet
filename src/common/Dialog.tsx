@@ -9,6 +9,7 @@ import {createContainer} from 'unstated-next'
 import {useIsMounted} from './hook-utils'
 import {DialogError} from './dialog/DialogError'
 import {waitUntil} from '../shared/utils'
+import {rendererLog} from './logger'
 import './Dialog.scss'
 
 // https://github.com/yiminghe/async-validator/#how-to-avoid-warning
@@ -101,7 +102,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
         }
         await onClick(event)
       } catch (e) {
-        if (e?.message !== DIALOG_VALIDATION_ERROR) console.error(e)
+        if (e?.message !== DIALOG_VALIDATION_ERROR) rendererLog.error(e)
         if (mounted.current) setErrorMessage(e.message)
       } finally {
         if (mounted.current) setInProgress(false)

@@ -20,6 +20,7 @@ import {usePersistedState} from '../common/hook-utils'
 import {Web3API, makeWeb3Worker} from '../web3'
 import {config} from '../config/renderer'
 import {prop} from '../shared/utils'
+import {rendererLog} from '../common/logger'
 
 export interface BurnWatcher {
   burnAddress: string
@@ -153,7 +154,7 @@ function useProofOfBurnState(
             rewards: _.mapValues(_.get('min_fee'))(chainInfos),
           }))
           .catch((err) => {
-            console.error(err)
+            rendererLog.error(err)
             return prover
           }),
       ),
@@ -178,7 +179,7 @@ function useProofOfBurnState(
       const tx = await web3.eth.getTransaction(txid)
       return _.get('blockNumber')(tx) || null
     } catch (err) {
-      console.error(err)
+      rendererLog.error(err)
       return null
     }
   }

@@ -5,6 +5,7 @@ import * as _ from 'lodash/fp'
 import {processEnv, processExecutablePath} from './MidnightProcess'
 import {LunaManagedConfig, ProcessConfig, SettingsPerClient} from '../config/type'
 import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
+import {mainLog} from './logger'
 
 const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
   `midnight.consensus.private-coinbase.${option}`
@@ -20,8 +21,8 @@ export async function getCoinbaseParams(
       cwd: walletBackendConfig.packageDirectory,
       env: processEnv(walletBackendConfig),
     })
-    console.info(stdout)
-    console.error(stderr)
+    if (stdout) mainLog.info(stdout)
+    if (stderr) mainLog.error(stderr)
 
     const parsed = JSON.parse(stdout)
     return {
@@ -30,7 +31,7 @@ export async function getCoinbaseParams(
       ovk: parsed[getPrivateCoinbaseOptionPath('ovk')],
     }
   } catch (e) {
-    console.error(e)
+    mainLog.error(e)
     throw Error('Possibly invalid spending key.')
   }
 }
@@ -38,8 +39,8 @@ export async function getCoinbaseParams(
 export async function updateConfig(toUpdate: Partial<LunaManagedConfig>): Promise<void> {
   const previousConfig = loadLunaManagedConfig()
   const newConfig = _.merge(previousConfig)(toUpdate)
-  console.info('Config changed')
-  console.info({previousConfig, newConfig})
+  mainLog.info('Config changed')
+  mainLog.info({previousConfig, newConfig})
   await fs.writeFile(lunaManagedConfigPath, JSON.stringify(newConfig, null, 2), 'utf8')
 }
 

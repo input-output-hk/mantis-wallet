@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import {createContainer} from 'unstated-next'
 import {ROUTES, MENU, RouteId, Route, MenuItem} from './routes-config'
+import {rendererLog} from './common/logger'
 
 interface RouterState {
   currentRouteId: RouteId
@@ -27,12 +28,12 @@ function useRouterState(
 
   const navigate = (routeId: RouteId): void => {
     if (isLocked) {
-      return console.debug(`Attempted navigation to ${routeId} while navigation is locked`)
+      return rendererLog.debug(`Attempted navigation to ${routeId} while navigation is locked`)
     }
     if (routeId === currentRouteId) {
-      return console.debug(`Attempted double navigation to ${routeId}`)
+      return rendererLog.debug(`Attempted double navigation to ${routeId}`)
     }
-    console.debug(`Navigation to ${routeId}`)
+    rendererLog.debug(`Navigation to ${routeId}`)
     setCurrentRouteId(routeId)
   }
 
