@@ -388,6 +388,7 @@ if (config.runClients) {
   ipcListenToRenderer('restart-clients', async (event) => {
     try {
       await killClients()
+      event.reply('restart-clients-success')
     } catch (e) {
       mainLog.error(e)
       event.reply('restart-clients-failure', e.message)

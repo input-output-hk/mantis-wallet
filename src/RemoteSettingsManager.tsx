@@ -117,7 +117,13 @@ const _RestartPrompt = ({onRestart, onCancel}: RestartPromptProps): JSX.Element 
 
 export const RestartPrompt = wrapWithModal(_RestartPrompt, 'RestartPrompt')
 
-export const RemoteSettingsManager = (): JSX.Element => {
+interface RemoteSettingsManagerProps {
+  setBackendRunning: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const RemoteSettingsManager = ({
+  setBackendRunning,
+}: RemoteSettingsManagerProps): JSX.Element => {
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
@@ -128,6 +134,10 @@ export const RemoteSettingsManager = (): JSX.Element => {
     ipcListenToMain('update-config-failure', (_event, msg: string) => {
       message.error(`Configuration update failed. Error: ${msg}`, 10)
       rendererLog.error(msg)
+    })
+
+    ipcListenToMain('restart-clients-success', (_event) => {
+      setBackendRunning(false)
     })
 
     ipcListenToMain('restart-clients-failure', (_event, msg: string) => {
