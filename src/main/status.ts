@@ -26,6 +26,7 @@ export const status: LunaStatus = {
   },
   dag: {
     status: 'not-running',
+    message: '',
   },
   info: {
     platform: os.type(),
