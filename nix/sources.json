@@ -25,16 +25,28 @@
         "url": "https://github.com/hercules-ci/gitignore.nix/archive/2ced4519f865341adcb143c5d668f955a2cb997f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "haskell.nix": {
+        "branch": "master",
+        "description": "Alternative Haskell Infrastructure for Nixpkgs",
+        "homepage": "https://input-output-hk.github.io/haskell.nix",
+        "owner": "input-output-hk",
+        "repo": "haskell.nix",
+        "rev": "487eea1c249537d34c27f6143dff2b9d5586c657",
+        "sha256": "077j5j3j86qy1wnabjlrg4dmqy1fv037dyq3xb8ch4ickpxxs123",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/haskell.nix/archive/487eea1c249537d34c27f6143dff2b9d5586c657.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "midnight": {
-        "branch": "release/v0.13.3",
+        "branch": "develop",
         "description": null,
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "midnight",
-        "rev": "5e30054254135eb52561703ea91f748272677fe5",
-        "sha256": "0dmfdyvqls5dl0y4gvwqbnvkkhd9i6z8zn383zhifa4a33v87q1r",
+        "rev": "6a7dd5e2d09f6a606cca82be154eabdbfed84843",
+        "sha256": "05lwsqp93f1x9h1njlvh5x98w947s3iij8pz7v1zrpvb61qgyrp9",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/midnight/archive/5e30054254135eb52561703ea91f748272677fe5.tar.gz",
+        "url": "https://github.com/input-output-hk/midnight/archive/6a7dd5e2d09f6a606cca82be154eabdbfed84843.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
@@ -79,10 +91,10 @@
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "9b3515eb95d9b3bc033f43cd562fe2b14f9efd86",
-        "sha256": "1gc1hc30cqymkrrw4nj545md6h5dr9cpjf10vh080wwf5ybaggcl",
+        "rev": "970b2b853d41ec80a3c2aba3e585f52818fbbfa3",
+        "sha256": "0cwm2gvnb7dfw9pjrwzlxb2klix58chc36nnymahjqaa1qmnpbpq",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/9b3515eb95d9b3bc033f43cd562fe2b14f9efd86.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/970b2b853d41ec80a3c2aba3e585f52818fbbfa3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "yarn2nix": {
