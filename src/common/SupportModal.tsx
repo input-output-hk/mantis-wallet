@@ -5,6 +5,7 @@ import {CheckCircleFilled} from '@ant-design/icons'
 import {LINKS} from '../external-link-config'
 import {IPCToRendererChannelName} from '../shared/ipc-types'
 import {saveDebugLogs, ipcListenToMain, ipcRemoveAllListeners} from './ipc-util'
+import {makeDismissableMessage, DismissFunction} from './dismissable-message'
 import {DialogMessage} from './dialog/DialogMessage'
 import {wrapWithModal, ModalLocker} from './LunaModal'
 import {Dialog} from './Dialog'
@@ -15,18 +16,25 @@ const CHANNELS: IPCToRendererChannelName[] = [
   'save-debug-logs-failure',
 ]
 
+const createMessage = (path: string) => ({dismiss}: {dismiss: DismissFunction}): JSX.Element => {
+  const onClickMsg = (): void => {
+    shell.showItemInFolder(path)
+    dismiss()
+  }
+  return (
+    <span style={{cursor: 'pointer'}} onClick={onClickMsg}>
+      Debug logs saved successfully! Click here to open the containing folder.
+    </span>
+  )
+}
+
 export const SupportDialog = (): JSX.Element => {
   const {setLocked, isLocked} = ModalLocker.useContainer()
   const [isDone, setDone] = useState(false)
 
   useEffect(() => {
     ipcListenToMain('save-debug-logs-success', (_event, path): void => {
-      message.success(
-        <span style={{cursor: 'pointer'}} onClick={() => shell.showItemInFolder(path)}>
-          Debug logs saved successfully! Click here to open the containing folder.
-        </span>,
-        10,
-      )
+      makeDismissableMessage('success', createMessage(path), {duration: 0})
       setLocked(false)
       setDone(true)
     })
