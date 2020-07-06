@@ -208,9 +208,9 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
             <div>To:</div>
             <div className="monospace">{receivingAddress}</div>
             <div>Gas Limit:</div>
-            <div className="monospace">{gasLimit}</div>
+            <div className="monospace">{new BigNumber(gasLimit).toString(10)}</div>
             <div>Gas Price:</div>
-            <div className="monospace">{gasPrice}</div>
+            <div className="monospace">{new BigNumber(gasPrice).toString(10)}</div>
           </div>
         </div>
       )

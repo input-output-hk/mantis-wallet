@@ -266,7 +266,7 @@ export const transactions: Transaction[] = [
       usedTransparentAccountIndexes: [0],
       transparentTransaction: {
         nonce: '0x1',
-        gasPrice: '0x123',
+        gasPrice: 123,
         gasLimit: '0x1185920',
         sendingAddress: 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v7',
         receivingAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95',
@@ -293,7 +293,7 @@ export const transactions: Transaction[] = [
       usedTransparentAccountIndexes: [0, 2],
       transparentTransaction: {
         nonce: '0x1',
-        gasPrice: '0x123',
+        gasPrice: 123,
         gasLimit: '0x1185920',
         sendingAddress: 'third-transparent-address',
         receivingAddress: 'first-transparent-address',

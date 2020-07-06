@@ -52,7 +52,7 @@ const tx2: Transaction = {
     transparentTransactionHash: 'transparentTransactionHash',
     transparentTransaction: {
       nonce: toHex(12345),
-      gasPrice: toHex(12345),
+      gasPrice: 12345,
       gasLimit: toHex(12345),
       receivingAddress: 'receivingAddress',
       sendingAddress: 'sendingAddress',
