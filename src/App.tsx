@@ -14,6 +14,7 @@ import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
 import {RemoteSettingsManager} from './RemoteSettingsManager'
 import {LUNA_VERSION} from './shared/version'
+import {rendererLog} from './common/logger'
 import './App.scss'
 
 const web3 = makeWeb3Worker()
@@ -34,6 +35,7 @@ const App: React.FC = () => {
       }
     }
 
+    rendererLog.info('Luna renderer started')
     checkBackend()
   }, [])
 
