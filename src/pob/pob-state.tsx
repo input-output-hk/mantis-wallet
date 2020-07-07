@@ -282,16 +282,6 @@ function useProofOfBurnState(
     } else {
       setHiddenBurnProcesses(_.unset(burnStatusKey)(hiddenBurnProcesses))
     }
-
-    const burnStatus = burnStatuses[burnStatusKey]
-    setBurnStatuses({
-      ...burnStatuses,
-      [burnStatusKey]: {
-        ...burnStatus,
-        isHidden: hide,
-        lastStatuses: burnStatus.lastStatuses.map((s) => ({...s, isHidden: hide})),
-      },
-    })
   }
 
   const hideBurnProcess = (burnWatcher: BurnWatcher, txId: string, hide: boolean): void => {
@@ -308,17 +298,6 @@ function useProofOfBurnState(
       [burnStatusKey]: hide
         ? [...hiddenByThisBurnWatcher, txId]
         : _.without([txId])(hiddenByThisBurnWatcher),
-    })
-
-    setBurnStatuses({
-      ...burnStatuses,
-      [burnStatusKey]: {
-        ...burnStatus,
-        isHidden: false,
-        lastStatuses: burnStatus.lastStatuses.map((s) =>
-          s.txid === txId ? {...s, isHidden: hide} : s,
-        ),
-      },
     })
   }
 

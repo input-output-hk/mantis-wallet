@@ -18,6 +18,10 @@
     float: right;
     transition: visibility 0.5s;
 
+    &.forceDisplay {
+      visibility: visible;
+    }
+
     .toggle-hide {
       opacity: $secondary-opacity;
       cursor: pointer;

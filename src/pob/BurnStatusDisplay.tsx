@@ -1,4 +1,4 @@
-import React, {ReactNode, useState} from 'react'
+import React, {ReactNode, useState, useEffect} from 'react'
 import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
 import {
@@ -158,7 +158,14 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
+  const [hidingProgress, setHidingProgress] = useState<{to: boolean} | 'persisted'>('persisted')
   const [detailsShown, setDetailsShown] = useState(false)
+
+  useEffect(() => {
+    if (hidingProgress !== 'persisted' && hidingProgress.to === burnStatus.isHidden) {
+      setHidingProgress('persisted')
+    }
+  }, [burnStatus.isHidden])
 
   const chain = CHAINS[burnAddressInfo.chainId]
   const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
@@ -171,18 +178,25 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
 
   return (
     <div className={classnames('BurnStatusDisplay', {hidden: burnStatus.isHidden})}>
-      <div className="actions">
+      <div className={classnames('actions', {forceDisplay: hidingProgress !== 'persisted'})}>
         <Popover
           content={burnStatus.isHidden ? 'Unhide this burn process' : `Hide this burn process`}
           placement="topRight"
           align={{offset: [13, 0]}}
         >
-          <span
-            className="toggle-hide"
-            onClick={() => hideBurnProcess(burnWatcher, burnStatus.txid, !burnStatus.isHidden)}
-          >
-            {burnStatus.isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-          </span>
+          {hidingProgress === 'persisted' ? (
+            <span
+              className="toggle-hide"
+              onClick={() => {
+                setHidingProgress({to: !burnStatus.isHidden})
+                hideBurnProcess(burnWatcher, burnStatus.txid, !burnStatus.isHidden)
+              }}
+            >
+              {burnStatus.isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            </span>
+          ) : (
+            <LoadingOutlined spin />
+          )}
         </Popover>
       </div>
       <div
