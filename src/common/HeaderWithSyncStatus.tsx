@@ -1,12 +1,20 @@
 import React from 'react'
-import {EmptyProps} from 'antd/lib/empty'
 import {SyncStatus} from './SyncStatus'
 import {MiningStatus} from './MiningStatus'
+import {Link} from './Link'
 import './HeaderWithSyncStatus.scss'
 
+interface HeaderWithSyncStatusProps {
+  externalLink?: {
+    text: string
+    url: string
+  }
+}
+
 export const HeaderWithSyncStatus = ({
+  externalLink,
   children,
-}: React.PropsWithChildren<EmptyProps>): JSX.Element => (
+}: React.PropsWithChildren<HeaderWithSyncStatusProps>): JSX.Element => (
   <div className="HeaderWithSyncStatus">
     <div className="right">
       <SyncStatus />
@@ -14,6 +22,15 @@ export const HeaderWithSyncStatus = ({
         <MiningStatus />
       </div>
     </div>
-    <div className="main-title">{children}</div>
+    <div className="main-title">
+      {children}
+      {externalLink && (
+        <div className="external-link">
+          <Link href={externalLink.url} popoverPlacement="right" styled>
+            {externalLink.text}
+          </Link>
+        </div>
+      )}
+    </div>
   </div>
 )

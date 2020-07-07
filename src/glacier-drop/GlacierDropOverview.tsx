@@ -21,7 +21,6 @@ import {Token} from '../common/Token'
 import {Loading} from '../common/Loading'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {LINKS} from '../external-link-config'
-import {Link} from '../common/Link'
 import {NoWallet} from '../wallets/NoWallet'
 import {
   getCurrentPeriod,
@@ -119,13 +118,10 @@ const ClaimHistory = ({
 const GlacierDropWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
     <div className="GlacierDropOverview">
-      <HeaderWithSyncStatus>
+      <HeaderWithSyncStatus
+        externalLink={{text: 'Learn more about Glacier Drop', url: LINKS.aboutGlacier}}
+      >
         Glacier Drop
-        <div className="link">
-          <Link href={LINKS.aboutGlacier} popoverPlacement="right">
-            Learn more about Glacier Drop
-          </Link>
-        </div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>
