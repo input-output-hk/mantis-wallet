@@ -2,6 +2,7 @@ import React, {useEffect} from 'react'
 import {WalletState} from '../common/wallet-state'
 import {Navigate} from '../layout/Router'
 import {Loading} from '../common/Loading'
+import {WalletError} from './WalletErrorScreen'
 import {Wallet} from './Wallet'
 
 export const Wallets = (): JSX.Element => {
@@ -30,7 +31,7 @@ export const Wallets = (): JSX.Element => {
       return <Navigate to="WALLET_SETUP" />
     }
     case 'ERROR': {
-      return <b>{walletState.errorMsg}</b>
+      return <WalletError />
     }
   }
 }

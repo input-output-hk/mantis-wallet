@@ -8,6 +8,7 @@ export type IPCToRendererChannelName =
   | 'disable-mining-success'
   | 'disable-mining-failure'
   | 'restart-clients-failure'
+  | 'restart-clients-success'
   | 'save-debug-logs-success'
   | 'save-debug-logs-failure'
   | 'save-debug-logs-cancel'

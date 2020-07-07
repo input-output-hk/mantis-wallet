@@ -28,7 +28,7 @@ const App: React.FC = () => {
       try {
         await Promise.all([web3.midnight.wallet.listAccounts(), web3.version.ethereum])
         setBackendRunning(true)
-        setTimeout(checkBackend, 2500)
+        setTimeout(checkBackend, 5000)
       } catch (e) {
         setBackendRunning(false)
         setTimeout(checkBackend, 1000)
@@ -61,7 +61,7 @@ const App: React.FC = () => {
                 </WalletState.Provider>
               </BuildJobState.Provider>
             </RouterState.Provider>
-            <RemoteSettingsManager />
+            <RemoteSettingsManager setBackendRunning={setBackendRunning} />
           </div>
         ) : (
           <SplashScreen />

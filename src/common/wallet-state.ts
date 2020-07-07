@@ -120,7 +120,7 @@ export interface NoWalletState {
 
 export interface ErrorState {
   walletStatus: 'ERROR'
-  errorMsg: string
+  error: Error
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
 }
@@ -146,7 +146,7 @@ interface Overview {
 interface WalletStateParams {
   walletStatus: WalletStatus
   web3: Remote<Web3API>
-  errorMsg: Option<string>
+  error: Option<Error>
   syncStatus: Option<SynchronizationStatus>
   totalBalance: Option<BigNumber>
   availableBalance: Option<BigNumber>
@@ -159,7 +159,7 @@ interface WalletStateParams {
 const DEFAULT_STATE: WalletStateParams = {
   walletStatus: 'INITIAL',
   web3: makeWeb3Worker(),
-  errorMsg: none,
+  error: none,
   syncStatus: none,
   totalBalance: none,
   availableBalance: none,
@@ -196,7 +196,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(_initialState.walletStatus)
-  const [errorMsgOption, setErrorMsg] = useState<Option<string>>(_initialState.errorMsg)
+  const [errorOption, setError] = useState<Option<Error>>(_initialState.error)
   const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(
     _initialState.syncStatus,
   )
@@ -270,7 +270,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setAvailableBalance(none)
     setTransparentBalance(none)
     setTransactions(none)
-    setErrorMsg(none)
+    setError(none)
     setTransparentAccounts(none)
     setAccounts(none)
     setSyncStatus(none)
@@ -283,12 +283,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       setWalletStatus('NO_WALLET')
     } else {
       rendererLog.error(e)
-      setErrorMsg(some(e.message))
+      setError(some(e))
       setWalletStatus('ERROR')
     }
   }
 
-  const errorMsg = getOrElse((): string => 'Unknown error')(errorMsgOption)
+  const error = getOrElse((): Error => Error('Unknown error'))(errorOption)
 
   const loadTransparentAccounts = async (): Promise<TransparentAccount[]> => {
     const transparentAddresses: TransparentAddress[] = await loadAll(
@@ -494,7 +494,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   return {
     walletStatus,
-    errorMsg,
+    error,
     syncStatus,
     getOverviewProps,
     reset,

@@ -1,5 +1,6 @@
 import chai, {assert} from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {some, none} from 'fp-ts/lib/Option'
 import BigNumber from 'bignumber.js'
 import {
   deserializeBigNumber,
@@ -18,6 +19,7 @@ import {
   createTransparentAddressValidator,
   createConfidentialAddressValidator,
   returnDataToHumanReadable,
+  optionHasValue,
 } from './util'
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
@@ -281,4 +283,12 @@ it('validates addresses correctly', async () => {
       'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5',
     ),
   )
+})
+
+it('optionHasValue works correctly', () => {
+  assert.equal(optionHasValue(some(1), 1), true)
+  assert.equal(optionHasValue(some({foo: {bar: 'baz'}}), {foo: {bar: 'baz'}}), true)
+  assert.equal(optionHasValue(some(2), 1), false)
+  assert.equal(optionHasValue(some({foo: {bar: 'wrong'}}), {foo: {bar: 'baz'}}), false)
+  assert.equal(optionHasValue(none, 1), false)
 })

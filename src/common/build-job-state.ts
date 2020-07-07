@@ -30,6 +30,8 @@ function useBuildJobState(initialState?: Partial<BuildJobStateParams>): BuildJob
   const [callbacks, setCallbacks] = useState<Record<string, BuiltCallback>>({})
 
   const updateJobs = (newJobStatuses: JobStatus[]): void => {
+    if (_.isEmpty(newJobStatuses)) return // avoid unnecessary update
+    rendererLog.debug('New job statuses', newJobStatuses)
     const newJobStatusesByHash = _.keyBy((j: JobStatus) => j.hash)(newJobStatuses)
     setJobStatuses({...jobStatuses, ...newJobStatusesByHash})
   }
@@ -47,6 +49,8 @@ function useBuildJobState(initialState?: Partial<BuildJobStateParams>): BuildJob
   }
 
   const refresh = async (): Promise<void> => {
+    if (_.isEmpty(jobStatuses)) return // avoid unnecessary update
+
     const newJobStatuses = await Promise.all(
       Object.values(jobStatuses)
         .filter((jobStatus) => jobStatus.status === 'building')
