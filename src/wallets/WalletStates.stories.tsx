@@ -17,4 +17,4 @@ export default {
   },
 }
 
-export const walletError = (): JSX.Element => <WalletError />
+export const walletError = (): JSX.Element => <WalletError countdownStart={60} />

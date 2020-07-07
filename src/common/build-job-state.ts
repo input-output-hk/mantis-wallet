@@ -31,7 +31,7 @@ function useBuildJobState(initialState?: Partial<BuildJobStateParams>): BuildJob
 
   const updateJobs = (newJobStatuses: JobStatus[]): void => {
     if (_.isEmpty(newJobStatuses)) return // avoid unnecessary update
-    rendererLog.debug(`New job statuses`, newJobStatuses)
+    rendererLog.debug('New job statuses', newJobStatuses)
     const newJobStatusesByHash = _.keyBy((j: JobStatus) => j.hash)(newJobStatuses)
     setJobStatuses({...jobStatuses, ...newJobStatusesByHash})
   }

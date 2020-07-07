@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import {EmptyProps} from 'antd/lib/empty'
 import {Button} from 'antd'
 import {ErrorState} from '../common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
@@ -7,9 +6,16 @@ import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {useInterval} from '../common/hook-utils'
 import './WalletErrorScreen.scss'
 
-const _WalletError = ({walletState}: PropsWithWalletState<EmptyProps, ErrorState>): JSX.Element => {
+interface WalletErrorProps {
+  countdownStart?: number
+}
+
+const _WalletError = ({
+  countdownStart = 20,
+  walletState,
+}: PropsWithWalletState<WalletErrorProps, ErrorState>): JSX.Element => {
   const {error, reset} = walletState
-  const [countdown, setCountdown] = useState(60)
+  const [countdown, setCountdown] = useState(countdownStart)
   const [isTraceShown, showTrace] = useState(false)
 
   useInterval(() => {
