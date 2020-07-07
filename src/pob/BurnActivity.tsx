@@ -76,12 +76,12 @@ export const _BurnActivity = ({
       {noBurnObserved
         .filter(({isHidden}) => areHiddenVisible || !isHidden)
         .map(({burnWatcher, errorMessage, isHidden}) => {
-          const {
-            burnAddress,
-            prover: {name},
-          } = burnWatcher
+          const {burnAddress, prover} = burnWatcher
           return (
-            <div className={classnames('burn-address', {hidden: isHidden})} key={burnAddress}>
+            <div
+              className={classnames('burn-address', {hidden: isHidden})}
+              key={`${burnAddress} ${prover.address}`}
+            >
               <div className="actions">
                 <Popover
                   content={isHidden ? 'Unhide this burn address' : 'Hide this burn address'}
@@ -99,14 +99,14 @@ export const _BurnActivity = ({
               <div className="burn-address-error">
                 {errorMessage && (
                   <>
-                    Gathering burn activity for {burnAddress} from prover &#34;{name}&#34; failed
-                    with the following error:
+                    Gathering burn activity for {burnAddress} from prover &#34;{prover.name}&#34;
+                    failed with the following error:
                     <br />
                     {errorMessage}
                   </>
                 )}
                 {!errorMessage &&
-                  `No burn transactions observed for burn address ${burnAddress} by prover "${name}".`}
+                  `No burn transactions observed for burn address ${burnAddress} by prover "${prover.name}".`}
               </div>
             </div>
           )
