@@ -9,6 +9,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons'
 import {Popover} from 'antd'
+import {TooltipPlacement} from 'antd/lib/tooltip'
 import _ from 'lodash'
 import classnames from 'classnames'
 import {CHAINS} from './chains'
@@ -17,6 +18,7 @@ import {formatPercentage} from '../common/formatters'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
+import circleIcon from '../assets/icons/circle.svg'
 import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus, BurnWatcher, BurnAddressInfo, ProofOfBurnData} from './pob-state'
@@ -27,7 +29,7 @@ import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
 import './BurnStatusDisplay.scss'
 
-type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS'
+type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS' | 'STOPPED'
 
 interface AllProgress {
   started: ProgressType
@@ -75,7 +77,7 @@ const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
   redeem_another_prover: {
     started: 'CHECKED',
     success: 'CHECKED',
-    confirm: 'CHECKED',
+    confirm: 'STOPPED',
   },
 }
 
@@ -84,6 +86,7 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   UNKNOWN: <CloseOutlined className="unknown icon" title="Unknown" />,
   FAILED: <CloseOutlined className="fail icon" title="Failed" />,
   IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" title="In progress" />,
+  STOPPED: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }
 
 type DisplayProgressRatio = number | 'unknown'
@@ -100,11 +103,13 @@ const ProvingProgressLabel = ({
   label,
   inProgressMessage,
   checkedMessage,
+  placement = 'top',
 }: {
   progress: ProgressType
   label: string
   inProgressMessage: string
   checkedMessage: string
+  placement?: TooltipPlacement
 }): JSX.Element => {
   const labelWithIcon = (
     <span>
@@ -112,11 +117,11 @@ const ProvingProgressLabel = ({
     </span>
   )
 
-  if (progress === 'IN_PROGRESS' || progress === 'CHECKED') {
+  if (progress === 'IN_PROGRESS' || progress === 'CHECKED' || progress === 'STOPPED') {
     return (
       <Popover
         content={progress === 'IN_PROGRESS' ? inProgressMessage : checkedMessage}
-        placement="top"
+        placement={placement}
       >
         <span>{labelWithIcon}</span>
       </Popover>
@@ -231,7 +236,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         <div className="progress">
           <Popover
             content="Your burn transaction has been found on source blockchain."
-            placement="top"
+            placement="topLeft"
           >
             <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
           </Popover>
@@ -288,9 +293,10 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         <div className="progress">
           <ProvingProgressLabel
             progress={progress.confirm}
-            label="Proving Confirmed"
+            label={progress.confirm === 'STOPPED' ? 'Already Proved' : 'Proving Confirmed'}
             inProgressMessage="Waiting for confirmations on Midnight."
             checkedMessage="Burn Process complete. Midnight Tokens are now available."
+            placement="topRight"
           />
         </div>
       </div>

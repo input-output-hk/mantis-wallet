@@ -40,6 +40,13 @@
       }
     }
 
+    .stopped {
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
+      }
+    }
+
     .fail {
       @include themify($themes) {
         color: themed('error-color');
