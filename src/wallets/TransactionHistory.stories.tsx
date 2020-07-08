@@ -7,6 +7,7 @@ import {Transaction, Account} from '../web3'
 import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
+import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
 import {
   dummyTransactions,
@@ -20,7 +21,7 @@ import {TransactionHistory} from './TransactionHistory'
 
 export default {
   title: 'Transaction History',
-  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withGlacierState, withBuildJobState],
 }
 
 const accounts: Account[] = [

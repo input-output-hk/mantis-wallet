@@ -18,6 +18,7 @@ import {Period} from './Period'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
 import {rendererLog} from '../common/logger'
+import {ContractConfigItem} from '../config/type'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -119,6 +120,9 @@ export interface GlacierData {
   constants: Option<GlacierConstants>
   constantsError: Option<string>
   refreshConstants(): Promise<void>
+
+  // Contract info
+  contractAddresses: ContractConfigItem
 
   // Claims
   claims: Claim[]
@@ -643,6 +647,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     constants,
     constantsError,
     refreshConstants,
+    contractAddresses,
     claims: claimList,
     claimedAddresses,
     addClaim,
