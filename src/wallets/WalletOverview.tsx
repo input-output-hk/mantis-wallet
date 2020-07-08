@@ -15,18 +15,21 @@ import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
 import {isTestnet, TESTNET_EDITION} from '../shared/version'
 import {BackendState} from '../common/backend-state'
+import {WalletViewMode} from './Wallet'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
   pending: BigNumber
   confidential: BigNumber
   transparent: BigNumber
+  viewType?: WalletViewMode
 }
 
 export const WalletOverview = ({
   pending,
   confidential,
   transparent,
+  viewType,
 }: WalletOverviewProps): JSX.Element => {
   const {theme} = SettingsState.useContainer()
   const {networkTag} = BackendState.useContainer()
@@ -38,8 +41,12 @@ export const WalletOverview = ({
     <p style={{width: '350px'}}>
       These funds are transparent and can be visible to other Midnight users, we recommend you move
       them to a confidential address.
-      <br />
-      <b>To view your transparent balances, click the Transparent Accounts button below.</b>
+      {viewType !== 'accounts' && (
+        <>
+          <br />
+          <b>To view your transparent balances, click the Transparent Accounts button below.</b>
+        </>
+      )}
     </p>
   )
 
