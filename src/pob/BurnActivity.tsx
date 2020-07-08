@@ -1,9 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import _ from 'lodash/fp'
 import classnames from 'classnames'
 import {Popover, Switch} from 'antd'
-import {SearchOutlined, EyeOutlined, EyeInvisibleOutlined} from '@ant-design/icons'
-import {BurnStatus, RealBurnStatus, ProofOfBurnData} from './pob-state'
+import {SearchOutlined, EyeOutlined, EyeInvisibleOutlined, LoadingOutlined} from '@ant-design/icons'
+import {BurnStatus, RealBurnStatus, ProofOfBurnData, BurnWatcher} from './pob-state'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
@@ -15,6 +15,65 @@ type BurnActivityProps = Pick<
   ProofOfBurnData,
   'burnAddresses' | 'burnStatuses' | 'hideBurnWatcher' | 'hideBurnProcess'
 >
+
+const BurnAddressError = ({
+  burnWatcher,
+  errorMessage,
+  isHidden,
+  hideBurnWatcher,
+}: {
+  burnWatcher: BurnWatcher
+  isHidden: boolean
+  errorMessage?: string
+  hideBurnWatcher: ProofOfBurnData['hideBurnWatcher']
+}): JSX.Element => {
+  const [hidingProgress, setHidingProgress] = useState<{to: boolean} | 'persisted'>('persisted')
+  const {burnAddress, prover} = burnWatcher
+
+  useEffect(() => {
+    if (hidingProgress !== 'persisted' && hidingProgress.to === isHidden) {
+      setHidingProgress('persisted')
+    }
+  }, [isHidden])
+
+  return (
+    <div className={classnames('burn-address', {hidden: isHidden})}>
+      <div className={classnames('actions', {forceDisplay: hidingProgress !== 'persisted'})}>
+        <Popover
+          content={isHidden ? 'Unhide this burn address' : 'Hide this burn address'}
+          placement="topRight"
+          align={{offset: [13, 0]}}
+        >
+          {hidingProgress === 'persisted' ? (
+            <span
+              className="toggle-hide"
+              onClick={() => {
+                setHidingProgress({to: !isHidden})
+                hideBurnWatcher(burnWatcher, !isHidden)
+              }}
+            >
+              {isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            </span>
+          ) : (
+            <LoadingOutlined spin />
+          )}
+        </Popover>
+      </div>
+      <div className="burn-address-error">
+        {errorMessage && (
+          <>
+            Gathering burn activity for {burnAddress} from prover &#34;{prover.name}&#34; failed
+            with the following error:
+            <br />
+            {errorMessage}
+          </>
+        )}
+        {!errorMessage &&
+          `No burn transactions observed for burn address ${burnAddress} by prover "${prover.name}".`}
+      </div>
+    </div>
+  )
+}
 
 export const _BurnActivity = ({
   burnStatuses,
@@ -75,42 +134,15 @@ export const _BurnActivity = ({
       </div>
       {noBurnObserved
         .filter(({isHidden}) => areHiddenVisible || !isHidden)
-        .map(({burnWatcher, errorMessage, isHidden}) => {
-          const {
-            burnAddress,
-            prover: {name},
-          } = burnWatcher
-          return (
-            <div className={classnames('burn-address', {hidden: isHidden})} key={burnAddress}>
-              <div className="actions">
-                <Popover
-                  content={isHidden ? 'Unhide this burn address' : 'Hide this burn address'}
-                  placement="topRight"
-                  align={{offset: [13, 0]}}
-                >
-                  <span
-                    className="toggle-hide"
-                    onClick={() => hideBurnWatcher(burnWatcher, !isHidden)}
-                  >
-                    {isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                  </span>
-                </Popover>
-              </div>
-              <div className="burn-address-error">
-                {errorMessage && (
-                  <>
-                    Gathering burn activity for {burnAddress} from prover &#34;{name}&#34; failed
-                    with the following error:
-                    <br />
-                    {errorMessage}
-                  </>
-                )}
-                {!errorMessage &&
-                  `No burn transactions observed for burn address ${burnAddress} by prover "${name}".`}
-              </div>
-            </div>
-          )
-        })}
+        .map(({burnWatcher, errorMessage, isHidden}) => (
+          <BurnAddressError
+            burnWatcher={burnWatcher}
+            errorMessage={errorMessage}
+            isHidden={isHidden}
+            hideBurnWatcher={hideBurnWatcher}
+            key={`${burnWatcher.burnAddress} ${burnWatcher.prover.address}`}
+          />
+        ))}
       {filteredStatuses.length === 0 && (
         <div className="no-activity">No burn activity to show.</div>
       )}

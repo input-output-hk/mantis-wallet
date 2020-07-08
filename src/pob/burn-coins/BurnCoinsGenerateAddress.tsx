@@ -10,17 +10,11 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {LINKS} from '../../external-link-config'
 import {Link} from '../../common/Link'
-import {
-  validateAmount,
-  hasAtMostDecimalPlaces,
-  isGreaterOrEqual,
-  isGreater,
-} from '../../common/util'
+import {validateAmount, hasAtMostDecimalPlaces, isGreaterOrEqual} from '../../common/util'
 import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import {UNITS} from '../../common/units'
 import {LunaModal} from '../../common/LunaModal'
-import {rendererLog} from '../../common/logger'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
@@ -79,19 +73,10 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
   const [fee, setFee] = useState('')
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
 
-  if (minFee.isZero() && compatibleProvers.length > 0) {
-    rendererLog.error('Something went wrong, the prover has 0 reward set.')
-    rendererLog.error(prover)
-  }
-
   const feeError =
     compatibleProvers.length === 0
       ? '' // don't show fee errors when there are no available provers
-      : validateAmount(fee, [
-          isGreater(0), // 0 reward might be a sign of error, let's prevent user to continue in such case
-          isGreaterOrEqual(minFee),
-          hasAtMostDecimalPlaces(minValue.dp()),
-        ])
+      : validateAmount(fee, [isGreaterOrEqual(minFee), hasAtMostDecimalPlaces(minValue.dp())])
 
   const disableGenerate = !!feeError || compatibleProvers.length === 0
 

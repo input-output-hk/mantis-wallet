@@ -81,6 +81,10 @@
         color: themed('error-dialog-color');
       }
 
+      &.forceDisplay {
+        visibility: visible;
+      }
+
       .toggle-hide {
         opacity: $secondary-opacity;
         cursor: pointer;

@@ -1,7 +1,6 @@
 import React from 'react'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {LINKS} from '../external-link-config'
-import {Link} from '../common/Link'
 import {BackendState} from '../common/backend-state'
 import {isTestnet} from '../shared/version'
 import './PobLayout.scss'
@@ -29,13 +28,10 @@ export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
   return (
     <div className="PobLayout">
       {isTestnet(networkTag) && <TestnetWarning />}
-      <HeaderWithSyncStatus>
+      <HeaderWithSyncStatus
+        externalLink={{text: 'Learn more about Proof of Burn', url: LINKS.aboutPoB}}
+      >
         {title}
-        <div className="link">
-          <Link href={LINKS.aboutPoB} popoverPlacement="right">
-            Learn more about Proof of Burn
-          </Link>
-        </div>
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>

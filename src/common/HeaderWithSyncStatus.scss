@@ -1,10 +1,8 @@
 @import '../partial';
 
 .HeaderWithSyncStatus {
-  .link {
-    @extend %link;
+  .external-link {
     margin: 0 0 0 1px;
-    overflow: hidden;
     font-size: 12px;
   }
 
