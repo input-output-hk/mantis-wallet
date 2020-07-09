@@ -87,6 +87,7 @@ const deserializeClaim = (serializedClaim: SerializedClaim): Claim => {
     dustAmount: new BigNumber(dustAmount),
     externalAmount: new BigNumber(externalAmount),
     withdrawnDustAmount: new BigNumber(withdrawnDustAmount),
+    txBuildInProgress: false, // fixes stuck builds in case of restart while build in progress
   } as Claim // FIXME: PM-1658
 }
 
