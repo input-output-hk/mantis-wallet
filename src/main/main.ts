@@ -174,7 +174,10 @@ ipcListenToRenderer(
   async (event, keyPath: LunaManagedConfigPaths, value: string) => {
     try {
       await updateConfig({[keyPath]: value})
-      event.reply('update-config-success')
+      if (keyPath !== 'selectedNetwork') {
+        // do not trigger restart when selectedNetwork changes
+        event.reply('update-config-success')
+      }
     } catch (e) {
       mainLog.error(e)
       event.reply('update-config-failure', e.message)
