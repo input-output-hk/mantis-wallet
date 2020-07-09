@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
 import {UNITS} from '../common/units'
-import {abbreviateAmount, formatPercentage} from '../common/formatters'
+import {abbreviateAmount} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
 import {expectCalledOnClick} from '../common/test-helpers'
@@ -268,9 +268,8 @@ const renderBurnStatusDisplay = (status: BurnStatusType): RenderResult =>
   )
 
 test('Burn Status - Display burn transaction found', async () => {
-  const {getByText, getAllByTitle} = renderBurnStatusDisplay('tx_found')
+  const {getAllByTitle} = renderBurnStatusDisplay('tx_found')
 
-  expect(getByText(`${formatPercentage(0.27)}%`)).toBeInTheDocument()
   expect(getAllByTitle('Checked')).toHaveLength(1)
   expect(getAllByTitle('In progress')).toHaveLength(1)
   expect(getAllByTitle('Unknown')).toHaveLength(2)

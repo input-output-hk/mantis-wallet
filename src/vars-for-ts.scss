@@ -5,5 +5,8 @@
 @import 'vars';
 
 :export {
+  lunaBlue: $primary-color;
   successColor: $success-color;
+  errorColor: $error-color;
+  warningColor: $warning-color;
 }

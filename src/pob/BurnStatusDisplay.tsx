@@ -7,14 +7,14 @@ import {
   RightOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
+  WarningOutlined,
 } from '@ant-design/icons'
-import {Popover} from 'antd'
+import {Popover, Progress} from 'antd'
 import {TooltipPlacement} from 'antd/lib/tooltip'
 import _ from 'lodash'
 import classnames from 'classnames'
 import {CHAINS} from './chains'
 import {BurnStatusType} from './api/prover'
-import {formatPercentage} from '../common/formatters'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
@@ -24,9 +24,14 @@ import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus, BurnWatcher, BurnAddressInfo, ProofOfBurnData} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
 import {InfoIcon} from '../common/InfoIcon'
-import {NUMBER_OF_BLOCKS_TO_SUCCESS, NUMBER_OF_BLOCKS_TO_CONFIRM} from './pob-config'
+import {
+  NUMBER_OF_BLOCKS_TO_SUCCESS,
+  NUMBER_OF_BLOCKS_TO_CONFIRM,
+  NUMBER_OF_BLOCKS_AFTER_TX_FOUND,
+} from './pob-config'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
+import * as styles from '../vars-for-ts.scss'
 import './BurnStatusDisplay.scss'
 
 type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS' | 'STOPPED'
@@ -91,13 +96,6 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
 
 type DisplayProgressRatio = number | 'unknown'
 
-const DisplayProgress = ({ratio}: {ratio: DisplayProgressRatio}): JSX.Element => (
-  <div className="percentage">
-    {ratio === 'unknown' && <LoadingOutlined style={{fontSize: 12}} spin />}
-    {ratio !== 'unknown' && `${formatPercentage(_.clamp(ratio, 0, 0.99))}%`}
-  </div>
-)
-
 const ProvingProgressLabel = ({
   progress,
   label,
@@ -132,15 +130,15 @@ const ProvingProgressLabel = ({
 }
 
 const startedProgress = (current: number, tx: number | null, start: number | null): number =>
-  start && tx && start !== tx ? (current - tx) / (start - tx) : 0
+  start && tx && start !== tx ? (current - tx) / (start + NUMBER_OF_BLOCKS_AFTER_TX_FOUND - tx) : 0
 
 const getTransactionProgress = (blocks: number, submittedStatus: BurnStatusType) => (
   status: BurnStatusType,
   txHeight: number | null,
   syncStatus: SynchronizationStatus,
-): DisplayProgressRatio => {
+): number => {
   if (status === submittedStatus) return 1 / (blocks + 1)
-  if (txHeight === null || syncStatus.mode === 'offline') return 'unknown'
+  if (txHeight === null || syncStatus.mode === 'offline') return 2 / (blocks + 1)
   return (1 + syncStatus.highestKnownBlock - txHeight) / (blocks + 1)
 }
 
@@ -153,6 +151,75 @@ const isRedeemDone = (
     redeemTxHeight != null &&
     redeemTxHeight + NUMBER_OF_BLOCKS_TO_CONFIRM <= syncStatus.highestKnownBlock
   )
+}
+
+const DisplayProgressNew = ({
+  progressType,
+  ratio,
+  showOfflineWarning = false,
+}: {
+  progressType: ProgressType
+  ratio: number
+  showOfflineWarning?: boolean
+}): JSX.Element => {
+  switch (progressType) {
+    case 'UNKNOWN':
+      return <div className="line" />
+    case 'CHECKED':
+      return (
+        <div className="progress-bar">
+          <Progress
+            strokeColor={styles.successColor}
+            status="success"
+            percent={100}
+            showInfo={false}
+          />
+        </div>
+      )
+    case 'FAILED':
+      return (
+        <div className="progress-bar">
+          <Progress
+            strokeColor={styles.errorColor}
+            status="exception"
+            percent={100}
+            showInfo={false}
+          />
+        </div>
+      )
+    case 'STOPPED':
+      return (
+        <div className="progress-bar">
+          <Progress
+            strokeColor={styles.warningColor}
+            status="normal"
+            percent={100}
+            showInfo={false}
+          />
+        </div>
+      )
+    case 'IN_PROGRESS':
+      return (
+        <div className="progress-bar">
+          <Progress
+            strokeColor={{
+              from: styles.successColor,
+              to: styles.lunaBlue,
+            }}
+            status="active"
+            percent={100 * _.clamp(ratio, 0, 0.99)}
+            showInfo={false}
+          />
+          {showOfflineWarning && (
+            <Popover content="Your wallet is connecting at the moment, the progress might be out-dated.">
+              <div className="offline-warning">
+                <WarningOutlined title="warning" />
+              </div>
+            </Popover>
+          )}
+        </div>
+      )
+  }
 }
 
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
@@ -204,100 +271,98 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           )}
         </Popover>
       </div>
-      <div
-        className={classnames('exchange-info', {open: detailsShown})}
-        onClick={() => setDetailsShown(!detailsShown)}
-      >
-        <div className="collapse-icon">
-          <RightOutlined />
+      <div className="summary">
+        <div className="logo">
+          <SVG src={chain.burnLogo} />
         </div>
-        <span>Burn Amount / Midnight Token: </span>
-        {burnStatus.tx_value && (
-          <>
-            <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
-            <SVG src={exchangeIcon} className="exchange-icon" />{' '}
-            <span className="final-amount">
-              <ShortNumber
-                big={new BigNumber(burnStatus.tx_value).minus(burnAddressInfo.reward)}
-                unit={chain.unitType}
-              />{' '}
-              M-
-              {chain.symbol}
-            </span>
-            <span className="prover-reward">
-              {' + '}
-              <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
-              {chain.symbol} (Prover&apos;s reward)
-            </span>
-          </>
-        )}
-      </div>
-      <div className="status">
-        <div className="progress">
-          <Popover
-            content="Your burn transaction has been found on source blockchain."
-            placement="topLeft"
-          >
-            <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
-          </Popover>
-        </div>
-        <div className="line">
-          {progress.started === 'IN_PROGRESS' && (
-            <DisplayProgress
-              ratio={startedProgress(
-                burnStatus.current_source_height,
-                burnStatus.burn_tx_height,
-                burnStatus.processing_start_height,
-              )}
-            />
+        <div
+          className={classnames('exchange-info', {open: detailsShown})}
+          onClick={() => setDetailsShown(!detailsShown)}
+        >
+          <div className="collapse-icon">
+            <RightOutlined />
+          </div>
+          <span>Burn Amount / Midnight Token: </span>
+          {burnStatus.tx_value && (
+            <>
+              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
+              <SVG src={exchangeIcon} className="exchange-icon" />{' '}
+              <span className="final-amount">
+                <ShortNumber
+                  big={new BigNumber(burnStatus.tx_value).minus(burnAddressInfo.reward)}
+                  unit={chain.unitType}
+                />{' '}
+                M-
+                {chain.symbol}
+              </span>
+              <span className="prover-reward">
+                {' + '}
+                <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
+                {chain.symbol} (Prover&apos;s reward)
+              </span>
+            </>
           )}
         </div>
-        <div className="progress">
-          <ProvingProgressLabel
-            progress={progress.started}
-            label="Proving Started"
-            inProgressMessage="Waiting for enough confirmations from source blockchain to start."
-            checkedMessage="Confirmations received from source blockchain."
+        <div className="status">
+          <div className="progress">
+            <Popover
+              content="Your burn transaction has been found on source blockchain."
+              placement="topLeft"
+            >
+              <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
+            </Popover>
+          </div>
+          <DisplayProgressNew
+            progressType={progress.started}
+            ratio={startedProgress(
+              burnStatus.current_source_height,
+              burnStatus.burn_tx_height,
+              burnStatus.processing_start_height,
+            )}
           />
-        </div>
-        <div className="line">
-          {progress.success === 'IN_PROGRESS' && (
-            <DisplayProgress
-              ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
-                burnStatus.status,
-                burnStatus.commitment_txid_height,
-                syncStatus,
-              )}
+          <div className="progress">
+            <ProvingProgressLabel
+              progress={progress.started}
+              label="Proving Started"
+              inProgressMessage="Waiting for enough confirmations from source blockchain to start."
+              checkedMessage="Confirmations received from source blockchain."
             />
-          )}
-        </div>
-        <div className="progress">
-          <ProvingProgressLabel
-            progress={progress.success}
-            label="Proving Successful"
-            inProgressMessage="Proving underway."
-            checkedMessage="Prover has successfully proved the burn transaction."
+          </div>
+          <DisplayProgressNew
+            progressType={progress.success}
+            ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
+              burnStatus.status,
+              burnStatus.commitment_txid_height,
+              syncStatus,
+            )}
+            showOfflineWarning={syncStatus.mode === 'offline'}
           />
-        </div>
-        <div className="line">
-          {progress.confirm === 'IN_PROGRESS' && (
-            <DisplayProgress
-              ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
-                burnStatus.status,
-                burnStatus.redeem_txid_height,
-                syncStatus,
-              )}
+          <div className="progress">
+            <ProvingProgressLabel
+              progress={progress.success}
+              label="Proving Successful"
+              inProgressMessage="Proving underway."
+              checkedMessage="Prover has successfully proved the burn transaction."
             />
-          )}
-        </div>
-        <div className="progress">
-          <ProvingProgressLabel
-            progress={progress.confirm}
-            label={progress.confirm === 'STOPPED' ? 'Already Proved' : 'Proving Confirmed'}
-            inProgressMessage="Waiting for confirmations on Midnight."
-            checkedMessage="Burn Process complete. Midnight Tokens are now available."
-            placement="topRight"
+          </div>
+          <DisplayProgressNew
+            progressType={progress.confirm}
+            ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
+              burnStatus.status,
+              burnStatus.redeem_txid_height,
+              syncStatus,
+            )}
+            showOfflineWarning={syncStatus.mode === 'offline'}
           />
+          <div className="progress">
+            <ProvingProgressLabel
+              progress={progress.confirm}
+              label={progress.confirm === 'STOPPED' ? 'Already Proved' : 'Proving Confirmed'}
+              inProgressMessage="Waiting for confirmations on Midnight."
+              checkedMessage="Burn Process complete. Midnight Tokens are now available."
+              placement="topRight"
+            />
+          </div>
         </div>
       </div>
       <div className={classnames('burn-details', {active: detailsShown})}>

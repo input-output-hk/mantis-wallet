@@ -42,8 +42,8 @@
 
     .stopped {
       @include themify($themes) {
-        stroke: themed('text-color');
-        fill: themed('text-color');
+        stroke: themed('warning-color');
+        fill: themed('warning-color');
       }
     }
 
