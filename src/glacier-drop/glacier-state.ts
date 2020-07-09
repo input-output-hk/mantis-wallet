@@ -13,7 +13,14 @@ import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
 import {loadCurrentContractAddresses} from './glacier-config'
-import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse, CallParams} from '../web3'
+import {
+  Web3API,
+  makeWeb3Worker,
+  NewMineStarted,
+  GetMiningStateResponse,
+  CallParams,
+  CancelMiningResponse,
+} from '../web3'
 import {Period} from './Period'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
@@ -144,6 +151,7 @@ export interface GlacierData {
 
   // PoW Puzzle
   getMiningState(claim: Claim): Promise<GetMiningStateResponse>
+  cancelMining(claim: Claim): Promise<CancelMiningResponse>
 
   // GlacierDrop Contract Calls
   getUnlockCallParams(claim: Claim, gasParams: GasParams): CallParams
@@ -493,9 +501,27 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     return response
   }
 
+  const cancelMining = async (claim: Claim): Promise<CancelMiningResponse> => {
+    // Used when unlocking period is over and mining is not finished yet
+
+    if (claim.puzzleStatus !== 'solving') {
+      throw Error('Mining is not in progress')
+    }
+
+    const response = await gd.cancelMining()
+    console.log({response})
+    if (response.status !== 'MiningCanceled') {
+      throw Error(response.message)
+    }
+
+    // Set to "unsubmitted" state, as submitting is disabled when unlocking period is over
+    updateClaim({...claim, puzzleStatus: 'unsubmitted', powNonce: 0})
+
+    return response
+  }
+
   const getMiningState = async (claim: SolvingClaim): Promise<GetMiningStateResponse> => {
     const response = await gd.getMiningState()
-    console.log({response})
     if (response.status === 'MiningSuccessful') {
       updateClaim({
         ...claim,
@@ -657,6 +683,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     removeClaims,
     getEtcSnapshotBalanceWithProof,
     authorizationSign,
+    cancelMining,
     getMiningState,
     getUnlockCallParams,
     getWithdrawCallParams,

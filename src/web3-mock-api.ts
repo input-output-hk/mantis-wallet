@@ -24,6 +24,7 @@ import {
   FeeLevel,
   JobStatus,
   AsyncTxResponse,
+  CancelMiningResponse,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -244,6 +245,13 @@ class MockGlacierDrop {
       estimatedTime: 123,
       estimatedBlockOfTxInclusion: '0x123',
       message: '',
+    }
+  }
+
+  cancelMining(): CancelMiningResponse {
+    return {
+      status: 'MiningCanceled',
+      message: 'Mining canceled',
     }
   }
 

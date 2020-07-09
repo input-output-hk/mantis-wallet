@@ -222,6 +222,18 @@ interface MiningNotStarted {
 
 export type GetMiningStateResponse = MiningInProgress | MiningSuccessful | MiningNotStarted
 
+interface MiningCanceled {
+  status: 'MiningCanceled'
+  message: string
+}
+
+interface NoMiningToCancel {
+  status: 'NoMiningToCancel'
+  message: string
+}
+
+export type CancelMiningResponse = MiningCanceled | NoMiningToCancel
+
 // Helpers
 
 export type PaginatedCallable<T> = (count: number, drop: number) => T[]
@@ -292,6 +304,7 @@ export interface GlacierDropAPI {
     unlockingStartBlock: number,
     unlockingEndBlock: number,
   ): MineResponse
+  cancelMining(): CancelMiningResponse
   getMiningState(): GetMiningStateResponse
 }
 

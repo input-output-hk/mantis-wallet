@@ -16,7 +16,13 @@ import {formatPercentage, toDurationString} from '../common/formatters'
 import {returnDataToHumanReadable} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {DUST_SYMBOL} from '../pob/chains'
-import {getUnfrozenAmount, getCurrentEpoch, Period, getNumberOfEpochsForClaim} from './Period'
+import {
+  getUnfrozenAmount,
+  getCurrentEpoch,
+  getNumberOfEpochsForClaim,
+  getCurrentPeriod,
+} from './Period'
+import {secondsUntilBlock} from './PeriodStatus'
 import checkIcon from '../assets/icons/check.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
@@ -51,13 +57,25 @@ const TxStatusText = ({txStatus}: TxStatusTextProps): JSX.Element => {
 
 interface PuzzleProgressProps {
   claim: Claim
-  period: Period
+  currentBlock: number
+  periodConfig: PeriodConfig
   onSubmitPuzzle(claim: Claim): void
 }
 
-const PuzzleProgress = ({claim, period, onSubmitPuzzle}: PuzzleProgressProps): JSX.Element => {
+const PuzzleProgress = ({
+  claim,
+  currentBlock,
+  periodConfig,
+  onSubmitPuzzle,
+}: PuzzleProgressProps): JSX.Element => {
+  const period = getCurrentPeriod(currentBlock, periodConfig)
+
   switch (claim.puzzleStatus) {
     case 'solving': {
+      const secondsUntilUnlockingEnds = secondsUntilBlock(
+        currentBlock,
+        periodConfig.unlockingEndBlock,
+      )
       return (
         <>
           <div>Solving Puzzle</div>
@@ -66,6 +84,12 @@ const PuzzleProgress = ({claim, period, onSubmitPuzzle}: PuzzleProgressProps): J
               <span>Total time to unlock:</span>
             </Popover>
             <span className="time-left">{toDurationString(claim.puzzleDuration)}</span>
+            {claim.puzzleDuration > secondsUntilUnlockingEnds && (
+              <div className="puzzle-warning">
+                There may not be enough time to solve the puzzle and unlock eligible funds before
+                the unlocking period ends.
+              </div>
+            )}
           </div>
         </>
       )
@@ -234,7 +258,6 @@ interface ClaimRowProps {
   index: number
   currentBlock: number
   periodConfig: PeriodConfig
-  period: Period
   showEpochs(): void
   onSubmitPuzzle(claim: Claim): void
   onWithdrawDust(claim: Claim): void
@@ -245,7 +268,6 @@ export const ClaimRow = ({
   index,
   currentBlock,
   periodConfig,
-  period,
   showEpochs,
   onSubmitPuzzle,
   onWithdrawDust,
@@ -314,7 +336,12 @@ export const ClaimRow = ({
             <ShortNumber big={unlockedDustAmount} /> {DUST_SYMBOL}
           </div>
           <div className="puzzle-progress">
-            <PuzzleProgress claim={claim} period={period} onSubmitPuzzle={onSubmitPuzzle} />
+            <PuzzleProgress
+              claim={claim}
+              periodConfig={periodConfig}
+              currentBlock={currentBlock}
+              onSubmitPuzzle={onSubmitPuzzle}
+            />
           </div>
         </div>
         <div className="unfrozen detail">

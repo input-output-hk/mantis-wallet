@@ -59,8 +59,6 @@ const ClaimHistory = ({
   const [claimToSubmit, setClaimToSubmit] = useState<Claim | null>(null)
   const [claimToWithdraw, setClaimToWithdraw] = useState<Claim | null>(null)
 
-  const period = getCurrentPeriod(currentBlock, periodConfig)
-
   return (
     <>
       <div className="claim-history">
@@ -77,7 +75,6 @@ const ClaimHistory = ({
                 index={i}
                 currentBlock={currentBlock}
                 periodConfig={periodConfig}
-                period={period}
                 showEpochs={showEpochs}
                 onSubmitPuzzle={setClaimToSubmit}
                 onWithdrawDust={setClaimToWithdraw}
@@ -135,6 +132,7 @@ const _GlacierDropOverview = ({
     claims,
     addClaim,
     getMiningState,
+    cancelMining,
     constants,
     constantsError,
     refreshConstants,
@@ -153,6 +151,11 @@ const _GlacierDropOverview = ({
   const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
   const solvingClaim = claims.find((c) => c.puzzleStatus === 'solving')
 
+  const {periodConfig, totalDustDistributed, minimumThreshold} = getOrElse(
+    (): GlacierConstants => DEFAULT_GLACIER_CONSTANTS,
+  )(constants)
+  const period = getCurrentPeriod(currentBlock, periodConfig)
+
   // Checks puzzle mining state every N milliseconds if a mining is in progress
 
   useInterval(async () => {
@@ -162,18 +165,16 @@ const _GlacierDropOverview = ({
       if (miningState.status === 'MiningSuccessful') {
         makeDesktopNotification('PoW Puzzle Complete')
       }
+      if (period !== 'Unlocking') {
+        // cancel mining if we're not in the unlocking period
+        await cancelMining(solvingClaim)
+      }
     } catch (e) {
       rendererLog.error(e)
     }
   }, MINING_STATUS_CHECK_INTERVAL)
 
   // Bookkeeping of values which depend on block progression
-
-  const {periodConfig, totalDustDistributed, minimumThreshold} = getOrElse(
-    (): GlacierConstants => DEFAULT_GLACIER_CONSTANTS,
-  )(constants)
-
-  const period = getCurrentPeriod(currentBlock, periodConfig)
 
   const update = async (): Promise<void> => {
     if (isNone(constants)) return

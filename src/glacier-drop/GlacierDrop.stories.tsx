@@ -94,7 +94,6 @@ export const claimSolving = (): JSX.Element => {
       index={1}
       currentBlock={4}
       periodConfig={PERIOD_CONFIG}
-      period={'Unlocking'}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -109,7 +108,6 @@ export const claimUnsubmitted = (): JSX.Element => {
       index={1}
       currentBlock={5}
       periodConfig={PERIOD_CONFIG}
-      period={'Unlocking'}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -124,7 +122,6 @@ export const claimSubmitted = (): JSX.Element => {
       index={1}
       currentBlock={6}
       periodConfig={PERIOD_CONFIG}
-      period={'Unlocking'}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
