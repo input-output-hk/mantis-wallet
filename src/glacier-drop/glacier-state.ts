@@ -495,6 +495,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const getMiningState = async (claim: SolvingClaim): Promise<GetMiningStateResponse> => {
     const response = await gd.getMiningState()
+    console.log({response})
     if (response.status === 'MiningSuccessful') {
       updateClaim({
         ...claim,
@@ -502,6 +503,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         puzzleDuration: 0,
         powNonce: parseInt(response.nonce, 16),
       })
+    } else if (response.status === 'MiningNotStarted') {
+      await mine(claim)
     }
     return response
   }

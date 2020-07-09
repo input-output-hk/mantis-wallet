@@ -216,7 +216,11 @@ interface MiningSuccessful {
   mixHash: string // hex string
 }
 
-export type GetMiningStateResponse = MiningInProgress | MiningSuccessful
+interface MiningNotStarted {
+  status: 'MiningNotStarted'
+}
+
+export type GetMiningStateResponse = MiningInProgress | MiningSuccessful | MiningNotStarted
 
 // Helpers
 
