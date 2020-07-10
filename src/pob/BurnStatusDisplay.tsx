@@ -94,8 +94,6 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   STOPPED: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }
 
-type DisplayProgressRatio = number | 'unknown'
-
 const ProvingProgressLabel = ({
   progress,
   label,
@@ -153,15 +151,17 @@ const isRedeemDone = (
   )
 }
 
-const DisplayProgressNew = ({
-  progressType,
-  ratio,
-  showOfflineWarning = false,
-}: {
+interface DisplayProgressProps {
   progressType: ProgressType
   ratio: number
   showOfflineWarning?: boolean
-}): JSX.Element => {
+}
+
+const DisplayProgress = ({
+  progressType,
+  ratio,
+  showOfflineWarning = false,
+}: DisplayProgressProps): JSX.Element => {
   switch (progressType) {
     case 'UNKNOWN':
       return <div className="line" />
@@ -211,7 +211,7 @@ const DisplayProgressNew = ({
             showInfo={false}
           />
           {showOfflineWarning && (
-            <Popover content="Your wallet is connecting at the moment, the progress might be out-dated.">
+            <Popover content="Your wallet is connecting at the moment, the progress might be outdated.">
               <div className="offline-warning">
                 <WarningOutlined title="warning" />
               </div>
@@ -312,7 +312,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
             </Popover>
           </div>
-          <DisplayProgressNew
+          <DisplayProgress
             progressType={progress.started}
             ratio={startedProgress(
               burnStatus.current_source_height,
@@ -328,7 +328,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               checkedMessage="Confirmations received from source blockchain."
             />
           </div>
-          <DisplayProgressNew
+          <DisplayProgress
             progressType={progress.success}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
               burnStatus.status,
@@ -345,7 +345,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               checkedMessage="Prover has successfully proved the burn transaction."
             />
           </div>
-          <DisplayProgressNew
+          <DisplayProgress
             progressType={progress.confirm}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
               burnStatus.status,

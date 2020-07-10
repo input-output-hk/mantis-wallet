@@ -13,6 +13,7 @@ export const AUTO_DUST_CONVERSION = false
  * Let's wait for a few more blocks, so the progress bar doesn't look like
  * it is stuck at the end.
  */
+// FIXME PM-2348 provide a more sophisticated solution
 export const NUMBER_OF_BLOCKS_AFTER_TX_FOUND = 25
 
 export const NUMBER_OF_BLOCKS_TO_SUCCESS = 10
