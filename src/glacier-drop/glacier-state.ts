@@ -332,12 +332,12 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   //
 
   const updateClaim = (updatedClaim: Claim): void => {
-    setClaims({...claims, [updatedClaim.externalAddress]: updatedClaim})
+    setClaims((claims) => ({...claims, [updatedClaim.externalAddress]: updatedClaim}))
   }
 
   const updateClaims = (updatedClaims: Claim[]): void => {
     const claimsByExternalAddress = _.keyBy((c: Claim) => c.externalAddress)(updatedClaims)
-    setClaims({...claims, ...claimsByExternalAddress})
+    setClaims((claims) => ({...claims, ...claimsByExternalAddress}))
   }
 
   const removeClaims = async (): Promise<void> => setClaims({})
@@ -544,7 +544,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const puzzleDuration = mineResponse.estimatedTime
 
     const completeClaim: SolvingClaim = {...claim, puzzleDuration}
-    setClaims({...claims, [claim.externalAddress]: completeClaim})
+    setClaims((claims) => ({...claims, [claim.externalAddress]: completeClaim}))
     return completeClaim
   }
 
