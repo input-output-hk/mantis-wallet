@@ -290,7 +290,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const error = getOrElse((): Error => Error('Unknown error'))(errorOption)
 
-  const loadTransparentAccounts = async (): Promise<TransparentAccount[]> => {
+  const loadTransparentAccounts = async (): Promise<void> => {
     const transparentAddresses: TransparentAddress[] = await loadAll(
       wallet.listTransparentAddresses,
     )
@@ -327,39 +327,37 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
           }
         },
       ),
-    )
+    ).then((transparentAccounts) => {
+      setTransparentAccounts(some(transparentAccounts))
+      setTransparentBalance(some(bigSum(transparentAccounts.map(({balance}) => balance))))
+    })
   }
 
-  const load = (): void => {
-    // set loading status
+  const loadBalance = (): Promise<void> =>
+    wallet.getBalance().then((balance: Balance) => {
+      setTotalBalance(some(deserializeBigNumber(balance.totalBalance)))
+      setAvailableBalance(some(deserializeBigNumber(balance.availableBalance)))
+    })
+
+  const loadTransactionHistory = (): Promise<void> =>
+    loadAll<Transaction>(wallet.getTransactionHistory).then((transactions: Transaction[]) =>
+      setTransactions(some(transactions)),
+    )
+
+  const loadAccounts = (): Promise<void> =>
+    wallet.listAccounts().then((accounts: Account[]) => setAccounts(some(accounts)))
+
+  const load = (
+    loadFns: Array<() => Promise<void>> = [
+      loadTransactionHistory,
+      loadBalance,
+      loadTransparentAccounts,
+      loadAccounts,
+    ],
+  ): void => {
     setWalletStatus('LOADING')
 
-    // load transaction history
-    loadAll<Transaction>(wallet.getTransactionHistory)
-      .then((transactions: Transaction[]) => setTransactions(some(transactions)))
-      .catch(handleError)
-
-    // load balance
-    wallet
-      .getBalance()
-      .then((balance: Balance) => {
-        setTotalBalance(some(deserializeBigNumber(balance.totalBalance)))
-        setAvailableBalance(some(deserializeBigNumber(balance.availableBalance)))
-      })
-      .catch(handleError)
-
-    // load transparent accounts and total transparent balance
-    loadTransparentAccounts()
-      .then((transparentAccounts) => {
-        setTransparentAccounts(some(transparentAccounts))
-        setTransparentBalance(some(bigSum(transparentAccounts.map(({balance}) => balance))))
-      })
-      .catch(handleError)
-
-    wallet
-      .listAccounts()
-      .then((accounts: Account[]) => setAccounts(some(accounts)))
-      .catch(handleError)
+    loadFns.forEach((fn) => fn().catch(handleError))
   }
 
   const refreshSyncStatus = async (): Promise<void> => {
@@ -376,10 +374,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const generateNewAddress = async (): Promise<void> => {
     await wallet.generateTransparentAddress()
-
-    const transparentAccounts = await loadTransparentAccounts()
-
-    setTransparentAccounts(some(transparentAccounts))
+    await loadTransparentAccounts()
   }
 
   const sendTransaction = async (
@@ -388,13 +383,15 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: number,
   ): Promise<string> => {
     const {jobHash} = await wallet.sendTransaction(recipient, amount, fee, false)
-    await buildJobState.submitJob(jobHash, load)
+    await buildJobState.submitJob(jobHash, () => load())
+    load([loadBalance])
     return jobHash
   }
 
   const redeemValue = async (address: string, amount: number, fee: number): Promise<string> => {
     const {jobHash} = await wallet.redeemValue(address, amount, fee, null, false)
-    await buildJobState.submitJob(jobHash, load)
+    await buildJobState.submitJob(jobHash, () => load())
+    load([loadBalance, loadTransparentAccounts])
     return jobHash
   }
 
@@ -414,7 +411,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       getPublicTransactionParams(amount, gasPrice, recipient),
       false,
     )
-    await buildJobState.submitJob(jobHash, load)
+    await buildJobState.submitJob(jobHash, () => load())
+    load([loadBalance])
     return jobHash
   }
 
