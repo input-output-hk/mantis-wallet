@@ -91,7 +91,7 @@ export const burnStatus = (
       redeem_txid: `${_.kebabCase(name)}-redeem-transaction-id`,
       redeem_txid_height: 15,
       burn_tx_height: 1000,
-      current_source_height: 1001,
+      current_source_height: 1035,
       processing_start_height: 1100,
       fail_reason: `This is an error message for ${name} transaction`,
       last_tag_height: 1,

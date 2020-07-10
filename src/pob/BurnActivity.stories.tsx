@@ -86,7 +86,7 @@ export const burnStatusDisplay = (): JSX.Element => (
         burnAddress: text('Burn address', '0xajfSDFJSFHKFGS8347faGSAFd743fsbj743fay4z'),
         prover: prover('Test'),
       }}
-      burnStatus={burnStatus()}
+      burnStatus={burnStatus('Burn', {status: 'commitment_appeared'})}
       syncStatus={{
         mode: select('Sync status type', ['online', 'offline'], 'online'),
         currentBlock: 0,

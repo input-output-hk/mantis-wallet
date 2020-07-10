@@ -42,8 +42,8 @@
 
     .stopped {
       @include themify($themes) {
-        stroke: themed('text-color');
-        fill: themed('text-color');
+        stroke: themed('warning-color');
+        fill: themed('warning-color');
       }
     }
 
@@ -52,6 +52,12 @@
         color: themed('error-color');
       }
     }
+  }
+
+  .ProgressBar {
+    position: relative;
+    top: -3px;
+    padding: 0 5px;
   }
 
   .line {
