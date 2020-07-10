@@ -13,7 +13,7 @@ import * as params from './data/params.json'
 const unsafeGet = <A>(maybeValue: Option<A>): A =>
   fold<A, A>(
     () => {
-      throw new Error('Could not get a value from `None`')
+      throw Error('Could not get a value from `None`')
     },
     (x) => x,
   )(maybeValue)

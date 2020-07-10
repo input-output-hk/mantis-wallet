@@ -295,7 +295,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const getFinalUnlockedDustForClaim = (claim: Claim, totalUnlockedEther: BigNumber): BigNumber => {
     if (isNone(constants)) {
-      throw new Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
+      throw Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
     }
     const {totalDustDistributed} = constants.value
     const {externalAmount} = claim
@@ -474,7 +474,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const mine = async (claim: IncompleteClaim): Promise<NewMineStarted> => {
     if (isNone(constants)) {
-      throw new Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
+      throw Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
     }
 
     const {externalAmount, externalAddress} = claim

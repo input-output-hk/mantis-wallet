@@ -106,7 +106,7 @@ export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerate
                 Number(UNITS[chain.unitType].toBasic(fee)),
               )
             } else {
-              throw new Error('No prover was selected.')
+              throw Error('No prover was selected.')
             }
           },
           name: 'generate-burn',

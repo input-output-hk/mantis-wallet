@@ -251,14 +251,14 @@ function useProofOfBurnState(
       reward,
       autoConversion,
     ).catch((err) => {
-      throw new Error(
+      throw Error(
         prettyErrorMessage(err, ({message, code}) =>
           code === 1001 ? 'Reward is too low for the selected prover.' : message,
         ),
       )
     })
     if (burnAddressFromProver !== burnAddress) {
-      throw new Error(
+      throw Error(
         `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddress} vs ${burnAddressFromProver}`,
       )
     }

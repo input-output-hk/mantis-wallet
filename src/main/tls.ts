@@ -195,7 +195,7 @@ export async function setupExternalTLS(tlsConfig: TLSConfig): Promise<TLSData> {
     extractCertData(password),
     option.fold(
       () => {
-        throw new Error('Could not extract generated certificate data')
+        throw Error('Could not extract generated certificate data')
       },
       (certData) => ({...tlsConfig, certData}),
     ),

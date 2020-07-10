@@ -68,7 +68,7 @@ class MockWallet implements WalletAPI {
   }
 
   _create(passphrase: string): boolean {
-    if (this.walletExists) throw new Error(WALLET_ALREADY_EXISTS)
+    if (this.walletExists) throw Error(WALLET_ALREADY_EXISTS)
     this.walletExists = true
     this.passphrase = passphrase
     return true
