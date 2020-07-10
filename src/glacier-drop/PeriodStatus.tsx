@@ -86,7 +86,7 @@ const PuzzleInfo = ({
   return (
     <div className="puzzle-info">
       <div className="title">PoW Puzzle Complete</div>
-      <div>You have {timeLeft} to submit your Unlocked Proof for Glacier Drop</div>
+      <div>You have {timeLeft} to submit your Proof of Unlock for Glacier Drop</div>
     </div>
   )
 }
