@@ -373,7 +373,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
           newSyncStatus.mode === 'online' &&
           newSyncStatus.currentBlock > newSyncStatus.highestKnownBlock
         ) {
-          // FIXME: on backend - highestKnownBlock should be >= currentBlock
+          // FIXME: PM-2352 highestKnownBlock should be >= currentBlock
           setSyncStatus(
             some({
               ...newSyncStatus,

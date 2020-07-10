@@ -196,7 +196,6 @@ const TxGlacierTypeLabel = ({
   sendingAddress,
   receivingAddress,
 }: TxGlacierTypeLabel): JSX.Element => {
-  // FIXME: osszevonni a TxTypeLabellel?
   const {
     contractAddresses: {glacierDrop},
   } = GlacierState.useContainer()

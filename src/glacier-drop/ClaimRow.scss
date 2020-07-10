@@ -115,7 +115,7 @@
 
         .puzzle-warning {
           margin-top: 1em;
-          
+
           @include themify($themes) {
             color: themed('error-color');
           }

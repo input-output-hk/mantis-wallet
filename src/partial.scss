@@ -27,8 +27,8 @@
 
     .checked {
       @include themify($themes) {
-        color: themed('text-color');
         fill: themed('success-color');
+        color: themed('text-color');
       }
     }
 
@@ -36,17 +36,17 @@
       left: 3px;
 
       @include themify($themes) {
-        color: themed('text-color');
         stroke: themed('text-color');
         fill: themed('text-color');
+        color: themed('text-color');
       }
     }
 
     .stopped {
       @include themify($themes) {
-        color: themed('text-color');
         stroke: themed('warning-color');
         fill: themed('warning-color');
+        color: themed('text-color');
       }
     }
 
