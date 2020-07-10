@@ -14,6 +14,7 @@ import {
   GlacierConstants,
 } from './glacier-state'
 import {LoadedState} from '../common/wallet-state'
+import {rendererLog} from '../common/logger'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
 import {makeDesktopNotification} from '../common/notify'
@@ -34,7 +35,6 @@ import {ClaimRow} from './ClaimRow'
 import {Epochs} from './Epochs'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
-import {rendererLog} from '../common/logger'
 import './GlacierDropOverview.scss'
 
 const availableChains: DisplayChain[] = [ETC_CHAIN]
@@ -131,8 +131,9 @@ const _GlacierDropOverview = ({
   const {
     claims,
     addClaim,
-    getMiningState,
+    mine,
     cancelMining,
+    getMiningState,
     constants,
     constantsError,
     refreshConstants,
@@ -149,28 +150,39 @@ const _GlacierDropOverview = ({
   const {currentBlock, mode} = walletState.syncStatus
 
   const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
-  const solvingClaim = claims.find((c) => c.puzzleStatus === 'solving')
+  const solvingClaim: SolvingClaim | undefined = claims.find(
+    (c): c is SolvingClaim => c.puzzleStatus === 'solving',
+  )
 
   const {periodConfig, totalDustDistributed, minimumThreshold} = getOrElse(
     (): GlacierConstants => DEFAULT_GLACIER_CONSTANTS,
   )(constants)
   const period = getCurrentPeriod(currentBlock, periodConfig)
 
+  const handleError = (e: Error): void => {
+    rendererLog.error(e)
+    message.error(e.message, 5)
+  }
+
   // Checks puzzle mining state every N milliseconds if a mining is in progress
 
   useInterval(async () => {
     if (!solvingClaim) return
+
     try {
       const miningState = await getMiningState(solvingClaim)
-      if (miningState.status === 'MiningSuccessful') {
-        makeDesktopNotification('PoW Puzzle Complete')
-      }
       if (period !== 'Unlocking') {
         // cancel mining if we're not in the unlocking period
         await cancelMining(solvingClaim)
+      } else if (miningState.status === 'MiningNotStarted') {
+        // app got restarted: restart mining as well
+        await mine(solvingClaim)
+      } else if (miningState.status === 'MiningSuccessful') {
+        // mining successful: show notification
+        makeDesktopNotification('PoW Puzzle Complete')
       }
     } catch (e) {
-      rendererLog.error(e)
+      handleError(e)
     }
   }, MINING_STATUS_CHECK_INTERVAL)
 
@@ -184,7 +196,7 @@ const _GlacierDropOverview = ({
   }
 
   useEffect(() => {
-    update().catch(rendererLog.error)
+    update().catch(handleError)
 
     if (isSome(constantsError)) {
       refreshConstants()
@@ -220,7 +232,9 @@ const _GlacierDropOverview = ({
   // Callbacks
 
   const startPuzzle = (claim: IncompleteClaim): void => {
-    addClaim(claim).then((addedClaim: SolvingClaim) => rendererLog.info({addedClaim}))
+    addClaim(claim)
+      .then((addedClaim: SolvingClaim) => rendererLog.info({addedClaim}))
+      .catch(handleError)
   }
 
   const chooseChain = (_chain: DisplayChain): void => {
@@ -237,7 +251,7 @@ const _GlacierDropOverview = ({
           setClaimDisabled(false)
         })
         .catch((e) => {
-          message.error(e.message)
+          handleError(e)
           setClaimDisabled(false)
         })
     } else {

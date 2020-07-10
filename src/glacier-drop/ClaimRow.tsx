@@ -21,6 +21,7 @@ import {
   getCurrentEpoch,
   getNumberOfEpochsForClaim,
   getCurrentPeriod,
+  Period,
 } from './Period'
 import {secondsUntilBlock} from './PeriodStatus'
 import checkIcon from '../assets/icons/check.svg'
@@ -28,11 +29,13 @@ import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
 
-const PROGRESS_ICONS: Record<string, ReactNode> = {
-  CHECKED: <SVG src={checkIcon} className="checked icon" />,
-  UNKNOWN: <CloseOutlined className="unknown icon" />,
-  FAIL: <CloseOutlined className="fail icon" />,
-  IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" />,
+type ProgressState = 'checked' | 'unknown' | 'fail' | 'inProgress'
+
+const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
+  checked: <SVG src={checkIcon} className="checked icon" />,
+  unknown: <CloseOutlined className="unknown icon" />,
+  fail: <CloseOutlined className="fail icon" />,
+  inProgress: <SVG src={refreshIcon} className="inProgress icon" />,
 }
 
 interface TxStatusTextProps {
@@ -109,7 +112,7 @@ const PuzzleProgress = ({
                 Submit Proof of Unlock
               </Button>
             ) : (
-              'You can no longer submit your Proof of Unlock.'
+              <span className="puzzle-warning">You can no longer submit your Proof of Unlock.</span>
             )}
           </div>
         </>
@@ -229,28 +232,31 @@ const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
   )
 }
 
-const getUnlockedIcon = (claim: Claim): React.ReactNode => {
+const getUnlockProgressState = (claim: Claim, period: Period): ProgressState => {
   const unlockStatus = getUnlockStatus(claim)
   if (
+    unlockStatus?.status === 'TransactionFailed' ||
+    (claim.puzzleStatus === 'unsubmitted' && period !== 'Unlocking')
+  ) {
+    return 'fail'
+  } else if (
     claim.puzzleStatus === 'solving' ||
     claim.puzzleStatus === 'unsubmitted' ||
     unlockStatus?.status === 'TransactionPending'
   ) {
-    return PROGRESS_ICONS.IN_PROGRESS
-  } else if (unlockStatus?.status === 'TransactionFailed') {
-    return PROGRESS_ICONS.FAIL
+    return 'inProgress'
   } else {
-    return PROGRESS_ICONS.CHECKED
+    return 'checked'
   }
 }
 
-const getNumericalProgressIcon = (
+const getNumericalProgressState = (
   currentAmount: BigNumber,
   maxAmount: BigNumber,
-): React.ReactNode => {
-  if (currentAmount.isEqualTo(0)) return PROGRESS_ICONS.UNKNOWN
-  if (currentAmount.isEqualTo(maxAmount)) return PROGRESS_ICONS.CHECKED
-  return PROGRESS_ICONS.IN_PROGRESS
+): ProgressState => {
+  if (currentAmount.isEqualTo(0)) return 'unknown'
+  if (currentAmount.isEqualTo(maxAmount)) return 'checked'
+  return 'inProgress'
 }
 
 interface ClaimRowProps {
@@ -290,11 +296,15 @@ export const ClaimRow = ({
     unlocked,
   )
   const unlockedDustAmount = unlocked ? dustAmount : new BigNumber(0)
+  const period = getCurrentPeriod(currentBlock, periodConfig)
+  const unlockProgress = getUnlockProgressState(claim, period)
+  const unfreezeProgress = getNumericalProgressState(unfrozenDustAmount, dustAmount)
+  const withdrawProgress = getNumericalProgressState(withdrawnDustAmount, dustAmount)
 
   return (
     <div className="ClaimRow">
       <div className="header">
-        <div className="claim-title">Claim #{index}</div>
+        <div className="claim-title">Claim #{index + 1}</div>
         <div className="exchange">
           <ShortNumber big={externalAmount} unit={ETC_CHAIN.unitType} /> {ETC_CHAIN.symbol}
           <SVG src={exchangeIcon} className="icon" />
@@ -314,16 +324,20 @@ export const ClaimRow = ({
         </div>
       </div>
       <div className="status">
-        <div className="progress">{PROGRESS_ICONS.CHECKED} Claimed</div>
-        <div className="line"></div>
-        <div className="progress">{getUnlockedIcon(claim)} Unlocked</div>
-        <div className="line"></div>
         <div className="progress">
-          {getNumericalProgressIcon(unfrozenDustAmount, dustAmount)} Unfrozen
+          {PROGRESS_ICONS.checked} <span className="checked">Claimed</span>
         </div>
         <div className="line"></div>
         <div className="progress">
-          {getNumericalProgressIcon(withdrawnDustAmount, dustAmount)} Withdrawn
+          {PROGRESS_ICONS[unlockProgress]} <span className={unlockProgress}>Unlocked</span>
+        </div>
+        <div className="line"></div>
+        <div className="progress">
+          {PROGRESS_ICONS[unfreezeProgress]} <span className={unfreezeProgress}>Unfrozen</span>
+        </div>
+        <div className="line"></div>
+        <div className="progress">
+          {PROGRESS_ICONS[withdrawProgress]} <span className={withdrawProgress}>Withdrawn</span>
         </div>
 
         <div className="claimed detail">

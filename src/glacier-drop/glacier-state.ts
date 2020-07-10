@@ -150,8 +150,9 @@ export interface GlacierData {
   ): Promise<AuthorizationSignature>
 
   // PoW Puzzle
-  getMiningState(claim: Claim): Promise<GetMiningStateResponse>
-  cancelMining(claim: Claim): Promise<CancelMiningResponse>
+  mine(claim: SolvingClaim): Promise<NewMineStarted>
+  getMiningState(claim: SolvingClaim): Promise<GetMiningStateResponse>
+  cancelMining(claim: SolvingClaim): Promise<CancelMiningResponse>
 
   // GlacierDrop Contract Calls
   getUnlockCallParams(claim: Claim, gasParams: GasParams): CallParams
@@ -367,8 +368,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   //
 
   const updateTxStatuses = async (currentBlock: number): Promise<void> => {
-    // collect all pending transactions from all claims
-    // and fetch new status if we're in a new block
+    // Collect all pending transactions from all claims and fetch new status if we're in a new block
+
     const newStatuses = await Promise.all(
       Object.values(claims)
         .flatMap((claim: Claim) =>
@@ -397,7 +398,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   }
 
   const updateDustAmounts = async (period: Period): Promise<void> => {
-    // Updates dust amounts to the final ones calculated from total unlocked ether
+    // Update dust amounts to the final ones calculated from total unlocked ether
+
     if (period === 'UnlockingNotStarted' || period === 'Unlocking') {
       return // Update is only needed when unlocking period is over
     }
@@ -422,7 +424,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   }
 
   const updateUnfreezingClaimData = async (period: Period): Promise<void> => {
-    // Updates epochs needed for full withdrawal of claim rewards
+    // Update epochs needed for full withdrawal of claim rewards
 
     if (period !== 'Unfreezing') {
       return // Update is only needed in Unfreezing period
@@ -491,25 +493,24 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
     const {externalAmount, externalAddress} = claim
     const {unlockingStartBlock, unlockingEndBlock} = constants.value.periodConfig
+
     const response = await gd.mine(
       toHex(externalAmount),
       externalAddress,
       unlockingStartBlock,
       unlockingEndBlock,
     )
-    if (response.status !== 'NewMineStarted') throw Error(response.message)
+    if (response.status !== 'NewMineStarted') {
+      throw Error(response.message)
+    }
+
     return response
   }
 
-  const cancelMining = async (claim: Claim): Promise<CancelMiningResponse> => {
+  const cancelMining = async (claim: SolvingClaim): Promise<CancelMiningResponse> => {
     // Used when unlocking period is over and mining is not finished yet
 
-    if (claim.puzzleStatus !== 'solving') {
-      throw Error('Mining is not in progress')
-    }
-
     const response = await gd.cancelMining()
-    console.log({response})
     if (response.status !== 'MiningCanceled') {
       throw Error(response.message)
     }
@@ -529,28 +530,33 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         puzzleDuration: 0,
         powNonce: parseInt(response.nonce, 16),
       })
-    } else if (response.status === 'MiningNotStarted') {
-      await mine(claim)
     }
+
     return response
   }
 
-  // Initialize a new claim and start mining
   const addClaim = async (claim: IncompleteClaim): Promise<SolvingClaim> => {
-    if (claims[claim.externalAddress] !== undefined) throw Error('Already claimed')
+    // Initialize a new claim and start mining
+
+    if (claims[claim.externalAddress] !== undefined) {
+      throw Error('Already claimed')
+    }
 
     // start mining and get estimated time
     const mineResponse = await mine(claim)
     const puzzleDuration = mineResponse.estimatedTime
 
     const completeClaim: SolvingClaim = {...claim, puzzleDuration}
-    setClaims((claims) => ({...claims, [claim.externalAddress]: completeClaim}))
+    updateClaims([completeClaim])
+
     return completeClaim
   }
 
   //
   // Contract Call Methods
   //
+
+  // Submit Proof of Unlock
 
   const getUnlockCallParams = (
     claim: UnsubmittedClaim,
@@ -619,6 +625,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     return jobHash
   }
 
+  // Withdraw Funds
+
   const getWithdrawCallParams = (claim: Claim, {gasLimit, gasPrice}: GasParams): CallParams => {
     const {transparentAddress} = claim
 
@@ -683,6 +691,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     removeClaims,
     getEtcSnapshotBalanceWithProof,
     authorizationSign,
+    mine,
     cancelMining,
     getMiningState,
     getUnlockCallParams,

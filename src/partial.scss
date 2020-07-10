@@ -27,14 +27,16 @@
 
     .checked {
       @include themify($themes) {
+        color: themed('text-color');
         fill: themed('success-color');
       }
     }
 
-    .in-progress {
+    .inProgress {
       left: 3px;
 
       @include themify($themes) {
+        color: themed('text-color');
         stroke: themed('text-color');
         fill: themed('text-color');
       }
@@ -42,6 +44,7 @@
 
     .stopped {
       @include themify($themes) {
+        color: themed('text-color');
         stroke: themed('warning-color');
         fill: themed('warning-color');
       }
