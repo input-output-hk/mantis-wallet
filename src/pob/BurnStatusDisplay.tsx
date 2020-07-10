@@ -7,11 +7,9 @@ import {
   RightOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
-  WarningOutlined,
 } from '@ant-design/icons'
-import {Popover, Progress} from 'antd'
+import {Popover} from 'antd'
 import {TooltipPlacement} from 'antd/lib/tooltip'
-import _ from 'lodash'
 import classnames from 'classnames'
 import {CHAINS} from './chains'
 import {BurnStatusType} from './api/prover'
@@ -31,10 +29,8 @@ import {
 } from './pob-config'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
-import * as styles from '../vars-for-ts.scss'
+import {ProgressType, ProgressBar} from '../common/ProgressBar'
 import './BurnStatusDisplay.scss'
-
-type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS' | 'STOPPED'
 
 interface AllProgress {
   started: ProgressType
@@ -151,77 +147,6 @@ const isRedeemDone = (
   )
 }
 
-interface DisplayProgressProps {
-  progressType: ProgressType
-  ratio: number
-  showOfflineWarning?: boolean
-}
-
-const DisplayProgress = ({
-  progressType,
-  ratio,
-  showOfflineWarning = false,
-}: DisplayProgressProps): JSX.Element => {
-  switch (progressType) {
-    case 'UNKNOWN':
-      return <div className="line" />
-    case 'CHECKED':
-      return (
-        <div className="progress-bar">
-          <Progress
-            strokeColor={styles.successColor}
-            status="success"
-            percent={100}
-            showInfo={false}
-          />
-        </div>
-      )
-    case 'FAILED':
-      return (
-        <div className="progress-bar">
-          <Progress
-            strokeColor={styles.errorColor}
-            status="exception"
-            percent={100}
-            showInfo={false}
-          />
-        </div>
-      )
-    case 'STOPPED':
-      return (
-        <div className="progress-bar">
-          <Progress
-            strokeColor={styles.warningColor}
-            status="normal"
-            percent={100}
-            showInfo={false}
-          />
-        </div>
-      )
-    case 'IN_PROGRESS':
-      return (
-        <div className="progress-bar">
-          <Progress
-            strokeColor={{
-              from: styles.successColor,
-              to: styles.lunaBlue,
-            }}
-            status="active"
-            percent={100 * _.clamp(ratio, 0, 0.99)}
-            showInfo={false}
-          />
-          {showOfflineWarning && (
-            <Popover content="Your wallet is connecting at the moment, the progress might be outdated.">
-              <div className="offline-warning">
-                <WarningOutlined title="warning" />
-              </div>
-            </Popover>
-          )}
-        </div>
-      )
-  }
-}
-
 export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
   burnWatcher,
   hideBurnProcess,
@@ -312,7 +237,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
             </Popover>
           </div>
-          <DisplayProgress
+          <ProgressBar
             progressType={progress.started}
             ratio={startedProgress(
               burnStatus.current_source_height,
@@ -328,7 +253,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               checkedMessage="Confirmations received from source blockchain."
             />
           </div>
-          <DisplayProgress
+          <ProgressBar
             progressType={progress.success}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
               burnStatus.status,
@@ -345,7 +270,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               checkedMessage="Prover has successfully proved the burn transaction."
             />
           </div>
-          <DisplayProgress
+          <ProgressBar
             progressType={progress.confirm}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
               burnStatus.status,
