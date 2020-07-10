@@ -365,8 +365,25 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       const result = await wallet.getSynchronizationStatus()
       if (typeof result === 'string') throw Error(result)
       const newSyncStatus = await tPromise.decode(SynchronizationStatus, result)
-      if (newSyncStatus.currentBlock !== syncStatus.currentBlock) load()
-      if (!_.isEqual(newSyncStatus)(syncStatus)) setSyncStatus(some(newSyncStatus))
+      if (newSyncStatus.currentBlock !== syncStatus.currentBlock) {
+        load()
+      }
+      if (!_.isEqual(newSyncStatus)(syncStatus)) {
+        if (
+          newSyncStatus.mode === 'online' &&
+          newSyncStatus.currentBlock > newSyncStatus.highestKnownBlock
+        ) {
+          // FIXME: on backend - highestKnownBlock should be >= currentBlock
+          setSyncStatus(
+            some({
+              ...newSyncStatus,
+              highestKnownBlock: newSyncStatus.currentBlock,
+            }),
+          )
+        } else {
+          setSyncStatus(some(newSyncStatus))
+        }
+      }
     } catch (e) {
       handleError(e)
     }

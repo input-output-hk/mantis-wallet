@@ -29,9 +29,15 @@ export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
 
 export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
   const classes = classnames('SyncStatus', getSyncStatus(syncStatus))
+  const popoverContent = (
+    <span>
+      <div>Current block: {syncStatus.currentBlock}</div>
+      {syncStatus.mode === 'online' && <div>Highest block: {syncStatus.highestKnownBlock}</div>}
+    </span>
+  )
   return (
     <span className={classes}>
-      <Popover content={`Current block: ${syncStatus.currentBlock}`} placement="left">
+      <Popover content={popoverContent} placement="left">
         <span>
           <SyncMessage syncStatus={syncStatus} />
           <SVG src={refreshIcon} className="svg" />
