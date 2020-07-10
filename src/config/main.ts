@@ -56,18 +56,18 @@ convict.addFormats({
   'existing-directory': {
     validate(val: unknown): void {
       if (typeof val != 'string') {
-        throw new Error('Expected a string containing path to existing directory')
+        throw Error('Expected a string containing path to existing directory')
       }
 
       if (!fs.statSync(val).isDirectory()) {
-        throw new Error(`Expected ${val} to be a path of an existing directory`)
+        throw Error(`Expected ${val} to be a path of an existing directory`)
       }
     },
   },
   'settings-map': {
     validate(val: unknown): void {
       if (!(val instanceof Map) && !(val instanceof Object)) {
-        throw new Error(`Expected ${JSON.stringify(val)} to be a Map/Object`)
+        throw Error(`Expected ${JSON.stringify(val)} to be a Map/Object`)
       }
     },
     coerce(val: unknown): Map<string, string> {
@@ -89,14 +89,14 @@ convict.addFormats({
           (entries) => new Map<string, string>(entries),
         )
       } else {
-        throw new Error(`Couldn't parse ${JSON.stringify(val)} to settings map`)
+        throw Error(`Couldn't parse ${JSON.stringify(val)} to settings map`)
       }
     },
   },
   ['list-of-provers']: {
     validate(val: unknown): void {
       if (!_.isArray(val)) {
-        throw new Error('Must be of type Array')
+        throw Error('Must be of type Array')
       }
 
       val.forEach((possibleProver) => {
@@ -104,10 +104,10 @@ convict.addFormats({
           .load(possibleProver)
           .validate()
         if (!possibleProver.address) {
-          throw new Error("Address shouldn't be empty for prover")
+          throw Error("Address shouldn't be empty for prover")
         }
         if (!possibleProver.name) {
-          throw new Error("Name shouldn't be empty for prover")
+          throw Error("Name shouldn't be empty for prover")
         }
       })
     },

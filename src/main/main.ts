@@ -268,7 +268,7 @@ if (config.runClients) {
         app.exit(1)
         // Little trick to make typechecker see that this promise cannot contain undefined
         // Because always an error is thrown
-        throw new Error('exiting')
+        throw Error('exiting')
       },
     )
 

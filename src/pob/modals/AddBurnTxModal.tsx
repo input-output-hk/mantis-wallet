@@ -39,7 +39,7 @@ const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
           if (prover) {
             await onAddTx(prover, burnTx, burnAddress)
           } else {
-            throw new Error('No prover was selected.')
+            throw Error('No prover was selected.')
           }
         },
       }}

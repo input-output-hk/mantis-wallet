@@ -97,7 +97,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
             ),
           )
           await dialogForm.validateFields().catch(() => {
-            return Promise.reject(new Error(DIALOG_VALIDATION_ERROR))
+            return Promise.reject(Error(DIALOG_VALIDATION_ERROR))
           })
         }
         await onClick(event)

@@ -137,7 +137,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           lock={async (passphrase: string): Promise<void> => {
             const isLocked = await walletState.lock({passphrase})
             if (!isLocked) {
-              throw new Error("Couldn't lock the wallet.")
+              throw Error("Couldn't lock the wallet.")
             }
             setActiveModal('none')
           }}
@@ -150,7 +150,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           onRemoveWallet={async (passphrase: string): Promise<void> => {
             const removed = await walletState.remove({passphrase})
             if (!removed) {
-              throw new Error("Couldn't remove the wallet.")
+              throw Error("Couldn't remove the wallet.")
             }
             pobState.reset()
             glacierState.removeClaims()
