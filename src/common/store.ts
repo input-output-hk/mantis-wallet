@@ -7,7 +7,12 @@ import {gt} from 'semver'
 import {StoreSettingsData, defaultSettingsData, migrationsForSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
 import {StorePobData, defaultPobData, migrationsForPobData} from '../pob/pob-state'
-import {Claim, StoreGlacierData, defaultGlacierData} from '../glacier-drop/glacier-state'
+import {
+  Claim,
+  StoreGlacierData,
+  defaultGlacierData,
+  migrationsForGlacierData,
+} from '../glacier-drop/glacier-state'
 import {DATADIR_VERSION} from '../shared/version'
 
 export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData
@@ -30,11 +35,15 @@ const mergeMigrations = _.mergeAllWith(
   },
 )
 
-const migrations = mergeMigrations([migrationsForSettingsData, migrationsForPobData])
+const migrations = mergeMigrations([
+  migrationsForSettingsData,
+  migrationsForPobData,
+  migrationsForGlacierData,
+])
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 
-const projectVersion = getMaxVersion('0.14.0-alpha.2', DATADIR_VERSION)
+const projectVersion = getMaxVersion('0.14.0-alpha.3', DATADIR_VERSION)
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]
@@ -87,6 +96,7 @@ const deserializeClaim = (serializedClaim: SerializedClaim): Claim => {
     dustAmount: new BigNumber(dustAmount),
     externalAmount: new BigNumber(externalAmount),
     withdrawnDustAmount: new BigNumber(withdrawnDustAmount),
+    txBuildInProgress: false, // fixes stuck builds in case of restart while build in progress
   } as Claim // FIXME: PM-1658
 }
 

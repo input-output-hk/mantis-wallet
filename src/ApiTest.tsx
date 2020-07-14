@@ -8,10 +8,9 @@ import {
   Account,
   RawSynchronizationStatus,
 } from './web3'
-import {getContractAddresses, loadLunaManagedConfig} from './config/renderer'
+import {getContractConfigs} from './config/renderer'
 import {WalletState} from './common/wallet-state'
 import {GlacierState} from './glacier-drop/glacier-state'
-import {updateSelectedNetworkConfig} from './common/ipc-util'
 import {BorderlessInput} from './common/BorderlessInput'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {rendererLog} from './common/logger'
@@ -25,10 +24,9 @@ export const ApiTest = (): JSX.Element => {
   const walletState = WalletState.useContainer()
   const glacierState = GlacierState.useContainer()
 
-  const contractAddresses = getContractAddresses()
+  const contractAddresses = getContractConfigs()
   const networks = Object.keys(contractAddresses)
-  const {selectedNetwork} = loadLunaManagedConfig()
-  const selectedNetworkIndex = networks.indexOf(selectedNetwork)
+  const selectedNetworkIndex = networks.indexOf(glacierState.selectedNetwork)
 
   const [message, setMessage] = useState<string>('')
 
@@ -112,7 +110,7 @@ export const ApiTest = (): JSX.Element => {
               label="Selected Network"
               options={networks}
               defaultOptionIndex={selectedNetworkIndex}
-              onChange={updateSelectedNetworkConfig}
+              onChange={glacierState.updateSelectedNetwork}
             />
           </div>
         )}

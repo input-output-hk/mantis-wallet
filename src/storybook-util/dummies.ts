@@ -21,7 +21,7 @@ export const dummyTransactions: Transaction[] = [
         gasPrice: 123,
         gasLimit: '0x1185920',
         sendingAddress: 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v7',
-        receivingAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95',
+        receivingAddress: 'm-test-uns-ad185v0zwhq92a3d230smap6sfxy9fjukgn7qs2q0',
         value: '123',
         payload: '0xPAYLOAD',
       },

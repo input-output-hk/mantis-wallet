@@ -216,7 +216,23 @@ interface MiningSuccessful {
   mixHash: string // hex string
 }
 
-export type GetMiningStateResponse = MiningInProgress | MiningSuccessful
+interface MiningNotStarted {
+  status: 'MiningNotStarted'
+}
+
+export type GetMiningStateResponse = MiningInProgress | MiningSuccessful | MiningNotStarted
+
+interface MiningCanceled {
+  status: 'MiningCanceled'
+  message: string
+}
+
+interface NoMiningToCancel {
+  status: 'NoMiningToCancel'
+  message: string
+}
+
+export type CancelMiningResponse = MiningCanceled | NoMiningToCancel
 
 // Helpers
 
@@ -288,6 +304,7 @@ export interface GlacierDropAPI {
     unlockingStartBlock: number,
     unlockingEndBlock: number,
   ): MineResponse
+  cancelMining(): CancelMiningResponse
   getMiningState(): GetMiningStateResponse
 }
 

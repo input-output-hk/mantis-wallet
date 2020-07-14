@@ -330,11 +330,6 @@ export const config = loadConfigs([
 // Luna managed config
 
 const lunaManagedConfigSchema = {
-  selectedNetwork: {
-    doc: 'Name of the network to which Luna is connected',
-    format: String,
-    default: 'testnet',
-  },
   miningEnabled: {
     doc: 'Whether mining is enabled or not',
     format: Boolean,

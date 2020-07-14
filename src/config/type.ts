@@ -47,7 +47,6 @@ export interface Config {
 }
 
 export interface LunaManagedConfig {
-  selectedNetwork: string
   miningEnabled: boolean
   pkd: string
   diversifier: string

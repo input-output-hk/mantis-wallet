@@ -9,8 +9,11 @@ import hourglassIcon from '../assets/icons/hourglass.svg'
 import {Period, getCurrentPeriod} from './Period'
 import './PeriodStatus.scss'
 
+export const secondsUntilBlock = (currentBlock: number, block: number): number =>
+  (block - currentBlock) * BLOCK_TIME_SECONDS
+
 const timeUntilBlock = (currentBlock: number, block: number): string =>
-  toDurationString((block - currentBlock) * BLOCK_TIME_SECONDS)
+  toDurationString(secondsUntilBlock(currentBlock, block))
 
 const getCurrentPeriodText = (period: Period): string => {
   switch (period) {
@@ -83,7 +86,7 @@ const PuzzleInfo = ({
   return (
     <div className="puzzle-info">
       <div className="title">PoW Puzzle Complete</div>
-      <div>You have {timeLeft} to submit your Unlocked Proof for Glacier Drop</div>
+      <div>You have {timeLeft} to submit your Proof of Unlock for Glacier Drop</div>
     </div>
   )
 }

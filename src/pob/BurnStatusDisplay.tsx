@@ -86,7 +86,7 @@ const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
   CHECKED: <SVG src={checkIcon} className="checked icon" title="Checked" />,
   UNKNOWN: <CloseOutlined className="unknown icon" title="Unknown" />,
   FAILED: <CloseOutlined className="fail icon" title="Failed" />,
-  IN_PROGRESS: <SVG src={refreshIcon} className="in-progress icon" title="In progress" />,
+  IN_PROGRESS: <SVG src={refreshIcon} className="inProgress icon" title="In progress" />,
   STOPPED: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }
 

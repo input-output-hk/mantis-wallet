@@ -5,6 +5,8 @@ import BigNumber from 'bignumber.js'
 import {render, fireEvent, waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {FeeEstimates, TransparentAccount, WalletState, WalletStatus} from '../common/wallet-state'
+import {BuildJobState} from '../common/build-job-state'
+import {GlacierState} from '../glacier-drop/glacier-state'
 import {RedeemModal} from './modals/RedeemModal'
 import {UNITS} from '../common/units'
 import {createInMemoryStore} from '../common/store'
@@ -14,7 +16,6 @@ import {findExactlyOneByTag} from '../common/test-helpers'
 import {TransparentAccounts} from './TransparentAccounts'
 import {Transaction, makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
-import {BuildJobState} from '../common/build-job-state'
 
 const {Dust} = UNITS
 
@@ -31,7 +32,9 @@ const WithProviders = ({children}: {children?: React.ReactNode}): JSX.Element =>
   return (
     <SettingsState.Provider initialState={createInMemoryStore(defaultSettingsData)}>
       <BuildJobState.Provider>
-        <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
+        <WalletState.Provider initialState={initialState}>
+          <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
+        </WalletState.Provider>
       </BuildJobState.Provider>
     </SettingsState.Provider>
   )

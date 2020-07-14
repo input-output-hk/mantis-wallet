@@ -12,12 +12,21 @@ import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
-import {loadCurrentContractAddresses} from './glacier-config'
-import {Web3API, makeWeb3Worker, NewMineStarted, GetMiningStateResponse, CallParams} from '../web3'
+import {loadContractAddresses} from './glacier-config'
+import {
+  Web3API,
+  makeWeb3Worker,
+  NewMineStarted,
+  GetMiningStateResponse,
+  CallParams,
+  CancelMiningResponse,
+} from '../web3'
 import {Period} from './Period'
+import {rendererLog} from '../common/logger'
+import {ContractConfigItem} from '../config/type'
+import {getContractConfigs} from '../config/renderer'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
-import {rendererLog} from '../common/logger'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -120,6 +129,11 @@ export interface GlacierData {
   constantsError: Option<string>
   refreshConstants(): Promise<void>
 
+  // Contract info
+  contractAddresses: ContractConfigItem
+  selectedNetwork: string
+  updateSelectedNetwork(selectedNetwork: string): void
+
   // Claims
   claims: Claim[]
   claimedAddresses: string[]
@@ -139,7 +153,9 @@ export interface GlacierData {
   ): Promise<AuthorizationSignature>
 
   // PoW Puzzle
-  getMiningState(claim: Claim): Promise<GetMiningStateResponse>
+  mine(claim: SolvingClaim): Promise<NewMineStarted>
+  getMiningState(claim: SolvingClaim): Promise<GetMiningStateResponse>
+  cancelMining(claim: SolvingClaim): Promise<CancelMiningResponse>
 
   // GlacierDrop Contract Calls
   getUnlockCallParams(claim: Claim, gasParams: GasParams): CallParams
@@ -172,12 +188,23 @@ export interface PeriodConfig {
 export type StoreGlacierData = {
   glacierDrop: {
     claims: Record<string, Claim>
+    selectedNetwork: string
   }
 }
 
 export const defaultGlacierData: StoreGlacierData = {
   glacierDrop: {
     claims: {},
+    selectedNetwork: 'testnet',
+  },
+}
+
+export const migrationsForGlacierData = {
+  '0.14.0-alpha.3': (store: Store<StoreGlacierData>) => {
+    store.set('glacierDrop', {
+      ...store.get('glacierDrop'),
+      selectedNetwork: defaultGlacierData.glacierDrop.selectedNetwork,
+    })
   },
 }
 
@@ -209,7 +236,24 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const [totalUnlockedEtherCache, setTotalUnlockedEtherCache] = useState<Option<BigNumber>>(none)
 
-  const contractAddresses = loadCurrentContractAddresses()
+  // Selected Network
+
+  const [selectedNetwork, setSelectedNetwork] = usePersistedState(store, [
+    'glacierDrop',
+    'selectedNetwork',
+  ])
+
+  const contractAddresses = loadContractAddresses(selectedNetwork)
+
+  const updateSelectedNetwork = (selectedNetwork: string): void => {
+    const contractConfigs = getContractConfigs()
+    if (!(selectedNetwork in contractConfigs)) {
+      return rendererLog.error(
+        `Invalid network: "${selectedNetwork}". Valid networks: ${Object.keys(contractConfigs)}`,
+      )
+    }
+    setSelectedNetwork(selectedNetwork)
+  }
 
   //
   // Constants
@@ -273,7 +317,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   useEffect((): void => {
     refreshConstants()
-  }, [])
+  }, [selectedNetwork])
 
   //
   // Statistics
@@ -320,12 +364,12 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   //
 
   const updateClaim = (updatedClaim: Claim): void => {
-    setClaims({...claims, [updatedClaim.externalAddress]: updatedClaim})
+    setClaims((claims) => ({...claims, [updatedClaim.externalAddress]: updatedClaim}))
   }
 
   const updateClaims = (updatedClaims: Claim[]): void => {
     const claimsByExternalAddress = _.keyBy((c: Claim) => c.externalAddress)(updatedClaims)
-    setClaims({...claims, ...claimsByExternalAddress})
+    setClaims((claims) => ({...claims, ...claimsByExternalAddress}))
   }
 
   const removeClaims = async (): Promise<void> => setClaims({})
@@ -355,8 +399,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   //
 
   const updateTxStatuses = async (currentBlock: number): Promise<void> => {
-    // collect all pending transactions from all claims
-    // and fetch new status if we're in a new block
+    // Collect all pending transactions from all claims and fetch new status if we're in a new block
+
     const newStatuses = await Promise.all(
       Object.values(claims)
         .flatMap((claim: Claim) =>
@@ -385,7 +429,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   }
 
   const updateDustAmounts = async (period: Period): Promise<void> => {
-    // Updates dust amounts to the final ones calculated from total unlocked ether
+    // Update dust amounts to the final ones calculated from total unlocked ether
+
     if (period === 'UnlockingNotStarted' || period === 'Unlocking') {
       return // Update is only needed when unlocking period is over
     }
@@ -410,7 +455,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   }
 
   const updateUnfreezingClaimData = async (period: Period): Promise<void> => {
-    // Updates epochs needed for full withdrawal of claim rewards
+    // Update epochs needed for full withdrawal of claim rewards
 
     if (period !== 'Unfreezing') {
       return // Update is only needed in Unfreezing period
@@ -479,13 +524,31 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
     const {externalAmount, externalAddress} = claim
     const {unlockingStartBlock, unlockingEndBlock} = constants.value.periodConfig
+
     const response = await gd.mine(
       toHex(externalAmount),
       externalAddress,
       unlockingStartBlock,
       unlockingEndBlock,
     )
-    if (response.status !== 'NewMineStarted') throw Error(response.message)
+    if (response.status !== 'NewMineStarted') {
+      throw Error(response.message)
+    }
+
+    return response
+  }
+
+  const cancelMining = async (claim: SolvingClaim): Promise<CancelMiningResponse> => {
+    // Used when unlocking period is over and mining is not finished yet
+
+    const response = await gd.cancelMining()
+    if (response.status !== 'MiningCanceled') {
+      throw Error(response.message)
+    }
+
+    // Set to "unsubmitted" state, as submitting is disabled when unlocking period is over
+    updateClaim({...claim, puzzleStatus: 'unsubmitted', powNonce: 0})
+
     return response
   }
 
@@ -499,25 +562,32 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         powNonce: parseInt(response.nonce, 16),
       })
     }
+
     return response
   }
 
-  // Initialize a new claim and start mining
   const addClaim = async (claim: IncompleteClaim): Promise<SolvingClaim> => {
-    if (claims[claim.externalAddress] !== undefined) throw Error('Already claimed')
+    // Initialize a new claim and start mining
+
+    if (claims[claim.externalAddress] !== undefined) {
+      throw Error('Already claimed')
+    }
 
     // start mining and get estimated time
     const mineResponse = await mine(claim)
     const puzzleDuration = mineResponse.estimatedTime
 
     const completeClaim: SolvingClaim = {...claim, puzzleDuration}
-    setClaims({...claims, [claim.externalAddress]: completeClaim})
+    updateClaims([completeClaim])
+
     return completeClaim
   }
 
   //
   // Contract Call Methods
   //
+
+  // Submit Proof of Unlock
 
   const getUnlockCallParams = (
     claim: UnsubmittedClaim,
@@ -586,6 +656,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     return jobHash
   }
 
+  // Withdraw Funds
+
   const getWithdrawCallParams = (claim: Claim, {gasLimit, gasPrice}: GasParams): CallParams => {
     const {transparentAddress} = claim
 
@@ -643,12 +715,17 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     constants,
     constantsError,
     refreshConstants,
+    selectedNetwork,
+    updateSelectedNetwork,
+    contractAddresses,
     claims: claimList,
     claimedAddresses,
     addClaim,
     removeClaims,
     getEtcSnapshotBalanceWithProof,
     authorizationSign,
+    mine,
+    cancelMining,
     getMiningState,
     getUnlockCallParams,
     getWithdrawCallParams,

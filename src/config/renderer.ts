@@ -11,5 +11,5 @@ export const loadLunaManagedConfig = (): LunaManagedConfig => remote.getGlobal('
 // static config
 export const config: Config = loadConfig()
 
-export const getContractAddresses = (): Record<string, ContractConfigItem> =>
+export const getContractConfigs = (): Record<string, ContractConfigItem> =>
   _.keyBy((c: ContractConfigItem) => c.networkName)(loadConfig().contractConfig)

@@ -36,7 +36,7 @@ test('PeriodStatus: PoW puzzle complete', async () => {
 
   expect(getByText('PoW Puzzle Complete')).toBeInTheDocument()
   expect(
-    getByText('You have about 1 hour to submit your Unlocked Proof for Glacier Drop'),
+    getByText('You have about 1 hour to submit your Proof of Unlock for Glacier Drop'),
   ).toBeInTheDocument()
 })
 

@@ -99,16 +99,26 @@
       grid-area: unlocked;
 
       .pow-status {
-        margin-bottom: 1.5em;
+        margin-bottom: 1em;
       }
 
-      .puzzle-progress .time-left {
-        display: inline-block;
-        margin-left: 0.5em;
-        font-weight: bold;
+      .puzzle-progress {
+        .time-left {
+          display: inline-block;
+          margin-left: 0.5em;
+          font-weight: bold;
 
-        @include themify($themes) {
-          color: themed('text-color');
+          @include themify($themes) {
+            color: themed('text-color');
+          }
+        }
+
+        .puzzle-warning {
+          margin-top: 1em;
+
+          @include themify($themes) {
+            color: themed('error-color');
+          }
         }
       }
     }

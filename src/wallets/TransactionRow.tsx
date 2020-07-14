@@ -8,6 +8,7 @@ import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString} from '../web3'
 import {SettingsState} from '../settings-state'
+import {GlacierState} from '../glacier-drop/glacier-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
@@ -22,6 +23,7 @@ import checkIcon from '../assets/icons/check.svg'
 import checkDoubleIcon from '../assets/icons/check-double.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import crossIcon from '../assets/icons/cross.svg'
+import glacierIcon from '../assets/icons/menu-glacier.svg'
 import './TransactionRow.scss'
 
 export interface TransactionCellProps {
@@ -185,6 +187,37 @@ const TxTypeLabel = ({
   )
 }
 
+interface TxGlacierTypeLabel {
+  sendingAddress: string
+  receivingAddress: string | null
+}
+
+const TxGlacierTypeLabel = ({
+  sendingAddress,
+  receivingAddress,
+}: TxGlacierTypeLabel): JSX.Element => {
+  const {
+    contractAddresses: {glacierDrop},
+  } = GlacierState.useContainer()
+
+  const wrapper = (content: React.ReactNode): JSX.Element => {
+    return (
+      <div className="type-label">
+        <SVG className="svg glacier-icon" src={glacierIcon} />
+        &nbsp;{content}
+      </div>
+    )
+  }
+
+  if (receivingAddress === glacierDrop) {
+    return wrapper('Glacier Drop Contract Call')
+  } else if (sendingAddress === glacierDrop) {
+    return wrapper('Glacier Drop Rewards')
+  } else {
+    return <></>
+  }
+}
+
 const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element => {
   switch (transaction.txDetails.txType) {
     case 'transfer':
@@ -201,6 +234,7 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
       } = transaction.txDetails.transparentTransaction
       return (
         <div>
+          <TxGlacierTypeLabel sendingAddress={sendingAddress} receivingAddress={receivingAddress} />
           <TxTypeLabel transaction={transaction} />
           <div className="call-details two-col-table">
             <div>From:</div>
