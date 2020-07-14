@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import {loadLunaManagedConfig, getContractAddresses} from '../config/renderer'
+import {getContractConfigs} from '../config/renderer'
 import {DEFAULT_CONTRACT_ADDRESSES} from '../shared/config'
 import {ContractConfigItem} from '../config/type'
 import {DisplayChain} from '../pob/chains'
@@ -31,12 +31,11 @@ export const BLOCK_TIME_SECONDS = 43
 export const TOTAL_ETHER_IN_SNAPSHOT = new BigNumber('99987579302527058980101585')
 
 // Contract Addresses
-export const loadCurrentContractAddresses = (): ContractConfigItem => {
-  const contractAddresses = getContractAddresses()
-  const lunaManagedConfig = loadLunaManagedConfig()
+export const loadContractAddresses = (selectedNetwork: string): ContractConfigItem => {
+  const contractAddresses = getContractConfigs()
 
-  return lunaManagedConfig.selectedNetwork in contractAddresses
-    ? contractAddresses[lunaManagedConfig.selectedNetwork]
+  return selectedNetwork in contractAddresses
+    ? contractAddresses[selectedNetwork]
     : DEFAULT_CONTRACT_ADDRESSES
 }
 

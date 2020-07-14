@@ -14,7 +14,6 @@ import * as rxop from 'rxjs/operators'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {asapScheduler, scheduled} from 'rxjs'
 import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
-import {LunaManagedConfigPaths} from '../shared/ipc-types'
 import {ClientName, SettingsPerClient} from '../config/type'
 import {
   MidnightProcess,
@@ -168,22 +167,6 @@ app.on('remote-get-global', (event, webContents, name) => {
     event.returnValue = shared[name]()
   }
 })
-
-ipcListenToRenderer(
-  'update-config',
-  async (event, keyPath: LunaManagedConfigPaths, value: string) => {
-    try {
-      await updateConfig({[keyPath]: value})
-      if (keyPath !== 'selectedNetwork') {
-        // do not trigger restart when selectedNetwork changes
-        event.reply('update-config-success')
-      }
-    } catch (e) {
-      mainLog.error(e)
-      event.reply('update-config-failure', e.message)
-    }
-  },
-)
 
 ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | null) => {
   if (!spendingKey) {

@@ -12,7 +12,7 @@ import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
-import {loadCurrentContractAddresses} from './glacier-config'
+import {loadContractAddresses} from './glacier-config'
 import {
   Web3API,
   makeWeb3Worker,
@@ -22,10 +22,11 @@ import {
   CancelMiningResponse,
 } from '../web3'
 import {Period} from './Period'
-import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
-import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
 import {rendererLog} from '../common/logger'
 import {ContractConfigItem} from '../config/type'
+import {getContractConfigs} from '../config/renderer'
+import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
+import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -130,6 +131,8 @@ export interface GlacierData {
 
   // Contract info
   contractAddresses: ContractConfigItem
+  selectedNetwork: string
+  updateSelectedNetwork(selectedNetwork: string): void
 
   // Claims
   claims: Claim[]
@@ -185,12 +188,23 @@ export interface PeriodConfig {
 export type StoreGlacierData = {
   glacierDrop: {
     claims: Record<string, Claim>
+    selectedNetwork: string
   }
 }
 
 export const defaultGlacierData: StoreGlacierData = {
   glacierDrop: {
     claims: {},
+    selectedNetwork: 'testnet',
+  },
+}
+
+export const migrationsForGlacierData = {
+  '0.14.0-alpha.3': (store: Store<StoreGlacierData>) => {
+    store.set('glacierDrop', {
+      ...store.get('glacierDrop'),
+      selectedNetwork: defaultGlacierData.glacierDrop.selectedNetwork,
+    })
   },
 }
 
@@ -222,7 +236,24 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const [totalUnlockedEtherCache, setTotalUnlockedEtherCache] = useState<Option<BigNumber>>(none)
 
-  const contractAddresses = loadCurrentContractAddresses()
+  // Selected Network
+
+  const [selectedNetwork, setSelectedNetwork] = usePersistedState(store, [
+    'glacierDrop',
+    'selectedNetwork',
+  ])
+
+  const contractAddresses = loadContractAddresses(selectedNetwork)
+
+  const updateSelectedNetwork = (selectedNetwork: string): void => {
+    const contractConfigs = getContractConfigs()
+    if (!(selectedNetwork in contractConfigs)) {
+      return rendererLog.error(
+        `Invalid network: "${selectedNetwork}". Valid networks: ${Object.keys(contractConfigs)}`,
+      )
+    }
+    setSelectedNetwork(selectedNetwork)
+  }
 
   //
   // Constants
@@ -286,7 +317,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   useEffect((): void => {
     refreshConstants()
-  }, [])
+  }, [selectedNetwork])
 
   //
   // Statistics
@@ -684,6 +715,8 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     constants,
     constantsError,
     refreshConstants,
+    selectedNetwork,
+    updateSelectedNetwork,
     contractAddresses,
     claims: claimList,
     claimedAddresses,
