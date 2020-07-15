@@ -100,7 +100,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
                     <span className="prefix">&nbsp;</span>
                     <span className="icon">
                       &nbsp;
-                      <SVG className="svg" src={menuItem.icon} />
+                      <SVG
+                        className={classnames('svg', menuId.toLowerCase())}
+                        src={menuItem.icon}
+                      />
                     </span>
                     <span className="link-title">{menuItem.title}</span>
                   </div>

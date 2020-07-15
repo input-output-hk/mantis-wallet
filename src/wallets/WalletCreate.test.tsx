@@ -76,7 +76,7 @@ test('WalletCreate `Security` step', async () => {
   const spendingKeySwitch = getByRole('switch')
   userEvent.click(spendingKeySwitch)
   expect(getByText(spendingKey)).toBeInTheDocument()
-  expect(getByText('Download .txt')).toBeInTheDocument()
+  expect(getByText('Download txt')).toBeInTheDocument()
 
   // Click checkbox
   userEvent.click(

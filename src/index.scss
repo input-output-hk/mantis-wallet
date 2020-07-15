@@ -74,7 +74,6 @@ div#root {
 }
 
 ::-webkit-scrollbar-track {
-  margin: 10px;
   @include themify($themes) {
     background-color: themed('border-color-base');
   }
@@ -119,7 +118,7 @@ div#root {
   &:focus,
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('btn-default-bg'), 10);
+      background-color: lighten(themed('btn-default-bg'), 15%);
       color: themed('secondary-background');
     }
   }
@@ -128,15 +127,15 @@ div#root {
 // antd "primary" Button overrides
 .ant-btn-primary {
   @include themify($themes) {
-    background-color: themed('primary-color');
-    color: #fff;
+    background-color: darken(themed('primary-color'), 3%);
+    color: #000;
   }
 
   &:focus,
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('primary-color'), 5);
-      color: #fff;
+      background-color: lighten(themed('primary-color'), 5%);
+      color: #000;
     }
   }
 
@@ -149,7 +148,7 @@ div#root {
     &:hover,
     &:focus {
       @include themify($themes) {
-        background-color: themed('quinary-background');
+        background-color: themed('normal-color');
         color: themed('text-color');
       }
     }
@@ -199,6 +198,25 @@ div#root {
   @include themify($themes) {
     background-color: themed('secondary-background');
     color: themed('text-color');
+  }
+}
+
+.ant-switch {
+  @include themify($themes) {
+    background-color: themed('normal-color');
+  }
+
+  &.ant-switch-checked {
+    @include themify($themes) {
+      background-color: themed('primary-color');
+    }
+  }
+}
+
+@include themify($themes) {
+  input::placeholder {
+    opacity: 1;
+    color: themed('secondary-text-color');
   }
 }
 

@@ -21,6 +21,7 @@
 
   .header {
     display: grid;
+    grid-gap: 0.25em;
     grid-template-areas: 'claim-title exchange external-address midnight-address';
     grid-template-columns: 1fr 2fr 3fr 3fr;
 
@@ -40,7 +41,7 @@
 
       .icon {
         display: inline-block;
-        height: 15px;
+        height: 11px;
         vertical-align: middle;
 
         @include themify($themes) {
@@ -52,13 +53,19 @@
     .external-address {
       @extend %ellipsize;
       grid-area: external-address;
-      opacity: $secondary-opacity;
+
+      @include themify($themes) {
+        color: themed('secondary-text-color');
+      }
     }
 
     .midnight-address {
       @extend %ellipsize;
       grid-area: midnight-address;
-      opacity: $secondary-opacity;
+
+      @include themify($themes) {
+        color: themed('secondary-text-color');
+      }
     }
   }
 
@@ -117,7 +124,7 @@
           margin-top: 1em;
 
           @include themify($themes) {
-            color: themed('error-color');
+            color: themed('error-text');
           }
         }
       }
@@ -141,7 +148,7 @@
 
       .fail {
         @include themify($themes) {
-          color: themed('error-color');
+          color: themed('error-text');
         }
       }
     }

@@ -26,6 +26,7 @@ export const Link = ({
       event.preventDefault()
       shell.openExternal(href)
     }}
+    tabIndex={0}
   >
     <Popover content={_.truncate(href, {length: 40})} placement={popoverPlacement}>
       <span>{children}</span>

@@ -4,6 +4,7 @@ import _ from 'lodash/fp'
 import {LunaWalletLoader} from 'luna-wallet-loader'
 import {config, loadLunaManagedConfig, loadLunaStatus} from './config/renderer'
 import {SettingsState} from './settings-state'
+import {onKeyDownEnter} from './common/util'
 import {useInterval} from './common/hook-utils'
 import {StatusModal} from './common/StatusModal'
 import {rendererLog} from './common/logger'
@@ -51,7 +52,12 @@ export const SplashScreen: React.FunctionComponent<{}> = () => {
         <LoadingOutlined spin />
       </div>
       <div className="loading">{message}</div>
-      <div className="details" onClick={() => setShowStatus(true)}>
+      <div
+        className="details"
+        onClick={() => setShowStatus(true)}
+        onKeyDown={onKeyDownEnter(() => setShowStatus(true))}
+        tabIndex={0}
+      >
         Show details
       </div>
     </div>

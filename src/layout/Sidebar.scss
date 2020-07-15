@@ -45,7 +45,7 @@
       font-size: 18px;
       font-weight: $link-font-weight;
       letter-spacing: $link-letter-spacing;
-      line-height: 40px;
+      line-height: 43px;
       text-decoration: none;
       cursor: pointer;
 
@@ -55,8 +55,10 @@
       }
 
       &.active {
-        font-weight: bold;
-        letter-spacing: 0.2px;
+        .link-title {
+          font-weight: bold;
+          letter-spacing: 0.2px;
+        }
 
         .prefix {
           @include themify($themes) {
@@ -77,8 +79,13 @@
           transform: translate(-50%, -50%);
 
           @include themify($themes) {
-            stroke: rgba(0, 0, 0, 0);
+            stroke-width: 0.2;
+            stroke: themed('text-color');
             fill: themed('text-color');
+
+            &.settings {
+              stroke-width: 0.4;
+            }
           }
         }
       }
@@ -136,6 +143,7 @@
     }
   }
 
+  // Mini Sidebar
   @media screen and #{$sidebar-collapse-query} {
     $mini-left-padding: 33px;
 

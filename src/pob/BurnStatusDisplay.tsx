@@ -29,14 +29,14 @@ import {
 } from './pob-config'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
-import {ProgressType, ProgressBar} from '../common/ProgressBar'
+import {ProgressState, ProgressBar} from '../common/ProgressBar'
 import './BurnStatusDisplay.scss'
 import {useFormatters} from '../common/i18n-hooks'
 
 interface AllProgress {
-  started: ProgressType
-  success: ProgressType
-  confirm: ProgressType
+  started: ProgressState
+  success: ProgressState
+  confirm: ProgressState
 }
 
 interface BurnStatusDisplayProps extends Pick<ProofOfBurnData, 'hideBurnProcess'> {
@@ -48,47 +48,47 @@ interface BurnStatusDisplayProps extends Pick<ProofOfBurnData, 'hideBurnProcess'
 }
 
 const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
-  tx_found: {started: 'IN_PROGRESS', success: 'UNKNOWN', confirm: 'UNKNOWN'},
-  commitment_submitted: {started: 'CHECKED', success: 'IN_PROGRESS', confirm: 'UNKNOWN'},
-  proof_fail: {started: 'FAILED', success: 'FAILED', confirm: 'FAILED'},
+  tx_found: {started: 'inProgress', success: 'unknown', confirm: 'unknown'},
+  commitment_submitted: {started: 'checked', success: 'inProgress', confirm: 'unknown'},
+  proof_fail: {started: 'fail', success: 'fail', confirm: 'fail'},
   commitment_appeared: {
-    started: 'CHECKED',
-    success: 'IN_PROGRESS',
-    confirm: 'UNKNOWN',
+    started: 'checked',
+    success: 'inProgress',
+    confirm: 'unknown',
   },
   redeem_submitted: {
-    started: 'CHECKED',
-    success: 'CHECKED',
-    confirm: 'IN_PROGRESS',
+    started: 'checked',
+    success: 'checked',
+    confirm: 'inProgress',
   },
   commitment_fail: {
-    started: 'CHECKED',
-    success: 'FAILED',
-    confirm: 'FAILED',
+    started: 'checked',
+    success: 'fail',
+    confirm: 'fail',
   },
   redeem_appeared: {
-    started: 'CHECKED',
-    success: 'CHECKED',
-    confirm: 'IN_PROGRESS',
+    started: 'checked',
+    success: 'checked',
+    confirm: 'inProgress',
   },
   redeem_fail: {
-    started: 'CHECKED',
-    success: 'CHECKED',
-    confirm: 'FAILED',
+    started: 'checked',
+    success: 'checked',
+    confirm: 'fail',
   },
   redeem_another_prover: {
-    started: 'CHECKED',
-    success: 'CHECKED',
-    confirm: 'STOPPED',
+    started: 'checked',
+    success: 'checked',
+    confirm: 'stopped',
   },
 }
 
-const PROGRESS_ICONS: Record<ProgressType, ReactNode> = {
-  CHECKED: <SVG src={checkIcon} className="checked icon" title="Checked" />,
-  UNKNOWN: <CloseOutlined className="unknown icon" title="Unknown" />,
-  FAILED: <CloseOutlined className="fail icon" title="Failed" />,
-  IN_PROGRESS: <SVG src={refreshIcon} className="inProgress icon" title="In progress" />,
-  STOPPED: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
+const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
+  checked: <SVG src={checkIcon} className="checked icon" title="Checked" />,
+  unknown: <CloseOutlined className="unknown icon" title="Unknown" />,
+  fail: <CloseOutlined className="fail icon" title="Failed" />,
+  inProgress: <SVG src={refreshIcon} className="inProgress icon" title="In progress" />,
+  stopped: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }
 
 const ProvingProgressLabel = ({
@@ -98,7 +98,7 @@ const ProvingProgressLabel = ({
   checkedMessage,
   placement = 'top',
 }: {
-  progress: ProgressType
+  progress: ProgressState
   label: string
   inProgressMessage: string
   checkedMessage: string
@@ -110,10 +110,10 @@ const ProvingProgressLabel = ({
     </span>
   )
 
-  if (progress === 'IN_PROGRESS' || progress === 'CHECKED' || progress === 'STOPPED') {
+  if (progress === 'inProgress' || progress === 'checked' || progress === 'stopped') {
     return (
       <Popover
-        content={progress === 'IN_PROGRESS' ? inProgressMessage : checkedMessage}
+        content={progress === 'inProgress' ? inProgressMessage : checkedMessage}
         placement={placement}
       >
         <span>{labelWithIcon}</span>
@@ -169,9 +169,9 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   const chain = CHAINS[burnAddressInfo.chainId]
   const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_tx_height)
     ? {
-        started: 'CHECKED',
-        success: 'CHECKED',
-        confirm: 'CHECKED',
+        started: 'checked',
+        success: 'checked',
+        confirm: 'checked',
       }
     : STATUS_TO_PROGRESS[burnStatus.status]
 
@@ -245,12 +245,12 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               content="Your burn transaction has been found on source blockchain."
               placement="topLeft"
             >
-              <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
+              <span>{PROGRESS_ICONS['checked']} Found Transaction</span>
             </Popover>
             {txFoundDate && <span className="step-date">{txFoundDate}</span>}
           </div>
           <ProgressBar
-            progressType={progress.started}
+            progressState={progress.started}
             ratio={startedProgress(
               burnStatus.current_source_height,
               burnStatus.burn_tx_height,
@@ -267,7 +267,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             {provingStartedDate && <span className="step-date">{provingStartedDate}</span>}
           </div>
           <ProgressBar
-            progressType={progress.success}
+            progressState={progress.success}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
               burnStatus.status,
               burnStatus.commitment_tx_height,
@@ -285,7 +285,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             {provingSuccessDate && <span className="step-date">{provingSuccessDate}</span>}
           </div>
           <ProgressBar
-            progressType={progress.confirm}
+            progressState={progress.confirm}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
               burnStatus.status,
               burnStatus.redeem_tx_height,
@@ -296,7 +296,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           <div className="progress">
             <ProvingProgressLabel
               progress={progress.confirm}
-              label={progress.confirm === 'STOPPED' ? 'Already Proved' : 'Proving Confirmed'}
+              label={progress.confirm === 'stopped' ? 'Already Proved' : 'Proving Confirmed'}
               inProgressMessage="Waiting for confirmations on Midnight."
               checkedMessage="Burn Process complete. Midnight Tokens are now available."
               placement="topRight"

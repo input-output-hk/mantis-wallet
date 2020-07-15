@@ -5,27 +5,27 @@ import {WarningOutlined} from '@ant-design/icons'
 import * as styles from '../vars-for-ts.scss'
 import './ProgressBar.scss'
 
-export type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS' | 'STOPPED'
+export type ProgressState = 'checked' | 'unknown' | 'fail' | 'inProgress' | 'stopped'
 
 interface ProgressBarProps {
-  progressType: ProgressType
+  progressState: ProgressState
   ratio: number
   showOfflineWarning?: boolean
 }
 
 export const ProgressBar = ({
-  progressType,
+  progressState,
   ratio,
   showOfflineWarning = false,
 }: ProgressBarProps): JSX.Element => {
-  switch (progressType) {
-    case 'UNKNOWN':
+  switch (progressState) {
+    case 'unknown':
       return (
         <div className="ProgressBar">
           <Progress status="normal" percent={0} showInfo={false} />
         </div>
       )
-    case 'CHECKED':
+    case 'checked':
       return (
         <div className="ProgressBar">
           <Progress
@@ -36,7 +36,7 @@ export const ProgressBar = ({
           />
         </div>
       )
-    case 'FAILED':
+    case 'fail':
       return (
         <div className="ProgressBar">
           <Progress
@@ -47,7 +47,7 @@ export const ProgressBar = ({
           />
         </div>
       )
-    case 'STOPPED':
+    case 'stopped':
       return (
         <div className="ProgressBar">
           <Progress
@@ -58,7 +58,7 @@ export const ProgressBar = ({
           />
         </div>
       )
-    case 'IN_PROGRESS':
+    case 'inProgress':
       return (
         <div className="ProgressBar">
           <Progress

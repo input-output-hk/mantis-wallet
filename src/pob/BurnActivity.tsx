@@ -120,6 +120,7 @@ export const _BurnActivity = ({
           {
             <BorderlessInput
               className="search-input"
+              aria-label="Search for Burn Tx ID"
               placeholder="Burn Tx ID"
               onChange={(e) => setSearchTxId(e.target.value)}
             />

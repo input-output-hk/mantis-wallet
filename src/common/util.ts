@@ -222,3 +222,10 @@ export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntV
  */
 export const optionHasValue = <T>(option: Option<T>, value: T): boolean =>
   elem(fromEquals(_.isEqual))(value, option)
+
+/**
+ * Used to handle keyboard events similarly to onClick for interactive non-button elements
+ */
+export const onKeyDownEnter = (callback: () => void) => (event: React.KeyboardEvent) => {
+  if (event.key === 'Enter') callback()
+}

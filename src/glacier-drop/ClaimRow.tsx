@@ -15,6 +15,7 @@ import {
 import {formatPercentage, toDurationString} from '../common/formatters'
 import {returnDataToHumanReadable} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
+import {ProgressState} from '../common/ProgressBar'
 import {DUST_SYMBOL} from '../pob/chains'
 import {
   getUnfrozenAmount,
@@ -29,13 +30,12 @@ import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
 
-type ProgressState = 'checked' | 'unknown' | 'fail' | 'inProgress'
-
 const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
   checked: <SVG src={checkIcon} className="checked icon" />,
   unknown: <CloseOutlined className="unknown icon" />,
   fail: <CloseOutlined className="fail icon" />,
   inProgress: <SVG src={refreshIcon} className="inProgress icon" />,
+  stopped: <></>,
 }
 
 interface TxStatusTextProps {
@@ -297,6 +297,8 @@ export const ClaimRow = ({
   )
   const unlockedDustAmount = unlocked ? dustAmount : new BigNumber(0)
   const period = getCurrentPeriod(currentBlock, periodConfig)
+
+  // Progress
   const unlockProgress = getUnlockProgressState(claim, period)
   const unfreezeProgress = getNumericalProgressState(unfrozenDustAmount, dustAmount)
   const withdrawProgress = getNumericalProgressState(withdrawnDustAmount, dustAmount)

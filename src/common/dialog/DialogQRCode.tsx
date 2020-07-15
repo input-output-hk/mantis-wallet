@@ -29,7 +29,7 @@ export const DialogQRCode: React.FunctionComponent<DialogQRCodeProps> = ({
         type="primary"
         onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
       >
-        Download .txt
+        Download txt
       </Button>
     )}
   </div>

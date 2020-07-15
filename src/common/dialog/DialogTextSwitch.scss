@@ -30,7 +30,7 @@
             opacity: 1;
 
             @include themify($themes) {
-              background-color: themed('quinary-background');
+              background-color: themed('normal-color');
             }
           }
         }

@@ -57,6 +57,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
         <div className="settings-label">Enable Dark Mode</div>
         <div className="settings-input">
           <Switch
+            aria-label="Enable Dark Mode"
             checked={theme === 'dark'}
             onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
           />
@@ -68,6 +69,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
         <div className="settings-label">Enable Mining</div>
         <div className="settings-input">
           <Switch
+            aria-label="Enable Mining"
             checked={lunaManagedConfig.miningEnabled}
             onChange={(miningEnabled) => {
               if (miningEnabled) {

@@ -23,7 +23,6 @@
 
     .input {
       @include themify($themes) {
-        background-color: themed('quaternary-background');
         color: themed('secondary-text-color');
       }
 

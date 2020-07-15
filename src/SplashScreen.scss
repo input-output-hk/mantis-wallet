@@ -73,7 +73,7 @@
     text-align: center;
 
     @include themify($themes) {
-      color: rgba(themed('text-color'), 0.8);
+      color: rgba(themed('text-color'), 0.9);
     }
   }
 }
