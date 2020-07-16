@@ -48,6 +48,18 @@ with cfg.steps.commands; {
       agents.queue = "project42";
     };
 
+    dtslint = {
+      dependsOn = [ node_modules ];
+      label = ":dtslint:";
+      command = ''
+        buildkite-agent artifact download node_modules.tgz .
+        tar xzf node_modules.tgz
+        rm node_modules.tgz
+        nix-shell --pure --run "yarn dtslint"
+      '';
+      agents.queue = "project42";
+    };
+
     test = {
       dependsOn = [ node_modules ];
       label = ":react::test_tube:";

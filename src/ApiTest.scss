@@ -4,7 +4,8 @@
   .input {
     margin-bottom: 20px;
 
-    label {
+    label,
+    div.label {
       @extend %dialog-label;
       display: block;
     }

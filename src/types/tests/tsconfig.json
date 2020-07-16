@@ -1,0 +1,20 @@
+// this additional tsconfig is required by dtslint
+// see: https://github.com/Microsoft/dtslint#typestsconfigjson
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noEmit": true
+  },
+  "include": [
+    "."
+  ]
+}

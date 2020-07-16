@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {expectCalledOnClick} from '../common/test-helpers'
+import {expectCalledOnClick, WithSettingsProvider} from '../common/test-helpers'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
@@ -32,6 +32,7 @@ test('WalletCreate `Define` step', async () => {
 
   const {getByLabelText, getByText, queryByText, getByTestId} = render(
     <WalletCreateDefineStep cancel={cancel} next={next} />,
+    {wrapper: WithSettingsProvider},
   )
 
   // Enter wallet name
@@ -68,6 +69,7 @@ test('WalletCreate `Security` step', async () => {
 
   const {getByText, getByRole, getByLabelText} = render(
     <WalletCreateSecurityStep cancel={cancel} next={next} spendingKey={spendingKey} />,
+    {wrapper: WithSettingsProvider},
   )
 
   // Show spending key
@@ -96,6 +98,7 @@ test('WalletCreate `Display Recovery` step', async () => {
 
   const {getByText, getByLabelText} = render(
     <WalletCreateDisplayRecoveryStep back={back} next={next} seedPhrase={seedPhrase} />,
+    {wrapper: WithSettingsProvider},
   )
 
   // every seed word is present in the docuement
@@ -132,6 +135,7 @@ test('WalletCreate `Verify Recovery` step', async () => {
       seedPhrase={seedPhrase}
       shuffledSeedPhrase={seedPhrase}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   // Click seed words in correct order

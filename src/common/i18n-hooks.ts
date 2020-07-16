@@ -1,3 +1,4 @@
+import {TFunctionRenderer, createTFunctionRenderer} from './i18n'
 import {SettingsState} from '../settings-state'
 import {formatDate} from './formatters'
 
@@ -10,4 +11,15 @@ export const useFormatters = (): Formatters => {
   return {
     formatDate: (date: Date) => formatDate(date, dateFormat, timeFormat),
   }
+}
+
+interface UseTranslationState {
+  i18n: SettingsState['i18n']
+  t: TFunctionRenderer
+}
+
+export const useTranslation = (): UseTranslationState => {
+  const {i18n} = SettingsState.useContainer()
+
+  return {i18n, t: createTFunctionRenderer(i18n)}
 }
