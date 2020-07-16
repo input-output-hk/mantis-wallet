@@ -32,10 +32,13 @@ import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
 import {getTitle, ipcListenToRenderer} from './util'
-import {inspectLineForDAGStatus, setFetchParamsStatus, status} from './status'
+import {inspectLineForDAGStatus, setFetchParamsStatus, status, setNetworkTag} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 import {saveLogsArchive} from './log-exporter'
 import {mainLog} from './logger'
+import {DEFAULT_LANGUAGE, Language} from '../shared/i18n'
+import {createAndInitI18nForMain, createTFunctionMain, TFunctionMain} from './i18n'
+import {store} from './store'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -48,7 +51,10 @@ let remixWindowHandle: BrowserWindow | null = null
 
 let shuttingDown = false
 
-function createRemixWindow(): void {
+const i18n = createAndInitI18nForMain(store.get('settings.language') || DEFAULT_LANGUAGE)
+const t = createTFunctionMain(i18n)
+
+function createRemixWindow(t: TFunctionMain): void {
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
 
   const remixWindow = new BrowserWindow({
@@ -63,7 +69,7 @@ function createRemixWindow(): void {
     slashes: true,
   })
 
-  remixWindow.setMenu(buildRemixMenu())
+  remixWindow.setMenu(buildRemixMenu(t))
   remixWindow.loadURL(remixUrl)
 
   // Work-around for electron/chrome 51+ onbeforeunload behavior
@@ -79,7 +85,15 @@ function createRemixWindow(): void {
   remixWindowHandle = remixWindow
 }
 
-function createWindow(): void {
+const openRemix = (t: TFunctionMain) => (): void => {
+  if (remixWindowHandle) {
+    remixWindowHandle.focus()
+  } else {
+    createRemixWindow(t)
+  }
+}
+
+function createWindow(t: TFunctionMain): void {
   mainLog.info({
     versions: process.versions,
     config,
@@ -99,15 +113,7 @@ function createWindow(): void {
     },
   })
 
-  const openRemix = (): void => {
-    if (remixWindowHandle) {
-      remixWindowHandle.focus()
-    } else {
-      createRemixWindow()
-    }
-  }
-
-  Menu.setApplicationMenu(buildMenu(openRemix))
+  Menu.setApplicationMenu(buildMenu(openRemix(t), t))
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
@@ -144,7 +150,7 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-const openLuna = (): Promise<void> => app.whenReady().then(createWindow)
+const openLuna = (t: TFunctionMain): Promise<void> => app.whenReady().then(() => createWindow(t))
 
 //
 // Configuration
@@ -192,6 +198,7 @@ ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | 
 })
 
 ipcListenToRenderer('update-network-tag', (_event, networkTag: NetworkTag) => {
+  setNetworkTag(networkTag)
   mainWindowHandle?.setTitle(getTitle(networkTag))
 })
 
@@ -214,6 +221,20 @@ ipcListenToRenderer('save-debug-logs', async (event) => {
   } catch (e) {
     mainLog.error(e)
     event.reply('save-debug-logs-failure', e.message)
+  }
+})
+
+// Setup language handling
+ipcListenToRenderer('update-language', (_event, language: Language) => {
+  if (mainWindowHandle) {
+    i18n.changeLanguage(language).then(() => {
+      const t = createTFunctionMain(i18n)
+      Menu.setApplicationMenu(buildMenu(openRemix(t), t))
+      mainWindowHandle?.setTitle(getTitle(status.info.networkTag))
+      if (remixWindowHandle) {
+        remixWindowHandle.setMenu(buildRemixMenu(t))
+      }
+    })
   }
 })
 
@@ -241,7 +262,7 @@ if (!config.runClients) {
 //
 if (config.runClients) {
   const initializationPromise = checkDatadirCompatibility()
-    .then(openLuna)
+    .then(() => openLuna(t))
     .then(() => setupOwnTLS(config.clientConfigs.node))
     .then((tlsData) => ({
       tlsData,
@@ -381,5 +402,5 @@ if (config.runClients) {
     }
   })
 } else {
-  openLuna()
+  openLuna(t)
 }

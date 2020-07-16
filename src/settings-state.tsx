@@ -5,6 +5,7 @@ import {usePersistedState} from './common/hook-utils'
 import {Store, createInMemoryStore} from './common/store'
 import {Language, DEFAULT_LANGUAGE} from './shared/i18n'
 import {createAndInitI18nForRenderer} from './common/i18n'
+import {updateLanguage} from './common/ipc-util'
 
 export type Theme = 'dark' | 'light'
 
@@ -88,6 +89,7 @@ function useSettingsState(
   const setLanguage = (language: Language): void => {
     _setLanguage(language)
     i18n.changeLanguage(language)
+    updateLanguage(language)
   }
 
   useEffect(() => {
