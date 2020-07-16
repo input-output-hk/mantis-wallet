@@ -9,8 +9,6 @@ import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecov
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
 import {DIALOG_VALIDATION_ERROR} from '../common/Dialog'
 
-jest.mock('../config/renderer.ts')
-
 const seedPhrase = [
   'vengeful',
   'legs',

@@ -11,8 +11,6 @@ import {mockWeb3Worker} from '../web3-mock'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-jest.mock('../config/renderer.ts')
-
 const seedPhrase = [
   'vengeful',
   'legs',

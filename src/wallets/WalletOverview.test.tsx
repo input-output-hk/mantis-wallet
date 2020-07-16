@@ -16,8 +16,6 @@ const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-jest.mock('../config/renderer.ts')
-
 test('WalletOverview shows properly formatted balance', () => {
   const confidential = Dust.toBasic(new BigNumber(12345))
   const transparent = Dust.toBasic(new BigNumber(98765))

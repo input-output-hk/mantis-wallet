@@ -6,8 +6,6 @@ import BigNumber from 'bignumber.js'
 import {DUMMY_PERIOD_CONFIG} from '../storybook-util/dummies'
 import {Epochs, EpochRow} from './Epochs'
 
-jest.mock('../config/renderer.ts')
-
 const EPOCH_ROWS: EpochRow[] = [
   {
     transparentAddress: 'm-main-uns-ABCDjfgdj6fewrhlv6j5qxeck38ms2t5sshgg5upk',

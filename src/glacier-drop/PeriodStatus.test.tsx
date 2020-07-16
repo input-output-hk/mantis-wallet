@@ -4,8 +4,6 @@ import {render} from '@testing-library/react'
 import {DUMMY_PERIOD_CONFIG} from '../storybook-util/dummies'
 import {PeriodStatus} from './PeriodStatus'
 
-jest.mock('../config/renderer.ts')
-
 test('PeriodStatus: Unlocking not yet started', async () => {
   const {getByText} = render(
     <PeriodStatus periodConfig={DUMMY_PERIOD_CONFIG} currentBlock={99} powPuzzleComplete={false} />,

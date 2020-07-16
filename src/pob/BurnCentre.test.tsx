@@ -23,8 +23,6 @@ const {ETH_TESTNET} = CHAINS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-jest.mock('../config/renderer.ts')
-
 test('Burn Centre shows correct burn balances and its buttons work as expected', async () => {
   const burnCoins = jest.fn()
   const addTx = jest.fn()

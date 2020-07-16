@@ -19,8 +19,6 @@ import {mockWeb3Worker} from '../web3-mock'
 
 const {Dust} = UNITS
 
-jest.mock('../config/renderer.ts')
-
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
 const WithProviders = ({children}: {children?: React.ReactNode}): JSX.Element => {

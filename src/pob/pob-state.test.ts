@@ -3,8 +3,6 @@ import BigNumber from 'bignumber.js'
 import {getPendingBalance, BurnStatus, BurnAddressInfo} from './pob-state'
 import {createBurnStatus} from '../common/test-helpers'
 
-jest.mock('../config/renderer.ts')
-
 it('gathers pending balance correctly', () => {
   const prover = {
     name: 'Test prover',

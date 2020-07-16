@@ -9,8 +9,6 @@ import {
 import {BLOCK_TIME_SECONDS} from './glacier-config'
 import {DUMMY_PERIOD_CONFIG} from '../storybook-util/dummies'
 
-jest.mock('../config/renderer.ts')
-
 it('validates amount correctly', () => {
   // Unfreezing not started
   assert.equal(getCurrentEpoch(0, DUMMY_PERIOD_CONFIG), 0)

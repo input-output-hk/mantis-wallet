@@ -14,8 +14,6 @@ import {UNITS} from '../common/units'
 const {ETH_TESTNET, BTC_TESTNET} = CHAINS
 const Bitcoin = UNITS.Bitcoin
 
-jest.mock('../config/renderer.ts')
-
 test('Burn Coins - Choose Tokens step', async () => {
   const chooseChain = jest.fn()
   const cancel = jest.fn()
