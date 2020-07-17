@@ -165,7 +165,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   }, [burnStatus.isHidden])
 
   const chain = CHAINS[burnAddressInfo.chainId]
-  const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
+  const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_tx_height)
     ? {
         started: 'CHECKED',
         success: 'CHECKED',
@@ -257,7 +257,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             progressType={progress.success}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
               burnStatus.status,
-              burnStatus.commitment_txid_height,
+              burnStatus.commitment_tx_height,
               syncStatus,
             )}
             showOfflineWarning={syncStatus.mode === 'offline'}
@@ -274,7 +274,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             progressType={progress.confirm}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
               burnStatus.status,
-              burnStatus.redeem_txid_height,
+              burnStatus.redeem_tx_height,
               syncStatus,
             )}
             showOfflineWarning={syncStatus.mode === 'offline'}

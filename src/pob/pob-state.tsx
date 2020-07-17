@@ -35,8 +35,8 @@ export interface BurnAddressInfo {
 }
 
 export interface RealBurnStatus extends BurnApiStatus {
-  commitment_txid_height: number | null
-  redeem_txid_height: number | null
+  commitment_tx_height: number | null
+  redeem_tx_height: number | null
   isHidden: boolean
 }
 
@@ -194,8 +194,8 @@ function useProofOfBurnState(
             async (s: BurnApiStatus): Promise<RealBurnStatus> => {
               return {
                 ...s,
-                commitment_txid_height: await getTransactionHeight(s.commitment_txid),
-                redeem_txid_height: await getTransactionHeight(s.redeem_txid),
+                commitment_tx_height: await getTransactionHeight(s.commitment_txid),
+                redeem_tx_height: await getTransactionHeight(s.redeem_txid),
                 isHidden:
                   hiddenBurnProcesses[burnStatusKey] === 'all' ||
                   (hiddenBurnProcesses[burnStatusKey] || []).includes(s.txid),

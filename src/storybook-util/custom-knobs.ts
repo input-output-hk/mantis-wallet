@@ -87,9 +87,9 @@ export const burnStatus = (
       txid: `${_.kebabCase(name)}-source-chain-transaction-id`,
       chain: null,
       commitment_txid: `${_.kebabCase(name)}-commitment-transaction-id`,
-      commitment_txid_height: 10,
+      commitment_tx_height: 10,
       redeem_txid: `${_.kebabCase(name)}-redeem-transaction-id`,
-      redeem_txid_height: 15,
+      redeem_tx_height: 15,
       burn_tx_height: 1000,
       current_source_height: 1035,
       processing_start_height: 1100,
@@ -106,14 +106,14 @@ export const burnStatus = (
     txid: text(`${name} transaction`, mergedValue.txid),
     chain: null,
     commitment_txid: text(`${name} commitment transaction`, mergedValue.commitment_txid || ''),
-    commitment_txid_height: number(
+    commitment_tx_height: number(
       `${name} commitment transaction height`,
-      mergedValue.commitment_txid_height || 1,
+      mergedValue.commitment_tx_height || 1,
     ),
     redeem_txid: text(`${name} redeem transaction`, mergedValue.redeem_txid || ''),
-    redeem_txid_height: number(
+    redeem_tx_height: number(
       `${name} redeem transaction height`,
-      mergedValue.redeem_txid_height || 1,
+      mergedValue.redeem_tx_height || 1,
     ),
     burn_tx_height: number(`${name} tx height`, mergedValue.burn_tx_height || 1),
     current_source_height: number(`${name} Current height`, mergedValue.current_source_height || 1),
