@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 import _ from 'lodash/fp'
 import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
+import {fromUnixTime} from 'date-fns'
 import {createContainer} from 'unstated-next'
 import {
   getStatuses,
@@ -37,6 +38,7 @@ export interface BurnAddressInfo {
 export interface RealBurnStatus extends BurnApiStatus {
   commitment_tx_height: number | null
   redeem_tx_height: number | null
+  redeem_tx_timestamp: Date | null
   isHidden: boolean
 }
 
@@ -184,6 +186,17 @@ function useProofOfBurnState(
     }
   }
 
+  const getBlockDate = async (blockNumber: number | null): Promise<Date | null> => {
+    if (blockNumber == null) return null
+    try {
+      const timestamp = (await web3.eth.getBlock(blockNumber, false))?.timestamp
+      return timestamp == null ? null : fromUnixTime(new BigNumber(timestamp).toNumber())
+    } catch (err) {
+      rendererLog.error(err)
+      return null
+    }
+  }
+
   const refreshBurnStatus = async (): Promise<void> => {
     const getBurnStatuses = async (burnWatcher: BurnWatcher): Promise<[string, BurnStatus]> => {
       const burnStatusKey = getBurnStatusKey(burnWatcher)
@@ -192,10 +205,12 @@ function useProofOfBurnState(
         const statusesWithTxidHeight: RealBurnStatus[] = await Promise.all(
           statuses.filter(noBurnObservedFilter).map(
             async (s: BurnApiStatus): Promise<RealBurnStatus> => {
+              const redeemTxHeight = await getTransactionHeight(s.redeem_txid)
               return {
                 ...s,
                 commitment_tx_height: await getTransactionHeight(s.commitment_txid),
-                redeem_tx_height: await getTransactionHeight(s.redeem_txid),
+                redeem_tx_height: redeemTxHeight,
+                redeem_tx_timestamp: await getBlockDate(redeemTxHeight),
                 isHidden:
                   hiddenBurnProcesses[burnStatusKey] === 'all' ||
                   (hiddenBurnProcesses[burnStatusKey] || []).includes(s.txid),

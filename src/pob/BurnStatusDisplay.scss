@@ -112,6 +112,20 @@
     grid-area: status;
     grid-template-columns: repeat(3, auto minmax(54px, 1fr)) auto;
     cursor: default;
+
+    .progress {
+      .step-date {
+        position: absolute;
+        top: 17px;
+        left: 25px;
+        white-space: nowrap;
+
+        &.last {
+          right: 0;
+          left: unset;
+        }
+      }
+    }
   }
 
   .burn-details {

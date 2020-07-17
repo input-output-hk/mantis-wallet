@@ -9,7 +9,7 @@ import {UNITS} from '../common/units'
 import {abbreviateAmount} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {expectCalledOnClick} from '../common/test-helpers'
+import {expectCalledOnClick, WithSettingsProvider} from '../common/test-helpers'
 import {BurnActivity} from './BurnActivity'
 import {BurnStatusType} from './api/prover'
 import {makeWeb3Worker} from '../web3'
@@ -119,6 +119,7 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       commitment_tx_height: 10,
       redeem_txid: null,
       redeem_tx_height: null,
+      redeem_tx_timestamp: null,
       fail_reason: null,
       burn_tx_height: 1,
       current_source_height: 1,
@@ -126,6 +127,11 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       last_tag_height: 1,
       tx_value: 20,
       isHidden: false,
+      timestamps: {
+        tx_found: new Date(2020, 4, 17, 3, 24, 0),
+        commitment_submitted: null,
+        redeem_submitted: null,
+      },
     },
     {
       status: 'tx_found',
@@ -135,6 +141,7 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       commitment_tx_height: 10,
       redeem_txid: null,
       redeem_tx_height: null,
+      redeem_tx_timestamp: null,
       fail_reason: null,
       burn_tx_height: 1,
       current_source_height: 1,
@@ -142,6 +149,11 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       last_tag_height: 1,
       tx_value: 20,
       isHidden: false,
+      timestamps: {
+        tx_found: new Date(2020, 4, 17, 3, 24, 0),
+        commitment_submitted: null,
+        redeem_submitted: null,
+      },
     },
   ]
 
@@ -265,6 +277,7 @@ const renderBurnStatusDisplay = (status: BurnStatusType): RenderResult =>
       syncStatus={syncStatus}
       hideBurnProcess={jest.fn()}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
 test('Burn Status - Display burn transaction found', async () => {

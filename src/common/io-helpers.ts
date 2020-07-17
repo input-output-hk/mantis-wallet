@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import {parseISO, isValid} from 'date-fns'
 import * as t from 'io-ts'
 import {either} from 'fp-ts/lib/Either'
 
@@ -36,4 +37,15 @@ export const SignatureParamCodec = new t.Type<string, string>(
       return t.success(`0x${str.slice(2).padStart(64, '0')}`)
     }),
   t.identity,
+)
+
+export const DateFromISO8601 = new t.Type<Date, string>(
+  'DateFromISO8601',
+  (u): u is Date => u instanceof Date,
+  (u, c) =>
+    either.chain(t.string.validate(u, c), (str) => {
+      const date = parseISO(str)
+      return isValid(date) ? t.success(date) : t.failure(str, c)
+    }),
+  (a) => a.toISOString(),
 )

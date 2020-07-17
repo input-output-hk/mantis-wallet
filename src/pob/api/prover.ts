@@ -9,6 +9,7 @@ import {ChainId} from '../chains'
 import {wait} from '../../shared/utils'
 import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
 import {rendererLog} from '../../common/logger'
+import {DateFromISO8601} from '../../common/io-helpers'
 
 function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
   return t.union([type, t.null, t.undefined])
@@ -46,6 +47,12 @@ const chainType = t.keyof({
   ETH_TESTNET: null,
 })
 
+const Timestamps = t.type({
+  tx_found: notRequired(DateFromISO8601),
+  commitment_submitted: notRequired(DateFromISO8601),
+  redeem_submitted: notRequired(DateFromISO8601),
+})
+
 const BurnApiStatus = t.type({
   txid: t.string,
   tx_value: t.union([t.number, t.null]),
@@ -58,6 +65,7 @@ const BurnApiStatus = t.type({
   fail_reason: notRequired(t.string),
   chain: notRequired(chainType),
   last_tag_height: notRequired(t.number),
+  timestamps: notRequired(Timestamps),
 })
 
 const BurnApiStatuses = t.array(t.union([BurnApiStatus, NoBurnStatus]))

@@ -90,6 +90,7 @@ export const burnStatus = (
       commitment_tx_height: 10,
       redeem_txid: `${_.kebabCase(name)}-redeem-transaction-id`,
       redeem_tx_height: 15,
+      redeem_tx_timestamp: new Date(2020, 4, 17, 4, 50, 0),
       burn_tx_height: 1000,
       current_source_height: 1035,
       processing_start_height: 1100,
@@ -97,6 +98,11 @@ export const burnStatus = (
       last_tag_height: 1,
       tx_value: 2,
       isHidden: false,
+      timestamps: {
+        tx_found: new Date(2020, 4, 17, 3, 24, 0),
+        commitment_submitted: new Date(2020, 4, 17, 4, 24, 0),
+        redeem_submitted: new Date(2020, 4, 17, 4, 48, 0),
+      },
     },
     value,
   )
@@ -115,6 +121,7 @@ export const burnStatus = (
       `${name} redeem transaction height`,
       mergedValue.redeem_tx_height || 1,
     ),
+    redeem_tx_timestamp: mergedValue.redeem_tx_timestamp,
     burn_tx_height: number(`${name} tx height`, mergedValue.burn_tx_height || 1),
     current_source_height: number(`${name} Current height`, mergedValue.current_source_height || 1),
     processing_start_height: number(
@@ -125,6 +132,7 @@ export const burnStatus = (
     last_tag_height: mergedValue.last_tag_height,
     tx_value: number(`${name} tokens sent`, mergedValue.tx_value || 1),
     isHidden: boolean(`${name} is hidden`, mergedValue.isHidden),
+    timestamps: mergedValue.timestamps,
   }
 }
 
