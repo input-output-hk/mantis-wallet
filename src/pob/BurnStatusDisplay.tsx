@@ -1,22 +1,13 @@
-import React, {ReactNode, useState, useEffect, FunctionComponent} from 'react'
+import React, {useState, useEffect, FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
-import {
-  CloseOutlined,
-  LoadingOutlined,
-  RightOutlined,
-  EyeInvisibleOutlined,
-  EyeOutlined,
-} from '@ant-design/icons'
+import {LoadingOutlined, RightOutlined, EyeInvisibleOutlined, EyeOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {TooltipPlacement} from 'antd/lib/tooltip'
 import classnames from 'classnames'
 import {CHAINS} from './chains'
 import {BurnStatusType} from './api/prover'
-import checkIcon from '../assets/icons/check.svg'
-import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
-import circleIcon from '../assets/icons/circle.svg'
 import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus, BurnWatcher, BurnAddressInfo, ProofOfBurnData} from './pob-state'
@@ -30,7 +21,7 @@ import {
 } from './pob-config'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
-import {ProgressState, ProgressBar} from '../common/ProgressBar'
+import {ProgressState, ProgressBar, PROGRESS_ICONS} from '../common/ProgressBar'
 import './BurnStatusDisplay.scss'
 import {useFormatters} from '../common/i18n-hooks'
 
@@ -82,14 +73,6 @@ const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
     success: 'checked',
     confirm: 'stopped',
   },
-}
-
-const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
-  checked: <SVG src={checkIcon} className="checked icon" title="Checked" />,
-  unknown: <CloseOutlined className="unknown icon" title="Unknown" />,
-  fail: <CloseOutlined className="fail icon" title="Failed" />,
-  inProgress: <SVG src={refreshIcon} className="inProgress icon" title="In progress" />,
-  stopped: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }
 
 const ProvingProgressLabel = ({

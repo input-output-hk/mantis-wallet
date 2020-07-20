@@ -1,7 +1,11 @@
-import React from 'react'
+import React, {ReactNode} from 'react'
 import _ from 'lodash'
 import {Progress, Popover} from 'antd'
-import {WarningOutlined} from '@ant-design/icons'
+import {WarningOutlined, CloseOutlined} from '@ant-design/icons'
+import SVG from 'react-inlinesvg'
+import checkIcon from '../assets/icons/check.svg'
+import refreshIcon from '../assets/icons/refresh.svg'
+import circleIcon from '../assets/icons/circle.svg'
 import * as styles from '../vars-for-ts.scss'
 import './ProgressBar.scss'
 
@@ -80,4 +84,12 @@ export const ProgressBar = ({
         </div>
       )
   }
+}
+
+export const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
+  checked: <SVG src={checkIcon} className="checked icon" title="Checked" />,
+  unknown: <CloseOutlined className="unknown icon" title="Unknown" />,
+  fail: <CloseOutlined className="fail icon" title="Failed" />,
+  inProgress: <SVG src={refreshIcon} className="inProgress icon" title="In progress" />,
+  stopped: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }

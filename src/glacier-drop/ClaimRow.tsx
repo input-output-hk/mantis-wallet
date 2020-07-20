@@ -1,7 +1,6 @@
-import React, {ReactNode} from 'react'
+import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
-import {CloseOutlined} from '@ant-design/icons'
 import {Button, Popover} from 'antd'
 import {ETC_CHAIN} from './glacier-config'
 import {
@@ -15,7 +14,7 @@ import {
 import {formatPercentage, toDurationString} from '../common/formatters'
 import {returnDataToHumanReadable, fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
-import {ProgressState} from '../common/ProgressBar'
+import {ProgressState, PROGRESS_ICONS} from '../common/ProgressBar'
 import {DUST_SYMBOL} from '../pob/chains'
 import {
   getUnfrozenAmount,
@@ -25,18 +24,8 @@ import {
   Period,
 } from './Period'
 import {secondsUntilBlock} from './PeriodStatus'
-import checkIcon from '../assets/icons/check.svg'
-import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
-
-const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
-  checked: <SVG src={checkIcon} className="checked icon" />,
-  unknown: <CloseOutlined className="unknown icon" />,
-  fail: <CloseOutlined className="fail icon" />,
-  inProgress: <SVG src={refreshIcon} className="inProgress icon" />,
-  stopped: <></>,
-}
 
 interface TxStatusTextProps {
   txStatus: TransactionStatus | null
