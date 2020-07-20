@@ -25,6 +25,7 @@ import {
   JobStatus,
   AsyncTxResponse,
   CancelMiningResponse,
+  EthBlock,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -274,6 +275,10 @@ export const Web3MockApi: Web3API = {
     getTransaction: (hash: string): EthTransaction => ({
       hash,
       blockNumber: 2,
+    }),
+    getBlock: (number: number): EthBlock => ({
+      number,
+      timestamp: toHex(new Date(2020, 4, 17, 3, 24, 0).getTime()),
     }),
     getTransactionReceipt: () => null,
     call: () => '0x1',

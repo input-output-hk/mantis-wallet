@@ -30,6 +30,12 @@ const WithGlacierProviders: FunctionComponent = ({children}: {children?: React.R
 export const glacierWrappedRender = (ui: React.ReactElement): RenderResult =>
   render(ui, {wrapper: WithGlacierProviders})
 
+export const WithSettingsProvider: FunctionComponent = ({
+  children,
+}: {
+  children?: React.ReactNode
+}) => <SettingsState.Provider>{children}</SettingsState.Provider>
+
 export const expectCalledOnClick = async (
   getter: () => HTMLElement,
   toBeCalledFn: CallableFunction,
@@ -56,9 +62,10 @@ export const createBurnStatus = (
   txid,
   chain: null,
   commitment_txid: 'midnight-transaction-id',
-  commitment_txid_height: 10,
+  commitment_tx_height: 10,
   redeem_txid: null,
-  redeem_txid_height: null,
+  redeem_tx_height: null,
+  redeem_tx_timestamp: null,
   fail_reason: null,
   burn_tx_height: 1,
   current_source_height: 1,
@@ -66,4 +73,9 @@ export const createBurnStatus = (
   last_tag_height: 1,
   tx_value: txValue,
   isHidden: false,
+  timestamps: {
+    tx_found: new Date(2020, 4, 17, 3, 24, 0),
+    commitment_submitted: null,
+    redeem_submitted: null,
+  },
 })

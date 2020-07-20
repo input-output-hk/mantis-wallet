@@ -14,7 +14,8 @@ import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
 import {WalletState} from '../common/wallet-state'
-import {formatDate, abbreviateAmount} from '../common/formatters'
+import {abbreviateAmount} from '../common/formatters'
+import {useFormatters} from '../common/i18n-hooks'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import transparentIcon from '../assets/icons/transparent.svg'
@@ -143,12 +144,12 @@ export const TxAmountCell = ({transaction}: TransactionCellProps): JSX.Element =
 }
 
 export const TxTimeCell = ({transaction: {txStatus}}: TransactionCellProps): JSX.Element => {
-  const {dateFormat, timeFormat} = SettingsState.useContainer()
+  const {formatDate} = useFormatters()
 
   const dateString =
     txStatus === 'pending' || txStatus === 'failed'
       ? ''
-      : formatDate(fromUnixTime(txStatus.timestamp), dateFormat, timeFormat)
+      : formatDate(fromUnixTime(txStatus.timestamp))
 
   return <>{dateString}</>
 }

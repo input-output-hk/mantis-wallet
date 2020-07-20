@@ -31,6 +31,7 @@ import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
 import {ProgressType, ProgressBar} from '../common/ProgressBar'
 import './BurnStatusDisplay.scss'
+import {useFormatters} from '../common/i18n-hooks'
 
 interface AllProgress {
   started: ProgressType
@@ -155,6 +156,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   burnStatus,
   errorMessage,
 }: BurnStatusDisplayProps) => {
+  const {formatDate} = useFormatters()
   const [hidingProgress, setHidingProgress] = useState<{to: boolean} | 'persisted'>('persisted')
   const [detailsShown, setDetailsShown] = useState(false)
 
@@ -165,13 +167,22 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
   }, [burnStatus.isHidden])
 
   const chain = CHAINS[burnAddressInfo.chainId]
-  const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_txid_height)
+  const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_tx_height)
     ? {
         started: 'CHECKED',
         success: 'CHECKED',
         confirm: 'CHECKED',
       }
     : STATUS_TO_PROGRESS[burnStatus.status]
+
+  const txFoundDate = burnStatus.timestamps?.tx_found && formatDate(burnStatus.timestamps.tx_found)
+  const provingStartedDate =
+    burnStatus.timestamps?.commitment_submitted &&
+    formatDate(burnStatus.timestamps.commitment_submitted)
+  const provingSuccessDate =
+    burnStatus.timestamps?.redeem_submitted && formatDate(burnStatus.timestamps.redeem_submitted)
+  const provingConfirmedDate =
+    burnStatus.redeem_tx_timestamp && formatDate(burnStatus.redeem_tx_timestamp)
 
   return (
     <div className={classnames('BurnStatusDisplay', {hidden: burnStatus.isHidden})}>
@@ -236,6 +247,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
             >
               <span>{PROGRESS_ICONS['CHECKED']} Found Transaction</span>
             </Popover>
+            {txFoundDate && <span className="step-date">{txFoundDate}</span>}
           </div>
           <ProgressBar
             progressType={progress.started}
@@ -252,12 +264,13 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               inProgressMessage="Waiting for enough confirmations from source blockchain to start."
               checkedMessage="Confirmations received from source blockchain."
             />
+            {provingStartedDate && <span className="step-date">{provingStartedDate}</span>}
           </div>
           <ProgressBar
             progressType={progress.success}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_SUCCESS, 'commitment_submitted')(
               burnStatus.status,
-              burnStatus.commitment_txid_height,
+              burnStatus.commitment_tx_height,
               syncStatus,
             )}
             showOfflineWarning={syncStatus.mode === 'offline'}
@@ -269,12 +282,13 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               inProgressMessage="Proving underway."
               checkedMessage="Prover has successfully proved the burn transaction."
             />
+            {provingSuccessDate && <span className="step-date">{provingSuccessDate}</span>}
           </div>
           <ProgressBar
             progressType={progress.confirm}
             ratio={getTransactionProgress(NUMBER_OF_BLOCKS_TO_CONFIRM, 'redeem_submitted')(
               burnStatus.status,
-              burnStatus.redeem_txid_height,
+              burnStatus.redeem_tx_height,
               syncStatus,
             )}
             showOfflineWarning={syncStatus.mode === 'offline'}
@@ -287,6 +301,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
               checkedMessage="Burn Process complete. Midnight Tokens are now available."
               placement="topRight"
             />
+            {provingConfirmedDate && <span className="step-date last">{provingConfirmedDate}</span>}
           </div>
         </div>
       </div>
