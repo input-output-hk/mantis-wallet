@@ -5,7 +5,7 @@
 
   .ant-input {
     @include themify($themes) {
-      background-color: themed('normal-color');
+      background-color: themed('input-bg');
       color: themed('text-color');
     }
 
@@ -16,11 +16,12 @@
     }
   }
 
-  .options .button.inactive {
-    opacity: $secondary-opacity;
+  .options .button.inactive,
+  .options .button.custom {
+    opacity: $unselected-opacity;
 
     @include themify($themes) {
-      background-color: themed('secondary-background');
+      background-color: themed('input-bg');
       color: themed('text-color');
     }
   }
@@ -35,7 +36,7 @@
 
     .options .button.inactive {
       @include themify($themes) {
-        background-color: themed('tertiary-background');
+        background-color: themed('dialog-dark-input-bg');
       }
     }
 
@@ -69,10 +70,10 @@
         &:hover,
         &:focus {
           opacity: 1;
+        }
 
-          @include themify($themes) {
-            background-color: themed('quinary-background');
-          }
+        @include themify($themes) {
+          background-color: themed('input-bg');
         }
       }
 

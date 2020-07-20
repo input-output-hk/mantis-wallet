@@ -108,6 +108,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
       <InlineError errorMessage={errorMessage}>
         <div className={classnames('options', {'custom-mode': isCustom})}>
           <Input
+            aria-label="Custom fee"
             value={value}
             className="input"
             onChange={onChangeWithDialogReset}

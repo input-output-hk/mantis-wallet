@@ -63,7 +63,6 @@ const _SubmitProofOfUnlock = ({
       title="Submit Proof of Unlock"
       rightButtonProps={{
         children: 'Submit',
-        type: 'default',
         onClick: async () => {
           const gasPrice = await calculateGasPrice(
             parseInt(Dust.toBasic(fee)),

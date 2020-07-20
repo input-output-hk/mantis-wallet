@@ -115,10 +115,16 @@ div#root {
     color: themed('secondary-background');
   }
 
-  &:focus,
+  &:focus {
+    @include themify($themes) {
+      background-color: themed('btn-focus-bg');
+      color: themed('secondary-background');
+    }
+  }
+
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('btn-default-bg'), 15%);
+      background-color: themed('btn-hover-bg');
       color: themed('secondary-background');
     }
   }
@@ -127,14 +133,20 @@ div#root {
 // antd "primary" Button overrides
 .ant-btn-primary {
   @include themify($themes) {
-    background-color: darken(themed('primary-color'), 3%);
+    background-color: themed('primary-color');
     color: #000;
   }
 
-  &:focus,
+  &:focus {
+    @include themify($themes) {
+      background-color: lighten(themed('primary-color'), 10%);
+      color: #000;
+    }
+  }
+
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('primary-color'), 5%);
+      background-color: lighten(themed('primary-color'), 15%);
       color: #000;
     }
   }
@@ -226,10 +238,12 @@ div#root {
 
 .Luna {
   .ant-btn {
-    height: 49px;
+    height: $dialog-component-height;
+    font-size: 14px;
     font-weight: bold;
     letter-spacing: 1.44px;
     text-align: right;
+    text-shadow: none;
     text-transform: uppercase;
 
     &.small-button {

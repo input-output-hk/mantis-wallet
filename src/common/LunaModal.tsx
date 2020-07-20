@@ -46,7 +46,7 @@ const _LunaModal: FunctionComponent<ModalProps> = ({onCancel, ...props}: ModalPr
       width={'auto'}
       footer={null}
       className="LunaModal"
-      closeIcon={<CloseOutlined style={{fontSize: '40px', ...closeIconStyle}} />}
+      closeIcon={<CloseOutlined style={{fontSize: '24px', ...closeIconStyle}} />}
       centered
       destroyOnClose
       onCancel={onCancelWithLock}

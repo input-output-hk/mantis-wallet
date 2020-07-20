@@ -55,7 +55,6 @@ const _ClaimWithMessage = ({
       title="Claim Dust with Signed Message"
       rightButtonProps={{
         children: UNLOCK_BUTTON_TEXT,
-        type: 'default',
         onClick: () => {
           const authSignature = signedMessageToAuthSignature(signedMessage)
           onNext(authSignature)

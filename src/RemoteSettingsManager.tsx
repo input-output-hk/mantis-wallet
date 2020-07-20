@@ -49,7 +49,6 @@ const _MiningConfigModal = ({onCancel, onFinish}: MiningConfigModalProps): JSX.E
       title="Enable Mining"
       rightButtonProps={{
         children: 'Enable',
-        type: 'default',
         onClick: enableMining,
         disabled: isLoading || !spendingKey,
       }}
@@ -97,7 +96,6 @@ const _RestartPrompt = ({onRestart, onCancel}: RestartPromptProps): JSX.Element 
       title="Backend Configuration Changed"
       rightButtonProps={{
         children: 'Restart',
-        type: 'default',
         onClick: onRestart,
       }}
       leftButtonProps={{

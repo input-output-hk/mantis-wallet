@@ -3,13 +3,13 @@
 $dark-text-color: #f7f7f7;
 $dark-normal-color: #303030;
 $dark-secondary-background: #000;
-$dark-btn-bg: #e6e6e6;
+$dark-btn-bg: #ebebeb;
 $dark-component-background: #1f1f1f;
 
 $light-text-color: #000000;
 $light-normal-color: #f7f7f7;
 $light-secondary-background: #f7f7f7;
-$light-btn-bg: #a2a2a2;
+$light-btn-bg: #595959;
 $light-component-background: #fff;
 
 $error-background-color: #fddddd;
@@ -49,6 +49,8 @@ $themes: (
     border-color-base: $dark-text-color,
     btn-default-bg: $dark-btn-bg,
     btn-disabled-bg: darken($dark-btn-bg, 20%),
+    btn-focus-bg: lighten($dark-btn-bg, 10%),
+    btn-hover-bg: lighten($dark-btn-bg, 20%),
     switch-bg: $dark-text-color,
     input-bg: $dark-normal-color,
     modal-content-bg: $dark-secondary-background,
@@ -82,6 +84,8 @@ $themes: (
     border-color-base: $light-text-color,
     btn-default-bg: $light-btn-bg,
     btn-disabled-bg: lighten($light-btn-bg, 20%),
+    btn-focus-bg: darken($light-btn-bg, 10%),
+    btn-hover-bg: darken($light-btn-bg, 20%),
     switch-bg: $light-text-color,
     input-bg: $light-normal-color,
     modal-content-bg: $light-secondary-background,

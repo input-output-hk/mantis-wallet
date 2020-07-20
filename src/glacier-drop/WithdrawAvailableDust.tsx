@@ -79,7 +79,6 @@ const _WithdrawAvailableDust = ({
       title="Withdraw Available Dust"
       rightButtonProps={{
         children: 'Withdraw',
-        type: 'default',
         onClick: async () => {
           const gasPrice = await calculateGasPrice(
             parseInt(Dust.toBasic(fee)),

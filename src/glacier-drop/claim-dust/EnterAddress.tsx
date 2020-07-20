@@ -27,7 +27,6 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
       title="Claim Dust"
       rightButtonProps={{
         children: 'Proceed',
-        type: 'default',
         onClick: async () => {
           const balanceWithProof = await getEtcSnapshotBalanceWithProof(address)
           onNext(address, balanceWithProof)

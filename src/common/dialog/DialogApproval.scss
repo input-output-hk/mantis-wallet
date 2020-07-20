@@ -9,7 +9,7 @@ $padding-h: 13px;
   .checkbox-wrapper {
     @include themify($themes) {
       background-color: themed('normal-color');
-      color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+      color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
     }
 
     .dark & {
@@ -27,7 +27,7 @@ $padding-h: 13px;
     font-size: 13px;
 
     @include themify($themes) {
-      color: rgba($color: themed('text-color'), $alpha: $secondary-opacity);
+      color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
     }
 
     .ant-checkbox {
