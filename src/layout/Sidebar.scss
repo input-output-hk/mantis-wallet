@@ -165,13 +165,6 @@
         position: relative;
         z-index: $zindex-sidebar;
 
-        &.active {
-          .link-title {
-            font-weight: $link-font-weight;
-            letter-spacing: $link-letter-spacing;
-          }
-        }
-
         .prefix {
           width: $mini-left-padding;
         }
@@ -188,6 +181,13 @@
 
           @include themify($themes) {
             background-color: themed('secondary-background');
+          }
+        }
+
+        &.active {
+          .link-title {
+            font-weight: $link-font-weight;
+            letter-spacing: $link-letter-spacing;
           }
         }
 
