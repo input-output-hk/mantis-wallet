@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import {Button, Popover} from 'antd'
 import _ from 'lodash/fp'
@@ -7,6 +7,7 @@ import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {ProofOfBurnData} from './pob-state'
 import {ProverConfig} from '../config/type'
 import {TransparentAccount} from '../common/wallet-state'
+import {fillActionHandlers} from '../common/util'
 import {CHAINS_TO_USE_IN_POB} from './pob-config'
 import {prop} from '../shared/utils'
 import {ChainId} from './chains'
@@ -14,11 +15,11 @@ import './BurnActions.scss'
 
 interface BurnActionsProps
   extends Pick<ProofOfBurnData, 'burnAddresses' | 'provers' | 'addTx' | 'pendingBalances'> {
-  onBurnCoins?: () => void
+  onBurnCoins: () => void
   transparentAccounts: TransparentAccount[]
 }
 
-export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
+export const BurnActions: FunctionComponent<BurnActionsProps> = ({
   onBurnCoins,
   transparentAccounts,
   pendingBalances,
@@ -57,7 +58,7 @@ export const BurnActions: React.FunctionComponent<BurnActionsProps> = ({
       </div>
       {burnBalances.length === 0 && (
         <div className="no-balances">
-          <span className="link" onClick={onBurnCoins}>
+          <span className="link" {...fillActionHandlers(onBurnCoins, 'link')}>
             You have no burns in progress, to start burn, click here.
           </span>
         </div>

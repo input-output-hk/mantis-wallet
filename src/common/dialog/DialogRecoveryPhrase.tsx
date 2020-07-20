@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import SVG from 'react-inlinesvg'
 import {InlineError} from '../InlineError'
+import {fillActionHandlers} from '../util'
 import checkIcon from '../../assets/icons/check.svg'
 import './DialogRecoveryPhrase.scss'
 
@@ -16,7 +17,7 @@ interface RecoveryWordProps {
   onClick: () => void
 }
 
-const RecoveryWord: React.FunctionComponent<RecoveryWordProps> = ({
+const RecoveryWord: FunctionComponent<RecoveryWordProps> = ({
   word,
   onClick,
   used,
@@ -26,13 +27,13 @@ const RecoveryWord: React.FunctionComponent<RecoveryWordProps> = ({
       <SVG src={checkIcon} className="check" />
     </div>
   ) : (
-    <div className="word" onClick={onClick}>
+    <div className="word" {...fillActionHandlers(onClick)}>
       {word}
     </div>
   )
 }
 
-export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> = ({
+export const DialogRecoveryPhrase: FunctionComponent<DialogRecoveryProps> = ({
   recoveryPhraseShuffled,
   recoveryPhraseValidation,
   setRecoveryPhraseValidated,
@@ -73,7 +74,7 @@ export const DialogRecoveryPhrase: React.FunctionComponent<DialogRecoveryProps> 
         {enteredPhrase.join(' ')}
       </InlineError>
       <div className="clear-container">
-        <span className="clear" onClick={clear}>
+        <span className="clear" {...fillActionHandlers(clear)}>
           Clear
         </span>
       </div>

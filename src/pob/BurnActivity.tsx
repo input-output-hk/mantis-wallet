@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import {Popover, Switch} from 'antd'
 import {SearchOutlined, EyeOutlined, EyeInvisibleOutlined, LoadingOutlined} from '@ant-design/icons'
 import {BurnStatus, RealBurnStatus, ProofOfBurnData, BurnWatcher} from './pob-state'
+import {fillActionHandlers} from '../common/util'
 import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
@@ -47,10 +48,10 @@ const BurnAddressError = ({
           {hidingProgress === 'persisted' ? (
             <span
               className="toggle-hide"
-              onClick={() => {
+              {...fillActionHandlers(() => {
                 setHidingProgress({to: !isHidden})
                 hideBurnWatcher(burnWatcher, !isHidden)
-              }}
+              })}
             >
               {isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
             </span>
@@ -127,7 +128,10 @@ export const _BurnActivity = ({
           }
         </div>
         <div className="toggle-hidden">
-          <span className="toggle-hidden-label" onClick={() => setHiddenVisible(!areHiddenVisible)}>
+          <span
+            className="toggle-hidden-label"
+            {...fillActionHandlers(() => setHiddenVisible(!areHiddenVisible))}
+          >
             Show hidden
           </span>
           <Switch title="Show hidden" checked={areHiddenVisible} onChange={setHiddenVisible} />

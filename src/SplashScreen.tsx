@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {LoadingOutlined} from '@ant-design/icons'
 import _ from 'lodash/fp'
 import {LunaWalletLoader} from 'luna-wallet-loader'
 import {config, loadLunaManagedConfig, loadLunaStatus} from './config/renderer'
 import {SettingsState} from './settings-state'
-import {onKeyDownEnter} from './common/util'
+import {fillActionHandlers} from './common/util'
 import {useInterval} from './common/hook-utils'
 import {StatusModal} from './common/StatusModal'
 import {rendererLog} from './common/logger'
@@ -27,7 +27,7 @@ const getStatusMessage = (lunaStatus: LunaStatus): string => {
   return 'Loading'
 }
 
-export const SplashScreen: React.FunctionComponent<{}> = () => {
+export const SplashScreen: FunctionComponent<{}> = () => {
   const {theme} = SettingsState.useContainer()
 
   const [showStatus, setShowStatus] = useState(false)
@@ -52,12 +52,7 @@ export const SplashScreen: React.FunctionComponent<{}> = () => {
         <LoadingOutlined spin />
       </div>
       <div className="loading">{message}</div>
-      <div
-        className="details"
-        onClick={() => setShowStatus(true)}
-        onKeyDown={onKeyDownEnter(() => setShowStatus(true))}
-        tabIndex={0}
-      >
+      <div className="details" {...fillActionHandlers(() => setShowStatus(true))}>
         Show details
       </div>
     </div>

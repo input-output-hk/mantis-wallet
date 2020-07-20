@@ -3,6 +3,7 @@ import {Button} from 'antd'
 import {ErrorState} from '../common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
+import {fillActionHandlers} from '../common/util'
 import {useInterval} from '../common/hook-utils'
 import './WalletErrorScreen.scss'
 
@@ -38,7 +39,7 @@ const _WalletError = ({
         {error.stack && isTraceShown ? (
           <div className="stacktrace">{error.stack}</div>
         ) : (
-          <div className="show-stacktrace" onClick={() => showTrace(true)}>
+          <div className="show-stacktrace" {...fillActionHandlers(() => showTrace(true))}>
             Show stacktrace
           </div>
         )}

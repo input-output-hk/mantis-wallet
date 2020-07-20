@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash/fp'
 import {message} from 'antd'
 import {MessageType, ConfigOnClose} from 'antd/lib/message'
+import {fillActionHandlers} from './util'
 import './DismissableMessage.scss'
 
 export type DismissFunction = () => MessageType | null
@@ -48,7 +49,7 @@ export const makeDismissableMessage = (
         <Content dismiss={dismiss} />
       </span>
       <div className="dismiss-wrapper">
-        <span className="dismiss-link" onClick={dismiss}>
+        <span className="dismiss-link" {...fillActionHandlers(dismiss)}>
           Dismiss
         </span>
       </div>

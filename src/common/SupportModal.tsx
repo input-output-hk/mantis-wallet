@@ -5,6 +5,7 @@ import {CheckCircleFilled} from '@ant-design/icons'
 import {LINKS} from '../external-link-config'
 import {IPCToRendererChannelName} from '../shared/ipc-types'
 import {saveDebugLogs, ipcListenToMain, ipcRemoveAllListeners} from './ipc-util'
+import {fillActionHandlers} from './util'
 import {makeDismissableMessage, DismissFunction} from './dismissable-message'
 import {DialogMessage} from './dialog/DialogMessage'
 import {wrapWithModal, ModalLocker} from './LunaModal'
@@ -22,7 +23,7 @@ const createMessage = (path: string) => ({dismiss}: {dismiss: DismissFunction}):
     dismiss()
   }
   return (
-    <span style={{cursor: 'pointer'}} onClick={onClickMsg}>
+    <span style={{cursor: 'pointer'}} {...fillActionHandlers(onClickMsg)}>
       Debug logs saved successfully! Click here to open the containing folder.
     </span>
   )

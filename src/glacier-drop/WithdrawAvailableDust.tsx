@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_LIMIT, DEFAULT_FEE} from './glacier-config'
 import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
 import {LoadedState, FeeEstimates} from '../common/wallet-state'
-import {validateFee} from '../common/util'
+import {validateFee, fillActionHandlers} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
 import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../common/fee-estimate-strings'
 import {wrapWithModal, ModalLocker} from '../common/LunaModal'
@@ -115,10 +115,10 @@ const _WithdrawAvailableDust = ({
       />
       <div
         className="more-info"
-        onClick={() => {
+        {...fillActionHandlers(() => {
           onCancel()
           showEpochs()
-        }}
+        }, 'link')}
       >
         view unfreezing progress
       </div>

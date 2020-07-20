@@ -1,7 +1,8 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {Button, message, Switch} from 'antd'
 import BigNumber from 'bignumber.js'
 import {SettingsState} from '../settings-state'
+import {fillActionHandlers} from '../common/util'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
 import {TransparentAccount, FeeEstimates} from '../common/wallet-state'
@@ -19,7 +20,7 @@ interface ShowAccountProps {
   transactions: Transaction[]
 }
 
-const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
+const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
   account,
   redeem,
   transactions,
@@ -80,7 +81,10 @@ const ShowTransparentAccount: React.FunctionComponent<ShowAccountProps> = ({
               )}
             />
             <div className="transactions-footer">
-              <span className="transactions-collapse" onClick={() => setTransactionVisible(false)}>
+              <span
+                className="transactions-collapse"
+                {...fillActionHandlers(() => setTransactionVisible(false))}
+              >
                 Collapse Transactions
               </span>
             </div>
@@ -100,7 +104,7 @@ interface TransparentAccountsProps {
   transactions: Transaction[]
 }
 
-export const TransparentAccounts: React.FunctionComponent<TransparentAccountsProps> = ({
+export const TransparentAccounts: FunctionComponent<TransparentAccountsProps> = ({
   transparentAccounts,
   generateAddress,
   redeem,
@@ -170,7 +174,10 @@ export const TransparentAccounts: React.FunctionComponent<TransparentAccountsPro
               <div>Asset</div>
               <div>Amount</div>
               <div className="hide-empty">
-                <span className="hide-empty-label" onClick={() => hideEmpty(!areEmptyHidden)}>
+                <span
+                  className="hide-empty-label"
+                  {...fillActionHandlers(() => hideEmpty(!areEmptyHidden))}
+                >
                   Hide Empty Accounts
                 </span>
                 <Switch title="Hide empty accounts" checked={areEmptyHidden} onChange={hideEmpty} />

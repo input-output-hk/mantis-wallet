@@ -13,7 +13,7 @@ import {
   isUnlocked,
 } from './glacier-state'
 import {formatPercentage, toDurationString} from '../common/formatters'
-import {returnDataToHumanReadable} from '../common/util'
+import {returnDataToHumanReadable, fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {ProgressState} from '../common/ProgressBar'
 import {DUST_SYMBOL} from '../pob/chains'
@@ -195,7 +195,7 @@ const UnfreezeDetail = ({
         >
           Withdraw Available Dust
         </Button>
-        <div className="action-link" onClick={showEpochs}>
+        <div className="action-link" {...fillActionHandlers(showEpochs)}>
           view unfreezing progress
         </div>
       </>
