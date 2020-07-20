@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
@@ -11,7 +11,7 @@ interface WalletCreateSecurityStepProps {
   spendingKey: string
 }
 
-export const WalletCreateSecurityStep: React.FunctionComponent<WalletCreateSecurityStepProps> = ({
+export const WalletCreateSecurityStep: FunctionComponent<WalletCreateSecurityStepProps> = ({
   cancel,
   next,
   spendingKey,

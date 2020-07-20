@@ -1,6 +1,6 @@
-import React from 'react'
-import './DialogError.scss'
+import React, {PropsWithChildren} from 'react'
 import {Link} from '../Link'
+import './DialogError.scss'
 
 interface DialogErrorProps {
   helpURL?: string | null
@@ -9,7 +9,7 @@ interface DialogErrorProps {
 export const DialogError = ({
   children,
   helpURL = null,
-}: React.PropsWithChildren<DialogErrorProps>): JSX.Element => (
+}: PropsWithChildren<DialogErrorProps>): JSX.Element => (
   <div className="DialogError">
     {children}
     {helpURL && (

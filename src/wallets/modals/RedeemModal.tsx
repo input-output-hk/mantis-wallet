@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import {Button} from 'antd'
@@ -63,7 +63,7 @@ const AmountInput = ({
   )
 }
 
-const RedeemDialog: React.FunctionComponent<RedeemDialogProps> = ({
+const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
   transparentAccount,
   redeem,
   estimateRedeemFee,

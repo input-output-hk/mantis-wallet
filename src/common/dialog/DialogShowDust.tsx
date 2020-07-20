@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropsWithChildren} from 'react'
 import BigNumber from 'bignumber.js'
 import {SettingsState} from '../../settings-state'
 import {ShortNumber} from '../ShortNumber'
@@ -14,7 +14,7 @@ interface DialogShowDustProps {
 export const DialogShowDust = ({
   amount,
   children,
-}: React.PropsWithChildren<DialogShowDustProps>): JSX.Element => {
+}: PropsWithChildren<DialogShowDustProps>): JSX.Element => {
   const {theme} = SettingsState.useContainer()
   const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
 

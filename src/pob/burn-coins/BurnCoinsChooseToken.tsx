@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Button} from 'antd'
 import {Chain} from '../chains'
 import {Token} from '../../common/Token'
@@ -10,7 +10,7 @@ interface BurnCoinsChooseTokenProps {
   cancel: () => void
 }
 
-export const BurnCoinsChooseToken: React.FunctionComponent<BurnCoinsChooseTokenProps> = ({
+export const BurnCoinsChooseToken: FunctionComponent<BurnCoinsChooseTokenProps> = ({
   chains,
   chooseChain,
   cancel,

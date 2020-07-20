@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/extend-expect'
-import React, {FunctionComponent} from 'react'
+import React, {FunctionComponent, ReactNode, ReactElement} from 'react'
 import {render, RenderResult, waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {mockWeb3Worker} from '../web3-mock'
@@ -13,7 +13,7 @@ import {RealBurnStatus} from '../pob/pob-state'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-const WithGlacierProviders: FunctionComponent = ({children}: {children?: React.ReactNode}) => {
+const WithGlacierProviders: FunctionComponent = ({children}: {children?: ReactNode}) => {
   const initialWalletState = {walletStatus: 'LOADED' as WalletStatus, web3}
 
   return (
@@ -27,7 +27,7 @@ const WithGlacierProviders: FunctionComponent = ({children}: {children?: React.R
   )
 }
 
-export const glacierWrappedRender = (ui: React.ReactElement): RenderResult =>
+export const glacierWrappedRender = (ui: ReactElement): RenderResult =>
   render(ui, {wrapper: WithGlacierProviders})
 
 export const WithSettingsProvider: FunctionComponent = ({

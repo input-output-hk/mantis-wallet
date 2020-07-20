@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, PropsWithChildren} from 'react'
 import BigNumber from 'bignumber.js'
 import {Option, none, some, getOrElse} from 'fp-ts/lib/Option'
 import {LoadedState} from '../../common/wallet-state'
@@ -37,7 +37,7 @@ export const ClaimController = ({
   activeModal,
   setActiveModal,
   onFinish,
-}: React.PropsWithChildren<ClaimControllerProps>): JSX.Element => {
+}: PropsWithChildren<ClaimControllerProps>): JSX.Element => {
   const {transparentAccounts, getOverviewProps} = walletState
   const {availableBalance} = getOverviewProps()
 

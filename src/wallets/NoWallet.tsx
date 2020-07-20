@@ -1,9 +1,9 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Dialog} from '../common/Dialog'
 import {RouterState} from '../router-state'
 import './NoWallet.scss'
 
-export const NoWallet: React.FunctionComponent<{}> = () => {
+export const NoWallet: FunctionComponent<{}> = () => {
   const routerState = RouterState.useContainer()
 
   return (

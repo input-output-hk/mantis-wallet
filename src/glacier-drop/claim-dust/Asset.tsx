@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropsWithChildren} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {DisplayChain} from '../../pob/chains'
@@ -10,11 +10,7 @@ interface AssetProps {
   amount: BigNumber
 }
 
-export const Asset = ({
-  chain,
-  amount,
-  children,
-}: React.PropsWithChildren<AssetProps>): JSX.Element => {
+export const Asset = ({chain, amount, children}: PropsWithChildren<AssetProps>): JSX.Element => {
   return (
     <div className="Asset">
       <div className="label">{children}</div>

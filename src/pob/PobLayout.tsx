@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent, PropsWithChildren} from 'react'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
@@ -19,10 +19,10 @@ const TestnetWarning = (): JSX.Element => (
   </div>
 )
 
-export const PobLayout: React.FunctionComponent<PobLayoutProps> = ({
+export const PobLayout: FunctionComponent<PobLayoutProps> = ({
   title,
   children,
-}: React.PropsWithChildren<PobLayoutProps>) => {
+}: PropsWithChildren<PobLayoutProps>) => {
   const {networkTag} = BackendState.useContainer()
 
   return (

@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import './DialogDisplayWords.scss'
 
 interface DialogDisplayWordsProps {
   words: string[]
 }
 
-export const DialogDisplayWords: React.FunctionComponent<DialogDisplayWordsProps> = ({
+export const DialogDisplayWords: FunctionComponent<DialogDisplayWordsProps> = ({
   words,
 }: DialogDisplayWordsProps) => (
   <div className="DialogDisplayWords">

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, ReactNode, PropsWithChildren, FunctionComponent} from 'react'
 import classnames from 'classnames'
 import _ from 'lodash'
 import Schema from 'async-validator'
@@ -26,13 +26,13 @@ interface DialogButtonProps {
 }
 
 interface DialogProps {
-  title?: React.ReactNode
+  title?: ReactNode
   type?: 'normal' | 'dark'
   buttonDisplayMode?: 'natural' | 'grid' | 'wide'
   leftButtonProps?: ButtonProps & DialogButtonProps
   rightButtonProps?: ButtonProps & DialogButtonProps
   onSetLoading?: (loading: boolean) => void
-  footer?: React.ReactNode
+  footer?: ReactNode
   helpURL?: string | null
   className?: string
 }
@@ -55,7 +55,7 @@ export const DialogState = createContainer(() => {
   }
 })
 
-const _Dialog: React.FunctionComponent<DialogProps> = ({
+const _Dialog: FunctionComponent<DialogProps> = ({
   title,
   type = 'normal',
   buttonDisplayMode = 'grid',
@@ -74,7 +74,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   footer,
   helpURL = null,
   className = '',
-}: React.PropsWithChildren<DialogProps>) => {
+}: PropsWithChildren<DialogProps>) => {
   const {errorMessage, setErrorMessage, dialogForm} = DialogState.useContainer()
 
   const [leftInProgress, setLeftInProgress] = useState(false)
@@ -151,7 +151,7 @@ const _Dialog: React.FunctionComponent<DialogProps> = ({
   )
 }
 
-export const Dialog: React.FunctionComponent<DialogProps> = (props) => (
+export const Dialog: FunctionComponent<DialogProps> = (props) => (
   <DialogState.Provider>
     <_Dialog {...props} />
   </DialogState.Provider>

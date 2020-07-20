@@ -1,4 +1,4 @@
-import React, {useState, PropsWithChildren} from 'react'
+import React, {useState, PropsWithChildren, FunctionComponent} from 'react'
 import _ from 'lodash/fp'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
@@ -229,7 +229,7 @@ const SendToTransparentDialog = ({
   )
 }
 
-export const _SendTransaction: React.FunctionComponent<SendTransactionProps & ModalProps> = ({
+export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
   accounts,
   availableAmount,
   estimateTransactionFee,

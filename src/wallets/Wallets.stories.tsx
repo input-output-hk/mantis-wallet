@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
@@ -26,7 +26,7 @@ export default {
 
 // `useState` cannot be used in stories
 // https://github.com/storybookjs/storybook/issues/4691
-const WalletList: React.FunctionComponent<{}> = () => {
+const WalletList: FunctionComponent<{}> = () => {
   const [currentWalletId, changeWallet] = useState<string>('1')
 
   return (
@@ -51,7 +51,7 @@ const WalletList: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const walletList: React.FunctionComponent<{}> = () => <WalletList />
+export const walletList: FunctionComponent<{}> = () => <WalletList />
 
 export const noWallet = (): JSX.Element => <NoWallet />
 

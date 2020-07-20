@@ -1,4 +1,4 @@
-import React, {ReactNode, useState, useEffect} from 'react'
+import React, {ReactNode, useState, useEffect, FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
 import {
@@ -21,6 +21,7 @@ import {ShortNumber} from '../common/ShortNumber'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {RealBurnStatus, BurnWatcher, BurnAddressInfo, ProofOfBurnData} from './pob-state'
 import {SynchronizationStatus} from '../common/wallet-state'
+import {fillActionHandlers} from '../common/util'
 import {InfoIcon} from '../common/InfoIcon'
 import {
   NUMBER_OF_BLOCKS_TO_SUCCESS,
@@ -148,7 +149,7 @@ const isRedeemDone = (
   )
 }
 
-export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> = ({
+export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
   burnWatcher,
   hideBurnProcess,
   burnAddressInfo,
@@ -195,10 +196,10 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
           {hidingProgress === 'persisted' ? (
             <span
               className="toggle-hide"
-              onClick={() => {
+              {...fillActionHandlers(() => {
                 setHidingProgress({to: !burnStatus.isHidden})
                 hideBurnProcess(burnWatcher, burnStatus.txid, !burnStatus.isHidden)
-              }}
+              })}
             >
               {burnStatus.isHidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
             </span>
@@ -213,7 +214,7 @@ export const BurnStatusDisplay: React.FunctionComponent<BurnStatusDisplayProps> 
         </div>
         <div
           className={classnames('exchange-info', {open: detailsShown})}
-          onClick={() => setDetailsShown(!detailsShown)}
+          {...fillActionHandlers(() => setDetailsShown(!detailsShown))}
         >
           <div className="collapse-icon">
             <RightOutlined />

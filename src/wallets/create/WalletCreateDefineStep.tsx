@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogPassword} from '../../common/dialog/DialogPassword'
@@ -9,7 +9,7 @@ interface WalletCreateDefineStepProps {
   errors?: React.ReactNode
 }
 
-export const WalletCreateDefineStep: React.FunctionComponent<WalletCreateDefineStepProps> = ({
+export const WalletCreateDefineStep: FunctionComponent<WalletCreateDefineStepProps> = ({
   cancel,
   next,
   errors,

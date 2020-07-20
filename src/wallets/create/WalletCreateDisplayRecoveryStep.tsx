@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
@@ -10,7 +10,7 @@ interface WalletCreateDisplayRecoveryStepProps {
   seedPhrase: string[]
 }
 
-export const WalletCreateDisplayRecoveryStep: React.FunctionComponent<WalletCreateDisplayRecoveryStepProps> = ({
+export const WalletCreateDisplayRecoveryStep: FunctionComponent<WalletCreateDisplayRecoveryStepProps> = ({
   back,
   next,
   seedPhrase,

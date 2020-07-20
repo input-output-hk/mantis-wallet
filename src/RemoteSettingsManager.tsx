@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Dispatch, SetStateAction} from 'react'
 import {none, Option, isNone, some} from 'fp-ts/lib/Option'
 import {message} from 'antd'
 import {IPCToRendererChannelName} from './shared/ipc-types'
@@ -118,7 +118,7 @@ const _RestartPrompt = ({onRestart, onCancel}: RestartPromptProps): JSX.Element 
 export const RestartPrompt = wrapWithModal(_RestartPrompt, 'RestartPrompt')
 
 interface RemoteSettingsManagerProps {
-  setBackendRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setBackendRunning: Dispatch<SetStateAction<boolean>>
 }
 
 export const RemoteSettingsManager = ({

@@ -1,5 +1,5 @@
 import url from 'url'
-import React, {PropsWithChildren, useEffect} from 'react'
+import React, {PropsWithChildren, useEffect, FunctionComponent} from 'react'
 import addons, {makeDecorator, StoryContext, StoryGetter} from '@storybook/addons'
 import {createInMemoryStore} from '../common/store'
 import {SettingsState, defaultSettingsData} from '../settings-state'
@@ -7,7 +7,7 @@ import {THEME_SWITCHER_CHANGE} from './shared-constants'
 
 const store = createInMemoryStore(defaultSettingsData)
 
-const ThemeSwitcher: React.FunctionComponent<{}> = ({children}: PropsWithChildren<{}>) => {
+const ThemeSwitcher: FunctionComponent<{}> = ({children}: PropsWithChildren<{}>) => {
   const themeState = SettingsState.useContainer()
   const channel = addons.getChannel()
 

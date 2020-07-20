@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import _ from 'lodash/fp'
 import {text, boolean, array, select} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
@@ -28,7 +28,7 @@ export default {
   decorators: ESSENTIAL_DECORATORS,
 }
 
-export const InteractiveDialog: React.FunctionComponent<{}> = () => (
+export const InteractiveDialog: FunctionComponent<{}> = () => (
   <Dialog
     title={text('Dialog title', 'Dialog title')}
     buttonDisplayMode={select('Button display mode', ['natural', 'grid', 'wide'], 'grid')}
@@ -50,13 +50,13 @@ export const InteractiveDialog: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveAddress: React.FunctionComponent<{}> = () => (
+export const InteractiveAddress: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Address">
     <DialogAddress chain={selectChain()} address={text('Address to show', 'test-address')} />
   </Dialog>
 )
 
-export const InteractiveApproval: React.FunctionComponent<{}> = () => {
+export const InteractiveApproval: FunctionComponent<{}> = () => {
   const [approved, setApproved] = useState(false)
 
   return (
@@ -73,7 +73,7 @@ export const InteractiveApproval: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveColumns: React.FunctionComponent<{}> = () => (
+export const InteractiveColumns: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Columns">
     <DialogColumns>
       <DialogMessage>{text('First column', 'First column')}</DialogMessage>
@@ -82,7 +82,7 @@ export const InteractiveColumns: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveDisplayWords: React.FunctionComponent<{}> = () => (
+export const InteractiveDisplayWords: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Display Words">
     <DialogDisplayWords
       words={array('Displayed words', [
@@ -104,7 +104,7 @@ export const InteractiveDisplayWords: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
+export const InteractiveDropdown: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Dropdown">
     <DialogDropdown
       type={select('Dropdown type', ['normal', 'small'], 'normal')}
@@ -125,7 +125,7 @@ export const InteractiveDropdown: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveError: React.FunctionComponent<{}> = () => (
+export const InteractiveError: FunctionComponent<{}> = () => (
   <Dialog
     title="Dialog Error"
     footer={<DialogError>{text('Error in footer', 'Error in the footer')}</DialogError>}
@@ -134,7 +134,7 @@ export const InteractiveError: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveFee: React.FunctionComponent<{}> = () => (
+export const InteractiveFee: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Fee" type={select('Input fee', ['normal', 'dark'], 'normal')}>
     <DialogFee
       label={text('Fee label', 'Fee label')}
@@ -148,13 +148,13 @@ export const InteractiveFee: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveInput: React.FunctionComponent<{}> = () => (
+export const InteractiveInput: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Input" type={select('Input type', ['normal', 'dark'], 'normal')}>
     <DialogInput label={text('Input label', 'Input label')} />
   </Dialog>
 )
 
-export const InteractiveMessage: React.FunctionComponent<{}> = () => (
+export const InteractiveMessage: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Message">
     <DialogMessage type={select('Input type', ['default', 'highlight'], 'default')}>
       {text('Message text', 'This is a message in a dialog')}
@@ -162,7 +162,7 @@ export const InteractiveMessage: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractivePassword: React.FunctionComponent<{}> = () => (
+export const InteractivePassword: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Password">
     <DialogPassword
       criteriaMessage={text('Password criteria', 'Password should be at least 4 characters')}
@@ -180,13 +180,13 @@ export const InteractivePassword: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveRestoreSeedPhrase: React.FunctionComponent<{}> = () => (
+export const InteractiveRestoreSeedPhrase: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Restore Seed Phrase">
     <DialogSeedPhrase onChange={action('onChange')} />
   </Dialog>
 )
 
-export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
+export const InteractivePrivateKey: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Private Key">
     <DialogQRCode
       content={text('Private key field', 'ThisIsYourVeryVeryVeryVeryLongPrivateKey')}
@@ -196,7 +196,7 @@ export const InteractivePrivateKey: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveRecoveryPhrase: React.FunctionComponent<{}> = () => (
+export const InteractiveRecoveryPhrase: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Recovery Phrase">
     <DialogRecoveryPhrase
       recoveryPhraseShuffled={['Third', 'First', 'Fourth', 'Second']}
@@ -210,7 +210,7 @@ export const InteractiveRecoveryPhrase: React.FunctionComponent<{}> = () => (
   </Dialog>
 )
 
-export const InteractiveSecrets: React.FunctionComponent<{}> = () => {
+export const InteractiveSecrets: FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Secrets">
       <DialogSecrets
@@ -222,7 +222,7 @@ export const InteractiveSecrets: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveShowDust: React.FunctionComponent<{}> = () => {
+export const InteractiveShowDust: FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Secrets">
       <DialogShowDust amount={dust('Dust amount', 123.456)}>
@@ -232,7 +232,7 @@ export const InteractiveShowDust: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
+export const InteractiveSwitch: FunctionComponent<{}> = () => {
   const [switched, setSwitched] = useState(false)
 
   return (
@@ -250,7 +250,7 @@ export const InteractiveSwitch: React.FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveTextSwitch: React.FunctionComponent<{}> = () => {
+export const InteractiveTextSwitch: FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Text Switch">
       <DialogTextSwitch

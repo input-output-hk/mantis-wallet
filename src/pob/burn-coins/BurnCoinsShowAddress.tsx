@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {Chain} from '../chains'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
@@ -11,7 +11,7 @@ interface BurnCoinsShowAddressProps {
   goBack: () => void
 }
 
-export const BurnCoinsShowAddress: React.FunctionComponent<BurnCoinsShowAddressProps> = ({
+export const BurnCoinsShowAddress: FunctionComponent<BurnCoinsShowAddressProps> = ({
   chain,
   burnAddress,
   goBack: cancel,

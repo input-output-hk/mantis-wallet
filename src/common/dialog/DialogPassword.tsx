@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Form} from 'antd'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
@@ -33,7 +33,7 @@ const isAtLeast8Characters = {
 const PASSWORD_FIELD = 'password'
 const REPASSWORD_FIELD = 're-password'
 
-export const DialogPassword: React.FunctionComponent<DialogPasswordProps> = ({
+export const DialogPassword: FunctionComponent<DialogPasswordProps> = ({
   onChange,
   rules = [hasAllNeededCharacters, isAtLeast8Characters],
   criteriaMessage = 'Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number',
