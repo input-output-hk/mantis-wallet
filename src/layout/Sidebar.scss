@@ -166,8 +166,10 @@
         z-index: $zindex-sidebar;
 
         &.active {
-          font-weight: $link-font-weight;
-          letter-spacing: $link-letter-spacing;
+          .link-title {
+            font-weight: $link-font-weight;
+            letter-spacing: $link-letter-spacing;
+          }
         }
 
         .prefix {

@@ -15,6 +15,7 @@
       height: 30px !important; // FIXME PM-1812 make button sizes consistent
       transition: color $transition-duration, background-color $transition-duration,
         opacity $transition-duration;
+      font-size: 12px;
       text-align: center;
 
       &.inactive {
