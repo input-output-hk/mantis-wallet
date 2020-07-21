@@ -27,7 +27,7 @@ const WithProviders = ({children}: {children?: React.ReactNode}): JSX.Element =>
   }
 
   return (
-    <SettingsState.Provider initialState={createInMemoryStore(defaultSettingsData)}>
+    <SettingsState.Provider initialState={{store: createInMemoryStore(defaultSettingsData)}}>
       <BuildJobState.Provider>
         <WalletState.Provider initialState={initialState}>
           <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>

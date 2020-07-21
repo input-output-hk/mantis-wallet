@@ -81,9 +81,20 @@ export const defaultSettingsData: StoreSettingsData = {
   },
 }
 
-function useSettingsState(
-  store: Store<StoreSettingsData> = createInMemoryStore(defaultSettingsData),
-): SettingsState {
+interface SettingsStateParams {
+  store: Store<StoreSettingsData>
+  isPseudoLanguageUsedDefault?: boolean
+}
+
+const DEFAULT_STATE: SettingsStateParams = {
+  store: createInMemoryStore(defaultSettingsData),
+  isPseudoLanguageUsedDefault: false,
+}
+
+function useSettingsState({
+  store,
+  isPseudoLanguageUsedDefault,
+}: SettingsStateParams = DEFAULT_STATE): SettingsState {
   // Theme settings
   const [theme, switchTheme] = usePersistedState(store, ['settings', 'theme'])
 
@@ -103,7 +114,7 @@ function useSettingsState(
   const [dateFormat, setDateFormat] = usePersistedState(store, ['settings', 'dateFormat'])
   const [timeFormat, setTimeFormat] = usePersistedState(store, ['settings', 'timeFormat'])
   const [language, _setLanguage] = usePersistedState(store, ['settings', 'language'])
-  const [isPseudoLanguageUsed, usePseudoLanguage] = useState(false)
+  const [isPseudoLanguageUsed, usePseudoLanguage] = useState(isPseudoLanguageUsedDefault || false)
   const translation = useMemo((): Translation => {
     const i18n = createAndInitI18nForRenderer(language, isPseudoLanguageUsed)
     return {
