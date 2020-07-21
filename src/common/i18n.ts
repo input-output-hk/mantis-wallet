@@ -1,6 +1,9 @@
 import i18next from 'i18next'
+import BigNumber from 'bignumber.js'
 import {initReactI18next} from 'react-i18next'
 import Pseudo from 'i18next-pseudo'
+import {Locale} from 'date-fns'
+import {enUS} from 'date-fns/locale'
 import {Path} from '../shared/typeUtils'
 import {DEFAULT_LANGUAGE, Language, TypedTFunction} from '../shared/i18n'
 import rendererTranslationsEn from '../translations/en/renderer.json'
@@ -45,3 +48,29 @@ export const createTFunctionRenderer = (i18n: typeof i18next): TFunctionRenderer
   key,
   options,
 ) => i18n.t(tKeyRendererToString(key), options)
+
+interface LanguageSettings {
+  dateFnsLocale: Locale
+  numberFormat: Intl.NumberFormat
+  bigNumberFormat: Required<BigNumber.Format>
+}
+
+export const EN_US_BIG_NUMBER_FORMAT = {
+  prefix: '',
+  decimalSeparator: '.',
+  groupSeparator: ',',
+  groupSize: 3,
+  secondaryGroupSize: 0,
+  fractionGroupSeparator: ' ',
+  fractionGroupSize: 0,
+  suffix: '',
+} as const
+
+export const LANGUAGE_SETTINGS: Record<Language, LanguageSettings> = {
+  en: {
+    dateFnsLocale: enUS,
+    numberFormat: new Intl.NumberFormat('en-US'),
+    // TODO it would be better if this was sourced from authoritative source
+    bigNumberFormat: EN_US_BIG_NUMBER_FORMAT,
+  },
+} as const

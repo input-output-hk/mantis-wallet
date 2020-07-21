@@ -4,7 +4,7 @@ import _ from 'lodash'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
-import {toDurationString} from '../common/formatters'
+import {useFormatters} from '../settings-state'
 import {LunaModal} from '../common/LunaModal'
 import {ShortNumber} from '../common/ShortNumber'
 import checkIcon from '../assets/icons/check.svg'
@@ -31,6 +31,8 @@ export const Epochs = ({
   currentBlock,
   ...props
 }: EpochsProps & ModalProps): JSX.Element => {
+  const {toDurationString} = useFormatters()
+
   const {numberOfEpochs: maximumNumberOfEpochs} = periodConfig
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
   const secondsUntilNextEpoch = getSecondsUntilNextEpoch(currentBlock, periodConfig)

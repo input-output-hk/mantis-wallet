@@ -6,10 +6,13 @@ import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
 import {CHAINS} from './chains'
 import {UNITS} from '../common/units'
-import {abbreviateAmount} from '../common/formatters'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {expectCalledOnClick, WithSettingsProvider} from '../common/test-helpers'
+import {
+  expectCalledOnClick,
+  WithSettingsProvider,
+  abbreviateAmountForEnUS,
+} from '../common/test-helpers'
 import {BurnActivity} from './BurnActivity'
 import {BurnStatusType} from './api/prover'
 import {makeWeb3Worker} from '../web3'
@@ -61,6 +64,7 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
       addTx={addTx}
       onBurnCoins={burnCoins}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   // Click Burn Coins
@@ -74,7 +78,7 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
   const allAmounts = [pending, available, pending.plus(available)]
 
   allAmounts
-    .map((big) => abbreviateAmount(UNITS[ETH_TESTNET.unitType].fromBasic(big)).strict)
+    .map((big) => abbreviateAmountForEnUS(UNITS[ETH_TESTNET.unitType].fromBasic(big)).strict)
     .forEach((formattedNumber) => {
       const numberElem = getByText(formattedNumber)
       // abbreviated numbers are present

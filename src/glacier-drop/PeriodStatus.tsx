@@ -3,7 +3,7 @@ import SVG from 'react-inlinesvg'
 import _ from 'lodash/fp'
 import {BLOCK_TIME_SECONDS} from './glacier-config'
 import {PeriodConfig} from './glacier-state'
-import {toDurationString} from '../common/formatters'
+import {useFormatters} from '../settings-state'
 import clockIcon from '../assets/icons/clock.svg'
 import hourglassIcon from '../assets/icons/hourglass.svg'
 import {Period, getCurrentPeriod} from './Period'
@@ -13,7 +13,7 @@ export const secondsUntilBlock = (currentBlock: number, block: number): number =
   (block - currentBlock) * BLOCK_TIME_SECONDS
 
 const timeUntilBlock = (currentBlock: number, block: number): string =>
-  toDurationString(secondsUntilBlock(currentBlock, block))
+  useFormatters().toDurationString(secondsUntilBlock(currentBlock, block))
 
 const getCurrentPeriodText = (period: Period): string => {
   switch (period) {
@@ -35,6 +35,7 @@ const getCurrentPeriodDetailText = (
 ): string => {
   const {unlockingStartBlock, unlockingEndBlock, unfreezingStartBlock} = periodConfig
 
+  // TODO check capitalize
   const t = (block: number): string => _.capitalize(timeUntilBlock(currentBlock, block))
 
   switch (period) {

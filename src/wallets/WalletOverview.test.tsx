@@ -8,7 +8,7 @@ import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
 import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
-import {abbreviateAmount} from '../common/formatters'
+import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
 
@@ -42,7 +42,7 @@ test('WalletOverview shows properly formatted balance', () => {
   )
 
   const numbers = [confidential, transparent, total].map((big) => {
-    return abbreviateAmount(Dust.fromBasic(big)).strict
+    return abbreviateAmountForEnUS(Dust.fromBasic(big)).strict
   })
 
   numbers.map((formattedNumber) => {

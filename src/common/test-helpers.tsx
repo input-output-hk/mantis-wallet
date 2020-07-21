@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent, ReactNode, ReactElement} from 'react'
+import BigNumber from 'bignumber.js'
 import {render, RenderResult, waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {mockWeb3Worker} from '../web3-mock'
@@ -10,6 +11,8 @@ import {SettingsState} from '../settings-state'
 import {WalletState, WalletStatus} from './wallet-state'
 import {BurnStatusType} from '../pob/api/prover'
 import {RealBurnStatus} from '../pob/pob-state'
+import {abbreviateAmount} from './formatters'
+import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -79,3 +82,6 @@ export const createBurnStatus = (
     redeem_submitted: null,
   },
 })
+
+export const abbreviateAmountForEnUS = (bg: BigNumber): ReturnType<typeof abbreviateAmount> =>
+  abbreviateAmount(bg, EN_US_BIG_NUMBER_FORMAT)

@@ -1,7 +1,7 @@
 import React from 'react'
 import {Popover} from 'antd'
 import BigNumber from 'bignumber.js'
-import {abbreviateAmount} from './formatters'
+import {useFormatters} from '../settings-state'
 import {UnitType, UNITS} from './units'
 
 interface ShortNumberProps {
@@ -17,6 +17,8 @@ export const ShortNumber = ({
   showSign = false,
   content = null,
 }: ShortNumberProps): JSX.Element => {
+  const {abbreviateAmount} = useFormatters()
+
   const big = new BigNumber(maybeBig)
   const {relaxed, strict} = abbreviateAmount(UNITS[unit].fromBasic(big))
   const prefix = showSign && big.isGreaterThan(0) ? '+' : ''

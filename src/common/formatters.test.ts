@@ -1,10 +1,12 @@
 import {assert} from 'chai'
 import BigNumber from 'bignumber.js'
+import {enUS} from 'date-fns/locale'
 import {abbreviateAmount, formatPercentage, formatAmount, formatDate} from './formatters'
+import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
 
 it('abbreviates numbers correctly', () => {
   const abbreviateBig = (n: number | string): [string, string] => {
-    const {relaxed, strict} = abbreviateAmount(new BigNumber(n))
+    const {relaxed, strict} = abbreviateAmount(new BigNumber(n), EN_US_BIG_NUMBER_FORMAT)
     return [strict, relaxed]
   }
   assert.deepEqual(abbreviateBig('0.00000001'), ['0.00000001', '0.00000001'])
@@ -27,25 +29,28 @@ it('abbreviates numbers correctly', () => {
 
 it('formats amount correctly', () => {
   const bigNum = new BigNumber(1.234567)
-  assert.equal(formatAmount(bigNum), '1.234567')
-  assert.equal(formatAmount(bigNum, 3), '1.235')
-  assert.equal(formatAmount(bigNum, 4, 'strict'), '1.2346')
-  assert.equal(formatAmount(bigNum, 4, 'relaxed'), '1.234567')
+  assert.equal(formatAmount(bigNum, 3, 'strict', EN_US_BIG_NUMBER_FORMAT), '1.235')
+  assert.equal(formatAmount(bigNum, 4, 'strict', EN_US_BIG_NUMBER_FORMAT), '1.2346')
+  assert.equal(formatAmount(bigNum, 4, 'relaxed', EN_US_BIG_NUMBER_FORMAT), '1.234567')
+  assert.equal(formatAmount(bigNum, 0, 'relaxed', EN_US_BIG_NUMBER_FORMAT), '1.234567')
+  assert.equal(formatAmount(bigNum, 10, 'relaxed', EN_US_BIG_NUMBER_FORMAT), '1.2345670000')
 })
 
 it('formats percentage correctly', () => {
-  assert.equal(formatPercentage(0.99999), '100')
-  assert.equal(formatPercentage(0.9999), '99.99')
-  assert.equal(formatPercentage(0.0001), '0.01')
-  assert.equal(formatPercentage(0.00005), '0.01')
-  assert.equal(formatPercentage(0.000049), '0')
-  assert.equal(formatPercentage(0.1), '10')
+  const enUSNumberFormat = new Intl.NumberFormat('en-US')
+
+  assert.equal(formatPercentage(0.99999, enUSNumberFormat), '100')
+  assert.equal(formatPercentage(0.9999, enUSNumberFormat), '99.99')
+  assert.equal(formatPercentage(0.0001, enUSNumberFormat), '0.01')
+  assert.equal(formatPercentage(0.00005, enUSNumberFormat), '0.01')
+  assert.equal(formatPercentage(0.000049, enUSNumberFormat), '0')
+  assert.equal(formatPercentage(0.1, enUSNumberFormat), '10')
 })
 
 it('formats date correctly', () => {
   const date = new Date('19 Jul 1994 6:12:00')
-  assert.equal(formatDate(date, 'MM/DD/YYYY', '12-hour'), '07/19/1994, 6:12 AM')
-  assert.equal(formatDate(date, 'YYYY-MM-DD', '24-hour'), '1994-07-19, 6:12')
-  assert.equal(formatDate(date, 'DD/MM/YYYY', '24-hour'), '19/07/1994, 6:12')
-  assert.equal(formatDate(date, 'DD-MM-YYYY', '24-hour'), '19-07-1994, 6:12')
+  assert.equal(formatDate(date, 'MM/DD/YYYY', '12-hour', enUS), '07/19/1994, 6:12 AM')
+  assert.equal(formatDate(date, 'YYYY-MM-DD', '24-hour', enUS), '1994-07-19, 6:12')
+  assert.equal(formatDate(date, 'DD/MM/YYYY', '24-hour', enUS), '19/07/1994, 6:12')
+  assert.equal(formatDate(date, 'DD-MM-YYYY', '24-hour', enUS), '19-07-1994, 6:12')
 })

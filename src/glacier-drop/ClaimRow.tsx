@@ -11,7 +11,6 @@ import {
   TransactionStatus,
   isUnlocked,
 } from './glacier-state'
-import {formatPercentage, toDurationString} from '../common/formatters'
 import {returnDataToHumanReadable, fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {ProgressState, PROGRESS_ICONS} from '../common/ProgressBar'
@@ -24,6 +23,7 @@ import {
   Period,
 } from './Period'
 import {secondsUntilBlock} from './PeriodStatus'
+import {useFormatters} from '../settings-state'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
 
@@ -60,6 +60,7 @@ const PuzzleProgress = ({
   periodConfig,
   onSubmitPuzzle,
 }: PuzzleProgressProps): JSX.Element => {
+  const {toDurationString} = useFormatters()
   const period = getCurrentPeriod(currentBlock, periodConfig)
 
   switch (claim.puzzleStatus) {
@@ -142,6 +143,8 @@ const UnfreezeDetail = ({
   showEpochs,
   onWithdrawDust,
 }: UnfreezeDetailProps): JSX.Element => {
+  const {formatPercentage} = useFormatters()
+
   const {puzzleStatus, dustAmount, withdrawnDustAmount} = claim
 
   const isUnfrozen = unfrozenDustAmount.isGreaterThan(0) && isUnlocked(claim)
@@ -197,6 +200,7 @@ interface WithdrawDetailProps {
 }
 
 const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
+  const {formatPercentage} = useFormatters()
   const {withdrawnDustAmount, dustAmount, withdrawTxHashes} = claim
   if (withdrawnDustAmount.isZero() || claim.puzzleStatus !== 'submitted') {
     return <div className="withdraw-progress">0%</div>

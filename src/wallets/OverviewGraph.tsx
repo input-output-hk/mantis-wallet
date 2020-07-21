@@ -1,6 +1,6 @@
 import React from 'react'
 import {Popover} from 'antd'
-import {formatPercentage} from '../common/formatters'
+import {useFormatters} from '../settings-state'
 import './OverviewGraph.scss'
 
 interface OverviewGraphProps {
@@ -25,6 +25,8 @@ function polarToCartesian(center: Point, radius: number, angleInRatio: number): 
 }
 
 export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
+  const {formatPercentage} = useFormatters()
+
   const c = {x: 50, y: 50}
   const r = 45
   const {confidential, transparent, pending} = props

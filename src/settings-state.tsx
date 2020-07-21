@@ -1,19 +1,40 @@
 import {useEffect, useState, useMemo} from 'react'
 import i18next from 'i18next'
 import {createContainer} from 'unstated-next'
+import BigNumber from 'bignumber.js'
 import {usePersistedState} from './common/hook-utils'
 import {Store, createInMemoryStore} from './common/store'
 import {Language, DEFAULT_LANGUAGE} from './shared/i18n'
-import {createAndInitI18nForRenderer} from './common/i18n'
 import {updateLanguage} from './common/ipc-util'
+import {
+  createAndInitI18nForRenderer,
+  TFunctionRenderer,
+  LANGUAGE_SETTINGS,
+  createTFunctionRenderer,
+} from './common/i18n'
+import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from './common/formatters'
 
 export type Theme = 'dark' | 'light'
 
+// FIXME PM-2390 => localized date/time format settings
 export const DATE_FORMATS = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY'] as const
 export const TIME_FORMATS = ['24-hour', '12-hour'] as const
 
 export type DateFormat = typeof DATE_FORMATS[number]
 export type TimeFormat = typeof TIME_FORMATS[number]
+
+interface Formatters {
+  formatDate: (date: Date) => string
+  toDurationString: (seconds: number) => string
+
+  formatPercentage: (ratio: number | BigNumber) => string
+  abbreviateAmount: (bg: BigNumber) => ReturnType<typeof abbreviateAmount>
+}
+
+interface Translation {
+  i18n: typeof i18next
+  t: TFunctionRenderer
+}
 
 export interface SettingsState {
   // Theme settings
@@ -34,7 +55,8 @@ export interface SettingsState {
   setLanguage(language: Language): void
   isPseudoLanguageUsed: boolean
   usePseudoLanguage(on: boolean): void
-  i18n: typeof i18next
+  formatters: Formatters
+  translation: Translation
 }
 
 export type StoreSettingsData = {
@@ -82,15 +104,33 @@ function useSettingsState(
   const [timeFormat, setTimeFormat] = usePersistedState(store, ['settings', 'timeFormat'])
   const [language, _setLanguage] = usePersistedState(store, ['settings', 'language'])
   const [isPseudoLanguageUsed, usePseudoLanguage] = useState(false)
-  const i18n = useMemo(() => createAndInitI18nForRenderer(language, isPseudoLanguageUsed), [
-    isPseudoLanguageUsed,
-  ])
+  const translation = useMemo((): Translation => {
+    const i18n = createAndInitI18nForRenderer(language, isPseudoLanguageUsed)
+    return {
+      i18n,
+      t: createTFunctionRenderer(i18n),
+    }
+  }, [isPseudoLanguageUsed])
 
   const setLanguage = (language: Language): void => {
     _setLanguage(language)
-    i18n.changeLanguage(language)
+    translation.i18n.changeLanguage(language)
     updateLanguage(language)
   }
+
+  const formatters = useMemo((): Formatters => {
+    const {dateFnsLocale, numberFormat, bigNumberFormat} = LANGUAGE_SETTINGS[
+      language || DEFAULT_LANGUAGE
+    ]
+
+    return {
+      formatDate: (date: Date) => formatDate(date, dateFormat, timeFormat, dateFnsLocale),
+      toDurationString: (seconds: number) => toDurationString(seconds, dateFnsLocale),
+
+      formatPercentage: (ratio: number | BigNumber) => formatPercentage(ratio, numberFormat),
+      abbreviateAmount: (bg: BigNumber) => abbreviateAmount(bg, bigNumberFormat),
+    }
+  }, [language, dateFormat, timeFormat])
 
   useEffect(() => {
     document.body.classList.forEach((className) => {
@@ -114,11 +154,16 @@ function useSettingsState(
     setLanguage,
     isPseudoLanguageUsed,
     usePseudoLanguage,
-    i18n,
+    formatters,
+    translation,
   }
 }
 
 export const SettingsState = createContainer(useSettingsState)
+
+export const useFormatters = (): Formatters => SettingsState.useContainer().formatters
+
+export const useTranslation = (): Translation => SettingsState.useContainer().translation
 
 export const migrationsForSettingsData = {
   '0.14.0-alpha.1': (store: Store<StoreSettingsData>) => {
