@@ -34,8 +34,8 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
       datadirVersion,
     }
   } catch (e) {
-    mainLog.error(e)
     if (e.code !== 'ENOENT') {
+      mainLog.error(e)
       // Abort in case the problem is not that it doesn't exist
       throw e
     }
