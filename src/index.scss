@@ -85,7 +85,11 @@ div#root {
 }
 
 ::selection {
-  background-color: lighten($primary-color, 20%);
+  background-color: $primary-color;
+}
+
+:focus {
+  outline-color: $primary-color;
 }
 
 //
@@ -139,14 +143,14 @@ div#root {
 
   &:focus {
     @include themify($themes) {
-      background-color: lighten(themed('primary-color'), 10%);
+      background-color: darken(themed('primary-color'), 5%);
       color: #000;
     }
   }
 
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('primary-color'), 15%);
+      background-color: darken(themed('primary-color'), 10%);
       color: #000;
     }
   }
@@ -185,7 +189,7 @@ div#root {
 .ant-btn[disabled].active {
   @include themify($themes) {
     background-color: themed('btn-disabled-bg');
-    color: rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.4);
   }
 }
 

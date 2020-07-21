@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import SVG from 'react-inlinesvg'
@@ -86,6 +84,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   return (
     <div className="Sidebar">
       {isTestnet(networkTag) && (
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
       )}
       <div className="logo">

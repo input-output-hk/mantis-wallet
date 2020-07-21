@@ -1,15 +1,24 @@
-@import '../../themify';
+@import '../../themify', '../../vars';
 
 .LockWalletModal {
   font-size: 13px;
 
   .remove-link {
     margin-bottom: 20px;
+    transition: color $transition-duration;
     text-decoration: underline;
     cursor: pointer;
 
     @include themify($themes) {
-      color: themed('error-color');
+      color: rgba(themed('error-color'), 0.9);
+    }
+
+    &:hover {
+      transition: color $transition-duration;
+
+      @include themify($themes) {
+        color: themed('error-color');
+      }
     }
   }
 }

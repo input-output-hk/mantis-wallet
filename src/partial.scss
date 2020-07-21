@@ -122,8 +122,10 @@
   text-decoration: underline;
   cursor: pointer;
 
-  &:hover {
+  &:hover,
+  &:focus {
     transition: opacity $transition-duration;
+    outline: none;
     opacity: 1;
   }
 }

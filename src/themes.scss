@@ -41,7 +41,7 @@ $themes: (
     link-color: $dark-text-color,
     tertiary-background: #707070,
     // for overview graph:
-      pending-color: #202020,
+      pending-color: #404040,
     dialog-dark-input-bg: #202020,
     quaternary-background: #202020,
     quinary-background: #202020,
@@ -83,7 +83,7 @@ $themes: (
     secondary-text-color: #545454,
     border-color-base: $light-text-color,
     btn-default-bg: $light-btn-bg,
-    btn-disabled-bg: lighten($light-btn-bg, 20%),
+    btn-disabled-bg: lighten($light-btn-bg, 50%),
     btn-focus-bg: darken($light-btn-bg, 10%),
     btn-hover-bg: darken($light-btn-bg, 20%),
     switch-bg: $light-text-color,
