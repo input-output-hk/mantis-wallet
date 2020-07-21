@@ -31,13 +31,18 @@ import {flatTap, prop, wait} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
-import {getTitle, ipcListenToRenderer} from './util'
+import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {inspectLineForDAGStatus, setFetchParamsStatus, status, setNetworkTag} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 import {saveLogsArchive} from './log-exporter'
 import {mainLog} from './logger'
 import {DEFAULT_LANGUAGE, Language} from '../shared/i18n'
-import {createAndInitI18nForMain, createTFunctionMain, TFunctionMain} from './i18n'
+import {
+  createAndInitI18nForMain,
+  createTFunctionMain,
+  TFunctionMain,
+  translateErrorMain,
+} from './i18n'
 import {store} from './store'
 
 const IS_LINUX = os.type() == 'Linux'
@@ -102,7 +107,7 @@ function createWindow(t: TFunctionMain): void {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
-    title: getTitle(),
+    title: getTitle(t),
     icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
@@ -190,7 +195,7 @@ ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | 
       const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
       await updateConfig({miningEnabled: true, ...coinbaseParams})
     } catch (e) {
-      return event.reply('enable-mining-failure', e.message)
+      return event.reply('enable-mining-failure', translateErrorMain(t, e))
     }
     event.reply('enable-mining-success')
     event.reply('update-config-success')
@@ -199,15 +204,15 @@ ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | 
 
 ipcListenToRenderer('update-network-tag', (_event, networkTag: NetworkTag) => {
   setNetworkTag(networkTag)
-  mainWindowHandle?.setTitle(getTitle(networkTag))
+  mainWindowHandle?.setTitle(getTitle(t, networkTag))
 })
 
 ipcListenToRenderer('save-debug-logs', async (event) => {
   const options = {
-    title: 'Save Debug Logs',
-    buttonLabel: 'Save Debug Logs',
+    title: t(['dialog', 'title', 'saveDebugLogs']),
+    buttonLabel: t(['dialog', 'button', 'saveDebugLogs']),
     defaultPath: `luna-debug-logs-${Date.now()}.zip`,
-    filters: [{name: 'Zip Archives', extensions: ['zip']}],
+    filters: [{name: t(['dialog', 'fileFilter', 'zipArchives']), extensions: ['zip']}],
   }
 
   const {canceled, filePath} = await dialog.showSaveDialog(options)
@@ -230,7 +235,7 @@ ipcListenToRenderer('update-language', (_event, language: Language) => {
     i18n.changeLanguage(language).then(() => {
       const t = createTFunctionMain(i18n)
       Menu.setApplicationMenu(buildMenu(openRemix(t), t))
-      mainWindowHandle?.setTitle(getTitle(status.info.networkTag))
+      mainWindowHandle?.setTitle(getTitle(t, status.info.networkTag))
       if (remixWindowHandle) {
         remixWindowHandle.setMenu(buildRemixMenu(t))
       }
@@ -250,7 +255,7 @@ if (!config.runClients) {
           .then((tlsData) => registerCertificateValidationHandler(app, tlsData, config.rpcAddress))
           .catch((error) => {
             mainLog.error(error)
-            dialog.showErrorBox('Luna startup error', error.message)
+            showErrorBox(t, t(['dialog', 'title', 'startupError']), error.message)
             app.exit(1)
           }),
     ),
@@ -261,7 +266,7 @@ if (!config.runClients) {
 // Handle client child processes with TLS
 //
 if (config.runClients) {
-  const initializationPromise = checkDatadirCompatibility()
+  const initializationPromise = checkDatadirCompatibility(t)
     .then(() => openLuna(t))
     .then(() => setupOwnTLS(config.clientConfigs.node))
     .then((tlsData) => ({
@@ -271,7 +276,7 @@ if (config.runClients) {
     .catch(
       async (e): Promise<never> => {
         mainLog.error(e)
-        await dialog.showErrorBox('Luna startup error', e.message)
+        showErrorBox(t, t(['dialog', 'title', 'startupError']), translateErrorMain(t, e))
         app.exit(1)
         // Little trick to make typechecker see that this promise cannot contain undefined
         // Because always an error is thrown
@@ -282,7 +287,7 @@ if (config.runClients) {
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
-    mainLog.info('Fetching zkSNARK parameters')
+    mainLog.info('Fetching Sonics parameters')
     setFetchParamsStatus('running')
     const nodePath = processExecutablePath(config.clientConfigs.node)
     return promisify(exec)(`${nodePath} fetch-params`, {
@@ -297,7 +302,11 @@ if (config.runClients) {
       .catch((error) => {
         setFetchParamsStatus('failed')
         mainLog.error(error)
-        dialog.showErrorBox('Luna startup error', 'Failed to fetch zkSNARK parameters')
+        showErrorBox(
+          t,
+          t(['dialog', 'title', 'startupError']),
+          t(['dialog', 'error', 'sonicsParamsFetching']),
+        )
         app.exit(1)
         return Promise.reject(error)
       })

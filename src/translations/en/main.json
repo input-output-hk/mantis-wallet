@@ -1,6 +1,43 @@
 {
+  "title": {
+    "lunaWallet": "Luna Wallet",
+    "testnetEdition": "testnet edition"
+  },
+  "dialog": {
+    "button": {
+      "cancel": "Cancel",
+      "ok": "OK",
+      "saveDebugLogs": "Save Debug logs"
+    },
+    "checkboxLabel": {
+      "deleteCurrentDataDir": "Delete my current data directory instead"
+    },
+    "error": {
+      "sonicsParamsFetching": "Failed to fetch Sonics parameters"
+    },
+    "fileFilter": {
+      "zipArchives": "Zip Archives"
+    },
+    "message": {
+      "incompatibleDataDir": "Your current data directory is incompatible with this version of Luna.",
+      "incompatibleDataDirAction": "We'll rename your old data directory from \"{{oldDirName}}\" to \"{{newDirName}}\".",
+      "deleteDirectoryQuestion": "Are you sure you want to delete \"{{directory}}\"?",
+      "operationComplete": "Operation complete"
+    },
+    "title": {
+      "incompatibleDataDir": "Incompatible data directory",
+      "saveDebugLogs": "Save Debug logs",
+      "startupError": "Luna startup error",
+      "error": "Error"
+    }
+  },
+  "error": {
+    "invalidSpendingKey": "Possibly invalid spending key",
+    "couldNotExtractCertificateData": "Could not extract generated certificate data"
+  },
   "menu": {
-    "openRemix": "Open Remix",
+    "Luna": "Luna",
+    "openRemix": "Open Remix IDE",
     "hide": "Hide Luna",
     "hideOthers": "Hide Others",
     "unhide": "Show All",
@@ -20,6 +57,7 @@
     "forceReload": "Force Reload",
     "toggleDevTools": "Toggle Developer Tools",
     "actualSize": "Actual Size",
+    "resetZoom": "Reset Zoom",
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
     "toggleFullScreen": "Toggle Full Screen"
