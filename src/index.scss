@@ -89,7 +89,7 @@ div#root {
 }
 
 :focus {
-  outline-color: $primary-color;
+  outline: none;
 }
 
 //
@@ -190,6 +190,22 @@ div#root {
   @include themify($themes) {
     background-color: themed('btn-disabled-bg');
     color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+// antd checkbox
+.ant-checkbox-checked .ant-checkbox-inner {
+  @include themify($themes) {
+    $dark-primary-color: darken(themed('primary-color'), 10%);
+    border-color: $dark-primary-color;
+    background-color: $dark-primary-color;
+  }
+
+  &:focus {
+    @include themify($themes) {
+      border-color: themed('primary-color');
+      background-color: themed('primary-color');
+    }
   }
 }
 
