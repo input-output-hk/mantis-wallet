@@ -1,7 +1,7 @@
-@import '../../partial';
+@import '../../partial', '../../vars';
 
 .DialogSwitch {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .label {
     @extend %dialog-label;

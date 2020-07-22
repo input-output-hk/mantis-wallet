@@ -68,6 +68,7 @@
       @extend %error;
       margin: 1.5em auto;
       padding: 1em 2.5em;
+      border-radius: $dialog-component-border-radius;
     }
 
     .actions {

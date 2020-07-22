@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 .BurnBalanceDisplay {
   display: inline-block;
@@ -33,7 +33,7 @@
     margin-bottom: 25px;
     font-size: 13px;
     font-weight: bold;
-    letter-spacing: 1.95px;
+    letter-spacing: $letter-spacing-large;
     line-height: 30px;
     vertical-align: middle;
 
@@ -42,7 +42,7 @@
       top: 2px;
       font-size: 30px;
       font-weight: 300;
-      letter-spacing: 0.69px;
+      letter-spacing: $letter-spacing-small;
       line-height: 30px;
     }
   }
@@ -51,7 +51,7 @@
     margin-bottom: 5px;
     font-size: 13px;
     font-weight: 300;
-    letter-spacing: 1.95px;
+    letter-spacing: $letter-spacing-large;
 
     .icon {
       display: inline-block;

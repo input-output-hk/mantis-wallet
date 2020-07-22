@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 .WalletActionBox {
   display: inline-grid;
@@ -6,6 +6,7 @@
   width: 307px;
   height: 367px;
   margin: 1rem;
+  border-radius: $dialog-component-border-radius;
   cursor: pointer;
 
   @include themify($themes) {
@@ -24,7 +25,7 @@
     padding: 36px;
     font-size: 13px;
     font-weight: bold;
-    letter-spacing: 0.17px;
+    letter-spacing: $letter-spacing-small;
     text-align: center;
     text-transform: uppercase;
   }
@@ -34,17 +35,18 @@
     padding: 0 13px;
     font-size: 13px;
     font-weight: 300;
-    letter-spacing: 0.17px;
+    letter-spacing: $letter-spacing-small;
     text-align: center;
   }
 
   .footer {
     padding: 0 46px;
+    border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
     font-size: 18px;
     font-weight: bold;
-    letter-spacing: 2.7px;
+    letter-spacing: $letter-spacing-large;
     line-height: 64px;
-    text-align: right;
+    text-align: center;
     text-transform: uppercase;
 
     @include themify($themes) {

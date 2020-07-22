@@ -12,6 +12,8 @@
   }
 
   .ant-modal-content {
+    border-radius: 1rem;
+
     @include themify($themes) {
       background-color: themed('modal-background');
     }
@@ -19,27 +21,6 @@
 
   .ant-modal-close {
     margin: 29px 46px 0 0;
-
-    .ant-modal-close-x {
-      margin: 0;
-      padding: 16px;
-      transition: color $transition-duration;
-      font-size: 24px;
-      line-height: 24px;
-
-      @include themify($themes) {
-        color: themed('secondary-text-color');
-      }
-
-      &:hover,
-      &:active {
-        transition: color $transition-duration;
-
-        @include themify($themes) {
-          color: themed('text-color');
-        }
-      }
-    }
   }
 
   .ant-modal-footer {

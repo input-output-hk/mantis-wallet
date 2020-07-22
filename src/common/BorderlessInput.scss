@@ -4,7 +4,9 @@
   position: relative;
 
   .ant-input {
+    padding: 0 0.75rem;
     border: 0;
+    border-radius: $dialog-component-border-radius;
     opacity: 1;
 
     @include themify($themes) {

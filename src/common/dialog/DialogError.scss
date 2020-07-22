@@ -1,8 +1,9 @@
-@import '../../themify';
+@import '../../themify', '../../vars';
 
 .DialogError {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
   padding: 15px;
+  border-radius: $dialog-component-border-radius;
   font-size: 10px;
   text-align: center;
 

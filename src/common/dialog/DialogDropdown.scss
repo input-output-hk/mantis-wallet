@@ -1,11 +1,11 @@
 @import '../../themify', '../../vars', '../../partial';
 
 .DialogDropdown {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .active-option {
     width: 508px;
-    padding: 10px 0;
+    padding: 10px 0 0;
     overflow: hidden;
     font-size: 14px;
     font-weight: bold;
@@ -17,7 +17,7 @@
   }
 
   .label {
-    font-size: 20px;
+    font-size: $dialog-component-spacing; // FIXME
     font-weight: bold;
     cursor: pointer;
   }

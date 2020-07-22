@@ -22,7 +22,7 @@
       padding: 0 26px;
       font-size: 12px;
       font-weight: bold;
-      letter-spacing: 0.24px;
+      letter-spacing: $letter-spacing-small;
       text-align: center;
       text-transform: uppercase;
       vertical-align: middle;
@@ -42,10 +42,6 @@
     height: 350px;
     margin-top: 13px;
 
-    @include themify($themes) {
-      border: solid 1px themed('tertiary-background');
-    }
-
     .scroller {
       height: 336px;
       overflow: auto hidden;
@@ -59,7 +55,6 @@
       }
 
       &::-webkit-scrollbar-track {
-        margin: 34px;
         @include themify($themes) {
           background-color: themed('tertiary-background');
         }

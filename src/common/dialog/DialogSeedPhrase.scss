@@ -1,7 +1,7 @@
 @import '../../themify', '../../vars';
 
 .DialogSeedPhrase {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .select {
     width: 100%;

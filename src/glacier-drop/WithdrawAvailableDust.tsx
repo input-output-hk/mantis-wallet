@@ -104,7 +104,7 @@ const _WithdrawAvailableDust = ({
       footer={footer}
     >
       <DialogMessage label="Midnight Transparent Address">{transparentAddress}</DialogMessage>
-      <DialogShowDust amount={estimatedWithdrawableDust} />
+      <DialogShowDust amount={estimatedWithdrawableDust}>Eligible Amount</DialogShowDust>
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}

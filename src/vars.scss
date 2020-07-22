@@ -14,7 +14,13 @@ $sidebar-width: 240px;
 $sidebar-collapsed-width: 80px;
 $sidebar-collapse-query: '(max-width: 1300px), (max-height: 800px)';
 
-$dialog-component-height: 47px;
+$dialog-component-height: 3rem;
+$dialog-component-spacing: 1.5rem;
+$dialog-component-border-radius: 0.5rem;
+
+$letter-spacing-small: 0.03em;
+$letter-spacing-medium: 0.06em;
+$letter-spacing-large: 0.09em;
 
 // antd uses z-index of 10xx for modals, tooltips, etc
 // let's keep sidebar under them

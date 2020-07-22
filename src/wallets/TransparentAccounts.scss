@@ -27,7 +27,7 @@
       margin-left: 19px;
       font-size: 12px;
       font-weight: bold;
-      letter-spacing: 1.8px;
+      letter-spacing: $letter-spacing-medium;
       text-align: center;
       text-transform: uppercase;
       vertical-align: middle;
@@ -51,7 +51,7 @@
         display: contents;
         font-size: 13px;
         font-weight: bold;
-        letter-spacing: 1.95px;
+        letter-spacing: $letter-spacing-large;
         text-align: left;
         text-transform: uppercase;
 
@@ -80,7 +80,7 @@
           display: contents;
           min-height: 73px;
           font-size: 13px;
-          letter-spacing: 0.3px;
+          letter-spacing: $letter-spacing-small;
           line-height: 44px;
           vertical-align: middle;
 
@@ -95,6 +95,11 @@
 
           & > :first-child {
             padding-left: 1em;
+            border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+          }
+
+          & > :last-child {
+            border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
           }
 
           .dust {
@@ -105,8 +110,9 @@
           .amount {
             display: inline-block;
             padding: 0 10px;
+            border-radius: $dialog-component-border-radius;
             font-weight: bold;
-            line-height: 32px;
+            line-height: 2rem;
 
             @include themify($themes) {
               background-color: themed('secondary-background');
@@ -119,12 +125,12 @@
 
           .action {
             display: inline-block;
-            height: 32px;
+            height: 2rem;
             margin-right: 1em;
             padding: 0 10px;
             font-size: 12px;
             font-weight: bold;
-            line-height: 32px;
+            line-height: 2rem;
           }
         }
 

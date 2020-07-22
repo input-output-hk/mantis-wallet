@@ -116,7 +116,27 @@
   text-transform: uppercase;
 }
 
+%focus-outline {
+  outline: none;
+  box-shadow: 0px 2px 30px 0px rgba(#000, 0.4), 0px 2px 30px 0px rgba($primary-color, 0.4);
+}
+
+%add-focus-outline {
+  &:focus {
+    @extend %focus-outline;
+  }
+}
+
+%disable-focus-outline {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
 %link {
+  @extend %disable-focus-outline;
+
   transition: opacity $transition-duration;
   opacity: $secondary-opacity;
   text-decoration: underline;
@@ -125,13 +145,13 @@
   &:hover,
   &:focus {
     transition: opacity $transition-duration;
-    outline: none;
     opacity: 1;
   }
 }
 
 %dialog-info-link {
   @extend %link;
+
   display: block;
   margin-bottom: 15px;
   padding: 5px 0;
@@ -155,6 +175,7 @@
 
 %error {
   padding: 1em;
+  border-radius: $dialog-component-border-radius;
   font-size: 13px;
   text-align: center;
 
@@ -169,7 +190,13 @@
   opacity: $secondary-opacity;
   font-size: 12px;
   font-weight: bold;
-  letter-spacing: 1.8px;
+  letter-spacing: $letter-spacing-large;
   text-align: center;
   text-transform: uppercase;
+}
+
+%two-col-grid-template {
+  display: grid;
+  grid-column-gap: 1rem;
+  grid-template-columns: 1fr 1fr;
 }

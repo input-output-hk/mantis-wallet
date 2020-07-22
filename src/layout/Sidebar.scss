@@ -1,4 +1,4 @@
-@import '../themify', '../vars';
+@import '../themify', '../vars', '../partial';
 
 .Sidebar {
   $link-font-weight: 300;
@@ -39,6 +39,8 @@
     list-style-type: none;
 
     .link {
+      @extend %disable-focus-outline;
+
       display: block;
       z-index: $zindex-sidebar;
       outline: 0;
@@ -115,6 +117,8 @@
     }
 
     .footer-link {
+      @extend %disable-focus-outline;
+
       cursor: pointer;
 
       &:hover {

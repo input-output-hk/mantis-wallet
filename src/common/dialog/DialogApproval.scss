@@ -4,9 +4,11 @@ $padding-v: 21px;
 $padding-h: 13px;
 
 .DialogApproval {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .checkbox-wrapper {
+    border-radius: $dialog-component-border-radius;
+
     @include themify($themes) {
       background-color: themed('normal-color');
       color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);

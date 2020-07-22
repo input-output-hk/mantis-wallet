@@ -1,7 +1,7 @@
-@import '../../themify', '../../partial';
+@import '../../themify', '../../partial', '../../vars';
 
 .DialogAddress {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .display {
     display: grid;

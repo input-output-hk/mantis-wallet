@@ -239,7 +239,7 @@ export const InteractiveSwitch: FunctionComponent<{}> = () => {
     <Dialog title="Dialog Switch">
       <DialogSwitch
         label={text('Switch field label', 'Switch this')}
-        description={text('Switch field text', '..becuase of this')}
+        description={text('Switch field text', '..because of this')}
         onChange={(checked): void => {
           setSwitched(checked)
           action(checked ? 'Is switched' : 'Is not switched')()

@@ -89,7 +89,7 @@ div#root {
 }
 
 :focus {
-  outline: none;
+  @extend %focus-outline;
 }
 
 //
@@ -99,9 +99,9 @@ div#root {
 .main-title {
   margin: 0;
   overflow: hidden;
-  font-size: 20px;
+  font-size: 20px; // FIXME
   font-weight: bold;
-  letter-spacing: 0.46px;
+  letter-spacing: $letter-spacing-small;
 }
 
 .uppercase {
@@ -234,6 +234,8 @@ div#root {
 }
 
 .ant-switch {
+  @extend %add-focus-outline;
+
   @include themify($themes) {
     background-color: themed('normal-color');
   }
@@ -245,6 +247,43 @@ div#root {
   }
 }
 
+// antd modal close X generic style
+.ant-modal-close {
+  @extend %disable-focus-outline;
+
+  transition: color $transition-duration;
+
+  @include themify($themes) {
+    color: themed('secondary-text-color');
+  }
+
+  &:hover,
+  &:focus {
+    transition: color $transition-duration;
+  }
+
+  &:hover {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+
+  &:focus {
+    @include themify($themes) {
+      color: themed('primary-color');
+    }
+  }
+
+  .ant-modal-close-x {
+    margin: 0;
+    padding: 16px;
+    color: inherit;
+    font-size: 24px;
+    line-height: 24px;
+  }
+}
+
+// FIXME MOVE
 @include themify($themes) {
   input::placeholder {
     opacity: 1;
@@ -259,10 +298,11 @@ div#root {
 .Luna {
   .ant-btn {
     height: $dialog-component-height;
-    font-size: 14px;
+    border-radius: $dialog-component-border-radius;
+    font-size: 16px;
     font-weight: bold;
-    letter-spacing: 1.44px;
-    text-align: right;
+    letter-spacing: $letter-spacing-medium;
+    text-align: center;
     text-shadow: none;
     text-transform: uppercase;
 

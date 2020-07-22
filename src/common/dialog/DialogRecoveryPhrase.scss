@@ -1,7 +1,7 @@
 @import '../../themify', '../../vars', '../../partial';
 
 .DialogRecoveryPhrase {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .instructions {
     margin-bottom: 10px;
@@ -11,6 +11,7 @@
   .input {
     height: 80px;
     padding: 20px 13px;
+    border-radius: $dialog-component-border-radius;
     font-size: 13px;
     font-weight: bold;
 
@@ -26,7 +27,7 @@
   }
 
   .clear-container {
-    margin-bottom: 20px;
+    margin-bottom: 0.5rem;
     text-align: right;
 
     .clear {
@@ -43,6 +44,7 @@
 
     .word {
       height: 30px;
+      border-radius: $dialog-component-border-radius;
       font-size: 13px;
       font-weight: bold;
       line-height: 30px;

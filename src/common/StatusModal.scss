@@ -19,12 +19,6 @@ $luna-status-modal-padding-ver: 3em;
     }
   }
 
-  .ant-modal-close-x {
-    @include themify($themes) {
-      color: themed('text-color');
-    }
-  }
-
   .ant-modal-footer {
     padding: 0;
     border-top-width: 0;
@@ -71,7 +65,7 @@ $luna-status-modal-padding-ver: 3em;
 
           &.success {
             @include themify($themes) {
-              color: themed('success-color');
+              color: themed('success-text');
             }
           }
 

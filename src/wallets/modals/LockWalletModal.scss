@@ -4,7 +4,7 @@
   font-size: 13px;
 
   .remove-link {
-    margin-bottom: 20px;
+    margin-bottom: $dialog-component-spacing;
     transition: color $transition-duration;
     text-decoration: underline;
     cursor: pointer;

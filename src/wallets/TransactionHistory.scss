@@ -1,4 +1,4 @@
-@import '../themify', '../partial';
+@import '../themify', '../partial', '../vars';
 
 .TransactionHistory {
   display: grid;
@@ -31,7 +31,7 @@
       display: inline-block;
       font-size: 12px;
       font-weight: bold;
-      letter-spacing: 0.15px;
+      letter-spacing: $letter-spacing-small;
       text-align: left;
       text-transform: uppercase;
       vertical-align: middle;
@@ -42,10 +42,10 @@
       display: inline-block;
       min-width: 126px;
       height: 30px;
-      margin-left: 19px;
+      margin-left: 1rem;
       font-size: 12px;
       font-weight: bold;
-      letter-spacing: 1.8px;
+      letter-spacing: $letter-spacing-large;
       text-align: center;
       text-transform: uppercase;
       vertical-align: middle;

@@ -1,4 +1,4 @@
-@import '../partial';
+@import '../partial', '../vars';
 
 .TransactionList {
   @extend %transactions-grid;
@@ -10,7 +10,7 @@
     padding-left: 12px;
     font-size: 13px;
     font-weight: bold;
-    letter-spacing: 1.95px;
+    letter-spacing: $letter-spacing-large;
     line-height: 40px;
     text-align: left;
     text-transform: uppercase;

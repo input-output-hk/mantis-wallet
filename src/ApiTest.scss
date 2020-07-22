@@ -1,8 +1,8 @@
-@import './partial';
+@import './partial', './vars';
 
 .ApiTest {
   .input {
-    margin-bottom: 20px;
+    margin-bottom: $dialog-component-spacing;
 
     label,
     div.label {
@@ -11,7 +11,7 @@
     }
 
     input {
-      height: 47px;
+      height: $dialog-component-height;
     }
   }
 }

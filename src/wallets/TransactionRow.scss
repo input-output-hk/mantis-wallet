@@ -3,7 +3,7 @@
 .TransactionRow {
   display: contents;
   font-size: 13px;
-  letter-spacing: 0.3px;
+  letter-spacing: $letter-spacing-small;
   line-height: 44px;
   vertical-align: middle;
 
@@ -111,8 +111,10 @@
 
   .amount {
     @extend %monospace;
+
     display: inline-block;
     padding: 10px;
+    border-radius: $dialog-component-border-radius;
     font-weight: bold;
     line-height: 14px;
 

@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars', '../partial';
 
 $dialog-width: 508px;
 
@@ -12,28 +12,29 @@ $dialog-width: 508px;
     }
   }
 
-  .title {
-    height: 50px;
-    margin: 0;
-    overflow: hidden;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 0.46px;
-  }
-
   .ant-btn {
     span {
       transition: none;
     }
   }
 
+  .title {
+    margin-bottom: $dialog-component-spacing;
+    overflow: hidden;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: $letter-spacing-small;
+  }
+
+  .dialog-children {
+    margin-bottom: $dialog-component-spacing;
+  }
+
   .actions {
-    margin-bottom: 20px;
+    margin-bottom: $dialog-component-spacing;
 
     &.grid {
-      display: grid;
-      grid-column-gap: 8px;
-      grid-template-columns: 1fr 1fr;
+      @extend %two-col-grid-template;
     }
 
     &.natural > * {

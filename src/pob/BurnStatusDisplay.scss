@@ -4,6 +4,7 @@
   position: relative;
   margin-top: 30px;
   padding-bottom: 14px;
+  border-radius: $dialog-component-border-radius;
 
   @include themify($themes) {
     background-color: themed('input-bg');

@@ -1,15 +1,14 @@
 @import '../../themify', '../../vars', '../../partial';
 
 .DialogTextSwitch {
-  margin: 20px auto;
+  margin: 0 auto $dialog-component-spacing;
 
   .label {
     @extend %dialog-label;
   }
 
   .switch-container {
-    display: grid;
-    grid-template-columns: 50% 50%;
+    @extend %two-col-grid-template;
 
     .button {
       height: 30px !important; // FIXME PM-1812 make button sizes consistent
