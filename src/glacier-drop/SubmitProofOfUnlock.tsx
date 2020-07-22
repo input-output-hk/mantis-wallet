@@ -5,13 +5,11 @@ import {GlacierState, Claim} from './glacier-state'
 import {LoadedState, FeeEstimates} from '../common/wallet-state'
 import {validateFee} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../common/fee-estimate-strings'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {DialogShowDust} from '../common/dialog/DialogShowDust'
 import {DialogFee} from '../common/dialog/DialogFee'
-import {DialogError} from '../common/dialog/DialogError'
 import {UNITS} from '../common/units'
 import './SubmitProofOfUnlock.scss'
 
@@ -51,13 +49,6 @@ const _SubmitProofOfUnlock = ({
 
   const disabled = !!feeError || !!feeEstimateError || isFeeEstimationPending
 
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
-
   return (
     <Dialog
       title="Submit Proof of Unlock"
@@ -86,13 +77,13 @@ const _SubmitProofOfUnlock = ({
       }}
       onSetLoading={modalLocker.setLocked}
       type="dark"
-      footer={footer}
     >
       <DialogMessage label="Midnight Transparent Address">{transparentAddress}</DialogMessage>
       <DialogShowDust amount={dustAmount}>Eligible Amount</DialogShowDust>
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         onChange={setFee}
         errorMessage={feeError}
         isPending={isFeeEstimationPending}

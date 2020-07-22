@@ -165,4 +165,13 @@
       border: 1px solid themed('error-color');
     }
   }
+
+  .warning {
+    font-size: 12px;
+    text-align: right;
+
+    @include themify($themes) {
+      color: themed('warning-color');
+    }
+  }
 }

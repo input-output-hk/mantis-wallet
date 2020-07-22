@@ -5,13 +5,11 @@ import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
 import {LoadedState, FeeEstimates} from '../common/wallet-state'
 import {validateFee, fillActionHandlers} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../common/fee-estimate-strings'
 import {wrapWithModal, ModalLocker} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {DialogShowDust} from '../common/dialog/DialogShowDust'
 import {DialogFee} from '../common/dialog/DialogFee'
-import {DialogError} from '../common/dialog/DialogError'
 import {getUnfrozenAmount, getNumberOfEpochsForClaim, getCurrentEpoch} from './Period'
 import {UNITS} from '../common/units'
 import './WithdrawAvailableDust.scss'
@@ -57,13 +55,6 @@ const _WithdrawAvailableDust = ({
 
   const disabled = !!feeError || !!feeEstimateError || isFeeEstimationPending
 
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
-
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
   const numberOfEpochsForClaim = getNumberOfEpochsForClaim(claim, periodConfig)
   const unfrozenDustAmount = getUnfrozenAmount(
@@ -101,13 +92,13 @@ const _WithdrawAvailableDust = ({
         disabled: modalLocker.isLocked,
       }}
       type="dark"
-      footer={footer}
     >
       <DialogMessage label="Midnight Transparent Address">{transparentAddress}</DialogMessage>
       <DialogShowDust amount={estimatedWithdrawableDust}>Eligible Amount</DialogShowDust>
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         onChange={setFee}
         errorMessage={feeError}
         isPending={isFeeEstimationPending}

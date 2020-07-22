@@ -11,9 +11,7 @@ import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {UNITS} from '../../common/units'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {useAsyncUpdate} from '../../common/hook-utils'
-import {DialogError} from '../../common/dialog/DialogError'
 import {DialogFee} from '../../common/dialog/DialogFee'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../../common/fee-estimate-strings'
 import './RedeemModal.scss'
 
 const {Dust} = UNITS
@@ -95,14 +93,6 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
 
   const disableRedeem = !!feeError || isFeeEstimationPending
 
-  // FIXME PM-2050 Fix error handling when amount is too big to estimate
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
-
   return (
     <Dialog
       title="Apply Confidentiality"
@@ -121,7 +111,6 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
         disabled: disableRedeem,
       }}
       onSetLoading={modalLocker.setLocked}
-      footer={footer}
       type="dark"
     >
       <DialogShowDust amount={transparentAccount.balance}>Available Amount</DialogShowDust>
@@ -148,6 +137,7 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         defaultValue={fee}
         onChange={(fee: string): void => setFee(fee)}
         isPending={isFeeEstimationPending}

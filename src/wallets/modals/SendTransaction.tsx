@@ -19,9 +19,7 @@ import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
-import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../../common/fee-estimate-strings'
 import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 import './SendTransaction.scss'
 
@@ -72,14 +70,6 @@ export const SendToConfidentialDialog = ({
 
   const disableSend = !!feeError || isFeeEstimationPending
 
-  // FIXME PM-2050 Fix error handling when amount is too big to estimate
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
-
   return (
     <Dialog
       leftButtonProps={{
@@ -93,7 +83,6 @@ export const SendToConfidentialDialog = ({
         disabled: disableSend,
       }}
       onSetLoading={modalLocker.setLocked}
-      footer={footer}
       type="dark"
     >
       {children}
@@ -120,6 +109,7 @@ export const SendToConfidentialDialog = ({
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         defaultValue={fee}
         onChange={(fee: string): void => setFee(fee)}
         isPending={isFeeEstimationPending}
@@ -161,14 +151,6 @@ const SendToTransparentDialog = ({
 
   const disableSend = !!feeError || !!feeEstimateError || isFeeEstimationPending
 
-  // FIXME PM-2050 Fix error handling when amount is too big to estimate
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
-
   return (
     <Dialog
       leftButtonProps={{
@@ -186,7 +168,6 @@ const SendToTransparentDialog = ({
         disabled: disableSend,
       }}
       onSetLoading={modalLocker.setLocked}
-      footer={footer}
       type="dark"
     >
       {children}
@@ -212,6 +193,7 @@ const SendToTransparentDialog = ({
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         onChange={setFee}
         errorMessage={feeError}
         isPending={isFeeEstimationPending}

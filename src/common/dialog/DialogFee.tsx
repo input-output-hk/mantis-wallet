@@ -26,6 +26,7 @@ interface DialogFeeProps {
   defaultValue?: string
   onChange: (value: string, feeLevel: FeeLevel | null) => void
   feeEstimates?: FeeEstimates
+  feeEstimateError?: string | Error | null
   forceCustom?: boolean
   isPending?: boolean
 }
@@ -49,6 +50,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
   className,
   onChange,
   feeEstimates,
+  feeEstimateError,
   defaultValue = '0',
   errorMessage,
   forceCustom = false,
@@ -160,6 +162,9 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
           ))}
         </div>
       </InlineError>
+      {feeEstimateError != null && (
+        <div className="warning">Couldn’t update fee estimates, they might be outdated</div>
+      )}
     </div>
   )
 }
