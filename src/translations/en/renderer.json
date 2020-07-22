@@ -1,13 +1,58 @@
 {
+  "title": {
+    "luna": "Luna",
+    "wallets": "Wallets",
+    "proofOfBurn": "Proof of Burn",
+    "glacierDrop": "Glacier Drop",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": {
+      "enableMining": "Enable Mining",
+      "backendConfigChanged": "Backend Configuration Changed"
+    },
+    "button": {
+      "enable": "Enable",
+      "restart": "Restart",
+      "exportPrivateKey": "Export Private Key"
+    },
+    "label": {
+      "privateKeyForMining": "Private key for mining rewards",
+      "enableDarkMode": "Enable Dark Mode",
+      "enableMining": "Enable Mining",
+      "dateFormat": "Date Format",
+      "timeFormat": "Time Format",
+      "exportPrivateKey": "Export"
+    },
+    "message": {
+      "enableMining": "By setting a private key, you'll enable mining on your computer.<br />It's crucial that your node is fully synced when mining, otherwise it won't work.",
+      "backendRestartPrompt": "<p>The backend must be restarted to apply configuration changes.</p><p>Do you want to restart now?</p>"
+    },
+    "error": {
+      "configFailed": "Configuration update failed. Error: {{reason}}",
+      "backendRestartFailed": "Backend restart failed. Error: {{reason}}"
+    }
+  },
   "common": {
+    "button": {
+      "cancel": "Cancel"
+    },
     "link": {
       "feedback": "Feedback",
       "logOut": "Log Out",
       "support": "Support",
-      "status": "Status"
+      "status": "Status",
+      "showDetails": "Show details"
     },
     "validationError": {
       "passwordsDoNotMatch": "Passwords don't match"
+    },
+    "initializationStatus": {
+      "initLuna": "Initializing Luna",
+      "sonicsParamsFetching": "Sonics params fetching",
+      "startingMidnight": "Starting Midnight node",
+      "connectingToWallet": "Connecting to wallet",
+      "loading": "Loading"
     }
   }
 }

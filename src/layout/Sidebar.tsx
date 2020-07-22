@@ -54,7 +54,10 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({version}: SidebarProps): JSX.Element => {
-  const {theme} = SettingsState.useContainer()
+  const {
+    theme,
+    translation: {t},
+  } = SettingsState.useContainer()
   const logo = theme === 'dark' ? darkLogo : lightLogo
 
   const walletState = WalletState.useContainer()
@@ -120,7 +123,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
                         src={menuItem.icon}
                       />
                     </span>
-                    <span className="link-title">{menuItem.title}</span>
+                    <span className="link-title">{t(menuItem.title)}</span>
                   </div>
                 </li>
               )

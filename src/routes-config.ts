@@ -11,13 +11,14 @@ import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
 import menuGlacierIcon from './assets/icons/menu-glacier.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
+import {TKeyRenderer} from './common/i18n'
 
 // Menu
 
 export type MenuId = 'WALLETS' | 'PROOF_OF_BURN' | 'GLACIER_DROP' | 'SETTINGS'
 
 export interface MenuItem {
-  title: string
+  title: TKeyRenderer
   route: RouteId
   icon: string
 }
@@ -28,22 +29,22 @@ export type Menu = {
 
 export const MENU: Menu = {
   WALLETS: {
-    title: 'Wallets',
+    title: ['title', 'wallets'],
     route: 'WALLETS',
     icon: menuWalletsIcon,
   },
   PROOF_OF_BURN: {
-    title: 'Proof of Burn',
+    title: ['title', 'proofOfBurn'],
     route: 'BURN_CENTRE',
     icon: menuPobIcon,
   },
   GLACIER_DROP: {
-    title: 'Glacier Drop',
+    title: ['title', 'glacierDrop'],
     route: 'GLACIER_DROP',
     icon: menuGlacierIcon,
   },
   SETTINGS: {
-    title: 'Settings',
+    title: ['title', 'settings'],
     route: 'SETTINGS',
     icon: menuSettingsIcon,
   },
