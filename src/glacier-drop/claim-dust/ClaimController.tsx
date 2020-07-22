@@ -24,7 +24,7 @@ export type ModalId =
 
 interface ClaimControllerProps {
   walletState: LoadedState
-  totalDustDistributed: BigNumber
+  totalAtomToBeDistributed: BigNumber
   minimumThreshold: BigNumber
   activeModal: ModalId
   setActiveModal(modalId: ModalId): void
@@ -55,7 +55,7 @@ export const ClaimController = ({
   const minimumDustAmount = balanceWithProof.balance.dividedBy(1e10)
   // FIXME: PM-1968
   // .dividedBy(TOTAL_ETHER_IN_SNAPSHOT)
-  // .multipliedBy(totalDustDistributed)
+  // .multipliedBy(totalAtomToBeDistributed)
 
   useEffect(() => {
     if (activeModal === 'none') {
