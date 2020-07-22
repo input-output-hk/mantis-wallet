@@ -41,7 +41,6 @@ const _ClaimWithKey = ({
       title="Claim Dust with Private Key"
       rightButtonProps={{
         children: UNLOCK_BUTTON_TEXT,
-        type: 'default',
         onClick: async () => {
           const signature = await authorizationSign(transparentAddress, etcPrivateKey)
           onNext(signature)

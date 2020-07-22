@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropsWithChildren} from 'react'
 import {SyncStatus} from './SyncStatus'
 import {MiningStatus} from './MiningStatus'
 import {Link} from './Link'
@@ -14,7 +14,7 @@ interface HeaderWithSyncStatusProps {
 export const HeaderWithSyncStatus = ({
   externalLink,
   children,
-}: React.PropsWithChildren<HeaderWithSyncStatusProps>): JSX.Element => (
+}: PropsWithChildren<HeaderWithSyncStatusProps>): JSX.Element => (
   <div className="HeaderWithSyncStatus">
     <div className="right">
       <SyncStatus />

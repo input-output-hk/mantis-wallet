@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {CloseOutlined} from '@ant-design/icons'
 import {Modal, message} from 'antd'
 import {ModalProps} from 'antd/lib/modal'
@@ -22,7 +22,7 @@ function useLocker(): ModalLocker {
 
 export const ModalLocker = createContainer(useLocker)
 
-const _LunaModal: React.FunctionComponent<ModalProps> = ({onCancel, ...props}: ModalProps) => {
+const _LunaModal: FunctionComponent<ModalProps> = ({onCancel, ...props}: ModalProps) => {
   const locker = ModalLocker.useContainer()
   const onCancelWithLock = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     if (onCancel) {
@@ -46,7 +46,7 @@ const _LunaModal: React.FunctionComponent<ModalProps> = ({onCancel, ...props}: M
       width={'auto'}
       footer={null}
       className="LunaModal"
-      closeIcon={<CloseOutlined style={{fontSize: '40px', ...closeIconStyle}} />}
+      closeIcon={<CloseOutlined style={{fontSize: '24px', ...closeIconStyle}} />}
       centered
       destroyOnClose
       onCancel={onCancelWithLock}
@@ -55,16 +55,16 @@ const _LunaModal: React.FunctionComponent<ModalProps> = ({onCancel, ...props}: M
   )
 }
 
-export const LunaModal: React.FunctionComponent<ModalProps> = (props) => (
+export const LunaModal: FunctionComponent<ModalProps> = (props) => (
   <ModalLocker.Provider>
     <_LunaModal {...props} />
   </ModalLocker.Provider>
 )
 
 export const wrapWithModal = <TProps extends object>(
-  Component: React.FunctionComponent<TProps>,
+  Component: FunctionComponent<TProps>,
   className?: string,
-): React.FunctionComponent<TProps & ModalProps> => (props: TProps & ModalProps) => {
+): FunctionComponent<TProps & ModalProps> => (props: TProps & ModalProps) => {
   return (
     <LunaModal wrapClassName={className} {...props}>
       <Component {...props} />

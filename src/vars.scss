@@ -1,5 +1,6 @@
 $font-family: 'Helvetica Neue', sans-serif;
 $secondary-opacity: 0.57;
+$unselected-opacity: 0.75;
 $border-radius-base: 0;
 $btn-border-width: 0;
 $switch-height: 22px;
@@ -20,8 +21,8 @@ $dialog-component-height: 47px;
 $zindex-sidebar: 900;
 
 // antd overwrites
-$primary-color: #04b7e0;
-$secondary-color: #9be2f1;
+$primary-color: #33daff;
+$secondary-color: #006e90;
 $success-color: #5add92;
 $error-color: #ff2121;
 $warning-color: #ff9021;

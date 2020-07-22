@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import classnames from 'classnames'
 import {Button} from 'antd'
 import QRCode from 'qrcode.react'
@@ -11,7 +11,7 @@ interface DialogQRCodeProps {
   blurred?: boolean
 }
 
-export const DialogQRCode: React.FunctionComponent<DialogQRCodeProps> = ({
+export const DialogQRCode: FunctionComponent<DialogQRCodeProps> = ({
   content,
   downloadFileName,
   blurred = false,
@@ -29,7 +29,7 @@ export const DialogQRCode: React.FunctionComponent<DialogQRCodeProps> = ({
         type="primary"
         onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
       >
-        Download .txt
+        Download txt
       </Button>
     )}
   </div>

@@ -13,14 +13,16 @@
 
     .button {
       height: 30px !important; // FIXME PM-1812 make button sizes consistent
-      transition: color 0.6s, background-color 0.6s;
+      transition: color $transition-duration, background-color $transition-duration,
+        opacity $transition-duration;
+      font-size: 12px;
       text-align: center;
 
       &.inactive {
-        opacity: $secondary-opacity;
+        opacity: $unselected-opacity;
 
         @include themify($themes) {
-          background-color: themed('secondary-background');
+          background-color: themed('input-bg');
           color: themed('text-color');
         }
 
@@ -30,7 +32,7 @@
             opacity: 1;
 
             @include themify($themes) {
-              background-color: themed('quinary-background');
+              background-color: themed('input-bg');
             }
           }
         }
@@ -46,7 +48,7 @@
         &.active {
           @include themify($themes) {
             background-color: themed('primary-color');
-            color: #fff;
+            color: #000;
           }
 
           &:disabled {
@@ -56,10 +58,15 @@
           }
 
           &:not(:disabled) {
-            &:hover,
+            &:hover {
+              @include themify($themes) {
+                background-color: lighten(themed('primary-color'), 15%);
+              }
+            }
+
             &:focus {
               @include themify($themes) {
-                background-color: lighten(themed('primary-color'), 5);
+                background-color: lighten(themed('primary-color'), 10%);
               }
             }
           }

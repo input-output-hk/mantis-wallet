@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import SVG from 'react-inlinesvg'
 import {DisplayChain} from '../../pob/chains'
 import './DialogAddress.scss'
@@ -8,7 +8,7 @@ interface DialogAddressProps {
   address: string
 }
 
-export const DialogAddress: React.FunctionComponent<DialogAddressProps> = ({
+export const DialogAddress: FunctionComponent<DialogAddressProps> = ({
   chain,
   address,
 }: DialogAddressProps) => (

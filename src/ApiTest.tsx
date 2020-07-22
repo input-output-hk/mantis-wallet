@@ -83,22 +83,25 @@ export const ApiTest = (): JSX.Element => {
       <div style={{marginBottom: '1rem'}}>
         <h2>Settings</h2>
         <div className="input">
-          <label>Passphrase</label>
+          <label htmlFor="passphrase">Passphrase</label>
           <BorderlessInput
+            id="passphrase"
             value={passphrase}
             onChange={(e): void => setPassphrase(e.target.value)}
           />
         </div>
         <div className="input">
-          <label>Private Key</label>
+          <label htmlFor="private-key">Private Key</label>
           <BorderlessInput
+            id="private-key"
             value={spendingKey}
             onChange={(e): void => setSpendingKey(e.target.value)}
           />
         </div>
         <div className="input">
-          <label>Seed Phrase</label>
+          <label htmlFor="seed-phrase">Seed Phrase</label>
           <BorderlessInput
+            id="seed-phrase"
             value={seedPhrase}
             onChange={(e): void => setSeedPhrase(e.target.value)}
           />

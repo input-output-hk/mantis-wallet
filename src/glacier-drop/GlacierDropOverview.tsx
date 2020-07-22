@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, PropsWithChildren} from 'react'
 import {message} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {isNone, getOrElse, isSome} from 'fp-ts/lib/Option'
@@ -112,7 +112,7 @@ const ClaimHistory = ({
   )
 }
 
-const GlacierDropWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.Element => {
+const GlacierDropWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
     <div className="GlacierDropOverview">
       <HeaderWithSyncStatus

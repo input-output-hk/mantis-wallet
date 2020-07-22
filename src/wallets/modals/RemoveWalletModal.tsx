@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
@@ -9,7 +9,7 @@ interface RemoveWalletModalProps extends ModalOnCancel {
   onRemoveWallet: (passphrase: string) => Promise<void>
 }
 
-const RemoveWalletDialog: React.FunctionComponent<RemoveWalletModalProps> = ({
+const RemoveWalletDialog: FunctionComponent<RemoveWalletModalProps> = ({
   onRemoveWallet,
   onCancel,
 }: RemoveWalletModalProps) => {

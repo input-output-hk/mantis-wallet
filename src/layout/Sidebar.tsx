@@ -11,6 +11,7 @@ import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wal
 import {Link} from '../common/Link'
 import {StatusModal} from '../common/StatusModal'
 import {SupportModal} from '../common/SupportModal'
+import {fillActionHandlers} from '../common/util'
 import {ProofOfBurnState} from '../pob/pob-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
@@ -66,7 +67,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const LogOutButton = (): JSX.Element => {
     if (walletState.walletStatus === 'LOADED' && !routerState.isLocked) {
       return (
-        <span className="footer-link" onClick={() => setActiveModal('LockWallet')}>
+        <span
+          className="footer-link"
+          {...fillActionHandlers(() => setActiveModal('LockWallet'), 'link')}
+        >
           Log Out
         </span>
       )
@@ -80,6 +84,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   return (
     <div className="Sidebar">
       {isTestnet(networkTag) && (
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
       )}
       <div className="logo">
@@ -96,11 +101,17 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
               const classes = classnames('link', {active: isActive})
               return (
                 <li key={menuId}>
-                  <div className={classes} onClick={() => handleMenuClick(menuId as MenuId)}>
+                  <div
+                    className={classes}
+                    {...fillActionHandlers(() => handleMenuClick(menuId as MenuId), 'link')}
+                  >
                     <span className="prefix">&nbsp;</span>
                     <span className="icon">
                       &nbsp;
-                      <SVG className="svg" src={menuItem.icon} />
+                      <SVG
+                        className={classnames('svg', menuId.toLowerCase())}
+                        src={menuItem.icon}
+                      />
                     </span>
                     <span className="link-title">{menuItem.title}</span>
                   </div>
@@ -112,7 +123,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
       </div>
       <div className="footer">
         <div>
-          <span className="footer-link support" onClick={() => setActiveModal('Support')}>
+          <span
+            className="footer-link support"
+            {...fillActionHandlers(() => setActiveModal('Support'), 'link')}
+          >
             Support
           </span>
           <Link href={LINKS.feedback} popoverPlacement="right" className="footer-link feedback">
@@ -120,7 +134,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           </Link>
         </div>
         <div>
-          <span onClick={() => setActiveModal('Status')} className="footer-link status">
+          <span
+            className="footer-link status"
+            {...fillActionHandlers(() => setActiveModal('Status'), 'link')}
+          >
             Status
           </span>
           <LogOutButton />

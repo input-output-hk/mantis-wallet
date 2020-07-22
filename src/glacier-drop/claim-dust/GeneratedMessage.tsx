@@ -37,7 +37,6 @@ export const GeneratedMessage = ({
         rightButtonProps={{
           children: 'Confirm',
           onClick: () => onNext(),
-          type: 'default',
         }}
         type="dark"
       >

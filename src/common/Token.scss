@@ -30,6 +30,7 @@
 
     @include themify($themes) {
       background-color: themed('primary-color');
+      color: #000;
     }
 
     .footer-text {
@@ -44,7 +45,7 @@
   &:hover {
     .footer {
       @include themify($themes) {
-        background-color: lighten(themed('primary-color'), 5%);
+        background-color: lighten(themed('primary-color'), 10%);
       }
     }
 

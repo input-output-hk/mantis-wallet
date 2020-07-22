@@ -1,9 +1,11 @@
-import React, {useState, useRef, useEffect} from 'react'
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import React, {useState, useRef, useEffect, FunctionComponent} from 'react'
 import classnames from 'classnames'
 import {Input, Select} from 'antd'
 import {SelectValue} from 'antd/lib/select'
 import {DialogInput} from './DialogInput'
 import {DialogSeedPhrase} from './DialogSeedPhrase'
+import {fillActionHandlers} from '../util'
 import './DialogSecrets.scss'
 
 export enum RecoveryMethod {
@@ -17,7 +19,7 @@ interface DialogSecrets {
   onSeedPhraseChange: (seedPhrase: string) => void
 }
 
-export const DialogSecrets: React.FunctionComponent<DialogSecrets> = ({
+export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
   onMethodChange,
   onSpendingKeyChange,
   onSeedPhraseChange,
@@ -53,7 +55,7 @@ export const DialogSecrets: React.FunctionComponent<DialogSecrets> = ({
           <div
             key={method}
             className={classnames('tab', {active: method === recoveryMethod})}
-            onClick={handleMethodChange(method)}
+            {...fillActionHandlers(handleMethodChange(method))}
           >
             {method}
           </div>

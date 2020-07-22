@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, FunctionComponent} from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {Popover, Button, Input} from 'antd'
@@ -54,7 +54,7 @@ const ApproveChangeReward = ({
   </LunaModal>
 )
 
-export const BurnCoinsGenerateAddress: React.FunctionComponent<BurnCoinsGenerateAddressProps> = ({
+export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddressProps> = ({
   chain,
   provers,
   transparentAddresses,

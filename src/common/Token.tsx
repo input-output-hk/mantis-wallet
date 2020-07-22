@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {PropsWithChildren} from 'react'
 import SVG from 'react-inlinesvg'
 import {DisplayChain} from '../pob/chains'
+import {fillActionHandlers} from './util'
 import './Token.scss'
 
 type TokenProps<T extends DisplayChain> = {
@@ -12,8 +13,8 @@ export const Token = <T extends DisplayChain>({
   chain,
   chooseChain,
   children,
-}: React.PropsWithChildren<TokenProps<T>>): JSX.Element => (
-  <div className="Token" onClick={() => chooseChain(chain)}>
+}: PropsWithChildren<TokenProps<T>>): JSX.Element => (
+  <div className="Token" {...fillActionHandlers(() => chooseChain(chain))}>
     <SVG src={chain.logo} className="logo" />
     <div className="footer">
       <span className="footer-text">{children}</span>

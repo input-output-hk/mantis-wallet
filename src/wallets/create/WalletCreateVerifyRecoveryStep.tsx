@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import _ from 'lodash/fp'
 import {Dialog} from '../../common/Dialog'
 import {DialogRecoveryPhrase} from '../../common/dialog/DialogRecoveryPhrase'
@@ -11,7 +11,7 @@ interface WalletCreateVerifyRecoveryStepProps {
   shuffledSeedPhrase: string[]
 }
 
-export const WalletCreateVerifyRecoveryStep: React.FunctionComponent<WalletCreateVerifyRecoveryStepProps> = ({
+export const WalletCreateVerifyRecoveryStep: FunctionComponent<WalletCreateVerifyRecoveryStepProps> = ({
   back,
   finish,
   seedPhrase,

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
 import {ShortNumber} from '../common/ShortNumber'
@@ -13,7 +13,7 @@ interface BurnBalanceDisplayProps {
   available: BigNumber
 }
 
-export const BurnBalanceDisplay: React.FunctionComponent<BurnBalanceDisplayProps> = ({
+export const BurnBalanceDisplay: FunctionComponent<BurnBalanceDisplayProps> = ({
   chain,
   available,
   pending,

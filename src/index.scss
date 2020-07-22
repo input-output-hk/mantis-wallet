@@ -74,7 +74,6 @@ div#root {
 }
 
 ::-webkit-scrollbar-track {
-  margin: 10px;
   @include themify($themes) {
     background-color: themed('border-color-base');
   }
@@ -86,7 +85,11 @@ div#root {
 }
 
 ::selection {
-  background-color: lighten($primary-color, 20%);
+  background-color: $primary-color;
+}
+
+:focus {
+  outline: none;
 }
 
 //
@@ -116,10 +119,16 @@ div#root {
     color: themed('secondary-background');
   }
 
-  &:focus,
+  &:focus {
+    @include themify($themes) {
+      background-color: themed('btn-focus-bg');
+      color: themed('secondary-background');
+    }
+  }
+
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('btn-default-bg'), 10);
+      background-color: themed('btn-hover-bg');
       color: themed('secondary-background');
     }
   }
@@ -129,14 +138,20 @@ div#root {
 .ant-btn-primary {
   @include themify($themes) {
     background-color: themed('primary-color');
-    color: #fff;
+    color: #000;
   }
 
-  &:focus,
+  &:focus {
+    @include themify($themes) {
+      background-color: darken(themed('primary-color'), 5%);
+      color: #000;
+    }
+  }
+
   &:hover {
     @include themify($themes) {
-      background-color: lighten(themed('primary-color'), 5);
-      color: #fff;
+      background-color: darken(themed('primary-color'), 10%);
+      color: #000;
     }
   }
 
@@ -149,7 +164,7 @@ div#root {
     &:hover,
     &:focus {
       @include themify($themes) {
-        background-color: themed('quinary-background');
+        background-color: themed('normal-color');
         color: themed('text-color');
       }
     }
@@ -174,7 +189,23 @@ div#root {
 .ant-btn[disabled].active {
   @include themify($themes) {
     background-color: themed('btn-disabled-bg');
-    color: rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+// antd checkbox
+.ant-checkbox-checked .ant-checkbox-inner {
+  @include themify($themes) {
+    $dark-primary-color: darken(themed('primary-color'), 10%);
+    border-color: $dark-primary-color;
+    background-color: $dark-primary-color;
+  }
+
+  &:focus {
+    @include themify($themes) {
+      border-color: themed('primary-color');
+      background-color: themed('primary-color');
+    }
   }
 }
 
@@ -202,16 +233,37 @@ div#root {
   }
 }
 
+.ant-switch {
+  @include themify($themes) {
+    background-color: themed('normal-color');
+  }
+
+  &.ant-switch-checked {
+    @include themify($themes) {
+      background-color: themed('primary-color');
+    }
+  }
+}
+
+@include themify($themes) {
+  input::placeholder {
+    opacity: 1;
+    color: themed('secondary-text-color');
+  }
+}
+
 //
 // non-theme-specific antd overrides
 //
 
 .Luna {
   .ant-btn {
-    height: 49px;
+    height: $dialog-component-height;
+    font-size: 14px;
     font-weight: bold;
     letter-spacing: 1.44px;
     text-align: right;
+    text-shadow: none;
     text-transform: uppercase;
 
     &.small-button {

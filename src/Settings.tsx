@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, PropsWithChildren} from 'react'
 import _ from 'lodash/fp'
 import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
@@ -7,6 +7,7 @@ import {IPCToRendererChannelName} from './shared/ipc-types'
 import {LoadedState} from './common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from './common/wallet-status-guard'
 import {updateMiningConfig, ipcRemoveAllListeners, ipcListenToMain} from './common/ipc-util'
+import {fillActionHandlers} from './common/util'
 import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {NoWallet} from './wallets/NoWallet'
@@ -18,7 +19,7 @@ import './Settings.scss'
 
 type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
 
-const SettingsWrapper = ({children}: React.PropsWithChildren<EmptyProps>): JSX.Element => {
+const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
     <div className="Settings">
       <HeaderWithSyncStatus>Settings</HeaderWithSyncStatus>
@@ -57,6 +58,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
         <div className="settings-label">Enable Dark Mode</div>
         <div className="settings-input">
           <Switch
+            aria-label="Enable Dark Mode"
             checked={theme === 'dark'}
             onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
           />
@@ -68,6 +70,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
         <div className="settings-label">Enable Mining</div>
         <div className="settings-input">
           <Switch
+            aria-label="Enable Mining"
             checked={lunaManagedConfig.miningEnabled}
             onChange={(miningEnabled) => {
               if (miningEnabled) {
@@ -102,7 +105,10 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
       <div className="settings-item">
         <div className="settings-label">Export</div>
         <div className="settings-input">
-          <span className="export-private-key" onClick={() => setActiveModal('ExportPrivateKey')}>
+          <span
+            className="export-private-key"
+            {...fillActionHandlers(() => setActiveModal('ExportPrivateKey'))}
+          >
             Export Private Key
           </span>
         </div>

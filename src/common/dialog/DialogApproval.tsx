@@ -1,4 +1,4 @@
-import React, {Ref, forwardRef} from 'react'
+import React, {Ref, forwardRef, RefForwardingComponent, PropsWithChildren} from 'react'
 import {Checkbox, Form} from 'antd'
 import {CheckboxProps} from 'antd/lib/checkbox'
 import './DialogApproval.scss'
@@ -9,8 +9,8 @@ interface DialogApprovalProps extends Omit<CheckboxProps, 'onChange'> {
   onChange?: (checked: boolean) => void
 }
 
-export const _DialogApproval: React.RefForwardingComponent<Checkbox, DialogApprovalProps> = (
-  {id, description, onChange, children, ...rest}: React.PropsWithChildren<DialogApprovalProps>,
+export const _DialogApproval: RefForwardingComponent<Checkbox, DialogApprovalProps> = (
+  {id, description, onChange, children, ...rest}: PropsWithChildren<DialogApprovalProps>,
   ref: Ref<Checkbox>,
 ): JSX.Element => (
   <div className="DialogApproval">

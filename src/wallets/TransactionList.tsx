@@ -6,6 +6,7 @@ import {pipe} from 'fp-ts/lib/pipeable'
 import {sort, map} from 'fp-ts/lib/Array'
 import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
 import {Transaction, TxStatusString} from '../web3'
+import {fillActionHandlers} from '../common/util'
 import {
   TransactionCellProps,
   TxAmountCell,
@@ -115,7 +116,7 @@ const _TransactionRow = ({transaction}: {transaction: Transaction}): JSX.Element
 
   return (
     <div className={classnames('TransactionRow', {open: detailsShown})}>
-      <div className="row-header" onClick={() => setDetailsShown(!detailsShown)}>
+      <div className="row-header" {...fillActionHandlers(() => setDetailsShown(!detailsShown))}>
         {columns.map(({property, CellComponent}) => (
           <div className="cell" key={property}>
             <CellComponent transaction={transaction} />
@@ -160,7 +161,7 @@ export const TransactionList = ({
     return !sortable ? (
       <div>{label}</div>
     ) : (
-      <div onClick={changeOrder(property as SortableProperty)} className="sortable">
+      <div className="sortable" {...fillActionHandlers(changeOrder(property as SortableProperty))}>
         <span className="label">{label}</span>
         {_sortBy.property === property &&
           (_sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}

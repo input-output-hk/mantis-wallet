@@ -7,8 +7,9 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
+    'plugin:jsx-a11y/recommended',
   ],
-  plugins: ['fp', 'prettier'],
+  plugins: ['fp', 'prettier', 'jsx-a11y'],
   root: true,
   reportUnusedDisableDirectives: true,
   env: {
@@ -70,6 +71,8 @@ module.exports = {
     'fp/no-class': 0,
     'fp/no-nil': 0,
     'fp/no-unused-expression': 0,
+    // a11y
+    'jsx-a11y/no-autofocus': 0,
   },
   overrides: [
     {

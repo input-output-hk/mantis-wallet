@@ -222,3 +222,36 @@ export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntV
  */
 export const optionHasValue = <T>(option: Option<T>, value: T): boolean =>
   elem(fromEquals(_.isEqual))(value, option)
+
+/**
+ * Used to handle keyboard events similarly to onClick for interactive non-button elements
+ */
+const onKeyDownEnter = (callback: () => void) => (event: React.KeyboardEvent) => {
+  if (event.key === 'Enter') callback()
+}
+
+// extend if necessary
+type Role = 'button' | 'link' | 'switch'
+interface AriaProps {
+  onClick(event: React.MouseEvent<HTMLElement, MouseEvent>): void
+  onKeyDown(event: React.KeyboardEvent): void
+  role: Role
+  tabIndex: number
+}
+
+/**
+ * Allows keyboard interaction (tabbing, enter->onClick) for the element
+ * e.g. `<div {...fillActionHandlers(() => doSomething())}>Open</div>`
+ *
+ * @param onClick onClick (on Enter) handler
+ * @param role https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles
+ */
+export const fillActionHandlers = (
+  onClick: (event?: React.MouseEvent<HTMLElement, MouseEvent>) => void,
+  role: Role = 'button',
+): AriaProps => ({
+  onClick,
+  onKeyDown: onKeyDownEnter(onClick),
+  role,
+  tabIndex: 0,
+})

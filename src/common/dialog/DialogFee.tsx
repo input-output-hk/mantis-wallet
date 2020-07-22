@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect, FunctionComponent} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {Input, Button, Popover} from 'antd'
@@ -46,7 +46,7 @@ const displayAmount = (amount: BigNumber): string =>
   abbreviateAmount(Dust.fromBasic(amount)).relaxed
 const fieldDisplayAmount = (amount: BigNumber): string => Dust.fromBasic(amount).toString(10)
 
-export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProps> = ({
+export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = ({
   label,
   className,
   onChange,
@@ -108,6 +108,7 @@ export const DialogFee: React.FunctionComponent<InlineErrorProps & DialogFeeProp
       <InlineError errorMessage={errorMessage}>
         <div className={classnames('options', {'custom-mode': isCustom})}>
           <Input
+            aria-label="Custom fee"
             value={value}
             className="input"
             onChange={onChangeWithDialogReset}

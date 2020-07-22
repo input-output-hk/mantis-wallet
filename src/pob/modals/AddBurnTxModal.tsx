@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import _ from 'lodash'
 import {ModalLocker, wrapWithModal, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
@@ -14,7 +14,7 @@ interface AddBurnTxModalProps extends ModalOnCancel {
   onAddTx: (proverAddress: Prover, burnTx: string, bunrAddress: string) => Promise<void>
 }
 
-const AddBurnTxDialog: React.FunctionComponent<AddBurnTxModalProps> = ({
+const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
   provers,
   burnAddresses,
   onAddTx,

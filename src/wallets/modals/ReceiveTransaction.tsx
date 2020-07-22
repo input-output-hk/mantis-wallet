@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import _ from 'lodash/fp'
 import {ModalProps} from 'antd/lib/modal'
+import {fillActionHandlers} from '../../common/util'
 import {LunaModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
@@ -29,7 +30,7 @@ interface ReceiveTransactionProps
   defaultMode?: 'transparent' | 'confidential'
 }
 
-const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransactionProps> = ({
+const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTransactionProps> = ({
   privateAddress,
 }: ReceivePrivateTransactionProps) => (
   <Dialog
@@ -50,7 +51,7 @@ const ReceivePrivateTransaction: React.FunctionComponent<ReceivePrivateTransacti
   </Dialog>
 )
 
-const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransactionProps> = ({
+const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps> = ({
   transparentAddress,
   onGenerateNew,
   onSetLoading,
@@ -100,7 +101,7 @@ const ReceivePublicTransaction: React.FunctionComponent<ReceivePublicTransaction
   )
 }
 
-export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps & ModalProps> = ({
+export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & ModalProps> = ({
   privateAddress,
   transparentAddresses,
   onGenerateNew,
@@ -125,9 +126,9 @@ export const ReceiveTransaction: React.FunctionComponent<ReceiveTransactionProps
         ))}
         {transparentAddresses.length > 6 && (
           <div
-            onClick={() => {
+            {...fillActionHandlers(() => {
               if (!isLoading) goToAccounts()
-            }}
+            })}
           >
             <span className="link">See all Transparent Addresses</span>
           </div>

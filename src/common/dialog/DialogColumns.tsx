@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {PropsWithChildren, FunctionComponent} from 'react'
 import './DialogColumns.scss'
 
-export const DialogColumns: React.FunctionComponent<{}> = ({
-  children,
-}: React.PropsWithChildren<{}>) => <div className="DialogColumns">{children}</div>
+export const DialogColumns: FunctionComponent<{}> = ({children}: PropsWithChildren<{}>) => (
+  <div className="DialogColumns">{children}</div>
+)

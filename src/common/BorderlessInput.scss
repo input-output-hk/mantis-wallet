@@ -5,6 +5,7 @@
 
   .ant-input {
     border: 0;
+    opacity: 1;
 
     @include themify($themes) {
       background-color: themed('normal-color');
@@ -24,6 +25,12 @@
       @include themify($themes) {
         background-color: themed('normal-color');
         color: themed('text-color');
+      }
+    }
+
+    &::placeholder {
+      @include themify($themes) {
+        color: themed('secondary-text-color');
       }
     }
   }

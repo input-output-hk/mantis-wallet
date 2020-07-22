@@ -1,31 +1,35 @@
-import React from 'react'
+import React, {ReactNode} from 'react'
 import _ from 'lodash'
 import {Progress, Popover} from 'antd'
-import {WarningOutlined} from '@ant-design/icons'
+import {WarningOutlined, CloseOutlined} from '@ant-design/icons'
+import SVG from 'react-inlinesvg'
+import checkIcon from '../assets/icons/check.svg'
+import refreshIcon from '../assets/icons/refresh.svg'
+import circleIcon from '../assets/icons/circle.svg'
 import * as styles from '../vars-for-ts.scss'
 import './ProgressBar.scss'
 
-export type ProgressType = 'CHECKED' | 'UNKNOWN' | 'FAILED' | 'IN_PROGRESS' | 'STOPPED'
+export type ProgressState = 'checked' | 'unknown' | 'fail' | 'inProgress' | 'stopped'
 
 interface ProgressBarProps {
-  progressType: ProgressType
+  progressState: ProgressState
   ratio: number
   showOfflineWarning?: boolean
 }
 
 export const ProgressBar = ({
-  progressType,
+  progressState,
   ratio,
   showOfflineWarning = false,
 }: ProgressBarProps): JSX.Element => {
-  switch (progressType) {
-    case 'UNKNOWN':
+  switch (progressState) {
+    case 'unknown':
       return (
         <div className="ProgressBar">
           <Progress status="normal" percent={0} showInfo={false} />
         </div>
       )
-    case 'CHECKED':
+    case 'checked':
       return (
         <div className="ProgressBar">
           <Progress
@@ -36,7 +40,7 @@ export const ProgressBar = ({
           />
         </div>
       )
-    case 'FAILED':
+    case 'fail':
       return (
         <div className="ProgressBar">
           <Progress
@@ -47,7 +51,7 @@ export const ProgressBar = ({
           />
         </div>
       )
-    case 'STOPPED':
+    case 'stopped':
       return (
         <div className="ProgressBar">
           <Progress
@@ -58,7 +62,7 @@ export const ProgressBar = ({
           />
         </div>
       )
-    case 'IN_PROGRESS':
+    case 'inProgress':
       return (
         <div className="ProgressBar">
           <Progress
@@ -80,4 +84,12 @@ export const ProgressBar = ({
         </div>
       )
   }
+}
+
+export const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
+  checked: <SVG src={checkIcon} className="checked icon" title="Checked" />,
+  unknown: <CloseOutlined className="unknown icon" title="Unknown" />,
+  fail: <CloseOutlined className="fail icon" title="Failed" />,
+  inProgress: <SVG src={refreshIcon} className="inProgress icon" title="In progress" />,
+  stopped: <SVG src={circleIcon} className="stopped icon" title="Stopped" />,
 }

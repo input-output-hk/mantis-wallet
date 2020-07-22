@@ -33,6 +33,7 @@ const _Exchange = ({
   availableDust,
   transparentAddresses,
   onNext,
+  onCancel,
   chain = ETC_CHAIN,
 }: ExchangeProps & ModalProps): JSX.Element => {
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
@@ -54,14 +55,14 @@ const _Exchange = ({
       title="Claim Dust"
       rightButtonProps={{
         children: 'Go to Unlocking',
-        type: 'default',
         onClick: () => {
           onNext(transparentAddress)
         },
         disabled,
       }}
       leftButtonProps={{
-        doNotRender: true,
+        children: 'Cancel',
+        onClick: onCancel,
       }}
       type="dark"
       helpURL={LINKS.aboutGlacier}

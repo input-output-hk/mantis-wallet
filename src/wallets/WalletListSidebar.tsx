@@ -1,5 +1,6 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import classnames from 'classnames'
+import {fillActionHandlers} from '../common/util'
 import './WalletListSidebar.scss'
 
 interface Wallet {
@@ -13,7 +14,7 @@ interface WalletListSidebarProps {
   changeWallet(walletId: string): void
 }
 
-export const WalletListSidebar: React.FunctionComponent<WalletListSidebarProps> = ({
+export const WalletListSidebar: FunctionComponent<WalletListSidebarProps> = ({
   wallets,
   currentWalletId,
   changeWallet,
@@ -26,7 +27,7 @@ export const WalletListSidebar: React.FunctionComponent<WalletListSidebarProps> 
           const classes = classnames('wallet-link', {'wallet-link-active': isActive})
           return (
             <li key={wallet.id}>
-              <div onClick={() => changeWallet(wallet.id)} className={classes}>
+              <div className={classes} {...fillActionHandlers(() => changeWallet(wallet.id))}>
                 {wallet.name}
               </div>
             </li>

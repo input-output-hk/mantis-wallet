@@ -122,7 +122,7 @@
 
     &.incoming {
       @include themify($themes) {
-        color: themed('success-color');
+        color: themed('success-text');
       }
     }
 

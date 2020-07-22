@@ -1,7 +1,6 @@
-import React, {ReactNode} from 'react'
+import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
-import {CloseOutlined} from '@ant-design/icons'
 import {Button, Popover} from 'antd'
 import {ETC_CHAIN} from './glacier-config'
 import {
@@ -13,8 +12,9 @@ import {
   isUnlocked,
 } from './glacier-state'
 import {formatPercentage, toDurationString} from '../common/formatters'
-import {returnDataToHumanReadable} from '../common/util'
+import {returnDataToHumanReadable, fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
+import {ProgressState, PROGRESS_ICONS} from '../common/ProgressBar'
 import {DUST_SYMBOL} from '../pob/chains'
 import {
   getUnfrozenAmount,
@@ -24,19 +24,8 @@ import {
   Period,
 } from './Period'
 import {secondsUntilBlock} from './PeriodStatus'
-import checkIcon from '../assets/icons/check.svg'
-import refreshIcon from '../assets/icons/refresh.svg'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
-
-type ProgressState = 'checked' | 'unknown' | 'fail' | 'inProgress'
-
-const PROGRESS_ICONS: Record<ProgressState, ReactNode> = {
-  checked: <SVG src={checkIcon} className="checked icon" />,
-  unknown: <CloseOutlined className="unknown icon" />,
-  fail: <CloseOutlined className="fail icon" />,
-  inProgress: <SVG src={refreshIcon} className="inProgress icon" />,
-}
 
 interface TxStatusTextProps {
   txStatus: TransactionStatus | null
@@ -195,7 +184,7 @@ const UnfreezeDetail = ({
         >
           Withdraw Available Dust
         </Button>
-        <div className="action-link" onClick={showEpochs}>
+        <div className="action-link" {...fillActionHandlers(showEpochs)}>
           view unfreezing progress
         </div>
       </>
@@ -297,6 +286,8 @@ export const ClaimRow = ({
   )
   const unlockedDustAmount = unlocked ? dustAmount : new BigNumber(0)
   const period = getCurrentPeriod(currentBlock, periodConfig)
+
+  // Progress
   const unlockProgress = getUnlockProgressState(claim, period)
   const unfreezeProgress = getNumericalProgressState(unfrozenDustAmount, dustAmount)
   const withdrawProgress = getNumericalProgressState(withdrawnDustAmount, dustAmount)

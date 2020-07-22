@@ -1,14 +1,14 @@
 import path from 'path'
+import _ from 'lodash'
 import initStoryshots from '@storybook/addon-storyshots'
 import {MatchImageSnapshotOptions} from 'jest-image-snapshot'
 import {imageSnapshot, Context} from '@storybook/addon-storyshots-puppeteer'
 import puppeteer, {Browser, Page, Base64ScreenShotOptions} from 'puppeteer'
-import _ from 'lodash'
 import {Theme} from './settings-state'
 
 jest.mock('./config/renderer.ts')
 
-const delay = 600 as const
+const WAIT_TIME = 750 as const
 
 const getCustomBrowser = (): Promise<Browser> =>
   puppeteer.launch({
@@ -40,7 +40,7 @@ const getMatchOptions = (theme: Theme) => ({
 const beforeScreenshot = (theme: Theme) => (page: Page): Promise<void> => {
   return page
     .goto(`${page.url()}&theme=${theme}&disable-animations=true`)
-    .then(() => new Promise((resolve) => setTimeout(resolve, delay)))
+    .then(() => new Promise((resolve) => setTimeout(resolve, WAIT_TIME)))
 }
 
 const initStoryshotsByTheme = (theme: Theme): void => {

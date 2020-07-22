@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {SwitchProps} from 'antd/lib/switch'
 import {SquareSwitch} from '../SquaredSwitch'
 import './DialogSwitch.scss'
@@ -8,7 +8,7 @@ interface DialogCheckProps {
   description: string
 }
 
-export const DialogSwitch: React.FunctionComponent<DialogCheckProps & SwitchProps> = ({
+export const DialogSwitch: FunctionComponent<DialogCheckProps & SwitchProps> = ({
   label,
   description,
   ...rest

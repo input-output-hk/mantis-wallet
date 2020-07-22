@@ -1,4 +1,10 @@
-import React, {Ref, forwardRef} from 'react'
+import React, {
+  Ref,
+  forwardRef,
+  FunctionComponent,
+  PropsWithChildren,
+  RefForwardingComponent,
+} from 'react'
 import classnames from 'classnames'
 import {Input, Form} from 'antd'
 import Password from 'antd/lib/input/Password'
@@ -19,13 +25,13 @@ interface DialogInputProps {
   formItem?: Omit<FormItemProps, 'children'>
 }
 
-const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
+const AbstractDialogInput: FunctionComponent<DialogInputProps> = ({
   children,
   label,
   id,
   formItem,
   className,
-}: React.PropsWithChildren<DialogInputProps>) => {
+}: PropsWithChildren<DialogInputProps>) => {
   return (
     <div className={classnames('DialogInput', className)}>
       {label && (
@@ -40,7 +46,7 @@ const AbstractDialogInput: React.FunctionComponent<DialogInputProps> = ({
   )
 }
 
-const _DialogInputPassword: React.RefForwardingComponent<
+const _DialogInputPassword: RefForwardingComponent<
   Password,
   BorderlessInputPasswordProps & DialogInputProps
 > = (
@@ -73,7 +79,7 @@ const _DialogInputPassword: React.RefForwardingComponent<
 
 export const DialogInputPassword = forwardRef(_DialogInputPassword)
 
-const _DialogInput: React.RefForwardingComponent<Input, BorderlessInputProps & DialogInputProps> = (
+const _DialogInput: RefForwardingComponent<Input, BorderlessInputProps & DialogInputProps> = (
   {label, onChange, formItem, ...props}: BorderlessInputProps & DialogInputProps,
   ref: Ref<Input>,
 ) => {

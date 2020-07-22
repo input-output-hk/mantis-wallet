@@ -30,7 +30,6 @@ export const VerifyAddress = ({
         rightButtonProps={{
           autoFocus: true,
           children: 'Generate Message',
-          type: 'default',
           onClick: () => onNext(),
         }}
         leftButtonProps={{

@@ -1,4 +1,4 @@
-import React, {Ref, forwardRef} from 'react'
+import React, {Ref, forwardRef, RefForwardingComponent} from 'react'
 import {Input} from 'antd'
 import Password from 'antd/lib/input/Password'
 import {InputProps, PasswordProps} from 'antd/lib/input'
@@ -8,7 +8,7 @@ import './BorderlessInput.scss'
 // prefix and suffix brakes BorderlessInput design, they will be disallowed
 export type BorderlessInputProps = InlineErrorProps & Omit<InputProps, 'prefix' | 'suffix'>
 
-const _BorderlessInput: React.RefForwardingComponent<Input, BorderlessInputProps> = (
+const _BorderlessInput: RefForwardingComponent<Input, BorderlessInputProps> = (
   {errorMessage, forceInvalid, ...props}: BorderlessInputProps,
   ref: Ref<Input>,
 ) => (
@@ -22,10 +22,10 @@ export const BorderlessInput = forwardRef(_BorderlessInput)
 export type BorderlessInputPasswordProps = InlineErrorProps &
   Omit<PasswordProps, 'prefix' | 'suffix' | 'visibilityToggle'>
 
-const _BorderlessInputPassword: React.RefForwardingComponent<
-  Password,
-  BorderlessInputPasswordProps
-> = ({errorMessage, forceInvalid, ...props}: BorderlessInputPasswordProps, ref: Ref<Password>) => (
+const _BorderlessInputPassword: RefForwardingComponent<Password, BorderlessInputPasswordProps> = (
+  {errorMessage, forceInvalid, ...props}: BorderlessInputPasswordProps,
+  ref: Ref<Password>,
+) => (
   <InlineError className="BorderlessInput" errorMessage={errorMessage} forceInvalid={forceInvalid}>
     <Password visibilityToggle={false} {...props} ref={ref} />
   </InlineError>

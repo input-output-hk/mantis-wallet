@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, FunctionComponent} from 'react'
 import {Option, none, isSome, some, isNone} from 'fp-ts/lib/Option'
 import {CheckCircleFilled} from '@ant-design/icons'
 import {LoadedState} from '../../common/wallet-state'
@@ -50,7 +50,7 @@ interface ExportPrivateKeyModalProps extends ModalOnCancel {
   getSpendingKey: LoadedState['getSpendingKey']
 }
 
-const ExportPrivateKeyDialog: React.FunctionComponent<ExportPrivateKeyModalProps> = ({
+const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
   getSpendingKey,
   onCancel,
 }: ExportPrivateKeyModalProps) => {

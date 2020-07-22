@@ -1,19 +1,19 @@
 @import './vars';
 
 $dark-text-color: #f7f7f7;
-$dark-normal-color: #414141;
+$dark-normal-color: #303030;
 $dark-secondary-background: #000;
-$dark-btn-bg: #e6e6e6;
-$dark-component-background: #292929;
+$dark-btn-bg: #ebebeb;
+$dark-component-background: #1f1f1f;
 
 $light-text-color: #000000;
-$light-normal-color: #fafafa;
-$light-secondary-background: #fafafa;
-$light-btn-bg: #a2a2a2;
+$light-normal-color: #f7f7f7;
+$light-secondary-background: #f7f7f7;
+$light-btn-bg: #595959;
 $light-component-background: #fff;
 
-$error-background-color: #fdcece;
-$error-dialog-color: #c20000;
+$error-background-color: #fddddd;
+$error-dialog-color: #990000;
 
 // secondary and tertiary backgrounds are used on components
 // put over the primary background
@@ -28,7 +28,11 @@ $themes: (
     primary-color: $primary-color,
     secondary-color: $secondary-color,
     success-color: $success-color,
+    success-text: $success-color,
     error-color: $error-color,
+    error-text: $error-color,
+    error-dialog-color: $error-dialog-color,
+    error-background-color: $error-background-color,
     warning-color: $warning-color,
     component-background: $dark-component-background,
     secondary-component-background: lighten($dark-component-background, 5%),
@@ -37,16 +41,16 @@ $themes: (
     link-color: $dark-text-color,
     tertiary-background: #707070,
     // for overview graph:
-      pending-color: #202020,
+      pending-color: #404040,
     dialog-dark-input-bg: #202020,
     quaternary-background: #202020,
-    quinary-background: #1e1e1e,
-    secondary-text-color: #808080,
-    error-background-color: $error-background-color,
-    error-dialog-color: $error-dialog-color,
+    quinary-background: #202020,
+    secondary-text-color: #b5b5b5,
     border-color-base: $dark-text-color,
     btn-default-bg: $dark-btn-bg,
     btn-disabled-bg: darken($dark-btn-bg, 20%),
+    btn-focus-bg: lighten($dark-btn-bg, 10%),
+    btn-hover-bg: lighten($dark-btn-bg, 20%),
     switch-bg: $dark-text-color,
     input-bg: $dark-normal-color,
     modal-content-bg: $dark-secondary-background,
@@ -60,9 +64,12 @@ $themes: (
     primary-color: $primary-color,
     secondary-color: $secondary-color,
     success-color: $success-color,
+    success-text: darken($success-color, 20%),
     error-color: $error-color,
-    warning-color: $warning-color,
+    error-text: darken($error-color, 10%),
     error-dialog-color: $error-dialog-color,
+    error-background-color: $error-background-color,
+    warning-color: $warning-color,
     component-background: $light-component-background,
     secondary-component-background: darken($light-component-background, 5%),
     tertiary-component-background: darken($light-component-background, 7%),
@@ -73,11 +80,12 @@ $themes: (
     pending-color: #e1f6fb,
     quaternary-background: #fafafa,
     quinary-background: #ccc,
-    secondary-text-color: #808080,
-    error-background-color: $error-background-color,
+    secondary-text-color: #545454,
     border-color-base: $light-text-color,
     btn-default-bg: $light-btn-bg,
-    btn-disabled-bg: lighten($light-btn-bg, 20%),
+    btn-disabled-bg: lighten($light-btn-bg, 50%),
+    btn-focus-bg: darken($light-btn-bg, 10%),
+    btn-hover-bg: darken($light-btn-bg, 20%),
     switch-bg: $light-text-color,
     input-bg: $light-normal-color,
     modal-content-bg: $light-secondary-background,

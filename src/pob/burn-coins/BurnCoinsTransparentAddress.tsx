@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import './BurnCoinsTransparentAddress.scss'
 
@@ -7,7 +7,7 @@ interface BurnCoinsNoWalletProps {
   generateTransparentAddress: () => Promise<void>
 }
 
-export const BurnCoinsTransparentAddress: React.FunctionComponent<BurnCoinsNoWalletProps> = ({
+export const BurnCoinsTransparentAddress: FunctionComponent<BurnCoinsNoWalletProps> = ({
   cancel,
   generateTransparentAddress,
 }: BurnCoinsNoWalletProps) => (
