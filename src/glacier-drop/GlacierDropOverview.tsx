@@ -154,7 +154,7 @@ const _GlacierDropOverview = ({
     (c): c is SolvingClaim => c.puzzleStatus === 'solving',
   )
 
-  const {periodConfig, totalDustDistributed, minimumThreshold} = getOrElse(
+  const {periodConfig, totalAtomToBeDistributed, minimumThreshold} = getOrElse(
     (): GlacierConstants => DEFAULT_GLACIER_CONSTANTS,
   )(constants)
   const period = getCurrentPeriod(currentBlock, periodConfig)
@@ -286,7 +286,7 @@ const _GlacierDropOverview = ({
       />
       <ClaimController
         walletState={walletState}
-        totalDustDistributed={totalDustDistributed}
+        totalAtomToBeDistributed={totalAtomToBeDistributed}
         minimumThreshold={minimumThreshold}
         onFinish={startPuzzle}
         activeModal={activeModal}

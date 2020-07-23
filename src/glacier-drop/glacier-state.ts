@@ -171,7 +171,7 @@ export interface GlacierData {
 
 export interface GlacierConstants {
   periodConfig: PeriodConfig
-  totalDustDistributed: BigNumber
+  totalAtomToBeDistributed: BigNumber
   minimumThreshold: BigNumber
 }
 
@@ -297,7 +297,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         epochLength: await loadConstant('getEpochLength', toNumber),
         numberOfEpochs: await loadConstant('getNumberOfEpochs', toNumber),
       },
-      totalDustDistributed: await loadConstant('getTotalDustDistributed', toBigNumber),
+      totalAtomToBeDistributed: await loadConstant('getTotalAtomToBeDistributed', toBigNumber),
       minimumThreshold: await loadConstant('getMinimumThreshold', toBigNumber),
     }
   }
@@ -341,10 +341,10 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     if (isNone(constants)) {
       throw Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
     }
-    const {totalDustDistributed} = constants.value
+    const {totalAtomToBeDistributed} = constants.value
     const {externalAmount} = claim
 
-    return externalAmount.dividedBy(totalUnlockedEther).multipliedBy(totalDustDistributed)
+    return externalAmount.dividedBy(totalUnlockedEther).multipliedBy(totalAtomToBeDistributed)
   }
 
   //

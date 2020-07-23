@@ -413,7 +413,7 @@ test('ClaimController - basic render', async () => {
     return (
       <ClaimController
         walletState={walletState}
-        totalDustDistributed={new BigNumber(2)}
+        totalAtomToBeDistributed={new BigNumber(2)}
         minimumThreshold={new BigNumber(1)}
         activeModal={activeModal}
         setActiveModal={setActiveModal}

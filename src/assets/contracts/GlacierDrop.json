@@ -84,8 +84,40 @@
         "internalType": "uint256",
         "name": "baseTarget",
         "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "unlockingStartBlock",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "unlockingStopBlock",
+        "type": "uint256"
     }],
     "name": "calculateTarget",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{
+        "internalType": "uint256",
+        "name": "weiAmount",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "totalUnlockedWei",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "atomToBeDistributed",
+        "type": "uint256"
+    }],
+    "name": "convertEtherClassicToDust",
     "outputs": [{
         "internalType": "uint256",
         "name": "",
@@ -240,6 +272,14 @@
         "internalType": "uint256",
         "name": "baseTarget",
         "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "unlockingStartBlock",
+        "type": "uint256"
+    }, {
+        "internalType": "uint256",
+        "name": "unlockingStopBlock",
+        "type": "uint256"
     }],
     "name": "validatePoW",
     "outputs": [{
@@ -248,7 +288,7 @@
         "type": "bool"
     }],
     "payable": false,
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
 }, {
     "constant": false,

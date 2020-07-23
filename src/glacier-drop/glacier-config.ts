@@ -55,6 +55,6 @@ export const DEFAULT_GLACIER_CONSTANTS = {
     epochLength: 1,
     numberOfEpochs: 1,
   },
-  totalDustDistributed: new BigNumber(1),
+  totalAtomToBeDistributed: new BigNumber(1),
   minimumThreshold: new BigNumber(1),
 }

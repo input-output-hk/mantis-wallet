@@ -89,7 +89,7 @@
 }, {
     "constant": true,
     "inputs": [],
-    "name": "getTotalDustDistributed",
+    "name": "getTotalAtomToBeDistributed",
     "outputs": [{
         "internalType": "uint256",
         "name": "",
