@@ -283,10 +283,10 @@ div#root {
   }
 }
 
-// FIXME MOVE
-@include themify($themes) {
-  input::placeholder {
-    opacity: 1;
+input::placeholder {
+  opacity: 1;
+  
+  @include themify($themes) {
     color: themed('secondary-text-color');
   }
 }
