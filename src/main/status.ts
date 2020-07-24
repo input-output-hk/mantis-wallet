@@ -16,16 +16,16 @@ const successesForDAG = ['DAG file loaded successfully', 'DAG file generated suc
 
 export const status: LunaStatus = {
   fetchParams: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   wallet: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   node: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   dag: {
-    status: 'not-running',
+    status: 'notRunning',
     message: '',
   },
   info: {

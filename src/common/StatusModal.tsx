@@ -14,10 +14,10 @@ import {NETWORK_CONSTANTS} from '../shared/version'
 import './StatusModal.scss'
 
 const visibleStatus: Record<ProcessStatus, React.ReactNode> = {
-  'running': <span className="status success">Running</span>,
-  'not-running': <span className="status error">Not Running</span>,
-  'finished': <span className="status success">Finished</span>,
-  'failed': <span className="status error">Failed</span>,
+  running: <span className="status success">Running</span>,
+  notRunning: <span className="status error">Not Running</span>,
+  finished: <span className="status success">Finished</span>,
+  failed: <span className="status error">Failed</span>,
 }
 
 const DisplaySyncStatus = ({syncStatus}: {syncStatus?: SynchronizationStatus}): JSX.Element => (

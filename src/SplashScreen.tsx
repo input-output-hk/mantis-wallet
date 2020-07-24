@@ -13,7 +13,7 @@ import {TKeyRenderer} from './common/i18n'
 import './SplashScreen.scss'
 
 const getStatusMessage = (lunaStatus: LunaStatus): TKeyRenderer => {
-  if (lunaStatus.fetchParams.status === 'not-running') {
+  if (lunaStatus.fetchParams.status === 'notRunning') {
     return ['common', 'initializationStatus', 'initLuna']
   } else if (lunaStatus.fetchParams.status === 'running') {
     return ['common', 'initializationStatus', 'sonicsParamsFetching']

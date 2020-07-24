@@ -8,16 +8,16 @@ export const loadConfig = (): Config => config
 
 export const loadLunaStatus = (): LunaStatus => ({
   fetchParams: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   wallet: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   node: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   dag: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   info: {
     platform: 'Linux',
