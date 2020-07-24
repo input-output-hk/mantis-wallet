@@ -67,7 +67,8 @@
 
   .puzzle-info {
     grid-area: puzzle-info;
-    padding: 1.5em;
+    padding: 1.5rem;
+    border-radius: $dialog-component-border-radius;
     font-size: 13px;
 
     @include themify($themes) {
@@ -78,7 +79,7 @@
       font-weight: bold;
 
       @include themify($themes) {
-        color: themed('success-color');
+        color: themed('success-text');
       }
     }
   }

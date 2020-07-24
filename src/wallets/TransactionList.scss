@@ -16,13 +16,18 @@
     text-transform: uppercase;
 
     .sortable {
+      @extend %disable-focus-outline;
+
       cursor: pointer;
       user-select: none;
 
       .label {
         margin-right: 0.5em;
+      }
 
-        &:hover {
+      &:hover,
+      &:focus {
+        .label {
           text-decoration: underline;
         }
       }

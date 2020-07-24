@@ -42,9 +42,9 @@ $themes: (
     tertiary-background: #707070,
     // for overview graph:
       pending-color: #404040,
-    dialog-dark-input-bg: #202020,
-    quaternary-background: #202020,
-    quinary-background: #202020,
+    dialog-dark-input-bg: $dark-component-background,
+    quaternary-background: $dark-component-background,
+    quinary-background: $dark-component-background,
     secondary-text-color: #b5b5b5,
     border-color-base: $dark-text-color,
     btn-default-bg: $dark-btn-bg,

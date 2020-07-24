@@ -67,8 +67,15 @@
           justify-self: end;
 
           .hide-empty-label {
+            @extend %disable-focus-outline;
+
             padding: 0 1em;
             cursor: pointer;
+
+            &:focus,
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
@@ -102,6 +109,16 @@
             border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
           }
 
+          &.transactionsVisible {
+            & > :first-child {
+              border-radius: $dialog-component-border-radius 0 0 0;
+            }
+
+            & > :last-child {
+              border-radius: 0 $dialog-component-border-radius 0 0;
+            }
+          }
+
           .dust {
             margin-right: 6px;
             float: left;
@@ -131,12 +148,22 @@
             font-size: 12px;
             font-weight: bold;
             line-height: 2rem;
+
+            &.secondary {
+              &:hover,
+              &:focus {
+                @include themify($themes) {
+                  background-color: themed('component-background');
+                }
+              }
+            }
           }
         }
 
         .transactions-container {
           grid-column: 1 / -1;
           padding: 0 1em 1em;
+          border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
 
           @include themify($themes) {
             background-color: themed('normal-color');
@@ -144,6 +171,7 @@
 
           .TransactionList {
             padding: 0 1em;
+            border-radius: $dialog-component-border-radius $dialog-component-border-radius 0 0;
 
             @include themify($themes) {
               background-color: themed('secondary-background');
@@ -152,6 +180,7 @@
 
           .transactions-footer {
             padding: 0.5em 1em;
+            border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
             text-align: center;
 
             .transactions-collapse {

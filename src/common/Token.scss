@@ -1,15 +1,18 @@
-@import '../themify', '../vars';
+@import '../themify', '../vars', '../partial';
 
 .Token {
+  @extend %disable-focus-outline;
+
   display: inline-block;
-  width: 307px;
-  height: 307px;
-  margin: 0 30px 30px 0;
+  width: 270px;
+  height: 270px;
+  margin: 0 2rem 2rem 0;
+  transition: background-color $transition-duration;
   border-radius: $dialog-component-border-radius;
   cursor: pointer;
 
   @include themify($themes) {
-    border: solid 1px themed('tertiary-background');
+    background-color: themed('normal-color');
   }
 
   .logo {
@@ -40,19 +43,26 @@
       font-size: 16px;
       font-weight: bold;
       letter-spacing: $letter-spacing-medium;
+      text-align: center;
       text-transform: uppercase;
     }
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+    }
+
     .footer {
       @include themify($themes) {
-        background-color: lighten(themed('primary-color'), 10%);
+        background-color: themed('btn-focus-bg');
+        color: themed('secondary-background');
       }
     }
 
     .logo {
-      transform: scale(110%, 110%);
+      transform: scale(1.2);
     }
   }
 }

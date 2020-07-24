@@ -228,6 +228,7 @@ div#root {
 // antd Message theme overrides
 .ant-message-notice-content {
   @include themify($themes) {
+    border-radius: $dialog-component-border-radius;
     background-color: themed('secondary-background');
     color: themed('text-color');
   }
@@ -285,7 +286,7 @@ div#root {
 
 input::placeholder {
   opacity: 1;
-  
+
   @include themify($themes) {
     color: themed('secondary-text-color');
   }

@@ -69,6 +69,14 @@
         }
       }
 
+      &:focus,
+      &:hover {
+        .link-title {
+          font-weight: bold;
+          letter-spacing: 0.2px;
+        }
+      }
+
       .icon {
         display: inline-block;
         position: relative;
@@ -180,6 +188,7 @@
           left: 0;
           margin-left: $sidebar-collapsed-width;
           padding: 0 1em;
+          border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
           font-size: 18px;
           white-space: nowrap;
 
@@ -188,7 +197,9 @@
           }
         }
 
-        &.active {
+        &.active,
+        &:hover,
+        &:focus {
           .link-title {
             font-weight: $link-font-weight;
             letter-spacing: $link-letter-spacing;
