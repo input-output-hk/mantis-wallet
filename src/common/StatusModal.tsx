@@ -10,7 +10,7 @@ import {MiningStatus} from './MiningStatus'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
 import {BackendState} from './backend-state'
-import {NETWORK_CONSTANTS} from '../shared/version'
+import {NETWORK_CONSTANTS} from './constants/network'
 import './StatusModal.scss'
 
 const visibleStatus: Record<ProcessStatus, React.ReactNode> = {

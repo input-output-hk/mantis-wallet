@@ -9,7 +9,7 @@ import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
-import {NETWORK_CONSTANTS} from '../shared/version'
+import {NETWORK_CONSTANTS} from './constants/network'
 
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
