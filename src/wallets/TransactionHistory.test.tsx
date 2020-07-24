@@ -11,12 +11,11 @@ import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
-import {abbreviateAmountForEnUS} from '../common/test-helpers'
+import {abbreviateAmountForEnUS, DIALOG_VALIDATION_ERROR} from '../common/test-helpers'
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
 import {CONFIDENTIAL_ADDRESS, TRANSPARENT_ADDRESSES} from '../storybook-util/dummies'
-import {DIALOG_VALIDATION_ERROR} from '../common/Dialog'
 import {mockedCopyToClipboard} from '../jest.setup'
 
 const {Dust} = UNITS

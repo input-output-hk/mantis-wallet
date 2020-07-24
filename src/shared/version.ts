@@ -1,8 +1,6 @@
 import {Option, isNone} from 'fp-ts/lib/Option'
 import {version, compatibleMidnightVersions} from '../../package.json'
 
-export const TESTNET_EDITION = 'Testnet Edition'
-
 export const LUNA_VERSION = `v${version}`
 
 export const isTestnet = (networkTag: Option<NetworkTag>): boolean =>

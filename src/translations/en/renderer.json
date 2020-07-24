@@ -1,6 +1,8 @@
 {
   "title": {
     "luna": "Luna",
+    "lunaWallet": "Luna Wallet",
+    "testnetEdition": "Testnet Edition",
     "wallets": "Wallets",
     "proofOfBurn": "Proof of Burn",
     "glacierDrop": "Glacier Drop",
@@ -33,9 +35,103 @@
       "backendRestartFailed": "Backend restart failed. Error: {{reason}}"
     }
   },
+  "wallet": {
+    "error": {
+      "jobAlreadyAdded": "Job {{jobHash}} already added",
+      "couldNotLockWallet": "Couldn't lock the wallet.",
+      "couldNotRemoveWallet": "Couldn't remove the wallet.",
+      "couldNotUpdateFeeEstimates": "Couldn't update fee estimates, they might be outdated"
+    },
+    "message": {
+      "buildingTransaction": "Building {{count}} transaction",
+      "buildingTransaction_plural": "Building {{count}} transactions",
+      "finishedTxBuilding": "Finished",
+      "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated."
+    },
+    "miningStatus": {
+      "loadingMiningStatus": "Loading mining status",
+      "notMining": "Not mining",
+      "miningAtHashrate": "Mining {{hashrate}}",
+      "invalidHashrate": "Invalid hashrate"
+    },
+    "syncStatus": {
+      "syncConnecting": "Connecting",
+      "fullySynced": "Fully Synced",
+      "syncing": "Syncing Blocks {{percentage}}%",
+      "currentBlock": "Current block: {{blockNumber}}",
+      "highestBlock": "Highest block: {{blockNumber}}"
+    },
+    "buildTxStatus": {
+      "buildingTransaction": "Building {{count}} transaction",
+      "buildingTransaction_plural": "Building {{count}} transactions",
+      "finishedTxBuilding": "Finished"
+    }
+  },
+  "status": {
+    "label": {
+      "computer": "Machine",
+      "operatingSystem": "Platform",
+      "operatingSystemVersion": "Platform version",
+      "cpu": "CPU",
+      "computerMemory": "Memory",
+      "lunaVersion": "Luna version",
+      "lunaMainProcessID": "Luna main process ID",
+      "lunaRendererProcessID": "Luna renderer process ID",
+      "lunaLocalDirectory": "Luna local directory",
+      "midnightBackend": "Midnight backend",
+      "network": "Network",
+      "sonicsParamsFetching": "Sonics params fetching",
+      "nodeStatus": "Node status",
+      "nodeProcessID": "Node process ID",
+      "walletStatus": "Wallet status",
+      "walletProcessID": "Wallet process ID",
+      "walletRpcAddress": "Wallet RPC address",
+      "miningEnabled": "Mining enabled",
+      "miningStatus": "Mining status",
+      "lastDagInformation": "Last DAG information",
+      "synchronizationStatus": "Synchronization",
+      "currentBlock": "Current block",
+      "highestKnownBlock": "Highest known block"
+    },
+    "message": {
+      "generatingDag": "Generating DAG {{percentage}}%",
+      "loadingDagFromFile": "Loading DAG from file {{percentage}}%"
+    },
+    "componentStatus": {
+      "loading": "Loading",
+      "running": "Running",
+      "notRunning": "Not Running",
+      "finished": "Finished",
+      "failed": "Failed",
+      "loaded": "Loaded"
+    },
+    "error": {
+      "dagFileEndedUnexpectedly": "DAG file ended unexpectedly",
+      "invalidDagFilePrefix": "Invalid DAG file prefix",
+      "cannotReadDagFromFile": "Cannot read DAG from file",
+      "cannotGenerateDagFile": "Cannot generate DAG file"
+    }
+  },
   "common": {
+    "title": {
+      "support": "Support"
+    },
     "button": {
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "next": "Next",
+      "exportDebugLogs": "Export Logs",
+      "openSupportChannel": "Open Slack"
+    },
+    "answer": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "progressIcon": {
+      "checkedState": "Checked",
+      "unknownState": "Unknown",
+      "failedState": "Failed",
+      "inProgressState": "In progress",
+      "stoppedState": "Stopped"
     },
     "link": {
       "feedback": "Feedback",
@@ -53,6 +149,23 @@
       "startingMidnight": "Starting Midnight node",
       "connectingToWallet": "Connecting to wallet",
       "loading": "Loading"
+    },
+    "message": {
+      "copiedToClipboard": "Successfully copied to clipboard.",
+      "clickToCopy": "Click to copy to clipboard",
+      "waitUntilActionFinish": "You will have to wait for your action to finish.",
+      "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
+      "saveDebugLogsCancelled": "Operation cancelled.",
+      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>"
+    },
+    "error": {
+      "dialogValidationFailed": "Some fields require additional action before you can continue.",
+      "unexpectedError": "Unexpected error",
+      "failedToSaveDebugLogs": "Failed to save debug logs: {{errorMsg}}"
+    },
+    "networkTag": {
+      "testnet": "Testnet",
+      "mainnet": "Mainnet"
     }
   }
 }

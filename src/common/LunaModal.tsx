@@ -3,6 +3,7 @@ import {CloseOutlined} from '@ant-design/icons'
 import {Modal, message} from 'antd'
 import {ModalProps} from 'antd/lib/modal'
 import {createContainer} from 'unstated-next'
+import {useTranslation} from '../settings-state'
 import './LunaModal.scss'
 
 export type ModalOnCancel = Required<Pick<ModalProps, 'onCancel'>>
@@ -23,11 +24,12 @@ function useLocker(): ModalLocker {
 export const ModalLocker = createContainer(useLocker)
 
 const _LunaModal: FunctionComponent<ModalProps> = ({onCancel, ...props}: ModalProps) => {
+  const {t} = useTranslation()
   const locker = ModalLocker.useContainer()
   const onCancelWithLock = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     if (onCancel) {
       if (locker.isLocked) {
-        message.warning('You will have to wait for your action to finish.')
+        message.warning(t(['common', 'message', 'waitUntilActionFinish']))
       } else {
         onCancel(e)
       }

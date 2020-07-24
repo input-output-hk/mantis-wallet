@@ -85,3 +85,6 @@ export const createBurnStatus = (
 
 export const abbreviateAmountForEnUS = (bg: BigNumber): ReturnType<typeof abbreviateAmount> =>
   abbreviateAmount(bg, EN_US_BIG_NUMBER_FORMAT)
+
+export const DIALOG_VALIDATION_ERROR =
+  'Some fields require additional action before you can continue.'

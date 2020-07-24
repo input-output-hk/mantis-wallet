@@ -13,7 +13,7 @@ import {
 } from './glacier-state'
 import {returnDataToHumanReadable, fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
-import {ProgressState, PROGRESS_ICONS} from '../common/ProgressBar'
+import {ProgressState, ProgressIcon} from '../common/ProgressBar'
 import {DUST_SYMBOL} from '../pob/chains'
 import {
   getUnfrozenAmount,
@@ -320,19 +320,22 @@ export const ClaimRow = ({
       </div>
       <div className="status">
         <div className="progress">
-          {PROGRESS_ICONS.checked} <span className="checked">Claimed</span>
+          <ProgressIcon progressState={'checked'} /> <span className="checked">Claimed</span>
         </div>
         <div className="line"></div>
         <div className="progress">
-          {PROGRESS_ICONS[unlockProgress]} <span className={unlockProgress}>Unlocked</span>
+          <ProgressIcon progressState={unlockProgress} />{' '}
+          <span className={unlockProgress}>Unlocked</span>
         </div>
         <div className="line"></div>
         <div className="progress">
-          {PROGRESS_ICONS[unfreezeProgress]} <span className={unfreezeProgress}>Unfrozen</span>
+          <ProgressIcon progressState={unfreezeProgress} />{' '}
+          <span className={unfreezeProgress}>Unfrozen</span>
         </div>
         <div className="line"></div>
         <div className="progress">
-          {PROGRESS_ICONS[withdrawProgress]} <span className={withdrawProgress}>Withdrawn</span>
+          <ProgressIcon progressState={withdrawProgress} />{' '}
+          <span className={withdrawProgress}>Withdrawn</span>
         </div>
 
         <div className="claimed detail">

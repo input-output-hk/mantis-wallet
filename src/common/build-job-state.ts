@@ -5,6 +5,7 @@ import {Remote} from 'comlink'
 import {message} from 'antd'
 import {makeWeb3Worker, Web3API, JobStatus} from '../web3'
 import {rendererLog} from './logger'
+import {createTErrorRenderer} from './i18n'
 
 type BuiltCallback = (txHash: string) => void
 
@@ -41,7 +42,7 @@ function useBuildJobState(initialState?: Partial<BuildJobStateParams>): BuildJob
     callback: BuiltCallback = () => undefined,
   ): Promise<void> => {
     if (jobHash in jobStatuses) {
-      throw Error(`Job ${jobHash} already added`)
+      throw createTErrorRenderer(['wallet', 'error', 'jobAlreadyAdded'], {replace: {jobHash}})
     }
     const jobStatus = await wallet.getTransactionBuildJobStatus(jobHash)
     setJobStatuses({...jobStatuses, [jobHash]: jobStatus})

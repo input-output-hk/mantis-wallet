@@ -18,8 +18,9 @@ import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
 import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
-import {isTestnet, TESTNET_EDITION} from '../shared/version'
+import {isTestnet} from '../shared/version'
 import {Trans} from '../common/Trans'
+import {createTErrorRenderer} from '../common/i18n'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
@@ -154,7 +155,12 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         </div>
         <div className="version">
           {version}
-          {isTestnet(networkTag) && <span className="edition"> — {TESTNET_EDITION}</span>}
+          {isTestnet(networkTag) && (
+            <span className="edition">
+              {' '}
+              — <Trans k={['title', 'testnetEdition']} />
+            </span>
+          )}
         </div>
       </div>
       {walletState.walletStatus === 'LOADED' && !routerState.isLocked && (
@@ -164,7 +170,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           lock={async (passphrase: string): Promise<void> => {
             const isLocked = await walletState.lock({passphrase})
             if (!isLocked) {
-              throw Error("Couldn't lock the wallet.")
+              throw createTErrorRenderer(['wallet', 'error', 'couldNotLockWallet'])
             }
             setActiveModal('none')
           }}
@@ -177,7 +183,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           onRemoveWallet={async (passphrase: string): Promise<void> => {
             const removed = await walletState.remove({passphrase})
             if (!removed) {
-              throw Error("Couldn't remove the wallet.")
+              throw createTErrorRenderer(['wallet', 'error', 'couldNotRemoveWallet'])
             }
             pobState.reset()
             glacierState.removeClaims()

@@ -13,7 +13,11 @@ import {
   PRIVATE_KEY_MUST_BE_SET_MSG,
   PRIVATE_KEY_INVALID_MSG,
 } from '../../common/util'
-import {expectCalledOnClick, glacierWrappedRender} from '../../common/test-helpers'
+import {
+  expectCalledOnClick,
+  glacierWrappedRender,
+  DIALOG_VALIDATION_ERROR,
+} from '../../common/test-helpers'
 import {UNLOCK_BUTTON_TEXT} from './claim-with-strings'
 import {DisplayChain} from '../../pob/chains'
 import {ClaimWithKey} from './ClaimWithKey'
@@ -27,7 +31,6 @@ import {Exchange} from './Exchange'
 import {EnterAddress} from './EnterAddress'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
-import {DIALOG_VALIDATION_ERROR} from '../../common/Dialog'
 import {ClaimController, ModalId} from './ClaimController'
 import {WalletState, LoadedState} from '../../common/wallet-state'
 

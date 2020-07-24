@@ -1,4 +1,4 @@
-export const PROGRESS_FOR_DAG = [/Generating DAG \d+%/, /Loading DAG from file \d+%/] as const
+export const PROGRESS_FOR_DAG = [/Generating DAG (\d+)%/, /Loading DAG from file (\d+)%/] as const
 
 export const FAILURE_FOR_DAG = [
   'DAG file ended unexpectedly',

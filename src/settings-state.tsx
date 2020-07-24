@@ -2,6 +2,7 @@ import {useEffect, useState, useMemo} from 'react'
 import i18next from 'i18next'
 import {createContainer} from 'unstated-next'
 import BigNumber from 'bignumber.js'
+import filesize from 'filesize'
 import {usePersistedState} from './common/hook-utils'
 import {Store, createInMemoryStore} from './common/store'
 import {Language, DEFAULT_LANGUAGE} from './shared/i18n'
@@ -11,8 +12,10 @@ import {
   TFunctionRenderer,
   LANGUAGE_SETTINGS,
   createTFunctionRenderer,
+  TErrorRenderer,
 } from './common/i18n'
 import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from './common/formatters'
+import {rendererLog} from './common/logger'
 
 export type Theme = 'dark' | 'light'
 
@@ -29,11 +32,13 @@ interface Formatters {
 
   formatPercentage: (ratio: number | BigNumber) => string
   abbreviateAmount: (bg: BigNumber) => ReturnType<typeof abbreviateAmount>
+  formatFileSize: (bytes: number) => string
 }
 
 interface Translation {
   i18n: typeof i18next
   t: TFunctionRenderer
+  translateError: (e: Error) => string
 }
 
 export interface SettingsState {
@@ -117,9 +122,18 @@ function useSettingsState({
   const [isPseudoLanguageUsed, usePseudoLanguage] = useState(isPseudoLanguageUsedDefault || false)
   const translation = useMemo((): Translation => {
     const i18n = createAndInitI18nForRenderer(language, isPseudoLanguageUsed)
+    const t = createTFunctionRenderer(i18n)
     return {
       i18n,
-      t: createTFunctionRenderer(i18n),
+      t,
+      translateError: (e: Error) => {
+        if (e instanceof TErrorRenderer) {
+          return t(e.tKey, e.options)
+        }
+
+        rendererLog.warn(`Untranslated error: ${e.message}`, e)
+        return e.message
+      },
     }
   }, [isPseudoLanguageUsed])
 
@@ -140,6 +154,7 @@ function useSettingsState({
 
       formatPercentage: (ratio: number | BigNumber) => formatPercentage(ratio, numberFormat),
       abbreviateAmount: (bg: BigNumber) => abbreviateAmount(bg, bigNumberFormat),
+      formatFileSize: (bytes: number) => filesize(bytes, {locale: language}),
     }
   }, [language, dateFormat, timeFormat])
 

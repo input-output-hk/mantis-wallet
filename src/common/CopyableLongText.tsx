@@ -3,6 +3,7 @@ import {CopyOutlined, QrcodeOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import QRCode from 'qrcode.react'
 import {copyToClipboard} from './clipboard'
+import {useTranslation} from '../settings-state'
 import './CopyableLongText.scss'
 
 interface CopyableLongTextProps {
@@ -15,8 +16,10 @@ export const CopyableLongText = ({
   content,
   showQrCode = false,
   fallback = '',
-}: CopyableLongTextProps): JSX.Element =>
-  content ? (
+}: CopyableLongTextProps): JSX.Element => {
+  const {t} = useTranslation()
+
+  return content ? (
     <div className="CopyableLongText">
       {showQrCode && (
         <Popover
@@ -27,7 +30,7 @@ export const CopyableLongText = ({
           <QrcodeOutlined className="clickable" />
         </Popover>
       )}
-      <Popover content="Click to copy to clipboard" placement="top">
+      <Popover content={t(['common', 'message', 'clickToCopy'])} placement="top">
         <CopyOutlined className="clickable" onClick={() => copyToClipboard(content)} />
       </Popover>
       <Popover content={content} placement="top">
@@ -37,3 +40,4 @@ export const CopyableLongText = ({
   ) : (
     <>{fallback}</>
   )
+}
