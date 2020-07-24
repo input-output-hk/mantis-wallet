@@ -2,6 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {Form} from 'antd'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
+import {useTranslation} from '../../settings-state'
 import {BorderlessInputPassword} from '../BorderlessInput'
 import {DialogState} from '../Dialog'
 import {DialogColumns} from './DialogColumns'
@@ -39,6 +40,7 @@ export const DialogPassword: FunctionComponent<DialogPasswordProps> = ({
   criteriaMessage = 'Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number',
 }: DialogPasswordProps) => {
   const {dialogForm} = DialogState.useContainer()
+  const {t} = useTranslation()
 
   return (
     <div className="DialogPassword">
@@ -68,7 +70,7 @@ export const DialogPassword: FunctionComponent<DialogPasswordProps> = ({
                   )
                   .then(() =>
                     !value || getFieldValue(PASSWORD_FIELD) !== value
-                      ? Promise.reject("Passwords don't match")
+                      ? Promise.reject(t(['common', 'validationError', 'passwordsDoNotMatch']))
                       : Promise.resolve(),
                   ),
             }),

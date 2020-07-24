@@ -7,15 +7,13 @@ import classnames from 'classnames'
 import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString} from '../web3'
-import {SettingsState} from '../settings-state'
+import {SettingsState, useFormatters} from '../settings-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
 import {WalletState} from '../common/wallet-state'
-import {abbreviateAmount} from '../common/formatters'
-import {useFormatters} from '../common/i18n-hooks'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import transparentIcon from '../assets/icons/transparent.svg'
@@ -103,11 +101,11 @@ const processAmount = (
   return {value, fee, totalValue}
 }
 
-const abbreviateDust = (big: BigNumber): string =>
-  abbreviateAmount(UNITS.Dust.fromBasic(big)).relaxed
-
 const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Element => {
+  const {abbreviateAmount} = useFormatters()
   const {value, fee, totalValue} = processAmount(txValue)
+  const abbreviateDust = (big: BigNumber): string =>
+    abbreviateAmount(UNITS.Dust.fromBasic(big)).relaxed
 
   return fee.isZero() ? (
     <></>

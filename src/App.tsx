@@ -40,7 +40,7 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <SettingsState.Provider initialState={store}>
+    <SettingsState.Provider initialState={{store}}>
       <BackendState.Provider initialState={{web3}}>
         {isBackendRunning ? (
           <div className="App">

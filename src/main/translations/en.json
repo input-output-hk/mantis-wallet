@@ -1,0 +1,27 @@
+{
+  "menu": {
+    "openRemix": "Open Remix",
+    "hide": "Hide Luna",
+    "hideOthers": "Hide Others",
+    "unhide": "Show All",
+    "quit": "Quit",
+
+    "edit": "Edit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "delete": "Delete",
+    "selectAll": "Select All",
+
+    "view": "View",
+    "reload": "Reload",
+    "forceReload": "Force Reload",
+    "toggleDevTools": "Toggle Developer Tools",
+    "actualSize": "Actual Size",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "toggleFullScreen": "Toggle Full Screen"
+  }
+}

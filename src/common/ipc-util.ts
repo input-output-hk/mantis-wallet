@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {ipcRenderer} from 'electron'
 import {IPCToRendererChannelName, IPCFromRendererChannelName} from '../shared/ipc-types'
+import {Language} from '../shared/i18n'
 
 // General typed wrappers
 
@@ -31,6 +32,10 @@ export const updateMiningConfig = (spendingKey: string | null): void => {
 
 export const updateNetworkTag = (networkTag: NetworkTag): void => {
   ipcSend('update-network-tag', networkTag)
+}
+
+export const updateLanguage = (language: Language): void => {
+  ipcSend('update-language', language)
 }
 
 export const saveDebugLogs = (): void => {

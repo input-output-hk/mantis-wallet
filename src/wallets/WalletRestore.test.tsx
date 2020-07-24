@@ -2,7 +2,11 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render, fireEvent, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {expectCalledOnClick, findExactlyOneByTag} from '../common/test-helpers'
+import {
+  expectCalledOnClick,
+  findExactlyOneByTag,
+  WithSettingsProvider,
+} from '../common/test-helpers'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
 import {makeWeb3Worker} from '../web3'
@@ -10,8 +14,6 @@ import {WalletRestore} from './WalletRestore'
 import {mockWeb3Worker} from '../web3-mock'
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
-
-jest.mock('../config/renderer.ts')
 
 const seedPhrase = [
   'vengeful',
@@ -44,6 +46,7 @@ test('WalletRestore', async () => {
         <WalletRestore cancel={cancel} finish={finish} />
       </WalletState.Provider>
     </BuildJobState.Provider>,
+    {wrapper: WithSettingsProvider},
   )
 
   // Enter wallet name

@@ -1,0 +1,13 @@
+{
+  "common": {
+    "link": {
+      "feedback": "Feedback",
+      "logOut": "Log Out",
+      "support": "Support",
+      "status": "Status"
+    },
+    "validationError": {
+      "passwordsDoNotMatch": "Passwords don't match"
+    }
+  }
+}

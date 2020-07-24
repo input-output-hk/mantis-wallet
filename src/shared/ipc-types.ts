@@ -18,3 +18,4 @@ export type IPCFromRendererChannelName =
   | 'update-mining-config'
   | 'update-network-tag'
   | 'save-debug-logs'
+  | 'update-language'

@@ -8,7 +8,7 @@ import {InlineError, InlineErrorProps} from '../InlineError'
 import {DialogState} from '../Dialog'
 import {DUST_SYMBOL} from '../../pob/chains'
 import {FeeEstimates} from '../wallet-state'
-import {abbreviateAmount} from '../formatters'
+import {useFormatters} from '../../settings-state'
 import {UNITS} from '../units'
 import speedLow from '../../assets/icons/speed-low.svg'
 import speedMedium from '../../assets/icons/speed-medium.svg'
@@ -42,8 +42,6 @@ const feeLevelIcons: Record<FeeLevel, React.ReactNode> = {
   high: <SVG src={speedHigh} className="icon" title="High" />,
 }
 
-const displayAmount = (amount: BigNumber): string =>
-  abbreviateAmount(Dust.fromBasic(amount)).relaxed
 const fieldDisplayAmount = (amount: BigNumber): string => Dust.fromBasic(amount).toString(10)
 
 export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = ({
@@ -61,6 +59,10 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
   const inputRef = useRef<Input>(null)
 
   const {setErrorMessage} = DialogState.useContainer()
+  const {abbreviateAmount} = useFormatters()
+
+  const displayAmount = (amount: BigNumber): string =>
+    abbreviateAmount(Dust.fromBasic(amount)).relaxed
 
   useEffect(() => {
     if (feeLevel != null && feeEstimates) {

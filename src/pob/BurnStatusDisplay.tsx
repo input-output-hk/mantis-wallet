@@ -22,8 +22,8 @@ import {
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
 import {ProgressState, ProgressBar, PROGRESS_ICONS} from '../common/ProgressBar'
+import {useFormatters} from '../settings-state'
 import './BurnStatusDisplay.scss'
-import {useFormatters} from '../common/i18n-hooks'
 
 interface AllProgress {
   started: ProgressState

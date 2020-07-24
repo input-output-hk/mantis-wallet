@@ -1,34 +1,65 @@
 import {Menu, MenuItemConstructorOptions} from 'electron'
+import {TFunctionMain} from './i18n'
 
 const isMac = process.platform === 'darwin'
 
-const appMenuForMac: MenuItemConstructorOptions[] = [
-  {role: 'hide'},
-  {role: 'hideOthers'},
-  {role: 'unhide'},
+const localizedAppMenuForMac = (t: TFunctionMain): MenuItemConstructorOptions[] => [
+  {label: t(['menu', 'hide']), role: 'hide'},
+  {label: t(['menu', 'hideOthers']), role: 'hideOthers'},
+  {label: t(['menu', 'unhide']), role: 'unhide'},
   {type: 'separator'},
 ]
 
-export const buildMenu = (openRemix: () => void): Menu => {
+const localizedSharedMenu = (t: TFunctionMain): MenuItemConstructorOptions[] => [
+  {
+    label: t(['menu', 'edit']),
+    submenu: [
+      {label: t(['menu', 'undo']), role: 'undo'},
+      {label: t(['menu', 'redo']), role: 'redo'},
+      {type: 'separator'},
+      {label: t(['menu', 'cut']), role: 'cut'},
+      {label: t(['menu', 'copy']), role: 'copy'},
+      {label: t(['menu', 'paste']), role: 'paste'},
+      {label: t(['menu', 'delete']), role: 'delete'},
+      {type: 'separator'},
+      {label: t(['menu', 'selectAll']), role: 'selectAll'},
+    ],
+  },
+  {
+    label: t(['menu', 'view']),
+    submenu: [
+      {label: t(['menu', 'reload']), role: 'reload'},
+      {label: t(['menu', 'forceReload']), role: 'forceReload'},
+      {label: t(['menu', 'toggleDevTools']), role: 'toggleDevTools'},
+      {type: 'separator'},
+      {label: t(['menu', 'resetZoom']), role: 'resetZoom'},
+      {label: t(['menu', 'zoomIn']), role: 'zoomIn'},
+      {label: t(['menu', 'zoomOut']), role: 'zoomOut'},
+      {type: 'separator'},
+      {label: t(['menu', 'toggleFullScreen']), role: 'togglefullscreen'},
+    ],
+  },
+]
+
+export const buildMenu = (openRemix: () => void, t: TFunctionMain): Menu => {
   const template: MenuItemConstructorOptions[] = [
     {
-      label: 'Luna',
+      label: t(['menu', 'Luna']),
       submenu: [
-        {label: 'Open Remix IDE', click: openRemix},
+        {label: t(['menu', 'openRemix']), click: openRemix},
         {type: 'separator'},
-        ...(isMac ? appMenuForMac : []),
-        {role: 'quit'},
+        ...(isMac ? localizedAppMenuForMac(t) : []),
+        {label: t(['menu', 'quit']), role: 'quit'},
       ],
     },
-    {role: 'editMenu'},
-    {role: 'viewMenu'},
+    ...localizedSharedMenu(t),
   ]
 
   return Menu.buildFromTemplate(template)
 }
 
-export const buildRemixMenu = (): Menu => {
-  const template: MenuItemConstructorOptions[] = [{role: 'editMenu'}, {role: 'viewMenu'}]
+export const buildRemixMenu = (t: TFunctionMain): Menu => {
+  const template: MenuItemConstructorOptions[] = localizedSharedMenu(t)
 
   return Menu.buildFromTemplate(template)
 }

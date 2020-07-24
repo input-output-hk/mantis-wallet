@@ -43,7 +43,7 @@ const migrations = mergeMigrations([
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 
-const projectVersion = getMaxVersion('0.14.0-alpha.3', DATADIR_VERSION)
+const projectVersion = getMaxVersion('0.14.0-alpha.4', DATADIR_VERSION)
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]

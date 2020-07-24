@@ -11,7 +11,7 @@ import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
-import {abbreviateAmount} from '../common/formatters'
+import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
@@ -22,8 +22,6 @@ import {mockedCopyToClipboard} from '../jest.setup'
 const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
-
-jest.mock('../config/renderer.ts')
 
 const tx1: Transaction = {
   hash: '1',
@@ -169,9 +167,9 @@ test('TransactionHistory shows proper message with empty tx list', () => {
 // txAmount
 test('TransactionHistory shows proper tx amounts', () => {
   const {getByText} = renderTransactionHistory({transactions: [tx1, tx2]})
-  const {strict: formattedNumber1} = abbreviateAmount(new BigNumber(123))
+  const {strict: formattedNumber1} = abbreviateAmountForEnUS(new BigNumber(123))
   expect(getByText(`+${formattedNumber1}`)).toBeInTheDocument()
-  const {strict: formattedNumber2} = abbreviateAmount(new BigNumber(123456889))
+  const {strict: formattedNumber2} = abbreviateAmountForEnUS(new BigNumber(123456889))
   expect(getByText(`-${formattedNumber2}`)).toBeInTheDocument()
 })
 
@@ -235,7 +233,7 @@ test('Send modal shows up', async () => {
 
   // 'Available amount' field and its value is in the document
   expect(getByText('Available Amount')).toBeInTheDocument()
-  const {strict: availableBalanceFormatted} = abbreviateAmount(availableDust)
+  const {strict: availableBalanceFormatted} = abbreviateAmountForEnUS(availableDust)
   expect(getByText(availableBalanceFormatted)).toBeInTheDocument()
 
   // 'Tx type' field and its buttons are in the document
@@ -298,7 +296,7 @@ test('Send confidential transaction works', async () => {
   // Check correct fee estimates are shown for default (0) amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmount(Dust.fromBasic(estimate))
+      const {strict: estimateFormatted} = abbreviateAmountForEnUS(Dust.fromBasic(estimate))
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })
   })
@@ -325,7 +323,7 @@ test('Send confidential transaction works', async () => {
   // Check correct fee estimates are shown for default used amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmount(
+      const {strict: estimateFormatted} = abbreviateAmountForEnUS(
         Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
@@ -404,7 +402,7 @@ test('Send transparent transaction works', async () => {
   // Check correct fee estimates are shown for default (0) amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmount(Dust.fromBasic(estimate))
+      const {strict: estimateFormatted} = abbreviateAmountForEnUS(Dust.fromBasic(estimate))
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })
   })
@@ -431,7 +429,7 @@ test('Send transparent transaction works', async () => {
   // Check correct fee estimates are shown for default used amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmount(
+      const {strict: estimateFormatted} = abbreviateAmountForEnUS(
         Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()

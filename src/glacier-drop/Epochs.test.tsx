@@ -5,8 +5,7 @@ import {range} from 'lodash'
 import BigNumber from 'bignumber.js'
 import {DUMMY_PERIOD_CONFIG} from '../storybook-util/dummies'
 import {Epochs, EpochRow} from './Epochs'
-
-jest.mock('../config/renderer.ts')
+import {WithSettingsProvider} from '../common/test-helpers'
 
 const EPOCH_ROWS: EpochRow[] = [
   {
@@ -24,6 +23,7 @@ const EPOCH_ROWS: EpochRow[] = [
 test('Epochs', async () => {
   const {getByText} = render(
     <Epochs visible epochRows={EPOCH_ROWS} periodConfig={DUMMY_PERIOD_CONFIG} currentBlock={320} />,
+    {wrapper: WithSettingsProvider},
   )
 
   // Transparent addresses are shown

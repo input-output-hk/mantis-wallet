@@ -11,15 +11,12 @@ import {RedeemModal} from './modals/RedeemModal'
 import {UNITS} from '../common/units'
 import {createInMemoryStore} from '../common/store'
 import {SettingsState, defaultSettingsData} from '../settings-state'
-import {abbreviateAmount} from '../common/formatters'
-import {findExactlyOneByTag} from '../common/test-helpers'
+import {findExactlyOneByTag, abbreviateAmountForEnUS} from '../common/test-helpers'
 import {TransparentAccounts} from './TransparentAccounts'
 import {Transaction, makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 
 const {Dust} = UNITS
-
-jest.mock('../config/renderer.ts')
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -30,7 +27,7 @@ const WithProviders = ({children}: {children?: React.ReactNode}): JSX.Element =>
   }
 
   return (
-    <SettingsState.Provider initialState={createInMemoryStore(defaultSettingsData)}>
+    <SettingsState.Provider initialState={{store: createInMemoryStore(defaultSettingsData)}}>
       <BuildJobState.Provider>
         <WalletState.Provider initialState={initialState}>
           <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
@@ -86,7 +83,7 @@ test('Redeem works', async () => {
   // Check correct fee estimates are shown for default (0) amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmount(Dust.fromBasic(estimate))
+      const {strict: estimateFormatted} = abbreviateAmountForEnUS(Dust.fromBasic(estimate))
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })
   })
@@ -97,7 +94,7 @@ test('Redeem works', async () => {
 
   // 'Available amount' field and its value is in the document
   expect(getByText('Available Amount')).toBeInTheDocument()
-  const {strict: availableBalanceFormatted} = abbreviateAmount(availableDust)
+  const {strict: availableBalanceFormatted} = abbreviateAmountForEnUS(availableDust)
   expect(getByText(availableBalanceFormatted)).toBeInTheDocument()
 
   // 'Amount' field, 'Fee' field are in the document
@@ -124,7 +121,7 @@ test('Redeem works', async () => {
   // Check correct fee estimates are shown for default used amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmount(
+      const {strict: estimateFormatted} = abbreviateAmountForEnUS(
         Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()

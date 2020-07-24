@@ -19,6 +19,7 @@ import {
   SettingsPerClient,
 } from '../config/type'
 import {mainLog} from './logger'
+import {TErrorMain} from './i18n'
 
 const keyStoreFilename = 'midnightCA.p12'
 const passwordFilename = 'password'
@@ -195,7 +196,10 @@ export async function setupExternalTLS(tlsConfig: TLSConfig): Promise<TLSData> {
     extractCertData(password),
     option.fold(
       () => {
-        throw Error('Could not extract generated certificate data')
+        throw new TErrorMain('Could not extract generated certificate data', [
+          'error',
+          'couldNotExtractCertificateData',
+        ])
       },
       (certData) => ({...tlsConfig, certData}),
     ),

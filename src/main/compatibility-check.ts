@@ -7,6 +7,7 @@ import {app, dialog} from 'electron'
 import {DATADIR_VERSION, COMPATIBLE_VERSIONS} from '../shared/version'
 import {config} from '../config/main'
 import {mainLog} from './logger'
+import {TFunctionMain} from './i18n'
 
 const versionFilePath = path.resolve(config.dataDir, 'version.txt')
 
@@ -59,7 +60,7 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   }
 }
 
-export async function checkDatadirCompatibility(): Promise<void> {
+export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void> {
   const {isCompatible, datadirVersion} = await checkDatadirVersion()
   if (isCompatible) return
 
@@ -68,11 +69,11 @@ export async function checkDatadirCompatibility(): Promise<void> {
 
   const userResponse = await dialog.showMessageBox({
     type: 'error',
-    buttons: ['OK', 'Cancel'],
-    title: 'Incompatible data directory',
-    message: 'Your current data directory is incompatible with this version of Luna.',
-    detail: `We'll rename your old data directory from "${oldDirName}" to "${newDirName}".`,
-    checkboxLabel: 'Delete my current data directory instead',
+    buttons: [t(['dialog', 'button', 'ok']), t(['dialog', 'button', 'cancel'])],
+    title: t(['dialog', 'title', 'incompatibleDataDir']),
+    message: t(['dialog', 'message', 'incompatibleDataDir']),
+    detail: t(['dialog', 'message', 'incompatibleDataDirAction'], {oldDirName, newDirName}),
+    checkboxLabel: t(['dialog', 'checkboxLabel', 'deleteCurrentDataDir']),
     checkboxChecked: false,
   })
   const {checkboxChecked, response} = userResponse
@@ -84,8 +85,8 @@ export async function checkDatadirCompatibility(): Promise<void> {
     // Delete option
     const {response} = await dialog.showMessageBox({
       type: 'warning',
-      buttons: ['OK', 'Cancel'],
-      message: `Are you sure you want to delete "${config.dataDir}"?`,
+      buttons: [t(['dialog', 'button', 'ok']), t(['dialog', 'button', 'cancel'])],
+      message: t(['dialog', 'message', 'deleteDirectoryQuestion'], {directory: config.dataDir}),
     })
     if (response === 1) {
       // Cancel delete
@@ -104,5 +105,8 @@ export async function checkDatadirCompatibility(): Promise<void> {
   // Initialize new dataDir with version.txt
   await initDataDir()
 
-  await dialog.showMessageBox({message: 'Operation complete.', buttons: ['OK']})
+  await dialog.showMessageBox({
+    message: t(['dialog', 'message', 'operationComplete']),
+    buttons: [t(['dialog', 'button', 'ok'])],
+  })
 }

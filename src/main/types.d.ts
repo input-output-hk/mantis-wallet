@@ -27,5 +27,6 @@ interface LunaStatus {
     lunaVersion: string
     mainPid: number
     midnightVersion?: string
+    networkTag?: NetworkTag
   }
 }

@@ -73,3 +73,7 @@ export function inspectLineForDAGStatus(line: string): void {
       status.dag.message = res[0]
     })
 }
+
+export function setNetworkTag(networkTag: NetworkTag): void {
+  status.info.networkTag = networkTag
+}

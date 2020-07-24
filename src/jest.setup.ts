@@ -13,6 +13,7 @@ const mockedLogger = (): log.ElectronLog => {
 jest.mock('./common/clipboard', () => ({copyToClipboard: jest.fn()}))
 jest.mock('./common/logger', () => ({rendererLog: mockedLogger()}))
 jest.mock('./main/logger', () => ({mainLog: mockedLogger()}))
+jest.mock('./config/renderer.ts')
 
 // Workaround suggested by the official manual
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom

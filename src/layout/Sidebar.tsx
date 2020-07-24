@@ -19,6 +19,7 @@ import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
 import {isTestnet, TESTNET_EDITION} from '../shared/version'
+import {Trans} from '../common/Trans'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
@@ -71,11 +72,15 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           className="footer-link"
           {...fillActionHandlers(() => setActiveModal('LockWallet'), 'link')}
         >
-          Log Out
+          <Trans k={['common', 'link', 'logOut']} />
         </span>
       )
     } else {
-      return <span className={classnames('footer-link', 'disabled')}>Log Out</span>
+      return (
+        <span className={classnames('footer-link', 'disabled')}>
+          <Trans k={['common', 'link', 'logOut']} />
+        </span>
+      )
     }
   }
 
@@ -127,10 +132,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
             className="footer-link support"
             {...fillActionHandlers(() => setActiveModal('Support'), 'link')}
           >
-            Support
+            <Trans k={['common', 'link', 'support']} />
           </span>
           <Link href={LINKS.feedback} popoverPlacement="right" className="footer-link feedback">
-            Feedback
+            <Trans k={['common', 'link', 'feedback']} />
           </Link>
         </div>
         <div>
@@ -138,7 +143,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
             className="footer-link status"
             {...fillActionHandlers(() => setActiveModal('Status'), 'link')}
           >
-            Status
+            <Trans k={['common', 'link', 'status']} />
           </span>
           <LogOutButton />
         </div>

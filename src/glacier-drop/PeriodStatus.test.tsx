@@ -3,12 +3,12 @@ import React from 'react'
 import {render} from '@testing-library/react'
 import {DUMMY_PERIOD_CONFIG} from '../storybook-util/dummies'
 import {PeriodStatus} from './PeriodStatus'
-
-jest.mock('../config/renderer.ts')
+import {WithSettingsProvider} from '../common/test-helpers'
 
 test('PeriodStatus: Unlocking not yet started', async () => {
   const {getByText} = render(
     <PeriodStatus periodConfig={DUMMY_PERIOD_CONFIG} currentBlock={99} powPuzzleComplete={false} />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText('Unlocking not yet started')).toBeInTheDocument()
@@ -22,6 +22,7 @@ test('PeriodStatus: Unlocking Period in Progress', async () => {
       currentBlock={100}
       powPuzzleComplete={false}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText('Unlocking Period in Progress')).toBeInTheDocument()
@@ -32,6 +33,7 @@ test('PeriodStatus: Unlocking Period in Progress', async () => {
 test('PeriodStatus: PoW puzzle complete', async () => {
   const {getByText} = render(
     <PeriodStatus periodConfig={DUMMY_PERIOD_CONFIG} currentBlock={100} powPuzzleComplete={true} />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText('PoW Puzzle Complete')).toBeInTheDocument()
@@ -47,6 +49,7 @@ test('PeriodStatus: Unlocking Period Ended', async () => {
       currentBlock={200}
       powPuzzleComplete={false}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText('Unlocking Period Ended')).toBeInTheDocument()
@@ -56,6 +59,7 @@ test('PeriodStatus: Unlocking Period Ended', async () => {
 test('PeriodStatus: PoW Puzzle Complete not shown when unlocking period ended', async () => {
   const {queryByText} = render(
     <PeriodStatus periodConfig={DUMMY_PERIOD_CONFIG} currentBlock={200} powPuzzleComplete={true} />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(queryByText('PoW Puzzle Complete')).not.toBeInTheDocument()
@@ -68,6 +72,7 @@ test('PeriodStatus: Unfreezing Period in Progress', async () => {
       currentBlock={300}
       powPuzzleComplete={false}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText('Unfreezing Period in Progress')).toBeInTheDocument()

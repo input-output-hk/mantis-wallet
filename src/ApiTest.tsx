@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Button} from 'antd'
+import {Button, Switch} from 'antd'
 import {
   makeWeb3Worker,
   SpendingKey,
@@ -11,6 +11,7 @@ import {
 import {getContractConfigs} from './config/renderer'
 import {WalletState} from './common/wallet-state'
 import {GlacierState} from './glacier-drop/glacier-state'
+import {SettingsState} from './settings-state'
 import {BorderlessInput} from './common/BorderlessInput'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {rendererLog} from './common/logger'
@@ -23,6 +24,7 @@ const wallet = web3.midnight.wallet
 export const ApiTest = (): JSX.Element => {
   const walletState = WalletState.useContainer()
   const glacierState = GlacierState.useContainer()
+  const settingState = SettingsState.useContainer()
 
   const contractAddresses = getContractConfigs()
   const networks = Object.keys(contractAddresses)
@@ -82,6 +84,14 @@ export const ApiTest = (): JSX.Element => {
 
       <div style={{marginBottom: '1rem'}}>
         <h2>Settings</h2>
+        <div className="input">
+          <div className="label">Pseudo language</div>
+          <Switch
+            aria-label="Pseudo language"
+            checked={settingState.isPseudoLanguageUsed}
+            onChange={settingState.usePseudoLanguage}
+          />
+        </div>
         <div className="input">
           <label htmlFor="passphrase">Passphrase</label>
           <BorderlessInput
