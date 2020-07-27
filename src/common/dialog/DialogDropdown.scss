@@ -5,7 +5,7 @@
 
   .active-option {
     width: 508px;
-    padding: 10px 0 0;
+    padding: 6px 0 0;
     overflow: hidden;
     font-size: 14px;
     font-weight: bold;
@@ -17,7 +17,7 @@
   }
 
   .label {
-    font-size: $dialog-component-spacing; // FIXME
+    font-size: $font-size-title;
     font-weight: bold;
     cursor: pointer;
   }
@@ -32,24 +32,29 @@
 
 .DialogDropdownOverlay {
   .ant-dropdown-menu {
+    @extend %disable-focus-outline;
+
     @include themify($themes) {
-      background-color: themed('component-background');
+      background-color: themed('normal-color');
       color: themed('text-color');
     }
   }
 
   .ant-dropdown-menu-item {
+    @extend %disable-focus-outline;
+
     width: 508px;
     overflow: hidden;
 
     @include themify($themes) {
-      background-color: themed('component-background');
+      background-color: themed('normal-color');
       color: themed('text-color');
     }
 
     &:hover {
       @include themify($themes) {
         background-color: themed('primary-color');
+        color: #000;
       }
     }
   }

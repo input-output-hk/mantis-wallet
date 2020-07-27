@@ -8,7 +8,6 @@
 
     margin-bottom: $dialog-component-spacing;
     transition: color $transition-duration;
-    text-decoration: underline;
     cursor: pointer;
 
     @include themify($themes) {
@@ -18,6 +17,7 @@
     &:hover,
     &:focus {
       transition: color $transition-duration;
+      text-decoration: underline;
 
       @include themify($themes) {
         color: themed('error-color');

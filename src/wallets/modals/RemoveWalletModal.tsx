@@ -26,6 +26,7 @@ const RemoveWalletDialog: FunctionComponent<RemoveWalletModalProps> = ({
       rightButtonProps={{
         onClick: (): Promise<void> => onRemoveWallet(passphrase),
         children: 'Remove Wallet',
+        danger: true,
       }}
       onSetLoading={modalLocker.setLocked}
     >

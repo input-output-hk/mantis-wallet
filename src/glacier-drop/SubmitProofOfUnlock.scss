@@ -1,10 +1,6 @@
 @import '../partial';
 
 .SubmitProofOfUnlock {
-  .dialog-children {
-    margin-bottom: 3rem;
-  }
-
   .DialogMessage .description {
     @extend %monospace;
     font-weight: bold;

@@ -1,14 +1,8 @@
-@import '../../partial';
+@import '../../partial', '../../vars';
 
 .Exchange {
   .DialogDropdown {
     padding-left: 1px;
-
-    .label {
-      font-size: 10px;
-      font-weight: 400;
-      text-transform: uppercase;
-    }
   }
 
   .dust-balance {
@@ -33,6 +27,6 @@
 
   .get-dust {
     @extend %dialog-info-link;
-    margin-top: -20px;
+    margin-top: -1 * $dialog-component-spacing;
   }
 }

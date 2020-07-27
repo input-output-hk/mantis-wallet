@@ -1,7 +1,7 @@
 @import '../../themify', '../../vars';
 
 $padding-v: 21px;
-$padding-h: 13px;
+$padding-h: 17px;
 
 .DialogApproval {
   margin-bottom: $dialog-component-spacing;
@@ -10,12 +10,14 @@ $padding-h: 13px;
     border-radius: $dialog-component-border-radius;
 
     @include themify($themes) {
+      border: 1px solid themed('normal-color');
       background-color: themed('normal-color');
       color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
     }
 
     .dark & {
       @include themify($themes) {
+        border: 1px solid themed('dialog-dark-input-bg');
         background-color: themed('dialog-dark-input-bg');
       }
     }
@@ -26,7 +28,7 @@ $padding-h: 13px;
     grid-column-gap: 5px;
     grid-template-columns: auto 1fr;
     padding: $padding-v $padding-h;
-    font-size: 13px;
+    font-size: 12px;
 
     @include themify($themes) {
       color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
@@ -44,14 +46,6 @@ $padding-h: 13px;
   .ant-form-item-has-error .checkbox-wrapper {
     @include themify($themes) {
       border: 1px solid themed('error-color');
-    }
-
-    .checkbox {
-      padding: $padding-v - 1px $padding-h - 1px;
-    }
-
-    .extra {
-      padding: $padding-v - 1px $padding-h - 1px 1px;
     }
   }
 

@@ -27,8 +27,6 @@ $dialog-width: 508px;
   }
 
   .actions {
-    margin-bottom: $dialog-component-spacing;
-
     &.grid {
       @extend %two-col-grid-template;
     }
@@ -48,17 +46,17 @@ $dialog-width: 508px;
     }
   }
 
-  .ant-form-item-explain {
-    position: absolute;
-    top: -25px;
-    right: 0;
-    width: $dialog-width;
-    height: 20px;
-    font-size: 10px;
-    text-align: right;
+  .footer:not(:empty) {
+    margin-top: $dialog-component-spacing;
 
-    @include themify($themes) {
-      color: themed('error-color');
+    > *:last-child {
+      margin-bottom: 0;
     }
+  }
+
+  .ant-form-item-explain {
+    @extend %dialog-input-inline-error;
+
+    width: $dialog-width;
   }
 }

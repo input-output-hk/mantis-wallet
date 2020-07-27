@@ -9,9 +9,12 @@
 
   .switch-container {
     @extend %two-col-grid-template;
+    grid-column-gap: 0;
 
     .button {
-      height: 30px !important; // FIXME PM-1812 make button sizes consistent
+      @extend %disable-focus-outline;
+
+      height: 30px !important;
       transition: color $transition-duration, background-color $transition-duration,
         opacity $transition-duration;
       font-size: 12px;
@@ -39,10 +42,12 @@
 
       &.left {
         justify-self: right;
+        border-radius: 0.5rem 0 0 0.5rem;
       }
 
       &.right {
         justify-self: left;
+        border-radius: 0 0.5rem 0.5rem 0;
 
         &.active {
           @include themify($themes) {

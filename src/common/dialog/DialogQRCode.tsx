@@ -24,13 +24,15 @@ export const DialogQRCode: FunctionComponent<DialogQRCodeProps> = ({
       <div className="qr-content">{content}</div>
     </div>
     {downloadFileName && (
-      <Button
-        className="download"
-        type="primary"
-        onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
-      >
-        Download txt
-      </Button>
+      <div className="actions grid">
+        <Button
+          className="download"
+          type="primary"
+          onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
+        >
+          Download txt
+        </Button>
+      </div>
     )}
   </div>
 )

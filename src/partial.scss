@@ -111,14 +111,28 @@
 }
 
 %dialog-label {
-  height: 25px;
+  height: $dialog-label-height;
   font-size: 10px;
+  letter-spacing: $letter-spacing-small;
   text-transform: uppercase;
+}
+
+%dialog-input-inline-error {
+  position: absolute;
+  top: -1 * $dialog-label-height;
+  right: 0;
+  height: $dialog-label-height;
+  font-size: 10px;
+  text-align: right;
+
+  @include themify($themes) {
+    color: themed('error-color');
+  }
 }
 
 %focus-outline {
   outline: none;
-  box-shadow: 0px 2px 30px 0px rgba(#000, 0.4), 0px 2px 30px 0px rgba($primary-color, 0.4);
+  box-shadow: 0px 2px 30px 0px rgba(#000, 0.4); //  , 0px 2px 30px 0px rgba($primary-color, 0.4) FIXME
 }
 
 %add-focus-outline {
@@ -194,11 +208,11 @@
 }
 
 %empty-list-message {
-  margin-top: 2em;
+  margin-top: 3rem;
   opacity: $secondary-opacity;
   font-size: 12px;
   font-weight: bold;
-  letter-spacing: $letter-spacing-large;
+  letter-spacing: $letter-spacing-medium;
   text-align: center;
   text-transform: uppercase;
 }

@@ -139,20 +139,6 @@ div#root {
     color: #000;
   }
 
-  &:focus {
-    @include themify($themes) {
-      background-color: darken(themed('primary-color'), 5%);
-      color: #000;
-    }
-  }
-
-  &:hover {
-    @include themify($themes) {
-      background-color: darken(themed('primary-color'), 10%);
-      color: #000;
-    }
-  }
-
   &.secondary {
     @include themify($themes) {
       background-color: themed('secondary-background');
@@ -166,6 +152,14 @@ div#root {
         color: themed('text-color');
       }
     }
+  }
+}
+
+// <Button danger> Remove </Button>
+.ant-btn-dangerous {
+  @include themify($themes) {
+    background-color: themed('error-color');
+    color: #fff;
   }
 }
 
@@ -329,5 +323,21 @@ input::placeholder {
 
   .ant-form-item {
     margin-bottom: 0;
+  }
+
+  .ant-checkbox-wrapper {
+    line-height: 20px;
+
+    .ant-checkbox {
+      top: 0;
+    }
+  }
+
+  .ant-select-dropdown {
+    border-radius: $dialog-component-border-radius;
+  }
+
+  .ant-modal-body {
+    padding: 42px 64px;
   }
 }

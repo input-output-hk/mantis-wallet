@@ -81,6 +81,7 @@ const _Exchange = ({
         label="Midnight Transparent Address"
         options={transparentAddresses}
         onChange={setTransparentAddress}
+        type="small"
       />
       <DialogApproval id="confirm-fee" description="I understand">
         <div className="dust-balance">

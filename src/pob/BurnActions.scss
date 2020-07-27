@@ -12,6 +12,7 @@
       @extend %link;
       display: inline-block;
       font-weight: bold;
+      text-decoration: none;
       vertical-align: bottom;
     }
 
@@ -34,6 +35,7 @@
     margin: 20px auto;
     opacity: $secondary-opacity;
     text-align: center;
+    text-decoration: none;
   }
 
   .balances {

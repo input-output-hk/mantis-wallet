@@ -1,17 +1,13 @@
 @import '../partial';
 
 .WithdrawAvailableDust {
-  .dialog-children {
-    margin-bottom: 3rem;
-  }
-
   .DialogMessage .description {
     @extend %monospace;
     font-weight: bold;
   }
 
   .DialogFee {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   .more-info {

@@ -1,18 +1,9 @@
-@import '../themify';
+@import '../partial';
 
 .InlineError {
   position: relative;
 
   .error-message {
-    position: absolute;
-    top: -25px;
-    right: 0;
-    height: 20px;
-    font-size: 10px;
-    text-align: right;
-
-    @include themify($themes) {
-      color: themed('error-color');
-    }
+    @extend %dialog-input-inline-error;
   }
 }

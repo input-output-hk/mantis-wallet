@@ -1,15 +1,15 @@
 @import '../../themify', '../../partial', '../../vars';
 
 .ReceiveModalFooter {
-  padding: 24px 64px;
+  padding: 1.5rem 64px;
   text-align: left;
 
   @include themify($themes) {
-    background-color: themed('quinary-background');
+    background-color: themed('dialog-dark-input-bg');
   }
 
   .title {
-    padding: 0.5em 0;
+    padding: 0 0 1rem;
     opacity: $secondary-opacity;
     font-size: 12px;
     font-weight: bold;
@@ -19,7 +19,7 @@
   .address {
     @extend %monospace;
     width: 508px;
-    padding: 0.5em 0;
+    padding: 0.5rem 0;
     overflow: hidden;
     opacity: $secondary-opacity;
     font-size: 12px;
@@ -32,8 +32,10 @@
 
   .link {
     @extend %link;
-    padding: 0.5em 0;
-    font-size: 12px;
+    display: block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    font-size: 10px;
     font-weight: bold;
     text-transform: uppercase;
   }
@@ -42,6 +44,6 @@
 .ReceiveModal {
   .mode-switch {
     width: 172px;
-    margin-bottom: $dialog-component-spacing;
+    margin-bottom: 1rem;
   }
 }
