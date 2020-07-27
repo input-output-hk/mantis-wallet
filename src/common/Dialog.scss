@@ -19,11 +19,7 @@ $dialog-width: 508px;
   }
 
   .title {
-    margin-bottom: $dialog-component-spacing;
-    overflow: hidden;
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: $letter-spacing-small;
+    @extend %title;
   }
 
   .dialog-children {

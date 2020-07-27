@@ -1,7 +1,7 @@
 @import '../../themify', '../../vars', '../../partial';
 
 .LockWalletModal {
-  font-size: 13px;
+  font-size: 12px;
 
   .remove-link {
     @extend %disable-focus-outline;

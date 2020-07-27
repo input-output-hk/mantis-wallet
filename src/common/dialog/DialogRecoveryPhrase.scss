@@ -4,15 +4,15 @@
   margin-bottom: $dialog-component-spacing;
 
   .instructions {
-    margin-bottom: 10px;
-    font-size: 13px;
+    margin-bottom: 1em;
+    font-size: 12px;
   }
 
   .input {
     height: 80px;
     padding: 20px 13px;
     border-radius: $dialog-component-border-radius;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
 
     @include themify($themes) {
@@ -45,7 +45,7 @@
     .word {
       height: 30px;
       border-radius: $dialog-component-border-radius;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
       line-height: 30px;
       text-align: center;
@@ -58,7 +58,7 @@
 
     .used-word {
       height: 30px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
       line-height: 30px;
       text-align: center;

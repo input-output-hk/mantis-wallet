@@ -1,6 +1,17 @@
 $font-family: 'Helvetica Neue', sans-serif;
+$font-family-monospace: 'Inconsolata', monospace;
+
+// Font sizes
+$font-size-root: 16px;
+$font-size-title: 20px;
+$font-size-input: 12px;
+$font-size-button: 16px;
+$font-size-button-action: 12px;
+$font-size-button-small: 10px;
+
 $secondary-opacity: 0.57;
 $unselected-opacity: 0.75;
+
 $border-radius-base: 0;
 $btn-border-width: 0;
 $switch-height: 22px;

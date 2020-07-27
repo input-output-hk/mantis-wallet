@@ -18,7 +18,7 @@
       width: 253px;
       height: 28px;
       opacity: $secondary-opacity;
-      font-size: 10px;
+      font-size: 12px;
 
       @include themify($themes) {
         border-bottom: 2px solid themed('border-color-base');
@@ -42,7 +42,7 @@
       .search-input {
         width: 230px;
         height: 22px;
-        font-size: 12px;
+        font-size: $font-size-input;
 
         @include themify($themes) {
           background-color: themed('component-background');
@@ -76,7 +76,7 @@
       margin: 1em;
       float: right;
       transition: visibility 0.5s;
-      font-size: 14px;
+      font-size: $font-size-button-action;
 
       @include themify($themes) {
         color: themed('error-dialog-color');

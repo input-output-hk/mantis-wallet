@@ -149,6 +149,14 @@
   }
 }
 
+%title {
+  margin-bottom: $dialog-component-spacing;
+  overflow: hidden;
+  font-size: $font-size-title;
+  font-weight: bold;
+  letter-spacing: $letter-spacing-small;
+}
+
 %dialog-info-link {
   @extend %link;
 
@@ -161,7 +169,7 @@
 }
 
 %monospace {
-  font-family: 'Inconsolata', monospace;
+  font-family: $font-family-monospace;
   font-weight: 400;
   word-break: break-all;
 }
@@ -176,7 +184,7 @@
 %error {
   padding: 1em;
   border-radius: $dialog-component-border-radius;
-  font-size: 13px;
+  font-size: 12px;
   text-align: center;
 
   @include themify($themes) {

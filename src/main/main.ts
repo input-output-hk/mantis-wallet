@@ -116,6 +116,7 @@ function createWindow(t: TFunctionMain): void {
     webPreferences: {
       nodeIntegration: true,
     },
+    titleBarStyle: 'hidden',
   })
 
   Menu.setApplicationMenu(buildMenu(openRemix(t), t))
