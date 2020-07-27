@@ -16,10 +16,16 @@ interface DatadirCompatibility {
   datadirVersion: string
 }
 
+const createVersionFile = (): Promise<void> =>
+  fs.writeFile(versionFilePath, DATADIR_VERSION, 'utf8')
+
 const initDataDir = async (): Promise<void> => {
   await fs.mkdir(config.dataDir)
-  await fs.writeFile(versionFilePath, DATADIR_VERSION, 'utf8')
+  await createVersionFile()
 }
+
+const isDirEmpty = (dir: string): Promise<boolean> =>
+  fs.readdir(dir).then((files) => files.length === 0)
 
 const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   // Load dataDir version and check if it's compatible
@@ -42,13 +48,24 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
     }
   }
 
-  // Check if data directory exists
+  // Check if data directory exists and is not empty
   try {
     await fs.access(config.dataDir, fsConstants.W_OK | fsConstants.R_OK)
-    // If dataDir already exists, but doesn't contain a version.txt: incompatible
-    return {
-      isCompatible: false,
-      datadirVersion: 'unknown',
+    const isDataDirEmpty = await isDirEmpty(config.dataDir)
+
+    // If dataDir already exists and it is empty we can use it
+    if (isDataDirEmpty) {
+      await createVersionFile()
+      return {
+        isCompatible: true,
+        datadirVersion: DATADIR_VERSION,
+      }
+    } else {
+      // non-empty and doesn't contain a version.txt: incompatible
+      return {
+        isCompatible: false,
+        datadirVersion: 'unknown',
+      }
     }
   } catch (e) {
     // If dataDir doesn't exist, initialize new one with version.txt
