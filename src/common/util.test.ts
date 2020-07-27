@@ -1,5 +1,4 @@
-import chai, {assert} from 'chai'
-import chaiAsPromised from 'chai-as-promised'
+import {assert} from 'chai'
 import {some, none} from 'fp-ts/lib/Option'
 import BigNumber from 'bignumber.js'
 import {
@@ -7,24 +6,20 @@ import {
   validateAmount,
   isGreaterOrEqual,
   validateEthAddress,
-  EMPTY_ADDRESS_MSG,
-  INVALID_ADDRESS_MSG,
   toHex,
   bigSum,
   bech32toHex,
   hexToBech32,
   isLowerOrEqual,
   areFundsEnough,
-  toHumanReadableHashrate,
   createTransparentAddressValidator,
   createConfidentialAddressValidator,
   returnDataToHumanReadable,
   optionHasValue,
+  ValidationResult,
 } from './util'
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
-
-chai.use(chaiAsPromised)
 
 const toDust = (v: BigNumber.Value): BigNumber => UNITS.Dust.toBasic(new BigNumber(v))
 
@@ -37,20 +32,40 @@ it('deserializes BigNumber correctly', () => {
 })
 
 it('validates amount correctly', () => {
-  assert.equal(validateAmount('x'), 'Must be a number greater than 0')
-  assert.equal(validateAmount('-1'), 'Must be a number greater than 0')
-  assert.equal(validateAmount('0'), 'Must be a number greater than 0')
-  assert.equal(validateAmount('0.000000001'), 'At most 8 decimal places are permitted')
-  assert.equal(validateAmount('0.00000001'), '')
-  assert.equal(validateAmount('0.000001'), '')
-  assert.equal(validateAmount('24323423.345141'), '')
-  assert.equal(validateAmount('342423'), '')
-  assert.equal(validateAmount('5', [isGreaterOrEqual(5)]), '')
-  assert.equal(validateAmount('4.99', [isGreaterOrEqual(5)]), 'Must be at least 5')
-  assert.equal(validateAmount('5', [isLowerOrEqual(5)]), '')
-  assert.equal(validateAmount('5.1', [isLowerOrEqual(5)]), 'Must be at most 5')
-  assert.equal(validateAmount('5', [areFundsEnough(toDust(5))]), '')
-  assert.equal(validateAmount('5.1', [areFundsEnough(toDust(5))]), 'Insufficient funds')
+  assert.deepEqual(validateAmount('x'), {
+    tKey: ['common', 'error', 'mustBeANumberGreaterThan'],
+    options: {replace: {minValue: 0}},
+  })
+  assert.deepEqual(validateAmount('-1'), {
+    tKey: ['common', 'error', 'mustBeANumberGreaterThan'],
+    options: {replace: {minValue: 0}},
+  })
+  assert.deepEqual(validateAmount('0'), {
+    tKey: ['common', 'error', 'mustBeANumberGreaterThan'],
+    options: {replace: {minValue: 0}},
+  })
+  assert.deepEqual(validateAmount('0.000000001'), {
+    tKey: ['common', 'error', 'atMostDecimalPlacesArePermitted'],
+    options: {count: 8},
+  })
+  assert.equal(validateAmount('0.00000001'), 'OK')
+  assert.equal(validateAmount('0.000001'), 'OK')
+  assert.equal(validateAmount('24323423.345141'), 'OK')
+  assert.equal(validateAmount('342423'), 'OK')
+  assert.equal(validateAmount('5', [isGreaterOrEqual(5)]), 'OK')
+  assert.deepEqual(validateAmount('4.99', [isGreaterOrEqual(5)]), {
+    tKey: ['common', 'error', 'mustBeAtLeast'],
+    options: {replace: {minValue: 5}},
+  })
+  assert.equal(validateAmount('5', [isLowerOrEqual(5)]), 'OK')
+  assert.deepEqual(validateAmount('5.1', [isLowerOrEqual(5)]), {
+    tKey: ['common', 'error', 'mustBeAtMost'],
+    options: {replace: {maxValue: 5}},
+  })
+  assert.equal(validateAmount('5', [areFundsEnough(toDust(5))]), 'OK')
+  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toDust(5))]), {
+    tKey: ['wallet', 'error', 'insufficientFunds'],
+  })
 })
 
 it('sums bignumbers', () => {
@@ -214,74 +229,71 @@ it('converts contract return data to human-readable ASCII', () => {
 })
 
 it('validates ethereum address', () => {
-  assert.equal(validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC7'), '')
-  assert.equal(validateEthAddress(''), EMPTY_ADDRESS_MSG)
-  assert.equal(validateEthAddress('foobar'), INVALID_ADDRESS_MSG)
-})
-
-it('converts hashrates ot human readable format correctly', () => {
-  assert.equal(toHumanReadableHashrate(0), '0 hash/s')
-  assert.equal(toHumanReadableHashrate(1024), '1 kH/s')
-  assert.equal(toHumanReadableHashrate(1024 + 512), '1.5 kH/s')
-  assert.equal(toHumanReadableHashrate(2048), '2 kH/s')
-  assert.equal(toHumanReadableHashrate(1024 * 1024), '1 MH/s')
-  assert.equal(toHumanReadableHashrate(1024 * 1024 * 1.5), '1.5 MH/s')
-  assert.equal(toHumanReadableHashrate(1024 * 1024 * 1024), '1 GH/s')
-
-  assert.equal(toHumanReadableHashrate(-1), 'Invalid hashrate')
+  assert.equal(validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC7'), 'OK')
+  assert.deepEqual(validateEthAddress(''), {tKey: ['glacierDrop', 'error', 'ethAddressMustBeSet']})
+  assert.deepEqual(validateEthAddress('foobar'), {
+    tKey: ['glacierDrop', 'error', 'invalidEthAddress'],
+  })
 })
 
 it('validates addresses correctly', async () => {
-  const validateTransparentOnTestnet = (v?: string): Promise<void> =>
-    createTransparentAddressValidator('testnet').validator({}, v)
-  const validateTransparentOnMainnet = (v?: string): Promise<void> =>
-    createTransparentAddressValidator('mainnet').validator({}, v)
-  const validateConfidentialOnTestnet = (v?: string): Promise<void> =>
-    createConfidentialAddressValidator('testnet').validator({}, v)
+  const validateTransparentOnTestnet = (v?: string): ValidationResult =>
+    createTransparentAddressValidator('testnet')(v)
+  const validateTransparentOnMainnet = (v?: string): ValidationResult =>
+    createTransparentAddressValidator('mainnet')(v)
+  const validateConfidentialOnTestnet = (v?: string): ValidationResult =>
+    createConfidentialAddressValidator('testnet')(v)
 
-  await assert.isRejected(validateTransparentOnTestnet(), /.*/, 'Empty string is invalid')
-  await assert.isRejected(validateTransparentOnTestnet('any-non-address-string'))
-  await assert.isRejected(
+  assert.notEqual(validateTransparentOnTestnet(), 'OK', 'Empty string is invalid')
+  assert.notEqual(
+    validateTransparentOnTestnet('any-non-address-string'),
+    'OK',
+    'Non address string is invalid',
+  )
+  assert.notEqual(
     validateTransparentOnTestnet(
       'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5',
     ),
-    /.*/,
+    'OK',
     'Confidential address for transparent is invalid',
   )
-  await assert.isRejected(
+  assert.notEqual(
     validateTransparentOnTestnet('m-main-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6gcfzcl'),
-    /.*/,
+    'OK',
     'Transparent mainnet address for testnet is rejected',
   )
 
-  await assert.isRejected(
+  assert.notEqual(
     validateTransparentOnMainnet('m-test-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6rt4y4h'),
-    /.*/,
+    'OK',
     'Transparent testnet address for mainnet is rejected',
   )
 
-  await assert.isRejected(validateConfidentialOnTestnet(), /.*/, 'Empty string is invalid')
-  await assert.isRejected(
+  assert.notEqual(validateConfidentialOnTestnet(), 'OK', 'Empty string is invalid')
+  assert.notEqual(
     validateConfidentialOnTestnet('any-non-address-string'),
-    /.*/,
+    'OK',
     'Invalid address for confidential is rejected',
   )
-  await assert.isRejected(
+  assert.notEqual(
     validateConfidentialOnTestnet('m-main-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6gcfzcl'),
-    /.*/,
+    'OK',
     'Transparent address for confidential is invalid',
   )
 
-  await assert.isFulfilled(
+  assert.equal(
     validateTransparentOnTestnet('m-test-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6rt4y4h'),
+    'OK',
   )
-  await assert.isFulfilled(
+  assert.equal(
     validateTransparentOnMainnet('m-main-uns-ad1ankhz3md8v8mcqxr3zzxgrhad44f9vx6gcfzcl'),
+    'OK',
   )
-  await assert.isFulfilled(
+  assert.equal(
     validateConfidentialOnTestnet(
       'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5',
     ),
+    'OK',
   )
 })
 

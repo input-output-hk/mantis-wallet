@@ -26,6 +26,8 @@ export const TIME_FORMATS = ['24-hour', '12-hour'] as const
 export type DateFormat = typeof DATE_FORMATS[number]
 export type TimeFormat = typeof TIME_FORMATS[number]
 
+const HASHRATE_SUFFIX = ['hash/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s', 'EH/s', 'ZH/s', 'YH/s']
+
 interface Formatters {
   formatDate: (date: Date) => string
   toDurationString: (seconds: number) => string
@@ -33,6 +35,7 @@ interface Formatters {
   formatPercentage: (ratio: number | BigNumber) => string
   abbreviateAmount: (bg: BigNumber) => ReturnType<typeof abbreviateAmount>
   formatFileSize: (bytes: number) => string
+  formatHashrate: (hashrate: number) => string
 }
 
 interface Translation {
@@ -155,6 +158,8 @@ function useSettingsState({
       formatPercentage: (ratio: number | BigNumber) => formatPercentage(ratio, numberFormat),
       abbreviateAmount: (bg: BigNumber) => abbreviateAmount(bg, bigNumberFormat),
       formatFileSize: (bytes: number) => filesize(bytes, {locale: language}),
+      formatHashrate: (hashrate: number) =>
+        filesize(hashrate, {locale: language, fullform: true, fullforms: HASHRATE_SUFFIX}),
     }
   }, [language, dateFormat, timeFormat])
 

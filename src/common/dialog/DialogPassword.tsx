@@ -1,52 +1,53 @@
 import React, {FunctionComponent} from 'react'
 import {Form} from 'antd'
-import {Rule} from 'antd/lib/form'
-import {StoreValue} from 'antd/lib/form/interface'
 import {useTranslation} from '../../settings-state'
 import {BorderlessInputPassword} from '../BorderlessInput'
 import {DialogState} from '../Dialog'
 import {DialogColumns} from './DialogColumns'
+import {Trans} from '../Trans'
+import {ValidationResult, toAntValidator} from '../util'
 import './DialogPassword.scss'
 
 interface DialogPasswordProps {
   onChange?: (value: string) => void
   setValid?: (valid: boolean) => void
-  rules?: Rule[]
-  criteriaMessage?: string
 }
 
-export const hasAllNeededCharacters = {
-  validator: (_rule: Rule, value: StoreValue): Promise<void> =>
-    !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(value)
-      ? Promise.reject(
-          'Password needs to have at least 1 uppercase, 1 lowercase and 1 number character',
-        )
-      : Promise.resolve(),
+export const hasAllNeededCharacters = (value?: string): ValidationResult => {
+  return /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(value || '')
+    ? 'OK'
+    : {tKey: ['wallet', 'error', 'missingCharacterTypeForPassword']}
 }
 
-const isAtLeast8Characters = {
-  validator: (_rule: Rule, value: StoreValue): Promise<void> =>
-    !value || value.length < 8
-      ? Promise.reject('Password needs to be at least 8 characters')
-      : Promise.resolve(),
-}
+const isAtLeast8Characters = (value?: string): ValidationResult =>
+  !value || value.length < 8
+    ? {tKey: ['wallet', 'error', 'passwordMustBeAtLeast8Characters']}
+    : 'OK'
 
 const PASSWORD_FIELD = 'password'
 const REPASSWORD_FIELD = 're-password'
 
 export const DialogPassword: FunctionComponent<DialogPasswordProps> = ({
   onChange,
-  rules = [hasAllNeededCharacters, isAtLeast8Characters],
-  criteriaMessage = 'Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number',
 }: DialogPasswordProps) => {
   const {dialogForm} = DialogState.useContainer()
   const {t} = useTranslation()
 
   return (
     <div className="DialogPassword">
-      <div className="label">Enter Password</div>
+      <div className="label">
+        <Trans k={['wallet', 'label', 'enterPassword']} />
+      </div>
       <DialogColumns>
-        <Form.Item name={PASSWORD_FIELD} rules={rules} validateFirst className="password-form-item">
+        <Form.Item
+          name={PASSWORD_FIELD}
+          rules={[
+            toAntValidator(t, hasAllNeededCharacters),
+            toAntValidator(t, isAtLeast8Characters),
+          ]}
+          validateFirst
+          className="password-form-item"
+        >
           <BorderlessInputPassword
             className="input"
             data-testid="password"
@@ -70,7 +71,7 @@ export const DialogPassword: FunctionComponent<DialogPasswordProps> = ({
                   )
                   .then(() =>
                     !value || getFieldValue(PASSWORD_FIELD) !== value
-                      ? Promise.reject(t(['common', 'validationError', 'passwordsDoNotMatch']))
+                      ? Promise.reject(t(['common', 'error', 'passwordsDoNotMatch']))
                       : Promise.resolve(),
                   ),
             }),
@@ -79,7 +80,9 @@ export const DialogPassword: FunctionComponent<DialogPasswordProps> = ({
           <BorderlessInputPassword className="input" data-testid="rePassword" />
         </Form.Item>
       </DialogColumns>
-      {criteriaMessage && <div className="criteria">{criteriaMessage}</div>}
+      <div className="criteria">
+        <Trans k={['wallet', 'message', 'passwordCriteriaMessage']} />
+      </div>
     </div>
   )
 }

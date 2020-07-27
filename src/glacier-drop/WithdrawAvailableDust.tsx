@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_LIMIT, DEFAULT_FEE} from './glacier-config'
 import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
 import {LoadedState, FeeEstimates} from '../common/wallet-state'
-import {validateFee, fillActionHandlers} from '../common/util'
+import {validateFee, fillActionHandlers, translateValidationResult} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
 import {wrapWithModal, ModalLocker} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
@@ -12,6 +12,7 @@ import {DialogShowDust} from '../common/dialog/DialogShowDust'
 import {DialogFee} from '../common/dialog/DialogFee'
 import {getUnfrozenAmount, getNumberOfEpochsForClaim, getCurrentEpoch} from './Period'
 import {UNITS} from '../common/units'
+import {useTranslation} from '../settings-state'
 import './WithdrawAvailableDust.scss'
 
 const {Dust} = UNITS
@@ -38,12 +39,13 @@ const _WithdrawAvailableDust = ({
   calculateGasPrice,
 }: WithdrawAvailableDustProps): JSX.Element => {
   const {withdraw, getWithdrawCallParams} = GlacierState.useContainer()
+  const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
   const {transparentAddress, withdrawnDustAmount, dustAmount} = claim
 
   const [fee, setFee] = useState(DEFAULT_FEE)
-  const feeError = validateFee(fee)
+  const feeValidationResult = validateFee(fee)
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> =>
@@ -53,7 +55,7 @@ const _WithdrawAvailableDust = ({
     [],
   )
 
-  const disabled = !!feeError || !!feeEstimateError || isFeeEstimationPending
+  const disabled = feeValidationResult !== 'OK' || !feeEstimates
 
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
   const numberOfEpochsForClaim = getNumberOfEpochsForClaim(claim, periodConfig)
@@ -100,7 +102,7 @@ const _WithdrawAvailableDust = ({
         feeEstimates={feeEstimates}
         feeEstimateError={feeEstimateError}
         onChange={setFee}
-        errorMessage={feeError}
+        errorMessage={translateValidationResult(t, feeValidationResult)}
         isPending={isFeeEstimationPending}
       />
       <div

@@ -1,13 +1,14 @@
 import React from 'react'
 import {isNone} from 'fp-ts/lib/Option'
-import {toHumanReadableHashrate} from './util'
 import {BackendState} from './backend-state'
 import {useInterval} from './hook-utils'
 import {Trans} from './Trans'
+import {useFormatters} from '../settings-state'
 import './MiningStatus.scss'
 
 export const MiningStatus = (): JSX.Element => {
   const {isMining, hashrate, refresh} = BackendState.useContainer()
+  const {formatHashrate} = useFormatters()
   useInterval(() => refresh(), 5000)
 
   if (isNone(isMining) || isNone(hashrate))
@@ -17,7 +18,7 @@ export const MiningStatus = (): JSX.Element => {
   return (
     <Trans
       k={['wallet', 'miningStatus', 'miningAtHashrate']}
-      values={{hashrate: toHumanReadableHashrate(hashrate.value)}}
+      values={{hashrate: formatHashrate(hashrate.value)}}
     />
   )
 }

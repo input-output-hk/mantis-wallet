@@ -6,16 +6,21 @@ import {SelectValue} from 'antd/lib/select'
 import {DialogInput} from './DialogInput'
 import {DialogSeedPhrase} from './DialogSeedPhrase'
 import {fillActionHandlers} from '../util'
+import {TKeyRenderer} from '../i18n'
+import {Trans} from '../Trans'
 import './DialogSecrets.scss'
 
-export enum RecoveryMethod {
-  SpendingKey = 'Private Key',
-  SeedPhrase = 'Recovery Phrase',
+const recoveryMethods = ['spendingKey', 'seedPhrase'] as const
+export type RecoveryMethod = typeof recoveryMethods[number]
+
+const recoveryMethodLabel: Record<RecoveryMethod, TKeyRenderer> = {
+  spendingKey: ['wallet', 'label', 'privateKey'],
+  seedPhrase: ['wallet', 'label', 'recoveryPhrase'],
 }
 
 interface DialogSecrets {
   onMethodChange: (method: RecoveryMethod) => void
-  onSpendingKeyChange: (spendinKey: string) => void
+  onSpendingKeyChange: (spendingKey: string) => void
   onSeedPhraseChange: (seedPhrase: string) => void
 }
 
@@ -26,11 +31,11 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
 }: DialogSecrets) => {
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhrase, setSeedPhrase] = useState('')
-  const [recoveryMethod, setRecoveryMethod] = useState(RecoveryMethod.SpendingKey)
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('spendingKey')
   const isInitialMount = useRef(true)
   const inputRefs = {
-    [RecoveryMethod.SpendingKey]: useRef<Input>(null),
-    [RecoveryMethod.SeedPhrase]: useRef<Select<SelectValue>>(null),
+    spendingKey: useRef<Input>(null),
+    seedPhrase: useRef<Select<SelectValue>>(null),
   }
 
   useEffect(() => {
@@ -51,22 +56,22 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
   return (
     <div className="DialogSecrets">
       <div className="tabs">
-        {Object.values(RecoveryMethod).map((method) => (
+        {recoveryMethods.map((method) => (
           <div
             key={method}
             className={classnames('tab', {active: method === recoveryMethod})}
             {...fillActionHandlers(handleMethodChange(method))}
           >
-            {method}
+            <Trans k={recoveryMethodLabel[method]} />
           </div>
         ))}
       </div>
       <div
-        className={classnames({hidden: RecoveryMethod.SpendingKey !== recoveryMethod})}
+        className={classnames({hidden: 'spendingKey' !== recoveryMethod})}
         onKeyDown={(e) => {
           if (e.key === 'Tab' && !e.shiftKey && spendingKey.length === 0) {
             e.preventDefault()
-            handleMethodChange(RecoveryMethod.SeedPhrase)()
+            handleMethodChange('seedPhrase')()
           }
         }}
       >
@@ -77,15 +82,15 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
             setSpendingKey(spendingKey)
             onSpendingKeyChange(spendingKey)
           }}
-          ref={inputRefs[RecoveryMethod.SpendingKey]}
+          ref={inputRefs.spendingKey}
         />
       </div>
       <div
-        className={classnames({hidden: RecoveryMethod.SeedPhrase !== recoveryMethod})}
+        className={classnames({hidden: 'seedPhrase' !== recoveryMethod})}
         onKeyDown={(e) => {
           if (e.key === 'Tab' && e.shiftKey && seedPhrase.length === 0) {
             e.preventDefault()
-            handleMethodChange(RecoveryMethod.SpendingKey)()
+            handleMethodChange('spendingKey')()
           }
         }}
       >
@@ -94,7 +99,7 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
             setSeedPhrase(seedPhrase)
             onSeedPhraseChange(seedPhrase)
           }}
-          ref={inputRefs[RecoveryMethod.SeedPhrase]}
+          ref={inputRefs.seedPhrase}
         />
       </div>
     </div>

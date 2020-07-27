@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {validateEthAddress, toAntValidator} from '../../common/util'
+import {validateEthAddress, toAntValidator, ValidationResult} from '../../common/util'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -7,6 +7,7 @@ import {DisplayChain} from '../../pob/chains'
 import {GlacierState, BalanceWithProof} from '../glacier-state'
 import {ETC_CHAIN} from '../glacier-config'
 import {LINKS} from '../../external-link-config'
+import {useTranslation} from '../../settings-state'
 
 interface EnterAddressProps extends ModalOnCancel {
   onNext: (address: string, balanceWithProof: BalanceWithProof) => void
@@ -15,12 +16,15 @@ interface EnterAddressProps extends ModalOnCancel {
 
 const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps): JSX.Element => {
   const modalLocker = ModalLocker.useContainer()
+  const {t} = useTranslation()
   const {getEtcSnapshotBalanceWithProof, claimedAddresses} = GlacierState.useContainer()
 
   const [address, setAddress] = useState<string>('')
 
-  const isAlreadyClaimed = (address?: string): string =>
-    address && claimedAddresses.includes(address) ? 'Already claimed' : ''
+  const isAlreadyClaimed = (address?: string): ValidationResult =>
+    address && claimedAddresses.includes(address)
+      ? {tKey: ['glacierDrop', 'error', 'alreadyClaimed']}
+      : 'OK'
 
   return (
     <Dialog
@@ -48,7 +52,7 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
         }}
         formItem={{
           name: 'public-address',
-          rules: [toAntValidator(isAlreadyClaimed), toAntValidator(validateEthAddress)],
+          rules: [toAntValidator(t, isAlreadyClaimed), toAntValidator(t, validateEthAddress)],
         }}
         autoFocus
       />

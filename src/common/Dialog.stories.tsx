@@ -165,17 +165,8 @@ export const InteractiveMessage: FunctionComponent<{}> = () => (
 export const InteractivePassword: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Password">
     <DialogPassword
-      criteriaMessage={text('Password criteria', 'Password should be at least 4 characters')}
       setValid={action('set-valid-password')}
       onChange={action('on-change-password')}
-      rules={[
-        {
-          validator: (_rule, value) =>
-            !value || value.length < 4
-              ? Promise.reject(text('Inline error', 'Password should be at least 4 characters'))
-              : Promise.resolve(),
-        },
-      ]}
     />
   </Dialog>
 )

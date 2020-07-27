@@ -20,13 +20,13 @@ const _WalletRestore = ({
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
   const [passphrase, setPassphrase] = useState('')
-  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>(RecoveryMethod.SpendingKey)
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('spendingKey')
 
   const restore = async (): Promise<boolean> => {
     switch (recoveryMethod) {
-      case RecoveryMethod.SpendingKey:
+      case 'spendingKey':
         return walletState.restoreFromSpendingKey({passphrase, spendingKey})
-      case RecoveryMethod.SeedPhrase:
+      case 'seedPhrase':
         const seedPhrase = seedPhraseString.split(' ')
         return walletState.restoreFromSeedPhrase({passphrase, seedPhrase})
     }

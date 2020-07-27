@@ -42,6 +42,11 @@ type RendererTranslations = typeof rendererTranslationsEn
 export type TKeyRenderer = Path<RendererTranslations>
 export type TFunctionRenderer = TypedTFunction<RendererTranslations>
 
+export interface Translatable {
+  tKey: TKeyRenderer
+  options?: Parameters<TFunctionRenderer>[1]
+}
+
 export const tKeyRendererToString = (key: TKeyRenderer): string => key.join('.')
 
 export const createTFunctionRenderer = (i18n: typeof i18next): TFunctionRenderer => (

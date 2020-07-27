@@ -6,12 +6,13 @@ import {TransparentAccount, FeeEstimates} from '../../common/wallet-state'
 import {ModalLocker, wrapWithModal, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog, DialogState} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {validateFee, createTxAmountValidator} from '../../common/util'
+import {validateFee, createTxAmountValidator, translateValidationResult} from '../../common/util'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {UNITS} from '../../common/units'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogFee} from '../../common/dialog/DialogFee'
+import {useTranslation} from '../../settings-state'
 import './RedeemModal.scss'
 
 const {Dust} = UNITS
@@ -67,13 +68,15 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
   estimateRedeemFee,
   onCancel,
 }: RedeemDialogProps) => {
+  const {t} = useTranslation()
+  const modalLocker = ModalLocker.useContainer()
+
   const [amount, setAmount] = useState('0')
   const [fee, setFee] = useState('0')
   const [useFullAmount, setUseFullAmount] = useState(false)
-  const modalLocker = ModalLocker.useContainer()
 
-  const feeError = validateFee(fee)
-  const txAmountValidator = createTxAmountValidator(transparentAccount.balance)
+  const feeValidationResult = validateFee(fee)
+  const txAmountValidator = createTxAmountValidator(t, transparentAccount.balance)
 
   useEffect(() => {
     if (useFullAmount) {
@@ -91,7 +94,7 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
     () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
   )
 
-  const disableRedeem = !!feeError || isFeeEstimationPending
+  const disableRedeem = feeValidationResult !== 'OK' || !feeEstimates
 
   return (
     <Dialog
@@ -141,7 +144,7 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
         defaultValue={fee}
         onChange={(fee: string): void => setFee(fee)}
         isPending={isFeeEstimationPending}
-        errorMessage={feeError}
+        errorMessage={translateValidationResult(t, feeValidationResult)}
         forceCustom={useFullAmount}
       />
       <DialogMessage type="highlight">

@@ -36,17 +36,39 @@
     }
   },
   "wallet": {
+    "button": {
+      "clearRecoveryPhraseInput": "Clear"
+    },
+    "label": {
+      "enterPassword": "Enter Password",
+      "privateKey": "Private Key",
+      "recoveryPhrase": "Recovery Phrase"
+    },
     "error": {
       "jobAlreadyAdded": "Job {{jobHash}} already added",
       "couldNotLockWallet": "Couldn't lock the wallet.",
       "couldNotRemoveWallet": "Couldn't remove the wallet.",
-      "couldNotUpdateFeeEstimates": "Couldn't update fee estimates, they might be outdated"
+      "couldNotUpdateFeeEstimates": "Couldn't update fee estimates, they might be outdated",
+      "couldNotLoadFeeEstimates": "Couldn't load fee estimates, cannot continue",
+      "insufficientFunds": "Insufficient funds",
+      "recoveryPhraseIsIncorrect": "The phrase is incorrect",
+      "addressMustBeSet": "Address must be set",
+      "invalidTransparentAddress": "Invalid transparent address",
+      "invalidConfidentialAddress": "Invalid confidential address",
+      "missingCharacterTypeForPassword": "Password needs to have at least 1 uppercase, 1 lowercase and 1 number character",
+      "passwordMustBeAtLeast8Characters": "Password needs to be at least 8 characters"
     },
     "message": {
-      "buildingTransaction": "Building {{count}} transaction",
-      "buildingTransaction_plural": "Building {{count}} transactions",
-      "finishedTxBuilding": "Finished",
-      "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated."
+      "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",
+      "loadingFeeEstimates": "Loading estimates",
+      "passwordCriteriaMessage": "Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number",
+      "inputRecoveryPhraseInstructions": "Re-input recovery phrase by selecting words from selection"
+    },
+    "feeEstimateLevels": {
+      "custom": "Custom",
+      "low": "Slow",
+      "medium": "Average",
+      "high": "Fast"
     },
     "miningStatus": {
       "loadingMiningStatus": "Loading mining status",
@@ -112,6 +134,21 @@
       "cannotGenerateDagFile": "Cannot generate DAG file"
     }
   },
+  "glacierDrop": {
+    "error": {
+      "alreadyClaimed": "Already claimed",
+      "ethAddressMustBeSet": "Address must be set",
+      "invalidEthAddress": "Invalid address",
+      "invalidEthPrivateKey": "Invalid private key",
+      "ethPrivateKeyMustBeSet": "Private key must be set"
+    }
+  },
+  "proofOfBurn": {
+    "error": {
+      "noAvailableProvers": "No available provers.",
+      "noAvailableProversForThisToken": "No available provers for this token at the moment."
+    }
+  },
   "common": {
     "title": {
       "support": "Support"
@@ -120,7 +157,8 @@
       "cancel": "Cancel",
       "next": "Next",
       "exportDebugLogs": "Export Logs",
-      "openSupportChannel": "Open Slack"
+      "openSupportChannel": "Open Slack",
+      "downloadTxt": "Download txt"
     },
     "answer": {
       "yes": "Yes",
@@ -140,9 +178,6 @@
       "status": "Status",
       "showDetails": "Show details"
     },
-    "validationError": {
-      "passwordsDoNotMatch": "Passwords don't match"
-    },
     "initializationStatus": {
       "initLuna": "Initializing Luna",
       "sonicsParamsFetching": "Sonics params fetching",
@@ -156,12 +191,24 @@
       "waitUntilActionFinish": "You will have to wait for your action to finish.",
       "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
       "saveDebugLogsCancelled": "Operation cancelled.",
-      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>"
+      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
+      "chooseFromDropdownList": "Choose from list…",
+      "learnMore": "Learn more"
     },
     "error": {
       "dialogValidationFailed": "Some fields require additional action before you can continue.",
       "unexpectedError": "Unexpected error",
-      "failedToSaveDebugLogs": "Failed to save debug logs: {{errorMsg}}"
+      "passwordsDoNotMatch": "Passwords don't match",
+      "failedToSaveDebugLogs": "Failed to save debug logs: {{errorMsg}}",
+      "numberMustBePositive": "Number must be positive",
+      "mustBeANumberLessThan": "Must be a number less than {{maxValue}}",
+      "mustBeANumberGreaterThan": "Must be a number greater than {{minValue}}",
+      "mustBeAtLeast": "Must be at least {{minValue}}",
+      "mustBeAtMost": "Must be at most {{maxValue}}",
+      "itMustBeAnInteger": "It must be an integer value",
+      "atMostDecimalPlacesArePermitted": "At most {{count}} decimal place is permitted",
+      "atMostDecimalPlacesArePermitted_plural": "At most {{count}} decimal places are permitted",
+      "noAvailableOptionForDropdown": "No available option"
     },
     "networkTag": {
       "testnet": "Testnet",
