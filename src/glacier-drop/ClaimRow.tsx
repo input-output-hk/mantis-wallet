@@ -2,7 +2,7 @@ import React from 'react'
 import SVG from 'react-inlinesvg'
 import BigNumber from 'bignumber.js'
 import {Button, Popover} from 'antd'
-import {ETC_CHAIN} from './glacier-config'
+import {ETC_CHAIN, DST_CHAIN} from '../common/chains'
 import {
   Claim,
   PeriodConfig,
@@ -14,7 +14,6 @@ import {TransactionStatus, CallTxStatuses} from '../common/wallet-state'
 import {fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {ProgressState, ProgressIcon} from '../common/ProgressBar'
-import {DUST_SYMBOL} from '../pob/chains'
 import {
   getUnfrozenAmount,
   getCurrentEpoch,
@@ -173,7 +172,7 @@ const UnfreezeDetail = ({
         <div>
           0%
           <span className="amount">
-            0 / <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
+            0 / <ShortNumber big={dustAmount} /> {DST_CHAIN.symbol}
           </span>
         </div>
       </>
@@ -188,7 +187,7 @@ const UnfreezeDetail = ({
           {formatPercentage(unfrozenDustAmount.dividedBy(dustAmount))}
           <span className="amount">
             <ShortNumber big={unfrozenDustAmount} /> / <ShortNumber big={dustAmount} />{' '}
-            {DUST_SYMBOL}
+            {DST_CHAIN.symbol}
           </span>
         </div>
         {epochsRemaining > 0 && (
@@ -228,7 +227,8 @@ const WithdrawDetail = ({claim, withdrawalStatus}: WithdrawDetailProps): JSX.Ele
       <div className="withdraw-progress">
         {formatPercentage(withdrawnDustAmount.dividedBy(dustAmount))}
         <span className="amount">
-          <ShortNumber big={withdrawnDustAmount} /> / <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
+          <ShortNumber big={withdrawnDustAmount} /> / <ShortNumber big={dustAmount} />{' '}
+          {DST_CHAIN.symbol}
         </span>
       </div>
       <div className="tx-status">
@@ -331,7 +331,7 @@ export const ClaimRow = ({
         <div className="exchange">
           <ShortNumber big={externalAmount} unit={ETC_CHAIN.unitType} /> {ETC_CHAIN.symbol}
           <SVG src={exchangeIcon} className="icon" />
-          <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
+          <ShortNumber big={dustAmount} /> {DST_CHAIN.symbol}
         </div>
         <div className="external-address">
           <Popover content={externalAddress} placement="bottom">
@@ -368,12 +368,12 @@ export const ClaimRow = ({
 
         <div className="claimed detail">
           <div>
-            <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
+            <ShortNumber big={dustAmount} /> {DST_CHAIN.symbol}
           </div>
         </div>
         <div className="unlocked detail">
           <div>
-            <ShortNumber big={unlockedDustAmount} /> {DUST_SYMBOL}
+            <ShortNumber big={unlockedDustAmount} /> {DST_CHAIN.symbol}
           </div>
           <div className="puzzle-progress">
             <PuzzleProgress

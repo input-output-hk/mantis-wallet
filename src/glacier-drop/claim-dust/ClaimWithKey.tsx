@@ -1,11 +1,10 @@
 import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {GlacierState, AuthorizationSignature} from '../glacier-state'
-import {ETC_CHAIN} from '../glacier-config'
 import {validateEthPrivateKey, toAntValidator} from '../../common/util'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {DisplayChain} from '../../pob/chains'
+import {Chain, ETC_CHAIN} from '../../common/chains'
 import {wrapWithModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -21,7 +20,7 @@ interface ClaimWithKeyProps {
   minimumDustAmount: BigNumber
   transparentAddress: string
   onNext: (signature: AuthorizationSignature) => void
-  chain?: DisplayChain
+  chain?: Chain
 }
 
 const _ClaimWithKey = ({

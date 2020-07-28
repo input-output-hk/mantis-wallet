@@ -1,12 +1,12 @@
 import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
-import {Chain} from '../chains'
+import {PobChain} from '../pob-chains'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
 import {useLocalizedUtilities} from '../../settings-state'
 import './BurnCoinsShowAddress.scss'
 
 interface BurnCoinsShowAddressProps {
-  chain: Chain
+  chain: PobChain
   burnAddress: string
   goBack: () => void
 }
@@ -32,7 +32,7 @@ export const BurnCoinsShowAddress: FunctionComponent<BurnCoinsShowAddressProps> 
           onClick: () => copyToClipboard(burnAddress),
         }}
       >
-        <DialogAddress chain={chain} address={burnAddress} />
+        <DialogAddress svgLogo={chain.burnLogo} address={burnAddress} />
       </Dialog>
     </div>
   )

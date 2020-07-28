@@ -5,7 +5,7 @@ import {Popover, Button, Input} from 'antd'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {Chain} from '../chains'
+import {PobChain} from '../pob-chains'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {LINKS} from '../../external-link-config'
@@ -24,7 +24,7 @@ import {useTranslation} from '../../settings-state'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
-  chain: Chain
+  chain: PobChain
   provers: Prover[]
   transparentAddresses: string[]
   cancel: () => void

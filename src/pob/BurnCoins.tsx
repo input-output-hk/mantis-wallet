@@ -5,7 +5,7 @@ import {RouterState} from '../router-state'
 import {LoadedState} from '../common/wallet-state'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
-import {Chain} from './chains'
+import {PobChain} from './pob-chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {ProofOfBurnState} from './pob-state'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
@@ -19,12 +19,12 @@ interface ChooseToken {
 
 interface GenerateBurn {
   step: 'GENERATE_BURN_ADDRESS'
-  chain: Chain
+  chain: PobChain
 }
 
 interface ShowAddress {
   step: 'SHOW_ADDRESS'
-  chain: Chain
+  chain: PobChain
   burnAddress: string
 }
 

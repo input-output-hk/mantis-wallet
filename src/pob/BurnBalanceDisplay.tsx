@@ -4,11 +4,11 @@ import SVG from 'react-inlinesvg'
 import {ShortNumber} from '../common/ShortNumber'
 import clockIcon from '../assets/icons/clock.svg'
 import sumIcon from '../assets/icons/sum.svg'
-import {Chain} from './chains'
+import {PobChain} from './pob-chains'
 import './BurnBalanceDisplay.scss'
 
 interface BurnBalanceDisplayProps {
-  chain: Chain
+  chain: PobChain
   pending: BigNumber
   available: BigNumber
 }

@@ -5,7 +5,7 @@ import {fold} from 'fp-ts/lib/Either'
 import {ExtendableError} from '../../shared/extendable-error'
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
-import {ChainId} from '../chains'
+import {PobChainId} from '../pob-chains'
 import {wait} from '../../shared/utils'
 import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
 import {rendererLog} from '../../common/logger'
@@ -203,7 +203,7 @@ export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<A
 export const createBurn = async (
   prover: ProverConfig,
   address: string,
-  chainId: ChainId,
+  chainId: PobChainId,
   fee: number,
   autoConversion: boolean,
 ): Promise<string> => {
@@ -230,7 +230,7 @@ export const proveTransaction = async (
 
 export const getInfo = async (
   prover: ProverConfig,
-): Promise<Partial<Record<ChainId, ChainInfo>>> => {
+): Promise<Partial<Record<PobChainId, ChainInfo>>> => {
   return httpGetRequest(prover, 'submitter', '/api/v1/info')
     .then(tPromise.decode(ProverInfo))
     .then(({chains}) => chains)

@@ -5,7 +5,7 @@ import {action} from '@storybook/addon-actions'
 import {prover, asyncAction} from '../storybook-util/custom-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {BurnBalanceDisplay} from './BurnBalanceDisplay'
-import {CHAINS} from './chains'
+import {POB_CHAINS} from './pob-chains'
 import {BurnActions} from './BurnActions'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -17,7 +17,7 @@ export default {
   decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
 }
 
-const {BTC_TESTNET, ETH_TESTNET} = CHAINS
+const {BTC_TESTNET, ETH_TESTNET} = POB_CHAINS
 
 export const emptyBurnActions = (): JSX.Element => (
   <BurnActions

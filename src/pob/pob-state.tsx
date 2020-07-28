@@ -14,7 +14,7 @@ import {
   prettyErrorMessage,
   BurnStatusType,
 } from './api/prover'
-import {Chain, ChainId} from './chains'
+import {PobChain, PobChainId} from './pob-chains'
 import {ProverConfig} from '../config/type'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
@@ -30,7 +30,7 @@ export interface BurnWatcher {
 
 export interface BurnAddressInfo {
   midnightAddress: string
-  chainId: ChainId
+  chainId: PobChainId
   reward: number
   autoConversion: boolean
 }
@@ -50,7 +50,7 @@ export type BurnStatus = {
 }
 
 export interface Prover extends ProverConfig {
-  rewards: Partial<Record<ChainId, number>>
+  rewards: Partial<Record<PobChainId, number>>
 }
 
 export interface ProofOfBurnData {
@@ -60,7 +60,7 @@ export interface ProofOfBurnData {
     burnAddress: string,
     prover: ProverConfig,
     midnightAddress: string,
-    chain: Chain,
+    chain: PobChain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
@@ -71,7 +71,7 @@ export interface ProofOfBurnData {
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
   provers: Prover[]
-  pendingBalances: Partial<Record<ChainId, BigNumber>>
+  pendingBalances: Partial<Record<PobChainId, BigNumber>>
 }
 
 export type StorePobData = {
@@ -104,7 +104,7 @@ const getBurnStatusKey = ({burnAddress, prover: {address}}: BurnWatcher): string
 export const getPendingBalance = (
   burnStatuses: BurnStatus[],
   burnAddresses: Record<string, BurnAddressInfo>,
-): Partial<Record<ChainId, BigNumber>> =>
+): Partial<Record<PobChainId, BigNumber>> =>
   _.pipe(
     _.flatMap(({lastStatuses, burnWatcher: {burnAddress}}: BurnStatus) =>
       lastStatuses.map((status) => ({
@@ -255,7 +255,7 @@ function useProofOfBurnState(
     burnAddress: string,
     prover: ProverConfig,
     midnightAddress: string,
-    chain: Chain,
+    chain: PobChain,
     reward: number,
     autoConversion: boolean,
   ): Promise<void> => {

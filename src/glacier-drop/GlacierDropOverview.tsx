@@ -2,8 +2,8 @@ import React, {useState, useEffect, PropsWithChildren} from 'react'
 import {message} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {isNone, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {DisplayChain} from '../pob/chains'
-import {ETC_CHAIN, MINING_STATUS_CHECK_INTERVAL, DEFAULT_GLACIER_CONSTANTS} from './glacier-config'
+import {ETC_CHAIN, Chain} from '../common/chains'
+import {MINING_STATUS_CHECK_INTERVAL, DEFAULT_GLACIER_CONSTANTS} from './glacier-config'
 import {
   Claim,
   GlacierState,
@@ -37,7 +37,7 @@ import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
 import './GlacierDropOverview.scss'
 
-const availableChains: DisplayChain[] = [ETC_CHAIN]
+const availableChains: Chain[] = [ETC_CHAIN]
 
 interface ClaimHistoryProps {
   claims: Claim[]
@@ -243,7 +243,7 @@ const _GlacierDropOverview = ({
       .catch(handleError)
   }
 
-  const chooseChain = (_chain: DisplayChain): void => {
+  const chooseChain = (_chain: Chain): void => {
     if (claimDisabled) return
 
     if (walletState.transparentAccounts.length === 0) {
@@ -270,8 +270,8 @@ const _GlacierDropOverview = ({
       <div className="wallet-selector"></div>
       {period === 'Unlocking' && !solvingClaim && (
         <div className="claim-buttons">
-          {availableChains.map((c: DisplayChain) => (
-            <Token chain={c} chooseChain={chooseChain} key={c.name}>
+          {availableChains.map((c: Chain) => (
+            <Token chain={c} chooseChain={chooseChain} key={c.symbol}>
               Claim Dust
             </Token>
           ))}

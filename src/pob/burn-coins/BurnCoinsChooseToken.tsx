@@ -1,12 +1,12 @@
 import React, {FunctionComponent} from 'react'
 import {Button} from 'antd'
-import {Chain} from '../chains'
+import {PobChain} from '../pob-chains'
 import {Token} from '../../common/Token'
 import './BurnCoinsChooseToken.scss'
 
 interface BurnCoinsChooseTokenProps {
-  chains: Chain[]
-  chooseChain: (chain: Chain) => void
+  chains: PobChain[]
+  chooseChain: (chain: PobChain) => void
   cancel: () => void
 }
 

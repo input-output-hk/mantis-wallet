@@ -5,7 +5,7 @@ import {LoadingOutlined, RightOutlined, EyeInvisibleOutlined, EyeOutlined} from 
 import {Popover} from 'antd'
 import {TooltipPlacement} from 'antd/lib/tooltip'
 import classnames from 'classnames'
-import {CHAINS} from './chains'
+import {POB_CHAINS} from './pob-chains'
 import {BurnStatusType} from './api/prover'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import {ShortNumber} from '../common/ShortNumber'
@@ -150,7 +150,7 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
     }
   }, [burnStatus.isHidden])
 
-  const chain = CHAINS[burnAddressInfo.chainId]
+  const chain = POB_CHAINS[burnAddressInfo.chainId]
   const progress: AllProgress = isRedeemDone(syncStatus, burnStatus.redeem_tx_height)
     ? {
         started: 'checked',

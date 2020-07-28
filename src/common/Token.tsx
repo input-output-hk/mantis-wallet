@@ -1,15 +1,15 @@
 import React, {PropsWithChildren} from 'react'
 import SVG from 'react-inlinesvg'
-import {DisplayChain} from '../pob/chains'
+import {Chain} from './chains'
 import {fillActionHandlers} from './util'
 import './Token.scss'
 
-type TokenProps<T extends DisplayChain> = {
+type TokenProps<T extends Chain> = {
   chain: T
   chooseChain: (chain: T) => void
 }
 
-export const Token = <T extends DisplayChain>({
+export const Token = <T extends Chain>({
   chain,
   chooseChain,
   children,

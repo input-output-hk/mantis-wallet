@@ -5,15 +5,13 @@ import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import {toWei} from 'web3/lib/utils/utils.js'
 import ethereumLogo from '../../assets/icons/chains/ethereum.svg'
-import ethereumClippedLogo from '../../assets/icons/chains/ethereum-clipped.svg'
-import ethereumBurnLogo from '../../assets/icons/chains/m-eth.svg'
 import {
   expectCalledOnClick,
   glacierWrappedRender,
   DIALOG_VALIDATION_ERROR,
 } from '../../common/test-helpers'
 import {UNLOCK_BUTTON_TEXT} from './claim-with-strings'
-import {DisplayChain} from '../../pob/chains'
+import {Chain} from '../../common/chains'
 import {ClaimWithKey} from './ClaimWithKey'
 import {
   ClaimWithMessage,
@@ -39,12 +37,9 @@ const TRANSPARENT_ADDRESS_2 = 'm-test-uns-ad17upzkhnpmuenuhk3lnrc64q5kr0l3ez44g8
 const ETC_ADDRESS = '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Ba'
 const ETC_PRIVATE_KEY = '0x9c33b6ccd581b0635f154b5df78276587655f1f4fad46eb034c751511fe86474'
 
-const fooChain: DisplayChain = {
+const fooChain: Chain = {
   symbol: 'DOGE',
-  name: 'Dogecoin',
   logo: ethereumLogo,
-  clippedLogo: ethereumClippedLogo,
-  burnLogo: ethereumBurnLogo,
   unitType: 'Ether',
 }
 

@@ -3,8 +3,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import {DisplayChain} from '../../pob/chains'
-import {ETC_CHAIN, MIDNIGHT_CHAIN} from '../glacier-config'
+import {Chain, DST_CHAIN, ETC_CHAIN} from '../../common/chains'
 import './VerifyAddress.scss'
 
 interface VerifyAddressProps {
@@ -12,7 +11,7 @@ interface VerifyAddressProps {
   transparentAddress: string
   onNext: () => void
   onCancel: () => void
-  chain?: DisplayChain
+  chain?: Chain
 }
 
 export const VerifyAddress = ({
@@ -39,11 +38,11 @@ export const VerifyAddress = ({
       >
         <div className="section">
           <div className="label">{chain.symbol} Address</div>
-          <DialogAddress chain={chain} address={externalAddress} />
+          <DialogAddress svgLogo={chain.logo} address={externalAddress} />
         </div>
         <div className="section">
           <div className="label">Midnight Address</div>
-          <DialogAddress chain={MIDNIGHT_CHAIN} address={transparentAddress} />
+          <DialogAddress svgLogo={DST_CHAIN.logo} address={transparentAddress} />
         </div>
       </Dialog>
     </LunaModal>

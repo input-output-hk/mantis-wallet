@@ -3,7 +3,7 @@ import React from 'react'
 import BigNumber from 'bignumber.js'
 import {render, waitFor, act, fireEvent, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {CHAINS} from './chains'
+import {POB_CHAINS} from './pob-chains'
 import {expectCalledOnClick, WithSettingsProvider} from '../common/test-helpers'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
@@ -11,7 +11,7 @@ import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {mockedCopyToClipboard} from '../jest.setup'
 import {UNITS} from '../common/units'
 
-const {ETH_TESTNET, BTC_TESTNET} = CHAINS
+const {ETH_TESTNET, BTC_TESTNET} = POB_CHAINS
 const Bitcoin = UNITS.Bitcoin
 
 test('Burn Coins - Choose Tokens step', async () => {

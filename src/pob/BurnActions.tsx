@@ -10,7 +10,7 @@ import {TransparentAccount} from '../common/wallet-state'
 import {fillActionHandlers} from '../common/util'
 import {CHAINS_TO_USE_IN_POB} from './pob-config'
 import {prop} from '../shared/utils'
-import {ChainId} from './chains'
+import {PobChainId} from './pob-chains'
 import './BurnActions.scss'
 
 interface BurnActionsProps
@@ -32,7 +32,7 @@ export const BurnActions: FunctionComponent<BurnActionsProps> = ({
   const availableBalances = transparentAccounts.map(prop('midnightTokens')).reduce(
     _.mergeWith((a: BigNumber, b: BigNumber) => (a ? a.plus(b) : b)),
     {},
-  ) as Partial<Record<ChainId, BigNumber>>
+  ) as Partial<Record<PobChainId, BigNumber>>
 
   const burnBalances = CHAINS_TO_USE_IN_POB.map((chain) => ({
     chain,

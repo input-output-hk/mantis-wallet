@@ -5,7 +5,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {BurnAddressInfo, Prover} from '../pob-state'
-import {CHAINS} from '../chains'
+import {POB_CHAINS} from '../pob-chains'
 import {ShortNumber} from '../../common/ShortNumber'
 
 interface AddBurnTxModalProps extends ModalOnCancel {
@@ -73,8 +73,8 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
           key: burnAddress,
           label: (
             <>
-              (Reward: <ShortNumber big={reward} unit={CHAINS[chainId].unitType} /> M-
-              {CHAINS[chainId].symbol}) {burnAddress}
+              (Reward: <ShortNumber big={reward} unit={POB_CHAINS[chainId].unitType} /> M-
+              {POB_CHAINS[chainId].symbol}) {burnAddress}
             </>
           ),
         }))}

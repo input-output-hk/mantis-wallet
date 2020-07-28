@@ -6,7 +6,7 @@ import {LoadingOutlined} from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 import {InlineError, InlineErrorProps} from '../InlineError'
 import {DialogState} from '../Dialog'
-import {DUST_SYMBOL} from '../../pob/chains'
+import {DST_CHAIN} from '../chains'
 import {FeeEstimates} from '../wallet-state'
 import {useFormatters} from '../../settings-state'
 import {UNITS} from '../units'
@@ -149,7 +149,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
                 <Popover
                   content={
                     <span>
-                      {displayAmount(feeEstimates[level])} {DUST_SYMBOL}
+                      {displayAmount(feeEstimates[level])} {DST_CHAIN.symbol}
                     </span>
                   }
                 >
@@ -160,7 +160,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
                   <Trans k={feeLevelLabels[level]} />
                   <br />
                   <span className="fee-amount">
-                    {displayAmount(feeEstimates[level])} {DUST_SYMBOL}
+                    {displayAmount(feeEstimates[level])} {DST_CHAIN.symbol}
                   </span>
                 </span>
               )}

@@ -10,7 +10,7 @@ import {withPobState} from '../storybook-util/pob-state-decorator'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
-import {CHAINS} from './chains'
+import {POB_CHAINS} from './pob-chains'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {BurnCoinsTransparentAddress} from './burn-coins/BurnCoinsTransparentAddress'
@@ -37,7 +37,7 @@ export const generateTansparentAddress = (): JSX.Element => (
 
 export const chooseToken = (): JSX.Element => (
   <BurnCoinsChooseToken
-    chains={_.values(CHAINS)}
+    chains={_.values(POB_CHAINS)}
     chooseChain={action('choose-chain')}
     cancel={action('on-cancel')}
   />

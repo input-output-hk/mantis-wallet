@@ -15,7 +15,7 @@ import {
   bech32toHex,
   returnDataToHumanReadable,
 } from './util'
-import {Chain, ChainId} from '../pob/chains'
+import {PobChain, PobChainId} from '../pob/pob-chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
   makeWeb3Worker,
@@ -63,7 +63,7 @@ export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
 
 export type TransparentAccount = TransparentAddress & {
   balance: BigNumber
-  midnightTokens: Partial<Record<ChainId, BigNumber>>
+  midnightTokens: Partial<Record<PobChainId, BigNumber>>
 }
 
 export type FeeEstimates = t.TypeOf<typeof FeeEstimates>
@@ -124,7 +124,7 @@ export interface LoadedState {
   estimateRedeemFee(amount: BigNumber): Promise<FeeEstimates>
   getBurnAddress: (
     address: string,
-    chain: Chain,
+    chain: PobChain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<string>
@@ -550,7 +550,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getBurnAddress = async (
     address: string,
-    chain: Chain,
+    chain: PobChain,
     reward: number,
     autoConversion: boolean,
   ): Promise<string> => wallet.getBurnAddress(address, chain.numericId, reward, autoConversion)

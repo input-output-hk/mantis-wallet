@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
 import {fromWei} from 'web3/lib/utils/utils.js'
-import {DisplayChain, DUST_SYMBOL} from '../../pob/chains'
+import {Chain, ETC_CHAIN, DST_CHAIN} from '../../common/chains'
 import {wrapWithModal} from '../../common/LunaModal'
 import {ShortNumber} from '../../common/ShortNumber'
 import {Dialog} from '../../common/Dialog'
@@ -12,7 +12,6 @@ import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {DialogError} from '../../common/dialog/DialogError'
 import {LINKS} from '../../external-link-config'
 import {Link} from '../../common/Link'
-import {ETC_CHAIN} from '../glacier-config'
 import {Asset} from './Asset'
 import './Exchange.scss'
 
@@ -23,7 +22,7 @@ interface ExchangeProps {
   availableDust: BigNumber
   transparentAddresses: string[]
   onNext: (transparentAddress: string) => void
-  chain?: DisplayChain
+  chain?: Chain
 }
 
 const _Exchange = ({
@@ -90,7 +89,7 @@ const _Exchange = ({
           </div>
           <span className="label">Currently Available Dust</span>
           <span className="amount">
-            <ShortNumber big={availableDust} /> {DUST_SYMBOL}
+            <ShortNumber big={availableDust} /> {DST_CHAIN.symbol}
           </span>
         </div>
       </DialogApproval>
