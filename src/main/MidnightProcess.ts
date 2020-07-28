@@ -111,7 +111,6 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
           ...processConfig.additionalSettings,
           ...additionalConfig,
           [processConfig.dataDir.settingName]: processDataDir,
-          LOGS_DIR: resolve(processDataDir, 'logs'),
         },
         Object.entries,
         array.map(([key, value]) => `-D${key}=${value}`),
