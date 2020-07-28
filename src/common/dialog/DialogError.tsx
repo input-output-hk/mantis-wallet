@@ -15,7 +15,7 @@ export const DialogError = ({
     {children}
     {helpURL && (
       <Link href={helpURL} className="help">
-        <Trans k={['common', 'message', 'learnMore']} />
+        <Trans k={['common', 'link', 'learnMore']} />
       </Link>
     )}
   </div>

@@ -10,6 +10,7 @@ import {wait} from '../../shared/utils'
 import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
 import {rendererLog} from '../../common/logger'
 import {DateFromISO8601} from '../../common/io-helpers'
+import {createTErrorRenderer} from '../../common/i18n'
 
 function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
   return t.union([type, t.null, t.undefined])
@@ -113,21 +114,21 @@ export class ProverApiError extends ExtendableError {
   }
 }
 
-export const prettyErrorMessage = (
+export const prettyError = (
   error: Error,
-  prettyApiError: (apiError: ProverApiError) => string = (e) => e.message,
-): string => {
+  prettyApiError: (apiError: ProverApiError) => Error = (e) => e,
+): Error => {
   rendererLog.error(error)
 
   if (tPromise.isDecodeError(error)) {
-    return 'Unexpected response from prover.'
+    return createTErrorRenderer(['proofOfBurn', 'error', 'unexpectedResponseFromProver'])
   }
 
   if (error instanceof ProverApiError) {
     return prettyApiError(error)
   }
 
-  return 'Unexpected error while communicating with prover.'
+  return createTErrorRenderer(['proofOfBurn', 'error', 'failedCommunicationWithProver'])
 }
 
 const httpRequest = async (

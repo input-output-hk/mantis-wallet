@@ -12,6 +12,7 @@ import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {NoWallet} from '../wallets/NoWallet'
 import {CHAINS_TO_USE_IN_POB, AUTO_DUST_CONVERSION} from './pob-config'
+import {useTranslation} from '../settings-state'
 
 interface ChooseToken {
   step: 'CHOOSE_TOKEN'
@@ -31,6 +32,7 @@ interface ShowAddress {
 type BurnCoinsState = ChooseToken | GenerateBurn | ShowAddress
 
 const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
+  const {t} = useTranslation()
   const pobState = ProofOfBurnState.useContainer()
   const routerState = RouterState.useContainer()
   const provers = pobState.provers
@@ -43,7 +45,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
     const generateTransparentAddress = (): Promise<void> => walletState.generateNewAddress()
 
     return (
-      <PobLayout title="Burn Coins">
+      <PobLayout title={t(['proofOfBurn', 'title', 'burnCoins'])}>
         <BurnCoinsTransparentAddress
           cancel={cancel}
           generateTransparentAddress={generateTransparentAddress}
@@ -55,7 +57,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
   switch (burnState.step) {
     case 'CHOOSE_TOKEN':
       return (
-        <PobLayout title="Token Burn">
+        <PobLayout title={t(['proofOfBurn', 'title', 'tokenBurn'])}>
           <BurnCoinsChooseToken
             chains={CHAINS_TO_USE_IN_POB}
             chooseChain={(chain) => {
@@ -71,7 +73,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
     case 'GENERATE_BURN_ADDRESS': {
       const {chain} = burnState
       return (
-        <PobLayout title={`Send ${chain.name}`}>
+        <PobLayout title={t(chain.translations.burn)}>
           <BurnCoinsGenerateAddress
             chain={chain}
             provers={provers}
@@ -105,7 +107,7 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
     case 'SHOW_ADDRESS': {
       const {chain, burnAddress} = burnState
       return (
-        <PobLayout title="Burn Address">
+        <PobLayout title={t(['proofOfBurn', 'title', 'showBurnAddress'])}>
           <BurnCoinsShowAddress chain={chain} burnAddress={burnAddress} goBack={cancel} />
         </PobLayout>
       )
@@ -113,8 +115,11 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
   }
 }
 
-export const BurnCoins = withStatusGuard(_BurnCoins, 'LOADED', () => (
-  <PobLayout title="Burn Coins">
-    <NoWallet />
-  </PobLayout>
-))
+export const BurnCoins = withStatusGuard(_BurnCoins, 'LOADED', () => {
+  const {t} = useTranslation()
+  return (
+    <PobLayout title={t(['proofOfBurn', 'title', 'burnCoins'])}>
+      <NoWallet />
+    </PobLayout>
+  )
+})

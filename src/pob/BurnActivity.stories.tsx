@@ -44,9 +44,8 @@ export const burnActivity = (): JSX.Element => {
               prover: someProver,
             },
             lastStatuses: [burnStatus('Burn #2')],
-            errorMessage: text(
-              'An error message #2',
-              'This is an error message for Burn Address #2',
+            error: Error(
+              text('An error message #2', 'This is an error message for Burn Address #2'),
             ),
             isHidden: false,
           },
@@ -56,9 +55,8 @@ export const burnActivity = (): JSX.Element => {
               prover: someProver,
             },
             lastStatuses: [],
-            errorMessage: text(
-              'An error message #3',
-              'This is an error message for Burn Address #3',
+            error: Error(
+              text('An error message #3', 'This is an error message for Burn Address #3'),
             ),
             isHidden: false,
           },
@@ -93,7 +91,7 @@ export const burnStatusDisplay = (): JSX.Element => (
         highestKnownBlock: number('Highest known block', 11),
         percentage: 100,
       }}
-      errorMessage={text('An error message', 'This is a global error message for Burn Address')}
+      error={Error(text('An error message', 'This is a global error message for Burn Address'))}
       hideBurnProcess={action('on-hide-burn-process')}
     />
   </div>

@@ -17,8 +17,8 @@
 
   .logo {
     display: block;
-    height: 30%;
-    margin: 27% auto;
+    height: 24%;
+    margin: 30% auto;
     transition-duration: $transition-duration;
 
     @include themify($themes) {

@@ -22,7 +22,9 @@ import {
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
 import {ProgressState, ProgressBar, ProgressIcon} from '../common/ProgressBar'
-import {useFormatters} from '../settings-state'
+import {useFormatters, useTranslation} from '../settings-state'
+import {Trans} from '../common/Trans'
+import {TKeyRenderer} from '../common/i18n'
 import './BurnStatusDisplay.scss'
 
 interface AllProgress {
@@ -36,7 +38,7 @@ interface BurnStatusDisplayProps extends Pick<ProofOfBurnData, 'hideBurnProcess'
   burnAddressInfo: BurnAddressInfo
   syncStatus: SynchronizationStatus
   burnStatus: RealBurnStatus
-  errorMessage?: string
+  error?: Error
 }
 
 const STATUS_TO_PROGRESS: Record<BurnStatusType, AllProgress> = {
@@ -83,21 +85,23 @@ const ProvingProgressLabel = ({
   placement = 'top',
 }: {
   progress: ProgressState
-  label: string
-  inProgressMessage: string
-  checkedMessage: string
+  label: TKeyRenderer
+  inProgressMessage: TKeyRenderer
+  checkedMessage: TKeyRenderer
   placement?: TooltipPlacement
 }): JSX.Element => {
   const labelWithIcon = (
     <span>
-      <ProgressIcon progressState={progress} /> {label}
+      <ProgressIcon progressState={progress} /> <Trans k={label} />
     </span>
   )
 
   if (progress === 'inProgress' || progress === 'checked' || progress === 'stopped') {
     return (
       <Popover
-        content={progress === 'inProgress' ? inProgressMessage : checkedMessage}
+        content={
+          progress === 'inProgress' ? <Trans k={inProgressMessage} /> : <Trans k={checkedMessage} />
+        }
         placement={placement}
       >
         <span>{labelWithIcon}</span>
@@ -138,9 +142,10 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
   burnAddressInfo,
   syncStatus,
   burnStatus,
-  errorMessage,
+  error,
 }: BurnStatusDisplayProps) => {
   const {formatDate} = useFormatters()
+  const {translateError} = useTranslation()
   const [hidingProgress, setHidingProgress] = useState<{to: boolean} | 'persisted'>('persisted')
   const [detailsShown, setDetailsShown] = useState(false)
 
@@ -172,7 +177,13 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
     <div className={classnames('BurnStatusDisplay', {hidden: burnStatus.isHidden})}>
       <div className={classnames('actions', {forceDisplay: hidingProgress !== 'persisted'})}>
         <Popover
-          content={burnStatus.isHidden ? 'Unhide this burn process' : `Hide this burn process`}
+          content={
+            burnStatus.isHidden ? (
+              <Trans k={['proofOfBurn', 'message', 'unhideThisBurnProcess']} />
+            ) : (
+              <Trans k={['proofOfBurn', 'message', 'hideThisBurnProcess']} />
+            )
+          }
           placement="topRight"
           align={{offset: [13, 0]}}
         >
@@ -202,7 +213,9 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
           <div className="collapse-icon">
             <RightOutlined />
           </div>
-          <span>Burn Amount / Midnight Token: </span>
+          <span>
+            <Trans k={['proofOfBurn', 'label', 'burnAmountToMidnightToken']} />:{' '}
+          </span>
           {burnStatus.tx_value && (
             <>
               <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
@@ -218,7 +231,7 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
               <span className="prover-reward">
                 {' + '}
                 <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
-                {chain.symbol} (Prover&apos;s reward)
+                {chain.symbol} (<Trans k={['proofOfBurn', 'label', 'proverReward']} />)
               </span>
             </>
           )}
@@ -226,11 +239,14 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
         <div className="status">
           <div className="progress">
             <Popover
-              content="Your burn transaction has been found on source blockchain."
+              content={
+                <Trans k={['proofOfBurn', 'burnProcessStatus', 'foundTransactionDescription']} />
+              }
               placement="topLeft"
             >
               <span>
-                <ProgressIcon progressState={'checked'} /> Found Transaction
+                <ProgressIcon progressState={'checked'} />{' '}
+                <Trans k={['proofOfBurn', 'burnProcessStatus', 'foundTransaction']} />
               </span>
             </Popover>
             {txFoundDate && <span className="step-date">{txFoundDate}</span>}
@@ -246,9 +262,17 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
           <div className="progress">
             <ProvingProgressLabel
               progress={progress.started}
-              label="Proving Started"
-              inProgressMessage="Waiting for enough confirmations from source blockchain to start."
-              checkedMessage="Confirmations received from source blockchain."
+              label={['proofOfBurn', 'burnProcessStatus', 'provingStarted']}
+              inProgressMessage={[
+                'proofOfBurn',
+                'burnProcessStatus',
+                'provingStartedInProgressDescription',
+              ]}
+              checkedMessage={[
+                'proofOfBurn',
+                'burnProcessStatus',
+                'provingStartedFinishedDescription',
+              ]}
             />
             {provingStartedDate && <span className="step-date">{provingStartedDate}</span>}
           </div>
@@ -264,9 +288,17 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
           <div className="progress">
             <ProvingProgressLabel
               progress={progress.success}
-              label="Proving Successful"
-              inProgressMessage="Proving underway."
-              checkedMessage="Prover has successfully proved the burn transaction."
+              label={['proofOfBurn', 'burnProcessStatus', 'provingSuccessful']}
+              inProgressMessage={[
+                'proofOfBurn',
+                'burnProcessStatus',
+                'provingStartedInProgressDescription',
+              ]}
+              checkedMessage={[
+                'proofOfBurn',
+                'burnProcessStatus',
+                'provingSuccessfulFinishedDescription',
+              ]}
             />
             {provingSuccessDate && <span className="step-date">{provingSuccessDate}</span>}
           </div>
@@ -282,9 +314,21 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
           <div className="progress">
             <ProvingProgressLabel
               progress={progress.confirm}
-              label={progress.confirm === 'stopped' ? 'Already Proved' : 'Proving Confirmed'}
-              inProgressMessage="Waiting for confirmations on Midnight."
-              checkedMessage="Burn Process complete. Midnight Tokens are now available."
+              label={
+                progress.confirm === 'stopped'
+                  ? ['proofOfBurn', 'burnProcessStatus', 'alreadyProved']
+                  : ['proofOfBurn', 'burnProcessStatus', 'provingConfirmed']
+              }
+              inProgressMessage={[
+                'proofOfBurn',
+                'burnProcessStatus',
+                'provingConfirmedInProgressDescription',
+              ]}
+              checkedMessage={[
+                'proofOfBurn',
+                'burnProcessStatus',
+                'provingConfirmedFinishedDescription',
+              ]}
               placement="topRight"
             />
             {provingConfirmedDate && <span className="step-date last">{provingConfirmedDate}</span>}
@@ -292,36 +336,48 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
         </div>
       </div>
       <div className={classnames('burn-details', {active: detailsShown})}>
-        <div className="burn-details-header">Burn Details</div>
+        <div className="burn-details-header">
+          <Trans k={['proofOfBurn', 'title', 'burnDetails']} />
+        </div>
         <div className="burn-details-info">
-          <div>Burn address:</div>
+          <div>
+            <Trans k={['proofOfBurn', 'label', 'burnAddress']} />:
+          </div>
           <div>
             <CopyableLongText content={burnWatcher.burnAddress} />
           </div>
-          <div>Associated midnight address:</div>
+          <div>
+            <Trans k={['proofOfBurn', 'label', 'associatedMidnightAddress']} />:
+          </div>
           <div>
             <CopyableLongText content={burnAddressInfo.midnightAddress} />
           </div>
-          <div>Prover:</div>
+          <div>
+            <Trans k={['proofOfBurn', 'label', 'prover']} />:
+          </div>
           <div>
             {burnWatcher.prover.name} ({burnWatcher.prover.address})
           </div>
         </div>
         <div className="burn-details-info">
-          <div>Burn transaction:</div>
+          <div>
+            <Trans k={['proofOfBurn', 'label', 'burnTransaction']} />:
+          </div>
           <div>
             <CopyableLongText content={burnStatus.txid} />
           </div>
           <div>
-            <InfoIcon content="Tagging Federation has monitored Source chains and published commitments to them on the Midnight Network" />{' '}
-            Commitment contract submission:
+            <InfoIcon
+              content={<Trans k={['proofOfBurn', 'message', 'commitmentTxDescription']} />}
+            />{' '}
+            <Trans k={['proofOfBurn', 'label', 'commitmentContractSubmissionTxId']} />:
           </div>
           <div>
             <CopyableLongText content={burnStatus.commitment_txid} fallback="-" />
           </div>
           <div>
-            <InfoIcon content="Prover is certain that the burn can be redeemed and has created Midnight Tokens" />{' '}
-            Redeem contract submission:
+            <InfoIcon content={<Trans k={['proofOfBurn', 'message', 'redeemTxDescription']} />} />{' '}
+            <Trans k={['proofOfBurn', 'label', 'redeemContractSubmissionTxId']} />:
           </div>
           <div>
             <CopyableLongText content={burnStatus.redeem_txid} fallback="-" />
@@ -332,16 +388,16 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
         <div className="error">
           {burnStatus.fail_reason}{' '}
           <Link href={LINKS.aboutPoB} className="help">
-            Learn more
+            <Trans k={['common', 'link', 'learnMore']} />
           </Link>
         </div>
       )}
-      {errorMessage && (
+      {error && (
         <div className="error">
-          Information about burn progress might be outdated. Gathering burn activity from prover
-          &#34;{burnWatcher.prover.name}&#34; failed with the following error:
-          <br />
-          {errorMessage}
+          <Trans
+            k={['proofOfBurn', 'error', 'infoMightBeOutdated']}
+            values={{proverName: burnWatcher.prover.name, errorMessage: translateError(error)}}
+          />
         </div>
       )}
     </div>

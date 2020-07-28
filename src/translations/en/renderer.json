@@ -84,7 +84,8 @@
       "removeWallet": "Remove Wallet",
       "copyAddress": "Copy Address",
       "seeAllTransparentAddresses": "See all Transparent Addresses",
-      "useFullAmount": "Full Amount"
+      "useFullAmount": "Full Amount",
+      "generateTransparentAddress": "Generate Transparent Address"
     },
     "link": {
       "viewInExplorer": "View in Explorer",
@@ -167,7 +168,8 @@
       "noKnownTransparentAddresses": "No known addresses",
       "transparentAddressWarning": "<strong>Warning:</strong> By using a transparent address your transaction will not stay confidential.",
       "applyConfidentialityDescription": "This transaction will move selected funds to a confidential address which will remove their visibility from the Midnight Blockchain.",
-      "transparentTransactionWarning": "<strong>Warning:</strong> I understand that the funds included in this transaction will no longer be confidential."
+      "transparentTransactionWarning": "<strong>Warning:</strong> I understand that the funds included in this transaction will no longer be confidential.",
+      "transparentAddressNeeded": "You need a transparent address to continue"
     },
     "feeEstimateLevels": {
       "custom": "Custom",
@@ -279,9 +281,100 @@
     }
   },
   "proofOfBurn": {
+    "title": {
+      "burnCentre": "Burn Centre",
+      "burnActivity": "Burn Activity",
+      "burnCoins": "Burn Coins",
+      "tokenBurn": "Token Burn",
+      "burnBitcoin": "Burn Bitcoin",
+      "burnEthereum": "Burn Ethereum",
+      "showBurnAddress": "Burn Address",
+      "bitcoinBurnAddress": "Bitcoin Burn Address",
+      "ethereumBurnAddress": "Ethereum Burn Address",
+      "burnDetails": "Burn Details",
+      "changeProverReward": "Change Prover Reward",
+      "enterBurnTransactionManually": "Enter burn transaction manually"
+    },
+    "button": {
+      "manualBurn": "Manual Burn",
+      "burnCoins": "Burn Coins",
+      "showHidden": "Show Hidden",
+      "burnBitcoinForMBtc": "Burn Bitcoin for M-BTC",
+      "burnEthereumForMEth": "Burn Ethereum for M-ETH",
+      "generateBtcAddress": "Generate BTC Address",
+      "generateEthAddress": "Generate ETH Address",
+      "changeProverReward": "Change Reward",
+      "goBackToBurnCentre": "Go Back to Burn Centre",
+      "copyAddress": "Copy Address",
+      "processBurn": "Process Burn"
+    },
+    "link": {
+      "learnMoreAboutPoB": "Learn more about Proof of Burn",
+      "seeProverListMetrics": "See Prover List Metrics"
+    },
+    "label": {
+      "searchForBurnTx": "Search for Burn Tx ID",
+      "availableAmount": "Available",
+      "pendingAmount": "Pending Amount",
+      "totalAmount": "Total Amount",
+      "burnAmountToMidnightToken": "Burn Amount / Midnight Token",
+      "burnAddress": "Burn address",
+      "associatedMidnightAddress": "Associated midnight address",
+      "prover": "Prover",
+      "proverReward": "Prover's reward",
+      "proverRewardShort": "Reward",
+      "burnTransaction": "Burn transaction",
+      "burnTransactionId": "Burn Transaction Id",
+      "commitmentContractSubmissionTxId": "Commitment contract submission",
+      "redeemContractSubmissionTxId": "Redeem contract submission",
+      "tokenExchangeRate": "Token Exchange Rate",
+      "selectReceiveAddress": "Select Receive Address",
+      "proverRewardInMBtc": "Assign reward in M-BTC for your prover",
+      "proverRewardInMEth": "Assign reward in M-ETH for your prover"
+    },
     "error": {
       "noAvailableProvers": "No available provers.",
-      "noAvailableProversForThisToken": "No available provers for this token at the moment."
+      "noAvailableProversForThisToken": "No available provers for this token at the moment.",
+      "gatheringBurnActivityFromProverFailed": "Gathering burn activity for {{burnAddress}} from prover \"{{proverName}}\" failed with the following error: <br />{{errorMessage}}",
+      "noBurnsObserved": "No burn transactions observed for burn address {{burnAddress}} by prover \"{{proverName}}\".",
+      "infoMightBeOutdated": "Information about burn progress might be outdated. Gathering burn activity from prover \"{{proverName}}\" failed with the following error: <br /> {{errorMessage}}",
+      "burnAddressesDoNotMatch": "Something went wrong, wallet and prover generated different burn-addresses: {{burnAddress}} vs {{burnAddressFromProver}}",
+      "rewardTooLowForProver": "Reward is too low for the selected prover.",
+      "unexpectedResponseFromProver": "Unexpected response from prover.",
+      "failedCommunicationWithProver": "Unexpected error while communicating with prover.",
+      "noProverWasSelected": "No prover was selected.",
+      "burnTxMustBeSet": "Burn transaction must be set"
+    },
+    "message": {
+      "manualBurnDescription": "Enter burn transaction manually",
+      "noBurnsInProgress": "You have no burns in progress, to start a burn, click here.",
+      "unhideThisBurnAddress": "Unhide this burn address",
+      "hideThisBurnAddress": "Hide this burn address",
+      "searchByTxIdFieldPlaceholder": "Burn Tx ID",
+      "noBurnActivity": "No burn activity to show.",
+      "unhideThisBurnProcess": "Unhide this burn process",
+      "hideThisBurnProcess": "Hide this burn process",
+      "commitmentTxDescription": "Tagging Federation has monitored Source chains and published commitments to them on the Midnight Network",
+      "redeemTxDescription": "Prover is certain that the burn can be redeemed and has created Midnight Tokens",
+      "burnProcessDescriptionForBitcoin": "This will generate a Bitcoin Address to which you can send Bitcoin to be burned and converted into Midnight Tokens. These Midnight Tokens can be used to participate in an Auction to win spendable Dust Tokens. <strong>The Burn process is irreversible and the Bitcoin Tokens burned will be unspendable forever.</strong><br /><br />I understand the process",
+      "burnProcessDescriptionForEthereum": "This will generate a Ethereum Address to which you can send Ethereum to be burned and converted into Midnight Tokens. These Midnight Tokens can be used to participate in an Auction to win spendable Dust Tokens. <strong>The Burn process is irreversible and the Ethereum Tokens burned will be unspendable forever.</strong><br /><br />I understand the process",
+      "testnetWarning": "<strong>Warning:</strong> This is a Testnet edition.<br /> Do <strong>NOT</strong> burn real ETH or BTC for Proof of Burn.",
+      "proverRewardTooltip": "This is a fee in Midnight Tokens that is the Prover reward and will be taken from your total burned amount.",
+      "proverRewardWarning": "<strong>Warning:</strong> If the fee is larger than burn amount, the burn will fail and cannot be recovered. Under such conditions, <strong>you will lose your source fund</strong>"
+    },
+    "burnProcessStatus": {
+      "foundTransaction": "Found Transaction",
+      "foundTransactionDescription": "Your burn transaction has been found on source blockchain.",
+      "provingStarted": "Proving Started",
+      "provingStartedInProgressDescription": "Waiting for enough confirmations from source blockchain to start.",
+      "provingStartedFinishedDescription": "Confirmations received from source blockchain.",
+      "provingSuccessful": "Proving Successful",
+      "provingSuccessfulInProgressDescription": "Proving underway.",
+      "provingSuccessfulFinishedDescription": "Prover has successfully proved the burn transaction.",
+      "provingConfirmed": "Proving Confirmed",
+      "provingConfirmedInProgressDescription": "Waiting for confirmations on Midnight.",
+      "provingConfirmedFinishedDescription": "Burn Process complete. Midnight Tokens are now available.",
+      "alreadyProved": "Already Proved"
     }
   },
   "common": {
@@ -296,7 +389,9 @@
       "downloadTxt": "Download txt",
       "oneStepBack": "Back",
       "finish": "Finish",
-      "closeModal": "Close"
+      "closeModal": "Close",
+      "goBackOneStep": "Go Back",
+      "iUnderstand": "I understand"
     },
     "answer": {
       "yes": "Yes",
@@ -313,7 +408,9 @@
       "feedback": "Feedback",
       "support": "Support",
       "status": "Status",
-      "showDetails": "Show details"
+      "showDetails": "Show details",
+      "learnMore": "Learn more",
+      "whatIsThis": "What is this?"
     },
     "initializationStatus": {
       "initLuna": "Initializing Luna",
@@ -329,8 +426,7 @@
       "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
       "saveDebugLogsCancelled": "Operation cancelled.",
       "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
-      "chooseFromDropdownList": "Choose from list…",
-      "learnMore": "Learn more"
+      "chooseFromDropdownList": "Choose from list…"
     },
     "error": {
       "dialogValidationFailed": "Some fields require additional action before you can continue.",

@@ -102,7 +102,9 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         <img src={logo} alt="logo" />
       </div>
       <div>
-        <h1 className="title">Luna</h1>
+        <h1 className="title">
+          <Trans k={['title', 'luna']} />
+        </h1>
       </div>
       <div>
         <nav>

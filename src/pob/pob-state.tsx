@@ -11,7 +11,7 @@ import {
   noBurnObservedFilter,
   proveTransaction,
   getInfo,
-  prettyErrorMessage,
+  prettyError,
   BurnStatusType,
 } from './api/prover'
 import {PobChain, PobChainId} from './pob-chains'
@@ -22,6 +22,7 @@ import {Web3API, makeWeb3Worker} from '../web3'
 import {config} from '../config/renderer'
 import {prop} from '../shared/utils'
 import {rendererLog} from '../common/logger'
+import {createTErrorRenderer} from '../common/i18n'
 
 export interface BurnWatcher {
   burnAddress: string
@@ -45,7 +46,7 @@ export interface RealBurnStatus extends BurnApiStatus {
 export type BurnStatus = {
   burnWatcher: BurnWatcher
   lastStatuses: RealBurnStatus[]
-  errorMessage?: string
+  error?: Error
   isHidden: boolean
 }
 
@@ -232,7 +233,7 @@ function useProofOfBurnState(
           {
             burnWatcher,
             lastStatuses: burnStatuses[burnStatusKey]?.lastStatuses || [],
-            errorMessage: prettyErrorMessage(error),
+            error: prettyError(error),
             isHidden: hiddenBurnProcesses[burnStatusKey] === 'all',
           },
         ]
@@ -266,16 +267,16 @@ function useProofOfBurnState(
       reward,
       autoConversion,
     ).catch((err) => {
-      throw Error(
-        prettyErrorMessage(err, ({message, code}) =>
-          code === 1001 ? 'Reward is too low for the selected prover.' : message,
-        ),
+      throw prettyError(err, (e) =>
+        e.code === 1001
+          ? createTErrorRenderer(['proofOfBurn', 'error', 'rewardTooLowForProver'])
+          : e,
       )
     })
     if (burnAddressFromProver !== burnAddress) {
-      throw Error(
-        `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddress} vs ${burnAddressFromProver}`,
-      )
+      throw createTErrorRenderer(['proofOfBurn', 'error', 'burnAddressesDoNotMatch'], {
+        replace: {burnAddress, burnAddressFromProver},
+      })
     }
     addBurnAddress(burnAddress, {midnightAddress, chainId: chain.id, reward, autoConversion})
     addBurnWatcher(burnAddress, prover)

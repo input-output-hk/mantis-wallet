@@ -24,13 +24,15 @@ test('Burn Coins - Choose Tokens step', async () => {
     {wrapper: WithSettingsProvider},
   )
 
-  chainsUsed.map((chain) => {
-    const tokenChooser = getByText(`Burn ${chain.name} for M-${chain.symbol}`)
-    userEvent.click(tokenChooser)
-    expect(chooseChain).toBeCalledWith(chain)
-  })
+  const btcTokenChooser = getByText('Burn Bitcoin for M-BTC')
+  userEvent.click(btcTokenChooser)
+  expect(chooseChain).toBeCalledWith(BTC_TESTNET)
 
-  await expectCalledOnClick(() => getByText('← Go Back'), cancel)
+  const ethTokenChooser = getByText('Burn Ethereum for M-ETH')
+  userEvent.click(ethTokenChooser)
+  expect(chooseChain).toBeCalledWith(ETH_TESTNET)
+
+  await expectCalledOnClick(() => getByText('Go Back'), cancel)
 })
 
 test('Burn Coins - Generate Address step', async () => {
@@ -102,7 +104,7 @@ test('Burn Coins - Generate Address step', async () => {
   await act(async () => userEvent.click(approvalCheckbox))
   await waitFor(() => expect(generateBurnAddressButton).toBeEnabled())
 
-  await expectCalledOnClick(() => getByText('← Go Back'), cancel)
+  await expectCalledOnClick(() => getByText('Go Back'), cancel)
 
   expect(generateBurnAddress).not.toBeCalled()
   await act(async () => userEvent.click(generateBurnAddressButton))
@@ -143,10 +145,10 @@ test('Burn Coins - Show Address step', async () => {
     {wrapper: WithSettingsProvider},
   )
 
-  expect(getByText(`${chain.name} Burn Address`)).toBeInTheDocument()
+  expect(getByText('Ethereum Burn Address')).toBeInTheDocument()
   expect(getByText(burnAddress)).toBeInTheDocument()
 
-  await expectCalledOnClick(() => getByText('← Go Back to Burn Centre'), goBack)
+  await expectCalledOnClick(() => getByText('Go Back to Burn Centre'), goBack)
 
   const copyAddressButton = getByText('Copy Address')
   await act(async () => userEvent.click(copyAddressButton))

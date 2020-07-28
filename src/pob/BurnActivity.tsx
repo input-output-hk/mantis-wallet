@@ -9,7 +9,8 @@ import {BorderlessInput} from '../common/BorderlessInput'
 import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
-import {SettingsState} from '../settings-state'
+import {SettingsState, useTranslation} from '../settings-state'
+import {Trans} from '../common/Trans'
 import './BurnActivity.scss'
 
 type BurnActivityProps = Pick<
@@ -19,15 +20,16 @@ type BurnActivityProps = Pick<
 
 const BurnAddressError = ({
   burnWatcher,
-  errorMessage,
+  error,
   isHidden,
   hideBurnWatcher,
 }: {
   burnWatcher: BurnWatcher
   isHidden: boolean
-  errorMessage?: string
+  error?: Error
   hideBurnWatcher: ProofOfBurnData['hideBurnWatcher']
 }): JSX.Element => {
+  const {translateError} = useTranslation()
   const [hidingProgress, setHidingProgress] = useState<{to: boolean} | 'persisted'>('persisted')
   const {burnAddress, prover} = burnWatcher
 
@@ -41,7 +43,13 @@ const BurnAddressError = ({
     <div className={classnames('burn-address', {hidden: isHidden})}>
       <div className={classnames('actions', {forceDisplay: hidingProgress !== 'persisted'})}>
         <Popover
-          content={isHidden ? 'Unhide this burn address' : 'Hide this burn address'}
+          content={
+            isHidden ? (
+              <Trans k={['proofOfBurn', 'message', 'unhideThisBurnAddress']} />
+            ) : (
+              <Trans k={['proofOfBurn', 'message', 'hideThisBurnAddress']} />
+            )
+          }
           placement="topRight"
           align={{offset: [13, 0]}}
         >
@@ -61,16 +69,18 @@ const BurnAddressError = ({
         </Popover>
       </div>
       <div className="burn-address-error">
-        {errorMessage && (
-          <>
-            Gathering burn activity for {burnAddress} from prover &#34;{prover.name}&#34; failed
-            with the following error:
-            <br />
-            {errorMessage}
-          </>
+        {error && (
+          <Trans
+            k={['proofOfBurn', 'error', 'gatheringBurnActivityFromProverFailed']}
+            values={{burnAddress, proverName: prover.name, errorMessage: translateError(error)}}
+          />
         )}
-        {!errorMessage &&
-          `No burn transactions observed for burn address ${burnAddress} by prover "${prover.name}".`}
+        {!error && (
+          <Trans
+            k={['proofOfBurn', 'error', 'noBurnsObserved']}
+            values={{burnAddress, proverName: prover.name}}
+          />
+        )}
       </div>
     </div>
   )
@@ -88,6 +98,7 @@ export const _BurnActivity = ({
   const {
     areHiddenBurnsVisible: areHiddenVisible,
     setHiddenBurnsVisible: setHiddenVisible,
+    translation: {t},
   } = SettingsState.useContainer()
 
   const [noBurnObserved, existingBurnStatuses]: BurnStatus[][] = _.partition(
@@ -95,11 +106,11 @@ export const _BurnActivity = ({
   )(burnStatuses)
 
   const filteredStatuses = existingBurnStatuses
-    .flatMap(({lastStatuses, burnWatcher, errorMessage}) =>
+    .flatMap(({lastStatuses, burnWatcher, error}) =>
       lastStatuses.map((lastStatus: RealBurnStatus) => ({
         burnWatcher,
         burnAddressInfo: burnAddresses[burnWatcher.burnAddress],
-        errorMessage,
+        error,
         burnStatus: lastStatus,
       })),
     )
@@ -114,15 +125,17 @@ export const _BurnActivity = ({
   return (
     <div className="BurnActivity">
       <div className="toolbar">
-        <div className="main-title">Burn Activity</div>
+        <div className="main-title">
+          <Trans k={['proofOfBurn', 'title', 'burnActivity']} />
+        </div>
         <div className="line"></div>
         <div className="search">
           <SearchOutlined />
           {
             <BorderlessInput
               className="search-input"
-              aria-label="Search for Burn Tx ID"
-              placeholder="Burn Tx ID"
+              aria-label={t(['proofOfBurn', 'label', 'searchForBurnTx'])}
+              placeholder={t(['proofOfBurn', 'message', 'searchByTxIdFieldPlaceholder'])}
               onChange={(e) => setSearchTxId(e.target.value)}
             />
           }
@@ -132,24 +145,30 @@ export const _BurnActivity = ({
             className="toggle-hidden-label"
             {...fillActionHandlers(() => setHiddenVisible(!areHiddenVisible))}
           >
-            Show hidden
+            <Trans k={['proofOfBurn', 'button', 'showHidden']} />
           </span>
-          <Switch title="Show hidden" checked={areHiddenVisible} onChange={setHiddenVisible} />
+          <Switch
+            title={t(['proofOfBurn', 'button', 'showHidden'])}
+            checked={areHiddenVisible}
+            onChange={setHiddenVisible}
+          />
         </div>
       </div>
       {noBurnObserved
         .filter(({isHidden}) => areHiddenVisible || !isHidden)
-        .map(({burnWatcher, errorMessage, isHidden}) => (
+        .map(({burnWatcher, error, isHidden}) => (
           <BurnAddressError
             burnWatcher={burnWatcher}
-            errorMessage={errorMessage}
+            error={error}
             isHidden={isHidden}
             hideBurnWatcher={hideBurnWatcher}
             key={`${burnWatcher.burnAddress} ${burnWatcher.prover.address}`}
           />
         ))}
       {filteredStatuses.length === 0 && (
-        <div className="no-activity">No burn activity to show.</div>
+        <div className="no-activity">
+          <Trans k={['proofOfBurn', 'message', 'noBurnActivity']} />
+        </div>
       )}
       {filteredStatuses.length > 0 && (
         <div>

@@ -7,6 +7,8 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {BurnAddressInfo, Prover} from '../pob-state'
 import {POB_CHAINS} from '../pob-chains'
 import {ShortNumber} from '../../common/ShortNumber'
+import {createTErrorRenderer} from '../../common/i18n'
+import {useTranslation} from '../../settings-state'
 
 interface AddBurnTxModalProps extends ModalOnCancel {
   provers: Prover[]
@@ -20,6 +22,7 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
   onAddTx,
   onCancel,
 }: AddBurnTxModalProps) => {
+  const {t} = useTranslation()
   const [burnAddress, setBurnAddress] = useState(_.keys(burnAddresses)[0])
   const [burnTx, setBurnTx] = useState('')
   const [prover, setProver] = useState(provers[0])
@@ -27,19 +30,19 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
 
   return (
     <Dialog
-      title="Enter burn transaction manually"
+      title={t(['proofOfBurn', 'title', 'enterBurnTransactionManually'])}
       leftButtonProps={{
         onClick: onCancel,
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
-        children: 'Process Burn',
+        children: t(['proofOfBurn', 'button', 'processBurn']),
         disabled: !burnAddresses[burnAddress],
         onClick: async (): Promise<void> => {
           if (prover) {
             await onAddTx(prover, burnTx, burnAddress)
           } else {
-            throw Error('No prover was selected.')
+            throw createTErrorRenderer(['proofOfBurn', 'error', 'noProverWasSelected'])
           }
         },
       }}
@@ -47,16 +50,16 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
     >
       <DialogInput
         autoFocus
-        label="Burn Transaction Id"
+        label={t(['proofOfBurn', 'label', 'burnTransactionId'])}
         value={burnTx}
         onChange={(e): void => setBurnTx(e.target.value)}
         formItem={{
           name: 'burn-tx-id',
-          rules: [{required: true, message: 'Burn transaction must be set'}],
+          rules: [{required: true, message: t(['proofOfBurn', 'error', 'burnTxMustBeSet'])}],
         }}
       />
       <DialogDropdown
-        label="Prover"
+        label={t(['proofOfBurn', 'label', 'prover'])}
         options={provers.map((prover) => ({
           key: prover.address,
           label: `${prover.name} (${prover.address})`,
@@ -68,12 +71,13 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
         noOptionsMessage={['proofOfBurn', 'error', 'noAvailableProvers']}
       />
       <DialogDropdown
-        label="Burn Address"
+        label={t(['proofOfBurn', 'label', 'burnAddress'])}
         options={_.toPairs(burnAddresses).map(([burnAddress, {chainId, reward}]) => ({
           key: burnAddress,
           label: (
             <>
-              (Reward: <ShortNumber big={reward} unit={POB_CHAINS[chainId].unitType} /> M-
+              ({t(['proofOfBurn', 'label', 'proverRewardShort'])}:{' '}
+              <ShortNumber big={reward} unit={POB_CHAINS[chainId].unitType} /> M-
               {POB_CHAINS[chainId].symbol}) {burnAddress}
             </>
           ),
