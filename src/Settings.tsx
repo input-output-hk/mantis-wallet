@@ -2,7 +2,7 @@ import React, {useState, useEffect, PropsWithChildren} from 'react'
 import _ from 'lodash/fp'
 import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {SettingsState, TIME_FORMATS, DATE_FORMATS} from './settings-state'
+import {SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './settings-state'
 import {IPCToRendererChannelName} from './shared/ipc-types'
 import {LoadedState} from './common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from './common/wallet-status-guard'
@@ -16,9 +16,15 @@ import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
 import {loadLunaManagedConfig} from './config/renderer'
 import {LunaManagedConfig} from './config/type'
 import {Trans} from './common/Trans'
+import {TKeyRenderer} from './common/i18n'
 import './Settings.scss'
 
 type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
+
+const TIME_FORMAT_LABELS: Record<TimeFormat, TKeyRenderer> = {
+  '12-hour': ['settings', 'timeFormat', '12hour'],
+  '24-hour': ['settings', 'timeFormat', '24hour'],
+}
 
 const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
@@ -103,7 +109,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
       <div className="settings-item">
         <DialogDropdown
           label={t(['settings', 'label', 'timeFormat'])}
-          options={TIME_FORMATS}
+          options={TIME_FORMATS.map((key) => ({key, label: t(TIME_FORMAT_LABELS[key])}))}
           defaultOptionIndex={_.indexOf(timeFormat)(TIME_FORMATS)}
           onChange={setTimeFormat}
         />

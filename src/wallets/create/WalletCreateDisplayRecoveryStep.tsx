@@ -3,6 +3,8 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogDisplayWords} from '../../common/dialog/DialogDisplayWords'
+import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
 
 interface WalletCreateDisplayRecoveryStepProps {
   back: () => void
@@ -15,27 +17,30 @@ export const WalletCreateDisplayRecoveryStep: FunctionComponent<WalletCreateDisp
   next,
   seedPhrase,
 }: WalletCreateDisplayRecoveryStepProps) => {
+  const {t} = useTranslation()
   return (
     <Dialog
-      title="Recovery Phrase"
+      title={t(['wallet', 'title', 'walletCreationRecoveryPhraseStep'])}
       leftButtonProps={{
         onClick: back,
-        children: 'Back',
+        children: t(['common', 'button', 'oneStepBack']),
       }}
       rightButtonProps={{
         onClick: next,
       }}
     >
       <DialogMessage>
-        This is your wallet backup phrase. It can be entered into any version of Luna Wallet in
-        order to restore your wallet
+        <Trans k={['wallet', 'message', 'recoveryPhraseDescription1']} />
       </DialogMessage>
       <DialogMessage>
-        The phrase is case sensitive. Please, make sure you write down and save your recovery
-        phrase. You will need this phrase to use and restore your wallet
+        <Trans k={['wallet', 'message', 'recoveryPhraseDescription2']} />
       </DialogMessage>
       <DialogDisplayWords words={seedPhrase} />
-      <DialogApproval id="written-down" description="Yes, I have written it down." autoFocus />
+      <DialogApproval
+        id="written-down"
+        description={t(['wallet', 'message', 'recoveryPhraseApproval'])}
+        autoFocus
+      />
     </Dialog>
   )
 }

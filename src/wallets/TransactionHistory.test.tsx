@@ -477,7 +477,7 @@ test('Receive modal shows up with confidential address', async () => {
   expect(getByText('Transparent')).toBeInTheDocument()
 
   // Title is visible
-  expect(getByText('Your confidential address')).toBeInTheDocument()
+  expect(getByText('Your Confidential Address')).toBeInTheDocument()
 
   // Address and QR code is visible
   expect(getByText(CONFIDENTIAL_ADDRESS)).toBeInTheDocument()

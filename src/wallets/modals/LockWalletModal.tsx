@@ -6,6 +6,8 @@ import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogInputPassword} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {fillActionHandlers} from '../../common/util'
+import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
 import './LockWalletModal.scss'
 
 interface LockWalletModalProps extends ModalOnCancel {
@@ -18,31 +20,31 @@ const LockWalletDialog: FunctionComponent<LockWalletModalProps> = ({
   toRemoveWallet,
   onCancel,
 }: LockWalletModalProps) => {
+  const {t} = useTranslation()
   const [passphrase, setPassphrase] = useState('')
   const modalLocker = ModalLocker.useContainer()
 
   return (
     <Dialog
-      title="Log Out"
+      title={t(['wallet', 'title', 'logOutOfWallet'])}
       leftButtonProps={{
         onClick: onCancel,
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
         onClick: (): Promise<void> => lock(passphrase),
-        children: 'Log Out',
+        children: t(['wallet', 'button', 'logOutOfWallet']),
       }}
       onSetLoading={modalLocker.setLocked}
     >
       <div className="LockWalletModal">
         <DialogMessage>
-          Enter your password to lock your wallet. You can access your wallet later by unlocking it
-          with your password.
+          <Trans k={['wallet', 'message', 'lockWalletDescription']} />
         </DialogMessage>
         <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
         <DialogColumns>
           <Button danger {...fillActionHandlers(toRemoveWallet)}>
-            Remove Wallet
+            <Trans k={['wallet', 'button', 'removeWallet']} />
           </Button>
         </DialogColumns>
       </div>

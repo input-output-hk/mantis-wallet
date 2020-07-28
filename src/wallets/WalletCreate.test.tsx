@@ -40,7 +40,7 @@ test('WalletCreate `Define` step', async () => {
 
   // Enter wallet name
   expect(queryByText("Name shouldn't be empty")).not.toBeInTheDocument()
-  const walletNameInput = getByLabelText('Wallet name')
+  const walletNameInput = getByLabelText('Wallet Name')
   userEvent.type(walletNameInput, walletName)
 
   // Verify password fields
@@ -70,7 +70,7 @@ test('WalletCreate `Security` step', async () => {
   const cancel = jest.fn()
   const next = jest.fn()
 
-  const {getByText, getByRole, getByLabelText} = render(
+  const {getByText, getByRole} = render(
     <WalletCreateSecurityStep cancel={cancel} next={next} spendingKey={spendingKey} />,
     {wrapper: WithSettingsProvider},
   )
@@ -80,13 +80,6 @@ test('WalletCreate `Security` step', async () => {
   userEvent.click(spendingKeySwitch)
   expect(getByText(spendingKey)).toBeInTheDocument()
   expect(getByText('Download txt')).toBeInTheDocument()
-
-  // Click checkbox
-  userEvent.click(
-    getByLabelText(
-      'I understand that I need to save my private key to enable mining in the future.',
-    ),
-  )
 
   // Click Cancel
   await expectCalledOnClick(() => getByText('Cancel'), cancel)

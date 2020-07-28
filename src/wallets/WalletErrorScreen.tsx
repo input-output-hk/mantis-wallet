@@ -5,6 +5,8 @@ import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-gua
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {fillActionHandlers} from '../common/util'
 import {useInterval} from '../common/hook-utils'
+import {Trans} from '../common/Trans'
+import {useTranslation} from '../settings-state'
 import './WalletErrorScreen.scss'
 
 interface WalletErrorProps {
@@ -15,6 +17,7 @@ const _WalletError = ({
   countdownStart = 20,
   walletState,
 }: PropsWithWalletState<WalletErrorProps, ErrorState>): JSX.Element => {
+  const {translateError} = useTranslation()
   const {error, reset} = walletState
   const [countdown, setCountdown] = useState(countdownStart)
   const [isTraceShown, showTrace] = useState(false)
@@ -30,28 +33,30 @@ const _WalletError = ({
   return (
     <div className="WalletError">
       <div className="header">
-        <HeaderWithSyncStatus>An error occurred while loading the wallet</HeaderWithSyncStatus>
+        <HeaderWithSyncStatus>
+          <Trans k={['wallet', 'error', 'errorWhileLoadingTheWallet']} />
+        </HeaderWithSyncStatus>
       </div>
 
-      <div className="error-msg">{error.message}</div>
+      <div className="error-msg">{translateError(error)}</div>
 
       <div>
         {error.stack && isTraceShown ? (
           <div className="stacktrace">{error.stack}</div>
         ) : (
           <div className="show-stacktrace" {...fillActionHandlers(() => showTrace(true))}>
-            Show stacktrace
+            <Trans k={['wallet', 'button', 'showErrorStacktrace']} />
           </div>
         )}
       </div>
 
       <div>
         <div className="retry-countdown">
-          Reloading wallet in <b>{countdown}</b>...
+          <Trans k={['wallet', 'message', 'reloadingWalletInCount']} values={{countdown}} />
         </div>
         <div className="retry-manual">
           <Button type="primary" onClick={reset}>
-            Reload Now
+            <Trans k={['wallet', 'button', 'reloadWalletNow']} />
           </Button>
         </div>
       </div>

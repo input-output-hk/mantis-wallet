@@ -176,7 +176,7 @@ function useSettingsState({
       formatDate: (date: Date) => formatDate(date, dateFormat, timeFormat, dateFnsLocale),
       toDurationString: (seconds: number) => toDurationString(seconds, dateFnsLocale),
 
-      formatPercentage: (ratio: number | BigNumber) => formatPercentage(ratio, numberFormat),
+      formatPercentage: (ratio: number | BigNumber) => `${formatPercentage(ratio, numberFormat)}%`,
       abbreviateAmount: (bg: BigNumber) => abbreviateAmount(bg, bigNumberFormat),
       formatFileSize: (bytes: number) => filesize(bytes, {locale: language}),
       formatHashrate: (hashrate: number) =>

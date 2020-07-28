@@ -185,7 +185,7 @@ const UnfreezeDetail = ({
     return (
       <>
         <div>
-          {formatPercentage(unfrozenDustAmount.dividedBy(dustAmount))}%
+          {formatPercentage(unfrozenDustAmount.dividedBy(dustAmount))}
           <span className="amount">
             <ShortNumber big={unfrozenDustAmount} /> / <ShortNumber big={dustAmount} />{' '}
             {DUST_SYMBOL}
@@ -226,7 +226,7 @@ const WithdrawDetail = ({claim, withdrawalStatus}: WithdrawDetailProps): JSX.Ele
   return (
     <>
       <div className="withdraw-progress">
-        {formatPercentage(withdrawnDustAmount.dividedBy(dustAmount))}%
+        {formatPercentage(withdrawnDustAmount.dividedBy(dustAmount))}
         <span className="amount">
           <ShortNumber big={withdrawnDustAmount} /> / <ShortNumber big={dustAmount} /> {DUST_SYMBOL}
         </span>

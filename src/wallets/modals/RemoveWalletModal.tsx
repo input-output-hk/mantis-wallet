@@ -4,6 +4,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogInputPassword} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
+import {useTranslation} from '../../settings-state'
 
 interface RemoveWalletModalProps extends ModalOnCancel {
   onRemoveWallet: (passphrase: string) => Promise<void>
@@ -13,32 +14,33 @@ const RemoveWalletDialog: FunctionComponent<RemoveWalletModalProps> = ({
   onRemoveWallet,
   onCancel,
 }: RemoveWalletModalProps) => {
+  const {t} = useTranslation()
   const [passphrase, setPassphrase] = useState('')
   const modalLocker = ModalLocker.useContainer()
 
   return (
     <Dialog
-      title="Remove Wallet"
+      title={t(['wallet', 'title', 'removeWallet'])}
       leftButtonProps={{
         onClick: onCancel,
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
         onClick: (): Promise<void> => onRemoveWallet(passphrase),
-        children: 'Remove Wallet',
+        children: t(['wallet', 'button', 'removeWallet']),
         danger: true,
       }}
       onSetLoading={modalLocker.setLocked}
     >
-      <DialogMessage>Enter your password to remove your wallet.</DialogMessage>
+      <DialogMessage>{t(['wallet', 'message', 'removeWalletInstruction'])}</DialogMessage>
       <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
       <DialogApproval
         id="restore-warning"
-        description="I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase."
+        description={t(['wallet', 'message', 'removeWalletApproval1'])}
       />
       <DialogApproval
         id="delete-data-warning"
-        description="I understand that all my Burn Addresses and Glacier Drop Claims will be deleted from this machine."
+        description={t(['wallet', 'message', 'removeWalletApproval2'])}
       />
     </Dialog>
   )

@@ -7,13 +7,15 @@ import classnames from 'classnames'
 import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString} from '../web3'
-import {SettingsState, useFormatters} from '../settings-state'
+import {SettingsState, useFormatters, useTranslation} from '../settings-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
 import {WalletState} from '../common/wallet-state'
+import {TKeyRenderer} from '../common/i18n'
+import {Trans} from '../common/Trans'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import transparentIcon from '../assets/icons/transparent.svg'
@@ -36,26 +38,35 @@ const ICON_PER_TX_STATUS: Record<TxStatusString, string> = {
   failed: crossIcon,
 }
 
-const DESCRIPTION_PER_TX_STATUS: Record<TxStatusString, string> = {
-  pending: 'Transaction waiting to be added to a block in the Midnight Chain',
-  confirmed: 'Transaction has been added to a block in the Midnight Chain',
-  persisted: 'Transaction cannot be rolled back',
-  failed: 'Transaction has failed to reach the chain and wallet doesn’t expect it to proceed',
+const DESCRIPTION_PER_TX_STATUS: Record<TxStatusString, TKeyRenderer> = {
+  pending: ['wallet', 'transactionStatus', 'pendingDescription'],
+  confirmed: ['wallet', 'transactionStatus', 'confirmedDescription'],
+  persisted: ['wallet', 'transactionStatus', 'persistedDescription'],
+  failed: ['wallet', 'transactionStatus', 'failedDescription'],
+}
+
+const TX_STATUS_TRANSLATION: Record<TxStatusString, TKeyRenderer> = {
+  pending: ['wallet', 'transactionStatus', 'pending'],
+  confirmed: ['wallet', 'transactionStatus', 'confirmed'],
+  persisted: ['wallet', 'transactionStatus', 'persisted'],
+  failed: ['wallet', 'transactionStatus', 'failed'],
 }
 
 export const TxStatusCell = ({transaction: {txStatus}}: TransactionCellProps): JSX.Element => {
+  const {t} = useTranslation()
+
   const status: TxStatusString = typeof txStatus === 'string' ? txStatus : txStatus.status
-  const capitalizedStatus = _.capitalize(status)
+  const translatedStatus = t(TX_STATUS_TRANSLATION[status])
   const iconSrc = ICON_PER_TX_STATUS[status]
-  const description = DESCRIPTION_PER_TX_STATUS[status]
+  const description = t(DESCRIPTION_PER_TX_STATUS[status])
 
   return (
     <>
       <span className="icon">
-        <SVG className={status} title={capitalizedStatus} src={iconSrc} />
+        <SVG className={status} title={translatedStatus} src={iconSrc} />
       </span>
       <Popover content={description} placement="bottom">
-        <span>{capitalizedStatus}</span>
+        <span>{translatedStatus}</span>
       </Popover>
     </>
   )
@@ -64,17 +75,22 @@ export const TxStatusCell = ({transaction: {txStatus}}: TransactionCellProps): J
 export const TxTypeCell = ({
   transaction: {txDetails, txDirection},
 }: TransactionCellProps): JSX.Element => {
-  const displayDirection = txDirection === 'incoming' ? 'Received' : 'Sent'
+  const {t} = useTranslation()
+
+  const displayDirection =
+    txDirection === 'incoming'
+      ? t(['wallet', 'transactionType', 'received'])
+      : t(['wallet', 'transactionType', 'sent'])
   const isTransparent = txDetails.txType === 'call'
 
   const {icon, typeText} = isTransparent
     ? {
         icon: transparentIcon,
-        typeText: 'Transparent',
+        typeText: t(['wallet', 'transactionType', 'transparent']),
       }
     : {
         icon: confidentialIcon,
-        typeText: 'Confidential',
+        typeText: t(['wallet', 'transactionType', 'confidential']),
       }
 
   return (
@@ -111,11 +127,17 @@ const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Ele
     <></>
   ) : (
     <div className="DetailedAmount two-col-table">
-      <div>Value:</div>
+      <div>
+        <Trans k={['wallet', 'label', 'transactionValue']} />:
+      </div>
       <div className="monospace">{abbreviateDust(value)}</div>
-      <div>Fee:</div>
+      <div>
+        <Trans k={['wallet', 'label', 'transactionFee']} />:
+      </div>
       <div className="monospace">{abbreviateDust(fee)}</div>
-      <div>Total:</div>
+      <div>
+        <Trans k={['wallet', 'label', 'transactionTotal']} />:
+      </div>
       <div className="monospace">{abbreviateDust(totalValue)}</div>
     </div>
   )
@@ -164,27 +186,33 @@ export const TxAssetCell = ({}: TransactionCellProps): JSX.Element => {
   )
 }
 
-const DESCRIPTION_PER_TX_TYPE: Record<Transaction['txDetails']['txType'], string> = {
-  redeem: 'A transfer transaction from a transparent address to a confidential address',
-  call: 'A smart contract call transaction',
-  transfer: 'A fully confidential transfer of funds',
-  coinbase: 'A transfer of mining rewards',
+const DESCRIPTION_PER_TX_TYPE: Record<Transaction['txDetails']['txType'], TKeyRenderer> = {
+  redeem: ['wallet', 'transactionType', 'redeemDescription'],
+  call: ['wallet', 'transactionType', 'callDescription'],
+  transfer: ['wallet', 'transactionType', 'transferDescription'],
+  coinbase: ['wallet', 'transactionType', 'coinbaseDescription'],
+}
+
+const LABEL_PER_TX_TYPE: Record<Transaction['txDetails']['txType'], TKeyRenderer> = {
+  redeem: ['wallet', 'transactionType', 'redeem'],
+  call: ['wallet', 'transactionType', 'call'],
+  transfer: ['wallet', 'transactionType', 'transfer'],
+  coinbase: ['wallet', 'transactionType', 'coinbase'],
 }
 
 const TxTypeLabel = ({
   transaction: {
     txDetails: {txType},
   },
-}: TransactionCellProps): JSX.Element => {
-  const typeLabel = `${_.capitalize(txType)} Transaction`
-  return (
-    <div className="type-label">
-      <Popover content={DESCRIPTION_PER_TX_TYPE[txType]} placement="right">
-        <span>{typeLabel}</span>
-      </Popover>
-    </div>
-  )
-}
+}: TransactionCellProps): JSX.Element => (
+  <div className="type-label">
+    <Popover content={<Trans k={DESCRIPTION_PER_TX_TYPE[txType]} />} placement="right">
+      <span>
+        <Trans k={LABEL_PER_TX_TYPE[txType]} />
+      </span>
+    </Popover>
+  </div>
+)
 
 interface TxGlacierTypeLabel {
   receivingAddress: string | null
@@ -205,7 +233,7 @@ const TxGlacierTypeLabel = ({receivingAddress}: TxGlacierTypeLabel): JSX.Element
   }
 
   if (receivingAddress === glacierDrop) {
-    return wrapper('Glacier Drop Contract Call')
+    return wrapper(<Trans k={['wallet', 'transactionType', 'glacierDropContractCall']} />)
   } else {
     return <></>
   }
@@ -230,13 +258,21 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
           <TxGlacierTypeLabel receivingAddress={receivingAddress} />
           <TxTypeLabel transaction={transaction} />
           <div className="call-details two-col-table">
-            <div>From:</div>
+            <div>
+              <Trans k={['wallet', 'label', 'sendingAddress']} />:
+            </div>
             <div className="monospace">{sendingAddress}</div>
-            <div>To:</div>
+            <div>
+              <Trans k={['wallet', 'label', 'receivingAddress']} />:
+            </div>
             <div className="monospace">{receivingAddress}</div>
-            <div>Gas Limit:</div>
+            <div>
+              <Trans k={['wallet', 'label', 'transactionGasLimit']} />:
+            </div>
             <div className="monospace">{new BigNumber(gasLimit).toString(10)}</div>
-            <div>Gas Price:</div>
+            <div>
+              <Trans k={['wallet', 'label', 'transactionGasPrice']} />:
+            </div>
             <div className="monospace">{new BigNumber(gasPrice).toString(10)}</div>
           </div>
         </div>
@@ -259,7 +295,7 @@ const Confirmations = ({transaction: {txStatus}}: TransactionCellProps): JSX.Ele
 
   return (
     <div>
-      Confirmations: <b>{confirmations}</b>
+      <Trans k={['wallet', 'label', 'transactionConfirmations']} />: <b>{confirmations}</b>
     </div>
   )
 }
@@ -272,10 +308,11 @@ export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element 
       <Confirmations transaction={transaction} />
       <DetailedAmount transaction={transaction} />
       <div>
-        Transaction ID: <span className="monospace">{hash}</span>
+        <Trans k={['wallet', 'label', 'transactionId']} />:{' '}
+        <span className="monospace">{hash}</span>
         <br />
         <Link href={`${LINKS.explorer}/transaction/${hash}`} styled>
-          View in Explorer
+          <Trans k={['wallet', 'link', 'viewInExplorer']} />
         </Link>
       </div>
     </>

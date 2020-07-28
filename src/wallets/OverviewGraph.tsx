@@ -1,6 +1,7 @@
 import React from 'react'
 import {Popover} from 'antd'
 import {useFormatters} from '../settings-state'
+import {Trans} from '../common/Trans'
 import './OverviewGraph.scss'
 
 interface OverviewGraphProps {
@@ -52,11 +53,20 @@ export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
 
   const popoverText = (
     <>
-      {formatPercentage(confRatio)}% Confidential
+      <Trans
+        k={['wallet', 'balanceType', 'confidentialPercentage']}
+        values={{percentage: formatPercentage(confRatio)}}
+      />
       <br />
-      {formatPercentage(tranRatio)}% Transparent
+      <Trans
+        k={['wallet', 'balanceType', 'transparentPercentage']}
+        values={{percentage: formatPercentage(confRatio)}}
+      />
       <br />
-      {formatPercentage(pendRatio)}% Pending
+      <Trans
+        k={['wallet', 'balanceType', 'pendingPercentage']}
+        values={{percentage: formatPercentage(confRatio)}}
+      />
     </>
   )
 
