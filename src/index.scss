@@ -111,7 +111,8 @@ div#root {
 //
 
 // antd generic Button overrides
-.ant-btn {
+.ant-btn,
+.ant-btn.active {
   @include themify($themes) {
     background-color: themed('btn-default-bg');
     color: themed('secondary-background');
@@ -291,6 +292,7 @@ input::placeholder {
 .Luna {
   .ant-btn {
     height: $dialog-component-height;
+    padding: 0 15px;
     border-radius: $dialog-component-border-radius;
     font-size: $font-size-button;
     font-weight: bold;
@@ -335,9 +337,5 @@ input::placeholder {
 
   .ant-select-dropdown {
     border-radius: $dialog-component-border-radius;
-  }
-
-  .ant-modal-body {
-    padding: 42px 64px;
   }
 }

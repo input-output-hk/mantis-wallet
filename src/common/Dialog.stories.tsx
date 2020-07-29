@@ -144,6 +144,7 @@ export const InteractiveFee: FunctionComponent<{}> = () => (
         high: dust('Fee high estimate', 0.03),
       }}
       onChange={action('on-change')}
+      errorMessage={text('Error message', '')}
     />
   </Dialog>
 )

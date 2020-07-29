@@ -10,12 +10,9 @@
     opacity: 1;
 
     @include themify($themes) {
+      border: 1px solid themed('normal-color');
       background-color: themed('normal-color');
       color: themed('text-color');
-    }
-
-    &:hover {
-      border: 0;
     }
 
     &:focus {
@@ -41,7 +38,7 @@
   .ant-form-item-has-error & {
     .ant-input {
       @include themify($themes) {
-        border: 1px solid themed('error-color');
+        border: 1px solid themed('error-color') !important; // FIXME
       }
     }
   }

@@ -144,12 +144,12 @@
             display: inline-block;
             height: 2rem;
             margin-right: 1em;
-            padding: 0 10px;
+            padding: 0 15px;
             font-size: 12px;
             font-weight: bold;
             line-height: 2rem;
 
-            &.secondary {
+            &.secondary:not(:disabled) {
               &:hover,
               &:focus {
                 @include themify($themes) {

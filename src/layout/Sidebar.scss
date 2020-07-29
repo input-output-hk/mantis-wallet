@@ -111,17 +111,29 @@
     font-size: 10px;
     font-weight: bold;
     letter-spacing: 1.8px;
-    text-align: center;
+    text-align: left;
     text-transform: uppercase;
+
+    > .footer-link-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 160px;
+      margin: 0.5em auto;
+    }
 
     .support,
     .status {
-      margin-right: 8px;
-      padding-right: 7px;
+      padding-right: 6px;
+      text-align: right;
 
       @include themify($themes) {
         border-right: 1px solid themed('text-color');
       }
+    }
+
+    .feedback,
+    .logout {
+      padding-left: 8px;
     }
 
     .footer-link {
@@ -151,6 +163,7 @@
       margin-top: 1em;
       font-weight: normal;
       letter-spacing: normal;
+      text-align: center;
       text-transform: none;
     }
   }
@@ -217,6 +230,13 @@
     .footer {
       font-size: 10px;
 
+      > .footer-link-wrapper {
+        display: block;
+        width: 100%;
+        margin: 0;
+        text-align: center;
+      }
+
       .footer-link {
         display: inline-block;
         margin-bottom: 0.5em;
@@ -225,12 +245,16 @@
 
       .support,
       .status {
-        margin-right: 0;
         padding-right: 0;
 
         @include themify($themes) {
           border-right: 0px solid themed('text-color');
         }
+      }
+
+      .feedback,
+      .logout {
+        padding-left: 0;
       }
 
       .edition {

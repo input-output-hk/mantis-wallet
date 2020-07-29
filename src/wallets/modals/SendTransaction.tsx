@@ -87,7 +87,7 @@ export const SendToConfidentialDialog = ({
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
-        children: 'Send →',
+        children: 'Send',
         onClick: (): Promise<void> =>
           onSend(recipient, Number(Dust.toBasic(amount)), Number(Dust.toBasic(fee))),
         disabled: disableSend,
@@ -176,7 +176,7 @@ const SendToTransparentDialog = ({
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
-        children: 'Send →',
+        children: 'Send',
         onClick: (): Promise<void> =>
           onSendToTransparent(
             recipient,
@@ -265,8 +265,8 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
           label="Transaction Type"
           defaultMode={mode}
           buttonClassName="mode-switch"
-          left={{label: 'Confidential', type: 'confidential'}}
-          right={{label: 'Transparent', type: 'transparent'}}
+          left={{label: 'Transparent', type: 'transparent'}}
+          right={{label: 'Confidential', type: 'confidential'}}
           disabled={modalLocker.isLocked}
           onChange={setMode}
         />

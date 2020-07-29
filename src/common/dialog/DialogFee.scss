@@ -61,6 +61,17 @@
     display: grid;
     grid-template-columns: 0 1fr 1fr 1fr 1fr;
     height: $dialog-component-height;
+    border-radius: $dialog-component-border-radius + 0.1rem;
+
+    @include themify($themes) {
+      border: 1px solid themed('input-bg');
+    }
+
+    .dark & {
+      @include themify($themes) {
+        border: 1px solid themed('dialog-dark-input-bg');
+      }
+    }
 
     .button {
       @extend %disable-focus-outline;

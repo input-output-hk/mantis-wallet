@@ -9,7 +9,7 @@
   }
 
   .title {
-    padding: 0 0 1rem;
+    padding: 0 0 0.5rem;
     opacity: $secondary-opacity;
     font-size: 12px;
     font-weight: bold;
@@ -33,7 +33,6 @@
   .link {
     @extend %link;
     display: block;
-    margin-top: 0.5rem;
     padding: 0.5rem 0;
     font-size: 10px;
     font-weight: bold;

@@ -123,7 +123,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
     type: 'primary',
     htmlType: 'submit',
     size: 'large',
-    children: 'Next →',
+    children: 'Next',
     loading: rightInProgress,
     ...rightButtonProps,
     onClick: createHandleClick(rightButtonProps, setRightInProgress, skipValidationRight),

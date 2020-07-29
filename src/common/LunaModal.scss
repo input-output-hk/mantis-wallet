@@ -12,7 +12,7 @@
   }
 
   .ant-modal-content {
-    border-radius: 1rem;
+    border-radius: $dialog-component-border-radius * 2;
 
     @include themify($themes) {
       background-color: themed('modal-background');

@@ -89,7 +89,7 @@ test('WalletCreate `Security` step', async () => {
   await expectCalledOnClick(() => getByText('Cancel'), cancel)
 
   // Click Next
-  await expectCalledOnClick(() => getByText('Next →'), next)
+  await expectCalledOnClick(() => getByText('Next'), next)
 })
 
 test('WalletCreate `Display Recovery` step', async () => {
@@ -108,7 +108,7 @@ test('WalletCreate `Display Recovery` step', async () => {
   await expectCalledOnClick(() => getByText('Back'), back)
 
   // Click Next
-  const nextButton = getByText('Next →')
+  const nextButton = getByText('Next')
   // Next button should be enabled
   expect(nextButton).toBeEnabled()
   // Clicking it should stop with an error

@@ -114,6 +114,7 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
         }}
       >
         <DialogDropdown
+          type="small"
           label="Select Receive Address"
           options={transparentAddresses}
           onChange={setTransparentAddress}
@@ -136,7 +137,7 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
             <Popover content={feeTooltip}>
               <span>
                 Assign reward in M-{chain.symbol} for your prover{' '}
-                <span style={{textTransform: 'none'}}>(Whats this?)</span>
+                <span style={{textTransform: 'none'}}>(What is this?)</span>
               </span>
             </Popover>
           </label>
