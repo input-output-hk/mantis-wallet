@@ -1,15 +1,18 @@
-@import '../themify';
+@import '../themify', '../vars', '../partial';
 
 .WalletActionBox {
+  @extend %disable-focus-outline;
+
   display: inline-grid;
   align-content: end;
-  width: 307px;
-  height: 367px;
+  width: 340px;
+  height: 370px;
   margin: 1rem;
+  border-radius: $dialog-component-border-radius;
   cursor: pointer;
 
   @include themify($themes) {
-    border: 1px solid themed('tertiary-background');
+    background-color: themed('secondary-background');
   }
 
   .svg {
@@ -21,35 +24,47 @@
   }
 
   .title {
-    padding: 36px;
-    font-size: 13px;
+    padding: 3em;
+    font-size: $font-size-s;
     font-weight: bold;
-    letter-spacing: 0.17px;
+    letter-spacing: $letter-spacing-small;
     text-align: center;
     text-transform: uppercase;
   }
 
   .note {
     height: 92px;
-    padding: 0 13px;
-    font-size: 13px;
+    padding: 0 1em;
+    font-size: $font-size-s;
     font-weight: 300;
-    letter-spacing: 0.17px;
+    letter-spacing: $letter-spacing-small;
     text-align: center;
   }
 
   .footer {
     padding: 0 46px;
-    font-size: 18px;
+    transition: background-color $transition-duration;
+    border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
+    font-size: $font-size-xl;
     font-weight: bold;
-    letter-spacing: 2.7px;
+    letter-spacing: $letter-spacing-large;
     line-height: 64px;
-    text-align: right;
+    text-align: center;
     text-transform: uppercase;
 
     @include themify($themes) {
-      background-color: themed('text-color');
-      color: themed('secondary-background');
+      background-color: themed('primary-color');
+      color: #000;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    .footer {
+      @include themify($themes) {
+        background-color: themed('btn-focus-bg');
+        color: themed('secondary-background');
+      }
     }
   }
 }

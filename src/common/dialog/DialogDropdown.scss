@@ -1,13 +1,13 @@
 @import '../../themify', '../../vars', '../../partial';
 
 .DialogDropdown {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .active-option {
     width: 508px;
-    padding: 10px 0;
+    padding: 6px 0 0;
     overflow: hidden;
-    font-size: 14px;
+    font-size: $font-size-m;
     font-weight: bold;
     white-space: nowrap;
 
@@ -17,39 +17,37 @@
   }
 
   .label {
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-}
-
-.DialogDropdown.small {
-  .label {
     @extend %dialog-label;
     font-weight: normal;
+    cursor: pointer;
   }
 }
 
 .DialogDropdownOverlay {
   .ant-dropdown-menu {
+    @extend %disable-focus-outline;
+
     @include themify($themes) {
-      background-color: themed('component-background');
+      background-color: themed('normal-color');
       color: themed('text-color');
     }
   }
 
   .ant-dropdown-menu-item {
+    @extend %disable-focus-outline;
+
     width: 508px;
     overflow: hidden;
 
     @include themify($themes) {
-      background-color: themed('component-background');
+      background-color: themed('normal-color');
       color: themed('text-color');
     }
 
     &:hover {
       @include themify($themes) {
         background-color: themed('primary-color');
+        color: #000;
       }
     }
   }

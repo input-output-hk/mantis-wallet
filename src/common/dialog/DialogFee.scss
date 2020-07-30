@@ -1,9 +1,11 @@
 @import '../../themify', '../../partial', '../../vars';
 
 .DialogFee {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .ant-input {
+    border-radius: 0;
+
     @include themify($themes) {
       background-color: themed('input-bg');
       color: themed('text-color');
@@ -59,12 +61,34 @@
     display: grid;
     grid-template-columns: 0 1fr 1fr 1fr 1fr;
     height: $dialog-component-height;
+    border-radius: $dialog-component-border-radius + 0.1rem;
+
+    @include themify($themes) {
+      border: 1px solid themed('input-bg');
+    }
+
+    .dark & {
+      @include themify($themes) {
+        border: 1px solid themed('dialog-dark-input-bg');
+      }
+    }
 
     .button {
+      @extend %disable-focus-outline;
+
       height: 100%;
       padding: 0;
-      font-size: 12px;
+      border-radius: 0;
+      font-size: $font-size-s;
       text-align: center;
+
+      &.custom {
+        border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+      }
+
+      &.high {
+        border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
+      }
 
       &.inactive:not(:disabled) {
         &:hover,
@@ -78,7 +102,7 @@
       }
 
       .fee-amount {
-        font-size: 10px;
+        font-size: $font-size-xs;
       }
     }
 
@@ -100,7 +124,8 @@
       .input {
         display: block;
         margin-right: 5px;
-        padding: 4px 11px;
+        padding: 0 0.75rem;
+        border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
       }
 
       .button {

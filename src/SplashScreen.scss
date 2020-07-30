@@ -1,4 +1,4 @@
-@import './themify', './partial';
+@import './themify', './partial', './vars';
 
 .SplashScreen {
   display: flex;
@@ -68,7 +68,7 @@
   .details {
     @extend %link;
 
-    font-size: 12px;
+    font-size: $font-size-s;
     font-weight: bold;
     text-align: center;
 

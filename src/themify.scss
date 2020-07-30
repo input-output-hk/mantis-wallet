@@ -1,5 +1,7 @@
 @import 'themes';
 
+$theme-map: null;
+
 @mixin themify($themes: $themes) {
   // iterate over every defined theme
   @each $theme, $map in $themes {

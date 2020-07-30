@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 .PeriodStatus {
   display: grid;
@@ -47,7 +47,7 @@
       .current-period-title {
         margin-bottom: 0.5em;
         font-weight: bold;
-        letter-spacing: 1.95px;
+        letter-spacing: $letter-spacing-large;
         text-transform: uppercase;
 
         @include themify($themes) {
@@ -56,19 +56,20 @@
       }
 
       .current-period-detail {
-        font-size: 12px;
+        font-size: $font-size-s;
       }
     }
 
     .next-period {
-      font-size: 12px;
+      font-size: $font-size-s;
     }
   }
 
   .puzzle-info {
     grid-area: puzzle-info;
-    padding: 1.5em;
-    font-size: 13px;
+    padding: 1.5rem;
+    border-radius: $dialog-component-border-radius;
+    font-size: $font-size-s;
 
     @include themify($themes) {
       background-color: themed('tertiary-component-background');
@@ -78,7 +79,7 @@
       font-weight: bold;
 
       @include themify($themes) {
-        color: themed('success-color');
+        color: themed('success-text');
       }
     }
   }

@@ -66,10 +66,12 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const [activeModal, setActiveModal] = useState<ModalId>('none')
 
   const LogOutButton = (): JSX.Element => {
+    const classNames = ['footer-link', 'logout']
+
     if (walletState.walletStatus === 'LOADED' && !routerState.isLocked) {
       return (
         <span
-          className="footer-link"
+          className={classnames(...classNames)}
           {...fillActionHandlers(() => setActiveModal('LockWallet'), 'link')}
         >
           <Trans k={['common', 'link', 'logOut']} />
@@ -77,7 +79,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
       )
     } else {
       return (
-        <span className={classnames('footer-link', 'disabled')}>
+        <span className={classnames(...classNames, 'disabled')}>
           <Trans k={['common', 'link', 'logOut']} />
         </span>
       )
@@ -127,7 +129,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         </nav>
       </div>
       <div className="footer">
-        <div>
+        <div className="footer-link-wrapper">
           <span
             className="footer-link support"
             {...fillActionHandlers(() => setActiveModal('Support'), 'link')}
@@ -138,7 +140,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
             <Trans k={['common', 'link', 'feedback']} />
           </Link>
         </div>
-        <div>
+        <div className="footer-link-wrapper">
           <span
             className="footer-link status"
             {...fillActionHandlers(() => setActiveModal('Status'), 'link')}

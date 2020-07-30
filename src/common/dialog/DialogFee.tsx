@@ -130,7 +130,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
           {allFeeLevels.map((level) => (
             <Button
               disabled={forceCustom}
-              className={classnames('button', {inactive: feeLevel !== level})}
+              className={classnames('button', level, {inactive: feeLevel !== level})}
               onClick={() => {
                 setValue(fieldDisplayAmount(feeEstimates[level]))
                 setFeeLevel(level)

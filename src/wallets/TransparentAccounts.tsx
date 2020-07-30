@@ -1,4 +1,5 @@
 import React, {useState, FunctionComponent} from 'react'
+import classnames from 'classnames'
 import {Button, message, Switch} from 'antd'
 import BigNumber from 'bignumber.js'
 import {SettingsState} from '../settings-state'
@@ -32,7 +33,7 @@ const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
   return (
     <>
       <div className="transparent-account">
-        <div className="info">
+        <div className={classnames('info', {transactionsVisible})}>
           <div>
             <CopyableLongText content={account.address} showQrCode />
           </div>

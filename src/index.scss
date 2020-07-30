@@ -38,6 +38,7 @@
 body {
   margin: 0;
   font-family: $font-family;
+  font-size: $font-size-root;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -89,7 +90,7 @@ div#root {
 }
 
 :focus {
-  outline: none;
+  @extend %focus-outline;
 }
 
 //
@@ -97,11 +98,8 @@ div#root {
 //
 
 .main-title {
+  @extend %title;
   margin: 0;
-  overflow: hidden;
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 0.46px;
 }
 
 .uppercase {
@@ -113,7 +111,8 @@ div#root {
 //
 
 // antd generic Button overrides
-.ant-btn {
+.ant-btn,
+.ant-btn.active {
   @include themify($themes) {
     background-color: themed('btn-default-bg');
     color: themed('secondary-background');
@@ -141,20 +140,6 @@ div#root {
     color: #000;
   }
 
-  &:focus {
-    @include themify($themes) {
-      background-color: darken(themed('primary-color'), 5%);
-      color: #000;
-    }
-  }
-
-  &:hover {
-    @include themify($themes) {
-      background-color: darken(themed('primary-color'), 10%);
-      color: #000;
-    }
-  }
-
   &.secondary {
     @include themify($themes) {
       background-color: themed('secondary-background');
@@ -168,6 +153,14 @@ div#root {
         color: themed('text-color');
       }
     }
+  }
+}
+
+// <Button danger> Remove </Button>
+.ant-btn-dangerous {
+  @include themify($themes) {
+    background-color: themed('error-color');
+    color: #fff;
   }
 }
 
@@ -211,7 +204,8 @@ div#root {
 
 // antd Popover theme overrides
 .ant-popover-inner-content {
-  font-size: 12px;
+  font-size: $font-size-s;
+
   @include themify($themes) {
     background-color: themed('text-color');
     color: themed('secondary-background');
@@ -228,12 +222,15 @@ div#root {
 // antd Message theme overrides
 .ant-message-notice-content {
   @include themify($themes) {
+    border-radius: $dialog-component-border-radius;
     background-color: themed('secondary-background');
     color: themed('text-color');
   }
 }
 
 .ant-switch {
+  @extend %add-focus-outline;
+
   @include themify($themes) {
     background-color: themed('normal-color');
   }
@@ -245,9 +242,46 @@ div#root {
   }
 }
 
-@include themify($themes) {
-  input::placeholder {
-    opacity: 1;
+// antd modal close X generic style
+.ant-modal-close {
+  @extend %disable-focus-outline;
+
+  transition: color $transition-duration;
+
+  @include themify($themes) {
+    color: themed('secondary-text-color');
+  }
+
+  &:hover,
+  &:focus {
+    transition: color $transition-duration;
+  }
+
+  &:hover {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+
+  &:focus {
+    @include themify($themes) {
+      color: themed('primary-color');
+    }
+  }
+
+  .ant-modal-close-x {
+    margin: 0;
+    padding: 16px;
+    color: inherit;
+    font-size: 24px;
+    line-height: 24px;
+  }
+}
+
+input::placeholder {
+  opacity: 1;
+
+  @include themify($themes) {
     color: themed('secondary-text-color');
   }
 }
@@ -259,17 +293,19 @@ div#root {
 .Luna {
   .ant-btn {
     height: $dialog-component-height;
-    font-size: 14px;
+    padding: 0 15px;
+    border-radius: $dialog-component-border-radius;
+    font-size: $font-size-button;
     font-weight: bold;
-    letter-spacing: 1.44px;
-    text-align: right;
+    letter-spacing: $letter-spacing-medium;
+    text-align: center;
     text-shadow: none;
     text-transform: uppercase;
 
     &.small-button {
       height: 30px;
       margin: 0.5rem 0;
-      font-size: 10px;
+      font-size: $font-size-xs;
       letter-spacing: initial;
     }
   }
@@ -277,7 +313,7 @@ div#root {
   // antd Wave animation override (e.g. Button click)
   [ant-click-animating-without-extra-node='true']::after,
   .ant-click-animating-node {
-    opacity: 0.62;
+    opacity: $secondary-opacity;
   }
 
   .ant-message {
@@ -290,5 +326,17 @@ div#root {
 
   .ant-form-item {
     margin-bottom: 0;
+  }
+
+  .ant-checkbox-wrapper {
+    line-height: 20px;
+
+    .ant-checkbox {
+      top: 0;
+    }
+  }
+
+  .ant-select-dropdown {
+    border-radius: $dialog-component-border-radius;
   }
 }

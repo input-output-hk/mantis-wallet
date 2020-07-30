@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars', '../partial';
 
 $dialog-width: 508px;
 
@@ -12,28 +12,23 @@ $dialog-width: 508px;
     }
   }
 
-  .title {
-    height: 50px;
-    margin: 0;
-    overflow: hidden;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 0.46px;
-  }
-
   .ant-btn {
     span {
       transition: none;
     }
   }
 
-  .actions {
-    margin-bottom: 20px;
+  .title {
+    @extend %title;
+  }
 
+  .dialog-children {
+    margin-bottom: $dialog-spacing-before-buttons;
+  }
+
+  .actions {
     &.grid {
-      display: grid;
-      grid-column-gap: 8px;
-      grid-template-columns: 1fr 1fr;
+      @extend %two-col-grid-template;
     }
 
     &.natural > * {
@@ -51,17 +46,17 @@ $dialog-width: 508px;
     }
   }
 
-  .ant-form-item-explain {
-    position: absolute;
-    top: -25px;
-    right: 0;
-    width: $dialog-width;
-    height: 20px;
-    font-size: 10px;
-    text-align: right;
+  .footer:not(:empty) {
+    margin-top: $dialog-component-spacing;
 
-    @include themify($themes) {
-      color: themed('error-color');
+    > *:last-child {
+      margin-bottom: 0;
     }
+  }
+
+  .ant-form-item-explain {
+    @extend %dialog-input-inline-error;
+
+    width: $dialog-width;
   }
 }

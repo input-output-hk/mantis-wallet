@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import {Button} from 'antd'
 import QRCode from 'qrcode.react'
 import fileDownload from 'js-file-download'
+import {DialogColumns} from './DialogColumns'
 import './DialogQRCode.scss'
 
 interface DialogQRCodeProps {
@@ -24,13 +25,15 @@ export const DialogQRCode: FunctionComponent<DialogQRCodeProps> = ({
       <div className="qr-content">{content}</div>
     </div>
     {downloadFileName && (
-      <Button
-        className="download"
-        type="primary"
-        onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
-      >
-        Download txt
-      </Button>
+      <DialogColumns>
+        <Button
+          className="download"
+          type="primary"
+          onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
+        >
+          Download txt
+        </Button>
+      </DialogColumns>
     )}
   </div>
 )

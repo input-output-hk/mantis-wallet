@@ -1,13 +1,11 @@
-@import '../../themify';
+@import '../../themify', '../../partial';
 
 .Asset {
   $height: 50px;
-  margin-bottom: 14px;
+  margin-bottom: 1rem;
 
   .label {
-    margin-bottom: 1em;
-    font-size: 10px;
-    text-transform: uppercase;
+    @extend %dialog-label;
   }
 
   .container {

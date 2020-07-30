@@ -2,8 +2,8 @@
 
 .RedeemModal {
   .amount-container {
-    display: grid;
-    grid-column-gap: 8px;
+    @extend %two-col-grid-template;
+
     grid-template-columns: auto 1fr;
 
     .label {
@@ -13,13 +13,19 @@
 
     .full-amount {
       height: $dialog-component-height;
+      opacity: 1;
 
       &.inactive {
-        opacity: $secondary-opacity;
+        opacity: $unselected-opacity;
 
         @include themify($themes) {
-          background-color: themed('tertiary-background');
+          background-color: themed('input-bg');
           color: themed('text-color');
+        }
+
+        &:hover,
+        &:focus {
+          opacity: 1;
         }
       }
     }

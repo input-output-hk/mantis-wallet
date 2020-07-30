@@ -1,4 +1,4 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 $luna-status-modal-padding-hor: 4em;
 $luna-status-modal-padding-ver: 3em;
@@ -19,12 +19,6 @@ $luna-status-modal-padding-ver: 3em;
     }
   }
 
-  .ant-modal-close-x {
-    @include themify($themes) {
-      color: themed('text-color');
-    }
-  }
-
   .ant-modal-footer {
     padding: 0;
     border-top-width: 0;
@@ -38,7 +32,7 @@ $luna-status-modal-padding-ver: 3em;
     grid-template-rows: none;
     width: calc(100vw - 4 * #{$luna-status-modal-padding-hor});
     height: calc(100vh - 4 * #{$luna-status-modal-padding-ver});
-    font-size: 14px;
+    font-size: $font-size-m;
 
     @include themify($themes) {
       color: rgba(themed('text-color'), 0.7);
@@ -71,7 +65,7 @@ $luna-status-modal-padding-ver: 3em;
 
           &.success {
             @include themify($themes) {
-              color: themed('success-color');
+              color: themed('success-text');
             }
           }
 

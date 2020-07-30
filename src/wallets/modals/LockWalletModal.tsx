@@ -1,8 +1,10 @@
 import React, {useState, FunctionComponent} from 'react'
+import {Button} from 'antd'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogInputPassword} from '../../common/dialog/DialogInput'
+import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {fillActionHandlers} from '../../common/util'
 import './LockWalletModal.scss'
 
@@ -38,9 +40,11 @@ const LockWalletDialog: FunctionComponent<LockWalletModalProps> = ({
           with your password.
         </DialogMessage>
         <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
-        <div className="remove-link" {...fillActionHandlers(toRemoveWallet)}>
-          Remove Wallet
-        </div>
+        <DialogColumns>
+          <Button danger {...fillActionHandlers(toRemoveWallet)}>
+            Remove Wallet
+          </Button>
+        </DialogColumns>
       </div>
     </Dialog>
   )

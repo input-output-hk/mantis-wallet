@@ -1,10 +1,11 @@
-@import '../../themify', '../../partial';
+@import '../../themify', '../../partial', '../../vars';
 
 .DialogMessage {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
+  border-radius: $dialog-component-border-radius;
 
   &.highlight {
-    padding: 20px 13px;
+    padding: 1rem;
 
     @include themify($themes) {
       background-color: themed('normal-color');
@@ -23,6 +24,6 @@
   }
 
   .description {
-    font-size: 13px;
+    font-size: $font-size-s;
   }
 }

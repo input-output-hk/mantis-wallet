@@ -25,9 +25,9 @@
       display: inline-block;
       height: 30px;
       margin-left: 19px;
-      font-size: 12px;
+      font-size: $font-size-s;
       font-weight: bold;
-      letter-spacing: 1.8px;
+      letter-spacing: $letter-spacing-medium;
       text-align: center;
       text-transform: uppercase;
       vertical-align: middle;
@@ -49,9 +49,9 @@
 
       .header {
         display: contents;
-        font-size: 13px;
+        font-size: $font-size-s;
         font-weight: bold;
-        letter-spacing: 1.95px;
+        letter-spacing: $letter-spacing-large;
         text-align: left;
         text-transform: uppercase;
 
@@ -67,8 +67,15 @@
           justify-self: end;
 
           .hide-empty-label {
+            @extend %disable-focus-outline;
+
             padding: 0 1em;
             cursor: pointer;
+
+            &:focus,
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
@@ -79,8 +86,8 @@
         .info {
           display: contents;
           min-height: 73px;
-          font-size: 13px;
-          letter-spacing: 0.3px;
+          font-size: $font-size-s;
+          letter-spacing: $letter-spacing-small;
           line-height: 44px;
           vertical-align: middle;
 
@@ -95,6 +102,21 @@
 
           & > :first-child {
             padding-left: 1em;
+            border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+          }
+
+          & > :last-child {
+            border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
+          }
+
+          &.transactionsVisible {
+            & > :first-child {
+              border-radius: $dialog-component-border-radius 0 0 0;
+            }
+
+            & > :last-child {
+              border-radius: 0 $dialog-component-border-radius 0 0;
+            }
           }
 
           .dust {
@@ -105,8 +127,9 @@
           .amount {
             display: inline-block;
             padding: 0 10px;
+            border-radius: $dialog-component-border-radius;
             font-weight: bold;
-            line-height: 32px;
+            line-height: 2rem;
 
             @include themify($themes) {
               background-color: themed('secondary-background');
@@ -119,18 +142,28 @@
 
           .action {
             display: inline-block;
-            height: 32px;
+            height: 2rem;
             margin-right: 1em;
-            padding: 0 10px;
-            font-size: 12px;
+            padding: 0 15px;
+            font-size: $font-size-s;
             font-weight: bold;
-            line-height: 32px;
+            line-height: 2rem;
+
+            &.secondary:not(:disabled) {
+              &:hover,
+              &:focus {
+                @include themify($themes) {
+                  background-color: themed('component-background');
+                }
+              }
+            }
           }
         }
 
         .transactions-container {
           grid-column: 1 / -1;
           padding: 0 1em 1em;
+          border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
 
           @include themify($themes) {
             background-color: themed('normal-color');
@@ -138,6 +171,7 @@
 
           .TransactionList {
             padding: 0 1em;
+            border-radius: $dialog-component-border-radius $dialog-component-border-radius 0 0;
 
             @include themify($themes) {
               background-color: themed('secondary-background');
@@ -146,11 +180,12 @@
 
           .transactions-footer {
             padding: 0.5em 1em;
+            border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
             text-align: center;
 
             .transactions-collapse {
               @extend %link;
-              font-size: 13px;
+              font-size: $font-size-s;
               font-weight: bold;
               text-decoration: none;
               text-transform: uppercase;

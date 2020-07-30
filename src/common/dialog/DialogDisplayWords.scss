@@ -1,14 +1,15 @@
-@import '../../themify';
+@import '../../themify', '../../vars';
 
 .DialogDisplayWords {
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .word {
     height: 30px;
-    font-size: 13px;
+    border-radius: $dialog-component-border-radius;
+    font-size: $font-size-s;
     font-weight: bold;
     line-height: 30px;
     user-select: none;

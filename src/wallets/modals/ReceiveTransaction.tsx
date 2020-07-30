@@ -81,7 +81,7 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
       }}
       rightButtonProps={{
         type: 'default',
-        children: 'Generate new →',
+        children: 'Generate new',
         onClick: onGenerateNew,
       }}
       onSetLoading={handleLoading}

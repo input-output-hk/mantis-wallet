@@ -73,9 +73,9 @@ $balance-min-width: 285px;
 
     .box-text {
       margin-bottom: 4px;
-      font-size: 13px;
+      font-size: $font-size-s;
       font-weight: bold;
-      letter-spacing: 1.95px;
+      letter-spacing: $letter-spacing-large;
       line-height: 20px;
       text-transform: uppercase;
     }
@@ -105,7 +105,7 @@ $balance-min-width: 285px;
 
     .get-dust {
       padding-left: 4px;
-      font-size: 12px;
+      font-size: $font-size-s;
     }
   }
 }

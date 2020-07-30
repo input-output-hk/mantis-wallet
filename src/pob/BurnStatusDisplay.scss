@@ -4,6 +4,7 @@
   position: relative;
   margin-top: 30px;
   padding-bottom: 14px;
+  border-radius: $dialog-component-border-radius;
 
   @include themify($themes) {
     background-color: themed('input-bg');
@@ -65,8 +66,8 @@
 
   .exchange-info {
     grid-area: exchange;
-    padding: 15px;
-    font-size: 14px;
+    padding: 1em;
+    font-size: $font-size-m;
     cursor: pointer;
     user-select: none;
 
@@ -132,7 +133,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s;
-    font-size: 13px;
+    font-size: $font-size-s;
 
     &.active {
       max-height: 500px;

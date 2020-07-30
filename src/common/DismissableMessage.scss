@@ -1,4 +1,4 @@
-@import '../partial';
+@import '../partial', '../vars';
 
 .DismissableMessage {
   .dismiss-wrapper {
@@ -6,7 +6,7 @@
 
     .dismiss-link {
       @extend %link;
-      font-size: 12px;
+      font-size: $font-size-s;
     }
   }
 }

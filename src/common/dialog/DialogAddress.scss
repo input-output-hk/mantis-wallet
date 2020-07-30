@@ -1,17 +1,17 @@
-@import '../../themify', '../../partial';
+@import '../../themify', '../../partial', '../../vars';
 
 .DialogAddress {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .display {
     display: grid;
     grid-column-gap: 1rem;
     grid-template-columns: 1fr 3fr;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 
     .private-key {
       @extend %monospace;
-      font-size: 16px;
+      font-size: $font-size-m;
     }
   }
 

@@ -7,6 +7,7 @@ import {Dialog} from '../../common/Dialog'
 import {Link} from '../../common/Link'
 import {LINKS} from '../../external-link-config'
 import {DisplayChain} from '../../pob/chains'
+import {DialogColumns} from '../../common/dialog/DialogColumns'
 import './SelectMethod.scss'
 
 interface SelectMethodProps {
@@ -40,27 +41,27 @@ export const SelectMethod = ({
         </div>
         <div className="section">
           <div className="label">{chain.symbol} Private Key</div>
-          <div className="actions grid">
+          <DialogColumns>
             <Button autoFocus size="large" onClick={onPrivateKey}>
               Continue
             </Button>
-          </div>
-          <div className="actions grid">
+          </DialogColumns>
+          <DialogColumns>
             <div className="more-info">
               <Link href={LINKS.aboutGlacier}>read more on website</Link>
             </div>
-          </div>
+          </DialogColumns>
         </div>
         <div className="section">
           <div className="label">Messages</div>
-          <div className="actions grid">
+          <DialogColumns>
             <Button size="large" onClick={onMessageCreate}>
               Create
             </Button>
             <Button size="large" onClick={onMessageUseSigned}>
               Use Signed
             </Button>
-          </div>
+          </DialogColumns>
         </div>
       </Dialog>
     </LunaModal>

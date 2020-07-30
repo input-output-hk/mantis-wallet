@@ -2,7 +2,7 @@
 
 .DialogInput {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
 
   .label {
     @extend %dialog-label;
@@ -11,11 +11,13 @@
 
   .input {
     height: $dialog-component-height;
+    border-radius: $dialog-component-border-radius;
   }
 
   .dark & {
     .ant-input {
       @include themify($themes) {
+        border: 1px solid themed('dialog-dark-input-bg');
         background-color: themed('dialog-dark-input-bg');
         color: themed('secondary-text-color');
       }

@@ -1,4 +1,4 @@
-@import '../themify', '../vars';
+@import '../themify', '../vars', '../partial';
 
 .Sidebar {
   $link-font-weight: 300;
@@ -39,10 +39,12 @@
     list-style-type: none;
 
     .link {
+      @extend %disable-focus-outline;
+
       display: block;
       z-index: $zindex-sidebar;
       outline: 0;
-      font-size: 18px;
+      font-size: $font-size-xl;
       font-weight: $link-font-weight;
       letter-spacing: $link-letter-spacing;
       line-height: 43px;
@@ -64,6 +66,14 @@
           @include themify($themes) {
             border-left: 3px solid themed('border-color-base');
           }
+        }
+      }
+
+      &:focus,
+      &:hover {
+        .link-title {
+          font-weight: bold;
+          letter-spacing: 0.2px;
         }
       }
 
@@ -98,23 +108,37 @@
 
   .footer {
     margin: 0 0 2em;
-    font-size: 10px;
+    font-size: $font-size-xs;
     font-weight: bold;
-    letter-spacing: 1.8px;
-    text-align: center;
+    letter-spacing: $letter-spacing-large;
+    text-align: left;
     text-transform: uppercase;
+
+    > .footer-link-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 160px;
+      margin: 0.5em auto;
+    }
 
     .support,
     .status {
-      margin-right: 8px;
-      padding-right: 7px;
+      padding-right: 6px;
+      text-align: right;
 
       @include themify($themes) {
         border-right: 1px solid themed('text-color');
       }
     }
 
+    .feedback,
+    .logout {
+      padding-left: 8px;
+    }
+
     .footer-link {
+      @extend %disable-focus-outline;
+
       cursor: pointer;
 
       &:hover {
@@ -139,6 +163,7 @@
       margin-top: 1em;
       font-weight: normal;
       letter-spacing: normal;
+      text-align: center;
       text-transform: none;
     }
   }
@@ -152,7 +177,7 @@
     .title {
       width: 100%;
       padding-left: 0;
-      font-size: 18px;
+      font-size: $font-size-xl;
       text-align: center;
     }
 
@@ -176,7 +201,8 @@
           left: 0;
           margin-left: $sidebar-collapsed-width;
           padding: 0 1em;
-          font-size: 18px;
+          border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
+          font-size: $font-size-xl;
           white-space: nowrap;
 
           @include themify($themes) {
@@ -184,7 +210,9 @@
           }
         }
 
-        &.active {
+        &.active,
+        &:hover,
+        &:focus {
           .link-title {
             font-weight: $link-font-weight;
             letter-spacing: $link-letter-spacing;
@@ -200,7 +228,14 @@
     }
 
     .footer {
-      font-size: 10px;
+      font-size: $font-size-xs;
+
+      > .footer-link-wrapper {
+        display: block;
+        width: 100%;
+        margin: 0;
+        text-align: center;
+      }
 
       .footer-link {
         display: inline-block;
@@ -210,12 +245,16 @@
 
       .support,
       .status {
-        margin-right: 0;
         padding-right: 0;
 
         @include themify($themes) {
           border-right: 0px solid themed('text-color');
         }
+      }
+
+      .feedback,
+      .logout {
+        padding-left: 0;
       }
 
       .edition {

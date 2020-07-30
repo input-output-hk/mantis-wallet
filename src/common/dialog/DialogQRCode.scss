@@ -1,7 +1,7 @@
 @import '../../partial', '../../vars';
 
 .DialogQRCode {
-  margin-bottom: 20px;
+  margin-bottom: $dialog-component-spacing;
   transition: filter $transition-duration;
 
   &.blurred {
@@ -12,9 +12,9 @@
 
   .display {
     display: grid;
-    grid-column-gap: 30px;
+    grid-column-gap: 1.5rem;
     grid-template-columns: auto 1fr;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
   }
 
   .qr-content {
@@ -23,7 +23,7 @@
 
   .download {
     padding: 0 30px;
-    letter-spacing: 1.8px;
+    letter-spacing: $letter-spacing-large;
     text-transform: uppercase;
   }
 

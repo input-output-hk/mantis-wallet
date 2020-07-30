@@ -107,7 +107,6 @@ export const InteractiveDisplayWords: FunctionComponent<{}> = () => (
 export const InteractiveDropdown: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Dropdown">
     <DialogDropdown
-      type={select('Dropdown type', ['normal', 'small'], 'normal')}
       label={text('Dropdown label', 'Hover me')}
       options={[
         {
@@ -144,6 +143,7 @@ export const InteractiveFee: FunctionComponent<{}> = () => (
         high: dust('Fee high estimate', 0.03),
       }}
       onChange={action('on-change')}
+      errorMessage={text('Error message', '')}
     />
   </Dialog>
 )
@@ -239,7 +239,7 @@ export const InteractiveSwitch: FunctionComponent<{}> = () => {
     <Dialog title="Dialog Switch">
       <DialogSwitch
         label={text('Switch field label', 'Switch this')}
-        description={text('Switch field text', '..becuase of this')}
+        description={text('Switch field text', '..because of this')}
         onChange={(checked): void => {
           setSwitched(checked)
           action(checked ? 'Is switched' : 'Is not switched')()

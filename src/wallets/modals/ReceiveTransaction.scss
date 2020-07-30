@@ -1,17 +1,17 @@
 @import '../../themify', '../../partial', '../../vars';
 
 .ReceiveModalFooter {
-  padding: 24px 64px;
+  padding: 1.5rem 64px;
   text-align: left;
 
   @include themify($themes) {
-    background-color: themed('quinary-background');
+    background-color: themed('dialog-dark-input-bg');
   }
 
   .title {
-    padding: 0.5em 0;
+    padding: 0 0 0.5rem;
     opacity: $secondary-opacity;
-    font-size: 12px;
+    font-size: $font-size-s;
     font-weight: bold;
     text-transform: uppercase;
   }
@@ -19,10 +19,10 @@
   .address {
     @extend %monospace;
     width: 508px;
-    padding: 0.5em 0;
+    padding: 0.5rem 0;
     overflow: hidden;
     opacity: $secondary-opacity;
-    font-size: 12px;
+    font-size: $font-size-s;
     white-space: nowrap;
 
     &:hover {
@@ -32,8 +32,9 @@
 
   .link {
     @extend %link;
-    padding: 0.5em 0;
-    font-size: 11px;
+    display: block;
+    padding: 0.5rem 0;
+    font-size: $font-size-xs;
     font-weight: bold;
     text-transform: uppercase;
   }
@@ -42,6 +43,6 @@
 .ReceiveModal {
   .mode-switch {
     width: 172px;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
   }
 }

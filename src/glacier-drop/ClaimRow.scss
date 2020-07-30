@@ -26,8 +26,7 @@
     grid-template-columns: 1fr 2fr 3fr 3fr;
 
     margin-bottom: 1em;
-    font-size: 12px;
-    letter-spacing: 0.01px;
+    font-size: $font-size-s;
     line-height: 1.5;
 
     .claim-title {
@@ -80,6 +79,7 @@
 
     height: unset;
     padding: 2em 1.5em;
+    border-radius: $dialog-component-border-radius;
 
     @include themify($themes) {
       background-color: themed('secondary-component-background');

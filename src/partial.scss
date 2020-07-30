@@ -4,7 +4,7 @@
   display: grid;
   height: 30px;
   padding: 0 14px;
-  font-size: 10px;
+  font-size: $font-size-xs;
   font-weight: bold;
 
   @include themify($themes) {
@@ -111,12 +111,46 @@
 }
 
 %dialog-label {
-  height: 25px;
-  font-size: 10px;
+  height: $dialog-label-height;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-small;
   text-transform: uppercase;
 }
 
+%dialog-input-inline-error {
+  position: absolute;
+  top: -1 * $dialog-label-height;
+  right: 0;
+  height: $dialog-label-height;
+  font-size: $font-size-xs;
+  text-align: right;
+
+  @include themify($themes) {
+    color: themed('error-color');
+  }
+}
+
+%focus-outline {
+  outline: none;
+  box-shadow: 0px 2px 25px 0px rgba(#000, 0.4), 0px 2px 20px 0px rgba($primary-color, 0.2);
+}
+
+%add-focus-outline {
+  &:focus {
+    @extend %focus-outline;
+  }
+}
+
+%disable-focus-outline {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
 %link {
+  @extend %disable-focus-outline;
+
   transition: opacity $transition-duration;
   opacity: $secondary-opacity;
   text-decoration: underline;
@@ -125,23 +159,31 @@
   &:hover,
   &:focus {
     transition: opacity $transition-duration;
-    outline: none;
     opacity: 1;
   }
 }
 
+%title {
+  margin-bottom: $dialog-component-spacing;
+  overflow: hidden;
+  font-size: $font-size-title;
+  font-weight: bold;
+  letter-spacing: $letter-spacing-small;
+}
+
 %dialog-info-link {
   @extend %link;
+
   display: block;
   margin-bottom: 15px;
   padding: 5px 0;
-  font-size: 12px;
+  font-size: $font-size-s;
   font-weight: bold;
   text-align: right;
 }
 
 %monospace {
-  font-family: 'Inconsolata', monospace;
+  font-family: $font-family-monospace;
   font-weight: 400;
   word-break: break-all;
 }
@@ -155,7 +197,8 @@
 
 %error {
   padding: 1em;
-  font-size: 13px;
+  border-radius: $dialog-component-border-radius;
+  font-size: $font-size-s;
   text-align: center;
 
   @include themify($themes) {
@@ -165,11 +208,17 @@
 }
 
 %empty-list-message {
-  margin-top: 2em;
+  margin-top: 3rem;
   opacity: $secondary-opacity;
-  font-size: 12px;
+  font-size: $font-size-s;
   font-weight: bold;
-  letter-spacing: 1.8px;
+  letter-spacing: $letter-spacing-medium;
   text-align: center;
   text-transform: uppercase;
+}
+
+%two-col-grid-template {
+  display: grid;
+  grid-column-gap: 1rem;
+  grid-template-columns: 1fr 1fr;
 }

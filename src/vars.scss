@@ -1,11 +1,27 @@
 $font-family: 'Helvetica Neue', sans-serif;
+$font-family-monospace: 'Inconsolata', monospace;
+
+// Font sizes
+$font-size-xs: 10px;
+$font-size-s: 12px;
+$font-size-m: 14px;
+$font-size-l: 16px;
+$font-size-xl: 18px;
+$font-size-xxl: 20px;
+
+$font-size-root: $font-size-l;
+$font-size-input: $font-size-s;
+$font-size-title: $font-size-xxl;
+$font-size-button: $font-size-l;
+$font-size-button-action: $font-size-s;
+
 $secondary-opacity: 0.57;
 $unselected-opacity: 0.75;
+
 $border-radius-base: 0;
 $btn-border-width: 0;
 $switch-height: 22px;
 $checkbox-size: 20px;
-$modal-body-padding: 42px 64px 53px;
 
 $transition-duration: 0.3s;
 $wave-animation-width: 6px;
@@ -14,7 +30,19 @@ $sidebar-width: 240px;
 $sidebar-collapsed-width: 80px;
 $sidebar-collapse-query: '(max-width: 1300px), (max-height: 800px)';
 
-$dialog-component-height: 47px;
+// Dialog / Modal
+$modal-body-padding: 42px 64px 53px;
+$dialog-spacing-before-buttons: 1.7rem;
+$dialog-label-height: 20px;
+
+$dialog-component-height: 3rem;
+$dialog-component-spacing: 1.5rem;
+$dialog-component-border-radius: 0.5rem;
+
+// Default letter spacings
+$letter-spacing-small: 0.03em;
+$letter-spacing-medium: 0.06em;
+$letter-spacing-large: 0.09em;
 
 // antd uses z-index of 10xx for modals, tooltips, etc
 // let's keep sidebar under them

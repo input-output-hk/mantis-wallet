@@ -18,7 +18,7 @@
       width: 253px;
       height: 28px;
       opacity: $secondary-opacity;
-      font-size: 10px;
+      font-size: $font-size-s;
 
       @include themify($themes) {
         border-bottom: 2px solid themed('border-color-base');
@@ -28,7 +28,7 @@
 
       .anticon {
         margin: 2px;
-        font-size: 16px;
+        font-size: $font-size-l;
 
         @include themify($themes) {
           color: themed('text-color');
@@ -42,7 +42,8 @@
       .search-input {
         width: 230px;
         height: 22px;
-        font-size: 12px;
+        border: 0;
+        font-size: $font-size-input;
 
         @include themify($themes) {
           background-color: themed('component-background');
@@ -68,6 +69,7 @@
       @extend %error;
       margin: 1.5em auto;
       padding: 1em 2.5em;
+      border-radius: $dialog-component-border-radius;
     }
 
     .actions {
@@ -75,7 +77,7 @@
       margin: 1em;
       float: right;
       transition: visibility 0.5s;
-      font-size: 14px;
+      font-size: $font-size-button-action;
 
       @include themify($themes) {
         color: themed('error-dialog-color');
@@ -103,6 +105,7 @@
 
   .no-activity {
     margin: 20px auto;
+    font-size: $font-size-m;
     text-align: center;
   }
 }

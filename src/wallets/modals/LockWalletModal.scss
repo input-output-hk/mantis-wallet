@@ -1,20 +1,23 @@
-@import '../../themify', '../../vars';
+@import '../../themify', '../../vars', '../../partial';
 
 .LockWalletModal {
-  font-size: 13px;
+  font-size: $font-size-s;
 
   .remove-link {
-    margin-bottom: 20px;
+    @extend %disable-focus-outline;
+
+    margin-bottom: $dialog-component-spacing;
     transition: color $transition-duration;
-    text-decoration: underline;
     cursor: pointer;
 
     @include themify($themes) {
       color: rgba(themed('error-color'), 0.9);
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
       transition: color $transition-duration;
+      text-decoration: underline;
 
       @include themify($themes) {
         color: themed('error-color');

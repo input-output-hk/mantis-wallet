@@ -57,7 +57,6 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
       />
       <DialogDropdown
         label="Prover"
-        type="small"
         options={provers.map((prover) => ({
           key: prover.address,
           label: `${prover.name} (${prover.address})`,
@@ -70,7 +69,6 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
       />
       <DialogDropdown
         label="Burn Address"
-        type="small"
         options={_.toPairs(burnAddresses).map(([burnAddress, {chainId, reward}]) => ({
           key: burnAddress,
           label: (
