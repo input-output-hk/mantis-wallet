@@ -107,7 +107,6 @@ export const InteractiveDisplayWords: FunctionComponent<{}> = () => (
 export const InteractiveDropdown: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Dropdown">
     <DialogDropdown
-      type={select('Dropdown type', ['normal', 'small'], 'normal')}
       label={text('Dropdown label', 'Hover me')}
       options={[
         {

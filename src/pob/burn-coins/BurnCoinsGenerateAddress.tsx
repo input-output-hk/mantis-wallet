@@ -114,13 +114,11 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
         }}
       >
         <DialogDropdown
-          type="small"
           label="Select Receive Address"
           options={transparentAddresses}
           onChange={setTransparentAddress}
         />
         <DialogDropdown
-          type="small"
           label="Prover"
           options={compatibleProvers.map((prover) => ({
             key: prover.address,

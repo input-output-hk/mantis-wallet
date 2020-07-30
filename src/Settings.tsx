@@ -90,7 +90,6 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
           options={DATE_FORMATS}
           defaultOptionIndex={_.indexOf(dateFormat)(DATE_FORMATS)}
           onChange={setDateFormat}
-          type="small"
         />
       </div>
       <div className="settings-item">
@@ -99,7 +98,6 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
           options={TIME_FORMATS}
           defaultOptionIndex={_.indexOf(timeFormat)(TIME_FORMATS)}
           onChange={setTimeFormat}
-          type="small"
         />
       </div>
       <div className="settings-item">

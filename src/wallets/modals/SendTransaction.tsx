@@ -257,7 +257,6 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
       >
         <DialogDropdown
           label="Select Account"
-          type="small"
           options={accounts.map(({address}) => address).filter(_.isString)}
         />
         <DialogShowDust amount={availableAmount}>Available Amount</DialogShowDust>
