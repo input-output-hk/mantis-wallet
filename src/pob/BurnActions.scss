@@ -36,6 +36,10 @@
     opacity: $secondary-opacity;
     text-align: center;
     text-decoration: none;
+
+    .link {
+      @extend %disable-focus-outline;
+    }
   }
 
   .balances {
