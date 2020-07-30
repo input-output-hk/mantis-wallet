@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import _ from 'lodash/fp'
-import classnames from 'classnames'
 import {Dropdown, Menu} from 'antd'
 import {DialogError} from './DialogError'
 import './DialogDropdown.scss'
