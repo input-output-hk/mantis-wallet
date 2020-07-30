@@ -1,4 +1,4 @@
-@import './partial', './themify';
+@import './partial', './themify', './vars';
 
 .Settings {
   .main-title {
@@ -11,13 +11,13 @@
 
       .settings-label {
         margin-bottom: 0.5rem;
-        font-size: 10px;
+        font-size: $font-size-xs;
         text-transform: uppercase;
       }
 
       .settings-note {
         margin-bottom: 0.6rem;
-        font-size: 10px;
+        font-size: $font-size-xs;
 
         @include themify($themes) {
           color: themed('inactive-text-color');
@@ -37,7 +37,7 @@
           overflow: hidden;
 
           input {
-            font-size: 12px;
+            font-size: $font-size-input;
           }
         }
       }
@@ -52,6 +52,6 @@
 
   .export-private-key {
     @extend %link;
-    font-size: 12px;
+    font-size: $font-size-s;
   }
 }

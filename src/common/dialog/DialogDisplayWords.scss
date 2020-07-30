@@ -9,7 +9,7 @@
   .word {
     height: 30px;
     border-radius: $dialog-component-border-radius;
-    font-size: 12px;
+    font-size: $font-size-s;
     font-weight: bold;
     line-height: 30px;
     user-select: none;

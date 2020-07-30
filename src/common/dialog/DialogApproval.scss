@@ -28,7 +28,7 @@ $padding-h: 17px;
     grid-column-gap: 5px;
     grid-template-columns: auto 1fr;
     padding: $padding-v $padding-h;
-    font-size: 12px;
+    font-size: $font-size-s;
 
     @include themify($themes) {
       color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);

@@ -18,7 +18,7 @@
       width: 253px;
       height: 28px;
       opacity: $secondary-opacity;
-      font-size: 12px;
+      font-size: $font-size-s;
 
       @include themify($themes) {
         border-bottom: 2px solid themed('border-color-base');
@@ -28,7 +28,7 @@
 
       .anticon {
         margin: 2px;
-        font-size: 16px;
+        font-size: $font-size-l;
 
         @include themify($themes) {
           color: themed('text-color');
@@ -105,7 +105,7 @@
 
   .no-activity {
     margin: 20px auto;
-    font-size: 14px;
+    font-size: $font-size-m;
     text-align: center;
   }
 }

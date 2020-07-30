@@ -1,7 +1,7 @@
-@import '../themify';
+@import '../themify', '../vars';
 
 .SyncStatus {
-  font-size: 12px;
+  font-size: $font-size-s;
   font-weight: bold;
 
   @include themify($themes) {

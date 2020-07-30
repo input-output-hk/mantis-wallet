@@ -44,7 +44,7 @@
       display: block;
       z-index: $zindex-sidebar;
       outline: 0;
-      font-size: 18px;
+      font-size: $font-size-xl;
       font-weight: $link-font-weight;
       letter-spacing: $link-letter-spacing;
       line-height: 43px;
@@ -108,9 +108,9 @@
 
   .footer {
     margin: 0 0 2em;
-    font-size: 10px;
+    font-size: $font-size-xs;
     font-weight: bold;
-    letter-spacing: 1.8px;
+    letter-spacing: $letter-spacing-large;
     text-align: left;
     text-transform: uppercase;
 
@@ -177,7 +177,7 @@
     .title {
       width: 100%;
       padding-left: 0;
-      font-size: 18px;
+      font-size: $font-size-xl;
       text-align: center;
     }
 
@@ -202,7 +202,7 @@
           margin-left: $sidebar-collapsed-width;
           padding: 0 1em;
           border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
-          font-size: 18px;
+          font-size: $font-size-xl;
           white-space: nowrap;
 
           @include themify($themes) {
@@ -228,7 +228,7 @@
     }
 
     .footer {
-      font-size: 10px;
+      font-size: $font-size-xs;
 
       > .footer-link-wrapper {
         display: block;

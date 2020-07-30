@@ -79,7 +79,7 @@
       height: 100%;
       padding: 0;
       border-radius: 0;
-      font-size: 12px;
+      font-size: $font-size-s;
       text-align: center;
 
       &.custom {
@@ -102,7 +102,7 @@
       }
 
       .fee-amount {
-        font-size: 10px;
+        font-size: $font-size-xs;
       }
     }
 

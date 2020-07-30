@@ -17,7 +17,7 @@
       height: 30px !important;
       transition: color $transition-duration, background-color $transition-duration,
         opacity $transition-duration;
-      font-size: 12px;
+      font-size: $font-size-s;
       text-align: center;
 
       &.inactive {

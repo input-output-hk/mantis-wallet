@@ -13,7 +13,7 @@
     width: 27px;
     margin-left: -12px;
     padding: 2px;
-    font-size: 15px;
+    font-size: $font-size-l;
     text-align: center;
 
     @include themify($themes) {

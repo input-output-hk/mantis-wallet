@@ -4,7 +4,7 @@
   display: grid;
   height: 30px;
   padding: 0 14px;
-  font-size: 10px;
+  font-size: $font-size-xs;
   font-weight: bold;
 
   @include themify($themes) {
@@ -112,7 +112,7 @@
 
 %dialog-label {
   height: $dialog-label-height;
-  font-size: 10px;
+  font-size: $font-size-xs;
   letter-spacing: $letter-spacing-small;
   text-transform: uppercase;
 }
@@ -122,7 +122,7 @@
   top: -1 * $dialog-label-height;
   right: 0;
   height: $dialog-label-height;
-  font-size: 10px;
+  font-size: $font-size-xs;
   text-align: right;
 
   @include themify($themes) {
@@ -177,7 +177,7 @@
   display: block;
   margin-bottom: 15px;
   padding: 5px 0;
-  font-size: 12px;
+  font-size: $font-size-s;
   font-weight: bold;
   text-align: right;
 }
@@ -198,7 +198,7 @@
 %error {
   padding: 1em;
   border-radius: $dialog-component-border-radius;
-  font-size: 12px;
+  font-size: $font-size-s;
   text-align: center;
 
   @include themify($themes) {
@@ -210,7 +210,7 @@
 %empty-list-message {
   margin-top: 3rem;
   opacity: $secondary-opacity;
-  font-size: 12px;
+  font-size: $font-size-s;
   font-weight: bold;
   letter-spacing: $letter-spacing-medium;
   text-align: center;

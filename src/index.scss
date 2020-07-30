@@ -204,7 +204,8 @@ div#root {
 
 // antd Popover theme overrides
 .ant-popover-inner-content {
-  font-size: 12px;
+  font-size: $font-size-s;
+
   @include themify($themes) {
     background-color: themed('text-color');
     color: themed('secondary-background');
@@ -304,7 +305,7 @@ input::placeholder {
     &.small-button {
       height: 30px;
       margin: 0.5rem 0;
-      font-size: $font-size-button-small;
+      font-size: $font-size-xs;
       letter-spacing: initial;
     }
   }

@@ -1,15 +1,13 @@
-@import '../partial', '../themify';
-
-$group-margin: 1.5rem;
+@import '../partial', '../themify', '../vars';
 
 .WalletError {
   .header {
-    margin-bottom: $group-margin;
+    margin-bottom: $dialog-component-spacing;
   }
 
   .error-msg {
     @extend %monospace;
-    font-size: 18px;
+    font-size: $font-size-xl;
 
     @include themify($themes) {
       color: themed('error-color');
@@ -19,15 +17,15 @@ $group-margin: 1.5rem;
   .show-stacktrace {
     @extend %link;
 
-    margin-bottom: $group-margin;
-    font-size: 12px;
+    margin-bottom: $dialog-component-spacing;
+    font-size: $font-size-s;
   }
 
   .stacktrace {
     @extend %monospace;
 
     max-height: 250px;
-    margin: 0.5rem 0 $group-margin 0;
+    margin: 0.5rem 0 $dialog-component-spacing 0;
     padding: 0.7em 1em;
     overflow: auto;
     white-space: pre;

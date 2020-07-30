@@ -5,14 +5,14 @@
 
   .instructions {
     margin-bottom: 1em;
-    font-size: 12px;
+    font-size: $font-size-s;
   }
 
   .input {
     height: 80px;
     padding: 20px 13px;
     border-radius: $dialog-component-border-radius;
-    font-size: 12px;
+    font-size: $font-size-s;
     font-weight: bold;
 
     @include themify($themes) {
@@ -32,7 +32,7 @@
 
     .clear {
       @extend %link;
-      font-size: 12px;
+      font-size: $font-size-s;
       font-weight: bold;
     }
   }
@@ -45,7 +45,7 @@
     .word {
       height: 30px;
       border-radius: $dialog-component-border-radius;
-      font-size: 12px;
+      font-size: $font-size-s;
       font-weight: bold;
       line-height: 30px;
       text-align: center;
@@ -58,7 +58,7 @@
 
     .used-word {
       height: 30px;
-      font-size: 12px;
+      font-size: $font-size-s;
       font-weight: bold;
       line-height: 30px;
       text-align: center;

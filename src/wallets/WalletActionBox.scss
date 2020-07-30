@@ -24,8 +24,8 @@
   }
 
   .title {
-    padding: 36px;
-    font-size: 12px;
+    padding: 3em;
+    font-size: $font-size-s;
     font-weight: bold;
     letter-spacing: $letter-spacing-small;
     text-align: center;
@@ -34,8 +34,8 @@
 
   .note {
     height: 92px;
-    padding: 0 13px;
-    font-size: 12px;
+    padding: 0 1em;
+    font-size: $font-size-s;
     font-weight: 300;
     letter-spacing: $letter-spacing-small;
     text-align: center;
@@ -45,7 +45,7 @@
     padding: 0 46px;
     transition: background-color $transition-duration;
     border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
-    font-size: 18px;
+    font-size: $font-size-xl;
     font-weight: bold;
     letter-spacing: $letter-spacing-large;
     line-height: 64px;

@@ -1,9 +1,9 @@
-@import '../partial';
+@import '../partial', '../vars';
 
 .HeaderWithSyncStatus {
   .external-link {
     margin: 0 0 0 1px;
-    font-size: 12px;
+    font-size: $font-size-s;
   }
 
   .right {

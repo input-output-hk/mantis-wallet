@@ -2,12 +2,18 @@ $font-family: 'Helvetica Neue', sans-serif;
 $font-family-monospace: 'Inconsolata', monospace;
 
 // Font sizes
-$font-size-root: 16px;
-$font-size-title: 20px;
-$font-size-input: 12px;
-$font-size-button: 16px;
-$font-size-button-action: 12px;
-$font-size-button-small: 10px;
+$font-size-xs: 10px;
+$font-size-s: 12px;
+$font-size-m: 14px;
+$font-size-l: 16px;
+$font-size-xl: 18px;
+$font-size-xxl: 20px;
+
+$font-size-root: $font-size-l;
+$font-size-input: $font-size-s;
+$font-size-title: $font-size-xxl;
+$font-size-button: $font-size-l;
+$font-size-button-action: $font-size-s;
 
 $secondary-opacity: 0.57;
 $unselected-opacity: 0.75;
