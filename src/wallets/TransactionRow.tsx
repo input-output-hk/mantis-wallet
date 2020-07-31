@@ -187,14 +187,10 @@ const TxTypeLabel = ({
 }
 
 interface TxGlacierTypeLabel {
-  sendingAddress: string
   receivingAddress: string | null
 }
 
-const TxGlacierTypeLabel = ({
-  sendingAddress,
-  receivingAddress,
-}: TxGlacierTypeLabel): JSX.Element => {
+const TxGlacierTypeLabel = ({receivingAddress}: TxGlacierTypeLabel): JSX.Element => {
   const {
     contractAddresses: {glacierDrop},
   } = GlacierState.useContainer()
@@ -210,8 +206,6 @@ const TxGlacierTypeLabel = ({
 
   if (receivingAddress === glacierDrop) {
     return wrapper('Glacier Drop Contract Call')
-  } else if (sendingAddress === glacierDrop) {
-    return wrapper('Glacier Drop Rewards')
   } else {
     return <></>
   }
@@ -233,7 +227,7 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
       } = transaction.txDetails.transparentTransaction
       return (
         <div>
-          <TxGlacierTypeLabel sendingAddress={sendingAddress} receivingAddress={receivingAddress} />
+          <TxGlacierTypeLabel receivingAddress={receivingAddress} />
           <TxTypeLabel transaction={transaction} />
           <div className="call-details two-col-table">
             <div>From:</div>

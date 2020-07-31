@@ -4,10 +4,27 @@
   margin-bottom: 2em;
 
   .action-link {
-    margin-bottom: 0.25rem;
+    @extend %disable-focus-outline;
+
+    margin-bottom: 0.75rem;
+    transition: opacity $transition-duration;
+    opacity: $unselected-opacity;
     font-weight: bold;
     text-decoration: underline;
     cursor: pointer;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+
+    &:last-child {
+      margin: 0;
+    }
+
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
   }
 
   .amount {
@@ -132,6 +149,10 @@
 
     .unfrozen {
       grid-area: unfrozen;
+
+      button {
+        margin: 0 0 0.5rem;
+      }
     }
 
     .withdrawn {

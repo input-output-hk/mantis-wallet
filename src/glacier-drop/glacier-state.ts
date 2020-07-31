@@ -195,7 +195,7 @@ export type StoreGlacierData = {
 export const defaultGlacierData: StoreGlacierData = {
   glacierDrop: {
     claims: {},
-    selectedNetwork: 'testnet',
+    selectedNetwork: 'genesis',
   },
 }
 
@@ -344,7 +344,9 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const {totalAtomToBeDistributed} = constants.value
     const {externalAmount} = claim
 
-    return externalAmount.dividedBy(totalUnlockedEther).multipliedBy(totalAtomToBeDistributed)
+    return externalAmount
+      .multipliedBy(totalAtomToBeDistributed)
+      .dividedToIntegerBy(totalUnlockedEther)
   }
 
   //
