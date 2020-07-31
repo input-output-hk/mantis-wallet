@@ -56,5 +56,5 @@ export const getUnfrozenAmount = (
     return dustAmount
   }
 
-  return dustAmount.dividedBy(numberOfEpochsForClaim).multipliedBy(currentEpoch)
+  return dustAmount.dividedToIntegerBy(numberOfEpochsForClaim).multipliedBy(currentEpoch)
 }
