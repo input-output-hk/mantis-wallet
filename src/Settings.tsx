@@ -17,6 +17,7 @@ import {loadLunaManagedConfig} from './config/renderer'
 import {LunaManagedConfig} from './config/type'
 import {Trans} from './common/Trans'
 import {TKeyRenderer} from './common/i18n'
+import {LANGUAGES, Language} from './shared/i18n'
 import './Settings.scss'
 
 type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
@@ -24,6 +25,10 @@ type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
 const TIME_FORMAT_LABELS: Record<TimeFormat, TKeyRenderer> = {
   '12-hour': ['settings', 'timeFormat', '12hour'],
   '24-hour': ['settings', 'timeFormat', '24hour'],
+}
+
+const LANGUAGES_DISPLAYED: Record<Language, string> = {
+  en: 'English',
 }
 
 const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
@@ -45,6 +50,8 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
     setTimeFormat,
     dateFormat,
     setDateFormat,
+    language,
+    setLanguage,
     translation: {t},
   } = SettingsState.useContainer()
 
@@ -97,7 +104,15 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
         </div>
       </div>
 
-      {/* Datetime */}
+      {/* l10n */}
+      <div className="settings-item">
+        <DialogDropdown
+          label={t(['settings', 'label', 'language'])}
+          options={LANGUAGES.map((l) => ({key: l, label: LANGUAGES_DISPLAYED[l]}))}
+          defaultOptionIndex={_.indexOf(language)(LANGUAGES)}
+          onChange={setLanguage}
+        />
+      </div>
       <div className="settings-item">
         <DialogDropdown
           label={t(['settings', 'label', 'dateFormat'])}

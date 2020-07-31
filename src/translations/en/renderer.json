@@ -22,6 +22,7 @@
       "privateKeyForMining": "Private key for mining rewards",
       "enableDarkMode": "Enable Dark Mode",
       "enableMining": "Enable Mining",
+      "language": "Language",
       "dateFormat": "Date Format",
       "timeFormat": "Time Format",
       "exportPrivateKey": "Export"
