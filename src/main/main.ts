@@ -96,6 +96,7 @@ function createRemixWindow(t: TFunctionMain): void {
 
 const openRemix = (t: TFunctionMain) => (): void => {
   if (remixWindowHandle) {
+    if (remixWindowHandle.isMinimized()) remixWindowHandle.restore()
     remixWindowHandle.focus()
   } else {
     createRemixWindow(t)
