@@ -4,28 +4,9 @@
   display: grid;
   grid-template-columns: auto 1fr;
   overflow: hidden;
-  font-family: $font-family;
 
   @include themify($themes) {
     background-color: themed('component-background');
     color: themed('text-color');
-  }
-
-  main {
-    position: relative;
-    height: 100vh;
-    padding: 36px;
-    overflow: auto;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @include themify($themes) {
-      color: themed('text-color');
-    }
   }
 }
