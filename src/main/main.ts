@@ -9,8 +9,8 @@ import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import * as array from 'fp-ts/lib/Array'
 import * as record from 'fp-ts/lib/Record'
-import {mergeAll} from 'rxjs/operators'
 import * as rxop from 'rxjs/operators'
+import {mergeAll} from 'rxjs/operators'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {asapScheduler, scheduled} from 'rxjs'
 import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
@@ -27,12 +27,12 @@ import {
   setupExternalTLS,
   setupOwnTLS,
 } from './tls'
-import {flatTap, prop, wait} from '../shared/utils'
+import {flatTap, prop} from '../shared/utils'
 import {config, loadLunaManagedConfig} from '../config/main'
 import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
 import {buildMenu, buildRemixMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
-import {inspectLineForDAGStatus, setFetchParamsStatus, status, setNetworkTag} from './status'
+import {inspectLineForDAGStatus, setFetchParamsStatus, setNetworkTag, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 import {saveLogsArchive} from './log-exporter'
 import {mainLog} from './logger'
@@ -191,7 +191,7 @@ ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | 
     event.reply('disable-mining-success')
     event.reply('update-config-success')
   } else {
-    mainLog.info(`Enabling mining with spending key: ${spendingKey}`)
+    mainLog.info(`Enabling mining`)
     try {
       const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
       await updateConfig({miningEnabled: true, ...coinbaseParams})
@@ -351,10 +351,11 @@ if (config.runClients) {
     pipe(
       clients,
       array.map((client) => client.close$),
-      (closeEvents) => scheduled(closeEvents, asapScheduler),
-      mergeAll(),
+      (events) => scheduled(events, asapScheduler),
+      rxop.mergeAll(),
       rxop.take(1),
-    ).subscribe(() => restartClients())
+      rxop.tap(() => mainLog.info('One of clients got closed. Restarting clients')),
+    ).subscribe(restartClients)
 
     runningClients = clients
   }
@@ -379,9 +380,7 @@ if (config.runClients) {
   async function restartClients(): Promise<void> {
     if (!shuttingDown) {
       mainLog.info('restarting clients')
-      return killClients()
-        .then(() => wait(500))
-        .then(startClients)
+      return killClients().then(startClients)
     }
   }
 
@@ -404,7 +403,8 @@ if (config.runClients) {
 
   ipcListenToRenderer('restart-clients', async (event) => {
     try {
-      await killClients()
+      //FIXME: PM-2413 (see: https://github.com/input-output-hk/luna-wallet/pull/256#issuecomment-668522392)
+      killClients()
       event.reply('restart-clients-success')
     } catch (e) {
       mainLog.error(e)
