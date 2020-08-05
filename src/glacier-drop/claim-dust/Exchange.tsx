@@ -86,7 +86,7 @@ const _Exchange = ({
         <div className="dust-balance">
           <div className="message">
             To complete the Unlocking of Dust and 1 Withdrawal Transaction, you will require est 0.5
-            (0.25X2). Please, ensure you have an available balance to cover these fees.
+            (0.25*2) Dust. Please, ensure you have an available balance to cover these fees.
           </div>
           <span className="label">Currently Available Dust</span>
           <span className="amount">

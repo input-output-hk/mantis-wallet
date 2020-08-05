@@ -122,6 +122,10 @@
     .unlocked {
       grid-area: unlocked;
 
+      .remove-claim-button {
+        margin: 0 0 0.5rem;
+      }
+
       .pow-status {
         margin-bottom: 1em;
       }

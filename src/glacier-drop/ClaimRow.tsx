@@ -11,7 +11,7 @@ import {
   TransactionStatus,
   isUnlocked,
 } from './glacier-state'
-import {returnDataToHumanReadable, fillActionHandlers} from '../common/util'
+import {fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {ProgressState, ProgressIcon} from '../common/ProgressBar'
 import {DUST_SYMBOL} from '../pob/chains'
@@ -38,7 +38,7 @@ const TxStatusText = ({txStatus}: TxStatusTextProps): JSX.Element => {
     return <>Transaction is pending</>
   } else if (txStatus.status === 'TransactionFailed') {
     return (
-      <Popover content={returnDataToHumanReadable(txStatus.returnData)} placement="bottom">
+      <Popover content={txStatus.message} placement="bottom">
         <span className="fail">Transaction failed</span>
       </Popover>
     )
@@ -52,6 +52,7 @@ interface PuzzleProgressProps {
   currentBlock: number
   periodConfig: PeriodConfig
   onSubmitPuzzle(claim: Claim): void
+  onRemoveClaim(claim: Claim): void
 }
 
 const PuzzleProgress = ({
@@ -59,6 +60,7 @@ const PuzzleProgress = ({
   currentBlock,
   periodConfig,
   onSubmitPuzzle,
+  onRemoveClaim,
 }: PuzzleProgressProps): JSX.Element => {
   const {toDurationString} = useFormatters()
   const period = getCurrentPeriod(currentBlock, periodConfig)
@@ -114,6 +116,15 @@ const PuzzleProgress = ({
           <div className="tx-status">
             <TxStatusText txStatus={getUnlockStatus(claim)} />
           </div>
+          {getUnlockStatus(claim)?.status === 'TransactionFailed' && (
+            <Button
+              type="primary"
+              className="small-button remove-claim-button"
+              onClick={() => onRemoveClaim(claim)}
+            >
+              Remove Claim
+            </Button>
+          )}
           <div className="pow-status">PoW Puzzle Submitted</div>
           <div className="action-link">
             <Popover content={claim.unlockTxHash} placement="bottom">
@@ -260,6 +271,7 @@ interface ClaimRowProps {
   showEpochs(): void
   onSubmitPuzzle(claim: Claim): void
   onWithdrawDust(claim: Claim): void
+  onRemoveClaim(claim: Claim): void
 }
 
 export const ClaimRow = ({
@@ -270,6 +282,7 @@ export const ClaimRow = ({
   showEpochs,
   onSubmitPuzzle,
   onWithdrawDust,
+  onRemoveClaim,
 }: ClaimRowProps): JSX.Element => {
   const {
     dustAmount,
@@ -353,6 +366,7 @@ export const ClaimRow = ({
               periodConfig={periodConfig}
               currentBlock={currentBlock}
               onSubmitPuzzle={onSubmitPuzzle}
+              onRemoveClaim={onRemoveClaim}
             />
           </div>
         </div>

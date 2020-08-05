@@ -44,6 +44,7 @@ interface ClaimHistoryProps {
   currentBlock: number
   periodConfig: PeriodConfig
   showEpochs(): void
+  onRemoveClaim(claim: Claim): void
   estimateCallFee: LoadedState['estimateCallFee']
   calculateGasPrice: LoadedState['calculateGasPrice']
 }
@@ -53,6 +54,7 @@ const ClaimHistory = ({
   currentBlock,
   periodConfig,
   showEpochs,
+  onRemoveClaim,
   estimateCallFee,
   calculateGasPrice,
 }: ClaimHistoryProps): JSX.Element => {
@@ -78,6 +80,7 @@ const ClaimHistory = ({
                 showEpochs={showEpochs}
                 onSubmitPuzzle={setClaimToSubmit}
                 onWithdrawDust={setClaimToWithdraw}
+                onRemoveClaim={onRemoveClaim}
               />
             ))}
           </div>
@@ -131,6 +134,7 @@ const _GlacierDropOverview = ({
   const {
     claims,
     addClaim,
+    removeClaim,
     mine,
     cancelMining,
     getMiningState,
@@ -281,6 +285,7 @@ const _GlacierDropOverview = ({
         currentBlock={currentBlock}
         periodConfig={periodConfig}
         showEpochs={() => showEpochs(true)}
+        onRemoveClaim={removeClaim}
         estimateCallFee={estimateCallFee}
         calculateGasPrice={calculateGasPrice}
       />

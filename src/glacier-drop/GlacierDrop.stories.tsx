@@ -97,6 +97,7 @@ export const claimSolving = (): JSX.Element => {
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
+      onRemoveClaim={action('onRemoveClaim')}
     />
   )
 }
@@ -111,6 +112,7 @@ export const claimUnsubmitted = (): JSX.Element => {
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
+      onRemoveClaim={action('onRemoveClaim')}
     />
   )
 }
@@ -125,6 +127,7 @@ export const claimSubmitted = (): JSX.Element => {
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
+      onRemoveClaim={action('onRemoveClaim')}
     />
   )
 }

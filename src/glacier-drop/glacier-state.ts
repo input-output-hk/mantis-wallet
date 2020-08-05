@@ -10,7 +10,7 @@ import * as tPromise from 'io-ts-promise'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
-import {validateEthAddress, toHex} from '../common/util'
+import {validateEthAddress, toHex, returnDataToHumanReadable} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
 import {loadContractAddresses} from './glacier-config'
 import {
@@ -111,13 +111,13 @@ interface TransactionPending {
 interface TransactionFailed {
   status: 'TransactionFailed'
   atBlock: number
-  returnData: string
+  message: string
 }
 
 interface TransactionOk {
   status: 'TransactionOk'
   atBlock: number
-  returnData: string
+  message: string
 }
 
 export type TransactionStatus = TransactionPending | TransactionFailed | TransactionOk
@@ -139,6 +139,7 @@ export interface GlacierData {
   claims: Claim[]
   claimedAddresses: string[]
   addClaim(claim: IncompleteClaim): Promise<SolvingClaim>
+  removeClaim(claimToRemove: Claim): void
   removeClaims(): Promise<void>
 
   // Bookkeeping
@@ -375,6 +376,9 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     setClaims((claims) => ({...claims, ...claimsByExternalAddress}))
   }
 
+  const removeClaim = (claimToRemove: Claim): void =>
+    setClaims(_.omit(claimToRemove.externalAddress))
+
   const removeClaims = async (): Promise<void> => setClaims({})
 
   //
@@ -385,16 +389,26 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     transactionHash: string,
     currentBlock: number,
   ): Promise<TransactionStatus> => {
-    const receipt = await web3.eth.getTransactionReceipt(transactionHash)
-    if (!receipt) {
-      return {status: 'TransactionPending', atBlock: currentBlock}
-    } else {
+    const rawTx = await web3.eth.getTransaction(transactionHash)
+
+    if (rawTx === null) {
+      // null if not found or failed
       return {
-        status: parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed',
-        returnData: receipt.returnData,
+        status: 'TransactionFailed',
+        message: 'Transaction failed before reaching the contract. Try again with a higher fee.',
         atBlock: currentBlock,
       }
     }
+
+    const receipt = await web3.eth.getTransactionReceipt(transactionHash)
+
+    return receipt === null
+      ? {status: 'TransactionPending', atBlock: currentBlock}
+      : {
+          status: parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed',
+          message: returnDataToHumanReadable(receipt.returnData),
+          atBlock: currentBlock,
+        }
   }
 
   //
@@ -725,6 +739,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     claims: claimList,
     claimedAddresses,
     addClaim,
+    removeClaim,
     removeClaims,
     getEtcSnapshotBalanceWithProof,
     authorizationSign,
