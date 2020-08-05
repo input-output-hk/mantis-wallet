@@ -114,6 +114,7 @@
     "lodash": "^4.17.19",
     "luna-wallet-loader": "git+ssh://git@github.com/input-output-hk/luna-wallet-loader.git#1315f47ca9a9414a9f72a6c2068dbc858e08cfe7",
     "node-forge": "^0.9.1",
+    "portfinder": "^1.0.28",
     "ps-tree": "^1.2.0",
     "qrcode.react": "^1.0.0",
     "raw-loader": "^4.0.0",

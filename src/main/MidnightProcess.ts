@@ -14,6 +14,7 @@ import {setProcessStatus} from './status'
 import {readableToObservable} from './streamUtils'
 import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
 import {mainLog} from './logger'
+import {config} from '../config/main'
 
 export const isWin = os.platform() === 'win32'
 
@@ -90,6 +91,26 @@ export const processEnv = _.memoize(
   },
 )
 
+const buildPortConfig = (name: ClientName): ClientSettings => {
+  switch (name) {
+    case 'wallet':
+      return {
+        'wallet.node-rpc-address': config.nodeRpcAddress,
+        'midnight.network.rpc.http.port': config.walletRpcPort,
+        'midnight.network.discovery.port': config.discoveryPort,
+        'midnight.network.server-address.port': config.p2pMessagingPort,
+        'wallet.sync.blocks-streaming-server-address': `127.0.0.1:${config.blocksStreamingPort}`,
+      }
+    case 'node':
+      return {
+        'midnight.network.rpc.http.port': config.nodeRpcPort,
+        'midnight.network.discovery.port': config.discoveryPort,
+        'midnight.network.server-address.port': config.p2pMessagingPort,
+        'midnight.blockchain.blocks-streaming.server-address': `0.0.0.0:${config.blocksStreamingPort}`,
+      }
+  }
+}
+
 export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
   name: ClientName,
   dataDir: string,
@@ -97,12 +118,14 @@ export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
 ) => {
   const executablePath = processExecutablePath(processConfig)
   const processDataDir = resolve(dataDir, processConfig.dataDir.directoryName)
+  const portConfig = buildPortConfig(name)
 
   return {
     name,
     spawn: (additionalConfig: ClientSettings) => {
       const settingsAsArguments = pipe(
         {
+          ...portConfig,
           ...processConfig.additionalSettings,
           ...additionalConfig,
           [processConfig.dataDir.settingName]: processDataDir,

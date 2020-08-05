@@ -44,6 +44,7 @@ import {
   translateErrorMain,
 } from './i18n'
 import {store} from './store'
+import {checkPortUsage} from './port-usage-check'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -280,6 +281,7 @@ if (!config.runClients) {
 //
 if (config.runClients) {
   const initializationPromise = checkDatadirCompatibility(t)
+    .then(checkPortUsage)
     .then(() => openLuna(t))
     .then(() => setupOwnTLS(config.clientConfigs.node))
     .then((tlsData) => ({

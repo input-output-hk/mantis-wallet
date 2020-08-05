@@ -53,7 +53,6 @@ export const nodeTLSConfig = {
 export const walletTLSConfig = {
   ...httpRpcOverTLS,
   'wallet.sync.connect-with-tls': true,
-  'wallet.node-rpc-address': 'https://127.0.0.1:8546',
 }
 
 export const configToParams = (config: TLSConfig): SettingsPerClient => {

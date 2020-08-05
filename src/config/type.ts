@@ -1,7 +1,7 @@
 import {Option} from 'fp-ts/lib/Option'
 import {TLSConfig} from '../main/tls'
 
-export type ClientSettings = Record<string, string | boolean | null>
+export type ClientSettings = Record<string, string | boolean | number | null>
 export type SettingsPerClient = Record<ClientName, ClientSettings>
 export const SettingsPerClient = (data: Partial<SettingsPerClient>): SettingsPerClient => ({
   node: {},
@@ -36,6 +36,12 @@ export const clientNames: ClientName[] = ['node', 'wallet']
 
 export interface Config {
   rpcAddress: string
+  nodeRpcAddress: string
+  nodeRpcPort: number
+  walletRpcPort: number
+  discoveryPort: number
+  p2pMessagingPort: number
+  blocksStreamingPort: number
   provers: ProverConfig[]
   contractConfig: ContractConfigItem[]
   dataDir: string

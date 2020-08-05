@@ -1,5 +1,5 @@
 // Typed wrapper for listening to IPC events
-import {ipcMain, dialog} from 'electron'
+import {app, ipcMain, dialog} from 'electron'
 import {IPCFromRendererChannelName} from '../shared/ipc-types'
 import {LUNA_VERSION} from '../shared/version'
 import {TFunctionMain} from './i18n'
@@ -17,11 +17,15 @@ export function getTitle(t: TFunctionMain, networkTag?: NetworkTag): string {
 }
 
 export function showErrorBox(t: TFunctionMain, title: string, content: string): void {
-  dialog.showMessageBoxSync({
-    type: 'error',
-    buttons: [t(['dialog', 'button', 'ok'])],
-    title: t(['dialog', 'title', 'error']),
-    message: title,
-    detail: content,
-  })
+  if (app.isReady()) {
+    dialog.showMessageBoxSync({
+      type: 'error',
+      buttons: [t(['dialog', 'button', 'ok'])],
+      title: t(['dialog', 'title', 'error']),
+      message: title,
+      detail: content,
+    })
+  } else {
+    dialog.showErrorBox(title, content)
+  }
 }
