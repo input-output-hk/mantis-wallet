@@ -9,6 +9,8 @@ import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
 import {BuildJobState} from './common/build-job-state'
 import {JobStatus} from './common/JobStatus'
+import {CallTxWatcher} from './common/CallTxWatcher'
+import {CallTxState} from './common/call-tx-state'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
@@ -49,9 +51,12 @@ const App: React.FC = () => {
                 <WalletState.Provider>
                   <ProofOfBurnState.Provider initialState={{store, web3}}>
                     <GlacierState.Provider initialState={{store}}>
-                      <Sidebar version={LUNA_VERSION} />
-                      <Router />
-                      <JobStatus />
+                      <CallTxState.Provider initialState={{web3}}>
+                        <Sidebar version={LUNA_VERSION} />
+                        <Router />
+                        <JobStatus />
+                        <CallTxWatcher />
+                      </CallTxState.Provider>
                     </GlacierState.Provider>
                   </ProofOfBurnState.Provider>
                 </WalletState.Provider>
