@@ -302,14 +302,17 @@ if (config.runClients) {
   async function fetchParams(): Promise<void> {
     mainLog.info('Fetching Sonics parameters')
     setFetchParamsStatus('running')
-    const nodePath = processExecutablePath(config.clientConfigs.node)
-    return promisify(exec)(`${nodePath} fetch-params`, {
+    const nodeConfig = config.clientConfigs.node
+    const nodePath = processExecutablePath(nodeConfig)
+    const nodeDataDir = path.resolve(config.dataDir, nodeConfig.dataDir.directoryName)
+    const command = `${nodePath} fetch-params -D${nodeConfig.dataDir.settingName}=${nodeDataDir}`
+    return promisify(exec)(command, {
       cwd: config.clientConfigs.node.packageDirectory,
       env: processEnv(config.clientConfigs.node),
     })
       .then(({stdout, stderr}) => {
         setFetchParamsStatus('finished')
-        if (stdout) mainLog.info(stdout)
+        if (stdout) console.info(stdout) // eslint-disable-line no-console
         if (stderr) mainLog.error(stderr)
       })
       .catch((error) => {
