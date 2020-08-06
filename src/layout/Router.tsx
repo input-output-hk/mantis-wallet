@@ -14,7 +14,7 @@ export const Router = (): JSX.Element => {
   }, [Component])
 
   return (
-    <main className="Router" ref={mainRef}>
+    <main id="main" className="Router" ref={mainRef}>
       <Component />
     </main>
   )
