@@ -51,7 +51,6 @@ const baseClaim = {
   powNonce: null,
   unlockTxHash: null,
   withdrawTxHashes: [],
-  txStatuses: {},
   numberOfEpochsForFullUnfreeze: 15,
   txBuildInProgress: false,
 }
@@ -68,7 +67,6 @@ const submittedClaim: Claim = {
   puzzleStatus: 'submitted',
   withdrawnDustAmount: new BigNumber(0),
   unlockTxHash: '0xc41',
-  txStatuses: {'0xc41': {status: 'TransactionPending', atBlock: 1}},
   powNonce: 1,
 }
 
@@ -135,7 +133,6 @@ export const claimSubmitted = (): JSX.Element => {
 export const submitProofOfUnlock = (): JSX.Element => (
   <SubmitProofOfUnlock
     visible
-    currentBlock={1}
     claim={unsubmittedClaim}
     onNext={action('onNext')}
     onCancel={action('onCancel')}

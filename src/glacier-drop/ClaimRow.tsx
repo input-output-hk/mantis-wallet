@@ -8,9 +8,9 @@ import {
   PeriodConfig,
   getUnlockStatus,
   getWithdrawalStatus,
-  TransactionStatus,
   isUnlocked,
 } from './glacier-state'
+import {CallTxState, TransactionStatus} from '../common/call-tx-state'
 import {fillActionHandlers} from '../common/util'
 import {ShortNumber} from '../common/ShortNumber'
 import {ProgressState, ProgressIcon} from '../common/ProgressBar'
@@ -62,6 +62,7 @@ const PuzzleProgress = ({
   onSubmitPuzzle,
   onRemoveClaim,
 }: PuzzleProgressProps): JSX.Element => {
+  const {txStatuses} = CallTxState.useContainer()
   const {toDurationString} = useFormatters()
   const period = getCurrentPeriod(currentBlock, periodConfig)
 
@@ -114,9 +115,9 @@ const PuzzleProgress = ({
       return (
         <>
           <div className="tx-status">
-            <TxStatusText txStatus={getUnlockStatus(claim)} />
+            <TxStatusText txStatus={getUnlockStatus(claim, txStatuses)} />
           </div>
-          {getUnlockStatus(claim)?.status === 'TransactionFailed' && (
+          {getUnlockStatus(claim, txStatuses)?.status === 'TransactionFailed' && (
             <Button
               type="primary"
               className="small-button remove-claim-button"
@@ -154,11 +155,12 @@ const UnfreezeDetail = ({
   showEpochs,
   onWithdrawDust,
 }: UnfreezeDetailProps): JSX.Element => {
+  const {txStatuses} = CallTxState.useContainer()
   const {formatPercentage} = useFormatters()
 
   const {puzzleStatus, dustAmount, withdrawnDustAmount} = claim
 
-  const isUnfrozen = unfrozenDustAmount.isGreaterThan(0) && isUnlocked(claim)
+  const isUnfrozen = unfrozenDustAmount.isGreaterThan(0) && isUnlocked(claim, txStatuses)
 
   if (puzzleStatus === 'solving' || !isUnfrozen) {
     return <div>0%</div>
@@ -211,11 +213,14 @@ interface WithdrawDetailProps {
 }
 
 const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
+  const {txStatuses} = CallTxState.useContainer()
   const {formatPercentage} = useFormatters()
   const {withdrawnDustAmount, dustAmount, withdrawTxHashes} = claim
+
   if (withdrawnDustAmount.isZero() || claim.puzzleStatus !== 'submitted') {
     return <div className="withdraw-progress">0%</div>
   }
+
   return (
     <>
       <div className="withdraw-progress">
@@ -225,7 +230,7 @@ const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
         </span>
       </div>
       <div className="tx-status">
-        <TxStatusText txStatus={getWithdrawalStatus(claim)} />
+        <TxStatusText txStatus={getWithdrawalStatus(claim, txStatuses)} />
       </div>
       <div className="action-link">
         <Popover content={withdrawTxHashes[withdrawTxHashes.length - 1]} placement="bottom">
@@ -237,7 +242,8 @@ const WithdrawDetail = ({claim}: WithdrawDetailProps): JSX.Element => {
 }
 
 const getUnlockProgressState = (claim: Claim, period: Period): ProgressState => {
-  const unlockStatus = getUnlockStatus(claim)
+  const {txStatuses} = CallTxState.useContainer()
+  const unlockStatus = getUnlockStatus(claim, txStatuses)
   if (
     unlockStatus?.status === 'TransactionFailed' ||
     (claim.puzzleStatus === 'unsubmitted' && period !== 'Unlocking')
@@ -292,7 +298,8 @@ export const ClaimRow = ({
     withdrawnDustAmount,
   } = claim
 
-  const unlocked = isUnlocked(claim)
+  const {txStatuses} = CallTxState.useContainer()
+  const unlocked = isUnlocked(claim, txStatuses)
   const currentEpoch = getCurrentEpoch(currentBlock, periodConfig)
   const numberOfEpochsForClaim = getNumberOfEpochsForClaim(claim, periodConfig)
   const unfrozenDustAmount = getUnfrozenAmount(

@@ -44,7 +44,6 @@ function useCallTxState(initialState?: Partial<CallTxStateParams>): CallTxState 
     // private method
 
     const rawTx = await eth.getTransaction(transactionHash)
-
     if (rawTx === null) {
       // null if not found or failed
       return {
@@ -54,12 +53,11 @@ function useCallTxState(initialState?: Partial<CallTxStateParams>): CallTxState 
     }
 
     const receipt = await eth.getTransactionReceipt(transactionHash)
-
     return receipt === null
       ? {status: 'TransactionPending'}
       : {
           status: parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed',
-          message: returnDataToHumanReadable(receipt.returnData),
+          message: receipt.returnData ? returnDataToHumanReadable(receipt.returnData) : '',
         }
   }
 
@@ -71,7 +69,7 @@ function useCallTxState(initialState?: Partial<CallTxStateParams>): CallTxState 
       .map((tx) => tx.hash)
 
     const newStatuses = await Promise.all(
-      hashesToCheck.map(async ([txHash]) => {
+      hashesToCheck.map(async (txHash) => {
         const newStatus = await _getTransactionStatus(txHash)
         return [txHash, newStatus]
       }),

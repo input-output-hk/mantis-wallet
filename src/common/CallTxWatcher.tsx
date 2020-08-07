@@ -7,17 +7,12 @@ import {withStatusGuard, PropsWithWalletState} from './wallet-status-guard'
 const _CallTxWatcher = ({
   walletState,
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
-  const {
-    syncStatus: {currentBlock},
-    getOverviewProps,
-  } = walletState
-
-  const {transactions} = getOverviewProps()
+  const {transactions} = walletState.getOverviewProps()
   const {updateTxStatuses} = CallTxState.useContainer()
 
   useEffect(() => {
     updateTxStatuses(transactions)
-  }, [currentBlock])
+  }, [transactions])
 
   return <></>
 }

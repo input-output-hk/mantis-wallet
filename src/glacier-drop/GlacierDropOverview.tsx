@@ -14,6 +14,7 @@ import {
   GlacierConstants,
 } from './glacier-state'
 import {LoadedState} from '../common/wallet-state'
+import {CallTxState} from '../common/call-tx-state'
 import {rendererLog} from '../common/logger'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
@@ -91,7 +92,6 @@ const ClaimHistory = ({
         <SubmitProofOfUnlock
           visible
           claim={claimToSubmit}
-          currentBlock={currentBlock}
           onCancel={() => setClaimToSubmit(null)}
           onNext={() => setClaimToSubmit(null)}
           estimateCallFee={estimateCallFee}
@@ -141,10 +141,11 @@ const _GlacierDropOverview = ({
     constants,
     constantsError,
     refreshConstants,
-    updateTxStatuses,
     updateUnfreezingClaimData,
     updateDustAmounts,
   } = GlacierState.useContainer()
+
+  const {txStatuses} = CallTxState.useContainer()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
   const [epochsShown, showEpochs] = useState<boolean>(false)
@@ -194,9 +195,8 @@ const _GlacierDropOverview = ({
 
   const update = async (): Promise<void> => {
     if (isNone(constants)) return
-    await updateTxStatuses(currentBlock)
-    await updateUnfreezingClaimData(period)
-    await updateDustAmounts(period)
+    await updateUnfreezingClaimData(period, txStatuses)
+    await updateDustAmounts(period, txStatuses)
   }
 
   useEffect(() => {
@@ -305,7 +305,7 @@ const _GlacierDropOverview = ({
               claim.dustAmount,
               getCurrentEpoch(currentBlock, periodConfig),
               getNumberOfEpochsForClaim(claim, periodConfig),
-              isUnlocked(claim),
+              isUnlocked(claim, txStatuses),
             ).isGreaterThan(0),
           )
           .map((claim) => {

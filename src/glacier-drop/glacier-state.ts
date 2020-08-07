@@ -10,7 +10,7 @@ import * as tPromise from 'io-ts-promise'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
-import {validateEthAddress, toHex, returnDataToHumanReadable} from '../common/util'
+import {validateEthAddress, toHex} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
 import {loadContractAddresses} from './glacier-config'
 import {
@@ -28,6 +28,7 @@ import {getContractConfigs} from '../config/renderer'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
 import {createTErrorRenderer} from '../common/i18n'
+import {TransactionStatus} from '../common/call-tx-state'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -50,7 +51,6 @@ export interface BaseClaim {
   // transactions
   unlockTxHash: string | null
   withdrawTxHashes: string[]
-  txStatuses: Record<string, TransactionStatus>
   // unlocking
   authSignature: AuthorizationSignature
   inclusionProof: string
@@ -101,27 +101,6 @@ const AuthorizationSignature = t.type({
 
 export type AuthorizationSignature = t.TypeOf<typeof AuthorizationSignature>
 
-// TransactionReceipt related types
-
-interface TransactionPending {
-  status: 'TransactionPending'
-  atBlock: number
-}
-
-interface TransactionFailed {
-  status: 'TransactionFailed'
-  atBlock: number
-  message: string
-}
-
-interface TransactionOk {
-  status: 'TransactionOk'
-  atBlock: number
-  message: string
-}
-
-export type TransactionStatus = TransactionPending | TransactionFailed | TransactionOk
-
 // Glacier Store
 
 export interface GlacierData {
@@ -143,9 +122,8 @@ export interface GlacierData {
   removeClaims(): Promise<void>
 
   // Bookkeeping
-  updateTxStatuses(currentBlock: number): Promise<void>
-  updateDustAmounts(period: Period): Promise<void>
-  updateUnfreezingClaimData(period: Period): Promise<void>
+  updateDustAmounts(period: Period, txStatuses: TxStatuses): Promise<void>
+  updateUnfreezingClaimData(period: Period, txStatuses: TxStatuses): Promise<void>
 
   // WalletBackend Calls
   getEtcSnapshotBalanceWithProof(etcAddress: string): Promise<BalanceWithProof>
@@ -162,13 +140,15 @@ export interface GlacierData {
   // GlacierDrop Contract Calls
   getUnlockCallParams(claim: Claim, gasParams: GasParams): CallParams
   getWithdrawCallParams(claim: Claim, gasParams: GasParams): CallParams
-  unlock(claim: Claim, gasParams: GasParams, currentBlock: number): Promise<string>
-  withdraw(
-    claim: Claim,
-    gasParams: GasParams,
-    currentBlock: number,
-    unfrozenDustAmount: BigNumber,
-  ): Promise<string>
+  unlock(claim: Claim, gasParams: GasParams): Promise<string>
+  withdraw(claim: Claim, gasParams: GasParams, unfrozenDustAmount: BigNumber): Promise<string>
+}
+
+type TxStatuses = Record<string, TransactionStatus>
+
+interface GasParams {
+  gasLimit: BigNumber
+  gasPrice: BigNumber
 }
 
 export interface GlacierConstants {
@@ -211,11 +191,6 @@ export const migrationsForGlacierData = {
 }
 
 // Params
-
-interface GasParams {
-  gasLimit: BigNumber
-  gasPrice: BigNumber
-}
 
 interface GlacierStateParams {
   web3: Remote<Web3API>
@@ -382,70 +357,10 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   const removeClaims = async (): Promise<void> => setClaims({})
 
   //
-  // Utils
-  //
-
-  const getTransactionStatus = async (
-    transactionHash: string,
-    currentBlock: number,
-  ): Promise<TransactionStatus> => {
-    const rawTx = await web3.eth.getTransaction(transactionHash)
-
-    if (rawTx === null) {
-      // null if not found or failed
-      return {
-        status: 'TransactionFailed',
-        message: 'Transaction failed before reaching the contract. Try again with a higher fee.',
-        atBlock: currentBlock,
-      }
-    }
-
-    const receipt = await web3.eth.getTransactionReceipt(transactionHash)
-
-    return receipt === null
-      ? {status: 'TransactionPending', atBlock: currentBlock}
-      : {
-          status: parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed',
-          message: returnDataToHumanReadable(receipt.returnData),
-          atBlock: currentBlock,
-        }
-  }
-
-  //
   // Bookkeeping
   //
 
-  const updateTxStatuses = async (currentBlock: number): Promise<void> => {
-    // Collect all pending transactions from all claims and fetch new status if we're in a new block
-
-    const newStatuses = await Promise.all(
-      Object.values(claims)
-        .flatMap((claim: Claim) =>
-          _.toPairs(claim.txStatuses)
-            .filter(
-              ([_txHash, txStatus]) =>
-                txStatus.atBlock !== currentBlock && txStatus.status === 'TransactionPending',
-            )
-            .map(([txHash, _txStatus]): [Claim, string] => [claim, txHash]),
-        )
-        .map(
-          async ([claim, txHash]): Promise<[Claim, string, TransactionStatus]> => {
-            const newStatus = await getTransactionStatus(txHash, currentBlock)
-            return [claim, txHash, newStatus]
-          },
-        ),
-    )
-
-    const updateArray = newStatuses.map(
-      ([claim, txHash, txStatus]): Claim => ({
-        ...claim,
-        txStatuses: {...claim.txStatuses, [txHash]: txStatus},
-      }),
-    )
-    updateClaims(updateArray)
-  }
-
-  const updateDustAmounts = async (period: Period): Promise<void> => {
+  const updateDustAmounts = async (period: Period, txStatuses: TxStatuses): Promise<void> => {
     // Update dust amounts to the final ones calculated from total unlocked ether
 
     if (period === 'UnlockingNotStarted' || period === 'Unlocking') {
@@ -453,7 +368,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     }
 
     const claimsToUpdate = Object.values(claims).filter(
-      (c: Claim) => !c.isFinalDustAmount && isUnlocked(c),
+      (c: Claim) => !c.isFinalDustAmount && isUnlocked(c, txStatuses),
     )
     if (_.isEmpty(claimsToUpdate)) {
       return // No claim to update
@@ -471,7 +386,10 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     updateClaims(updateArray)
   }
 
-  const updateUnfreezingClaimData = async (period: Period): Promise<void> => {
+  const updateUnfreezingClaimData = async (
+    period: Period,
+    txStatuses: TxStatuses,
+  ): Promise<void> => {
     // Update epochs needed for full withdrawal of claim rewards
 
     if (period !== 'Unfreezing') {
@@ -479,7 +397,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     }
 
     const claimsToUpdate = Object.values(claims).filter(
-      (c: Claim) => !c.numberOfEpochsForFullUnfreeze && isUnlocked(c),
+      (c: Claim) => !c.numberOfEpochsForFullUnfreeze && isUnlocked(c, txStatuses),
     )
     if (_.isEmpty(claimsToUpdate)) {
       return // No claim to update
@@ -643,7 +561,6 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   const unlock = async (
     claim: UnsubmittedClaim,
     {gasLimit, gasPrice}: GasParams,
-    currentBlock: number,
   ): Promise<string> => {
     const {powNonce, puzzleStatus} = claim
 
@@ -662,10 +579,6 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         txBuildInProgress: false,
         puzzleStatus: 'submitted',
         unlockTxHash,
-        txStatuses: {
-          ...claim.txStatuses,
-          [unlockTxHash]: {status: 'TransactionPending', atBlock: currentBlock},
-        },
       })
     })
 
@@ -694,7 +607,6 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   const withdraw = async (
     claim: Claim,
     {gasLimit, gasPrice}: GasParams,
-    currentBlock: number,
     unfrozenDustAmount: BigNumber,
   ): Promise<string> => {
     const {puzzleStatus} = claim
@@ -714,10 +626,6 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
         txBuildInProgress: false,
         withdrawTxHashes: [...claim.withdrawTxHashes, withdrawTxHash],
         withdrawnDustAmount: unfrozenDustAmount,
-        txStatuses: {
-          ...claim.txStatuses,
-          [withdrawTxHash]: {status: 'TransactionPending', atBlock: currentBlock},
-        },
       })
     })
 
@@ -750,7 +658,6 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     getWithdrawCallParams,
     unlock,
     withdraw,
-    updateTxStatuses,
     updateDustAmounts,
     updateUnfreezingClaimData,
   }
@@ -760,22 +667,25 @@ export const GlacierState = createContainer(useGlacierState)
 
 // free utility functions
 
-export function isUnlocked(claim: Claim): boolean {
-  return getUnlockStatus(claim)?.status === 'TransactionOk'
+export function isUnlocked(claim: Claim, txStatuses: TxStatuses): boolean {
+  return getUnlockStatus(claim, txStatuses)?.status === 'TransactionOk'
 }
 
-export function getUnlockStatus(claim: Claim): TransactionStatus | null {
+export function getUnlockStatus(claim: Claim, txStatuses: TxStatuses): TransactionStatus | null {
   if (!claim.unlockTxHash) return null
-  return claim.txStatuses[claim.unlockTxHash]
+  return txStatuses[claim.unlockTxHash] ?? {status: 'TransactionPending'}
 }
 
-export function getWithdrawalStatus(claim: Claim): TransactionStatus | null {
-  const {withdrawTxHashes, txStatuses} = claim
+export function getWithdrawalStatus(
+  claim: Claim,
+  txStatuses: TxStatuses,
+): TransactionStatus | null {
+  const {withdrawTxHashes} = claim
   if (withdrawTxHashes.length === 0) {
     return null
   }
   const lastWithdrawalTxHash = withdrawTxHashes[withdrawTxHashes.length - 1]
-  return txStatuses[lastWithdrawalTxHash]
+  return txStatuses[lastWithdrawalTxHash] ?? {status: 'TransactionPending'}
 }
 
 export function normalizeAddress(externalAddress: string): string {

@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_LIMIT, DEFAULT_FEE} from './glacier-config'
 import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
+import {CallTxState} from '../common/call-tx-state'
 import {LoadedState, FeeEstimates} from '../common/wallet-state'
 import {validateFee, fillActionHandlers, translateValidationResult} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
@@ -39,6 +40,7 @@ const _WithdrawAvailableDust = ({
   calculateGasPrice,
 }: WithdrawAvailableDustProps): JSX.Element => {
   const {withdraw, getWithdrawCallParams} = GlacierState.useContainer()
+  const {txStatuses} = CallTxState.useContainer()
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
@@ -63,7 +65,7 @@ const _WithdrawAvailableDust = ({
     dustAmount,
     currentEpoch,
     numberOfEpochsForClaim,
-    isUnlocked(claim),
+    isUnlocked(claim, txStatuses),
   )
   const estimatedWithdrawableDust = unfrozenDustAmount.minus(withdrawnDustAmount)
 
@@ -84,7 +86,7 @@ const _WithdrawAvailableDust = ({
             gasLimit: new BigNumber(DEFAULT_GAS_LIMIT),
             gasPrice: new BigNumber(gasPrice),
           }
-          await withdraw(claim, gasParams, currentBlock, unfrozenDustAmount)
+          await withdraw(claim, gasParams, unfrozenDustAmount)
           onNext()
         },
         disabled,
