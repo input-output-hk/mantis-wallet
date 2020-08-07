@@ -37,6 +37,7 @@ const PERIOD_CONFIG: PeriodConfig = {
   epochLength: 1,
   numberOfEpochs: 10,
 }
+const CALL_TX_STATUSES = {}
 
 const baseClaim = {
   added: new Date(),
@@ -92,6 +93,7 @@ export const claimSolving = (): JSX.Element => {
       index={1}
       currentBlock={4}
       periodConfig={PERIOD_CONFIG}
+      callTxStatuses={CALL_TX_STATUSES}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -107,6 +109,7 @@ export const claimUnsubmitted = (): JSX.Element => {
       index={1}
       currentBlock={5}
       periodConfig={PERIOD_CONFIG}
+      callTxStatuses={CALL_TX_STATUSES}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -122,6 +125,7 @@ export const claimSubmitted = (): JSX.Element => {
       index={1}
       currentBlock={6}
       periodConfig={PERIOD_CONFIG}
+      callTxStatuses={CALL_TX_STATUSES}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
@@ -147,6 +151,7 @@ export const withdrawAvailableDust = (): JSX.Element => (
     claim={{...submittedClaim, withdrawnDustAmount: dust('withdrawn dust', 0)}}
     currentBlock={10}
     periodConfig={PERIOD_CONFIG}
+    callTxStatuses={CALL_TX_STATUSES}
     showEpochs={action('showEpochs')}
     onNext={action('onNext')}
     onCancel={action('onCancel')}

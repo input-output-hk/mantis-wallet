@@ -12,6 +12,7 @@ import {usePersistedState} from '../common/hook-utils'
 import {BigNumberFromHexString, SignatureParamCodec} from '../common/io-helpers'
 import {validateEthAddress, toHex} from '../common/util'
 import {BuildJobState} from '../common/build-job-state'
+import {CallTxStatuses, TransactionStatus} from '../common/wallet-state'
 import {loadContractAddresses} from './glacier-config'
 import {
   Web3API,
@@ -28,7 +29,6 @@ import {getContractConfigs} from '../config/renderer'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
 import {createTErrorRenderer} from '../common/i18n'
-import {TransactionStatus} from '../common/call-tx-state'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -122,8 +122,8 @@ export interface GlacierData {
   removeClaims(): Promise<void>
 
   // Bookkeeping
-  updateDustAmounts(period: Period, txStatuses: TxStatuses): Promise<void>
-  updateUnfreezingClaimData(period: Period, txStatuses: TxStatuses): Promise<void>
+  updateDustAmounts(period: Period, txStatuses: CallTxStatuses): Promise<void>
+  updateUnfreezingClaimData(period: Period, txStatuses: CallTxStatuses): Promise<void>
 
   // WalletBackend Calls
   getEtcSnapshotBalanceWithProof(etcAddress: string): Promise<BalanceWithProof>
@@ -143,8 +143,6 @@ export interface GlacierData {
   unlock(claim: Claim, gasParams: GasParams): Promise<string>
   withdraw(claim: Claim, gasParams: GasParams, unfrozenDustAmount: BigNumber): Promise<string>
 }
-
-type TxStatuses = Record<string, TransactionStatus>
 
 interface GasParams {
   gasLimit: BigNumber
@@ -360,7 +358,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   // Bookkeeping
   //
 
-  const updateDustAmounts = async (period: Period, txStatuses: TxStatuses): Promise<void> => {
+  const updateDustAmounts = async (period: Period, txStatuses: CallTxStatuses): Promise<void> => {
     // Update dust amounts to the final ones calculated from total unlocked ether
 
     if (period === 'UnlockingNotStarted' || period === 'Unlocking') {
@@ -388,7 +386,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const updateUnfreezingClaimData = async (
     period: Period,
-    txStatuses: TxStatuses,
+    txStatuses: CallTxStatuses,
   ): Promise<void> => {
     // Update epochs needed for full withdrawal of claim rewards
 
@@ -667,18 +665,21 @@ export const GlacierState = createContainer(useGlacierState)
 
 // free utility functions
 
-export function isUnlocked(claim: Claim, txStatuses: TxStatuses): boolean {
+export function isUnlocked(claim: Claim, txStatuses: CallTxStatuses): boolean {
   return getUnlockStatus(claim, txStatuses)?.status === 'TransactionOk'
 }
 
-export function getUnlockStatus(claim: Claim, txStatuses: TxStatuses): TransactionStatus | null {
+export function getUnlockStatus(
+  claim: Claim,
+  txStatuses: CallTxStatuses,
+): TransactionStatus | null {
   if (!claim.unlockTxHash) return null
   return txStatuses[claim.unlockTxHash] ?? {status: 'TransactionPending'}
 }
 
 export function getWithdrawalStatus(
   claim: Claim,
-  txStatuses: TxStatuses,
+  txStatuses: CallTxStatuses,
 ): TransactionStatus | null {
   const {withdrawTxHashes} = claim
   if (withdrawTxHashes.length === 0) {

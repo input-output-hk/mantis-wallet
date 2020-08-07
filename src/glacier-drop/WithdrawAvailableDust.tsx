@@ -2,8 +2,7 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_LIMIT, DEFAULT_FEE} from './glacier-config'
 import {GlacierState, Claim, PeriodConfig, isUnlocked} from './glacier-state'
-import {CallTxState} from '../common/call-tx-state'
-import {LoadedState, FeeEstimates} from '../common/wallet-state'
+import {LoadedState, FeeEstimates, CallTxStatuses} from '../common/wallet-state'
 import {validateFee, fillActionHandlers, translateValidationResult} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
 import {wrapWithModal, ModalLocker} from '../common/LunaModal'
@@ -22,6 +21,7 @@ interface WithdrawAvailableDustProps {
   claim: Claim
   currentBlock: number
   periodConfig: PeriodConfig
+  callTxStatuses: CallTxStatuses
   showEpochs: () => void
   onNext: () => void
   onCancel: () => void
@@ -31,8 +31,9 @@ interface WithdrawAvailableDustProps {
 
 const _WithdrawAvailableDust = ({
   claim,
-  periodConfig,
   currentBlock,
+  periodConfig,
+  callTxStatuses,
   showEpochs,
   onNext,
   onCancel,
@@ -40,7 +41,6 @@ const _WithdrawAvailableDust = ({
   calculateGasPrice,
 }: WithdrawAvailableDustProps): JSX.Element => {
   const {withdraw, getWithdrawCallParams} = GlacierState.useContainer()
-  const {txStatuses} = CallTxState.useContainer()
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
@@ -65,7 +65,7 @@ const _WithdrawAvailableDust = ({
     dustAmount,
     currentEpoch,
     numberOfEpochsForClaim,
-    isUnlocked(claim, txStatuses),
+    isUnlocked(claim, callTxStatuses),
   )
   const estimatedWithdrawableDust = unfrozenDustAmount.minus(withdrawnDustAmount)
 

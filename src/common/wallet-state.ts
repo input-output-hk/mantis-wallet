@@ -7,7 +7,14 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome} from 'fp-ts/lib/Option'
 import {Remote} from 'comlink'
 import {WALLET_IS_OFFLINE, WALLET_IS_LOCKED, WALLET_DOES_NOT_EXIST} from './errors'
-import {deserializeBigNumber, loadAll, bigSum, toHex, bech32toHex} from './util'
+import {
+  deserializeBigNumber,
+  loadAll,
+  bigSum,
+  toHex,
+  bech32toHex,
+  returnDataToHumanReadable,
+} from './util'
 import {Chain, ChainId} from '../pob/chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
@@ -61,6 +68,25 @@ export type TransparentAccount = TransparentAddress & {
 
 export type FeeEstimates = t.TypeOf<typeof FeeEstimates>
 
+// TransactionStatus
+
+interface TransactionPending {
+  readonly status: 'TransactionPending'
+}
+
+interface TransactionFailed {
+  readonly status: 'TransactionFailed'
+  readonly message: string
+}
+
+interface TransactionOk {
+  readonly status: 'TransactionOk'
+  readonly message: string
+}
+
+export type TransactionStatus = TransactionPending | TransactionFailed | TransactionOk
+export type CallTxStatuses = Record<string, TransactionStatus> // by txHash
+
 // States
 
 export interface InitialState {
@@ -77,6 +103,7 @@ export interface LoadedState {
   syncStatus: SynchronizationStatus
   transparentAccounts: TransparentAccount[]
   getOverviewProps: () => Overview
+  callTxStatuses: CallTxStatuses
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
   getSpendingKey: (secrets: PassphraseSecrets) => Promise<string>
@@ -135,12 +162,12 @@ export type WalletData =
   | ErrorState
 
 interface Overview {
-  transactions: Transaction[]
   transparentBalance: BigNumber
   availableBalance: BigNumber
   pendingBalance: BigNumber
   transparentAccounts: TransparentAccount[]
   accounts: Account[]
+  transactions: Transaction[]
 }
 
 interface WalletStateParams {
@@ -151,9 +178,10 @@ interface WalletStateParams {
   totalBalance: Option<BigNumber>
   availableBalance: Option<BigNumber>
   transparentBalance: Option<BigNumber>
-  transactions: Option<Transaction[]>
   transparentAccounts: Option<TransparentAccount[]>
   accounts: Option<Account[]>
+  transactions: Option<Transaction[]>
+  callTxStatuses: CallTxStatuses
 }
 
 const DEFAULT_STATE: WalletStateParams = {
@@ -164,9 +192,10 @@ const DEFAULT_STATE: WalletStateParams = {
   totalBalance: none,
   availableBalance: none,
   transparentBalance: none,
-  transactions: none,
   transparentAccounts: none,
   accounts: none,
+  transactions: none,
+  callTxStatuses: {},
 }
 
 export const canRemoveWallet = (
@@ -191,7 +220,8 @@ const getPublicTransactionParams = (
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const wallet = _initialState.web3.midnight.wallet
-  const erc20 = _initialState.web3.erc20
+  const {erc20, eth} = _initialState.web3
+
   const buildJobState = BuildJobState.useContainer()
 
   // wallet status
@@ -216,6 +246,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [transactionsOption, setTransactions] = useState<Option<Transaction[]>>(
     _initialState.transactions,
   )
+  const [callTxStatuses, setCallTxStatuses] = useState<CallTxStatuses>(_initialState.callTxStatuses)
 
   // addresses / accounts
   const [accountsOption, setAccounts] = useState<Option<Account[]>>(_initialState.accounts)
@@ -237,12 +268,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const accounts = getOrElse((): Account[] => [])(accountsOption)
 
     return {
-      transactions,
       transparentBalance,
       availableBalance,
       pendingBalance,
       transparentAccounts,
       accounts,
+      transactions,
     }
   }
 
@@ -339,10 +370,47 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       setAvailableBalance(some(deserializeBigNumber(balance.availableBalance)))
     })
 
-  const loadTransactionHistory = (): Promise<void> =>
-    loadAll<Transaction>(wallet.getTransactionHistory).then((transactions: Transaction[]) =>
-      setTransactions(some(transactions)),
+  const _getCallTransactionStatus = async (transactionHash: string): Promise<TransactionStatus> => {
+    // (private) Get status of contract call transaction
+
+    const rawTx = await eth.getTransaction(transactionHash)
+    if (rawTx === null) {
+      // null if not found or failed
+      return {
+        status: 'TransactionFailed',
+        message: 'Transaction failed before reaching the contract. Try again with a higher fee.',
+      }
+    }
+
+    const receipt = await eth.getTransactionReceipt(transactionHash)
+    return receipt === null
+      ? {status: 'TransactionPending'}
+      : {
+          status: parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed',
+          message: receipt.returnData ? returnDataToHumanReadable(receipt.returnData) : '',
+        }
+  }
+
+  const _updateCallTxStatuses = async (transactions: Transaction[]): Promise<void> => {
+    const hashesToCheck = transactions
+      .filter((tx) => tx.txDetails.txType === 'call')
+      .map((tx) => tx.hash)
+
+    const newStatuses = await Promise.all(
+      hashesToCheck.map(async (txHash) => {
+        const newStatus = await _getCallTransactionStatus(txHash)
+        return [txHash, newStatus]
+      }),
     )
+
+    setCallTxStatuses(_.fromPairs(newStatuses))
+  }
+
+  const loadTransactionHistory = (): Promise<void> =>
+    loadAll<Transaction>(wallet.getTransactionHistory).then((transactions: Transaction[]) => {
+      setTransactions(some(transactions))
+      _updateCallTxStatuses(transactions)
+    })
 
   const loadAccounts = (): Promise<void> =>
     wallet.listAccounts().then((accounts: Account[]) => setAccounts(some(accounts)))
@@ -532,6 +600,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     getSpendingKey,
     getBurnAddress,
     transparentAccounts,
+    callTxStatuses,
   }
 }
 
