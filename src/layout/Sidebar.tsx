@@ -18,8 +18,9 @@ import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
 import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
-import {isTestnet, TESTNET_EDITION} from '../shared/version'
+import {isTestnet} from '../shared/version'
 import {Trans} from '../common/Trans'
+import {createTErrorRenderer} from '../common/i18n'
 import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
@@ -54,7 +55,10 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({version}: SidebarProps): JSX.Element => {
-  const {theme} = SettingsState.useContainer()
+  const {
+    theme,
+    translation: {t},
+  } = SettingsState.useContainer()
   const logo = theme === 'dark' ? darkLogo : lightLogo
 
   const walletState = WalletState.useContainer()
@@ -89,7 +93,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const handleMenuClick = (menuId: MenuId): void => routerState.navigate(MENU[menuId].route)
 
   return (
-    <div className="Sidebar">
+    <header className="Sidebar">
       {isTestnet(networkTag) && (
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
@@ -120,7 +124,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
                         src={menuItem.icon}
                       />
                     </span>
-                    <span className="link-title">{menuItem.title}</span>
+                    <span className="link-title">{t(menuItem.title)}</span>
                   </div>
                 </li>
               )
@@ -151,7 +155,12 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         </div>
         <div className="version">
           {version}
-          {isTestnet(networkTag) && <span className="edition"> — {TESTNET_EDITION}</span>}
+          {isTestnet(networkTag) && (
+            <span className="edition">
+              {' '}
+              — <Trans k={['title', 'testnetEdition']} />
+            </span>
+          )}
         </div>
       </div>
       {walletState.walletStatus === 'LOADED' && !routerState.isLocked && (
@@ -161,7 +170,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           lock={async (passphrase: string): Promise<void> => {
             const isLocked = await walletState.lock({passphrase})
             if (!isLocked) {
-              throw Error("Couldn't lock the wallet.")
+              throw createTErrorRenderer(['wallet', 'error', 'couldNotLockWallet'])
             }
             setActiveModal('none')
           }}
@@ -174,7 +183,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           onRemoveWallet={async (passphrase: string): Promise<void> => {
             const removed = await walletState.remove({passphrase})
             if (!removed) {
-              throw Error("Couldn't remove the wallet.")
+              throw createTErrorRenderer(['wallet', 'error', 'couldNotRemoveWallet'])
             }
             pobState.reset()
             glacierState.removeClaims()
@@ -190,6 +199,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         />
       )}
       <SupportModal visible={activeModal === 'Support'} onCancel={() => setActiveModal('none')} />
-    </div>
+    </header>
   )
 }

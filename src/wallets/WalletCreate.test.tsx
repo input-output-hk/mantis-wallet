@@ -2,12 +2,15 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {expectCalledOnClick, WithSettingsProvider} from '../common/test-helpers'
+import {
+  expectCalledOnClick,
+  WithSettingsProvider,
+  DIALOG_VALIDATION_ERROR,
+} from '../common/test-helpers'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
-import {DIALOG_VALIDATION_ERROR} from '../common/Dialog'
 
 const seedPhrase = [
   'vengeful',

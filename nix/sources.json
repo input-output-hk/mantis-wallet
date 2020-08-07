@@ -38,15 +38,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "midnight": {
-        "branch": "develop",
+        "branch": "release/v0.14.0",
         "description": null,
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "midnight",
-        "rev": "6a7dd5e2d09f6a606cca82be154eabdbfed84843",
-        "sha256": "05lwsqp93f1x9h1njlvh5x98w947s3iij8pz7v1zrpvb61qgyrp9",
+        "rev": "14bcc82c845fa0aa1d36c9f464220b8173c40f61",
+        "sha256": "04c5hvkm8l6g416mfm4wm164divihy5r3h1ldfjghl5fx47kciz7",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/midnight/archive/6a7dd5e2d09f6a606cca82be154eabdbfed84843.tar.gz",
+        "url": "https://github.com/input-output-hk/midnight/archive/14bcc82c845fa0aa1d36c9f464220b8173c40f61.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {

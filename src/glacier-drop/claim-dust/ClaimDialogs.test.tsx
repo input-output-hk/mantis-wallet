@@ -8,12 +8,10 @@ import ethereumLogo from '../../assets/icons/chains/ethereum.svg'
 import ethereumClippedLogo from '../../assets/icons/chains/ethereum-clipped.svg'
 import ethereumBurnLogo from '../../assets/icons/chains/m-eth.svg'
 import {
-  EMPTY_ADDRESS_MSG,
-  INVALID_ADDRESS_MSG,
-  PRIVATE_KEY_MUST_BE_SET_MSG,
-  PRIVATE_KEY_INVALID_MSG,
-} from '../../common/util'
-import {expectCalledOnClick, glacierWrappedRender} from '../../common/test-helpers'
+  expectCalledOnClick,
+  glacierWrappedRender,
+  DIALOG_VALIDATION_ERROR,
+} from '../../common/test-helpers'
 import {UNLOCK_BUTTON_TEXT} from './claim-with-strings'
 import {DisplayChain} from '../../pob/chains'
 import {ClaimWithKey} from './ClaimWithKey'
@@ -27,7 +25,6 @@ import {Exchange} from './Exchange'
 import {EnterAddress} from './EnterAddress'
 import {VerifyAddress} from './VerifyAddress'
 import {GeneratedMessage} from './GeneratedMessage'
-import {DIALOG_VALIDATION_ERROR} from '../../common/Dialog'
 import {ClaimController, ModalId} from './ClaimController'
 import {WalletState, LoadedState} from '../../common/wallet-state'
 
@@ -71,17 +68,17 @@ test('Enter External Address', async () => {
   await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 
   // At this point we expect an empty address error msg
-  await waitFor(() => expect(getByText(EMPTY_ADDRESS_MSG)).toBeInTheDocument())
+  await waitFor(() => expect(getByText('Address must be set')).toBeInTheDocument())
 
   // We expect invalid address msgs in these cases
   fireEvent.change(publicAddressInput, {target: {value: 'invalid address'}})
-  await waitFor(() => expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument())
+  await waitFor(() => expect(getByText('Invalid address')).toBeInTheDocument())
 
   // Almost valid public address (checksum fails)
   fireEvent.change(publicAddressInput, {
     target: {value: '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Bb'},
   })
-  await waitFor(() => expect(getByText(INVALID_ADDRESS_MSG)).toBeInTheDocument())
+  await waitFor(() => expect(getByText('Invalid address')).toBeInTheDocument())
 
   // Cancel works any time
   await expectCalledOnClick(() => getByText('Cancel'), onCancel)
@@ -90,7 +87,7 @@ test('Enter External Address', async () => {
   fireEvent.change(publicAddressInput, {
     target: {value: '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Ba'},
   })
-  await waitFor(() => expect(queryByText(INVALID_ADDRESS_MSG)).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Invalid address')).not.toBeInTheDocument())
 
   // Now submit is enabled
   expect(submitButton).toBeEnabled()
@@ -298,7 +295,7 @@ test('Claim with Private Key', async () => {
   await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 
   // Message is shown that the key must be set
-  expect(getByText(PRIVATE_KEY_MUST_BE_SET_MSG)).toBeInTheDocument()
+  expect(getByText('Private key must be set')).toBeInTheDocument()
 
   // Enter invalid private key
   fireEvent.change(privateKeyInput, {
@@ -306,7 +303,7 @@ test('Claim with Private Key', async () => {
   })
 
   // Message is shown that the key is invalid
-  await waitFor(() => expect(getByText(PRIVATE_KEY_INVALID_MSG)).toBeInTheDocument())
+  await waitFor(() => expect(getByText('Invalid private key')).toBeInTheDocument())
 
   // Enter valid private key
   fireEvent.change(privateKeyInput, {
@@ -314,8 +311,8 @@ test('Claim with Private Key', async () => {
   })
 
   // Error messages are not shown
-  await waitFor(() => expect(queryByText(PRIVATE_KEY_MUST_BE_SET_MSG)).not.toBeInTheDocument())
-  await waitFor(() => expect(queryByText(PRIVATE_KEY_INVALID_MSG)).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Private key must be set')).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Invalid private key')).not.toBeInTheDocument())
 
   // Accept warning
   const shouldKeepOpenCheckbox = getByLabelText(

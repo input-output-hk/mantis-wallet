@@ -4,12 +4,14 @@ import * as bech32 from 'bech32-buffer'
 import _ from 'lodash'
 import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
-import fileSize from 'filesize'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
 import {BigNumberJSON, PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
-import {NETWORK_CONSTANTS} from '../shared/version'
+import {NETWORK_CONSTANTS} from './constants/network'
+import {Translatable, TFunctionRenderer, createTErrorRenderer} from './i18n'
+
+export type ValidationResult = Translatable | 'OK'
 
 export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
   return new BigNumber({_isBigNumber: true, ...json})
@@ -17,15 +19,9 @@ export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
 
 export const toHex = (n: number | BigNumber): string => {
   const asString = n.toString(16)
-  if (asString.startsWith('-')) throw Error('n must be positive')
+  if (asString.startsWith('-'))
+    throw createTErrorRenderer(['common', 'error', 'numberMustBePositive'])
   return `0x${asString}`
-}
-
-const HASHRATE_SUFFIX = ['hash/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s', 'EH/s', 'ZH/s', 'YH/s']
-
-export function toHumanReadableHashrate(hashrate: number): string {
-  if (hashrate < 0) return 'Invalid hashrate'
-  return fileSize(hashrate, {fullform: true, fullforms: HASHRATE_SUFFIX})
 }
 
 export const loadAll = async <T>(
@@ -41,47 +37,56 @@ export const loadAll = async <T>(
   }
 }
 
-export const isLess = (minValue = 0) => (b: BigNumber) =>
-  !b.isFinite() || !b.isLessThan(new BigNumber(minValue))
-    ? `Must be a number less than ${minValue}`
-    : ''
+export const isLess = (maxValue = 0) => (b: BigNumber): ValidationResult =>
+  !b.isFinite() || !b.isLessThan(new BigNumber(maxValue))
+    ? {tKey: ['common', 'error', 'mustBeANumberLessThan'], options: {replace: {maxValue}}}
+    : 'OK'
 
-export const isGreater = (minValue = 0) => (b: BigNumber) =>
+export const isGreater = (minValue = 0) => (b: BigNumber): ValidationResult =>
   !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
-    ? `Must be a number greater than ${minValue}`
-    : ''
+    ? {tKey: ['common', 'error', 'mustBeANumberGreaterThan'], options: {replace: {minValue}}}
+    : 'OK'
 
-export const isGreaterOrEqual = (minValue: BigNumber.Value = 0) => (b: BigNumber) =>
+export const isGreaterOrEqual = (minValue: BigNumber.Value = 0) => (
+  b: BigNumber,
+): ValidationResult =>
   !b.isFinite() || !b.isGreaterThanOrEqualTo(new BigNumber(minValue))
-    ? `Must be at least ${minValue.toString(10)}`
-    : ''
+    ? {tKey: ['common', 'error', 'mustBeAtLeast'], options: {replace: {minValue}}}
+    : 'OK'
 
-export const isLowerOrEqual = (maxValue: BigNumber.Value, message?: string) => (b: BigNumber) =>
+export const isLowerOrEqual = (maxValue: BigNumber.Value, message?: Translatable) => (
+  b: BigNumber,
+): ValidationResult =>
   !b.isFinite() || !b.isLessThanOrEqualTo(new BigNumber(maxValue))
-    ? message || `Must be at most ${maxValue.toString(10)}`
-    : ''
+    ? message || {tKey: ['common', 'error', 'mustBeAtMost'], options: {replace: {maxValue}}}
+    : 'OK'
 
 export const areFundsEnough = (
   funds: BigNumber,
   unit: UnitType = 'Dust',
 ): ReturnType<typeof isLowerOrEqual> =>
-  isLowerOrEqual(UNITS[unit].fromBasic(funds), 'Insufficient funds')
+  isLowerOrEqual(UNITS[unit].fromBasic(funds), {tKey: ['wallet', 'error', 'insufficientFunds']})
 
-const hasAtMostDecimalPlacesMessage = (dp: number): string =>
-  dp === 0 ? 'It must be an integer value' : `At most ${dp} decimal places are permitted`
+const messageForHasAtMostDecimalPlaces = (dp: number): Translatable =>
+  dp === 0
+    ? {tKey: ['common', 'error', 'itMustBeAnInteger']}
+    : {tKey: ['common', 'error', 'atMostDecimalPlacesArePermitted'], options: {count: dp}}
 
-export const hasAtMostDecimalPlaces = (dp = 8) => (b: BigNumber) =>
-  b.dp() > dp ? hasAtMostDecimalPlacesMessage(dp) : ''
+export const hasAtMostDecimalPlaces = (dp = 8) => (b: BigNumber): ValidationResult =>
+  b.dp() > dp ? messageForHasAtMostDecimalPlaces(dp) : 'OK'
 
 export function validateAmount(
   v: string,
-  validators: Array<(b: BigNumber) => string> = [isGreater(), hasAtMostDecimalPlaces()],
-): string {
+  validators: Array<(b: BigNumber) => ValidationResult> = [isGreater(), hasAtMostDecimalPlaces()],
+): ValidationResult {
   const b = new BigNumber(v)
-  return validators.reduce((acc, cur) => (acc !== '' ? acc : cur(b)), '')
+  return validators.reduce(
+    (acc: ValidationResult, cur): ValidationResult => (acc !== 'OK' ? acc : cur(b)),
+    'OK',
+  )
 }
 
-export function validateTxAmount(amount: string, availableAmount: BigNumber): string {
+export function validateTxAmount(amount: string, availableAmount: BigNumber): ValidationResult {
   return validateAmount(amount, [
     isGreater(),
     areFundsEnough(availableAmount),
@@ -89,7 +94,7 @@ export function validateTxAmount(amount: string, availableAmount: BigNumber): st
   ])
 }
 
-export function validateFee(fee: string): string {
+export function validateFee(fee: string): ValidationResult {
   return validateAmount(fee, [isGreaterOrEqual(), hasAtMostDecimalPlaces()])
 }
 
@@ -132,83 +137,110 @@ export function returnDataToHumanReadable(hex: string): string {
 
 const ETC_ADDRESS_REGEX = new RegExp('^0x[a-fA-F0-9]{40}$')
 
-export const EMPTY_ADDRESS_MSG = 'Address must be set'
-export const INVALID_ADDRESS_MSG = 'Invalid address'
-
-export function validateEthAddress(rawInput?: string): string {
-  if (rawInput == null || rawInput.length === 0) return EMPTY_ADDRESS_MSG
+export function validateEthAddress(rawInput?: string): ValidationResult {
+  if (rawInput == null || rawInput.length === 0)
+    return {tKey: ['glacierDrop', 'error', 'ethAddressMustBeSet']}
   // Note: use isChecksumAddress for checksum check
-  if (!ETC_ADDRESS_REGEX.test(rawInput)) return INVALID_ADDRESS_MSG
-  return ''
+  if (!ETC_ADDRESS_REGEX.test(rawInput))
+    return {tKey: ['glacierDrop', 'error', 'invalidEthAddress']}
+  return 'OK'
 }
 
 const MAX_KEY_VALUE = new BigNumber(
   '0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141',
 )
-export const PRIVATE_KEY_INVALID_MSG = 'Invalid private key'
-export const PRIVATE_KEY_MUST_BE_SET_MSG = 'Private Key must be set'
 
-export function validateEthPrivateKey(privateKey?: string): string {
+export function validateEthPrivateKey(privateKey?: string): ValidationResult {
   if (privateKey == null || privateKey.length === 0) {
-    return PRIVATE_KEY_MUST_BE_SET_MSG
+    return {tKey: ['glacierDrop', 'error', 'ethPrivateKeyMustBeSet']}
   }
   try {
     const k = new BigNumber(privateKey)
     if (!k.isFinite() || k.isZero() || k.isGreaterThan(MAX_KEY_VALUE)) {
-      return PRIVATE_KEY_INVALID_MSG
+      return {tKey: ['glacierDrop', 'error', 'invalidEthPrivateKey']}
     }
   } catch (e) {
-    return PRIVATE_KEY_INVALID_MSG
+    return {tKey: ['glacierDrop', 'error', 'invalidEthPrivateKey']}
   }
-  return ''
+  return 'OK'
 }
 
 type AntValidator = {
   validator: (rule: Rule, value: StoreValue) => Promise<void>
 }
 
-export function toAntValidator(validate: (value?: string) => string): AntValidator {
+export function toAntValidator(
+  t: TFunctionRenderer,
+  validate: (value?: string) => ValidationResult,
+): AntValidator {
   return {
     validator: (_rule, value) => {
-      const possibleError = validate(value)
-      return possibleError === '' ? Promise.resolve() : Promise.reject(possibleError)
+      const validationResult = validate(value)
+      return validationResult === 'OK'
+        ? Promise.resolve()
+        : Promise.reject(t(validationResult.tKey, validationResult.options))
     },
   }
 }
 
-export const createTxAmountValidator = (availableAmount: BigNumber): AntValidator =>
-  toAntValidator((amount?: string): string => validateTxAmount(amount || '', availableAmount))
-
-const createAddressValidator = (
-  prefix: string,
-  length: number,
-  message = 'Invalid address',
-): AntValidator => ({
-  validator: (_rule: Rule, value?: string): Promise<void> => {
-    if (!value) {
-      return Promise.reject('Address must be set')
-    }
-    try {
-      const decoded = bech32.decode(value)
-      if (prefix !== decoded.prefix || decoded.data.length !== length) {
-        return Promise.reject(message)
-      }
-    } catch (e) {
-      return Promise.reject(message)
-    }
-
-    return Promise.resolve()
-  },
-})
-
-export const createTransparentAddressValidator = (networkTag: NetworkTag): AntValidator => {
-  const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-uns-ad`
-  return createAddressValidator(prefix, 20, 'Invalid transparent address')
+export function translateValidationResult(t: TFunctionRenderer, vr: ValidationResult): string {
+  return vr === 'OK' ? '' : t(vr.tKey, vr.options)
 }
 
-export const createConfidentialAddressValidator = (networkTag: NetworkTag): AntValidator => {
+export const createTxAmountValidator = (
+  t: TFunctionRenderer,
+  availableAmount: BigNumber,
+): AntValidator =>
+  toAntValidator(
+    t,
+    (amount?: string): ValidationResult => validateTxAmount(amount || '', availableAmount),
+  )
+
+const validateBech32Address = (
+  prefix: string,
+  length: number,
+  message: Translatable,
+  value?: string,
+): ValidationResult => {
+  if (!value) {
+    return {tKey: ['wallet', 'error', 'addressMustBeSet']}
+  }
+  try {
+    const decoded = bech32.decode(value)
+    if (prefix !== decoded.prefix || decoded.data.length !== length) {
+      return message
+    }
+  } catch (e) {
+    return message
+  }
+
+  return 'OK'
+}
+
+export const createTransparentAddressValidator = (networkTag: NetworkTag) => (
+  value?: string,
+): ValidationResult => {
+  const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-uns-ad`
+  return validateBech32Address(
+    prefix,
+    20,
+    {tKey: ['wallet', 'error', 'invalidTransparentAddress']},
+    value,
+  )
+}
+
+export const createConfidentialAddressValidator = (networkTag: NetworkTag) => (
+  value?: string,
+): ValidationResult => {
   const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-shl-ad`
-  return createAddressValidator(prefix, 43, 'Invalid confidential address')
+  return validateBech32Address(
+    prefix,
+    43,
+    {
+      tKey: ['wallet', 'error', 'invalidConfidentialAddress'],
+    },
+    value,
+  )
 }
 
 /**

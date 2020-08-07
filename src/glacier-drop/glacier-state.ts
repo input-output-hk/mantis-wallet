@@ -27,6 +27,7 @@ import {ContractConfigItem} from '../config/type'
 import {getContractConfigs} from '../config/renderer'
 import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
+import {createTErrorRenderer} from '../common/i18n'
 
 const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
 
@@ -496,8 +497,9 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
   // Authorization
 
   const getEtcSnapshotBalanceWithProof = async (etcAddress: string): Promise<BalanceWithProof> => {
-    const validationError = validateEthAddress(etcAddress)
-    if (validationError) throw Error(validationError)
+    const validationResult = validateEthAddress(etcAddress)
+    if (validationResult !== 'OK')
+      throw createTErrorRenderer(validationResult.tKey, validationResult.options)
 
     const result = await gd.getEtcSnapshotBalanceWithProof(etcAddress)
     if (typeof result === 'string') throw Error(result)

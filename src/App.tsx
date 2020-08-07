@@ -49,12 +49,8 @@ const App: React.FC = () => {
                 <WalletState.Provider>
                   <ProofOfBurnState.Provider initialState={{store, web3}}>
                     <GlacierState.Provider initialState={{store}}>
-                      <header>
-                        <Sidebar version={LUNA_VERSION} />
-                      </header>
-                      <main id="main">
-                        <Router />
-                      </main>
+                      <Sidebar version={LUNA_VERSION} />
+                      <Router />
                       <JobStatus />
                     </GlacierState.Provider>
                   </ProofOfBurnState.Provider>

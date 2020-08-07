@@ -13,9 +13,10 @@ import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import transparentIcon from '../assets/icons/transparent.svg'
-import {isTestnet, TESTNET_EDITION} from '../shared/version'
+import {isTestnet} from '../shared/version'
 import {BackendState} from '../common/backend-state'
 import {WalletViewMode} from './Wallet'
+import {Trans} from '../common/Trans'
 import './WalletOverview.scss'
 
 interface WalletOverviewProps {
@@ -54,7 +55,11 @@ export const WalletOverview = ({
     <div className="WalletOverview">
       <div className="header">
         <HeaderWithSyncStatus>Wallet Overview</HeaderWithSyncStatus>
-        {isTestnet(networkTag) && <div>{TESTNET_EDITION}</div>}
+        {isTestnet(networkTag) && (
+          <div>
+            <Trans k={['title', 'testnetEdition']} />
+          </div>
+        )}
       </div>
       <div className="balances">
         <div className="total">

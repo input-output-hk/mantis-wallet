@@ -15,6 +15,8 @@ import speedMedium from '../../assets/icons/speed-medium.svg'
 import speedHigh from '../../assets/icons/speed-high.svg'
 import {FeeLevel, allFeeLevels} from '../../web3'
 import {DialogError} from './DialogError'
+import {TKeyRenderer} from '../i18n'
+import {Trans} from '../Trans'
 import './DialogFee.scss'
 
 const {Dust} = UNITS
@@ -26,14 +28,15 @@ interface DialogFeeProps {
   defaultValue?: string
   onChange: (value: string, feeLevel: FeeLevel | null) => void
   feeEstimates?: FeeEstimates
+  feeEstimateError?: string | Error | null
   forceCustom?: boolean
   isPending?: boolean
 }
 
-const feeLevelLabels: Record<FeeLevel, string> = {
-  low: 'Slow',
-  medium: 'Average',
-  high: 'Fast',
+const feeLevelLabels: Record<FeeLevel, TKeyRenderer> = {
+  low: ['wallet', 'feeEstimateLevels', 'low'],
+  medium: ['wallet', 'feeEstimateLevels', 'medium'],
+  high: ['wallet', 'feeEstimateLevels', 'high'],
 }
 
 const feeLevelIcons: Record<FeeLevel, React.ReactNode> = {
@@ -49,6 +52,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
   className,
   onChange,
   feeEstimates,
+  feeEstimateError,
   defaultValue = '0',
   errorMessage,
   forceCustom = false,
@@ -95,10 +99,14 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
           <div className="loading">
             <LoadingOutlined spin />
             <br />
-            <span>Loading estimates</span>
+            <span>
+              <Trans k={['wallet', 'message', 'loadingFeeEstimates']} />
+            </span>
           </div>
         ) : (
-          <DialogError>Couldn’t load estimates, cannot continue</DialogError>
+          <DialogError>
+            <Trans k={['wallet', 'error', 'couldNotLoadFeeEstimates']} />
+          </DialogError>
         )}
       </div>
     )
@@ -125,7 +133,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
               inputRef.current?.focus()
             }}
           >
-            Custom
+            <Trans k={['wallet', 'feeEstimateLevels', 'custom']} />
           </Button>
           {allFeeLevels.map((level) => (
             <Button
@@ -149,7 +157,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
                 </Popover>
               ) : (
                 <span>
-                  {feeLevelLabels[level]}
+                  <Trans k={feeLevelLabels[level]} />
                   <br />
                   <span className="fee-amount">
                     {displayAmount(feeEstimates[level])} {DUST_SYMBOL}
@@ -160,6 +168,11 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
           ))}
         </div>
       </InlineError>
+      {feeEstimateError != null && (
+        <div className="warning">
+          <Trans k={['wallet', 'error', 'couldNotUpdateFeeEstimates']} />
+        </div>
+      )}
     </div>
   )
 }

@@ -10,6 +10,8 @@ import {useIsMounted} from './hook-utils'
 import {DialogError} from './dialog/DialogError'
 import {waitUntil} from '../shared/utils'
 import {rendererLog} from './logger'
+import {useTranslation} from '../settings-state'
+import {createTErrorRenderer, TKeyRenderer} from './i18n'
 import './Dialog.scss'
 
 // https://github.com/yiminghe/async-validator/#how-to-avoid-warning
@@ -17,8 +19,7 @@ import './Dialog.scss'
 // @ts-ignore
 Schema.warning = () => undefined // eslint-disable-line fp/no-mutation
 
-export const DIALOG_VALIDATION_ERROR =
-  'Some fields require additional action before you can continue.'
+const DIALOG_VALIDATION_T_ERROR: TKeyRenderer = ['common', 'error', 'dialogValidationFailed']
 
 interface DialogButtonProps {
   doNotRender?: boolean
@@ -76,6 +77,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
   className = '',
 }: PropsWithChildren<DialogProps>) => {
   const {errorMessage, setErrorMessage, dialogForm} = DialogState.useContainer()
+  const {t, translateError} = useTranslation()
 
   const [leftInProgress, setLeftInProgress] = useState(false)
   const [rightInProgress, setRightInProgress] = useState(false)
@@ -97,13 +99,13 @@ const _Dialog: FunctionComponent<DialogProps> = ({
             ),
           )
           await dialogForm.validateFields().catch(() => {
-            return Promise.reject(Error(DIALOG_VALIDATION_ERROR))
+            return Promise.reject(createTErrorRenderer(DIALOG_VALIDATION_T_ERROR))
           })
         }
         await onClick(event)
       } catch (e) {
-        if (e?.message !== DIALOG_VALIDATION_ERROR) rendererLog.error(e)
-        if (mounted.current) setErrorMessage(e.message)
+        if (!_.isEqual(e?.tKey, DIALOG_VALIDATION_T_ERROR)) rendererLog.error(e)
+        if (mounted.current) setErrorMessage(translateError(e))
       } finally {
         if (mounted.current) setInProgress(false)
         onSetLoading?.(false)
@@ -114,7 +116,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
   const leftButtonPropsToUse: ButtonProps = {
     size: 'large',
     loading: leftInProgress,
-    children: 'Cancel',
+    children: t(['common', 'button', 'cancel']),
     ...leftButtonProps,
     onClick: createHandleClick(leftButtonProps, setLeftInProgress, skipValidationLeft),
   }
@@ -123,7 +125,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
     type: 'primary',
     htmlType: 'submit',
     size: 'large',
-    children: 'Next',
+    children: t(['common', 'button', 'next']),
     loading: rightInProgress,
     ...rightButtonProps,
     onClick: createHandleClick(rightButtonProps, setRightInProgress, skipValidationRight),

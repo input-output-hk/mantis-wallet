@@ -1,4 +1,4 @@
-type ProcessStatus = 'not-running' | 'running' | 'finished' | 'failed'
+type ProcessStatus = 'notRunning' | 'running' | 'finished' | 'failed'
 
 type NetworkTag = 'mainnet' | 'testnet'
 

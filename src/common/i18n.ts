@@ -5,7 +5,7 @@ import Pseudo from 'i18next-pseudo'
 import {Locale} from 'date-fns'
 import {enUS} from 'date-fns/locale'
 import {Path} from '../shared/typeUtils'
-import {DEFAULT_LANGUAGE, Language, TypedTFunction} from '../shared/i18n'
+import {DEFAULT_LANGUAGE, Language, TypedTFunction, GenericTError} from '../shared/i18n'
 import rendererTranslationsEn from '../translations/en/renderer.json'
 
 export function createAndInitI18nForRenderer(
@@ -42,6 +42,11 @@ type RendererTranslations = typeof rendererTranslationsEn
 export type TKeyRenderer = Path<RendererTranslations>
 export type TFunctionRenderer = TypedTFunction<RendererTranslations>
 
+export interface Translatable {
+  tKey: TKeyRenderer
+  options?: Parameters<TFunctionRenderer>[1]
+}
+
 export const tKeyRendererToString = (key: TKeyRenderer): string => key.join('.')
 
 export const createTFunctionRenderer = (i18n: typeof i18next): TFunctionRenderer => (
@@ -74,3 +79,14 @@ export const LANGUAGE_SETTINGS: Record<Language, LanguageSettings> = {
     bigNumberFormat: EN_US_BIG_NUMBER_FORMAT,
   },
 } as const
+
+export class TErrorRenderer extends GenericTError<RendererTranslations> {}
+
+const i18nDefault = createAndInitI18nForRenderer()
+
+export function createTErrorRenderer(
+  tKey: TKeyRenderer,
+  options?: Parameters<TFunctionRenderer>[1],
+): TErrorRenderer {
+  return new TErrorRenderer(i18nDefault.t(tKeyRendererToString(tKey), options), tKey, options)
+}

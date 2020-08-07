@@ -12,6 +12,8 @@ import {
   createTxAmountValidator,
   createConfidentialAddressValidator,
   createTransparentAddressValidator,
+  translateValidationResult,
+  toAntValidator,
 } from '../../common/util'
 import {UNITS} from '../../common/units'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
@@ -19,10 +21,9 @@ import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
-import {DialogError} from '../../common/dialog/DialogError'
 import {useAsyncUpdate} from '../../common/hook-utils'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../../common/fee-estimate-strings'
 import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
+import {useTranslation} from '../../settings-state'
 import './SendTransaction.scss'
 
 const {Dust} = UNITS
@@ -53,16 +54,20 @@ export const SendToConfidentialDialog = ({
   onCancel,
   children,
 }: PropsWithChildren<SendToConfidentialDialogProps>): JSX.Element => {
+  const {networkTag} = BackendState.useContainer()
+  const {t} = useTranslation()
+  const modalLocker = ModalLocker.useContainer()
+
   const [amount, setAmount] = useState('0')
   const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
 
-  const modalLocker = ModalLocker.useContainer()
-  const {networkTag} = BackendState.useContainer()
-
-  const feeError = validateFee(fee)
-  const txAmountValidator = createTxAmountValidator(availableAmount)
-  const addressValidator = createConfidentialAddressValidator(getNetworkTagOrTestnet(networkTag))
+  const feeValidationResult = validateFee(fee)
+  const txAmountValidator = createTxAmountValidator(t, availableAmount)
+  const addressValidator = toAntValidator(
+    t,
+    createConfidentialAddressValidator(getNetworkTagOrTestnet(networkTag)),
+  )
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> => estimateTransactionFee(Dust.toBasic(new BigNumber(amount))),
@@ -70,15 +75,7 @@ export const SendToConfidentialDialog = ({
     () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
   )
 
-  const disableSend = !!feeError || isFeeEstimationPending
-
-  // FIXME PM-2050 Fix error handling when amount is too big to estimate
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
+  const disableSend = feeValidationResult !== 'OK' || !feeEstimates
 
   return (
     <Dialog
@@ -93,7 +90,6 @@ export const SendToConfidentialDialog = ({
         disabled: disableSend,
       }}
       onSetLoading={modalLocker.setLocked}
-      footer={footer}
       type="dark"
     >
       {children}
@@ -120,10 +116,11 @@ export const SendToConfidentialDialog = ({
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         defaultValue={fee}
         onChange={(fee: string): void => setFee(fee)}
         isPending={isFeeEstimationPending}
-        errorMessage={feeError}
+        errorMessage={translateValidationResult(t, feeValidationResult)}
       />
     </Dialog>
   )
@@ -136,16 +133,20 @@ const SendToTransparentDialog = ({
   onCancel,
   children,
 }: PropsWithChildren<SendToTransparentDialogProps>): JSX.Element => {
+  const {networkTag} = BackendState.useContainer()
+  const {t} = useTranslation()
+  const modalLocker = ModalLocker.useContainer()
+
   const [amount, setAmount] = useState('0')
   const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
 
-  const modalLocker = ModalLocker.useContainer()
-  const {networkTag} = BackendState.useContainer()
-
-  const feeError = validateFee(fee)
-  const txAmountValidator = createTxAmountValidator(availableAmount)
-  const addressValidator = createTransparentAddressValidator(getNetworkTagOrTestnet(networkTag))
+  const feeValidationResult = validateFee(fee)
+  const txAmountValidator = createTxAmountValidator(t, availableAmount)
+  const addressValidator = toAntValidator(
+    t,
+    createTransparentAddressValidator(getNetworkTagOrTestnet(networkTag)),
+  )
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> =>
@@ -159,15 +160,7 @@ const SendToTransparentDialog = ({
             .then(() => addressValidator.validator({}, recipient)),
   )
 
-  const disableSend = !!feeError || !!feeEstimateError || isFeeEstimationPending
-
-  // FIXME PM-2050 Fix error handling when amount is too big to estimate
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
+  const disableSend = feeValidationResult !== 'OK' || !feeEstimates
 
   return (
     <Dialog
@@ -186,7 +179,6 @@ const SendToTransparentDialog = ({
         disabled: disableSend,
       }}
       onSetLoading={modalLocker.setLocked}
-      footer={footer}
       type="dark"
     >
       {children}
@@ -212,8 +204,9 @@ const SendToTransparentDialog = ({
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         onChange={setFee}
-        errorMessage={feeError}
+        errorMessage={translateValidationResult(t, feeValidationResult)}
         isPending={isFeeEstimationPending}
       />
       <DialogApproval

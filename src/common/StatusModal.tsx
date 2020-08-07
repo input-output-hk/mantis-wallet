@@ -1,6 +1,5 @@
 import React from 'react'
 import {Modal} from 'antd'
-import filesize from 'filesize'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
 import {isNone} from 'fp-ts/lib/Option'
@@ -10,33 +9,85 @@ import {MiningStatus} from './MiningStatus'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
 import {BackendState} from './backend-state'
-import {NETWORK_CONSTANTS} from '../shared/version'
+import {NETWORK_CONSTANTS} from './constants/network'
+import {useTranslation, useFormatters} from '../settings-state'
+import {TKeyRenderer} from './i18n'
+import {Trans} from './Trans'
+import {FAILURE_FOR_DAG, PROGRESS_FOR_DAG} from '../shared/dagStatus'
 import './StatusModal.scss'
 
-const visibleStatus: Record<ProcessStatus, React.ReactNode> = {
-  'running': <span className="status success">Running</span>,
-  'not-running': <span className="status error">Not Running</span>,
-  'finished': <span className="status success">Finished</span>,
-  'failed': <span className="status error">Failed</span>,
+const statusToTranslation: Record<ProcessStatus, TKeyRenderer> = {
+  notRunning: ['status', 'componentStatus', 'notRunning'],
+  running: ['status', 'componentStatus', 'running'],
+  failed: ['status', 'componentStatus', 'failed'],
+  finished: ['status', 'componentStatus', 'finished'],
 }
 
-const DisplaySyncStatus = ({syncStatus}: {syncStatus?: SynchronizationStatus}): JSX.Element => (
-  <span
-    className={classnames('status', {error: !syncStatus, success: syncStatus?.mode === 'offline'})}
-  >
-    {!syncStatus ? 'Not Running' : <SyncMessage syncStatus={syncStatus} />}
+const VisibleStatus = ({status}: {status: ProcessStatus}): JSX.Element => {
+  const specificClassName = status === 'notRunning' || status === 'failed' ? 'error' : 'success'
+
+  return (
+    <span className={classnames('status', specificClassName)}>
+      <Trans k={statusToTranslation[status]} />
+    </span>
+  )
+}
+
+const DisplaySyncStatus = ({syncStatus}: {syncStatus: SynchronizationStatus}): JSX.Element => (
+  <span className={classnames('status', {success: syncStatus?.mode === 'offline'})}>
+    <SyncMessage syncStatus={syncStatus} />
   </span>
 )
+
+const dagErrorToTranslation: Record<typeof FAILURE_FOR_DAG[number], TKeyRenderer> = {
+  'DAG file ended unexpectedly': ['status', 'error', 'dagFileEndedUnexpectedly'],
+  'Invalid DAG file prefix': ['status', 'error', 'invalidDagFilePrefix'],
+  'Cannot read DAG from file': ['status', 'error', 'cannotReadDagFromFile'],
+  'Cannot generate DAG file': ['status', 'error', 'cannotGenerateDagFile'],
+}
+
+const localizeDagLoadingStatus = (
+  message = '',
+): {tKey: TKeyRenderer; percentage: string} | null => {
+  const matches = PROGRESS_FOR_DAG.map((progressRegex) => message.match(progressRegex)).filter(
+    (res): res is RegExpMatchArray => res != null,
+  )
+  if (matches.length === 0) return null
+  const [[fullRegexMatch, percentage]] = matches
+  return {
+    tKey: fullRegexMatch.startsWith('Generating DAG')
+      ? ['status', 'message', 'generatingDag']
+      : ['status', 'message', 'loadingDagFromFile'],
+    percentage: percentage,
+  }
+}
 
 const DisplayDagStatus = ({
   dag: {status, message},
 }: {
   dag: {status: ProcessStatus; message?: string}
 }): JSX.Element => {
-  if (status === 'finished') return <span className="status success">Loaded</span>
-  if (status === 'failed')
-    return <span className="status error">{message || 'Unexpected error'}</span>
-  return <>{message || '-'}</>
+  const {t} = useTranslation()
+
+  if (status === 'finished')
+    return <span className="status success">{t(['status', 'componentStatus', 'loaded'])}</span>
+
+  if (status === 'failed') {
+    const dagError = (message &&
+      (dagErrorToTranslation as Record<string, TKeyRenderer>)[message]) || [
+      'common',
+      'error',
+      'unexpectedError',
+    ]
+    return <span className="status error">{t(dagError)}</span>
+  }
+
+  const loadingStatus = localizeDagLoadingStatus(message)
+  return loadingStatus == null ? (
+    <>-</>
+  ) : (
+    <>{(t(loadingStatus.tKey), {replace: {percentage: loadingStatus.percentage}})}</>
+  )
 }
 
 interface StatusModalProps extends Pick<ModalProps, 'visible' | 'onCancel'> {
@@ -54,6 +105,10 @@ export const StatusModal = ({
   ...props
 }: StatusModalProps): JSX.Element => {
   const {networkTag} = BackendState.useContainer()
+  const {t} = useTranslation()
+  const {formatFileSize} = useFormatters()
+
+  const getLabel = (key: TKeyRenderer): string => `${t(key)}:`
 
   return (
     <Modal
@@ -66,109 +121,123 @@ export const StatusModal = ({
     >
       <div className="content">
         <div>
-          <div className="title">Machine</div>
+          <div className="title">{t(['status', 'label', 'computer'])}</div>
           <div className="info-item">
-            <div>Platform:</div>
+            <div>{getLabel(['status', 'label', 'operatingSystem'])}</div>
             <div className="info-value">{status.info.platform}</div>
           </div>
           <div className="info-item">
-            <div>Platform Version:</div>
+            <div>{getLabel(['status', 'label', 'operatingSystemVersion'])}</div>
             <div className="info-value">{status.info.platformVersion}</div>
           </div>
           <div className="info-item">
-            <div>CPU:</div>
+            <div>{getLabel(['status', 'label', 'cpu'])}</div>
             <div className="info-value">{status.info.cpu}</div>
           </div>
           <div className="info-item">
-            <div>Memory:</div>
-            <div className="info-value">{filesize(status.info.memory)}</div>
+            <div>{getLabel(['status', 'label', 'computerMemory'])}</div>
+            <div className="info-value">{formatFileSize(status.info.memory)}</div>
           </div>
-          <div className="title">Luna</div>
+          <div className="title">{t(['title', 'luna'])}</div>
           <div className="info-item">
-            <div>Luna version:</div>
+            <div>{getLabel(['status', 'label', 'lunaVersion'])}</div>
             <div className="info-value">{status.info.lunaVersion}</div>
           </div>
           <div className="info-item">
-            <div>Luna main process ID:</div>
+            <div>{getLabel(['status', 'label', 'lunaMainProcessID'])}</div>
             <div className="info-value">{status.info.mainPid}</div>
           </div>
           <div className="info-item">
-            <div>Luna renderer process ID:</div>
+            <div>{getLabel(['status', 'label', 'lunaRendererProcessID'])}</div>
             <div className="info-value">{process.pid}</div>
           </div>
           <div className="info-item">
-            <div>Luna local directory:</div>
+            <div>{getLabel(['status', 'label', 'lunaLocalDirectory'])}</div>
             <div className="info-value">
               <CopyableLongText content={config.dataDir} />
             </div>
           </div>
         </div>
         <div>
-          <div className="title">Midnight backend</div>
+          <div className="title">{t(['status', 'label', 'midnightBackend'])}</div>
           <div className="info-item">
-            <div>Network:</div>
+            <div>{getLabel(['status', 'label', 'network'])}</div>
             <div className="info-value">
-              {isNone(networkTag) ? 'Loading' : NETWORK_CONSTANTS[networkTag.value].name}
+              {isNone(networkTag)
+                ? t(['status', 'componentStatus', 'loading'])
+                : t(NETWORK_CONSTANTS[networkTag.value].name)}
             </div>
           </div>
           <div className="info-item">
-            <div>Sonics params fetching:</div>
-            <div className="info-value">{visibleStatus[status.fetchParams.status]}</div>
+            <div>{getLabel(['status', 'label', 'sonicsParamsFetching'])}</div>
+            <div className="info-value">
+              <VisibleStatus status={status.fetchParams.status} />
+            </div>
           </div>
           <div className="info-item">
-            <div>Node status:</div>
-            <div className="info-value">{visibleStatus[status.node.status]}</div>
+            <div>{getLabel(['status', 'label', 'nodeStatus'])}</div>
+            <div className="info-value">
+              <VisibleStatus status={status.node.status} />
+            </div>
           </div>
           <div className="info-item">
-            <div>Node process ID:</div>
+            <div>{getLabel(['status', 'label', 'nodeProcessID'])}</div>
             <div className="info-value">{status.node.pid || '-'}</div>
           </div>
           <div className="info-item">
-            <div>Wallet status:</div>
-            <div className="info-value">{visibleStatus[status.wallet.status]}</div>
+            <div>{getLabel(['status', 'label', 'walletStatus'])}</div>
+            <div className="info-value">
+              <VisibleStatus status={status.wallet.status} />
+            </div>
           </div>
           <div className="info-item">
-            <div>Wallet process ID:</div>
+            <div>{getLabel(['status', 'label', 'walletProcessID'])}</div>
             <div className="info-value">{status.wallet.pid || '-'}</div>
           </div>
           <div className="info-item">
-            <div>Wallet RPC address:</div>
+            <div>{getLabel(['status', 'label', 'walletRpcAddress'])}</div>
             <div className="info-value">
               <CopyableLongText content={config.rpcAddress} />
             </div>
           </div>
           <div className="info-item">
-            <div>Mining enabled:</div>
+            <div>{getLabel(['status', 'label', 'miningEnabled'])}</div>
             <div className="info-value">
               <span className={classnames('status', {success: managedConfig.miningEnabled})}>
-                {managedConfig.miningEnabled ? 'Yes' : 'No'}
+                {managedConfig.miningEnabled
+                  ? t(['common', 'answer', 'yes'])
+                  : t(['common', 'answer', 'no'])}
               </span>
             </div>
           </div>
           <div className="info-item">
-            <div>Mining status:</div>
+            <div>{getLabel(['status', 'label', 'miningStatus'])}</div>
             <div className="info-value">
               <MiningStatus />
             </div>
           </div>
           <div className="info-item">
-            <div>Last DAG information:</div>
+            <div>{getLabel(['status', 'label', 'lastDagInformation'])}</div>
             <div className="info-value">
               <DisplayDagStatus dag={status.dag} />
             </div>
           </div>
           <div className="info-item">
-            <div>Synchronization:</div>
+            <div>{getLabel(['status', 'label', 'synchronizationStatus'])}</div>
             <div className="info-value">
-              <DisplaySyncStatus syncStatus={syncStatus} />
+              {syncStatus == null ? (
+                <VisibleStatus status={'notRunning'} />
+              ) : (
+                <DisplaySyncStatus syncStatus={syncStatus} />
+              )}
             </div>
           </div>
           <div className="info-item">
-            <div>Current block:</div>
+            <div>{getLabel(['status', 'label', 'currentBlock'])}</div>
             <div className="info-value">{syncStatus?.currentBlock || '-'}</div>
           </div>
           <div className="info-item">
-            <div>Highest known block:</div>
+            <div>{getLabel(['status', 'label', 'highestKnownBlock'])}</div>
             <div className="info-value">
               {(syncStatus?.mode === 'online' && syncStatus.highestKnownBlock) || '-'}
             </div>

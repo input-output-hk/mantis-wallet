@@ -65,7 +65,7 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
           const prover = provers.find(({address}) => proverAddress === address)
           if (prover) setProver(prover)
         }}
-        noOptionsMessage="No available provers."
+        noOptionsMessage={['proofOfBurn', 'error', 'noAvailableProvers']}
       />
       <DialogDropdown
         label="Burn Address"

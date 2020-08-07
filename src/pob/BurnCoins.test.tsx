@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import {render, waitFor, act, fireEvent, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {CHAINS} from './chains'
-import {expectCalledOnClick} from '../common/test-helpers'
+import {expectCalledOnClick, WithSettingsProvider} from '../common/test-helpers'
 import {BurnCoinsChooseToken} from './burn-coins/BurnCoinsChooseToken'
 import {BurnCoinsGenerateAddress} from './burn-coins/BurnCoinsGenerateAddress'
 import {BurnCoinsShowAddress} from './burn-coins/BurnCoinsShowAddress'
@@ -21,6 +21,7 @@ test('Burn Coins - Choose Tokens step', async () => {
   const chainsUsed = [ETH_TESTNET, BTC_TESTNET]
   const {getByText} = render(
     <BurnCoinsChooseToken chains={chainsUsed} chooseChain={chooseChain} cancel={cancel} />,
+    {wrapper: WithSettingsProvider},
   )
 
   chainsUsed.map((chain) => {
@@ -46,7 +47,13 @@ test('Burn Coins - Generate Address step', async () => {
   const proverMinFee = Bitcoin.fromBasic(new BigNumber(prover.rewards.BTC_TESTNET)).toString(10)
   const usedReward = new BigNumber(0.01)
 
-  const {getByText, getByRole, getByLabelText, queryByText, findByText} = render(
+  const {
+    getByText,
+    getByRole,
+    getByLabelText,
+    queryByText,
+    findByText,
+  } = render(
     <BurnCoinsGenerateAddress
       chain={chain}
       provers={[prover]}
@@ -54,6 +61,7 @@ test('Burn Coins - Generate Address step', async () => {
       cancel={cancel}
       generateBurnAddress={generateBurnAddress}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   // Fields and values visible
@@ -118,6 +126,7 @@ test('Generate Address shows warning when there are no provers', async () => {
       cancel={jest.fn()}
       generateBurnAddress={jest.fn()}
     />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText('No available provers for this token at the moment.')).toBeInTheDocument()
@@ -131,6 +140,7 @@ test('Burn Coins - Show Address step', async () => {
 
   const {getByText} = render(
     <BurnCoinsShowAddress burnAddress={burnAddress} chain={chain} goBack={goBack} />,
+    {wrapper: WithSettingsProvider},
   )
 
   expect(getByText(`${chain.name} Burn Address`)).toBeInTheDocument()

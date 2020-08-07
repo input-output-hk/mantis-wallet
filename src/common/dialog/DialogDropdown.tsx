@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {Dropdown, Menu} from 'antd'
 import {DialogError} from './DialogError'
+import {Trans} from '../Trans'
+import {TKeyRenderer} from '../i18n'
 import './DialogDropdown.scss'
 
 interface DialogDropdownOption<T> {
@@ -14,7 +16,7 @@ interface DialogDropdownProps<T> {
   options: ReadonlyArray<T | DialogDropdownOption<T>>
   defaultOptionIndex?: number
   onChange?: (option: T) => void
-  noOptionsMessage?: string
+  noOptionsMessage?: TKeyRenderer
 }
 
 export const DialogDropdown = <T extends string>({
@@ -22,7 +24,7 @@ export const DialogDropdown = <T extends string>({
   options,
   defaultOptionIndex = 0,
   onChange,
-  noOptionsMessage = 'No available options',
+  noOptionsMessage = ['common', 'error', 'noAvailableOptionForDropdown'],
 }: DialogDropdownProps<T>): JSX.Element => {
   const trueOptions: Array<DialogDropdownOption<T>> = options.map((option) =>
     _.isString(option) ? {key: option, label: option} : option,
@@ -53,9 +55,15 @@ export const DialogDropdown = <T extends string>({
         <div className="active-option">{activeOption.label}</div>
       )}
       {trueOptions.length > 0 && !activeOption && (
-        <div className="active-option no-option">Choose from list...</div>
+        <div className="active-option no-option">
+          <Trans k={['common', 'message', 'chooseFromDropdownList']} />
+        </div>
       )}
-      {trueOptions.length === 0 && <DialogError>{noOptionsMessage}</DialogError>}
+      {trueOptions.length === 0 && (
+        <DialogError>
+          <Trans k={noOptionsMessage} />
+        </DialogError>
+      )}
     </div>
   )
 }

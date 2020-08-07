@@ -10,11 +10,17 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {LINKS} from '../../external-link-config'
 import {Link} from '../../common/Link'
-import {validateAmount, hasAtMostDecimalPlaces, isGreaterOrEqual} from '../../common/util'
+import {
+  validateAmount,
+  hasAtMostDecimalPlaces,
+  isGreaterOrEqual,
+  translateValidationResult,
+} from '../../common/util'
 import {Prover} from '../pob-state'
 import exchangeIcon from '../../assets/icons/exchange.svg'
 import {UNITS} from '../../common/units'
 import {LunaModal} from '../../common/LunaModal'
+import {useTranslation} from '../../settings-state'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
@@ -61,6 +67,8 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
   cancel,
   generateBurnAddress,
 }: BurnCoinsGenerateAddressProps) => {
+  const {t} = useTranslation()
+
   const compatibleProvers = provers.filter((p) => p.rewards[chain.id] !== undefined)
   const [prover, setProver] = useState(compatibleProvers[0])
 
@@ -76,7 +84,10 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
   const feeError =
     compatibleProvers.length === 0
       ? '' // don't show fee errors when there are no available provers
-      : validateAmount(fee, [isGreaterOrEqual(minFee), hasAtMostDecimalPlaces(minValue.dp())])
+      : translateValidationResult(
+          t,
+          validateAmount(fee, [isGreaterOrEqual(minFee), hasAtMostDecimalPlaces(minValue.dp())]),
+        )
 
   const disableGenerate = !!feeError || compatibleProvers.length === 0
 
@@ -128,7 +139,7 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
             const prover = compatibleProvers.find(({address}) => proverAddress === address)
             if (prover) setProver(prover)
           }}
-          noOptionsMessage="No available provers for this token at the moment."
+          noOptionsMessage={['proofOfBurn', 'error', 'noAvailableProversForThisToken']}
         />
         <div className="fee-container">
           <label className="label" htmlFor="generate-burn-fee">

@@ -34,16 +34,16 @@ export const statusModal = (): JSX.Element => (
   <StatusModal
     status={{
       fetchParams: {
-        status: 'not-running',
+        status: 'notRunning',
       },
       wallet: {
-        status: 'not-running',
+        status: 'notRunning',
       },
       node: {
-        status: 'not-running',
+        status: 'notRunning',
       },
       dag: {
-        status: 'not-running',
+        status: 'notRunning',
       },
       info: {
         platform: text('Platform', 'Linux'),
