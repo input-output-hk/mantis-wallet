@@ -2,30 +2,20 @@
 import os from 'os'
 import {ClientName} from '../config/type'
 import {LUNA_VERSION} from '../shared/version'
-
-const progressForDAG = [/Generating DAG \d+%/, /Loading DAG from file \d+%/] as const
-
-const failuresForDAG = [
-  'DAG file ended unexpectedly',
-  'Invalid DAG file prefix',
-  'Cannot read DAG from file',
-  'Cannot generate DAG file',
-] as const
-
-const successesForDAG = ['DAG file loaded successfully', 'DAG file generated successfully'] as const
+import {PROGRESS_FOR_DAG, FAILURE_FOR_DAG, SUCCESS_FOR_DAG} from '../shared/dagStatus'
 
 export const status: LunaStatus = {
   fetchParams: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   wallet: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   node: {
-    status: 'not-running',
+    status: 'notRunning',
   },
   dag: {
-    status: 'not-running',
+    status: 'notRunning',
     message: '',
   },
   info: {
@@ -51,22 +41,21 @@ export function setProcessStatus(
 }
 
 export function inspectLineForDAGStatus(line: string): void {
-  const failure = failuresForDAG.find((failure) => line.includes(failure))
+  const failure = FAILURE_FOR_DAG.find((failure) => line.includes(failure))
   if (failure) {
     status.dag.message = failure
     status.dag.status = 'failed'
     return
   }
 
-  const success = successesForDAG.find((success) => line.includes(success))
+  const success = SUCCESS_FOR_DAG.find((success) => line.includes(success))
   if (success) {
     status.dag.message = success
     status.dag.status = 'finished'
     return
   }
 
-  progressForDAG
-    .map((progressRegex) => line.match(progressRegex))
+  PROGRESS_FOR_DAG.map((progressRegex) => line.match(progressRegex))
     .filter((res): res is RegExpMatchArray => res != null)
     .forEach((res) => {
       status.dag.status = 'running'

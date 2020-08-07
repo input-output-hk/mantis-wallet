@@ -9,6 +9,8 @@ import {DialogInput} from './common/dialog/DialogInput'
 import {DialogError} from './common/dialog/DialogError'
 import {DialogMessage} from './common/dialog/DialogMessage'
 import {rendererLog} from './common/logger'
+import {Trans} from './common/Trans'
+import {useTranslation} from './settings-state'
 import './RestartPrompt.scss'
 
 interface MiningConfigModalProps {
@@ -17,6 +19,7 @@ interface MiningConfigModalProps {
 }
 
 const _MiningConfigModal = ({onCancel, onFinish}: MiningConfigModalProps): JSX.Element => {
+  const {t} = useTranslation()
   const [spendingKey, setSpendingKey] = useState<string>('')
   const [isLoading, setLoading] = useState<boolean>(false)
   const [response, setResponse] = useState<Option<'ok' | {errorMsg: string}>>(none)
@@ -46,14 +49,14 @@ const _MiningConfigModal = ({onCancel, onFinish}: MiningConfigModalProps): JSX.E
 
   return (
     <Dialog
-      title="Enable Mining"
+      title={t(['settings', 'title', 'enableMining'])}
       rightButtonProps={{
-        children: 'Enable',
+        children: t(['settings', 'button', 'enable']),
         onClick: enableMining,
         disabled: isLoading || !spendingKey,
       }}
       leftButtonProps={{
-        children: 'Cancel',
+        children: t(['common', 'button', 'cancel']),
         type: 'default',
         onClick: onCancel,
         disabled: isLoading,
@@ -63,13 +66,10 @@ const _MiningConfigModal = ({onCancel, onFinish}: MiningConfigModalProps): JSX.E
     >
       <div className="MiningConfigModal">
         <DialogMessage>
-          By setting a private key, you&apos;ll enable mining on your computer.
-          <br />
-          It&apos;s crucial that your node is fully synced when mining, otherwise it won&apos;t
-          work.
+          <Trans k={['settings', 'message', 'enableMining']} />
         </DialogMessage>
         <DialogInput
-          label="Private key for mining rewards"
+          label={t(['settings', 'label', 'privateKeyForMining'])}
           value={spendingKey}
           onChange={(e): void => setSpendingKey(e.target.value)}
         />
@@ -91,23 +91,24 @@ interface RestartPromptProps {
 export const MiningConfigModal = wrapWithModal(_MiningConfigModal, 'MiningConfigModal')
 
 const _RestartPrompt = ({onRestart, onCancel}: RestartPromptProps): JSX.Element => {
+  const {t} = useTranslation()
+
   return (
     <Dialog
-      title="Backend Configuration Changed"
+      title={t(['settings', 'title', 'backendConfigChanged'])}
       rightButtonProps={{
-        children: 'Restart',
+        children: t(['settings', 'button', 'restart']),
         onClick: onRestart,
       }}
       leftButtonProps={{
-        children: 'Cancel',
+        children: t(['common', 'button', 'cancel']),
         type: 'default',
         onClick: onCancel,
       }}
       type="dark"
     >
       <div className="RestartPrompt">
-        <p>The backend must be restarted to apply configuration changes.</p>
-        <p>Do you want to restart now?</p>
+        <Trans k={['settings', 'message', 'backendRestartPrompt']} />
       </div>
     </Dialog>
   )
@@ -123,6 +124,7 @@ export const RemoteSettingsManager = ({
   setBackendRunning,
 }: RemoteSettingsManagerProps): JSX.Element => {
   const [modalOpen, setModalOpen] = useState(false)
+  const {t} = useTranslation()
 
   useEffect(() => {
     ipcListenToMain('update-config-success', () => {
@@ -130,7 +132,7 @@ export const RemoteSettingsManager = ({
     })
 
     ipcListenToMain('update-config-failure', (_event, msg: string) => {
-      message.error(`Configuration update failed. Error: ${msg}`, 10)
+      message.error(t(['settings', 'error', 'configFailed'], {replace: {reason: msg}}), 10)
       rendererLog.error(msg)
     })
 
@@ -139,7 +141,7 @@ export const RemoteSettingsManager = ({
     })
 
     ipcListenToMain('restart-clients-failure', (_event, msg: string) => {
-      message.error(`Backend restart failed. Error: ${msg}`, 10)
+      message.error(t(['settings', 'error', 'backendRestartFailed'], {replace: {reason: msg}}), 10)
       rendererLog.error(msg)
     })
   }, [])

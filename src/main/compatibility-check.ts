@@ -89,7 +89,9 @@ export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void>
     buttons: [t(['dialog', 'button', 'ok']), t(['dialog', 'button', 'cancel'])],
     title: t(['dialog', 'title', 'incompatibleDataDir']),
     message: t(['dialog', 'message', 'incompatibleDataDir']),
-    detail: t(['dialog', 'message', 'incompatibleDataDirAction'], {oldDirName, newDirName}),
+    detail: t(['dialog', 'message', 'incompatibleDataDirAction'], {
+      replace: {oldDirName, newDirName},
+    }),
     checkboxLabel: t(['dialog', 'checkboxLabel', 'deleteCurrentDataDir']),
     checkboxChecked: false,
   })
@@ -103,7 +105,9 @@ export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void>
     const {response} = await dialog.showMessageBox({
       type: 'warning',
       buttons: [t(['dialog', 'button', 'ok']), t(['dialog', 'button', 'cancel'])],
-      message: t(['dialog', 'message', 'deleteDirectoryQuestion'], {directory: config.dataDir}),
+      message: t(['dialog', 'message', 'deleteDirectoryQuestion'], {
+        replace: {directory: config.dataDir},
+      }),
     })
     if (response === 1) {
       // Cancel delete

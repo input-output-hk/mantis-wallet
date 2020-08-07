@@ -43,7 +43,7 @@ type Prev = [
  * const pathToBar: Path<typeof obj> = ['foo', 'bar'] // correct
  * const pathToFoo: Path<typeof obj> = ['foo'] // error
  */
-export type Path<T, D extends number = 10> = [D] extends [never]
+export type Path<T, D extends number = 5> = [D] extends [never]
   ? never
   : T extends object
   ? {[K in keyof T]-?: Cons<K, Path<T[K], Prev[D]>>}[keyof T]

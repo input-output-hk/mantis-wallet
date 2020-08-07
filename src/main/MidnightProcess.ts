@@ -65,7 +65,7 @@ export class SpawnedMidnightProcess {
         rxop.mapTo(void 0),
       )
       .toPromise()
-      .then(() => setProcessStatus(this.name, {status: 'not-running'}))
+      .then(() => setProcessStatus(this.name, {status: 'notRunning'}))
   }
 }
 

@@ -4,6 +4,7 @@ import {Button} from 'antd'
 import QRCode from 'qrcode.react'
 import fileDownload from 'js-file-download'
 import {DialogColumns} from './DialogColumns'
+import {Trans} from '../Trans'
 import './DialogQRCode.scss'
 
 interface DialogQRCodeProps {
@@ -31,7 +32,7 @@ export const DialogQRCode: FunctionComponent<DialogQRCodeProps> = ({
           type="primary"
           onClick={(): void => fileDownload(content, `${downloadFileName}.txt`)}
         >
-          Download txt
+          <Trans k={['common', 'button', 'downloadTxt']} />
         </Button>
       </DialogColumns>
     )}

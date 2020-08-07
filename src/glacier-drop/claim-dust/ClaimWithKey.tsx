@@ -13,6 +13,7 @@ import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {LINKS} from '../../external-link-config'
 import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
 import {Asset} from './Asset'
+import {useTranslation} from '../../settings-state'
 import './ClaimWith.scss'
 
 interface ClaimWithKeyProps {
@@ -31,6 +32,7 @@ const _ClaimWithKey = ({
   chain = ETC_CHAIN,
 }: ClaimWithKeyProps): JSX.Element => {
   const {authorizationSign} = GlacierState.useContainer()
+  const {t} = useTranslation()
 
   const [etcPrivateKey, setEtcPrivateKey] = useState<string>('')
 
@@ -60,7 +62,7 @@ const _ClaimWithKey = ({
         onChange={(e): void => setEtcPrivateKey(e.target.value.toLowerCase())}
         formItem={{
           name: 'private-key-input',
-          rules: [toAntValidator(validateEthPrivateKey)],
+          rules: [toAntValidator(t, validateEthPrivateKey)],
         }}
         autoFocus
       />

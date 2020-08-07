@@ -8,23 +8,25 @@ import {fillActionHandlers} from './common/util'
 import {useInterval} from './common/hook-utils'
 import {StatusModal} from './common/StatusModal'
 import {rendererLog} from './common/logger'
+import {Trans} from './common/Trans'
+import {TKeyRenderer} from './common/i18n'
 import './SplashScreen.scss'
 
-const getStatusMessage = (lunaStatus: LunaStatus): string => {
-  if (lunaStatus.fetchParams.status === 'not-running') {
-    return 'Initializing Luna'
+const getStatusMessage = (lunaStatus: LunaStatus): TKeyRenderer => {
+  if (lunaStatus.fetchParams.status === 'notRunning') {
+    return ['common', 'initializationStatus', 'initLuna']
   } else if (lunaStatus.fetchParams.status === 'running') {
-    return 'Sonics params fetching'
+    return ['common', 'initializationStatus', 'sonicsParamsFetching']
   } else if (lunaStatus.fetchParams.status === 'finished') {
-    return 'Starting Midnight node'
+    return ['common', 'initializationStatus', 'startingMidnight']
   } else if (lunaStatus.node.status === 'running' && lunaStatus.wallet.status === 'running') {
-    return 'Connecting to wallet'
+    return ['common', 'initializationStatus', 'connectingToWallet']
   }
 
   // this is just a safe fallback, the code shouldn't get here
   rendererLog.warn('Unexpected backend status...')
   rendererLog.warn(lunaStatus)
-  return 'Loading'
+  return ['common', 'initializationStatus', 'loading']
 }
 
 export const SplashScreen: FunctionComponent<{}> = () => {
@@ -47,13 +49,17 @@ export const SplashScreen: FunctionComponent<{}> = () => {
         onCancel={() => setShowStatus(false)}
       />
       <LunaWalletLoader className="logo" mode={theme} />
-      <div className="title">Luna</div>
+      <div className="title">
+        <Trans k={['title', 'luna']} />
+      </div>
       <div className="spinner">
         <LoadingOutlined spin />
       </div>
-      <div className="loading">{message}</div>
+      <div className="loading">
+        <Trans k={message} />
+      </div>
       <div className="details" {...fillActionHandlers(() => setShowStatus(true))}>
-        Show details
+        <Trans k={['common', 'link', 'showDetails']} />
       </div>
     </div>
   )

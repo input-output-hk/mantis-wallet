@@ -1,5 +1,6 @@
 import React, {PropsWithChildren} from 'react'
 import {Link} from '../Link'
+import {Trans} from '../Trans'
 import './DialogError.scss'
 
 interface DialogErrorProps {
@@ -14,7 +15,7 @@ export const DialogError = ({
     {children}
     {helpURL && (
       <Link href={helpURL} className="help">
-        Learn more
+        <Trans k={['common', 'message', 'learnMore']} />
       </Link>
     )}
   </div>

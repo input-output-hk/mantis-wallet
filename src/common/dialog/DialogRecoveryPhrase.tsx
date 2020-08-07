@@ -2,6 +2,8 @@ import React, {useState, FunctionComponent} from 'react'
 import SVG from 'react-inlinesvg'
 import {InlineError} from '../InlineError'
 import {fillActionHandlers} from '../util'
+import {Trans} from '../Trans'
+import {useTranslation} from '../../settings-state'
 import checkIcon from '../../assets/icons/check.svg'
 import './DialogRecoveryPhrase.scss'
 
@@ -38,6 +40,8 @@ export const DialogRecoveryPhrase: FunctionComponent<DialogRecoveryProps> = ({
   recoveryPhraseValidation,
   setRecoveryPhraseValidated,
 }: DialogRecoveryProps) => {
+  const {t} = useTranslation()
+
   const [enteredPhrase, setEnteredPhrase] = useState<string[]>([])
   const [shuffledWords, setShuffledWords] = useState(
     recoveryPhraseShuffled.map((word) => ({word, used: false})),
@@ -66,16 +70,20 @@ export const DialogRecoveryPhrase: FunctionComponent<DialogRecoveryProps> = ({
 
   return (
     <div className="DialogRecoveryPhrase">
-      <div className="instructions">Re-input seed phrase by selecting words from selection</div>
+      <div className="instructions">
+        <Trans k={['wallet', 'message', 'inputRecoveryPhraseInstructions']} />
+      </div>
       <InlineError
         className="input"
-        errorMessage={showValidationError ? 'The phrase is incorrect' : ''}
+        errorMessage={
+          showValidationError ? t(['wallet', 'error', 'recoveryPhraseIsIncorrect']) : ''
+        }
       >
         {enteredPhrase.join(' ')}
       </InlineError>
       <div className="clear-container">
         <span className="clear" {...fillActionHandlers(clear)}>
-          Clear
+          <Trans k={['wallet', 'button', 'clearRecoveryPhraseInput']} />
         </span>
       </div>
       <div className="words">

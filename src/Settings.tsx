@@ -15,6 +15,7 @@ import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
 import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
 import {loadLunaManagedConfig} from './config/renderer'
 import {LunaManagedConfig} from './config/type'
+import {Trans} from './common/Trans'
 import './Settings.scss'
 
 type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
@@ -22,7 +23,9 @@ type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
 const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
     <div className="Settings">
-      <HeaderWithSyncStatus>Settings</HeaderWithSyncStatus>
+      <HeaderWithSyncStatus>
+        <Trans k={['title', 'settings']} />
+      </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>
   )
@@ -36,6 +39,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
     setTimeFormat,
     dateFormat,
     setDateFormat,
+    translation: {t},
   } = SettingsState.useContainer()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
@@ -55,10 +59,12 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
     <SettingsWrapper>
       {/* Theme */}
       <div className="settings-item">
-        <div className="settings-label">Enable Dark Mode</div>
+        <div className="settings-label">
+          <Trans k={['settings', 'label', 'enableDarkMode']} />
+        </div>
         <div className="settings-input">
           <Switch
-            aria-label="Enable Dark Mode"
+            aria-label={t(['settings', 'label', 'enableDarkMode'])}
             checked={theme === 'dark'}
             onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
           />
@@ -67,10 +73,12 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
 
       {/* Mining */}
       <div className="settings-item">
-        <div className="settings-label">Enable Mining</div>
+        <div className="settings-label">
+          <Trans k={['settings', 'label', 'enableMining']} />
+        </div>
         <div className="settings-input">
           <Switch
-            aria-label="Enable Mining"
+            aria-label={t(['settings', 'label', 'enableMining'])}
             checked={lunaManagedConfig.miningEnabled}
             onChange={(miningEnabled) => {
               if (miningEnabled) {
@@ -86,7 +94,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
       {/* Datetime */}
       <div className="settings-item">
         <DialogDropdown
-          label="Date Format"
+          label={t(['settings', 'label', 'dateFormat'])}
           options={DATE_FORMATS}
           defaultOptionIndex={_.indexOf(dateFormat)(DATE_FORMATS)}
           onChange={setDateFormat}
@@ -94,20 +102,22 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
       </div>
       <div className="settings-item">
         <DialogDropdown
-          label="Time Format"
+          label={t(['settings', 'label', 'timeFormat'])}
           options={TIME_FORMATS}
           defaultOptionIndex={_.indexOf(timeFormat)(TIME_FORMATS)}
           onChange={setTimeFormat}
         />
       </div>
       <div className="settings-item">
-        <div className="settings-label">Export</div>
+        <div className="settings-label">
+          <Trans k={['settings', 'label', 'exportPrivateKey']} />
+        </div>
         <div className="settings-input">
           <span
             className="export-private-key"
             {...fillActionHandlers(() => setActiveModal('ExportPrivateKey'))}
           >
-            Export Private Key
+            <Trans k={['settings', 'button', 'exportPrivateKey']} />
           </span>
         </div>
       </div>

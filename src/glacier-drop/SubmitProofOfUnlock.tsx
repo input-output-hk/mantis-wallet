@@ -3,16 +3,15 @@ import BigNumber from 'bignumber.js'
 import {DEFAULT_GAS_LIMIT, DEFAULT_FEE} from './glacier-config'
 import {GlacierState, Claim} from './glacier-state'
 import {LoadedState, FeeEstimates} from '../common/wallet-state'
-import {validateFee} from '../common/util'
+import {validateFee, translateValidationResult} from '../common/util'
 import {useAsyncUpdate} from '../common/hook-utils'
-import {COULD_NOT_UPDATE_FEE_ESTIMATES} from '../common/fee-estimate-strings'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../common/LunaModal'
 import {Dialog} from '../common/Dialog'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {DialogShowDust} from '../common/dialog/DialogShowDust'
 import {DialogFee} from '../common/dialog/DialogFee'
-import {DialogError} from '../common/dialog/DialogError'
 import {UNITS} from '../common/units'
+import {useTranslation} from '../settings-state'
 import './SubmitProofOfUnlock.scss'
 
 const {Dust} = UNITS
@@ -34,12 +33,13 @@ const _SubmitProofOfUnlock = ({
   calculateGasPrice,
 }: SubmitProofOfUnlockProps): JSX.Element => {
   const {unlock, getUnlockCallParams} = GlacierState.useContainer()
+  const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
   const {transparentAddress, dustAmount} = claim
 
   const [fee, setFee] = useState(DEFAULT_FEE)
-  const feeError = validateFee(fee)
+  const feeValidationResult = validateFee(fee)
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> =>
@@ -49,14 +49,7 @@ const _SubmitProofOfUnlock = ({
     [],
   )
 
-  const disabled = !!feeError || !!feeEstimateError || isFeeEstimationPending
-
-  const footer =
-    !feeEstimates || feeEstimateError == null ? (
-      <></>
-    ) : (
-      <DialogError>{COULD_NOT_UPDATE_FEE_ESTIMATES}</DialogError>
-    )
+  const disabled = feeValidationResult !== 'OK' || !feeEstimates
 
   return (
     <Dialog
@@ -86,15 +79,15 @@ const _SubmitProofOfUnlock = ({
       }}
       onSetLoading={modalLocker.setLocked}
       type="dark"
-      footer={footer}
     >
       <DialogMessage label="Midnight Transparent Address">{transparentAddress}</DialogMessage>
       <DialogShowDust amount={dustAmount}>Eligible Amount</DialogShowDust>
       <DialogFee
         label="Fee"
         feeEstimates={feeEstimates}
+        feeEstimateError={feeEstimateError}
         onChange={setFee}
-        errorMessage={feeError}
+        errorMessage={translateValidationResult(t, feeValidationResult)}
         isPending={isFeeEstimationPending}
       />
     </Dialog>

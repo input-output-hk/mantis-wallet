@@ -6,6 +6,7 @@ import {EmptyProps} from 'antd/lib/empty'
 import {SynchronizationStatus, LoadedState} from './wallet-state'
 import {useInterval} from './hook-utils'
 import {withStatusGuard, PropsWithWalletState} from './wallet-status-guard'
+import {Trans} from './Trans'
 import refreshIcon from '../assets/icons/refresh.svg'
 import './SyncStatus.scss'
 
@@ -22,17 +23,31 @@ const getSyncStatus = (syncStatus: SynchronizationStatus): SyncStatus => {
 }
 
 export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
-  if (syncStatus.mode === 'offline') return <>Connecting</>
-  if (syncStatus.percentage === 100) return <>Fully Synced</>
-  return <>Syncing Blocks {syncStatus.percentage}%</>
+  if (syncStatus.mode === 'offline') return <Trans k={['wallet', 'syncStatus', 'syncConnecting']} />
+  if (syncStatus.percentage === 100) return <Trans k={['wallet', 'syncStatus', 'fullySynced']} />
+  return (
+    <Trans k={['wallet', 'syncStatus', 'syncing']} values={{percentage: syncStatus.percentage}} />
+  )
 }
 
 export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
   const classes = classnames('SyncStatus', getSyncStatus(syncStatus))
   const popoverContent = (
     <span>
-      <div>Current block: {syncStatus.currentBlock}</div>
-      {syncStatus.mode === 'online' && <div>Highest block: {syncStatus.highestKnownBlock}</div>}
+      <div>
+        <Trans
+          k={['wallet', 'syncStatus', 'currentBlock']}
+          values={{blockNumber: syncStatus.currentBlock}}
+        />
+      </div>
+      {syncStatus.mode === 'online' && (
+        <div>
+          <Trans
+            k={['wallet', 'syncStatus', 'highestBlock']}
+            values={{blockNumber: syncStatus.highestKnownBlock}}
+          />
+        </div>
+      )}
     </span>
   )
   return (

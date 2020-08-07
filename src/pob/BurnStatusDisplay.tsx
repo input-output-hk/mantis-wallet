@@ -21,7 +21,7 @@ import {
 } from './pob-config'
 import {Link} from '../common/Link'
 import {LINKS} from '../external-link-config'
-import {ProgressState, ProgressBar, PROGRESS_ICONS} from '../common/ProgressBar'
+import {ProgressState, ProgressBar, ProgressIcon} from '../common/ProgressBar'
 import {useFormatters} from '../settings-state'
 import './BurnStatusDisplay.scss'
 
@@ -90,7 +90,7 @@ const ProvingProgressLabel = ({
 }): JSX.Element => {
   const labelWithIcon = (
     <span>
-      {PROGRESS_ICONS[progress]} {label}
+      <ProgressIcon progressState={progress} /> {label}
     </span>
   )
 
@@ -229,7 +229,9 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
               content="Your burn transaction has been found on source blockchain."
               placement="topLeft"
             >
-              <span>{PROGRESS_ICONS['checked']} Found Transaction</span>
+              <span>
+                <ProgressIcon progressState={'checked'} /> Found Transaction
+              </span>
             </Popover>
             {txFoundDate && <span className="step-date">{txFoundDate}</span>}
           </div>

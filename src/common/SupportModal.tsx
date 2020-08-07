@@ -10,6 +10,8 @@ import {makeDismissableMessage, DismissFunction} from './dismissable-message'
 import {DialogMessage} from './dialog/DialogMessage'
 import {wrapWithModal, ModalLocker} from './LunaModal'
 import {Dialog} from './Dialog'
+import {Trans} from './Trans'
+import {useTranslation} from '../settings-state'
 
 const CHANNELS: IPCToRendererChannelName[] = [
   'save-debug-logs-success',
@@ -24,12 +26,13 @@ const createMessage = (path: string) => ({dismiss}: {dismiss: DismissFunction}):
   }
   return (
     <span style={{cursor: 'pointer'}} {...fillActionHandlers(onClickMsg)}>
-      Debug logs saved successfully! Click here to open the containing folder.
+      <Trans k={['common', 'message', 'debugLogsSaved']} />
     </span>
   )
 }
 
 export const SupportDialog = (): JSX.Element => {
+  const {t} = useTranslation()
   const {setLocked, isLocked} = ModalLocker.useContainer()
   const [isDone, setDone] = useState(false)
 
@@ -41,12 +44,12 @@ export const SupportDialog = (): JSX.Element => {
     })
 
     ipcListenToMain('save-debug-logs-cancel', () => {
-      message.info('Operation cancelled.', 5)
+      message.info(t(['common', 'message', 'saveDebugLogsCancelled']), 5)
       setLocked(false)
     })
 
     ipcListenToMain('save-debug-logs-failure', (_event, errorMsg: string): void => {
-      message.error(`Failed to save debug logs: ${errorMsg}`, 10)
+      message.error(t(['common', 'error', 'failedToSaveDebugLogs'], {replace: {errorMsg}}), 10)
       setLocked(false)
     })
 
@@ -57,31 +60,24 @@ export const SupportDialog = (): JSX.Element => {
 
   return (
     <Dialog
-      title="Support"
+      title={t(['common', 'title', 'support'])}
       leftButtonProps={{
         onClick: () => {
           saveDebugLogs()
           setLocked(true)
         },
-        children: 'Export Logs',
+        children: t(['common', 'button', 'exportDebugLogs']),
         disabled: isLocked,
         icon: isDone && <CheckCircleFilled />,
       }}
       rightButtonProps={{
         onClick: async (): Promise<void> => shell.openExternal(LINKS.support),
-        children: 'Open Slack',
+        children: t(['common', 'button', 'openSupportChannel']),
         disabled: isLocked,
       }}
     >
       <DialogMessage>
-        <p>If you encounter a bug, don&apos;t hesitate to contact our support team on Slack.</p>
-        <p>
-          To make it easier for us to diagnose your problem, please, include your debug logs in the
-          bug report.
-        </p>
-        <p>
-          You can save your logs easily by clicking the <b>Export Logs</b> button below.
-        </p>
+        <Trans k={['common', 'message', 'supportModalMessage']} />
       </DialogMessage>
     </Dialog>
   )

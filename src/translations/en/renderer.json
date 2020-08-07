@@ -1,13 +1,218 @@
 {
+  "title": {
+    "luna": "Luna",
+    "lunaWallet": "Luna Wallet",
+    "testnetEdition": "Testnet Edition",
+    "wallets": "Wallets",
+    "proofOfBurn": "Proof of Burn",
+    "glacierDrop": "Glacier Drop",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": {
+      "enableMining": "Enable Mining",
+      "backendConfigChanged": "Backend Configuration Changed"
+    },
+    "button": {
+      "enable": "Enable",
+      "restart": "Restart",
+      "exportPrivateKey": "Export Private Key"
+    },
+    "label": {
+      "privateKeyForMining": "Private key for mining rewards",
+      "enableDarkMode": "Enable Dark Mode",
+      "enableMining": "Enable Mining",
+      "dateFormat": "Date Format",
+      "timeFormat": "Time Format",
+      "exportPrivateKey": "Export"
+    },
+    "message": {
+      "enableMining": "By setting a private key, you'll enable mining on your computer.<br />It's crucial that your node is fully synced when mining, otherwise it won't work.",
+      "backendRestartPrompt": "<p>The backend must be restarted to apply configuration changes.</p><p>Do you want to restart now?</p>"
+    },
+    "error": {
+      "configFailed": "Configuration update failed. Error: {{reason}}",
+      "backendRestartFailed": "Backend restart failed. Error: {{reason}}"
+    }
+  },
+  "wallet": {
+    "button": {
+      "clearRecoveryPhraseInput": "Clear"
+    },
+    "label": {
+      "enterPassword": "Enter Password",
+      "privateKey": "Private Key",
+      "recoveryPhrase": "Recovery Phrase"
+    },
+    "error": {
+      "jobAlreadyAdded": "Job {{jobHash}} already added",
+      "couldNotLockWallet": "Couldn't lock the wallet.",
+      "couldNotRemoveWallet": "Couldn't remove the wallet.",
+      "couldNotUpdateFeeEstimates": "Couldn't update fee estimates, they might be outdated",
+      "couldNotLoadFeeEstimates": "Couldn't load fee estimates, cannot continue",
+      "insufficientFunds": "Insufficient funds",
+      "recoveryPhraseIsIncorrect": "The phrase is incorrect",
+      "addressMustBeSet": "Address must be set",
+      "invalidTransparentAddress": "Invalid transparent address",
+      "invalidConfidentialAddress": "Invalid confidential address",
+      "missingCharacterTypeForPassword": "Password needs to have at least 1 uppercase, 1 lowercase and 1 number character",
+      "passwordMustBeAtLeast8Characters": "Password needs to be at least 8 characters"
+    },
+    "message": {
+      "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",
+      "loadingFeeEstimates": "Loading estimates",
+      "passwordCriteriaMessage": "Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number",
+      "inputRecoveryPhraseInstructions": "Re-input recovery phrase by selecting words from selection"
+    },
+    "feeEstimateLevels": {
+      "custom": "Custom",
+      "low": "Slow",
+      "medium": "Average",
+      "high": "Fast"
+    },
+    "miningStatus": {
+      "loadingMiningStatus": "Loading mining status",
+      "notMining": "Not mining",
+      "miningAtHashrate": "Mining {{hashrate}}",
+      "invalidHashrate": "Invalid hashrate"
+    },
+    "syncStatus": {
+      "syncConnecting": "Connecting",
+      "fullySynced": "Fully Synced",
+      "syncing": "Syncing Blocks {{percentage}}%",
+      "currentBlock": "Current block: {{blockNumber}}",
+      "highestBlock": "Highest block: {{blockNumber}}"
+    },
+    "buildTxStatus": {
+      "buildingTransaction": "Building {{count}} transaction",
+      "buildingTransaction_plural": "Building {{count}} transactions",
+      "finishedTxBuilding": "Finished"
+    }
+  },
+  "status": {
+    "label": {
+      "computer": "Machine",
+      "operatingSystem": "Platform",
+      "operatingSystemVersion": "Platform version",
+      "cpu": "CPU",
+      "computerMemory": "Memory",
+      "lunaVersion": "Luna version",
+      "lunaMainProcessID": "Luna main process ID",
+      "lunaRendererProcessID": "Luna renderer process ID",
+      "lunaLocalDirectory": "Luna local directory",
+      "midnightBackend": "Midnight backend",
+      "network": "Network",
+      "sonicsParamsFetching": "Sonics params fetching",
+      "nodeStatus": "Node status",
+      "nodeProcessID": "Node process ID",
+      "walletStatus": "Wallet status",
+      "walletProcessID": "Wallet process ID",
+      "walletRpcAddress": "Wallet RPC address",
+      "miningEnabled": "Mining enabled",
+      "miningStatus": "Mining status",
+      "lastDagInformation": "Last DAG information",
+      "synchronizationStatus": "Synchronization",
+      "currentBlock": "Current block",
+      "highestKnownBlock": "Highest known block"
+    },
+    "message": {
+      "generatingDag": "Generating DAG {{percentage}}%",
+      "loadingDagFromFile": "Loading DAG from file {{percentage}}%"
+    },
+    "componentStatus": {
+      "loading": "Loading",
+      "running": "Running",
+      "notRunning": "Not Running",
+      "finished": "Finished",
+      "failed": "Failed",
+      "loaded": "Loaded"
+    },
+    "error": {
+      "dagFileEndedUnexpectedly": "DAG file ended unexpectedly",
+      "invalidDagFilePrefix": "Invalid DAG file prefix",
+      "cannotReadDagFromFile": "Cannot read DAG from file",
+      "cannotGenerateDagFile": "Cannot generate DAG file"
+    }
+  },
+  "glacierDrop": {
+    "error": {
+      "alreadyClaimed": "Already claimed",
+      "ethAddressMustBeSet": "Address must be set",
+      "invalidEthAddress": "Invalid address",
+      "invalidEthPrivateKey": "Invalid private key",
+      "ethPrivateKeyMustBeSet": "Private key must be set"
+    }
+  },
+  "proofOfBurn": {
+    "error": {
+      "noAvailableProvers": "No available provers.",
+      "noAvailableProversForThisToken": "No available provers for this token at the moment."
+    }
+  },
   "common": {
+    "title": {
+      "support": "Support"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "next": "Next",
+      "exportDebugLogs": "Export Logs",
+      "openSupportChannel": "Open Slack",
+      "downloadTxt": "Download txt"
+    },
+    "answer": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "progressIcon": {
+      "checkedState": "Checked",
+      "unknownState": "Unknown",
+      "failedState": "Failed",
+      "inProgressState": "In progress",
+      "stoppedState": "Stopped"
+    },
     "link": {
       "feedback": "Feedback",
       "logOut": "Log Out",
       "support": "Support",
-      "status": "Status"
+      "status": "Status",
+      "showDetails": "Show details"
     },
-    "validationError": {
-      "passwordsDoNotMatch": "Passwords don't match"
+    "initializationStatus": {
+      "initLuna": "Initializing Luna",
+      "sonicsParamsFetching": "Sonics params fetching",
+      "startingMidnight": "Starting Midnight node",
+      "connectingToWallet": "Connecting to wallet",
+      "loading": "Loading"
+    },
+    "message": {
+      "copiedToClipboard": "Successfully copied to clipboard.",
+      "clickToCopy": "Click to copy to clipboard",
+      "waitUntilActionFinish": "You will have to wait for your action to finish.",
+      "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
+      "saveDebugLogsCancelled": "Operation cancelled.",
+      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
+      "chooseFromDropdownList": "Choose from list…",
+      "learnMore": "Learn more"
+    },
+    "error": {
+      "dialogValidationFailed": "Some fields require additional action before you can continue.",
+      "unexpectedError": "Unexpected error",
+      "passwordsDoNotMatch": "Passwords don't match",
+      "failedToSaveDebugLogs": "Failed to save debug logs: {{errorMsg}}",
+      "numberMustBePositive": "Number must be positive",
+      "mustBeANumberLessThan": "Must be a number less than {{maxValue}}",
+      "mustBeANumberGreaterThan": "Must be a number greater than {{minValue}}",
+      "mustBeAtLeast": "Must be at least {{minValue}}",
+      "mustBeAtMost": "Must be at most {{maxValue}}",
+      "itMustBeAnInteger": "It must be an integer value",
+      "atMostDecimalPlacesArePermitted": "At most {{count}} decimal place is permitted",
+      "atMostDecimalPlacesArePermitted_plural": "At most {{count}} decimal places are permitted",
+      "noAvailableOptionForDropdown": "No available option"
+    },
+    "networkTag": {
+      "testnet": "Testnet",
+      "mainnet": "Mainnet"
     }
   }
 }
