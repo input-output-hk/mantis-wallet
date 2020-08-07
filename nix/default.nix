@@ -4,6 +4,11 @@ let
   sources = import ./sources.nix;
   inherit (sources) nixpkgs gitignore yarn2nix;
 
+  haskellNix = import sources."haskell.nix" {
+    sourceOverrides = sources;
+    inherit system;
+  };
+
   pkgs = import nixpkgs {
     inherit system;
     config = { };
@@ -14,8 +19,10 @@ let
   nodejs = pkgs.nodejs-12_x;
   yarn = pkgs.yarn.override { inherit nodejs; };
 
-  midnight =
-    (import (sources.midnight + "/release.nix") { }).midnight-embedded-jvm;
+  midnight = import sources.midnight {
+    inherit system;
+    src = sources.midnight;
+  };
 in {
   inherit pkgs nodejs yarn midnight;
 
@@ -31,31 +38,12 @@ in {
     cp ${electron.${system}} $out/$(stripHash ${electron.${system}})
   '';
 
-  midnight-dist = {
-    x86_64-linux = pkgs.runCommand "midnight-dist-x86_64-linux" { } ''
-      mkdir -p $out/midnight-dist
-      cd $_
-      cp --recursive --dereference ${midnight.x86_64-linux} midnight
-      ln -s midnight midnight-node
-      ln -s midnight midnight-wallet
-    '';
-
-    x86_64-darwin = pkgs.runCommand "midnight-dist-x86_64-darwin" { } ''
-      mkdir -p $out/midnight-dist
-      cd $_
-      cp --recursive --dereference ${midnight.x86_64-darwin} midnight
-      ln -s midnight midnight-node
-      ln -s midnight midnight-wallet
-    '';
-
-    x86_64-win = pkgs.runCommand "midnight-darwin-x86_64-win" { } ''
-      mkdir -p $out/midnight-dist
-      cd $_
-      cp --recursive --dereference ${midnight.x86_64-win} midnight
-      ln -s midnight midnight-node
-      ln -s midnight midnight-wallet
-    '';
-  };
+  midnight-dist = pkgs.runCommand "midnight-dist" { } ''
+    mkdir -p $out/midnight-dist
+    cd $_
+    ln -s ${midnight} midnight-node
+    ln -s ${midnight} midnight-wallet
+  '';
 
   nodeHeaders = pkgs.fetchurl {
     url =
@@ -65,18 +53,5 @@ in {
 
   yarn2nix = import yarn2nix rec { inherit pkgs nodejs yarn; };
 
-  mkSrc = src:
-    let
-      isGit = builtins.pathExists (src + "/.git");
-      repo = builtins.fetchGit src;
-      dirty = repo.revCount == 0;
-      filterSrc = src:
-        pkgs.lib.cleanSourceWith {
-          inherit src;
-          filter = path: _: (builtins.baseNameOf path) != "release.nix";
-        };
-    in if isGit then
-      if dirty then filterSrc (gitignoreSource src) else repo
-    else
-      src;
+  inherit (haskellNix.pkgs.haskell-nix.haskellLib) cleanGit;
 }

@@ -5,7 +5,22 @@ with import ./nix { inherit system; };
 let
   inherit (pkgs.lib.importJSON ./package.json) name version;
 
-  yarnNix = yarn2nix.mkYarnNix { yarnLock = ./yarn.lock; };
+  yarnLock = pkgs.runCommand "yarn.lock" {
+    srcs = [ ./package.json ./yarn.lock ];
+    buildInputs = with pkgs; [ jq ];
+  } ''
+
+    for src in $srcs; do
+      cp $src $(stripHash $src)
+      chmod +w $_
+    done
+
+    cat package.json | jq -r '.dependencies["web3"]' | cut -d# -f2 | xargs -I% sed -i 's/%":$/develop":/' yarn.lock
+    cat package.json | jq -r '.dependencies["luna-wallet-loader"]' | cut -d# -f2 | xargs -I% sed -i 's/%":$/master":/' yarn.lock
+    mv yarn.lock $out
+  '';
+
+  yarnNix = yarn2nix.mkYarnNix { inherit yarnLock; };
   offlineCache = yarn2nix.importOfflineCache yarnNix;
 
   nodeModules = pkgs.stdenv.mkDerivation {
@@ -44,7 +59,12 @@ let
     '';
 
     buildPhase = ''
-      yarn config --offline set tarball ${nodeHeaders}
+      # yarn config --offline set tarball ''${nodeHeaders}
+
+      # export CPPFLAGS="-I${nodejs}/include/node"
+
+      yarn config --offline set nodedir ${nodejs}
+      #--build-from-source
       yarn install --offline --frozen-lockfile --ignore-scripts
       patchShebangs .
 
@@ -95,7 +115,11 @@ in pkgs.stdenv.mkDerivation {
   inherit version;
 
   pname = name;
-  src = mkSrc src;
+  src = cleanGit {
+    name = "${name}-source";
+    inherit src;
+  };
+
   buildInputs = [ yarn pkgs.unzip pkgs.zip ];
 
   LUNA_DIST_PACKAGES_DIR = midnight-dist + "/midnight-dist";
@@ -110,26 +134,27 @@ in pkgs.stdenv.mkDerivation {
     cp -r ${nodeModules}/node_modules .
   '';
 
-  buildPhase = ''
-    yarn --offline run build-dist-${system}
-  '';
+  buildPhase = "";
 
-  installPhase = ''
-    cp -r dist $out
+  passthru = { inherit yarnNix nodeModules; };
 
-    ${{
-      x86_64-darwin = ''
-        tmp=$(mktemp -d)
-        ln -s /usr/bin/hdiutil /usr/sbin/bless $tmp
-        export PATH="$PATH:$tmp"
-        yarn --offline run make-dmg
-
-        mkdir -p $out/nix-support
-        mv dist/*.dmg $out
-        echo file dmg $out/*.dmg >> $out/nix-support/hydra-build-products
-      '';
-    }.${system} or "true"}
-  '';
-
-  dontFixup = pkgs.stdenv.isDarwin;
+  installPhase = {
+    x86_64-darwin = ''
+      yarn --offline run build-dist-${system}
+      mkdir -p $out/Applications
+      cp -r dist/Luna-darwin-x64/Luna.app $_
+    '';
+    x86_64-linux = ''
+      yarn --offline run build-all
+      mkdir -p $out/{bin,share/luna-wallet}
+      mv build/main/package.json .
+      mv build package.json $out/share/luna-wallet/
+      ln -s $LUNA_DIST_PACKAGES_DIR $out/share/midnight-dist
+      chmod 0755 $out/share/ -R
+      echo "#!${pkgs.runtimeShell}" > $out/bin/luna-wallet
+      echo "cd $out/share/luna-wallet" >> $out/bin/luna-wallet
+      echo "${pkgs.electron_8}/bin/electron $out/share/luna-wallet/build/main/main.js" >> $out/bin/luna-wallet
+      chmod 0755 $out/bin/luna-wallet
+    '';
+  }.${system};
 }
