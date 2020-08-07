@@ -56,6 +56,10 @@ let remixWindowHandle: BrowserWindow | null = null
 
 let shuttingDown = false
 
+if (!app.requestSingleInstanceLock()) {
+  app.quit()
+}
+
 const i18n = createAndInitI18nForMain(store.get('settings.language') || DEFAULT_LANGUAGE)
 const t = createTFunctionMain(i18n)
 
@@ -92,6 +96,7 @@ function createRemixWindow(t: TFunctionMain): void {
 
 const openRemix = (t: TFunctionMain) => (): void => {
   if (remixWindowHandle) {
+    if (remixWindowHandle.isMinimized()) remixWindowHandle.restore()
     remixWindowHandle.focus()
   } else {
     createRemixWindow(t)
@@ -177,6 +182,13 @@ app.on('remote-get-global', (event, webContents, name) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     event.returnValue = shared[name]()
+  }
+})
+
+app.on('second-instance', () => {
+  if (mainWindowHandle) {
+    if (mainWindowHandle.isMinimized()) mainWindowHandle.restore()
+    mainWindowHandle.focus()
   }
 })
 
