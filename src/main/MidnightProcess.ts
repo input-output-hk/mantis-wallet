@@ -5,7 +5,7 @@ import {promisify} from 'util'
 import * as fs from 'fs'
 import psTree from 'ps-tree'
 import * as rxop from 'rxjs/operators'
-import {EMPTY, fromEvent, generate, merge, Observable} from 'rxjs'
+import {EMPTY, fromEvent, interval, merge, Observable, zip} from 'rxjs'
 import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
@@ -27,7 +27,8 @@ export class SpawnedMidnightProcess {
   constructor(public name: ClientName, private childProcess: ChildProcess) {
     mainLog.info(`Spawned ${name}, PID: ${childProcess.pid}`)
     setProcessStatus(name, {pid: childProcess.pid, status: 'running'})
-    childProcess.on('close', (code) => mainLog.info('exited with', code))
+    childProcess.on('close', (code) => mainLog.info(this.name, 'stdio closed with', code))
+    childProcess.on('exit', (code) => mainLog.info(this.name, 'exited with', code))
     childProcess.on('error', (err) => mainLog.error(err))
   }
 
@@ -39,10 +40,9 @@ export class SpawnedMidnightProcess {
     rxop.map((buffer) => buffer.toString().trim()),
   )
 
-  close$ = merge(fromEvent(this.childProcess, 'close'), fromEvent(this.childProcess, 'exit'))
-
-  private isRunning = (): boolean =>
-    !this.childProcess.killed && this.childProcess.exitCode === null
+  close$ = zip(fromEvent(this.childProcess, 'close'), fromEvent(this.childProcess, 'exit')).pipe(
+    rxop.shareReplay(1),
+  )
 
   kill = async (): Promise<void> => {
     mainLog.info(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
@@ -58,16 +58,11 @@ export class SpawnedMidnightProcess {
     if (this.childProcess.exitCode !== null) {
       mainLog.info(`...already exited with exit code ${this.childProcess.exitCode}`)
     }
-    return generate({
-      initialState: 0,
-      iterate: (nr) => nr + 1,
-    })
+    return interval(100)
       .pipe(
-        rxop.takeWhile(this.isRunning),
-        rxop.tap(() => {
-          this.childProcess.kill()
-        }),
-        rxop.map(() => void 0),
+        rxop.tap(() => this.childProcess.kill()),
+        rxop.takeUntil(this.close$),
+        rxop.mapTo(void 0),
       )
       .toPromise()
       .then(() => setProcessStatus(this.name, {status: 'not-running'}))
