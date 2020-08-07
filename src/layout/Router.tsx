@@ -1,13 +1,23 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useRef} from 'react'
 import {RouterState} from '../router-state'
 import {RouteId} from '../routes-config'
+import './Router.scss'
 
 export const Router = (): JSX.Element => {
   const {
     currentRoute: {component: Component},
   } = RouterState.useContainer()
+  const mainRef = useRef<HTMLElement>(null)
 
-  return <Component />
+  useEffect(() => {
+    mainRef.current?.scroll({top: 0})
+  }, [Component])
+
+  return (
+    <main id="main" className="Router" ref={mainRef}>
+      <Component />
+    </main>
+  )
 }
 
 interface NavigateProps {

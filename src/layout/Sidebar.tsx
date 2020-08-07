@@ -93,7 +93,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const handleMenuClick = (menuId: MenuId): void => routerState.navigate(MENU[menuId].route)
 
   return (
-    <div className="Sidebar">
+    <header className="Sidebar">
       {isTestnet(networkTag) && (
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
@@ -199,6 +199,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         />
       )}
       <SupportModal visible={activeModal === 'Support'} onCancel={() => setActiveModal('none')} />
-    </div>
+    </header>
   )
 }
