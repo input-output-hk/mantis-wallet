@@ -12,6 +12,10 @@
     "linux": {
       "maintainer": "Shay Bergmann <shay.bergmann@iohk.io>",
       "executableName": "Luna"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
   },
   "main": "build/main/main.js",
