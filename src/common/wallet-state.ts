@@ -219,8 +219,11 @@ const getPublicTransactionParams = (
 
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
-  const wallet = _initialState.web3.midnight.wallet
-  const {erc20, eth} = _initialState.web3
+  const {
+    erc20,
+    eth,
+    midnight: {wallet},
+  } = _initialState.web3
 
   const buildJobState = BuildJobState.useContainer()
 
