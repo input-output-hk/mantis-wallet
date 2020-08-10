@@ -6,7 +6,7 @@ import {LunaModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {TransparentAddress} from '../../web3'
-import {copyToClipboard} from '../../common/clipboard'
+import {useLocalizedUtilities} from '../../settings-state'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {CopyableLongText} from '../../common/CopyableLongText'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
@@ -32,24 +32,27 @@ interface ReceiveTransactionProps
 
 const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTransactionProps> = ({
   privateAddress,
-}: ReceivePrivateTransactionProps) => (
-  <Dialog
-    leftButtonProps={{
-      children: 'Copy Address',
-      autoFocus: true,
-      onClick: (): void => {
-        copyToClipboard(privateAddress)
-      },
-    }}
-    rightButtonProps={{
-      doNotRender: true,
-    }}
-    type="dark"
-  >
-    <div className="title">Your confidential address</div>
-    <DialogQRCode content={privateAddress} />
-  </Dialog>
-)
+}: ReceivePrivateTransactionProps) => {
+  const {copyToClipboard} = useLocalizedUtilities()
+  return (
+    <Dialog
+      leftButtonProps={{
+        children: 'Copy Address',
+        autoFocus: true,
+        onClick: (): void => {
+          copyToClipboard(privateAddress)
+        },
+      }}
+      rightButtonProps={{
+        doNotRender: true,
+      }}
+      type="dark"
+    >
+      <div className="title">Your confidential address</div>
+      <DialogQRCode content={privateAddress} />
+    </Dialog>
+  )
+}
 
 const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps> = ({
   transparentAddress,
@@ -57,6 +60,7 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
   onSetLoading,
 }: ReceivePublicTransactionProps) => {
   const modalLocker = ModalLocker.useContainer()
+  const {copyToClipboard} = useLocalizedUtilities()
 
   const title = transparentAddress
     ? `Receive Account ${transparentAddress.index}`

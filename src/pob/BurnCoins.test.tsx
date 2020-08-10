@@ -150,5 +150,5 @@ test('Burn Coins - Show Address step', async () => {
 
   const copyAddressButton = getByText('Copy Address')
   await act(async () => userEvent.click(copyAddressButton))
-  await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(burnAddress))
+  await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(burnAddress, expect.any(String)))
 })

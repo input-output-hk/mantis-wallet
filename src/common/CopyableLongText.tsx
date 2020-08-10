@@ -2,8 +2,7 @@ import React from 'react'
 import {CopyOutlined, QrcodeOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import QRCode from 'qrcode.react'
-import {copyToClipboard} from './clipboard'
-import {useTranslation} from '../settings-state'
+import {useTranslation, useLocalizedUtilities} from '../settings-state'
 import './CopyableLongText.scss'
 
 interface CopyableLongTextProps {
@@ -18,6 +17,7 @@ export const CopyableLongText = ({
   fallback = '',
 }: CopyableLongTextProps): JSX.Element => {
   const {t} = useTranslation()
+  const {copyToClipboard} = useLocalizedUtilities()
 
   return content ? (
     <div className="CopyableLongText">

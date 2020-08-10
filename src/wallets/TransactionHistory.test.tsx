@@ -486,7 +486,9 @@ test('Receive modal shows up with confidential address', async () => {
   // Address can be copied
   const copyAddressButton = getByText('Copy Address')
   act(() => userEvent.click(copyAddressButton))
-  await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(CONFIDENTIAL_ADDRESS))
+  await waitFor(() =>
+    expect(mockedCopyToClipboard).toBeCalledWith(CONFIDENTIAL_ADDRESS, expect.any(String)),
+  )
   expect(mockedCopyToClipboard).toHaveBeenCalledTimes(1)
 })
 
@@ -520,7 +522,9 @@ test('Receive modal works with transparent addresses', async () => {
   // QR code is also visible and address can be copied
   expect(getByTestId('qr-code')).toBeInTheDocument()
   act(() => userEvent.click(copyAddressButton))
-  await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(getTransparentAddress(0)))
+  await waitFor(() =>
+    expect(mockedCopyToClipboard).toBeCalledWith(getTransparentAddress(0), expect.any(String)),
+  )
 
   // Generating 5 more addresses
   // eslint-disable-next-line
