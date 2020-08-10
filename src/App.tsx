@@ -46,7 +46,7 @@ const App: React.FC = () => {
           <div className="App">
             <RouterState.Provider>
               <BuildJobState.Provider initialState={{web3}}>
-                <WalletState.Provider>
+                <WalletState.Provider initialState={{web3}}>
                   <ProofOfBurnState.Provider initialState={{store, web3}}>
                     <GlacierState.Provider initialState={{store}}>
                       <Sidebar version={LUNA_VERSION} />

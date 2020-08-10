@@ -79,7 +79,6 @@ export const ClaimController = ({
       powNonce: null,
       unlockTxHash: null,
       withdrawTxHashes: [],
-      txStatuses: {},
       isFinalDustAmount: false,
       numberOfEpochsForFullUnfreeze: null,
       txBuildInProgress: false,

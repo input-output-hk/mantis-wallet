@@ -37,6 +37,7 @@ const PERIOD_CONFIG: PeriodConfig = {
   epochLength: 1,
   numberOfEpochs: 10,
 }
+const CALL_TX_STATUSES = {}
 
 const baseClaim = {
   added: new Date(),
@@ -51,7 +52,6 @@ const baseClaim = {
   powNonce: null,
   unlockTxHash: null,
   withdrawTxHashes: [],
-  txStatuses: {},
   numberOfEpochsForFullUnfreeze: 15,
   txBuildInProgress: false,
 }
@@ -68,7 +68,6 @@ const submittedClaim: Claim = {
   puzzleStatus: 'submitted',
   withdrawnDustAmount: new BigNumber(0),
   unlockTxHash: '0xc41',
-  txStatuses: {'0xc41': {status: 'TransactionPending', atBlock: 1}},
   powNonce: 1,
 }
 
@@ -94,9 +93,11 @@ export const claimSolving = (): JSX.Element => {
       index={1}
       currentBlock={4}
       periodConfig={PERIOD_CONFIG}
+      callTxStatuses={CALL_TX_STATUSES}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
+      onRemoveClaim={action('onRemoveClaim')}
     />
   )
 }
@@ -108,9 +109,11 @@ export const claimUnsubmitted = (): JSX.Element => {
       index={1}
       currentBlock={5}
       periodConfig={PERIOD_CONFIG}
+      callTxStatuses={CALL_TX_STATUSES}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
+      onRemoveClaim={action('onRemoveClaim')}
     />
   )
 }
@@ -122,9 +125,11 @@ export const claimSubmitted = (): JSX.Element => {
       index={1}
       currentBlock={6}
       periodConfig={PERIOD_CONFIG}
+      callTxStatuses={CALL_TX_STATUSES}
       showEpochs={action('showEpochs')}
       onSubmitPuzzle={action('onSubmitPuzzle')}
       onWithdrawDust={action('onWithdrawDust')}
+      onRemoveClaim={action('onRemoveClaim')}
     />
   )
 }
@@ -132,7 +137,6 @@ export const claimSubmitted = (): JSX.Element => {
 export const submitProofOfUnlock = (): JSX.Element => (
   <SubmitProofOfUnlock
     visible
-    currentBlock={1}
     claim={unsubmittedClaim}
     onNext={action('onNext')}
     onCancel={action('onCancel')}
@@ -147,6 +151,7 @@ export const withdrawAvailableDust = (): JSX.Element => (
     claim={{...submittedClaim, withdrawnDustAmount: dust('withdrawn dust', 0)}}
     currentBlock={10}
     periodConfig={PERIOD_CONFIG}
+    callTxStatuses={CALL_TX_STATUSES}
     showEpochs={action('showEpochs')}
     onNext={action('onNext')}
     onCancel={action('onCancel')}

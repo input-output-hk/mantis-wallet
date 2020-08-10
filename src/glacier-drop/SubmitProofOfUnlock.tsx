@@ -18,7 +18,6 @@ const {Dust} = UNITS
 
 interface SubmitProofOfUnlockProps extends ModalOnCancel {
   claim: Claim
-  currentBlock: number
   onNext: () => void
   estimateCallFee: LoadedState['estimateCallFee']
   calculateGasPrice: LoadedState['calculateGasPrice']
@@ -26,7 +25,6 @@ interface SubmitProofOfUnlockProps extends ModalOnCancel {
 
 const _SubmitProofOfUnlock = ({
   claim,
-  currentBlock,
   onNext,
   onCancel,
   estimateCallFee,
@@ -68,7 +66,7 @@ const _SubmitProofOfUnlock = ({
             gasLimit: new BigNumber(DEFAULT_GAS_LIMIT),
             gasPrice: new BigNumber(gasPrice),
           }
-          await unlock(claim, gasParams, currentBlock)
+          await unlock(claim, gasParams)
           onNext()
         },
         disabled,

@@ -13,7 +13,7 @@ import {
   isUnlocked,
   GlacierConstants,
 } from './glacier-state'
-import {LoadedState} from '../common/wallet-state'
+import {LoadedState, CallTxStatuses} from '../common/wallet-state'
 import {rendererLog} from '../common/logger'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
@@ -43,7 +43,9 @@ interface ClaimHistoryProps {
   claims: Claim[]
   currentBlock: number
   periodConfig: PeriodConfig
+  callTxStatuses: CallTxStatuses
   showEpochs(): void
+  onRemoveClaim(claim: Claim): void
   estimateCallFee: LoadedState['estimateCallFee']
   calculateGasPrice: LoadedState['calculateGasPrice']
 }
@@ -52,7 +54,9 @@ const ClaimHistory = ({
   claims,
   currentBlock,
   periodConfig,
+  callTxStatuses,
   showEpochs,
+  onRemoveClaim,
   estimateCallFee,
   calculateGasPrice,
 }: ClaimHistoryProps): JSX.Element => {
@@ -75,9 +79,11 @@ const ClaimHistory = ({
                 index={i}
                 currentBlock={currentBlock}
                 periodConfig={periodConfig}
+                callTxStatuses={callTxStatuses}
                 showEpochs={showEpochs}
                 onSubmitPuzzle={setClaimToSubmit}
                 onWithdrawDust={setClaimToWithdraw}
+                onRemoveClaim={onRemoveClaim}
               />
             ))}
           </div>
@@ -88,7 +94,6 @@ const ClaimHistory = ({
         <SubmitProofOfUnlock
           visible
           claim={claimToSubmit}
-          currentBlock={currentBlock}
           onCancel={() => setClaimToSubmit(null)}
           onNext={() => setClaimToSubmit(null)}
           estimateCallFee={estimateCallFee}
@@ -101,6 +106,7 @@ const ClaimHistory = ({
           claim={claimToWithdraw}
           currentBlock={currentBlock}
           periodConfig={periodConfig}
+          callTxStatuses={callTxStatuses}
           showEpochs={() => showEpochs()}
           onCancel={() => setClaimToWithdraw(null)}
           onNext={() => setClaimToWithdraw(null)}
@@ -131,13 +137,13 @@ const _GlacierDropOverview = ({
   const {
     claims,
     addClaim,
+    removeClaim,
     mine,
     cancelMining,
     getMiningState,
     constants,
     constantsError,
     refreshConstants,
-    updateTxStatuses,
     updateUnfreezingClaimData,
     updateDustAmounts,
   } = GlacierState.useContainer()
@@ -146,7 +152,7 @@ const _GlacierDropOverview = ({
   const [epochsShown, showEpochs] = useState<boolean>(false)
   const [claimDisabled, setClaimDisabled] = useState<boolean>(false)
 
-  const {estimateCallFee, calculateGasPrice} = walletState
+  const {estimateCallFee, calculateGasPrice, callTxStatuses} = walletState
   const {currentBlock, mode} = walletState.syncStatus
 
   const powPuzzleComplete = claims.some((c) => c.puzzleStatus === 'unsubmitted')
@@ -190,9 +196,8 @@ const _GlacierDropOverview = ({
 
   const update = async (): Promise<void> => {
     if (isNone(constants)) return
-    await updateTxStatuses(currentBlock)
-    await updateUnfreezingClaimData(period)
-    await updateDustAmounts(period)
+    await updateUnfreezingClaimData(period, callTxStatuses)
+    await updateDustAmounts(period, callTxStatuses)
   }
 
   useEffect(() => {
@@ -280,7 +285,9 @@ const _GlacierDropOverview = ({
         claims={claims}
         currentBlock={currentBlock}
         periodConfig={periodConfig}
+        callTxStatuses={callTxStatuses}
         showEpochs={() => showEpochs(true)}
+        onRemoveClaim={removeClaim}
         estimateCallFee={estimateCallFee}
         calculateGasPrice={calculateGasPrice}
       />
@@ -300,7 +307,7 @@ const _GlacierDropOverview = ({
               claim.dustAmount,
               getCurrentEpoch(currentBlock, periodConfig),
               getNumberOfEpochsForClaim(claim, periodConfig),
-              isUnlocked(claim),
+              isUnlocked(claim, callTxStatuses),
             ).isGreaterThan(0),
           )
           .map((claim) => {
