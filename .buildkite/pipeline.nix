@@ -50,7 +50,7 @@ with cfg.steps.commands; {
 
     dtslint = {
       dependsOn = [ node_modules ];
-      label = ":dtslint:";
+      label = ":tslint:";
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         tar xzf node_modules.tgz
