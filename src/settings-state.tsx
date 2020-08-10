@@ -16,6 +16,8 @@ import {
 } from './common/i18n'
 import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from './common/formatters'
 import {rendererLog} from './common/logger'
+import {makeDesktopNotification} from './common/notify'
+import {copyToClipboard} from './common/clipboard'
 
 export type Theme = 'dark' | 'light'
 
@@ -44,6 +46,11 @@ interface Translation {
   translateError: (e: Error) => string
 }
 
+interface LocalizedUtilities {
+  makeDesktopNotification: (body: string, title?: string, options?: NotificationOptions) => void
+  copyToClipboard: (text: string) => Promise<void>
+}
+
 export interface SettingsState {
   // Theme settings
   theme: Theme
@@ -63,8 +70,10 @@ export interface SettingsState {
   setLanguage(language: Language): void
   isPseudoLanguageUsed: boolean
   usePseudoLanguage(on: boolean): void
+  // Localized helpers
   formatters: Formatters
   translation: Translation
+  localizedUtilities: LocalizedUtilities
 }
 
 export type StoreSettingsData = {
@@ -140,6 +149,18 @@ function useSettingsState({
     }
   }, [isPseudoLanguageUsed])
 
+  const localizedUtilities = useMemo((): LocalizedUtilities => {
+    return {
+      makeDesktopNotification: (body: string, title?: string, options: NotificationOptions = {}) =>
+        makeDesktopNotification(body, title ?? translation.t(['title', 'lunaWallet']), {
+          lang: language,
+          ...options,
+        }),
+      copyToClipboard: (text: string) =>
+        copyToClipboard(text, translation.t(['common', 'message', 'copiedToClipboard'])),
+    }
+  }, [isPseudoLanguageUsed])
+
   const setLanguage = (language: Language): void => {
     _setLanguage(language)
     translation.i18n.changeLanguage(language)
@@ -187,6 +208,7 @@ function useSettingsState({
     usePseudoLanguage,
     formatters,
     translation,
+    localizedUtilities,
   }
 }
 
@@ -195,6 +217,9 @@ export const SettingsState = createContainer(useSettingsState)
 export const useFormatters = (): Formatters => SettingsState.useContainer().formatters
 
 export const useTranslation = (): Translation => SettingsState.useContainer().translation
+
+export const useLocalizedUtilities = (): LocalizedUtilities =>
+  SettingsState.useContainer().localizedUtilities
 
 export const migrationsForSettingsData = {
   '0.14.0-alpha.1': (store: Store<StoreSettingsData>) => {

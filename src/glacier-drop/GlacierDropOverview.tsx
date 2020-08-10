@@ -14,10 +14,10 @@ import {
   GlacierConstants,
 } from './glacier-state'
 import {LoadedState, CallTxStatuses} from '../common/wallet-state'
+import {useLocalizedUtilities} from '../settings-state'
 import {rendererLog} from '../common/logger'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
-import {makeDesktopNotification} from '../common/notify'
 import {Token} from '../common/Token'
 import {Loading} from '../common/Loading'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
@@ -134,6 +134,7 @@ const GlacierDropWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Elem
 const _GlacierDropOverview = ({
   walletState,
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
+  const {makeDesktopNotification} = useLocalizedUtilities()
   const {
     claims,
     addClaim,

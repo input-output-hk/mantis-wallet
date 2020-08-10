@@ -1,15 +1,10 @@
 import {rendererLog} from './logger'
-import {SettingsState} from '../settings-state'
 
 export const makeDesktopNotification = (
   body: string,
-  title?: string,
+  title: string,
   options: NotificationOptions = {},
 ): void => {
-  const {
-    language,
-    translation: {t},
-  } = SettingsState.useContainer()
   if (body.length > 256) {
     rendererLog.error('Notification body will be truncated on macOS (max 256 chars)')
     rendererLog.info({notificationBody: body})
@@ -20,9 +15,8 @@ export const makeDesktopNotification = (
   }
 
   const show = (): void => {
-    new Notification(title || t(['title', 'lunaWallet']), {
+    new Notification(title, {
       body,
-      lang: language,
       ...options,
     })
   }

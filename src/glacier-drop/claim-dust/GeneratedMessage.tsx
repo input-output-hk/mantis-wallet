@@ -3,7 +3,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {copyToClipboard} from '../../common/clipboard'
+import {useLocalizedUtilities} from '../../settings-state'
 import {Link} from '../../common/Link'
 import {LINKS} from '../../external-link-config'
 import {normalizeAddress} from '../glacier-state'
@@ -21,6 +21,7 @@ export const GeneratedMessage = ({
   onNext,
   ...props
 }: GeneratedMessageProps & ModalProps): JSX.Element => {
+  const {copyToClipboard} = useLocalizedUtilities()
   // TODO: get authorization message from an endpoint
   const normalizedEtcAddress = normalizeAddress(externalAddress)
   const msg = `I authorise ${transparentAddress} to get my ${normalizedEtcAddress} GlacierDrop`

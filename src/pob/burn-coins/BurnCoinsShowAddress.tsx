@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {Chain} from '../chains'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import {copyToClipboard} from '../../common/clipboard'
+import {useLocalizedUtilities} from '../../settings-state'
 import './BurnCoinsShowAddress.scss'
 
 interface BurnCoinsShowAddressProps {
@@ -16,6 +16,8 @@ export const BurnCoinsShowAddress: FunctionComponent<BurnCoinsShowAddressProps> 
   burnAddress,
   goBack: cancel,
 }: BurnCoinsShowAddressProps) => {
+  const {copyToClipboard} = useLocalizedUtilities()
+
   return (
     <div className="BurnCoinsShowAddress">
       <Dialog
