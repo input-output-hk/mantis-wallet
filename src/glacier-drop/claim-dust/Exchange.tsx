@@ -1,8 +1,9 @@
 import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
-import {fromWei} from 'web3/lib/utils/utils.js'
-import {Chain, ETC_CHAIN, DST_CHAIN} from '../../common/chains'
+import {UNITS} from '../../common/units'
+import {DST_CHAIN} from '../../common/chains'
+import {GdChain, ETC_CHAIN} from '../gd-chains'
 import {wrapWithModal} from '../../common/LunaModal'
 import {ShortNumber} from '../../common/ShortNumber'
 import {Dialog} from '../../common/Dialog'
@@ -13,6 +14,8 @@ import {DialogError} from '../../common/dialog/DialogError'
 import {LINKS} from '../../external-link-config'
 import {Link} from '../../common/Link'
 import {Asset} from './Asset'
+import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
 import './Exchange.scss'
 
 interface ExchangeProps {
@@ -22,7 +25,7 @@ interface ExchangeProps {
   availableDust: BigNumber
   transparentAddresses: string[]
   onNext: (transparentAddress: string) => void
-  chain?: Chain
+  chain?: GdChain
 }
 
 const _Exchange = ({
@@ -35,12 +38,13 @@ const _Exchange = ({
   onCancel,
   chain = ETC_CHAIN,
 }: ExchangeProps & ModalProps): JSX.Element => {
+  const {t} = useTranslation()
   const [transparentAddress, setTransparentAddress] = useState(transparentAddresses[0])
 
   const externalBalanceTooLowError = externalAmount.isLessThan(minimumThreshold)
-    ? `${chain.symbol} account balance should be at least ${fromWei(minimumThreshold)} ${
-        chain.symbol
-      }`
+    ? t(chain.translations.lowBalanceError, {
+        replace: {amount: `${UNITS[chain.unitType].fromBasic(minimumThreshold)} ${chain.symbol}`},
+      })
     : ''
 
   const globalErrorElem = externalBalanceTooLowError && (
@@ -51,16 +55,15 @@ const _Exchange = ({
 
   return (
     <Dialog
-      title="Claim Dust"
+      title={t(['glacierDrop', 'title', 'claimDust'])}
       rightButtonProps={{
-        children: 'Go to Unlocking',
+        children: t(['glacierDrop', 'button', 'goToUnlocking']),
         onClick: () => {
           onNext(transparentAddress)
         },
         disabled,
       }}
       leftButtonProps={{
-        children: 'Cancel',
         onClick: onCancel,
       }}
       type="dark"
@@ -68,33 +71,41 @@ const _Exchange = ({
       footer={globalErrorElem}
     >
       <Asset amount={externalAmount} chain={chain}>
-        {chain.symbol} Balance
+        <Trans k={chain.translations.balanceLabel} />
       </Asset>
-      <DialogShowDust amount={minimumDustAmount}>You are eligible for at least</DialogShowDust>
+      <DialogShowDust amount={minimumDustAmount}>
+        <Trans k={['glacierDrop', 'label', 'youAreEligibleDust']} />
+      </DialogShowDust>
       <DialogApproval
         id="confirm-balance"
-        description={`Confirm ${chain.symbol} Balance OK`}
+        description={t(chain.translations.confirmBalance)}
         autoFocus
       />
       <DialogDropdown
-        label="Midnight Transparent Address"
+        label={t(['glacierDrop', 'label', 'midnightTransparentAddress'])}
         options={transparentAddresses}
         onChange={setTransparentAddress}
       />
-      <DialogApproval id="confirm-fee" description="I understand">
+      <DialogApproval
+        id="confirm-fee"
+        description={t(['common', 'message', 'iUnderstandApproval'])}
+      >
         <div className="dust-balance">
           <div className="message">
-            To complete the Unlocking of Dust and 1 Withdrawal Transaction, you will require est 0.5
-            (0.25 × 2) Dust. Please, ensure you have an available balance to cover these fees.
+            <Trans k={['glacierDrop', 'message', 'confirmFeeMessage']} />
           </div>
-          <span className="label">Currently Available Dust</span>
+          <span className="label">
+            <Trans k={['glacierDrop', 'label', 'availableDust']} />
+          </span>
           <span className="amount">
             <ShortNumber big={availableDust} /> {DST_CHAIN.symbol}
           </span>
         </div>
       </DialogApproval>
       <div className="get-dust">
-        <Link href={LINKS.faucet}>get dust</Link>
+        <Link href={LINKS.faucet}>
+          <Trans k={['glacierDrop', 'link', 'getDust']} />
+        </Link>
       </div>
     </Dialog>
   )

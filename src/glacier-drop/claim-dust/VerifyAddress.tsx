@@ -3,7 +3,9 @@ import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import {Chain, DST_CHAIN, ETC_CHAIN} from '../../common/chains'
+import {DST_CHAIN} from '../../common/chains'
+import {GdChain, ETC_CHAIN} from '../gd-chains'
+import {Trans} from '../../common/Trans'
 import './VerifyAddress.scss'
 
 interface VerifyAddressProps {
@@ -11,7 +13,7 @@ interface VerifyAddressProps {
   transparentAddress: string
   onNext: () => void
   onCancel: () => void
-  chain?: Chain
+  chain?: GdChain
 }
 
 export const VerifyAddress = ({
@@ -25,10 +27,10 @@ export const VerifyAddress = ({
   return (
     <LunaModal wrapClassName="VerifyAddress" onCancel={onCancel} {...props}>
       <Dialog
-        title="Claim Dust"
+        title={<Trans k={['glacierDrop', 'title', 'claimDust']} />}
         rightButtonProps={{
           autoFocus: true,
-          children: 'Generate Message',
+          children: <Trans k={['glacierDrop', 'button', 'generateMessage']} />,
           onClick: () => onNext(),
         }}
         leftButtonProps={{
@@ -37,11 +39,15 @@ export const VerifyAddress = ({
         type="dark"
       >
         <div className="section">
-          <div className="label">{chain.symbol} Address</div>
+          <div className="label">
+            <Trans k={chain.translations.address} />
+          </div>
           <DialogAddress svgLogo={chain.logo} address={externalAddress} />
         </div>
         <div className="section">
-          <div className="label">Midnight Address</div>
+          <div className="label">
+            <Trans k={['glacierDrop', 'label', 'midnightAddress']} />
+          </div>
           <DialogAddress svgLogo={DST_CHAIN.logo} address={transparentAddress} />
         </div>
       </Dialog>

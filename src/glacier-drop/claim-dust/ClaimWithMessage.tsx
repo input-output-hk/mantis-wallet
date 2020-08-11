@@ -2,10 +2,9 @@ import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {fromRpcSig, bufferToHex} from 'ethereumjs-util'
 import {AuthorizationSignature} from '../glacier-state'
-import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {Chain, ETC_CHAIN} from '../../common/chains'
+import {GdChain, ETC_CHAIN} from '../gd-chains'
 import {wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -13,10 +12,10 @@ import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {LINKS} from '../../external-link-config'
 import {Asset} from './Asset'
 import {rendererLog} from '../../common/logger'
+import {useTranslation} from '../../settings-state'
+import {createTErrorRenderer} from '../../common/i18n'
+import {Trans} from '../../common/Trans'
 import './ClaimWith.scss'
-
-export const INVALID_SIGNED_MESSAGE_TEXT = 'Invalid signed message'
-export const MESSAGE_MUST_BE_SET_TEXT = 'Message must be set'
 
 const signedMessageToAuthSignature = (signedMessage: string): AuthorizationSignature => {
   try {
@@ -28,7 +27,7 @@ const signedMessageToAuthSignature = (signedMessage: string): AuthorizationSigna
     }
   } catch (e) {
     rendererLog.error(e)
-    throw Error(INVALID_SIGNED_MESSAGE_TEXT)
+    throw createTErrorRenderer(['glacierDrop', 'error', 'invalidSignedMessage'])
   }
 }
 
@@ -37,7 +36,7 @@ interface ClaimWithMessageProps {
   minimumDustAmount: BigNumber
   transparentAddress: string
   onNext: (authSignature: AuthorizationSignature) => void
-  chain?: Chain
+  chain?: GdChain
 }
 
 const _ClaimWithMessage = ({
@@ -47,13 +46,14 @@ const _ClaimWithMessage = ({
   onNext,
   chain = ETC_CHAIN,
 }: ClaimWithMessageProps): JSX.Element => {
+  const {t} = useTranslation()
   const [signedMessage, setSignedMessage] = useState<string>('')
 
   return (
     <Dialog
-      title="Claim Dust with Signed Message"
+      title={t(['glacierDrop', 'title', 'claimDustWithSignedMessage'])}
       rightButtonProps={{
-        children: UNLOCK_BUTTON_TEXT,
+        children: t(['glacierDrop', 'button', 'unlockAndInitiatePoW']),
         onClick: () => {
           const authSignature = signedMessageToAuthSignature(signedMessage)
           onNext(authSignature)
@@ -69,23 +69,29 @@ const _ClaimWithMessage = ({
       <DialogInput
         autoFocus
         id="signed-message"
-        label={`Input Signed Message`}
+        label={t(['glacierDrop', 'label', 'inputSignedMessage'])}
         onChange={(e): void => {
           setSignedMessage(e.target.value)
         }}
         formItem={{
           name: 'signed-message',
-          rules: [{required: true, message: MESSAGE_MUST_BE_SET_TEXT}],
+          rules: [{required: true, message: t(['glacierDrop', 'error', 'signedMessageMustBeSet'])}],
         }}
       />
       <Asset amount={externalAmount} chain={chain}>
-        Asset
+        <Trans k={['glacierDrop', 'label', 'asset']} />
       </Asset>
       <DialogShowDust amount={minimumDustAmount}>
-        Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
+        <Trans k={['glacierDrop', 'label', 'estimatedDust']} />{' '}
+        <span className="note">
+          (<Trans k={['glacierDrop', 'message', 'estimatedDustNote']} />)
+        </span>
       </DialogShowDust>
       <DialogMessage label="Destination Address">{transparentAddress}</DialogMessage>
-      <DialogApproval id="should-keep-open-checkbox" description={SHOULD_KEEP_OPEN_TEXT} />
+      <DialogApproval
+        id="should-keep-open-checkbox"
+        description={t(['glacierDrop', 'message', 'shouldKeepLunaOpenWhileUnlocking'])}
+      />
     </Dialog>
   )
 }

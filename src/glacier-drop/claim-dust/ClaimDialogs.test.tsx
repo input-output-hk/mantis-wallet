@@ -4,20 +4,14 @@ import {fireEvent, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import {toWei} from 'web3/lib/utils/utils.js'
-import ethereumLogo from '../../assets/icons/chains/ethereum.svg'
 import {
   expectCalledOnClick,
   glacierWrappedRender,
   DIALOG_VALIDATION_ERROR,
 } from '../../common/test-helpers'
-import {UNLOCK_BUTTON_TEXT} from './claim-with-strings'
-import {Chain} from '../../common/chains'
+import {ETC_CHAIN} from '../gd-chains'
 import {ClaimWithKey} from './ClaimWithKey'
-import {
-  ClaimWithMessage,
-  MESSAGE_MUST_BE_SET_TEXT,
-  INVALID_SIGNED_MESSAGE_TEXT,
-} from './ClaimWithMessage'
+import {ClaimWithMessage} from './ClaimWithMessage'
 import {SelectMethod} from './SelectMethod'
 import {Exchange} from './Exchange'
 import {EnterAddress} from './EnterAddress'
@@ -37,22 +31,22 @@ const TRANSPARENT_ADDRESS_2 = 'm-test-uns-ad17upzkhnpmuenuhk3lnrc64q5kr0l3ez44g8
 const ETC_ADDRESS = '0x3a649Fe33e0845Df3e26977cc7B4592aFEC732Ba'
 const ETC_PRIVATE_KEY = '0x9c33b6ccd581b0635f154b5df78276587655f1f4fad46eb034c751511fe86474'
 
-const fooChain: Chain = {
-  symbol: 'DOGE',
-  logo: ethereumLogo,
-  unitType: 'Ether',
-}
+const UNLOCK_BUTTON_TEXT = 'Unlock and initiate Proof of Work puzzle'
+const INVALID_SIGNED_MESSAGE_TEXT = 'Invalid signed message'
+const MESSAGE_MUST_BE_SET_TEXT = 'Message must be set'
+
+const testChain = ETC_CHAIN
 
 test('Enter External Address', async () => {
   const onNext = jest.fn()
   const onCancel = jest.fn()
 
   const {getByLabelText, getByText, queryByText} = glacierWrappedRender(
-    <EnterAddress visible onNext={onNext} onCancel={onCancel} chain={fooChain} />,
+    <EnterAddress visible onNext={onNext} onCancel={onCancel} chain={testChain} />,
   )
 
   // Find Public Address field
-  const publicAddressInput = getByLabelText(`${fooChain.symbol} Public Address`)
+  const publicAddressInput = getByLabelText(`${testChain.symbol} Public Address`)
 
   // Find Proceed Button
   const submitButton = getByText('Proceed')
@@ -104,7 +98,7 @@ test('Exchange', async () => {
       transparentAddresses={transparentAddresses}
       onNext={onNext}
       onCancel={onCancel}
-      chain={fooChain}
+      chain={testChain}
     />,
   )
 
@@ -117,7 +111,7 @@ test('Exchange', async () => {
   await waitFor(() => expect(getByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 
   // External Balance shown
-  expect(getByText(`${fooChain.symbol} Balance`)).toBeInTheDocument()
+  expect(getByText(`${testChain.symbol} Balance`)).toBeInTheDocument()
   expect(getByText(EXTERNAL_AS_SRT)).toBeInTheDocument()
 
   // Dust Balance shown
@@ -125,7 +119,7 @@ test('Exchange', async () => {
   expect(getByText(DUST_AS_STR)).toBeInTheDocument()
 
   // Submit is disabled without confirmation
-  const confirmCheckbox = getByLabelText(`Confirm ${fooChain.symbol} Balance OK`)
+  const confirmCheckbox = getByLabelText(`Confirm ${testChain.symbol} Balance OK`)
   userEvent.click(confirmCheckbox)
 
   // First transparent address is selected by default
@@ -256,7 +250,7 @@ test('Claim with Private Key', async () => {
       transparentAddress={TRANSPARENT_ADDRESS_1}
       onNext={onNext}
       onCancel={onCancel}
-      chain={fooChain}
+      chain={testChain}
     />,
   )
 
@@ -271,7 +265,7 @@ test('Claim with Private Key', async () => {
   expect(getByText(DUST_AS_STR)).toBeInTheDocument()
 
   // Note is shown that it's only the minimum amount
-  expect(getByText('(The minimum amount of Dust you’ll get)')).toBeInTheDocument()
+  expect(getByText("(The minimum amount of Dust you'll get)")).toBeInTheDocument()
 
   // Destination transparent address is shown
   expect(getByText(TRANSPARENT_ADDRESS_1)).toBeInTheDocument()
@@ -282,7 +276,7 @@ test('Claim with Private Key', async () => {
 
   // Find Private Key Input
   const privateKeyInput = getByLabelText(
-    `${fooChain.symbol} Private Key from your ${fooChain.symbol} Wallet`,
+    `${testChain.symbol} Private Key from your ${testChain.symbol} Wallet`,
   )
 
   // Submit button can be clicked but it shows a dialog validation error
@@ -311,7 +305,7 @@ test('Claim with Private Key', async () => {
 
   // Accept warning
   const shouldKeepOpenCheckbox = getByLabelText(
-    'I’m aware that I have to keep my Luna wallet open during unlocking',
+    "I'm aware that I have to keep my Luna wallet open during unlocking",
   )
   userEvent.click(shouldKeepOpenCheckbox)
 
@@ -335,7 +329,7 @@ test('Claim with Message', async () => {
       transparentAddress={TRANSPARENT_ADDRESS_1}
       onNext={onNext}
       onCancel={onCancel}
-      chain={fooChain}
+      chain={testChain}
     />,
   )
 
@@ -350,7 +344,7 @@ test('Claim with Message', async () => {
   expect(getByText(DUST_AS_STR)).toBeInTheDocument()
 
   // Note is shown that it's only the minimum amount
-  expect(getByText('(The minimum amount of Dust you’ll get)')).toBeInTheDocument()
+  expect(getByText("(The minimum amount of Dust you'll get)")).toBeInTheDocument()
 
   // Destination transparent address is shown
   expect(getByText(TRANSPARENT_ADDRESS_1)).toBeInTheDocument()
@@ -377,7 +371,7 @@ test('Claim with Message', async () => {
 
   // Accept warning
   const shouldKeepOpenCheckbox = getByLabelText(
-    'I’m aware that I have to keep my Luna wallet open during unlocking',
+    "I'm aware that I have to keep my Luna wallet open during unlocking",
   )
   userEvent.click(shouldKeepOpenCheckbox)
 

@@ -1,12 +1,13 @@
 import React from 'react'
 import SVG from 'react-inlinesvg'
-import _ from 'lodash/fp'
 import {BLOCK_TIME_SECONDS} from './glacier-config'
 import {PeriodConfig} from './glacier-state'
-import {useFormatters} from '../settings-state'
+import {useFormatters, useTranslation} from '../settings-state'
 import clockIcon from '../assets/icons/clock.svg'
 import hourglassIcon from '../assets/icons/hourglass.svg'
 import {Period, getCurrentPeriod} from './Period'
+import {TKeyRenderer} from '../common/i18n'
+import {Trans} from '../common/Trans'
 import './PeriodStatus.scss'
 
 export const secondsUntilBlock = (currentBlock: number, block: number): number =>
@@ -15,16 +16,16 @@ export const secondsUntilBlock = (currentBlock: number, block: number): number =
 const timeUntilBlock = (currentBlock: number, block: number): string =>
   useFormatters().toDurationString(secondsUntilBlock(currentBlock, block))
 
-const getCurrentPeriodText = (period: Period): string => {
+const getCurrentPeriodText = (period: Period): TKeyRenderer => {
   switch (period) {
     case 'UnlockingNotStarted':
-      return 'Unlocking not yet started'
+      return ['glacierDrop', 'periodStatus', 'unlockingNotStarted']
     case 'Unlocking':
-      return 'Unlocking Period in Progress'
+      return ['glacierDrop', 'periodStatus', 'unlocking']
     case 'UnlockingEnded':
-      return 'Unlocking Period Ended'
+      return ['glacierDrop', 'periodStatus', 'unlockingEnded']
     case 'Unfreezing':
-      return 'Unfreezing Period in Progress'
+      return ['glacierDrop', 'periodStatus', 'unfreezing']
   }
 }
 
@@ -34,17 +35,23 @@ const getCurrentPeriodDetailText = (
   period: Period,
 ): string => {
   const {unlockingStartBlock, unlockingEndBlock, unfreezingStartBlock} = periodConfig
+  const {t} = useTranslation()
 
-  // TODO check capitalize
-  const t = (block: number): string => _.capitalize(timeUntilBlock(currentBlock, block))
+  const timeUntil = (block: number): string => timeUntilBlock(currentBlock, block)
 
   switch (period) {
     case 'UnlockingNotStarted':
-      return `${t(unlockingStartBlock)} until Unlocking starts`
+      return t(['glacierDrop', 'periodStatus', 'timeUntilUnlockingStarts'], {
+        replace: {duration: timeUntil(unlockingStartBlock)},
+      })
     case 'Unlocking':
-      return `${t(unlockingEndBlock)} left to unlock Dust`
+      return t(['glacierDrop', 'periodStatus', 'timeLeftToUnlockDust'], {
+        replace: {duration: timeUntil(unlockingEndBlock)},
+      })
     case 'UnlockingEnded':
-      return `${t(unfreezingStartBlock)} until Unfreezing`
+      return t(['glacierDrop', 'periodStatus', 'timeUntilUnfreezing'], {
+        replace: {duration: timeUntil(unfreezingStartBlock)},
+      })
     default:
       return ''
   }
@@ -65,7 +72,10 @@ const NextPeriodDetail = ({
       <div className="next-period">
         <div className="next-period-detail">
           <SVG src={hourglassIcon} className="icon hourglass" />
-          Unfreezing Period starts in {timeUntilBlock(currentBlock, unfreezingStartBlock)}
+          <Trans
+            k={['glacierDrop', 'periodStatus', 'unfreezingPeriodStartsIn']}
+            values={{duration: timeUntilBlock(currentBlock, unfreezingStartBlock)}}
+          />
         </div>
       </div>
     )
@@ -86,8 +96,15 @@ const PuzzleInfo = ({
   const timeLeft = timeUntilBlock(currentBlock, unlockingEndBlock)
   return (
     <div className="puzzle-info">
-      <div className="title">PoW Puzzle Complete</div>
-      <div>You have {timeLeft} to submit your Proof of Unlock for Glacier Drop</div>
+      <div className="title">
+        <Trans k={['glacierDrop', 'message', 'powPuzzleComplete']} />
+      </div>
+      <div>
+        <Trans
+          k={['glacierDrop', 'message', 'youHaveTimeLeftToSubmitYourProof']}
+          values={{timeLeft}}
+        />
+      </div>
     </div>
   )
 }
@@ -112,7 +129,7 @@ export const PeriodStatus = ({
         <div className="current-period">
           <div className="current-period-title">
             <SVG src={clockIcon} className="icon" />
-            {getCurrentPeriodText(period)}
+            <Trans k={getCurrentPeriodText(period)} />
           </div>
           {currentPeriodDetailText && (
             <div className="current-period-detail">{currentPeriodDetailText}</div>

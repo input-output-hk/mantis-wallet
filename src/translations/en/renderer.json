@@ -170,7 +170,9 @@
       "transparentAddressWarning": "<strong>Warning:</strong> By using a transparent address your transaction will not stay confidential.",
       "applyConfidentialityDescription": "This transaction will move selected funds to a confidential address which will remove their visibility from the Midnight Blockchain.",
       "transparentTransactionWarning": "<strong>Warning:</strong> I understand that the funds included in this transaction will no longer be confidential.",
-      "transparentAddressNeeded": "You need a transparent address to continue"
+      "transparentAddressNeeded": "You need a transparent address to continue",
+      "walletIsNotSyncing": "Wallet is not syncing.",
+      "generatedYourFirstTransparentAddress": "We generated your first transparent address."
     },
     "feeEstimateLevels": {
       "custom": "Custom",
@@ -273,12 +275,122 @@
     }
   },
   "glacierDrop": {
+    "title": {
+      "glacierDrop": "Glacier Drop",
+      "claimNumber": "Claim #{{number}}",
+      "epochs": "Epochs",
+      "claimHistory": "Claim History",
+      "submitProofOfUnlock": "Submit Proof of Unlock",
+      "withdrawAvailableDust": "Withdraw Available Dust",
+      "claimDustWithPrivateKey": "Claim Dust with Private Key",
+      "claimDustWithSignedMessage": "Claim Dust with Signed Message",
+      "claimDust": "Claim Dust"
+    },
+    "button": {
+      "submitProofOfUnlock": "Submit Proof of Unlock",
+      "submitProofOfUnlockShort": "Submit",
+      "withdrawAvailableDust": "Withdraw Available Dust",
+      "withdrawAvailableDustShort": "Withdraw",
+      "claimDust": "Claim Dust",
+      "unlockAndInitiatePoW": "Unlock and initiate Proof of Work puzzle",
+      "goToUnlocking": "Go to Unlocking",
+      "copyGeneratedMessage": "Copy Message",
+      "confirmAuthorization": "Confirm",
+      "continueWithPrivateKey": "Continue",
+      "createMessage": "Create",
+      "generateMessage": "Generate Message",
+      "useSignedMessage": "Use Signed",
+      "removeClaim": "Remove Claim"
+    },
+    "link": {
+      "viewUnfreezingProgress": "view unfreezing progress",
+      "viewUnlockTxnId": "view unlock txn-id",
+      "viewLatestWithdrawalTxnId": "view latest withdrawal txn-id",
+      "remainingEpochsUntilFullUnfreeze": "{{count}} epoch until full unfreeze",
+      "remainingEpochsUntilFullUnfreeze_plural": "{{count}} epochs until full unfreeze",
+      "learnMoreAboutGlacierDrop": "Learn more about Glacier Drop",
+      "getDust": "get Dust",
+      "viewCompatibleWalletsAndSoftware": "view compatible wallets & software",
+      "readMoreAboutGlacierDrop": "read more on website"
+    },
+    "label": {
+      "totalTimeToUnlockFunds": "Total time to unlock",
+      "etcAddress": "ETC Address",
+      "etcPublicAddress": "ETC Public Address",
+      "transparentMidnightAddress": "Transparent Midnight Address",
+      "midnightTransparentAddress": "Midnight Transparent Address",
+      "midnightAddress": "Midnight Address",
+      "eligibleAmount": "Eligible Amount",
+      "transactionFee": "Fee",
+      "etcPrivateKey": "ETC Private Key",
+      "etcPrivateKeyFromYourWallet": "ETC Private Key from your ETC Wallet",
+      "asset": "Asset",
+      "estimatedDust": "Estimated Dust",
+      "inputSignedMessage": "Input Signed Message",
+      "etcBalance": "ETC Balance",
+      "youAreEligibleDust": "You are eligible for at least",
+      "availableDust": "Currently Available Dust",
+      "signedMessages": "Messages",
+      "generatedMessage": "Generated Message"
+    },
     "error": {
       "alreadyClaimed": "Already claimed",
       "ethAddressMustBeSet": "Address must be set",
       "invalidEthAddress": "Invalid address",
       "invalidEthPrivateKey": "Invalid private key",
-      "ethPrivateKeyMustBeSet": "Private key must be set"
+      "ethPrivateKeyMustBeSet": "Private key must be set",
+      "failedToLoadConstantsFromContract": "Failed to load Glacier Drop constants from smart contract",
+      "glacierConstantsNotLoaded": "Glacier Drop constants not loaded",
+      "puzzleNotSolvedYet": "Puzzle is not solved yet",
+      "puzzleIsInInvalidStatus": "Puzzle is in invalid status",
+      "invalidSignedMessage": "Invalid signed message",
+      "signedMessageMustBeSet": "Message must be set",
+      "lowEtcBalanceError": "ETC account balance should be at least {{amount}}"
+    },
+    "message": {
+      "notEnoughTimeForPuzzleWarning": "There may not be enough time to solve the puzzle and unlock eligible funds before the unlocking period ends.",
+      "youCanNoLongerSubmitProof": "You can no longer submit your Proof of Unlock.",
+      "epochNFinishes": "Epoch {{currentEpoch}} finishes in {{duration}}",
+      "totalDust": "Total Dust",
+      "youHaveNotMadeClaimsYet": "You haven't made claims yet",
+      "powPuzzleComplete": "PoW Puzzle Complete",
+      "youHaveTimeLeftToSubmitYourProof": "You have {{timeLeft}} to submit your Proof of Unlock for Glacier Drop",
+      "shouldKeepLunaOpenWhileUnlocking": "I'm aware that I have to keep my Luna wallet open during unlocking",
+      "estimatedDustNote": "The minimum amount of Dust you'll get",
+      "confirmEtcBalance": "Confirm ETC Balance OK",
+      "confirmFeeMessage": "To complete the Unlocking of Dust and 1 Withdrawal Transaction, you will require est 0.5 (0.25 × 2). Please, ensure you have an available balance to cover these fees.",
+      "registerForDustMessage": "You can register for Dust using two methods. Please, select the most appropriate for you."
+    },
+    "transactionStatus": {
+      "pending": "Transaction is pending",
+      "failed": "Transaction failed",
+      "successful": "Transaction successful"
+    },
+    "powStatus": {
+      "solvingPuzzle": "Solving Puzzle",
+      "puzzleSolved": "Puzzle Solved",
+      "powPuzzleSubmitted": "PoW Puzzle Submitted"
+    },
+    "claimStatus": {
+      "claimed": "Claimed",
+      "unlocked": "Unlocked",
+      "unfrozen": "Unfrozen",
+      "withdrawn": "Withdrawn"
+    },
+    "epochHeader": {
+      "midnightAddress": "Midnight Address",
+      "totalDust": "Total Dust",
+      "epochNumber": "Epoch {{epochNumber}}"
+    },
+    "periodStatus": {
+      "unlockingNotStarted": "Unlocking not yet started",
+      "unlocking": "Unlocking Period in Progress",
+      "unlockingEnded": "Unlocking Period Ended",
+      "unfreezing": "Unfreezing Period in Progress",
+      "timeUntilUnlockingStarts": "{{duration}} until Unlocking starts",
+      "timeLeftToUnlockDust": "{{duration}} left to unlock Dust",
+      "timeUntilUnfreezing": "{{duration}} until Unfreezing",
+      "unfreezingPeriodStartsIn": "Unfreezing Period starts in {{duration}}"
     }
   },
   "proofOfBurn": {
@@ -392,7 +504,8 @@
       "finish": "Finish",
       "closeModal": "Close",
       "goBackOneStep": "Go Back",
-      "iUnderstand": "I understand"
+      "iUnderstand": "I understand",
+      "proceedToNextStep": "Proceed"
     },
     "answer": {
       "yes": "Yes",
@@ -427,7 +540,8 @@
       "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
       "saveDebugLogsCancelled": "Operation cancelled.",
       "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
-      "chooseFromDropdownList": "Choose from list…"
+      "chooseFromDropdownList": "Choose from list…",
+      "iUnderstandApproval": "I understand"
     },
     "error": {
       "dialogValidationFailed": "Some fields require additional action before you can continue.",

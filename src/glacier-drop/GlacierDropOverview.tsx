@@ -2,7 +2,7 @@ import React, {useState, useEffect, PropsWithChildren} from 'react'
 import {message} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {isNone, getOrElse, isSome} from 'fp-ts/lib/Option'
-import {ETC_CHAIN, Chain} from '../common/chains'
+import {ETC_CHAIN, GdChain} from './gd-chains'
 import {MINING_STATUS_CHECK_INTERVAL, DEFAULT_GLACIER_CONSTANTS} from './glacier-config'
 import {
   Claim,
@@ -14,7 +14,7 @@ import {
   GlacierConstants,
 } from './glacier-state'
 import {LoadedState, CallTxStatuses} from '../common/wallet-state'
-import {useLocalizedUtilities} from '../settings-state'
+import {useLocalizedUtilities, useTranslation} from '../settings-state'
 import {rendererLog} from '../common/logger'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {useInterval} from '../common/hook-utils'
@@ -35,9 +35,10 @@ import {ClaimRow} from './ClaimRow'
 import {Epochs} from './Epochs'
 import {SubmitProofOfUnlock} from './SubmitProofOfUnlock'
 import {WithdrawAvailableDust} from './WithdrawAvailableDust'
+import {Trans} from '../common/Trans'
 import './GlacierDropOverview.scss'
 
-const availableChains: Chain[] = [ETC_CHAIN]
+const availableChains: GdChain[] = [ETC_CHAIN]
 
 interface ClaimHistoryProps {
   claims: Claim[]
@@ -67,7 +68,9 @@ const ClaimHistory = ({
     <>
       <div className="claim-history">
         <div className="title">
-          <div className="main-title">Claim History</div>
+          <div className="main-title">
+            <Trans k={['glacierDrop', 'title', 'claimHistory']} />
+          </div>
           <div className="line"></div>
         </div>
         {claims.length > 0 && (
@@ -88,7 +91,11 @@ const ClaimHistory = ({
             ))}
           </div>
         )}
-        {claims.length === 0 && <div className="message">You haven&apos;t made claims yet</div>}
+        {claims.length === 0 && (
+          <div className="message">
+            <Trans k={['glacierDrop', 'message', 'youHaveNotMadeClaimsYet']} />
+          </div>
+        )}
       </div>
       {claimToSubmit && (
         <SubmitProofOfUnlock
@@ -119,12 +126,16 @@ const ClaimHistory = ({
 }
 
 const GlacierDropWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
+  const {t} = useTranslation()
   return (
     <div className="GlacierDropOverview">
       <HeaderWithSyncStatus
-        externalLink={{text: 'Learn more about Glacier Drop', url: LINKS.aboutGlacier}}
+        externalLink={{
+          text: t(['glacierDrop', 'link', 'learnMoreAboutGlacierDrop']),
+          url: LINKS.aboutGlacier,
+        }}
       >
-        Glacier Drop
+        <Trans k={['glacierDrop', 'title', 'glacierDrop']} />
       </HeaderWithSyncStatus>
       <div className="content">{children}</div>
     </div>
@@ -148,6 +159,7 @@ const _GlacierDropOverview = ({
     updateUnfreezingClaimData,
     updateDustAmounts,
   } = GlacierState.useContainer()
+  const {t, translateError} = useTranslation()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
   const [epochsShown, showEpochs] = useState<boolean>(false)
@@ -168,7 +180,7 @@ const _GlacierDropOverview = ({
 
   const handleError = (e: Error): void => {
     rendererLog.error(e)
-    message.error(e.message, 5)
+    message.error(translateError(e), 5)
   }
 
   // Checks puzzle mining state every N milliseconds if a mining is in progress
@@ -186,7 +198,7 @@ const _GlacierDropOverview = ({
         await mine(solvingClaim)
       } else if (miningState.status === 'MiningSuccessful') {
         // mining successful: show notification
-        makeDesktopNotification('PoW Puzzle Complete')
+        makeDesktopNotification(t(['glacierDrop', 'message', 'powPuzzleComplete']))
       }
     } catch (e) {
       handleError(e)
@@ -230,7 +242,9 @@ const _GlacierDropOverview = ({
   if (mode === 'offline') {
     return (
       <GlacierDropWrapper>
-        <div className="error">Wallet is not syncing.</div>
+        <div className="error">
+          <Trans k={['wallet', 'message', 'walletIsNotSyncing']} />
+        </div>
       </GlacierDropWrapper>
     )
   }
@@ -243,7 +257,7 @@ const _GlacierDropOverview = ({
       .catch(handleError)
   }
 
-  const chooseChain = (_chain: Chain): void => {
+  const chooseChain = (_chain: GdChain): void => {
     if (claimDisabled) return
 
     if (walletState.transparentAccounts.length === 0) {
@@ -252,7 +266,7 @@ const _GlacierDropOverview = ({
       walletState
         .generateNewAddress()
         .then(() => {
-          message.info('We generated your first transparent address.', 5)
+          message.info(t(['wallet', 'message', 'generatedYourFirstTransparentAddress']), 5)
           setActiveModal('EnterAddress')
           setClaimDisabled(false)
         })
@@ -270,9 +284,9 @@ const _GlacierDropOverview = ({
       <div className="wallet-selector"></div>
       {period === 'Unlocking' && !solvingClaim && (
         <div className="claim-buttons">
-          {availableChains.map((c: Chain) => (
+          {availableChains.map((c: GdChain) => (
             <Token chain={c} chooseChain={chooseChain} key={c.symbol}>
-              Claim Dust
+              <Trans k={['glacierDrop', 'button', 'claimDust']} />
             </Token>
           ))}
         </div>

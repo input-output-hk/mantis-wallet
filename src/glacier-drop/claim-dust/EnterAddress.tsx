@@ -3,14 +3,14 @@ import {validateEthAddress, toAntValidator, ValidationResult} from '../../common
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {Chain, ETC_CHAIN} from '../../common/chains'
+import {GdChain, ETC_CHAIN} from '../gd-chains'
 import {GlacierState, BalanceWithProof} from '../glacier-state'
 import {LINKS} from '../../external-link-config'
 import {useTranslation} from '../../settings-state'
 
 interface EnterAddressProps extends ModalOnCancel {
   onNext: (address: string, balanceWithProof: BalanceWithProof) => void
-  chain?: Chain
+  chain?: GdChain
 }
 
 const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps): JSX.Element => {
@@ -27,9 +27,9 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
 
   return (
     <Dialog
-      title="Claim Dust"
+      title={t(['glacierDrop', 'title', 'claimDust'])}
       rightButtonProps={{
-        children: 'Proceed',
+        children: t(['common', 'button', 'proceedToNextStep']),
         onClick: async () => {
           const balanceWithProof = await getEtcSnapshotBalanceWithProof(address)
           onNext(address, balanceWithProof)
@@ -44,7 +44,7 @@ const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps)
     >
       <DialogInput
         id="public-address"
-        label={`${chain.symbol} Public Address`}
+        label={t(chain.translations.publicAddressLabel)}
         value={address}
         onChange={(e): void => {
           setAddress(e.target.value)

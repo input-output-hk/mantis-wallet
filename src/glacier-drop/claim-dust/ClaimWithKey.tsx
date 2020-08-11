@@ -4,15 +4,15 @@ import {GlacierState, AuthorizationSignature} from '../glacier-state'
 import {validateEthPrivateKey, toAntValidator} from '../../common/util'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {Chain, ETC_CHAIN} from '../../common/chains'
+import {GdChain, ETC_CHAIN} from '../gd-chains'
 import {wrapWithModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogShowDust} from '../../common/dialog/DialogShowDust'
 import {LINKS} from '../../external-link-config'
-import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
 import {Asset} from './Asset'
 import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
 import './ClaimWith.scss'
 
 interface ClaimWithKeyProps {
@@ -20,7 +20,7 @@ interface ClaimWithKeyProps {
   minimumDustAmount: BigNumber
   transparentAddress: string
   onNext: (signature: AuthorizationSignature) => void
-  chain?: Chain
+  chain?: GdChain
 }
 
 const _ClaimWithKey = ({
@@ -39,9 +39,9 @@ const _ClaimWithKey = ({
 
   return (
     <Dialog
-      title="Claim Dust with Private Key"
+      title={t(['glacierDrop', 'title', 'claimDustWithPrivateKey'])}
       rightButtonProps={{
-        children: UNLOCK_BUTTON_TEXT,
+        children: t(['glacierDrop', 'button', 'unlockAndInitiatePoW']),
         onClick: async () => {
           const signature = await authorizationSign(transparentAddress, etcPrivateKey)
           onNext(signature)
@@ -57,7 +57,7 @@ const _ClaimWithKey = ({
     >
       <DialogInput
         id="private-key-input"
-        label={`${chain.symbol} Private Key from your ${chain.symbol} Wallet `}
+        label={t(chain.translations.privateKeyLabelLong)}
         onChange={(e): void => setEtcPrivateKey(e.target.value.toLowerCase())}
         formItem={{
           name: 'private-key-input',
@@ -66,13 +66,19 @@ const _ClaimWithKey = ({
         autoFocus
       />
       <Asset amount={externalAmount} chain={chain}>
-        Asset
+        <Trans k={['glacierDrop', 'label', 'asset']} />
       </Asset>
       <DialogShowDust amount={minimumDustAmount}>
-        Estimated Dust <span className="note">(The minimum amount of Dust you’ll get)</span>
+        <Trans k={['glacierDrop', 'label', 'estimatedDust']} />{' '}
+        <span className="note">
+          (<Trans k={['glacierDrop', 'message', 'estimatedDustNote']} />)
+        </span>
       </DialogShowDust>
       <DialogMessage label="Destination Address">{transparentAddress}</DialogMessage>
-      <DialogApproval id="should-keep-open-checkbox" description={SHOULD_KEEP_OPEN_TEXT} />
+      <DialogApproval
+        id="should-keep-open-checkbox"
+        description={t(['glacierDrop', 'message', 'shouldKeepLunaOpenWhileUnlocking'])}
+      />
     </Dialog>
   )
 }

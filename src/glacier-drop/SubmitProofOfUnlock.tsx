@@ -51,9 +51,9 @@ const _SubmitProofOfUnlock = ({
 
   return (
     <Dialog
-      title="Submit Proof of Unlock"
+      title={t(['glacierDrop', 'title', 'submitProofOfUnlock'])}
       rightButtonProps={{
-        children: 'Submit',
+        children: t(['glacierDrop', 'button', 'submitProofOfUnlockShort']),
         onClick: async () => {
           const gasPrice = await calculateGasPrice(
             parseInt(Dust.toBasic(fee)),
@@ -78,10 +78,14 @@ const _SubmitProofOfUnlock = ({
       onSetLoading={modalLocker.setLocked}
       type="dark"
     >
-      <DialogMessage label="Midnight Transparent Address">{transparentAddress}</DialogMessage>
-      <DialogShowDust amount={dustAmount}>Eligible Amount</DialogShowDust>
+      <DialogMessage label={t(['glacierDrop', 'label', 'transparentMidnightAddress'])}>
+        {transparentAddress}
+      </DialogMessage>
+      <DialogShowDust amount={dustAmount}>
+        {t(['glacierDrop', 'label', 'eligibleAmount'])}
+      </DialogShowDust>
       <DialogFee
-        label="Fee"
+        label={t(['glacierDrop', 'label', 'transactionFee'])}
         feeEstimates={feeEstimates}
         feeEstimateError={feeEstimateError}
         onChange={setFee}

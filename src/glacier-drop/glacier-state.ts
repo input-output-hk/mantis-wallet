@@ -30,8 +30,6 @@ import glacierDropContractABI from '../assets/contracts/GlacierDrop.json'
 import constantsRepositoryContractABI from '../assets/contracts/ConstantsRepository.json'
 import {createTErrorRenderer} from '../common/i18n'
 
-const GLACIER_CONSTANTS_NOT_LOADED_MSG = 'Glacier Drop constants not loaded'
-
 // Contracts
 const web3sync = new Web3()
 const GlacierDropContract = web3sync.eth.contract(glacierDropContractABI).at()
@@ -259,7 +257,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const toBigNumber = (raw: string): BigNumber => {
       const result = new BigNumber(raw)
       if (result.isNaN()) {
-        throw Error('Failed to load Glacier Drop constants from smart contract')
+        throw createTErrorRenderer(['glacierDrop', 'error', 'failedToLoadConstantsFromContract'])
       }
       return result
     }
@@ -314,7 +312,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const getFinalUnlockedDustForClaim = (claim: Claim, totalUnlockedEther: BigNumber): BigNumber => {
     if (isNone(constants)) {
-      throw Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
+      throw createTErrorRenderer(['glacierDrop', 'error', 'glacierConstantsNotLoaded'])
     }
     const {totalAtomToBeDistributed} = constants.value
     const {externalAmount} = claim
@@ -453,7 +451,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
 
   const mine = async (claim: IncompleteClaim): Promise<NewMineStarted> => {
     if (isNone(constants)) {
-      throw Error(GLACIER_CONSTANTS_NOT_LOADED_MSG)
+      throw createTErrorRenderer(['glacierDrop', 'error', 'glacierConstantsNotLoaded'])
     }
 
     const {externalAmount, externalAddress} = claim
@@ -504,7 +502,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     // Initialize a new claim and start mining
 
     if (claims[claim.externalAddress] !== undefined) {
-      throw Error('Already claimed')
+      throw createTErrorRenderer(['glacierDrop', 'error', 'alreadyClaimed'])
     }
 
     // start mining and get estimated time
@@ -563,7 +561,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const {powNonce, puzzleStatus} = claim
 
     if (!powNonce || puzzleStatus !== 'unsubmitted') {
-      throw Error('Puzzle is not solved yet.')
+      throw createTErrorRenderer(['glacierDrop', 'error', 'puzzleNotSolvedYet'])
     }
 
     const unlockCallParams = getUnlockCallParams(claim, {gasLimit, gasPrice})
@@ -610,7 +608,7 @@ function useGlacierState(initialState?: Partial<GlacierStateParams>): GlacierDat
     const {puzzleStatus} = claim
 
     if (puzzleStatus !== 'submitted') {
-      throw Error('Puzzle is in invalid status')
+      throw createTErrorRenderer(['glacierDrop', 'error', 'puzzleIsInInvalidStatus'])
     }
 
     const withdrawCallParams = getWithdrawCallParams(claim, {gasLimit, gasPrice})

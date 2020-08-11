@@ -11,6 +11,7 @@ import checkIcon from '../assets/icons/check.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import {PeriodConfig} from './glacier-state'
 import {getCurrentEpoch, getSecondsUntilNextEpoch, getUnfrozenAmount} from './Period'
+import {Trans} from '../common/Trans'
 import './Epochs.scss'
 
 export interface EpochRow {
@@ -48,26 +49,33 @@ export const Epochs = ({
   return (
     <LunaModal wrapClassName="Epochs" width="1000px" {...props}>
       <div className="main-title">
-        Epochs
+        <Trans k={['glacierDrop', 'title', 'epochs']} />
         {currentEpoch < maximumNumberOfEpochs && (
           <span className="epoch-timer">
             <SVG src={clockIcon} className="clock icon" />
-            Epoch {currentEpoch} finishes in {toDurationString(secondsUntilNextEpoch)}
+            <Trans
+              k={['glacierDrop', 'message', 'epochNFinishes']}
+              values={{currentEpoch, duration: toDurationString(secondsUntilNextEpoch)}}
+            />
           </span>
         )}
       </div>
       <div className="table-container">
         <div className="epochs-table" style={tableStyle}>
           {/* Epochs Header */}
-          <div className="header">Midnight Address</div>
-          <div className="header">Total Dust</div>
-          {epochIndices.map((epochNum) => (
+          <div className="header">
+            <Trans k={['glacierDrop', 'epochHeader', 'midnightAddress']} />
+          </div>
+          <div className="header">
+            <Trans k={['glacierDrop', 'epochHeader', 'totalDust']} />
+          </div>
+          {epochIndices.map((epochNumber) => (
             <div
-              className={classnames('header', {pending: isEpochPending(epochNum)})}
-              key={epochNum}
+              className={classnames('header', {pending: isEpochPending(epochNumber)})}
+              key={epochNumber}
             >
-              Epoch {epochNum}
-              {!isEpochPending(epochNum) && <SVG src={checkIcon} className="checked icon" />}
+              <Trans k={['glacierDrop', 'epochHeader', 'epochNumber']} values={{epochNumber}} />
+              {!isEpochPending(epochNumber) && <SVG src={checkIcon} className="checked icon" />}
             </div>
           ))}
 
@@ -89,7 +97,7 @@ export const Epochs = ({
                   return (
                     <div key={epochNum} className={classnames({pending: isEpochPending(epochNum)})}>
                       {unfrozenAmountAtEpoch.isEqualTo(dustAmount) ? (
-                        'Total Dust'
+                        <Trans k={['glacierDrop', 'message', 'totalDust']} />
                       ) : (
                         <ShortNumber big={unfrozenAmountAtEpoch} />
                       )}

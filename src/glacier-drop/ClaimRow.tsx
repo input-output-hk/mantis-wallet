@@ -23,6 +23,7 @@ import {
 } from './Period'
 import {secondsUntilBlock} from './PeriodStatus'
 import {useFormatters} from '../settings-state'
+import {Trans} from '../common/Trans'
 import exchangeIcon from '../assets/icons/exchange.svg'
 import './ClaimRow.scss'
 
@@ -34,15 +35,17 @@ const TxStatusText = ({txStatus}: TxStatusTextProps): JSX.Element => {
   if (!txStatus) {
     return <></>
   } else if (txStatus.status === 'TransactionPending') {
-    return <>Transaction is pending</>
+    return <Trans k={['glacierDrop', 'transactionStatus', 'pending']} />
   } else if (txStatus.status === 'TransactionFailed') {
     return (
       <Popover content={txStatus.message} placement="bottom">
-        <span className="fail">Transaction failed</span>
+        <span className="fail">
+          <Trans k={['glacierDrop', 'transactionStatus', 'failed']} />
+        </span>
       </Popover>
     )
   } else {
-    return <>Transaction successful</>
+    return <Trans k={['glacierDrop', 'transactionStatus', 'successful']} />
   }
 }
 
@@ -74,16 +77,19 @@ const PuzzleProgress = ({
       )
       return (
         <>
-          <div>Solving Puzzle</div>
+          <div>
+            <Trans k={['glacierDrop', 'powStatus', 'solvingPuzzle']} />
+          </div>
           <div>
             <Popover content="Estimation" placement="bottom">
-              <span>Total time to unlock:</span>
+              <span>
+                <Trans k={['glacierDrop', 'label', 'totalTimeToUnlockFunds']} />:
+              </span>
             </Popover>
             <span className="time-left">{toDurationString(claim.puzzleDuration)}</span>
             {claim.puzzleDuration > secondsUntilUnlockingEnds && (
               <div className="puzzle-warning">
-                There may not be enough time to solve the puzzle and unlock eligible funds before
-                the unlocking period ends.
+                <Trans k={['glacierDrop', 'message', 'notEnoughTimeForPuzzleWarning']} />
               </div>
             )}
           </div>
@@ -93,7 +99,9 @@ const PuzzleProgress = ({
     case 'unsubmitted': {
       return (
         <>
-          <div className="pow-status">Puzzle Solved</div>
+          <div className="pow-status">
+            <Trans k={['glacierDrop', 'powStatus', 'puzzleSolved']} />
+          </div>
           <div>
             {period === 'Unlocking' ? (
               <Button
@@ -102,10 +110,12 @@ const PuzzleProgress = ({
                 onClick={() => onSubmitPuzzle(claim)}
                 disabled={claim.txBuildInProgress}
               >
-                Submit Proof of Unlock
+                <Trans k={['glacierDrop', 'button', 'submitProofOfUnlock']} />
               </Button>
             ) : (
-              <span className="puzzle-warning">You can no longer submit your Proof of Unlock.</span>
+              <span className="puzzle-warning">
+                <Trans k={['glacierDrop', 'message', 'youCanNoLongerSubmitProof']} />
+              </span>
             )}
           </div>
         </>
@@ -123,13 +133,17 @@ const PuzzleProgress = ({
               className="small-button remove-claim-button"
               onClick={() => onRemoveClaim(claim)}
             >
-              Remove Claim
+              <Trans k={['glacierDrop', 'button', 'removeClaim']} />
             </Button>
           )}
-          <div className="pow-status">PoW Puzzle Submitted</div>
+          <div className="pow-status">
+            <Trans k={['glacierDrop', 'powStatus', 'powPuzzleSubmitted']} />
+          </div>
           <div className="action-link">
             <Popover content={claim.unlockTxHash} placement="bottom">
-              <span>view unlock txn-id</span>
+              <span>
+                <Trans k={['glacierDrop', 'link', 'viewUnlockTxnId']} />
+              </span>
             </Popover>
           </div>
         </>
@@ -191,7 +205,12 @@ const UnfreezeDetail = ({
           </span>
         </div>
         {epochsRemaining > 0 && (
-          <div className="action-link">{epochsRemaining} epochs until full unfreeze</div>
+          <div className="action-link">
+            <Trans
+              k={['glacierDrop', 'link', 'remainingEpochsUntilFullUnfreeze']}
+              count={epochsRemaining}
+            />
+          </div>
         )}
         <Button
           type="primary"
@@ -199,10 +218,10 @@ const UnfreezeDetail = ({
           onClick={() => onWithdrawDust(claim)}
           disabled={cannotWithdrawMore || claim.txBuildInProgress}
         >
-          Withdraw Available Dust
+          <Trans k={['glacierDrop', 'button', 'withdrawAvailableDust']} />
         </Button>
         <div className="action-link" {...fillActionHandlers(showEpochs)}>
-          view unfreezing progress
+          <Trans k={['glacierDrop', 'link', 'viewUnfreezingProgress']} />
         </div>
       </>
     )
@@ -236,7 +255,9 @@ const WithdrawDetail = ({claim, withdrawalStatus}: WithdrawDetailProps): JSX.Ele
       </div>
       <div className="action-link">
         <Popover content={withdrawTxHashes[withdrawTxHashes.length - 1]} placement="bottom">
-          <span>view latest withdrawal txn-id</span>
+          <span>
+            <Trans k={['glacierDrop', 'link', 'viewLatestWithdrawalTxnId']} />
+          </span>
         </Popover>
       </div>
     </>
@@ -327,7 +348,9 @@ export const ClaimRow = ({
   return (
     <div className="ClaimRow">
       <div className="header">
-        <div className="claim-title">Claim #{index + 1}</div>
+        <div className="claim-title">
+          <Trans k={['glacierDrop', 'title', 'claimNumber']} values={{number: index + 1}} />
+        </div>
         <div className="exchange">
           <ShortNumber big={externalAmount} unit={ETC_CHAIN.unitType} /> {ETC_CHAIN.symbol}
           <SVG src={exchangeIcon} className="icon" />
@@ -336,34 +359,46 @@ export const ClaimRow = ({
         <div className="external-address">
           <Popover content={externalAddress} placement="bottom">
             <span>
-              {ETC_CHAIN.symbol} Address: {externalAddress}
+              <Trans k={['glacierDrop', 'label', 'etcAddress']} />: {externalAddress}
             </span>
           </Popover>
         </div>
         <div className="midnight-address">
           <Popover content={transparentAddress} placement="bottom">
-            <span>Transparent Midnight Address: {transparentAddress}</span>
+            <span>
+              <Trans k={['glacierDrop', 'label', 'transparentMidnightAddress']} />:{' '}
+              {transparentAddress}
+            </span>
           </Popover>
         </div>
       </div>
       <div className="status">
         <div className="progress">
-          <ProgressIcon progressState={'checked'} /> <span className="checked">Claimed</span>
+          <ProgressIcon progressState={'checked'} />{' '}
+          <span className="checked">
+            <Trans k={['glacierDrop', 'claimStatus', 'claimed']} />
+          </span>
         </div>
         <div className="line"></div>
         <div className="progress">
           <ProgressIcon progressState={unlockProgress} />{' '}
-          <span className={unlockProgress}>Unlocked</span>
+          <span className={unlockProgress}>
+            <Trans k={['glacierDrop', 'claimStatus', 'unlocked']} />
+          </span>
         </div>
         <div className="line"></div>
         <div className="progress">
           <ProgressIcon progressState={unfreezeProgress} />{' '}
-          <span className={unfreezeProgress}>Unfrozen</span>
+          <span className={unfreezeProgress}>
+            <Trans k={['glacierDrop', 'claimStatus', 'unfrozen']} />
+          </span>
         </div>
         <div className="line"></div>
         <div className="progress">
           <ProgressIcon progressState={withdrawProgress} />{' '}
-          <span className={withdrawProgress}>Withdrawn</span>
+          <span className={withdrawProgress}>
+            <Trans k={['glacierDrop', 'claimStatus', 'withdrawn']} />
+          </span>
         </div>
 
         <div className="claimed detail">

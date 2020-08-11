@@ -12,7 +12,7 @@ test('PeriodStatus: Unlocking not yet started', async () => {
   )
 
   expect(getByText('Unlocking not yet started')).toBeInTheDocument()
-  expect(getByText('Less than a minute until Unlocking starts')).toBeInTheDocument()
+  expect(getByText('less than a minute until Unlocking starts')).toBeInTheDocument()
 })
 
 test('PeriodStatus: Unlocking Period in Progress', async () => {
@@ -26,7 +26,7 @@ test('PeriodStatus: Unlocking Period in Progress', async () => {
   )
 
   expect(getByText('Unlocking Period in Progress')).toBeInTheDocument()
-  expect(getByText('About 1 hour left to unlock Dust')).toBeInTheDocument()
+  expect(getByText('about 1 hour left to unlock Dust')).toBeInTheDocument()
   expect(getByText('Unfreezing Period starts in about 2 hours')).toBeInTheDocument()
 })
 
@@ -53,7 +53,7 @@ test('PeriodStatus: Unlocking Period Ended', async () => {
   )
 
   expect(getByText('Unlocking Period Ended')).toBeInTheDocument()
-  expect(getByText('About 1 hour until Unfreezing')).toBeInTheDocument()
+  expect(getByText('about 1 hour until Unfreezing')).toBeInTheDocument()
 })
 
 test('PeriodStatus: PoW Puzzle Complete not shown when unlocking period ended', async () => {

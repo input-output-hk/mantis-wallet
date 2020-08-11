@@ -20,9 +20,8 @@ import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
 import './TransactionList.scss'
 
-export const SORTABLE_PROPERTIES = ['type', 'amount', 'time', 'status'] as const
-type SortableProperty = typeof SORTABLE_PROPERTIES[number]
-type Property = SortableProperty | 'asset'
+type SortableProperty = 'type' | 'amount' | 'time' | 'status'
+type NonSortableProperty = 'asset'
 type Direction = 'asc' | 'desc'
 
 export interface SortBy {
@@ -50,14 +49,24 @@ export const updateSorting = (currentSortBy: SortBy, nextProperty: SortablePrope
   }
 }
 
-interface ColumnConfig {
-  property: Property
+interface CommonColumnConfig {
   label: TKeyRenderer
-  sortable: boolean
   CellComponent: ({transaction}: TransactionCellProps) => JSX.Element
 }
 
-const columns: ColumnConfig[] = [
+export interface SortableColumnConfig extends CommonColumnConfig {
+  property: SortableProperty
+  sortable: true
+}
+
+interface NonSortableColumnConfig extends CommonColumnConfig {
+  property: NonSortableProperty
+  sortable: false
+}
+
+type ColumnConfig = SortableColumnConfig | NonSortableColumnConfig
+
+export const columns: ColumnConfig[] = [
   {
     property: 'type',
     label: ['wallet', 'label', 'transactionType'],

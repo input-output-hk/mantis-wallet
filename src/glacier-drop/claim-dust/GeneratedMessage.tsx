@@ -3,10 +3,11 @@ import {ModalProps} from 'antd/lib/modal'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {useLocalizedUtilities} from '../../settings-state'
+import {useLocalizedUtilities, useTranslation} from '../../settings-state'
 import {Link} from '../../common/Link'
 import {LINKS} from '../../external-link-config'
 import {normalizeAddress} from '../glacier-state'
+import {Trans} from '../../common/Trans'
 import './GeneratedMessage.scss'
 
 interface GeneratedMessageProps {
@@ -22,6 +23,8 @@ export const GeneratedMessage = ({
   ...props
 }: GeneratedMessageProps & ModalProps): JSX.Element => {
   const {copyToClipboard} = useLocalizedUtilities()
+  const {t} = useTranslation()
+
   // TODO: get authorization message from an endpoint
   const normalizedEtcAddress = normalizeAddress(externalAddress)
   const msg = `I authorise ${transparentAddress} to get my ${normalizedEtcAddress} GlacierDrop`
@@ -29,21 +32,27 @@ export const GeneratedMessage = ({
   return (
     <LunaModal wrapClassName="GeneratedMessage" {...props}>
       <Dialog
-        title="Claim Dust"
+        title={t(['glacierDrop', 'title', 'claimDust'])}
         leftButtonProps={{
           autoFocus: true,
-          children: 'Copy Message',
+          children: t(['glacierDrop', 'button', 'copyGeneratedMessage']),
           onClick: () => copyToClipboard(msg),
         }}
         rightButtonProps={{
-          children: 'Confirm',
+          children: t(['glacierDrop', 'button', 'confirmAuthorization']),
           onClick: () => onNext(),
         }}
         type="dark"
       >
-        <DialogInput label="Generated Message" value={msg} disabled={true} />
+        <DialogInput
+          label={t(['glacierDrop', 'label', 'generatedMessage'])}
+          value={msg}
+          disabled={true}
+        />
         <div className="more-info">
-          <Link href={LINKS.aboutGlacier}>view compatible wallets & software</Link>
+          <Link href={LINKS.aboutGlacier}>
+            <Trans k={['glacierDrop', 'link', 'viewCompatibleWalletsAndSoftware']} />
+          </Link>
         </div>
       </Dialog>
     </LunaModal>

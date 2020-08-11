@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import _ from 'lodash/fp'
 import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
@@ -8,7 +7,13 @@ import {Transaction, TransparentAddress, Account} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates} from '../common/wallet-state'
-import {TransactionList, updateSorting, SORTABLE_PROPERTIES, SortBy} from './TransactionList'
+import {
+  TransactionList,
+  updateSorting,
+  SortBy,
+  columns,
+  SortableColumnConfig,
+} from './TransactionList'
 import {Trans} from '../common/Trans'
 import './TransactionHistory.scss'
 
@@ -48,15 +53,17 @@ export const TransactionHistory = ({
 
   const sortByMenu = (
     <Menu>
-      {SORTABLE_PROPERTIES.map((name) => {
-        return (
-          <Menu.Item key={name} onClick={() => setSortBy(updateSorting(sortBy, name))}>
-            {sortBy.property === name &&
-              (sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}
-            {_.capitalize(name)}
-          </Menu.Item>
-        )
-      })}
+      {columns
+        .filter((column): column is SortableColumnConfig => column.sortable)
+        .map(({property, label}) => {
+          return (
+            <Menu.Item key={property} onClick={() => setSortBy(updateSorting(sortBy, property))}>
+              {sortBy.property === property &&
+                (sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}
+              <Trans k={label} />
+            </Menu.Item>
+          )
+        })}
     </Menu>
   )
 

@@ -60,12 +60,12 @@ export const OverviewGraph = (props: OverviewGraphProps): JSX.Element => {
       <br />
       <Trans
         k={['wallet', 'balanceType', 'transparentPercentage']}
-        values={{percentage: formatPercentage(confRatio)}}
+        values={{percentage: formatPercentage(tranRatio)}}
       />
       <br />
       <Trans
         k={['wallet', 'balanceType', 'pendingPercentage']}
-        values={{percentage: formatPercentage(confRatio)}}
+        values={{percentage: formatPercentage(pendRatio)}}
       />
     </>
   )
