@@ -65,6 +65,8 @@
   }
 
   .exchange-info {
+    @extend %disable-focus-outline;
+
     grid-area: exchange;
     padding: 1em;
     font-size: $font-size-m;

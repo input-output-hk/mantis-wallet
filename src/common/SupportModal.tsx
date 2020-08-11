@@ -25,7 +25,7 @@ const createMessage = (path: string) => ({dismiss}: {dismiss: DismissFunction}):
     dismiss()
   }
   return (
-    <span style={{cursor: 'pointer'}} {...fillActionHandlers(onClickMsg)}>
+    <span className="link" {...fillActionHandlers(onClickMsg)}>
       <Trans k={['common', 'message', 'debugLogsSaved']} />
     </span>
   )
@@ -61,6 +61,7 @@ export const SupportDialog = (): JSX.Element => {
   return (
     <Dialog
       title={t(['common', 'title', 'support'])}
+      className="SupportModal"
       leftButtonProps={{
         onClick: () => {
           saveDebugLogs()

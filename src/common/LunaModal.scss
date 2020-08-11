@@ -1,6 +1,6 @@
 @import '../themify', '../vars';
 
-.LunaModal {
+.LunaModal.ant-modal {
   margin-left: $sidebar-width;
 
   @media screen and #{$sidebar-collapse-query} {

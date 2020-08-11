@@ -147,6 +147,10 @@
         }
       }
 
+      &:focus {
+        text-decoration: underline;
+      }
+
       &.disabled {
         opacity: 0.3;
         cursor: not-allowed;
@@ -219,7 +223,8 @@
           }
         }
 
-        &:hover {
+        &:hover,
+        &:focus {
           .link-title {
             display: block;
           }

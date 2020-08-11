@@ -1,0 +1,8 @@
+@import '../partial';
+
+.SupportModal {
+  .link {
+    @extend %disable-focus-outline;
+    cursor: 'pointer';
+  }
+}
