@@ -80,6 +80,7 @@ export const interactive = (): JSX.Element => {
           },
           txDetails: {
             txType: 'transfer',
+            memo: null,
           },
         }),
         object<Transaction>('Transaction 2', {
@@ -93,6 +94,7 @@ export const interactive = (): JSX.Element => {
           },
           txDetails: {
             txType: 'transfer',
+            memo: null,
           },
         }),
         object<Transaction>('Transaction 3', {
@@ -102,6 +104,7 @@ export const interactive = (): JSX.Element => {
           txStatus: 'pending',
           txDetails: {
             txType: 'transfer',
+            memo: null,
           },
         }),
       ]}

@@ -35,12 +35,8 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
           transparentAddresses={transparentAccounts}
           accounts={accounts}
           availableBalance={availableBalance}
-          sendTransaction={async (
-            recipient: string,
-            amount: number,
-            fee: number,
-          ): Promise<void> => {
-            await walletState.sendTransaction(recipient, amount, fee)
+          sendTransaction={async (recipient: string, amount: number, fee: number, memo: string) => {
+            await walletState.sendTransaction(recipient, amount, fee, memo)
           }}
           sendTxToTransparent={async (
             recipient: string,

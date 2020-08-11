@@ -110,7 +110,7 @@ export interface LoadedState {
   lock: (secrets: PassphraseSecrets) => Promise<boolean>
   generateNewAddress: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
-  sendTransaction: (recipient: string, amount: number, fee: number) => Promise<string>
+  sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<string>
   sendTxToTransparent: (
     recipient: string,
     amount: BigNumber,
@@ -469,8 +469,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     recipient: string,
     amount: number,
     fee: number,
+    memo: string,
   ): Promise<string> => {
-    const {jobHash} = await wallet.sendTransaction(recipient, amount, fee, false)
+    const {jobHash} = await wallet.sendTransaction(recipient, amount, fee, ['text', memo], false)
     await buildJobState.submitJob(jobHash, () => load())
     load([loadBalance])
     return jobHash

@@ -71,6 +71,7 @@ interface CallTxDetails {
 
 interface TransferTxDetails {
   txType: 'transfer'
+  memo: ['text', string] | ['binary', string] | null
 }
 
 interface CoinbaseTxDetails {
@@ -267,6 +268,7 @@ export interface WalletAPI {
     recipient: string,
     amount: number,
     fee: number,
+    memo: ['text', string] | ['binary', string],
     waitForBuild: false,
   ): AsyncTxResponse
   callContract(callParams: CallParams, waitForBuild: false): AsyncTxResponse

@@ -114,7 +114,12 @@ class MockWallet implements WalletAPI {
   }
 
   // transactions
-  sendTransaction(recipient: string, amount: number, fee: number): AsyncTxResponse {
+  sendTransaction(
+    recipient: string,
+    amount: number,
+    fee: number,
+    memo: ['text', string],
+  ): AsyncTxResponse {
     this._lockGuard()
     this.transactions.push({
       hash: this.transactions.length.toString(),
@@ -126,6 +131,7 @@ class MockWallet implements WalletAPI {
       },
       txDetails: {
         txType: 'transfer',
+        memo,
       },
     })
     return ASYNC_TX_RESPONSE
