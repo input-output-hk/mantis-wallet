@@ -5,6 +5,8 @@ import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
+import {useTranslation} from '../settings-state'
+import {createTErrorRenderer} from '../common/i18n'
 
 interface WalletRestoreProps {
   cancel: () => void
@@ -16,6 +18,7 @@ const _WalletRestore = ({
   finish,
   walletState,
 }: PropsWithWalletState<WalletRestoreProps, NoWalletState>): JSX.Element => {
+  const {t} = useTranslation()
   const [, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
@@ -34,13 +37,13 @@ const _WalletRestore = ({
 
   return (
     <Dialog
-      title="Restore wallet"
+      title={t(['wallet', 'title', 'restoreWallet'])}
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
         onClick: async (): Promise<void> => {
           const isRestored = await restore()
           if (!isRestored) {
-            throw Error("Couldn't restore wallet with the provided information")
+            throw createTErrorRenderer(['wallet', 'error', 'couldNotRestoreWallet'])
           }
           finish()
         },
@@ -48,12 +51,12 @@ const _WalletRestore = ({
     >
       <DialogInput
         autoFocus
-        label="Wallet name"
+        label={t(['wallet', 'label', 'walletName'])}
         id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
         formItem={{
           name: 'wallet-name',
-          rules: [{required: true, message: "Name shouldn't be empty"}],
+          rules: [{required: true, message: t(['wallet', 'error', 'walletNameShouldNotBeEmpty'])}],
         }}
       />
       <DialogSecrets

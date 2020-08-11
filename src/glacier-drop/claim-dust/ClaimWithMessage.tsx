@@ -1,12 +1,11 @@
 import React, {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import {fromRpcSig, bufferToHex} from 'ethereumjs-util'
-import {ETC_CHAIN} from '../glacier-config'
 import {AuthorizationSignature} from '../glacier-state'
 import {UNLOCK_BUTTON_TEXT, SHOULD_KEEP_OPEN_TEXT} from './claim-with-strings'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {DisplayChain} from '../../pob/chains'
+import {Chain, ETC_CHAIN} from '../../common/chains'
 import {wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -38,7 +37,7 @@ interface ClaimWithMessageProps {
   minimumDustAmount: BigNumber
   transparentAddress: string
   onNext: (authSignature: AuthorizationSignature) => void
-  chain?: DisplayChain
+  chain?: Chain
 }
 
 const _ClaimWithMessage = ({

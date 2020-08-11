@@ -10,18 +10,20 @@ import {NoWallet} from '../wallets/NoWallet'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
 import {PROVER_POLLING_RATE} from './pob-config'
+import {useTranslation} from '../settings-state'
 import './BurnCentre.scss'
 
 export const _BurnCentre = ({
   walletState,
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
+  const {t} = useTranslation()
   const pobState = ProofOfBurnState.useContainer()
   const routerState = RouterState.useContainer()
 
   useInterval(pobState.refresh, PROVER_POLLING_RATE)
 
   return (
-    <PobLayout title="Burn Centre">
+    <PobLayout title={t(['proofOfBurn', 'title', 'burnCentre'])}>
       <BurnActions
         onBurnCoins={() => routerState.navigate('BURN_COINS')}
         transparentAccounts={walletState.transparentAccounts}
@@ -32,8 +34,11 @@ export const _BurnCentre = ({
   )
 }
 
-export const BurnCentre = withStatusGuard(_BurnCentre, 'LOADED', () => (
-  <PobLayout title="Burn Centre">
-    <NoWallet />
-  </PobLayout>
-))
+export const BurnCentre = withStatusGuard(_BurnCentre, 'LOADED', () => {
+  const {t} = useTranslation()
+  return (
+    <PobLayout title={t(['proofOfBurn', 'title', 'burnCentre'])}>
+      <NoWallet />
+    </PobLayout>
+  )
+})

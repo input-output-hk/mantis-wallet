@@ -6,10 +6,11 @@ import {LunaModal, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {TransparentAddress} from '../../web3'
-import {useLocalizedUtilities} from '../../settings-state'
+import {useLocalizedUtilities, useTranslation} from '../../settings-state'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {CopyableLongText} from '../../common/CopyableLongText'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
+import {Trans} from '../../common/Trans'
 import './ReceiveTransaction.scss'
 
 interface ReceivePrivateTransactionProps {
@@ -37,7 +38,7 @@ const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTransactionProp
   return (
     <Dialog
       leftButtonProps={{
-        children: 'Copy Address',
+        children: <Trans k={['wallet', 'button', 'copyAddress']} />,
         autoFocus: true,
         onClick: (): void => {
           copyToClipboard(privateAddress)
@@ -48,7 +49,9 @@ const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTransactionProp
       }}
       type="dark"
     >
-      <div className="title">Your confidential address</div>
+      <div className="title">
+        <Trans k={['wallet', 'title', 'yourConfidentialAddress']} />
+      </div>
       <DialogQRCode content={privateAddress} />
     </Dialog>
   )
@@ -62,9 +65,14 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
   const modalLocker = ModalLocker.useContainer()
   const {copyToClipboard} = useLocalizedUtilities()
 
-  const title = transparentAddress
-    ? `Receive Account ${transparentAddress.index}`
-    : 'No known addresses'
+  const title = transparentAddress ? (
+    <Trans
+      k={['wallet', 'title', 'receiveTransparentAccount']}
+      values={{index: transparentAddress.index}}
+    />
+  ) : (
+    <Trans k={['wallet', 'message', 'noKnownTransparentAddresses']} />
+  )
 
   const handleLoading = (isLoading: boolean): void => {
     onSetLoading(isLoading)
@@ -74,7 +82,7 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
   return (
     <Dialog
       leftButtonProps={{
-        children: 'Copy Address',
+        children: <Trans k={['wallet', 'button', 'copyAddress']} />,
         autoFocus: true,
         onClick: (): void => {
           if (transparentAddress) {
@@ -85,7 +93,7 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
       }}
       rightButtonProps={{
         type: 'default',
-        children: 'Generate new',
+        children: <Trans k={['wallet', 'button', 'generateNewTransparentAddressShort']} />,
         onClick: onGenerateNew,
       }}
       onSetLoading={handleLoading}
@@ -96,8 +104,7 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
         <>
           <DialogQRCode content={transparentAddress.address} />
           <DialogMessage type="highlight">
-            <b>Warning:</b> By using a transparent address your transaction will not stay
-            confidential.
+            <Trans k={['wallet', 'message', 'transparentAddressWarning']} />
           </DialogMessage>
         </>
       )}
@@ -113,6 +120,7 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
   defaultMode = 'confidential',
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
+  const {t} = useTranslation()
   const [mode, setMode] = useState(defaultMode)
   const [isLoading, setLoading] = useState(false)
 
@@ -122,7 +130,9 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
     transparentAddresses &&
     transparentAddresses.length > 1 && (
       <div className="ReceiveModalFooter">
-        <div className="title">Last Used addresses</div>
+        <div className="title">
+          <Trans k={['wallet', 'label', 'lastUsedAddresses']} />
+        </div>
         {transparentAddresses.slice(1, 6).map(({address}) => (
           <div key={address} className="address">
             <CopyableLongText content={address} showQrCode />
@@ -134,7 +144,9 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
               if (!isLoading) goToAccounts()
             })}
           >
-            <span className="link">See all Transparent Addresses</span>
+            <span className="link">
+              <Trans k={['wallet', 'button', 'seeAllTransparentAddresses']} />
+            </span>
           </div>
         )}
       </div>
@@ -153,8 +165,8 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
         <DialogTextSwitch
           buttonClassName="mode-switch"
           defaultMode={mode}
-          left={{label: 'Confidential', type: 'confidential'}}
-          right={{label: 'Transparent', type: 'transparent'}}
+          left={{label: t(['wallet', 'transactionType', 'confidential']), type: 'confidential'}}
+          right={{label: t(['wallet', 'transactionType', 'transparent']), type: 'transparent'}}
           onChange={setMode}
         />
       </Dialog>

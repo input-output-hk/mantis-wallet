@@ -40,12 +40,13 @@ export const WalletOverview = ({
 
   const transparentTooltip = (
     <p style={{width: '350px'}}>
-      These funds are transparent and can be visible to other Midnight users, we recommend you move
-      them to a confidential address.
+      <Trans k={['wallet', 'message', 'transparentFundsDescription']} />
       {viewType !== 'accounts' && (
         <>
           <br />
-          <b>To view your transparent balances, click the Transparent Accounts button below.</b>
+          <b>
+            <Trans k={['wallet', 'message', 'howToViewTransparentBalancesInfo']} />
+          </b>
         </>
       )}
     </p>
@@ -54,7 +55,9 @@ export const WalletOverview = ({
   return (
     <div className="WalletOverview">
       <div className="header">
-        <HeaderWithSyncStatus>Wallet Overview</HeaderWithSyncStatus>
+        <HeaderWithSyncStatus>
+          <Trans k={['wallet', 'title', 'walletOverview']} />
+        </HeaderWithSyncStatus>
         {isTestnet(networkTag) && (
           <div>
             <Trans k={['title', 'testnetEdition']} />
@@ -68,7 +71,9 @@ export const WalletOverview = ({
               {..._.mapValues({pending, confidential, transparent}, (b) => b.toNumber())}
             />
           </div>
-          <div className="box-text">Total Balance</div>
+          <div className="box-text">
+            <Trans k={['wallet', 'label', 'accountTotalBalance']} />
+          </div>
           <div className="box-amount">
             <img src={dustIcon} alt="dust" className="dust" />
             <ShortNumber big={total} />
@@ -80,14 +85,16 @@ export const WalletOverview = ({
               &nbsp;
               <SVG src={confidentialIcon} className="svg" />
             </span>
-            Confidential
+            <Trans k={['wallet', 'label', 'accountConfidentialBalance']} />
           </div>
           <div className="box-amount">
             <img src={dustIcon} alt="dust" className="dust" />
             <ShortNumber big={confidential} />
           </div>
           <div className="get-dust">
-            <Link href={LINKS.faucet}>Where to get Dust?</Link>
+            <Link href={LINKS.faucet}>
+              <Trans k={['wallet', 'link', 'whereToGetDust']} />
+            </Link>
           </div>
         </div>
         <div className="transparent">
@@ -98,7 +105,7 @@ export const WalletOverview = ({
                   &nbsp;
                   <SVG src={transparentIcon} className="svg" />
                 </span>
-                Transparent
+                <Trans k={['wallet', 'label', 'accountTransparentBalance']} />
               </div>
               <div className="box-amount">
                 <img src={dustIcon} alt="dust" className="dust" />

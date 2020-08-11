@@ -5,11 +5,12 @@ import {fold} from 'fp-ts/lib/Either'
 import {ExtendableError} from '../../shared/extendable-error'
 import {ProverConfig} from '../../config/type'
 import {BurnWatcher} from '../pob-state'
-import {ChainId} from '../chains'
+import {PobChainId} from '../pob-chains'
 import {wait} from '../../shared/utils'
 import {PROVER_API_REQUEST_TIMEOUT} from '../pob-config'
 import {rendererLog} from '../../common/logger'
 import {DateFromISO8601} from '../../common/io-helpers'
+import {createTErrorRenderer} from '../../common/i18n'
 
 function notRequired<T extends t.Mixed>(type: T): t.UnionC<[T, t.NullC, t.UndefinedC]> {
   return t.union([type, t.null, t.undefined])
@@ -113,21 +114,21 @@ export class ProverApiError extends ExtendableError {
   }
 }
 
-export const prettyErrorMessage = (
+export const prettyError = (
   error: Error,
-  prettyApiError: (apiError: ProverApiError) => string = (e) => e.message,
-): string => {
+  prettyApiError: (apiError: ProverApiError) => Error = (e) => e,
+): Error => {
   rendererLog.error(error)
 
   if (tPromise.isDecodeError(error)) {
-    return 'Unexpected response from prover.'
+    return createTErrorRenderer(['proofOfBurn', 'error', 'unexpectedResponseFromProver'])
   }
 
   if (error instanceof ProverApiError) {
     return prettyApiError(error)
   }
 
-  return 'Unexpected error while communicating with prover.'
+  return createTErrorRenderer(['proofOfBurn', 'error', 'failedCommunicationWithProver'])
 }
 
 const httpRequest = async (
@@ -203,7 +204,7 @@ export const getStatuses = async ({burnAddress, prover}: BurnWatcher): Promise<A
 export const createBurn = async (
   prover: ProverConfig,
   address: string,
-  chainId: ChainId,
+  chainId: PobChainId,
   fee: number,
   autoConversion: boolean,
 ): Promise<string> => {
@@ -230,7 +231,7 @@ export const proveTransaction = async (
 
 export const getInfo = async (
   prover: ProverConfig,
-): Promise<Partial<Record<ChainId, ChainInfo>>> => {
+): Promise<Partial<Record<PobChainId, ChainInfo>>> => {
   return httpGetRequest(prover, 'submitter', '/api/v1/info')
     .then(tPromise.decode(ProverInfo))
     .then(({chains}) => chains)

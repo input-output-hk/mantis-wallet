@@ -2,7 +2,7 @@ import React, {PropsWithChildren} from 'react'
 import BigNumber from 'bignumber.js'
 import {SettingsState} from '../../settings-state'
 import {ShortNumber} from '../ShortNumber'
-import {DUST_SYMBOL} from '../../pob/chains'
+import {DST_CHAIN} from '../chains'
 import dustIconDark from '../../assets/dark/dust.png'
 import dustIconLight from '../../assets/light/dust.png'
 import './DialogShowDust.scss'
@@ -26,7 +26,7 @@ export const DialogShowDust = ({
           <img src={dustIcon} alt="dust" className="dust" />
         </div>
         <div className="amount">
-          <ShortNumber big={amount} /> {DUST_SYMBOL}
+          <ShortNumber big={amount} /> {DST_CHAIN.symbol}
         </div>
       </div>
     </div>

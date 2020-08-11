@@ -3,6 +3,7 @@ import _ from 'lodash/fp'
 import {Dialog} from '../../common/Dialog'
 import {DialogRecoveryPhrase} from '../../common/dialog/DialogRecoveryPhrase'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
+import {useTranslation} from '../../settings-state'
 
 interface WalletCreateVerifyRecoveryStepProps {
   back: () => void
@@ -17,18 +18,19 @@ export const WalletCreateVerifyRecoveryStep: FunctionComponent<WalletCreateVerif
   seedPhrase,
   shuffledSeedPhrase,
 }: WalletCreateVerifyRecoveryStepProps) => {
+  const {t} = useTranslation()
   const [isSeedPhraseValidated, setSeedPhraseValidated] = useState(false)
 
   return (
     <Dialog
-      title="Recovery Phrase"
+      title={t(['wallet', 'title', 'walletCreationRecoveryPhraseStep'])}
       leftButtonProps={{
         onClick: back,
-        children: 'Back',
+        children: t(['common', 'button', 'oneStepBack']),
       }}
       rightButtonProps={{
         disabled: !isSeedPhraseValidated,
-        children: 'Finish',
+        children: t(['common', 'button', 'finish']),
         onClick: finish,
       }}
     >
@@ -39,11 +41,11 @@ export const WalletCreateVerifyRecoveryStep: FunctionComponent<WalletCreateVerif
       />
       <DialogApproval
         id="checkbox-local-only"
-        description="I understand that my wallet and tokens are held securely on this device only and not on any servers"
+        description={t(['wallet', 'message', 'checkboxFinishingWalletCreationDescription1'])}
       />
       <DialogApproval
         id="checkbox-recovery"
-        description="I understand that if this application is moved to another device or is deleted, my wallet can only be recovered with the backup phrase I have written down and stored securely"
+        description={t(['wallet', 'message', 'checkboxFinishingWalletCreationDescription2'])}
       />
     </Dialog>
   )

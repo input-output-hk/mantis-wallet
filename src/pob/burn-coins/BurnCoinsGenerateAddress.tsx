@@ -5,7 +5,7 @@ import {Popover, Button, Input} from 'antd'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
-import {Chain} from '../chains'
+import {PobChain} from '../pob-chains'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {LINKS} from '../../external-link-config'
@@ -21,10 +21,12 @@ import exchangeIcon from '../../assets/icons/exchange.svg'
 import {UNITS} from '../../common/units'
 import {LunaModal} from '../../common/LunaModal'
 import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
+import {createTErrorRenderer} from '../../common/i18n'
 import './BurnCoinsGenerateAddress.scss'
 
 interface BurnCoinsGenerateAddressProps {
-  chain: Chain
+  chain: PobChain
   provers: Prover[]
   transparentAddresses: string[]
   cancel: () => void
@@ -45,16 +47,18 @@ const ApproveChangeReward = ({
 }): JSX.Element => (
   <LunaModal visible={visible} onCancel={onCancel}>
     <Dialog
-      title="Change Prover Reward"
+      title={<Trans k={['proofOfBurn', 'title', 'changeProverReward']} />}
       leftButtonProps={{onClick: onCancel}}
-      rightButtonProps={{children: 'I understand', onClick: onApprove}}
+      rightButtonProps={{
+        children: <Trans k={['common', 'button', 'iUnderstand']} />,
+        onClick: onApprove,
+      }}
     >
       <DialogMessage type="highlight">
-        {feeTooltip}
+        <Trans k={['proofOfBurn', 'message', 'proverRewardTooltip']} />
         <br />
         <br />
-        <b>Warning:</b> If the fee is larger than burn amount, the burn will fail and cannot be
-        recovered. Under such conditions, <b>you will lose your source fund</b>.
+        <Trans k={['proofOfBurn', 'message', 'proverRewardWarning']} />
       </DialogMessage>
     </Dialog>
   </LunaModal>
@@ -93,7 +97,8 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
 
   const title = (
     <>
-      Token Exchange Rate: 1 {chain.symbol} <SVG src={exchangeIcon} className="svg" /> 1 M-
+      <Trans k={['proofOfBurn', 'label', 'tokenExchangeRate']} />: 1 {chain.symbol}{' '}
+      <SVG src={exchangeIcon} className="svg" /> 1 M-
       {chain.symbol}
     </>
   )
@@ -106,9 +111,12 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
     <div className="BurnCoinsGenerateAddress">
       <Dialog
         title={title}
-        leftButtonProps={{children: '← Go Back', onClick: cancel}}
+        leftButtonProps={{
+          children: t(['common', 'button', 'goBackOneStep']),
+          onClick: cancel,
+        }}
         rightButtonProps={{
-          children: `Generate ${chain.symbol} Address`,
+          children: t(chain.translations.generateAddress),
           onClick: async (): Promise<void> => {
             if (prover) {
               await generateBurnAddress(
@@ -117,7 +125,7 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
                 Number(UNITS[chain.unitType].toBasic(fee)),
               )
             } else {
-              throw Error('No prover was selected.')
+              throw createTErrorRenderer(['proofOfBurn', 'error', 'noProverWasSelected'])
             }
           },
           name: 'generate-burn',
@@ -125,12 +133,12 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
         }}
       >
         <DialogDropdown
-          label="Select Receive Address"
+          label={t(['proofOfBurn', 'label', 'selectReceiveAddress'])}
           options={transparentAddresses}
           onChange={setTransparentAddress}
         />
         <DialogDropdown
-          label="Prover"
+          label={t(['proofOfBurn', 'label', 'prover'])}
           options={compatibleProvers.map((prover) => ({
             key: prover.address,
             label: `${prover.name} (${prover.address})`,
@@ -145,8 +153,10 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
           <label className="label" htmlFor="generate-burn-fee">
             <Popover content={feeTooltip}>
               <span>
-                Assign reward in M-{chain.symbol} for your prover{' '}
-                <span style={{textTransform: 'none'}}>(What is this?)</span>
+                <Trans k={chain.translations.proverRewardLabel} />{' '}
+                <span style={{textTransform: 'none'}}>
+                  (<Trans k={['common', 'link', 'whatIsThis']} />)
+                </span>
               </span>
             </Popover>
           </label>
@@ -160,31 +170,19 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
           />
           {isFeeDisabled && (
             <Button className="change-reward" onClick={() => setApproveChangeRewardVisible(true)}>
-              Change Reward
+              <Trans k={['proofOfBurn', 'button', 'changeProverReward']} />
             </Button>
           )}
         </div>
         <DialogMessage>
           <Link href={LINKS.proverListMetrics} styled>
-            See Prover List Metrics
+            <Trans k={['proofOfBurn', 'link', 'seeProverListMetrics']} />
           </Link>
         </DialogMessage>
         <DialogApproval
           autoFocus
           id="i-understand-the-process-checkbox"
-          description={
-            <>
-              This will generate a {chain.name} Address to which you can send {chain.name} to be
-              burned and converted into Midnight Tokens. These Midnight Tokens can be used to
-              participate in an Auction to win spendable Dust Tokens.{' '}
-              <b>
-                The Burn process is irreversible and the {chain.name} Tokens burned will be
-                unspendable forever.
-              </b>
-              <br />
-              <br />I understand the process
-            </>
-          }
+          description={<Trans k={chain.translations.burnDescription} />}
         />
       </Dialog>
       <ApproveChangeReward

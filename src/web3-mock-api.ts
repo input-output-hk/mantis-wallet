@@ -29,7 +29,7 @@ import {
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
-import {CHAINS, ChainId} from './pob/chains'
+import {POB_CHAINS, PobChainId} from './pob/pob-chains'
 
 const HIGHEST_KNOWN_BLOCK = 1000
 const ADDRESS =
@@ -265,7 +265,7 @@ class MockGlacierDrop {
   }
 }
 
-const mockErc20Contracts = _.values(CHAINS).map(({id}): [ChainId, ERC20Contract] => [
+const mockErc20Contracts = _.values(POB_CHAINS).map(({id}): [PobChainId, ERC20Contract] => [
   id,
   {balanceOf: () => new BigNumber(1) as BigNumberJSON},
 ])
@@ -300,5 +300,5 @@ export const Web3MockApi: Web3API = {
   config: {
     getNetworkTag: () => ({networkTag: 'testnet'}),
   },
-  erc20: _.fromPairs(mockErc20Contracts) as Record<ChainId, ERC20Contract>,
+  erc20: _.fromPairs(mockErc20Contracts) as Record<PobChainId, ERC20Contract>,
 }

@@ -11,10 +11,10 @@ import {
   noBurnObservedFilter,
   proveTransaction,
   getInfo,
-  prettyErrorMessage,
+  prettyError,
   BurnStatusType,
 } from './api/prover'
-import {Chain, ChainId} from './chains'
+import {PobChain, PobChainId} from './pob-chains'
 import {ProverConfig} from '../config/type'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
@@ -22,6 +22,7 @@ import {Web3API, makeWeb3Worker} from '../web3'
 import {config} from '../config/renderer'
 import {prop} from '../shared/utils'
 import {rendererLog} from '../common/logger'
+import {createTErrorRenderer} from '../common/i18n'
 
 export interface BurnWatcher {
   burnAddress: string
@@ -30,7 +31,7 @@ export interface BurnWatcher {
 
 export interface BurnAddressInfo {
   midnightAddress: string
-  chainId: ChainId
+  chainId: PobChainId
   reward: number
   autoConversion: boolean
 }
@@ -45,12 +46,12 @@ export interface RealBurnStatus extends BurnApiStatus {
 export type BurnStatus = {
   burnWatcher: BurnWatcher
   lastStatuses: RealBurnStatus[]
-  errorMessage?: string
+  error?: Error
   isHidden: boolean
 }
 
 export interface Prover extends ProverConfig {
-  rewards: Partial<Record<ChainId, number>>
+  rewards: Partial<Record<PobChainId, number>>
 }
 
 export interface ProofOfBurnData {
@@ -60,7 +61,7 @@ export interface ProofOfBurnData {
     burnAddress: string,
     prover: ProverConfig,
     midnightAddress: string,
-    chain: Chain,
+    chain: PobChain,
     reward: number,
     autoConversion: boolean,
   ) => Promise<void>
@@ -71,7 +72,7 @@ export interface ProofOfBurnData {
   burnAddresses: Record<string, BurnAddressInfo>
   addTx: (prover: ProverConfig, burnTx: string, burnAddress: string) => Promise<void>
   provers: Prover[]
-  pendingBalances: Partial<Record<ChainId, BigNumber>>
+  pendingBalances: Partial<Record<PobChainId, BigNumber>>
 }
 
 export type StorePobData = {
@@ -104,7 +105,7 @@ const getBurnStatusKey = ({burnAddress, prover: {address}}: BurnWatcher): string
 export const getPendingBalance = (
   burnStatuses: BurnStatus[],
   burnAddresses: Record<string, BurnAddressInfo>,
-): Partial<Record<ChainId, BigNumber>> =>
+): Partial<Record<PobChainId, BigNumber>> =>
   _.pipe(
     _.flatMap(({lastStatuses, burnWatcher: {burnAddress}}: BurnStatus) =>
       lastStatuses.map((status) => ({
@@ -232,7 +233,7 @@ function useProofOfBurnState(
           {
             burnWatcher,
             lastStatuses: burnStatuses[burnStatusKey]?.lastStatuses || [],
-            errorMessage: prettyErrorMessage(error),
+            error: prettyError(error),
             isHidden: hiddenBurnProcesses[burnStatusKey] === 'all',
           },
         ]
@@ -255,7 +256,7 @@ function useProofOfBurnState(
     burnAddress: string,
     prover: ProverConfig,
     midnightAddress: string,
-    chain: Chain,
+    chain: PobChain,
     reward: number,
     autoConversion: boolean,
   ): Promise<void> => {
@@ -266,16 +267,16 @@ function useProofOfBurnState(
       reward,
       autoConversion,
     ).catch((err) => {
-      throw Error(
-        prettyErrorMessage(err, ({message, code}) =>
-          code === 1001 ? 'Reward is too low for the selected prover.' : message,
-        ),
+      throw prettyError(err, (e) =>
+        e.code === 1001
+          ? createTErrorRenderer(['proofOfBurn', 'error', 'rewardTooLowForProver'])
+          : e,
       )
     })
     if (burnAddressFromProver !== burnAddress) {
-      throw Error(
-        `Something went wrong, wallet and prover generated different burn-addresses: ${burnAddress} vs ${burnAddressFromProver}`,
-      )
+      throw createTErrorRenderer(['proofOfBurn', 'error', 'burnAddressesDoNotMatch'], {
+        replace: {burnAddress, burnAddressFromProver},
+      })
     }
     addBurnAddress(burnAddress, {midnightAddress, chainId: chain.id, reward, autoConversion})
     addBurnWatcher(burnAddress, prover)

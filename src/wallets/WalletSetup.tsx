@@ -4,6 +4,7 @@ import {Navigate} from '../layout/Router'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletCreate} from './WalletCreate'
 import {WalletRestore} from './WalletRestore'
+import {Trans} from '../common/Trans'
 import './WalletSetup.scss'
 
 type StepType = 'PATH_CHOOSER' | 'CREATE' | 'RESTORE' | 'FINISHED'
@@ -45,7 +46,9 @@ export const WalletSetup = (): JSX.Element => {
 
   return (
     <div className="WalletSetup">
-      <div className="main-title">Wallet Setup</div>
+      <div className="main-title">
+        <Trans k={['wallet', 'title', 'walletSetup']} />
+      </div>
       <div className="content">{getContent(step, setStep)}</div>
     </div>
   )

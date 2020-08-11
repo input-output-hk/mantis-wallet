@@ -3,12 +3,12 @@ import {action, ActionOptions} from '@storybook/addon-actions'
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 import {Prover, RealBurnStatus, BurnAddressInfo} from '../pob/pob-state'
-import {Chain, CHAINS, ALL_CHAIN_IDS, ChainId} from '../pob/chains'
+import {PobChain, POB_CHAINS, ALL_POB_CHAIN_IDS, PobChainId} from '../pob/pob-chains'
 import {UNITS} from '../common/units'
 import {BurnStatusType} from '../pob/api/prover'
 
-export const selectChain = (name = 'Select chain', chainId: ChainId = 'BTC_MAINNET'): Chain =>
-  CHAINS[select(name, ALL_CHAIN_IDS, chainId)]
+export const selectChain = (name = 'Select chain', chainId: PobChainId = 'BTC_MAINNET'): PobChain =>
+  POB_CHAINS[select(name, ALL_POB_CHAIN_IDS, chainId)]
 
 export const selectBurnStatusType = (
   name = 'Burn Status Type',

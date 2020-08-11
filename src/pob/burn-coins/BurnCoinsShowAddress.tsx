@@ -1,12 +1,12 @@
 import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
-import {Chain} from '../chains'
+import {PobChain} from '../pob-chains'
 import {DialogAddress} from '../../common/dialog/DialogAddress'
-import {useLocalizedUtilities} from '../../settings-state'
+import {useLocalizedUtilities, useTranslation} from '../../settings-state'
 import './BurnCoinsShowAddress.scss'
 
 interface BurnCoinsShowAddressProps {
-  chain: Chain
+  chain: PobChain
   burnAddress: string
   goBack: () => void
 }
@@ -17,22 +17,23 @@ export const BurnCoinsShowAddress: FunctionComponent<BurnCoinsShowAddressProps> 
   goBack: cancel,
 }: BurnCoinsShowAddressProps) => {
   const {copyToClipboard} = useLocalizedUtilities()
+  const {t} = useTranslation()
 
   return (
     <div className="BurnCoinsShowAddress">
       <Dialog
-        title={`${chain.name} Burn Address`}
+        title={t(chain.translations.burnAddress)}
         leftButtonProps={{
-          children: '← Go Back to Burn Centre',
+          children: t(['proofOfBurn', 'button', 'goBackToBurnCentre']),
           onClick: cancel,
         }}
         rightButtonProps={{
-          children: 'Copy Address',
+          children: t(['proofOfBurn', 'button', 'copyAddress']),
           autoFocus: true,
           onClick: () => copyToClipboard(burnAddress),
         }}
       >
-        <DialogAddress chain={chain} address={burnAddress} />
+        <DialogAddress svgLogo={chain.burnLogo} address={burnAddress} />
       </Dialog>
     </div>
   )

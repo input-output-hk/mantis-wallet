@@ -3,15 +3,14 @@ import {validateEthAddress, toAntValidator, ValidationResult} from '../../common
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {DisplayChain} from '../../pob/chains'
+import {Chain, ETC_CHAIN} from '../../common/chains'
 import {GlacierState, BalanceWithProof} from '../glacier-state'
-import {ETC_CHAIN} from '../glacier-config'
 import {LINKS} from '../../external-link-config'
 import {useTranslation} from '../../settings-state'
 
 interface EnterAddressProps extends ModalOnCancel {
   onNext: (address: string, balanceWithProof: BalanceWithProof) => void
-  chain?: DisplayChain
+  chain?: Chain
 }
 
 const _EnterAddress = ({onNext, onCancel, chain = ETC_CHAIN}: EnterAddressProps): JSX.Element => {

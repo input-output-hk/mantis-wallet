@@ -1,12 +1,11 @@
 import React from 'react'
 import {ModalProps} from 'antd/lib/modal'
 import {Button} from 'antd'
-import {ETC_CHAIN} from '../glacier-config'
+import {Chain, ETC_CHAIN} from '../../common/chains'
 import {LunaModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {Link} from '../../common/Link'
 import {LINKS} from '../../external-link-config'
-import {DisplayChain} from '../../pob/chains'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import './SelectMethod.scss'
 
@@ -14,7 +13,7 @@ interface SelectMethodProps {
   onPrivateKey: () => void
   onMessageCreate: () => void
   onMessageUseSigned: () => void
-  chain?: DisplayChain
+  chain?: Chain
 }
 
 export const SelectMethod = ({

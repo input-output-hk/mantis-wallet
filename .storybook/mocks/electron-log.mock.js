@@ -4,7 +4,7 @@ module.exports = {
     info: console.info,
     debug: console.debug,
     log: console.log,
-    warn: console.log,
+    warn: console.warn,
     transports: {file: {}},
   }),
 }

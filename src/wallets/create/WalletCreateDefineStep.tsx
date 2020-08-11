@@ -2,6 +2,7 @@ import React, {useState, FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogPassword} from '../../common/dialog/DialogPassword'
+import {useTranslation} from '../../settings-state'
 
 interface WalletCreateDefineStepProps {
   cancel: () => void
@@ -14,12 +15,13 @@ export const WalletCreateDefineStep: FunctionComponent<WalletCreateDefineStepPro
   next,
   errors,
 }: WalletCreateDefineStepProps) => {
+  const {t} = useTranslation()
   const [walletName, setWalletName] = useState('')
   const [passphrase, setPassphrase] = useState('')
 
   return (
     <Dialog
-      title="Create wallet"
+      title={t(['wallet', 'title', 'walletCreationFirstStep'])}
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
         onClick: async (): Promise<void> => next(walletName, passphrase),
@@ -28,12 +30,12 @@ export const WalletCreateDefineStep: FunctionComponent<WalletCreateDefineStepPro
     >
       <DialogInput
         autoFocus
-        label="Wallet name"
+        label={t(['wallet', 'label', 'walletName'])}
         id="wallet-name"
         onChange={(e): void => setWalletName(e.target.value)}
         formItem={{
           name: 'wallet-name',
-          rules: [{required: true, message: "Name shouldn't be empty"}],
+          rules: [{required: true, message: t(['wallet', 'error', 'walletNameShouldNotBeEmpty'])}],
         }}
       />
       <DialogPassword onChange={setPassphrase} />

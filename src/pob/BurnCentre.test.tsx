@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import {render, RenderResult, waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {BurnActions} from './BurnActions'
-import {CHAINS} from './chains'
+import {POB_CHAINS} from './pob-chains'
 import {UNITS} from '../common/units'
 import {WalletState, WalletStatus, SynchronizationStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
@@ -21,8 +21,9 @@ import {BurnStatusDisplay} from './BurnStatusDisplay'
 import {RealBurnStatus, BurnAddressInfo} from './pob-state'
 import {ProverConfig} from '../config/type'
 import {SettingsState} from '../settings-state'
+import {createTErrorRenderer} from '../common/i18n'
 
-const {ETH_TESTNET} = CHAINS
+const {ETH_TESTNET} = POB_CHAINS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -95,11 +96,18 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
   const burnAddress1 = 'burn-address-1'
 
   const burnAddress2 = 'burn-address-2'
-  const errorForBurnAddress2 = 'This is an error message for Burn Address #2'
+  const errorForBurnAddress2 = createTErrorRenderer([
+    'proofOfBurn',
+    'error',
+    'unexpectedResponseFromProver',
+  ])
 
   const burnAddress3 = 'burn-address-3'
-  const errorForBurnAddress3 = 'This is an error message for Burn Address #3'
-
+  const errorForBurnAddress3 = createTErrorRenderer([
+    'proofOfBurn',
+    'error',
+    'failedCommunicationWithProver',
+  ])
   const burnAddressInfo: BurnAddressInfo = {
     midnightAddress: 'transparent-midnight-address',
     chainId: 'BTC_TESTNET',
@@ -179,13 +187,13 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
               {
                 burnWatcher: {burnAddress: burnAddress2, prover},
                 lastStatuses: [],
-                errorMessage: errorForBurnAddress2,
+                error: errorForBurnAddress2,
                 isHidden: false,
               },
               {
                 burnWatcher: {burnAddress: burnAddress3, prover},
                 lastStatuses,
-                errorMessage: errorForBurnAddress3,
+                error: errorForBurnAddress3,
                 isHidden: false,
               },
             ]}
@@ -206,7 +214,9 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
   lastStatuses.map(({txid, commitment_txid: mTxid}) => {
     expect(getByText(txid)).toBeInTheDocument()
     mTxid && expect(getByText(txid)).toBeInTheDocument()
-    expect(getAllByText(CHAINS[burnAddressInfo.chainId].symbol, {exact: false})).not.toHaveLength(0)
+    expect(
+      getAllByText(POB_CHAINS[burnAddressInfo.chainId].symbol, {exact: false}),
+    ).not.toHaveLength(0)
   })
 
   // no burn observed error is shown for Burn Address #1
@@ -222,10 +232,10 @@ test('Burn Activity list shows correct errors and burn statuses', async () => {
       exact: false,
     }),
   ).toBeInTheDocument()
-  expect(getByText(errorForBurnAddress2, {exact: false})).toBeInTheDocument()
+  expect(getByText(errorForBurnAddress2.message, {exact: false})).toBeInTheDocument()
 
   // errors are inlined with burn statuses for Burn Address #3
-  expect(getAllByText(errorForBurnAddress3, {exact: false})).not.toHaveLength(0)
+  expect(getAllByText(errorForBurnAddress3.message, {exact: false})).not.toHaveLength(0)
 
   // check if search works correctly
   const searchField = getByPlaceholderText('Burn Tx ID')

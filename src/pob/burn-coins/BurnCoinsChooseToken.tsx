@@ -1,12 +1,13 @@
 import React, {FunctionComponent} from 'react'
 import {Button} from 'antd'
-import {Chain} from '../chains'
+import {PobChain} from '../pob-chains'
 import {Token} from '../../common/Token'
+import {Trans} from '../../common/Trans'
 import './BurnCoinsChooseToken.scss'
 
 interface BurnCoinsChooseTokenProps {
-  chains: Chain[]
-  chooseChain: (chain: Chain) => void
+  chains: PobChain[]
+  chooseChain: (chain: PobChain) => void
   cancel: () => void
 }
 
@@ -19,10 +20,14 @@ export const BurnCoinsChooseToken: FunctionComponent<BurnCoinsChooseTokenProps> 
     <div className="tokens">
       {chains.map((chain) => (
         <Token chain={chain} chooseChain={chooseChain} key={chain.id}>
-          Burn {chain.name} for M-{chain.symbol}
+          <Trans k={chain.translations.burnFor} />
         </Token>
       ))}
     </div>
-    <Button onClick={cancel}>← Go Back</Button>
+    <Button onClick={cancel}>
+      <span>
+        <Trans k={['common', 'button', 'goBackOneStep']} />
+      </span>
+    </Button>
   </div>
 )

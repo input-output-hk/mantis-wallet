@@ -7,6 +7,7 @@ import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
+import {useTranslation} from '../settings-state'
 
 interface WalletCreateProps {
   cancel: () => void
@@ -16,6 +17,7 @@ interface WalletCreateProps {
 type WalletCreateSteps = 'DEFINE' | 'SECURITY' | 'DISPLAY_RECOVERY' | 'VERIFY_RECOVERY'
 
 export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element => {
+  const {t, translateError} = useTranslation()
   const routerState = RouterState.useContainer()
   const walletState = WalletState.useContainer()
   const [step, setStep] = useState<WalletCreateSteps>('DEFINE')
@@ -50,7 +52,7 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
           cancel={cancel}
           next={async (walletName, passphrase): Promise<void> => {
             if (walletState.walletStatus !== 'NO_WALLET') {
-              return setWalletCreateError('Wallet already exists')
+              return setWalletCreateError(t(['wallet', 'error', 'walletAlreadyExists']))
             }
             routerState.setLocked(true)
             setWalletCreateError('')
@@ -68,7 +70,7 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
               setStep('SECURITY')
             } catch (e) {
               routerState.setLocked(false)
-              setWalletCreateError(e.message)
+              setWalletCreateError(translateError(e))
             }
           }}
           errors={createErrors}

@@ -2,28 +2,6 @@ import BigNumber from 'bignumber.js'
 import {getContractConfigs} from '../config/renderer'
 import {DEFAULT_CONTRACT_ADDRESSES} from '../shared/config'
 import {ContractConfigItem} from '../config/type'
-import {DisplayChain} from '../pob/chains'
-import ethereumLogo from '../assets/icons/chains/ethereum.svg'
-import ethereumClippedLogo from '../assets/icons/chains/ethereum-clipped.svg'
-import midnightChainLogo from '../assets/icons/chains/dust.svg'
-
-export const ETC_CHAIN: DisplayChain = {
-  symbol: 'ETC',
-  name: 'Ethereum Classic',
-  logo: ethereumLogo,
-  clippedLogo: ethereumClippedLogo,
-  burnLogo: ethereumClippedLogo,
-  unitType: 'Ether',
-}
-
-export const MIDNIGHT_CHAIN: DisplayChain = {
-  symbol: 'DST',
-  name: 'Dust',
-  logo: midnightChainLogo,
-  clippedLogo: midnightChainLogo,
-  burnLogo: midnightChainLogo,
-  unitType: 'Dust',
-}
 
 export const BLOCK_TIME_SECONDS = 43
 

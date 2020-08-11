@@ -3,6 +3,8 @@ import {ExtendableError} from './extendable-error'
 import {Path} from './typeUtils'
 
 export const DEFAULT_LANGUAGE = 'en'
+
+// LANGUAGES should be using BCP-47 language tag format
 export const LANGUAGES = [DEFAULT_LANGUAGE] as const
 export type Language = typeof LANGUAGES[number]
 

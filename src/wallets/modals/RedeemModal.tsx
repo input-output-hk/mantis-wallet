@@ -13,6 +13,7 @@ import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
 import './RedeemModal.scss'
 
 const {Dust} = UNITS
@@ -98,12 +99,12 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
 
   return (
     <Dialog
-      title="Apply Confidentiality"
+      title={t(['wallet', 'title', 'applyConfidentiality'])}
       leftButtonProps={{
         onClick: onCancel,
       }}
       rightButtonProps={{
-        children: 'Apply Confidentiality',
+        children: t(['wallet', 'button', 'applyConfidentiality']),
         onClick: async (): Promise<void> => {
           await redeem(
             transparentAccount.address,
@@ -116,9 +117,13 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
       onSetLoading={modalLocker.setLocked}
       type="dark"
     >
-      <DialogShowDust amount={transparentAccount.balance}>Available Amount</DialogShowDust>
+      <DialogShowDust amount={transparentAccount.balance}>
+        <Trans k={['wallet', 'label', 'availableAmount']} />
+      </DialogShowDust>
       <div className="amount-container">
-        <div className="label">Amount</div>
+        <div className="label">
+          <Trans k={['wallet', 'label', 'amount']} />
+        </div>
         <Button
           data-testid="full-amount"
           className={classnames('full-amount', {inactive: !useFullAmount})}
@@ -126,7 +131,7 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
             setUseFullAmount(!useFullAmount)
           }}
         >
-          Full Amount
+          <Trans k={['wallet', 'button', 'useFullAmount']} />
         </Button>
         <AmountInput
           onChange={(amount) => {
@@ -138,7 +143,7 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
         />
       </div>
       <DialogFee
-        label="Fee"
+        label={t(['wallet', 'label', 'transactionFee'])}
         feeEstimates={feeEstimates}
         feeEstimateError={feeEstimateError}
         defaultValue={fee}
@@ -148,8 +153,7 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
         forceCustom={useFullAmount}
       />
       <DialogMessage type="highlight">
-        This transaction will move selected funds to a confidential address which will remove their
-        visibility from the Midnight Blockchain.
+        <Trans k={['wallet', 'message', 'applyConfidentialityDescription']} />
       </DialogMessage>
     </Dialog>
   )

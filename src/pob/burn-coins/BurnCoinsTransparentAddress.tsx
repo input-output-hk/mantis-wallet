@@ -1,5 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
+import {useTranslation} from '../../settings-state'
 import './BurnCoinsTransparentAddress.scss'
 
 interface BurnCoinsNoWalletProps {
@@ -10,16 +11,19 @@ interface BurnCoinsNoWalletProps {
 export const BurnCoinsTransparentAddress: FunctionComponent<BurnCoinsNoWalletProps> = ({
   cancel,
   generateTransparentAddress,
-}: BurnCoinsNoWalletProps) => (
-  <div className="BurnCoinsTransparentAddress">
-    <Dialog
-      title="You need a transparent address to continue"
-      leftButtonProps={{onClick: cancel}}
-      rightButtonProps={{
-        children: 'Generate Transparent Address',
-        autoFocus: true,
-        onClick: generateTransparentAddress,
-      }}
-    />
-  </div>
-)
+}: BurnCoinsNoWalletProps) => {
+  const {t} = useTranslation()
+  return (
+    <div className="BurnCoinsTransparentAddress">
+      <Dialog
+        title={t(['wallet', 'message', 'transparentAddressNeeded'])}
+        leftButtonProps={{onClick: cancel}}
+        rightButtonProps={{
+          children: t(['wallet', 'button', 'generateTransparentAddress']),
+          autoFocus: true,
+          onClick: generateTransparentAddress,
+        }}
+      />
+    </div>
+  )
+}

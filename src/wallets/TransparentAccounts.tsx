@@ -2,7 +2,7 @@ import React, {useState, FunctionComponent} from 'react'
 import classnames from 'classnames'
 import {Button, message, Switch} from 'antd'
 import BigNumber from 'bignumber.js'
-import {SettingsState} from '../settings-state'
+import {SettingsState, useTranslation} from '../settings-state'
 import {fillActionHandlers} from '../common/util'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
@@ -13,6 +13,7 @@ import dustIconLight from '../assets/light/dust.png'
 import {Transaction} from '../web3'
 import {TransactionList} from './TransactionList'
 import {rendererLog} from '../common/logger'
+import {Trans} from '../common/Trans'
 import './TransparentAccounts.scss'
 
 interface ShowAccountProps {
@@ -54,7 +55,7 @@ const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
               onClick={redeem}
               disabled={account.balance.isZero()}
             >
-              Apply Confidentiality
+              <Trans k={['wallet', 'button', 'applyConfidentiality']} />
             </Button>
             <Button
               data-testid="txs-button"
@@ -63,7 +64,7 @@ const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
               onClick={() => setTransactionVisible(!transactionsVisible)}
               disabled={transactions.length === 0}
             >
-              Transactions
+              <Trans k={['wallet', 'button', 'showTransactions']} />
             </Button>
           </div>
         </div>
@@ -86,7 +87,7 @@ const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
                 className="transactions-collapse"
                 {...fillActionHandlers(() => setTransactionVisible(false))}
               >
-                Collapse Transactions
+                <Trans k={['wallet', 'button', 'collapseTransactions']} />
               </span>
             </div>
           </div>
@@ -113,6 +114,8 @@ export const TransparentAccounts: FunctionComponent<TransparentAccountsProps> = 
   backToTransactions,
   transactions,
 }: TransparentAccountsProps) => {
+  const {t, translateError} = useTranslation()
+
   const [showRedeem, setShowRedeem] = useState(false)
   const [addressGenerationInProgress, setAddressGenerationInProgress] = useState(false)
   const [transparentAccount, setTransparentAccount] = useState<TransparentAccount | null>(null)
@@ -134,7 +137,9 @@ export const TransparentAccounts: FunctionComponent<TransparentAccountsProps> = 
   return (
     <div className="TransparentAccounts">
       <div className="toolbar">
-        <div className="main-title">Transparent Accounts</div>
+        <div className="main-title">
+          <Trans k={['wallet', 'title', 'transparentAccounts']} />
+        </div>
         <div className="line"></div>
         <div>
           <Button
@@ -145,43 +150,55 @@ export const TransparentAccounts: FunctionComponent<TransparentAccountsProps> = 
               setAddressGenerationInProgress(true)
               try {
                 await generateAddress()
-                message.success('New transparent address was generated')
+                message.success(t(['wallet', 'message', 'transparentAddressWasGenerated']))
               } catch (e) {
                 rendererLog.error(e)
-                message.error(<div style={{width: '500px', float: 'right'}}>{e.message}</div>, 10)
+                message.error(
+                  <div style={{width: '500px', float: 'right'}}>{translateError(e)}</div>,
+                  10,
+                )
               } finally {
                 setAddressGenerationInProgress(false)
               }
             }}
           >
-            Generate New Address
+            <Trans k={['wallet', 'button', 'generateNewTransparentAddress']} />
           </Button>
           <Button type="primary" className="action secondary" onClick={backToTransactions}>
-            Back to Overview
+            <Trans k={['wallet', 'button', 'goBackToOverview']} />
           </Button>
         </div>
       </div>
       <div className="accounts">
         {transparentAccounts.length === 0 && (
           <div className="no-accounts-text">
-            You have no transparent accounts. Click on &#34;Generate New Address&#34; to generate
-            one.
+            <Trans k={['wallet', 'message', 'noTransparentAccounts']} />
           </div>
         )}
         {transparentAccounts.length > 0 && (
           <div className="list-accounts">
             <div className="header">
-              <div>Account</div>
-              <div>Asset</div>
-              <div>Amount</div>
+              <div>
+                <Trans k={['wallet', 'label', 'transparentAccountAddress']} />
+              </div>
+              <div>
+                <Trans k={['wallet', 'label', 'asset']} />
+              </div>
+              <div>
+                <Trans k={['wallet', 'label', 'amount']} />
+              </div>
               <div className="hide-empty">
                 <span
                   className="hide-empty-label"
                   {...fillActionHandlers(() => hideEmpty(!areEmptyHidden))}
                 >
-                  Hide Empty Accounts
+                  <Trans k={['wallet', 'button', 'hideEmptyAccounts']} />
                 </span>
-                <Switch title="Hide empty accounts" checked={areEmptyHidden} onChange={hideEmpty} />
+                <Switch
+                  title={t(['wallet', 'button', 'hideEmptyAccounts'])}
+                  checked={areEmptyHidden}
+                  onChange={hideEmpty}
+                />
               </div>
             </div>
             {transparentAccounts

@@ -9,6 +9,7 @@ import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates} from '../common/wallet-state'
 import {TransactionList, updateSorting, SORTABLE_PROPERTIES, SortBy} from './TransactionList'
+import {Trans} from '../common/Trans'
 import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
@@ -62,11 +63,15 @@ export const TransactionHistory = ({
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
-        <div className="main-title">Transaction History</div>
+        <div className="main-title">
+          <Trans k={['wallet', 'title', 'transactionHistory']} />
+        </div>
         <div className="line"></div>
         <div>
           <Dropdown overlay={sortByMenu} overlayClassName="SortByDropdown">
-            <span className="sort-by">Sort by ▼ </span>
+            <span className="sort-by">
+              <Trans k={['wallet', 'button', 'sortByDropdown']} /> ▼{' '}
+            </span>
           </Dropdown>
           <Button
             data-testid="send-button"
@@ -75,7 +80,7 @@ export const TransactionHistory = ({
             disabled={availableBalance.isZero()}
             onClick={(): void => setShowSendModal(true)}
           >
-            Send
+            <Trans k={['wallet', 'button', 'sendTransaction']} />
           </Button>
           <Button
             data-testid="receive-button"
@@ -83,7 +88,7 @@ export const TransactionHistory = ({
             className="action"
             onClick={(): void => setShowReceiveModal(true)}
           >
-            Receive
+            <Trans k={['wallet', 'button', 'receiveTransaction']} />
           </Button>
           <Button
             type="primary"
@@ -91,7 +96,7 @@ export const TransactionHistory = ({
             className="action secondary"
             onClick={goToAccounts}
           >
-            Transparent Accounts
+            <Trans k={['wallet', 'button', 'goToTransparentAccounts']} />
           </Button>
           <SendTransaction
             visible={showSendModal}
@@ -124,7 +129,9 @@ export const TransactionHistory = ({
         </div>
       </div>
       {transactions.length === 0 ? (
-        <div className="no-transactions">You haven&apos;t made a transaction</div>
+        <div className="no-transactions">
+          <Trans k={['wallet', 'message', 'noTransactions']} />
+        </div>
       ) : (
         <div className="transactions-container">
           <InfiniteScroll

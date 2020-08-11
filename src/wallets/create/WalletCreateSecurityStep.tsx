@@ -3,7 +3,8 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
-import {DialogApproval} from '../../common/dialog/DialogApproval'
+import {useTranslation} from '../../settings-state'
+import {Trans} from '../../common/Trans'
 
 interface WalletCreateSecurityStepProps {
   cancel: () => void
@@ -16,27 +17,23 @@ export const WalletCreateSecurityStep: FunctionComponent<WalletCreateSecuritySte
   next,
   spendingKey,
 }: WalletCreateSecurityStepProps) => {
+  const {t} = useTranslation()
   const [useSpendingKey, setUseSpendingKey] = useState(false)
 
   return (
     <Dialog
-      title="Security"
-      leftButtonProps={{onClick: cancel, children: 'Cancel'}}
+      title={t(['wallet', 'title', 'walletCreationSecurityStep'])}
+      leftButtonProps={{onClick: cancel}}
       rightButtonProps={{onClick: next}}
     >
       <DialogMessage label="Recovery Phrase">
-        On the following Screen you will see a 12 Word Phrase. This is your wallet backup phrase. It
-        can be entered in any version of Luna in order to restore your wallet.
+        <Trans k={['wallet', 'message', 'securityRecoveryPhraseDescription']} />
       </DialogMessage>
-      <DialogApproval
-        id="pk-needed-for-mining"
-        description="I understand that I need to save my private key to enable mining in the future."
-      />
       <DialogSwitch
         autoFocus
         key="private-key-switch"
-        label="Private Key"
-        description="Please, make sure your screen is not visible to anyone but you to ensure security"
+        label={t(['wallet', 'label', 'privateKey'])}
+        description={t(['wallet', 'message', 'showPrivateKeyDescription'])}
         checked={useSpendingKey}
         onChange={setUseSpendingKey}
       />

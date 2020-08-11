@@ -78,13 +78,13 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           className={classnames(...classNames)}
           {...fillActionHandlers(() => setActiveModal('LockWallet'), 'link')}
         >
-          <Trans k={['common', 'link', 'logOut']} />
+          <Trans k={['wallet', 'button', 'logOutOfWallet']} />
         </span>
       )
     } else {
       return (
         <span className={classnames(...classNames, 'disabled')}>
-          <Trans k={['common', 'link', 'logOut']} />
+          <Trans k={['wallet', 'button', 'logOutOfWallet']} />
         </span>
       )
     }
@@ -102,7 +102,9 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         <img src={logo} alt="logo" />
       </div>
       <div>
-        <h1 className="title">Luna</h1>
+        <h1 className="title">
+          <Trans k={['title', 'luna']} />
+        </h1>
       </div>
       <div>
         <nav>

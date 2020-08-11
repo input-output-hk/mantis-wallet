@@ -10,7 +10,8 @@ import {TransparentAccount} from '../common/wallet-state'
 import {fillActionHandlers} from '../common/util'
 import {CHAINS_TO_USE_IN_POB} from './pob-config'
 import {prop} from '../shared/utils'
-import {ChainId} from './chains'
+import {PobChainId} from './pob-chains'
+import {Trans} from '../common/Trans'
 import './BurnActions.scss'
 
 interface BurnActionsProps
@@ -32,7 +33,7 @@ export const BurnActions: FunctionComponent<BurnActionsProps> = ({
   const availableBalances = transparentAccounts.map(prop('midnightTokens')).reduce(
     _.mergeWith((a: BigNumber, b: BigNumber) => (a ? a.plus(b) : b)),
     {},
-  ) as Partial<Record<ChainId, BigNumber>>
+  ) as Partial<Record<PobChainId, BigNumber>>
 
   const burnBalances = CHAINS_TO_USE_IN_POB.map((chain) => ({
     chain,
@@ -45,21 +46,21 @@ export const BurnActions: FunctionComponent<BurnActionsProps> = ({
       <div className="toolbar">
         <div>
           {!_.isEmpty(burnAddresses) && (
-            <Popover content="Enter burn transaction manually">
+            <Popover content={<Trans k={['proofOfBurn', 'message', 'manualBurnDescription']} />}>
               <Button type="primary" className="action" onClick={() => setShowAddTxModal(true)}>
-                Manual Burn
+                <Trans k={['proofOfBurn', 'button', 'manualBurn']} />
               </Button>
             </Popover>
           )}
           <Button type="primary" className="action" onClick={onBurnCoins}>
-            Burn Coins
+            <Trans k={['proofOfBurn', 'button', 'burnCoins']} />
           </Button>
         </div>
       </div>
       {burnBalances.length === 0 && (
         <div className="no-balances">
           <span className="link" {...fillActionHandlers(onBurnCoins, 'link')}>
-            You have no burns in progress, to start burn, click here.
+            <Trans k={['proofOfBurn', 'message', 'noBurnsInProgress']} />
           </span>
         </div>
       )}

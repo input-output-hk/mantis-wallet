@@ -132,6 +132,11 @@ function useSettingsState({
   const [timeFormat, setTimeFormat] = usePersistedState(store, ['settings', 'timeFormat'])
   const [language, _setLanguage] = usePersistedState(store, ['settings', 'language'])
   const [isPseudoLanguageUsed, usePseudoLanguage] = useState(isPseudoLanguageUsedDefault || false)
+
+  useEffect(() => {
+    document.documentElement.lang = language // eslint-disable-line fp/no-mutation
+  }, [language])
+
   const translation = useMemo((): Translation => {
     const i18n = createAndInitI18nForRenderer(language, isPseudoLanguageUsed)
     const t = createTFunctionRenderer(i18n)
@@ -176,7 +181,7 @@ function useSettingsState({
       formatDate: (date: Date) => formatDate(date, dateFormat, timeFormat, dateFnsLocale),
       toDurationString: (seconds: number) => toDurationString(seconds, dateFnsLocale),
 
-      formatPercentage: (ratio: number | BigNumber) => formatPercentage(ratio, numberFormat),
+      formatPercentage: (ratio: number | BigNumber) => `${formatPercentage(ratio, numberFormat)}%`,
       abbreviateAmount: (bg: BigNumber) => abbreviateAmount(bg, bigNumberFormat),
       formatFileSize: (bytes: number) => filesize(bytes, {locale: language}),
       formatHashrate: (hashrate: number) =>

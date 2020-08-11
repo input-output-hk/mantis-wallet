@@ -52,7 +52,10 @@ export const InteractiveDialog: FunctionComponent<{}> = () => (
 
 export const InteractiveAddress: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Address">
-    <DialogAddress chain={selectChain()} address={text('Address to show', 'test-address')} />
+    <DialogAddress
+      svgLogo={selectChain().burnLogo}
+      address={text('Address to show', 'test-address')}
+    />
   </Dialog>
 )
 

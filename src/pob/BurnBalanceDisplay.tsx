@@ -2,13 +2,14 @@ import React, {FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import SVG from 'react-inlinesvg'
 import {ShortNumber} from '../common/ShortNumber'
+import {PobChain} from './pob-chains'
+import {Trans} from '../common/Trans'
 import clockIcon from '../assets/icons/clock.svg'
 import sumIcon from '../assets/icons/sum.svg'
-import {Chain} from './chains'
 import './BurnBalanceDisplay.scss'
 
 interface BurnBalanceDisplayProps {
-  chain: Chain
+  chain: PobChain
   pending: BigNumber
   available: BigNumber
 }
@@ -25,19 +26,20 @@ export const BurnBalanceDisplay: FunctionComponent<BurnBalanceDisplayProps> = ({
         <SVG src={chain.burnLogo} className="logo" />
       </div>
       <div className="available">
-        Available{' '}
+        <Trans k={['proofOfBurn', 'label', 'availableAmount']} />{' '}
         <span className="amount">
           <ShortNumber big={available} unit={chain.unitType} /> {tokenSymbol}
         </span>
       </div>
       <div className="rest">
         <SVG src={clockIcon} className="icon" />
-        Pending Amount · <ShortNumber big={pending} unit={chain.unitType} /> {tokenSymbol}
+        <Trans k={['proofOfBurn', 'label', 'pendingAmount']} /> ·{' '}
+        <ShortNumber big={pending} unit={chain.unitType} /> {tokenSymbol}
       </div>
       <div className="rest">
         <SVG src={sumIcon} className="icon" />
-        Total Amount · <ShortNumber big={available.plus(pending)} unit={chain.unitType} />{' '}
-        {tokenSymbol}
+        <Trans k={['proofOfBurn', 'label', 'totalAmount']} /> ·{' '}
+        <ShortNumber big={available.plus(pending)} unit={chain.unitType} /> {tokenSymbol}
       </div>
     </div>
   )

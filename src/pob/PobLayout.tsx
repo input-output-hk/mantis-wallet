@@ -3,6 +3,8 @@ import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
 import {isTestnet} from '../shared/version'
+import {useTranslation} from '../settings-state'
+import {Trans} from '../common/Trans'
 import './PobLayout.scss'
 
 interface PobLayoutProps {
@@ -12,9 +14,7 @@ interface PobLayoutProps {
 const TestnetWarning = (): JSX.Element => (
   <div className="warning">
     <div className="warning-content">
-      <b>Warning:</b> This is a Testnet edition.
-      <br />
-      Do <b>NOT</b> burn real ETH or BTC for Proof of Burn.
+      <Trans k={['proofOfBurn', 'message', 'testnetWarning']} />
     </div>
   </div>
 )
@@ -24,12 +24,13 @@ export const PobLayout: FunctionComponent<PobLayoutProps> = ({
   children,
 }: PropsWithChildren<PobLayoutProps>) => {
   const {networkTag} = BackendState.useContainer()
+  const {t} = useTranslation()
 
   return (
     <div className="PobLayout">
       {isTestnet(networkTag) && <TestnetWarning />}
       <HeaderWithSyncStatus
-        externalLink={{text: 'Learn more about Proof of Burn', url: LINKS.aboutPoB}}
+        externalLink={{text: t(['proofOfBurn', 'link', 'learnMoreAboutPoB']), url: LINKS.aboutPoB}}
       >
         {title}
       </HeaderWithSyncStatus>

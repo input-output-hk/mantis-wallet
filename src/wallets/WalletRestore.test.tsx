@@ -51,7 +51,7 @@ test('WalletRestore', async () => {
 
   // Enter wallet name
   expect(queryByText("Name shouldn't be empty")).not.toBeInTheDocument()
-  const walletNameInput = getByLabelText('Wallet name')
+  const walletNameInput = getByLabelText('Wallet Name')
   fireEvent.change(walletNameInput, {target: {value: walletName}})
 
   // Enter private key

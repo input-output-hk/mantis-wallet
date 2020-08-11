@@ -8,7 +8,8 @@ import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogInputPassword} from '../../common/dialog/DialogInput'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
-
+import {Trans} from '../../common/Trans'
+import {useTranslation} from '../../settings-state'
 import './ExportPrivateKey.scss'
 
 const PasswordStep = ({
@@ -17,12 +18,15 @@ const PasswordStep = ({
   setPassphrase: React.Dispatch<React.SetStateAction<string>>
 }): JSX.Element => (
   <>
-    <DialogMessage>Enter your password to export your private key.</DialogMessage>
+    <DialogMessage>
+      <Trans k={['wallet', 'message', 'exportPrivateKey']} />
+    </DialogMessage>
     <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
   </>
 )
 
 const RevealStep = ({privateKey}: {privateKey: string}): JSX.Element => {
+  const {t} = useTranslation()
   const [isRevealed, reveal] = useState(false)
 
   return (
@@ -30,8 +34,8 @@ const RevealStep = ({privateKey}: {privateKey: string}): JSX.Element => {
       <DialogSwitch
         autoFocus
         key="reveal-private-key-switch"
-        label="Reveal Private Key"
-        description="Please, make sure your screen is not visible to anyone but you to ensure security"
+        label={t(['wallet', 'label', 'revealPrivateKey'])}
+        description={t(['wallet', 'message', 'showPrivateKeyDescription'])}
         checked={isRevealed}
         onChange={reveal}
       ></DialogSwitch>
@@ -54,6 +58,7 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
   getSpendingKey,
   onCancel,
 }: ExportPrivateKeyModalProps) => {
+  const {t} = useTranslation()
   const [passphrase, setPassphrase] = useState('')
   const [privateKey, setPrivateKey] = useState<Option<string>>(none)
 
@@ -61,10 +66,10 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
 
   return (
     <Dialog
-      title="Export Private Key"
+      title={t(['wallet', 'title', 'exportPrivateKey'])}
       className="ExportPrivateKey"
       leftButtonProps={{
-        children: 'Close',
+        children: t(['common', 'button', 'closeModal']),
         onClick: onCancel,
         disabled: modalLocker.isLocked,
       }}
@@ -73,7 +78,7 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
           const privateKey = await getSpendingKey({passphrase})
           setPrivateKey(some(privateKey))
         },
-        children: 'Unlock',
+        children: t(['wallet', 'button', 'unlockPrivateKey']),
         disabled: modalLocker.isLocked || isSome(privateKey),
         icon: isSome(privateKey) && <CheckCircleFilled />,
       }}

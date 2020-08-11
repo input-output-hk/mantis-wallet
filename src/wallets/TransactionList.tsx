@@ -16,6 +16,8 @@ import {
   TxTypeCell,
   TxDetailsCell,
 } from './TransactionRow'
+import {TKeyRenderer} from '../common/i18n'
+import {Trans} from '../common/Trans'
 import './TransactionList.scss'
 
 export const SORTABLE_PROPERTIES = ['type', 'amount', 'time', 'status'] as const
@@ -50,6 +52,7 @@ export const updateSorting = (currentSortBy: SortBy, nextProperty: SortablePrope
 
 interface ColumnConfig {
   property: Property
+  label: TKeyRenderer
   sortable: boolean
   CellComponent: ({transaction}: TransactionCellProps) => JSX.Element
 }
@@ -57,26 +60,31 @@ interface ColumnConfig {
 const columns: ColumnConfig[] = [
   {
     property: 'type',
+    label: ['wallet', 'label', 'transactionType'],
     sortable: true,
     CellComponent: TxTypeCell,
   },
   {
     property: 'asset',
+    label: ['wallet', 'label', 'asset'],
     sortable: false,
     CellComponent: TxAssetCell,
   },
   {
     property: 'amount',
+    label: ['wallet', 'label', 'amount'],
     sortable: true,
     CellComponent: TxAmountCell,
   },
   {
     property: 'time',
+    label: ['wallet', 'label', 'transactionTime'],
     sortable: true,
     CellComponent: TxTimeCell,
   },
   {
     property: 'status',
+    label: ['wallet', 'label', 'transactionStatus'],
     sortable: true,
     CellComponent: TxStatusCell,
   },
@@ -155,14 +163,16 @@ export const TransactionList = ({
     onSortChange?.(newSortBy)
   }
 
-  const Header = ({column: {property, sortable}}: {column: ColumnConfig}): JSX.Element => {
-    const label = _.capitalize(property)
-
+  const Header = ({column: {property, label, sortable}}: {column: ColumnConfig}): JSX.Element => {
     return !sortable ? (
-      <div>{label}</div>
+      <div>
+        <Trans k={label} />
+      </div>
     ) : (
       <div className="sortable" {...fillActionHandlers(changeOrder(property as SortableProperty))}>
-        <span className="label">{label}</span>
+        <span className="label">
+          <Trans k={label} />
+        </span>
         {_sortBy.property === property &&
           (_sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}
       </div>
