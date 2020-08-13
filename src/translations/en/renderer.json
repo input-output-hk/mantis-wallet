@@ -511,7 +511,8 @@
       "closeModal": "Close",
       "goBackOneStep": "Go Back",
       "iUnderstand": "I understand",
-      "proceedToNextStep": "Proceed"
+      "proceedToNextStep": "Proceed",
+      "dismissNotificationMessage": "Dismiss"
     },
     "label": {
       "optionalField": "optional"

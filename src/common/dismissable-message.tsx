@@ -3,13 +3,14 @@ import _ from 'lodash/fp'
 import {message} from 'antd'
 import {MessageType, ConfigOnClose} from 'antd/lib/message'
 import {fillActionHandlers} from './util'
+import {TFunctionRenderer} from './i18n'
 import './DismissableMessage.scss'
 
 export type DismissFunction = () => MessageType | null
-type MsgContent = ({dismiss}: {dismiss: DismissFunction}) => JSX.Element
-type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading'
+export type MsgContent = ({dismiss}: {dismiss: DismissFunction}) => JSX.Element
+export type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading'
 
-interface Config {
+export interface DismissableConfig {
   duration: number
   onClose: ConfigOnClose
 }
@@ -27,9 +28,10 @@ const DEFAULT_CONFIG = {
  * @param config `{duration, onClose}`
  */
 export const makeDismissableMessage = (
+  t: TFunctionRenderer,
   type: NoticeType,
   Content: MsgContent,
-  config: Partial<Config> = DEFAULT_CONFIG,
+  config: Partial<DismissableConfig> = {},
 ): DismissFunction => {
   const {duration, onClose} = _.merge(DEFAULT_CONFIG)(config)
 
@@ -50,7 +52,7 @@ export const makeDismissableMessage = (
       </span>
       <div className="dismiss-wrapper">
         <span className="dismiss-link" {...fillActionHandlers(dismiss)}>
-          Dismiss
+          {t(['common', 'button', 'dismissNotificationMessage'])}
         </span>
       </div>
     </>

@@ -6,12 +6,13 @@ import {LINKS} from '../external-link-config'
 import {IPCToRendererChannelName} from '../shared/ipc-types'
 import {saveDebugLogs, ipcListenToMain, ipcRemoveAllListeners} from './ipc-util'
 import {fillActionHandlers} from './util'
-import {makeDismissableMessage, DismissFunction} from './dismissable-message'
+import {DismissFunction} from './dismissable-message'
 import {DialogMessage} from './dialog/DialogMessage'
 import {wrapWithModal, ModalLocker} from './LunaModal'
 import {Dialog} from './Dialog'
 import {Trans} from './Trans'
-import {useTranslation} from '../settings-state'
+import {useTranslation, useLocalizedUtilities} from '../settings-state'
+import {TFunctionRenderer} from './i18n'
 
 const CHANNELS: IPCToRendererChannelName[] = [
   'save-debug-logs-success',
@@ -19,26 +20,31 @@ const CHANNELS: IPCToRendererChannelName[] = [
   'save-debug-logs-failure',
 ]
 
-const createMessage = (path: string) => ({dismiss}: {dismiss: DismissFunction}): JSX.Element => {
+const createMessage = (t: TFunctionRenderer, path: string) => ({
+  dismiss,
+}: {
+  dismiss: DismissFunction
+}): JSX.Element => {
   const onClickMsg = (): void => {
     shell.showItemInFolder(path)
     dismiss()
   }
   return (
     <span className="link" {...fillActionHandlers(onClickMsg)}>
-      <Trans k={['common', 'message', 'debugLogsSaved']} />
+      {t(['common', 'message', 'debugLogsSaved'])}
     </span>
   )
 }
 
 export const SupportDialog = (): JSX.Element => {
   const {t} = useTranslation()
+  const {makeDismissableMessage} = useLocalizedUtilities()
   const {setLocked, isLocked} = ModalLocker.useContainer()
   const [isDone, setDone] = useState(false)
 
   useEffect(() => {
     ipcListenToMain('save-debug-logs-success', (_event, path): void => {
-      makeDismissableMessage('success', createMessage(path), {duration: 0})
+      makeDismissableMessage('success', createMessage(t, path), {duration: 0})
       setLocked(false)
       setDone(true)
     })
