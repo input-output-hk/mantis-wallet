@@ -6,7 +6,7 @@ import {processEnv, processExecutablePath} from './MidnightProcess'
 import {LunaManagedConfig, ProcessConfig, SettingsPerClient} from '../config/type'
 import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
 import {mainLog} from './logger'
-import {TErrorMain} from './i18n'
+import {createTErrorMain} from './i18n'
 
 const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
   `midnight.consensus.private-coinbase.${option}`
@@ -33,7 +33,7 @@ export async function getCoinbaseParams(
     }
   } catch (e) {
     mainLog.error(e)
-    throw new TErrorMain('Possibly invalid spending key.', ['error', 'invalidSpendingKey'])
+    throw createTErrorMain(['error', 'invalidSpendingKey'])
   }
 }
 
