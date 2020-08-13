@@ -97,7 +97,7 @@ const _WithdrawAvailableDust = ({
       }}
       type="dark"
     >
-      <DialogMessage label={t(['glacierDrop', 'label', 'transparentMidnightAddress'])}>
+      <DialogMessage label={t(['glacierDrop', 'label', 'midnightTransparentAddress'])}>
         {transparentAddress}
       </DialogMessage>
       <DialogShowDust amount={estimatedWithdrawableDust}>

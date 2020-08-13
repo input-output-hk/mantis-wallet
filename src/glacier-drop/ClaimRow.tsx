@@ -366,7 +366,7 @@ export const ClaimRow = ({
         <div className="midnight-address">
           <Popover content={transparentAddress} placement="bottom">
             <span>
-              <Trans k={['glacierDrop', 'label', 'transparentMidnightAddress']} />:{' '}
+              <Trans k={['glacierDrop', 'label', 'midnightTransparentAddress']} />:{' '}
               {transparentAddress}
             </span>
           </Popover>

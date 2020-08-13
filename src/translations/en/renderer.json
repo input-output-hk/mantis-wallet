@@ -320,7 +320,6 @@
       "totalTimeToUnlockFunds": "Total time to unlock",
       "etcAddress": "ETC Address",
       "etcPublicAddress": "ETC Public Address",
-      "transparentMidnightAddress": "Transparent Midnight Address",
       "midnightTransparentAddress": "Midnight Transparent Address",
       "midnightAddress": "Midnight Address",
       "eligibleAmount": "Eligible Amount",
