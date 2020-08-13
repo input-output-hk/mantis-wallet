@@ -36,7 +36,7 @@ export const GeneratedMessage = ({
         leftButtonProps={{
           autoFocus: true,
           children: t(['glacierDrop', 'button', 'copyGeneratedMessage']),
-          onClick: () => copyToClipboard(msg),
+          onClick: async () => await copyToClipboard(msg),
         }}
         rightButtonProps={{
           children: t(['glacierDrop', 'button', 'confirmAuthorization']),

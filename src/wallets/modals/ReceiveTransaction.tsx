@@ -40,8 +40,8 @@ const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTransactionProp
       leftButtonProps={{
         children: <Trans k={['wallet', 'button', 'copyAddress']} />,
         autoFocus: true,
-        onClick: (): void => {
-          copyToClipboard(privateAddress)
+        onClick: async (): Promise<void> => {
+          await copyToClipboard(privateAddress)
         },
       }}
       rightButtonProps={{
@@ -84,9 +84,9 @@ const ReceivePublicTransaction: FunctionComponent<ReceivePublicTransactionProps>
       leftButtonProps={{
         children: <Trans k={['wallet', 'button', 'copyAddress']} />,
         autoFocus: true,
-        onClick: (): void => {
+        onClick: async (): Promise<void> => {
           if (transparentAddress) {
-            copyToClipboard(transparentAddress.address)
+            await copyToClipboard(transparentAddress.address)
           }
         },
         disabled: !transparentAddress,
@@ -165,8 +165,8 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
         <DialogTextSwitch
           buttonClassName="mode-switch"
           defaultMode={mode}
-          left={{label: t(['wallet', 'transactionType', 'confidential']), type: 'confidential'}}
-          right={{label: t(['wallet', 'transactionType', 'transparent']), type: 'transparent'}}
+          left={{label: t(['wallet', 'transactionType', 'transparent']), type: 'transparent'}}
+          right={{label: t(['wallet', 'transactionType', 'confidential']), type: 'confidential'}}
           onChange={setMode}
         />
       </Dialog>

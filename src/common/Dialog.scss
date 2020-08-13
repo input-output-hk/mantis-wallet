@@ -12,12 +12,6 @@ $dialog-width: 508px;
     }
   }
 
-  .ant-btn {
-    span {
-      transition: none;
-    }
-  }
-
   .title {
     @extend %title;
   }

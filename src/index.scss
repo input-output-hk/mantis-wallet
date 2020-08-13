@@ -39,8 +39,7 @@ body {
   margin: 0;
   font-family: $font-family;
   font-size: $font-size-root;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility; // could cause performance problems on mobile
 }
 
 a {
@@ -349,5 +348,10 @@ input::placeholder {
 
   .ant-select-dropdown {
     border-radius: $dialog-component-border-radius;
+  }
+
+  .ant-dropdown-menu {
+    padding: ($dialog-component-border-radius / 2) 0;
+    border-radius: ($dialog-component-border-radius / 2);
   }
 }

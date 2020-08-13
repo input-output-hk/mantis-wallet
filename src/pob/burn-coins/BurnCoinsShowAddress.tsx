@@ -30,7 +30,7 @@ export const BurnCoinsShowAddress: FunctionComponent<BurnCoinsShowAddressProps> 
         rightButtonProps={{
           children: t(['proofOfBurn', 'button', 'copyAddress']),
           autoFocus: true,
-          onClick: () => copyToClipboard(burnAddress),
+          onClick: async () => await copyToClipboard(burnAddress),
         }}
       >
         <DialogAddress svgLogo={chain.burnLogo} address={burnAddress} />

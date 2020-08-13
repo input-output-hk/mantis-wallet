@@ -2,6 +2,7 @@
 
 .ReceiveModalFooter {
   padding: 1.5rem 64px;
+  border-radius: 0 0 $dialog-component-border-radius * 2 $dialog-component-border-radius * 2;
   text-align: left;
 
   @include themify($themes) {
