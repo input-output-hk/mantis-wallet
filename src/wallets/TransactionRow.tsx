@@ -241,10 +241,24 @@ const TxGlacierTypeLabel = ({receivingAddress}: TxGlacierTypeLabel): JSX.Element
 
 const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element => {
   switch (transaction.txDetails.txType) {
-    case 'transfer':
     case 'coinbase':
     case 'redeem': {
       return <TxTypeLabel transaction={transaction} />
+    }
+    case 'transfer': {
+      return (
+        <div>
+          <TxTypeLabel transaction={transaction} />
+          {transaction.txDetails.memo && (
+            <div className="call-details two-col-table">
+              <div>
+                <Trans k={['wallet', 'label', 'encryptedMemo']} />:
+              </div>
+              <div className="monospace">{transaction.txDetails.memo[1]}</div>
+            </div>
+          )}
+        </div>
+      )
     }
     case 'call': {
       const {

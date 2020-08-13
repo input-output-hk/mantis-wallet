@@ -18934,9 +18934,9 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
-"web3@git+ssh://git@github.com/input-output-hk/midnight-web3.git#0ec5955501ba80375f843d03f92edc64e75f3c6d":
+"web3@git+ssh://git@github.com/input-output-hk/midnight-web3.git#ff954a973ed2da51ee04cf6148cdae3c0ab5c916":
   version "0.20.6"
-  resolved "git+ssh://git@github.com/input-output-hk/midnight-web3.git#0ec5955501ba80375f843d03f92edc64e75f3c6d"
+  resolved "git+ssh://git@github.com/input-output-hk/midnight-web3.git#ff954a973ed2da51ee04cf6148cdae3c0ab5c916"
   dependencies:
     bignumber.js "9.0.0"
     crypto-js "3.1.4"

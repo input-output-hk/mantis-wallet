@@ -287,3 +287,10 @@ export const fillActionHandlers = (
   role,
   tabIndex: 0,
 })
+
+export const utf8Length = (str: string): number => new Blob([str]).size
+
+export const validateUtf8Length = (lengthInBytes: number) => (value?: string): ValidationResult =>
+  value != null && utf8Length(value) > lengthInBytes
+    ? {tKey: ['wallet', 'error', 'textIsLimitedToBytes'], options: {count: lengthInBytes}}
+    : 'OK'

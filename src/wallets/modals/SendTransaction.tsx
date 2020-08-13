@@ -5,7 +5,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {ModalLocker, ModalOnCancel, wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
-import {DialogInput} from '../../common/dialog/DialogInput'
+import {DialogInput, DialogInputTextArea} from '../../common/dialog/DialogInput'
 import {Account} from '../../web3'
 import {
   validateFee,
@@ -13,6 +13,7 @@ import {
   createConfidentialAddressValidator,
   createTransparentAddressValidator,
   translateValidationResult,
+  validateUtf8Length,
   toAntValidator,
 } from '../../common/util'
 import {UNITS} from '../../common/units'
@@ -29,9 +30,11 @@ import './SendTransaction.scss'
 
 const {Dust} = UNITS
 
+const MAX_MEMO_LENGTH_IN_BYTES = 512
+
 interface SendToConfidentialDialogProps extends ModalOnCancel {
   estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
-  onSend: (recipient: string, amount: number, fee: number) => Promise<void>
+  onSend: (recipient: string, amount: number, fee: number, memo: string) => Promise<void>
   availableAmount: BigNumber
 }
 
@@ -62,6 +65,7 @@ export const SendToConfidentialDialog = ({
   const [amount, setAmount] = useState('0')
   const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
+  const [memo, setMemo] = useState('')
 
   const feeValidationResult = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(t, availableAmount)
@@ -69,6 +73,7 @@ export const SendToConfidentialDialog = ({
     t,
     createConfidentialAddressValidator(getNetworkTagOrTestnet(networkTag)),
   )
+  const memoValidator = toAntValidator(t, validateUtf8Length(MAX_MEMO_LENGTH_IN_BYTES))
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     (): Promise<FeeEstimates> => estimateTransactionFee(Dust.toBasic(new BigNumber(amount))),
@@ -87,7 +92,7 @@ export const SendToConfidentialDialog = ({
       rightButtonProps={{
         children: t(['wallet', 'button', 'sendTransaction']),
         onClick: (): Promise<void> =>
-          onSend(recipient, Number(Dust.toBasic(amount)), Number(Dust.toBasic(fee))),
+          onSend(recipient, Number(Dust.toBasic(amount)), Number(Dust.toBasic(fee)), memo),
         disabled: disableSend,
       }}
       onSetLoading={modalLocker.setLocked}
@@ -125,6 +130,18 @@ export const SendToConfidentialDialog = ({
         onChange={(fee: string): void => setFee(fee)}
         isPending={isFeeEstimationPending}
         errorMessage={translateValidationResult(t, feeValidationResult)}
+      />
+      <DialogInputTextArea
+        label={t(['wallet', 'label', 'encryptedMemo'])}
+        optional
+        id="encrypted-memo"
+        onChange={(e): void => setMemo(e.target.value)}
+        autoSize
+        formItem={{
+          name: 'encrypted-memo',
+          initialValue: memo,
+          rules: [memoValidator],
+        }}
       />
     </Dialog>
   )

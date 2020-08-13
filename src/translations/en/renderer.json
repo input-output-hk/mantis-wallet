@@ -119,7 +119,8 @@
       "walletName": "Wallet Name",
       "revealPrivateKey": "Reveal Private Key",
       "lastUsedAddresses": "Last used addresses",
-      "selectAccount": "Select Account"
+      "selectAccount": "Select Account",
+      "encryptedMemo": "Encrypted Memo"
     },
     "error": {
       "jobAlreadyAdded": "Job {{jobHash}} already added",
@@ -138,7 +139,9 @@
       "errorWhileLoadingTheWallet": "An error occurred while loading the wallet",
       "walletNameShouldNotBeEmpty": "Name shouldn't be empty",
       "receivingAddressMustBe": "Recipient must be set",
-      "couldNotRestoreWallet": "Couldn't restore wallet with the provided information"
+      "couldNotRestoreWallet": "Couldn't restore wallet with the provided information",
+      "textIsLimitedToBytes": "The text is limited to {{count}} byte",
+      "textIsLimitedToBytes_plural": "The text is limited to {{count}} bytes"
     },
     "message": {
       "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",
@@ -317,7 +320,6 @@
       "totalTimeToUnlockFunds": "Total time to unlock",
       "etcAddress": "ETC Address",
       "etcPublicAddress": "ETC Public Address",
-      "transparentMidnightAddress": "Transparent Midnight Address",
       "midnightTransparentAddress": "Midnight Transparent Address",
       "midnightAddress": "Midnight Address",
       "eligibleAmount": "Eligible Amount",
@@ -506,6 +508,9 @@
       "goBackOneStep": "Go Back",
       "iUnderstand": "I understand",
       "proceedToNextStep": "Proceed"
+    },
+    "label": {
+      "optionalField": "optional"
     },
     "answer": {
       "yes": "Yes",

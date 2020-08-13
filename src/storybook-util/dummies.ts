@@ -37,6 +37,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
+      memo: ['text', 'My memo'],
     },
     txDirection: 'outgoing',
     txValue: {
@@ -53,6 +54,7 @@ export const dummyTransactions: Transaction[] = [
     },
     txDetails: {
       txType: 'transfer',
+      memo: null,
     },
     txDirection: 'incoming',
     txValue: '0x100441e',
@@ -62,6 +64,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
+      memo: null,
     },
     txDirection: 'incoming',
     txValue: '0x54708b',
@@ -71,6 +74,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: 'failed',
     txDetails: {
       txType: 'transfer',
+      memo: null,
     },
     txDirection: 'outgoing',
     txValue: {
@@ -96,6 +100,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
+      memo: null,
     },
     txDirection: 'incoming',
     txValue: '0x4c45dce',
@@ -105,6 +110,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
+      memo: null,
     },
     txDirection: 'outgoing',
     txValue: {

@@ -78,7 +78,7 @@ const _SubmitProofOfUnlock = ({
       onSetLoading={modalLocker.setLocked}
       type="dark"
     >
-      <DialogMessage label={t(['glacierDrop', 'label', 'transparentMidnightAddress'])}>
+      <DialogMessage label={t(['glacierDrop', 'label', 'midnightTransparentAddress'])}>
         {transparentAddress}
       </DialogMessage>
       <DialogShowDust amount={dustAmount}>

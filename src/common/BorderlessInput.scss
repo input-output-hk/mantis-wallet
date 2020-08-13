@@ -8,6 +8,7 @@
     border: 0;
     border-radius: $dialog-component-border-radius;
     opacity: 1;
+    resize: none;
 
     @include themify($themes) {
       border: 1px solid themed('normal-color');

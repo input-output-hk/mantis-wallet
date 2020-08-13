@@ -33,6 +33,7 @@ const tx1: Transaction = {
   txValue: Dust.toBasic('123'),
   txDetails: {
     txType: 'transfer',
+    memo: null,
   },
 }
 
@@ -341,6 +342,7 @@ test('Send confidential transaction works', async () => {
       CONFIDENTIAL_ADDRESS, // the confidential address used
       usedAtom.toNumber(), // the amount used
       mockEstimateCalculator(usedAtom)(baseEstimates.low).toNumber(), // the lowest fee used
+      '',
     ),
   )
 })

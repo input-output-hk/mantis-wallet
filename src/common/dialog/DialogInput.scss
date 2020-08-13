@@ -7,11 +7,22 @@
   .label {
     @extend %dialog-label;
     display: block;
+
+    .optional {
+      @include themify($themes) {
+        color: themed('secondary-text-color');
+      }
+    }
   }
 
   .input {
     height: $dialog-component-height;
+    min-height: $dialog-component-height;
     border-radius: $dialog-component-border-radius;
+  }
+
+  textarea.input {
+    padding: 12px;
   }
 
   .dark & {
