@@ -39,7 +39,6 @@ body {
   margin: 0;
   font-family: $font-family;
   font-size: $font-size-root;
-  -webkit-font-smoothing: auto;
   text-rendering: optimizeLegibility; // could cause performance problems on mobile
 }
 
