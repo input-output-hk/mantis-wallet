@@ -183,6 +183,41 @@ const configGetter = convict({
     env: 'LUNA_RPC_ADDRESS',
     doc: "Address where is available Wallet Backend's RPC",
   },
+  nodeRpcPort: {
+    default: 8546,
+    format: 'port',
+    arg: 'node-rpc-port',
+    env: 'LUNA_NODE_RPC_PORT',
+    doc: 'Port used for node rpc',
+  },
+  walletRpcPort: {
+    default: 8342,
+    format: 'port',
+    arg: 'wallet-rpc-port',
+    env: 'LUNA_WALLET_RPC_PORT',
+    doc: 'Port used for wallet rpc',
+  },
+  discoveryPort: {
+    default: 30303,
+    format: 'port',
+    arg: 'discovery-port',
+    env: 'LUNA_DISCOVERY_PORT',
+    doc: 'Port used for discovery',
+  },
+  p2pMessagingPort: {
+    default: 9076,
+    format: 'port',
+    arg: 'p2p-messaging-port',
+    env: 'LUNA_P2P_MESSAGING_PORT',
+    doc: 'Port used for p2p messaging',
+  },
+  blocksStreamingPort: {
+    default: 4242,
+    format: 'port',
+    arg: 'blocks-streaming-port',
+    env: 'LUNA_BLOCKS_STREAMING_PORT',
+    doc: 'Port used for blocks streaming',
+  },
   provers: {
     default: [
       {
@@ -308,6 +343,13 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
         optionZip(handlePath(keyStorePath), handlePath(passwordPath)),
         option.map(([keyStorePath, passwordPath]): TLSConfig => ({keyStorePath, passwordPath})),
       )
+    }),
+    (config) => ({
+      ...config,
+      rpcAddress: config.runClients
+        ? `https://127.0.0.1:${config.walletRpcPort}/`
+        : config.rpcAddress,
+      nodeRpcAddress: `https://127.0.0.1:${config.nodeRpcPort}/`,
     }),
     (config) => config as Config,
     mapProp('dataDir', tildeToHome),
