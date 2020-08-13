@@ -33,9 +33,6 @@ interface BurnCoinsGenerateAddressProps {
   generateBurnAddress: (prover: Prover, midnightAddress: string, fee: number) => Promise<void>
 }
 
-const feeTooltip =
-  'This is a fee in Midnight Tokens that is the Prover reward and will be taken from your total burned amount.'
-
 const ApproveChangeReward = ({
   visible,
   onCancel,
@@ -151,7 +148,7 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
         />
         <div className="fee-container">
           <label className="label" htmlFor="generate-burn-fee">
-            <Popover content={feeTooltip}>
+            <Popover content={<Trans k={['proofOfBurn', 'message', 'proverRewardTooltip']} />}>
               <span>
                 <Trans k={chain.translations.proverRewardLabel} />{' '}
                 <span style={{textTransform: 'none'}}>
@@ -182,7 +179,15 @@ export const BurnCoinsGenerateAddress: FunctionComponent<BurnCoinsGenerateAddres
         <DialogApproval
           autoFocus
           id="i-understand-the-process-checkbox"
-          description={<Trans k={chain.translations.burnDescription} />}
+          description={
+            <div>
+              <Trans k={chain.translations.burnDescription} />
+              <br />
+              <Link href={LINKS.aboutPoB} styled>
+                <Trans k={['proofOfBurn', 'link', 'learnMoreAboutPoB']} />
+              </Link>
+            </div>
+          }
         />
       </Dialog>
       <ApproveChangeReward
