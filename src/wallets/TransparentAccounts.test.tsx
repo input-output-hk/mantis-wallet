@@ -13,8 +13,9 @@ import {createInMemoryStore} from '../common/store'
 import {SettingsState, defaultSettingsData} from '../settings-state'
 import {findExactlyOneByTag, abbreviateAmountForEnUS} from '../common/test-helpers'
 import {TransparentAccounts} from './TransparentAccounts'
-import {Transaction, makeWeb3Worker} from '../web3'
+import {makeWeb3Worker} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
+import {ExtendedTransaction} from './TransactionRow'
 
 const {Dust} = UNITS
 
@@ -252,7 +253,7 @@ export const transparentAccounts: TransparentAccount[] = [
   },
 ]
 
-export const transactions: Transaction[] = [
+export const transactions: ExtendedTransaction[] = [
   {
     hash: '1',
     txStatus: {
@@ -272,6 +273,10 @@ export const transactions: Transaction[] = [
         receivingAddress: 'm-test-uns-ad1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq79ndq95',
         value: '123',
         payload: '0xPAYLOAD',
+      },
+      callTxStatus: {
+        status: 'TransactionOk',
+        message: '',
       },
     },
     txDirection: 'outgoing',
@@ -299,6 +304,10 @@ export const transactions: Transaction[] = [
         receivingAddress: 'first-transparent-address',
         value: '1230',
         payload: '0xPAYLOAD',
+      },
+      callTxStatus: {
+        status: 'TransactionOk',
+        message: '',
       },
     },
     txDirection: 'outgoing',

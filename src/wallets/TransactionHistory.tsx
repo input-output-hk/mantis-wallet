@@ -3,7 +3,7 @@ import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
-import {Transaction, TransparentAddress, Account} from '../web3'
+import {TransparentAddress, Account} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates} from '../common/wallet-state'
@@ -15,10 +15,11 @@ import {
   SortableColumnConfig,
 } from './TransactionList'
 import {Trans} from '../common/Trans'
+import {ExtendedTransaction} from './TransactionRow'
 import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
-  transactions: Transaction[]
+  transactions: ExtendedTransaction[]
   transparentAddresses: TransparentAddress[]
   accounts: Account[]
   availableBalance: BigNumber

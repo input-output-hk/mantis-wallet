@@ -7,10 +7,10 @@ import {fillActionHandlers} from '../common/util'
 import {CopyableLongText} from '../common/CopyableLongText'
 import {ShortNumber} from '../common/ShortNumber'
 import {TransparentAccount, FeeEstimates} from '../common/wallet-state'
+import {ExtendedTransaction} from './TransactionRow'
 import {RedeemModal} from './modals/RedeemModal'
 import dustIconDark from '../assets/dark/dust.png'
 import dustIconLight from '../assets/light/dust.png'
-import {Transaction} from '../web3'
 import {TransactionList} from './TransactionList'
 import {rendererLog} from '../common/logger'
 import {Trans} from '../common/Trans'
@@ -19,7 +19,7 @@ import './TransparentAccounts.scss'
 interface ShowAccountProps {
   account: TransparentAccount
   redeem: () => void
-  transactions: Transaction[]
+  transactions: ExtendedTransaction[]
 }
 
 const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
@@ -72,7 +72,7 @@ const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
           <div className="transactions-container">
             <TransactionList
               transactions={transactions.map(
-                (tx: Transaction): Transaction =>
+                (tx: ExtendedTransaction): ExtendedTransaction =>
                   // this is necessary for txs between a single user's accounts
                   // where it is always shown as outgoing
                   tx.txDetails.txType === 'call' &&
@@ -103,7 +103,7 @@ interface TransparentAccountsProps {
   redeem: (address: string, amount: number, fee: number) => Promise<void>
   estimateRedeemFee: (amount: BigNumber) => Promise<FeeEstimates>
   backToTransactions: () => void
-  transactions: Transaction[]
+  transactions: ExtendedTransaction[]
 }
 
 export const TransparentAccounts: FunctionComponent<TransparentAccountsProps> = ({

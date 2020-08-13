@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import {action} from '@storybook/addon-actions'
 import {object, text} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
-import {Transaction, Account} from '../web3'
+import {Account} from '../web3'
 import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
@@ -18,6 +18,7 @@ import {
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
+import {ExtendedTransaction} from './TransactionRow'
 
 export default {
   title: 'Transaction History',
@@ -66,7 +67,7 @@ export const interactive = (): JSX.Element => {
   return (
     <TransactionHistory
       transactions={[
-        object<Transaction>('Transaction 1', {
+        object<ExtendedTransaction>('Transaction 1', {
           hash: '1',
           txDirection: 'outgoing',
           txValue: {
@@ -83,7 +84,7 @@ export const interactive = (): JSX.Element => {
             memo: null,
           },
         }),
-        object<Transaction>('Transaction 2', {
+        object<ExtendedTransaction>('Transaction 2', {
           hash: '2',
           txDirection: 'incoming',
           txValue: toHex(1000.0),
@@ -97,7 +98,7 @@ export const interactive = (): JSX.Element => {
             memo: null,
           },
         }),
-        object<Transaction>('Transaction 3', {
+        object<ExtendedTransaction>('Transaction 3', {
           hash: '3',
           txDirection: 'incoming',
           txValue: toHex(1000.0),

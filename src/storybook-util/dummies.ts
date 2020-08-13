@@ -1,15 +1,15 @@
 import BigNumber from 'bignumber.js'
-import {Transaction} from '../web3'
 import {wait} from '../shared/utils'
 import {FeeEstimates} from '../common/wallet-state'
 import {PeriodConfig} from '../glacier-drop/glacier-state'
+import {ExtendedTransaction} from '../wallets/TransactionRow'
 
-export const dummyTransactions: Transaction[] = [
+export const dummyTransactions: ExtendedTransaction[] = [
   {
     hash: '1',
     txStatus: {
-      status: 'confirmed',
-      atBlock: '0xb70ef5',
+      status: 'persisted',
+      atBlock: '0xb70ef8',
       timestamp: 1585118001,
     },
     txDetails: {
@@ -24,6 +24,10 @@ export const dummyTransactions: Transaction[] = [
         receivingAddress: 'm-test-uns-ad185v0zwhq92a3d230smap6sfxy9fjukgn7qs2q0',
         value: '123',
         payload: '0xPAYLOAD',
+      },
+      callTxStatus: {
+        status: 'TransactionFailed',
+        message: '',
       },
     },
     txDirection: 'outgoing',
@@ -50,7 +54,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: {
       status: 'persisted',
       atBlock: '0xb70ef4',
-      timestamp: 1585118000,
+      timestamp: 1585118002,
     },
     txDetails: {
       txType: 'transfer',
@@ -87,7 +91,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: {
       status: 'confirmed',
       atBlock: '0xb70ef5',
-      timestamp: 1585118001,
+      timestamp: 1585118004,
     },
     txDetails: {
       txType: 'coinbase',
@@ -123,7 +127,7 @@ export const dummyTransactions: Transaction[] = [
     txStatus: {
       status: 'confirmed',
       atBlock: '0xb70ef8',
-      timestamp: 1585118004,
+      timestamp: 1585118003,
     },
     txDetails: {
       txType: 'call',
@@ -137,6 +141,10 @@ export const dummyTransactions: Transaction[] = [
         receivingAddress: 'first-transparent-address',
         value: '1230',
         payload: '0xPAYLOAD',
+      },
+      callTxStatus: {
+        status: 'TransactionFailed',
+        message: 'failed with a message',
       },
     },
     txDirection: 'outgoing',

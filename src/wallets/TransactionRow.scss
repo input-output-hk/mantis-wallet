@@ -41,6 +41,18 @@
           fill: themed('error-color');
         }
       }
+
+      &.failedToExecute {
+        @include themify($themes) {
+          fill: themed('error-color');
+        }
+
+        &.nonPersisted {
+          @include themify($themes) {
+            fill: themed('text-color');
+          }
+        }
+      }
     }
   }
 
@@ -129,6 +141,20 @@
 
     .fee {
       display: block;
+    }
+  }
+
+  .call-details {
+    .success {
+      @include themify($themes) {
+        color: themed('success-text');
+      }
+    }
+
+    .failure {
+      @include themify($themes) {
+        color: themed('error-text');
+      }
     }
   }
 }
