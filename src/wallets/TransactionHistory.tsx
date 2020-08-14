@@ -108,10 +108,9 @@ export const TransactionHistory = ({
           </Button>
           <SendTransaction
             visible={showSendModal}
-            accounts={accounts}
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
-            onSend={async (
+            onSendToConfidential={async (
               recipient: string,
               amount: number,
               fee: number,
@@ -120,7 +119,7 @@ export const TransactionHistory = ({
               await sendTransaction(recipient, amount, fee, memo)
               setShowSendModal(false)
             }}
-            estimateTransactionFee={estimateTransactionFee}
+            estimatePrivateTransactionFee={estimateTransactionFee}
             onSendToTransparent={async (
               recipient: string,
               amount: BigNumber,

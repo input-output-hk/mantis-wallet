@@ -14,6 +14,7 @@ import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {useTranslation} from '../../settings-state'
 import {Trans} from '../../common/Trans'
+import {DialogColumns} from '../../common/dialog/DialogColumns'
 import './RedeemModal.scss'
 
 const {Dust} = UNITS
@@ -95,16 +96,22 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
     () => (amount === '0' ? Promise.resolve() : txAmountValidator.validator({}, amount)),
   )
 
-  const disableRedeem = feeValidationResult !== 'OK' || !feeEstimates
+  const totalAmount = new BigNumber(Dust.toBasic(amount)).plus(new BigNumber(Dust.toBasic(fee)))
+  const remainingBalance = totalAmount.isFinite()
+    ? transparentAccount.balance.minus(totalAmount)
+    : transparentAccount.balance
+
+  const disableRedeem =
+    feeValidationResult !== 'OK' || !feeEstimates || !remainingBalance.isPositive()
 
   return (
     <Dialog
-      title={t(['wallet', 'title', 'applyConfidentiality'])}
+      title={t(['wallet', 'title', 'sendFromTransparentToConfidential'])}
       leftButtonProps={{
         onClick: onCancel,
       }}
       rightButtonProps={{
-        children: t(['wallet', 'button', 'applyConfidentiality']),
+        children: t(['wallet', 'button', 'applyConfidentialityShort']),
         onClick: async (): Promise<void> => {
           await redeem(
             transparentAccount.address,
@@ -117,9 +124,6 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
       onSetLoading={modalLocker.setLocked}
       type="dark"
     >
-      <DialogShowDust amount={transparentAccount.balance}>
-        <Trans k={['wallet', 'label', 'availableAmount']} />
-      </DialogShowDust>
       <div className="amount-container">
         <div className="label">
           <Trans k={['wallet', 'label', 'amount']} />
@@ -155,6 +159,14 @@ const RedeemDialog: FunctionComponent<RedeemDialogProps> = ({
       <DialogMessage type="highlight">
         <Trans k={['wallet', 'message', 'applyConfidentialityDescription']} />
       </DialogMessage>
+      <DialogColumns>
+        <DialogShowDust amount={totalAmount} displayExact>
+          <Trans k={['wallet', 'label', 'totalTransactionAmount']} />
+        </DialogShowDust>
+        <DialogShowDust amount={remainingBalance} displayExact>
+          <Trans k={['wallet', 'label', 'remainingBalance']} />
+        </DialogShowDust>
+      </DialogColumns>
     </Dialog>
   )
 }

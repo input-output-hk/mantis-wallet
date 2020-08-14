@@ -18,6 +18,10 @@
     }
   }
 
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
   .options .button.inactive,
   .options .button.custom {
     opacity: $unselected-opacity;

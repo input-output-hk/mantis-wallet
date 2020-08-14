@@ -215,7 +215,7 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 test('Send modal shows up', async () => {
   const availableDust = new BigNumber(123)
 
-  const {getByTestId, getAllByText, getByText, queryAllByText} = renderTransactionHistory({
+  const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
     accounts,
   })
@@ -225,21 +225,12 @@ test('Send modal shows up', async () => {
   // Default title is 'Confidential → Confidential'
   expect(getByText('Confidential → Confidential')).toBeInTheDocument()
 
-  // Fee estimates are shown two times (Confidential / Transparent)
-  expect(getAllByText('Fee')).toHaveLength(2)
-  await waitFor(() => expect(queryAllByText('Slow')).toHaveLength(2))
-  await waitFor(() => expect(queryAllByText('Average')).toHaveLength(2))
-  await waitFor(() => expect(queryAllByText('Fast')).toHaveLength(2))
-  await waitFor(() => expect(queryAllByText('Custom')).toHaveLength(2))
-
-  // 'Select Account' field and its value is in the document
-  expect(getByText(/Select Account.*/)).toBeInTheDocument()
-  expect(getByText(accounts[0].address)).toBeInTheDocument()
-
-  // 'Available amount' field and its value is in the document
-  expect(getByText('Available Amount')).toBeInTheDocument()
-  const {strict: availableBalanceFormatted} = abbreviateAmountForEnUS(availableDust)
-  expect(getByText(availableBalanceFormatted)).toBeInTheDocument()
+  // Fee estimates are shown
+  expect(getByText('Fee')).toBeInTheDocument()
+  await waitFor(() => expect(queryByText('Slow')).toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Average')).toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Fast')).toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Custom')).toBeInTheDocument())
 
   // 'Tx type' field and its buttons are in the document
   expect(getByText('Transaction Type')).toBeInTheDocument()
@@ -247,19 +238,16 @@ test('Send modal shows up', async () => {
   expect(getByText('Transparent')).toBeInTheDocument()
 
   // 'Recipient' and 'Amount' fields are two times in the document
-  expect(getAllByText('Recipient')).toHaveLength(2)
-  expect(getAllByText('Amount')).toHaveLength(2)
+  expect(getByText('Recipient')).toBeInTheDocument()
+  expect(getByText('Amount')).toBeInTheDocument()
 
   // Two Send buttons appeared (plus the one in TxHistory)
-  expect(getAllByText(/Send.*/)).toHaveLength(3)
-
-  // Warning for transparent tx is in the document
-  expect(getByText('Warning:')).toBeInTheDocument()
+  expect(getAllByText(/Send.*/)).toHaveLength(2)
 })
 
 test('Send confidential transaction works', async () => {
-  const availableDust = new BigNumber(123)
-  const usedDust = new BigNumber(100)
+  const availableDust = new BigNumber(1230)
+  const usedDust = new BigNumber(951)
   const usedAtom = Dust.toBasic(usedDust)
 
   const baseEstimates = {
@@ -274,7 +262,13 @@ test('Send confidential transaction works', async () => {
 
   const send = jest.fn()
 
-  const {getByTestId, getAllByLabelText, getAllByText, queryByText} = renderTransactionHistory({
+  const {
+    getByTestId,
+    getByLabelText,
+    getAllByText,
+    queryByText,
+    queryAllByText,
+  } = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
     accounts,
     estimateTransactionFee: estimateFees,
@@ -284,7 +278,7 @@ test('Send confidential transaction works', async () => {
   await act(async () => userEvent.click(openSendModalButton))
 
   // Set recipient to a invalid address, error pops up
-  const confidentialRecipient = getAllByLabelText('Recipient')[0]
+  const confidentialRecipient = getByLabelText('Recipient')
   fireEvent.change(confidentialRecipient, {target: {value: 'not-an-address'}})
   await waitFor(() => expect(queryByText('Invalid confidential address')).toBeInTheDocument())
 
@@ -299,15 +293,12 @@ test('Send confidential transaction works', async () => {
   await waitFor(() => expect(queryByText('Recipient must be set')).not.toBeInTheDocument())
 
   // Check correct fee estimates are shown for default (0) amount
-  await waitFor(() => {
-    Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmountForEnUS(Dust.fromBasic(estimate))
-      expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
-    })
-  })
+  await waitFor(() => expect(queryByText('0.00000123', {exact: false})).toBeInTheDocument())
+  await waitFor(() => expect(queryAllByText('0.00000456', {exact: false})).toHaveLength(2)) // Medium is used for total amount
+  await waitFor(() => expect(queryByText('0.00000789', {exact: false})).toBeInTheDocument())
 
   // Amount should be set to 0 by default
-  const confidentialAmount = getAllByLabelText('Amount')[0]
+  const confidentialAmount = getByLabelText('Amount')
   expect(confidentialAmount).toHaveAttribute('value', '0')
 
   // Clear amount, error pops up
@@ -353,8 +344,8 @@ test('Send confidential transaction works', async () => {
 })
 
 test('Send transparent transaction works', async () => {
-  const availableDust = new BigNumber(123)
-  const usedDust = new BigNumber(100)
+  const availableDust = new BigNumber(1230)
+  const usedDust = new BigNumber(951)
   const usedAtom = Dust.toBasic(usedDust)
   const recipient = TRANSPARENT_ADDRESSES[0].address
 
@@ -372,11 +363,11 @@ test('Send transparent transaction works', async () => {
 
   const {
     getByTestId,
-    getAllByLabelText,
     getAllByText,
     getByText,
     queryByText,
     getByLabelText,
+    queryAllByText,
   } = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
     accounts,
@@ -391,7 +382,7 @@ test('Send transparent transaction works', async () => {
   await waitFor(() => expect(getByText('Confidential → Transparent')).toBeInTheDocument())
 
   // Set recipient to a confidential address, error pops up
-  const confidentialRecipient = getAllByLabelText('Recipient')[1]
+  const confidentialRecipient = getByLabelText('Recipient')
   fireEvent.change(confidentialRecipient, {target: {value: CONFIDENTIAL_ADDRESS}})
   await waitFor(() => expect(queryByText('Invalid transparent address')).toBeInTheDocument())
 
@@ -406,15 +397,12 @@ test('Send transparent transaction works', async () => {
   await waitFor(() => expect(queryByText('Recipient must be set')).not.toBeInTheDocument())
 
   // Check correct fee estimates are shown for default (0) amount
-  await waitFor(() => {
-    Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmountForEnUS(Dust.fromBasic(estimate))
-      expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
-    })
-  })
+  await waitFor(() => expect(queryByText('0.00000123', {exact: false})).toBeInTheDocument())
+  await waitFor(() => expect(queryAllByText('0.00000456', {exact: false})).toHaveLength(2)) // Medium is used for total amount
+  await waitFor(() => expect(queryByText('0.00000789', {exact: false})).toBeInTheDocument())
 
   // Amount should be set to 0 by default
-  const confidentialAmount = getAllByLabelText('Amount')[1]
+  const confidentialAmount = getByLabelText('Amount')
   expect(confidentialAmount).toHaveAttribute('value', '0')
 
   // Clear amount, error pops up
@@ -443,7 +431,7 @@ test('Send transparent transaction works', async () => {
   })
 
   // Click correct send button, it fails since checkbox was not clicked
-  const sendButton = getAllByText(/Send.*/)[2]
+  const sendButton = getAllByText(/Send.*/)[1]
   await act(async () => userEvent.click(sendButton))
   await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
 

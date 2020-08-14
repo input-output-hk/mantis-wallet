@@ -144,23 +144,11 @@ export const interactive = (): JSX.Element => {
 
 export const sendConfidentialTransaction = (): JSX.Element => (
   <SendTransaction
-    accounts={[
-      {
-        wallet: 'wallet 1',
-        address: text('First address', CONFIDENTIAL_ADDRESS),
-        locked: false,
-      },
-      {
-        wallet: 'wallet 2',
-        address: text('Second address', 'second-address'),
-        locked: false,
-      },
-    ]}
     availableAmount={dust('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
-    onSend={asyncAction('on-send')}
+    onSendToConfidential={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}
-    estimateTransactionFee={estimateFeesWithRandomDelay}
+    estimatePrivateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     defaultMode="confidential"
     visible
@@ -169,23 +157,11 @@ export const sendConfidentialTransaction = (): JSX.Element => (
 
 export const sendTransparentTransaction = (): JSX.Element => (
   <SendTransaction
-    accounts={[
-      {
-        wallet: 'wallet 1',
-        address: text('First address', CONFIDENTIAL_ADDRESS),
-        locked: false,
-      },
-      {
-        wallet: 'wallet 2',
-        address: text('Second address', 'second-address'),
-        locked: false,
-      },
-    ]}
     availableAmount={dust('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
-    onSend={asyncAction('on-send')}
+    onSendToConfidential={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}
-    estimateTransactionFee={estimateFeesWithRandomDelay}
+    estimatePrivateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     defaultMode="transparent"
     visible
