@@ -101,7 +101,7 @@ class MockWallet implements WalletAPI {
   }
 
   // balances
-  getBalance(): Balance {
+  getPrivateBalance(): Balance {
     this._lockGuard()
     return {
       availableBalance: new BigNumber(100_000_000) as BigNumberJSON,
@@ -175,11 +175,11 @@ class MockWallet implements WalletAPI {
 
   // transparent addresses
 
-  listTransparentAddresses(): TransparentAddress[] {
+  listTransparentAccounts(): TransparentAddress[] {
     this._lockGuard()
     return [TRANSPARENT_ADDRESS]
   }
-  generateTransparentAddress(): TransparentAddress {
+  generateTransparentAccount(): TransparentAddress {
     this._lockGuard()
     return TRANSPARENT_ADDRESS
   }

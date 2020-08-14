@@ -5,12 +5,12 @@ import './BurnCoinsTransparentAddress.scss'
 
 interface BurnCoinsNoWalletProps {
   cancel: () => void
-  generateTransparentAddress: () => Promise<void>
+  generateTransparentAccount: () => Promise<void>
 }
 
 export const BurnCoinsTransparentAddress: FunctionComponent<BurnCoinsNoWalletProps> = ({
   cancel,
-  generateTransparentAddress,
+  generateTransparentAccount,
 }: BurnCoinsNoWalletProps) => {
   const {t} = useTranslation()
   return (
@@ -19,9 +19,9 @@ export const BurnCoinsTransparentAddress: FunctionComponent<BurnCoinsNoWalletPro
         title={t(['wallet', 'message', 'transparentAddressNeeded'])}
         leftButtonProps={{onClick: cancel}}
         rightButtonProps={{
-          children: t(['wallet', 'button', 'generateTransparentAddress']),
+          children: t(['wallet', 'button', 'generateTransparentAccount']),
           autoFocus: true,
-          onClick: generateTransparentAddress,
+          onClick: generateTransparentAccount,
         }}
       />
     </div>

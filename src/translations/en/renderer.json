@@ -86,7 +86,7 @@
       "copyAddress": "Copy Address",
       "seeAllTransparentAddresses": "See all Transparent Addresses",
       "useFullAmount": "Full Amount",
-      "generateTransparentAddress": "Generate Transparent Address"
+      "generateTransparentAccount": "Generate Transparent Address"
     },
     "link": {
       "viewInExplorer": "View in Explorer",
