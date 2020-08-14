@@ -5,7 +5,7 @@ import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {Transaction, Account, makeWeb3Worker, TransparentAddress} from '../web3'
+import {Account, makeWeb3Worker, TransparentAddress} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
@@ -17,12 +17,13 @@ import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
 import {CONFIDENTIAL_ADDRESS, TRANSPARENT_ADDRESSES} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
+import {ExtendedTransaction} from './TransactionRow'
 
 const {Dust} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
-const tx1: Transaction = {
+const tx1: ExtendedTransaction = {
   hash: '1',
   txDirection: 'incoming',
   txStatus: {
@@ -37,7 +38,7 @@ const tx1: Transaction = {
   },
 }
 
-const tx2: Transaction = {
+const tx2: ExtendedTransaction = {
   hash: '2',
   txDirection: 'outgoing',
   txStatus: 'pending',
@@ -57,6 +58,10 @@ const tx2: Transaction = {
       sendingAddress: 'sendingAddress',
       value: toHex(12345),
       payload: toHex(12345),
+    },
+    callTxStatus: {
+      status: 'TransactionOk',
+      message: '',
     },
   },
 }
@@ -175,13 +180,13 @@ test('TransactionHistory shows proper tx amounts', () => {
 
 // txStatus.status
 test('TransactionHistory shows `Confirmed` status/icon', () => {
-  const {getByTitle} = renderTransactionHistory({transactions: [tx1]})
-  expect(getByTitle('Confirmed')).toBeInTheDocument()
+  const {getByText} = renderTransactionHistory({transactions: [tx1]})
+  expect(getByText('Confirmed')).toBeInTheDocument()
 })
 
 test('TransactionHistory shows `Pending` status', () => {
-  const {getByTitle} = renderTransactionHistory({transactions: [tx2]})
-  expect(getByTitle('Pending')).toBeInTheDocument()
+  const {getByText} = renderTransactionHistory({transactions: [tx2]})
+  expect(getByText('Pending')).toBeInTheDocument()
 })
 
 // txDirection

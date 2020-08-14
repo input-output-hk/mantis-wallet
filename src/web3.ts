@@ -62,7 +62,7 @@ interface TransparentTransaction {
   payload: string // hex string
 }
 
-interface CallTxDetails {
+export interface CallTxDetails {
   txType: 'call'
   usedTransparentAccountIndexes: number[]
   transparentTransactionHash: string

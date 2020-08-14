@@ -120,7 +120,8 @@
       "revealPrivateKey": "Reveal Private Key",
       "lastUsedAddresses": "Last used addresses",
       "selectAccount": "Select Account",
-      "encryptedMemo": "Encrypted Memo"
+      "encryptedMemo": "Encrypted Memo",
+      "contractCallMessage": "Contract Message"
     },
     "error": {
       "jobAlreadyAdded": "Job {{jobHash}} already added",
@@ -211,10 +212,13 @@
       "confirmed": "Confirmed",
       "persisted": "Persisted",
       "failed": "Failed",
+      "failedToExecute": "Failed to execute",
       "pendingDescription": "Transaction waiting to be added to a block in the Midnight Chain",
       "confirmedDescription": "Transaction has been added to a block in the Midnight Chain",
       "persistedDescription": "Transaction cannot be rolled back",
-      "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed"
+      "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed",
+      "failedToExecuteDescription": "Transaction was added to blockchain but smart contract call resulted with error",
+      "notPersistedDescription": "This transaction is not yet persisted"
     },
     "transactionType": {
       "received": "Received",

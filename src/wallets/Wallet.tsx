@@ -6,6 +6,7 @@ import {TransactionHistory} from './TransactionHistory'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
 import {TransparentAccounts} from './TransparentAccounts'
+import {ExtendedTransaction} from './TransactionRow'
 
 export type WalletViewMode = 'transactions' | 'accounts'
 
@@ -18,8 +19,21 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
     transparentAccounts,
     accounts,
   } = walletState.getOverviewProps()
+  const {callTxStatuses} = walletState
 
   const [viewType, setViewType] = useState<WalletViewMode>('transactions')
+  const extendedTransactions = transactions.map(
+    (t): ExtendedTransaction =>
+      t.txDetails.txType === 'call'
+        ? {
+            ...t,
+            txDetails: {
+              ...t.txDetails,
+              callTxStatus: callTxStatuses[t.hash] ?? {status: 'TransactionPending'},
+            },
+          }
+        : (t as ExtendedTransaction),
+  )
 
   return (
     <div className="Wallet invisible-scrollbar">
@@ -31,7 +45,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
       />
       {viewType === 'transactions' && (
         <TransactionHistory
-          transactions={transactions}
+          transactions={extendedTransactions}
           transparentAddresses={transparentAccounts}
           accounts={accounts}
           availableBalance={availableBalance}
@@ -60,7 +74,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
           }}
           estimateRedeemFee={walletState.estimateRedeemFee}
           backToTransactions={() => setViewType('transactions')}
-          transactions={transactions}
+          transactions={extendedTransactions}
         />
       )}
     </div>

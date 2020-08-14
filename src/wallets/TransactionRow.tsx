@@ -6,14 +6,14 @@ import {fromUnixTime} from 'date-fns'
 import classnames from 'classnames'
 import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
-import {Transaction, TxStatusString} from '../web3'
+import {Transaction, TxStatusString, CallTxDetails} from '../web3'
 import {SettingsState, useFormatters, useTranslation} from '../settings-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
-import {WalletState} from '../common/wallet-state'
+import {WalletState, TransactionStatus} from '../common/wallet-state'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
 import dustIconDark from '../assets/dark/dust.png'
@@ -27,46 +27,88 @@ import crossIcon from '../assets/icons/cross.svg'
 import glacierIcon from '../assets/icons/menu-glacier.svg'
 import './TransactionRow.scss'
 
-export interface TransactionCellProps {
-  transaction: Transaction
+interface ExtendedCallTxDetails extends CallTxDetails {
+  callTxStatus: TransactionStatus
 }
 
-const ICON_PER_TX_STATUS: Record<TxStatusString, string> = {
+export type ExtendedTransaction = Transaction &
+  (
+    | {
+        txDetails: ExtendedCallTxDetails
+      }
+    | {
+        txDetails: {
+          txType: Exclude<Transaction['txDetails']['txType'], 'call'>
+        }
+      }
+  )
+
+export interface TransactionCellProps {
+  transaction: ExtendedTransaction
+}
+
+type TxVisibleStatus = TxStatusString | 'failedToExecute'
+
+const ICON_PER_TX_STATUS: Record<TxVisibleStatus, string> = {
   pending: clockIcon,
   confirmed: checkIcon,
   persisted: checkDoubleIcon,
   failed: crossIcon,
+  failedToExecute: crossIcon,
 }
 
-const DESCRIPTION_PER_TX_STATUS: Record<TxStatusString, TKeyRenderer> = {
+const DESCRIPTION_PER_TX_STATUS: Record<TxVisibleStatus, TKeyRenderer> = {
   pending: ['wallet', 'transactionStatus', 'pendingDescription'],
   confirmed: ['wallet', 'transactionStatus', 'confirmedDescription'],
   persisted: ['wallet', 'transactionStatus', 'persistedDescription'],
   failed: ['wallet', 'transactionStatus', 'failedDescription'],
+  failedToExecute: ['wallet', 'transactionStatus', 'failedToExecuteDescription'],
 }
 
-const TX_STATUS_TRANSLATION: Record<TxStatusString, TKeyRenderer> = {
+const TX_STATUS_TRANSLATION: Record<TxVisibleStatus, TKeyRenderer> = {
   pending: ['wallet', 'transactionStatus', 'pending'],
   confirmed: ['wallet', 'transactionStatus', 'confirmed'],
   persisted: ['wallet', 'transactionStatus', 'persisted'],
   failed: ['wallet', 'transactionStatus', 'failed'],
+  failedToExecute: ['wallet', 'transactionStatus', 'failedToExecute'],
 }
 
-export const TxStatusCell = ({transaction: {txStatus}}: TransactionCellProps): JSX.Element => {
-  const {t} = useTranslation()
+const getVisibleStatus = ({txStatus, txDetails}: ExtendedTransaction): TxVisibleStatus => {
+  if (txDetails.txType === 'call' && txDetails.callTxStatus.status === 'TransactionFailed') {
+    return 'failedToExecute'
+  }
+  return typeof txStatus === 'string' ? txStatus : txStatus.status
+}
 
-  const status: TxStatusString = typeof txStatus === 'string' ? txStatus : txStatus.status
-  const translatedStatus = t(TX_STATUS_TRANSLATION[status])
-  const iconSrc = ICON_PER_TX_STATUS[status]
-  const description = t(DESCRIPTION_PER_TX_STATUS[status])
+export const TxStatusCell = ({transaction}: TransactionCellProps): JSX.Element => {
+  const status = getVisibleStatus(transaction)
+  const nonPersisted =
+    status === 'failedToExecute' &&
+    typeof transaction.txStatus !== 'string' &&
+    transaction.txStatus.status === 'confirmed'
 
   return (
     <>
-      <span className="icon">
-        <SVG className={status} title={translatedStatus} src={iconSrc} />
-      </span>
-      <Popover content={description} placement="bottom">
-        <span>{translatedStatus}</span>
+      <Popover
+        content={
+          <>
+            <Trans k={DESCRIPTION_PER_TX_STATUS[status]} />
+            {nonPersisted && (
+              <>
+                <br />
+                <Trans k={['wallet', 'transactionStatus', 'notPersistedDescription']} />
+              </>
+            )}
+          </>
+        }
+        placement="bottom"
+      >
+        <span>
+          <span className="icon">
+            <SVG className={classnames(status, {nonPersisted})} src={ICON_PER_TX_STATUS[status]} />
+          </span>
+          <Trans k={TX_STATUS_TRANSLATION[status]} />
+        </span>
       </Popover>
     </>
   )
@@ -239,6 +281,28 @@ const TxGlacierTypeLabel = ({receivingAddress}: TxGlacierTypeLabel): JSX.Element
   }
 }
 
+const CallTxStatus = ({callTxStatus}: {callTxStatus: TransactionStatus}): JSX.Element => {
+  if (callTxStatus.status === 'TransactionPending' || callTxStatus.message === '') {
+    return <></>
+  }
+
+  return (
+    <>
+      <div>
+        <Trans k={['wallet', 'label', 'contractCallMessage']} />
+      </div>
+      <div
+        className={classnames(
+          'monospace',
+          callTxStatus.status === 'TransactionFailed' ? 'failure' : 'success',
+        )}
+      >
+        {callTxStatus.message}
+      </div>
+    </>
+  )
+}
+
 const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element => {
   switch (transaction.txDetails.txType) {
     case 'coinbase':
@@ -288,6 +352,7 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
               <Trans k={['wallet', 'label', 'transactionGasPrice']} />:
             </div>
             <div className="monospace">{new BigNumber(gasPrice).toString(10)}</div>
+            <CallTxStatus callTxStatus={transaction.txDetails.callTxStatus} />
           </div>
         </div>
       )
