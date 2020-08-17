@@ -1,10 +1,17 @@
-import i18next from 'i18next'
+import i18next, {ResourceLanguage} from 'i18next'
 import BigNumber from 'bignumber.js'
 import {initReactI18next} from 'react-i18next'
 import {Locale} from 'date-fns'
 import {enUS} from 'date-fns/locale'
 import {Path} from '../shared/typeUtils'
-import {DEFAULT_LANGUAGE, Language, TypedTFunction, GenericTError} from '../shared/i18n'
+import {
+  DEFAULT_LANGUAGE,
+  Language,
+  TypedTFunction,
+  GenericTError,
+  Namespace,
+  DEFAULT_NAMESPACE,
+} from '../shared/i18n'
 import rendererTranslationsEn from '../translations/en/renderer.json'
 import {pseudoLanguage} from './i18n-pseudo'
 
@@ -16,15 +23,17 @@ export function createAndInitI18nForRenderer(
 
   if (pseudo) i18n.use(pseudoLanguage)
 
+  const resources: Record<Language, Record<Namespace, ResourceLanguage>> = {
+    en: {
+      translations: rendererTranslationsEn,
+    },
+  }
+
   i18n.use(initReactI18next).init({
     lng: language,
     fallbackLng: DEFAULT_LANGUAGE,
-    defaultNS: 'translations',
-    resources: {
-      en: {
-        translations: rendererTranslationsEn,
-      },
-    },
+    defaultNS: DEFAULT_NAMESPACE,
+    resources,
 
     postProcess: pseudo ? [pseudoLanguage.name] : [],
 

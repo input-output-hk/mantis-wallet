@@ -1,5 +1,12 @@
-import i18next from 'i18next'
-import {DEFAULT_LANGUAGE, Language, TypedTFunction, GenericTError} from '../shared/i18n'
+import i18next, {ResourceLanguage} from 'i18next'
+import {
+  DEFAULT_LANGUAGE,
+  Language,
+  TypedTFunction,
+  GenericTError,
+  Namespace,
+  DEFAULT_NAMESPACE,
+} from '../shared/i18n'
 import {mainLog} from './logger'
 import mainTranslationsEn from '../translations/en/main.json'
 import {Path} from '../shared/typeUtils'
@@ -7,15 +14,17 @@ import {Path} from '../shared/typeUtils'
 export function createAndInitI18nForMain(language: Language): typeof i18next {
   const i18n = i18next.createInstance()
 
+  const resources: Record<Language, Record<Namespace, ResourceLanguage>> = {
+    en: {
+      translations: mainTranslationsEn,
+    },
+  }
+
   i18n.init({
     lng: language,
     fallbackLng: DEFAULT_LANGUAGE,
-    defaultNS: 'translations',
-    resources: {
-      en: {
-        translations: mainTranslationsEn,
-      },
-    },
+    defaultNS: DEFAULT_NAMESPACE,
+    resources,
 
     initImmediate: true,
 
