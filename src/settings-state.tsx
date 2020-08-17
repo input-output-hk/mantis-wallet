@@ -18,6 +18,13 @@ import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from '
 import {rendererLog} from './common/logger'
 import {makeDesktopNotification} from './common/notify'
 import {copyToClipboard} from './common/clipboard'
+import {
+  DismissFunction,
+  DismissableConfig,
+  MsgContent,
+  NoticeType,
+  makeDismissableMessage,
+} from './common/dismissable-message'
 
 export type Theme = 'dark' | 'light'
 
@@ -49,6 +56,11 @@ interface Translation {
 interface LocalizedUtilities {
   makeDesktopNotification: (body: string, title?: string, options?: NotificationOptions) => void
   copyToClipboard: (text: string) => Promise<void>
+  makeDismissableMessage: (
+    type: NoticeType,
+    Content: MsgContent,
+    config?: Partial<DismissableConfig>,
+  ) => DismissFunction
 }
 
 export interface SettingsState {
@@ -163,6 +175,11 @@ function useSettingsState({
         }),
       copyToClipboard: (text: string) =>
         copyToClipboard(text, translation.t(['common', 'message', 'copiedToClipboard'])),
+      makeDismissableMessage: (
+        type: NoticeType,
+        Content: MsgContent,
+        config: Partial<DismissableConfig> = {},
+      ) => makeDismissableMessage(translation.t, type, Content, config),
     }
   }, [isPseudoLanguageUsed])
 

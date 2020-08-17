@@ -1,6 +1,6 @@
 import {getPortPromise} from 'portfinder'
 import {config} from '../config/main'
-import {TErrorMain} from './i18n'
+import {createTErrorMain} from './i18n'
 
 const requiredPorts = [config.nodeRpcPort, config.walletRpcPort]
 
@@ -18,7 +18,7 @@ export async function checkPortUsage(): Promise<void> {
   const blockedPorts = await getBlockedPorts()
   if (blockedPorts.length > 0) {
     const ports = blockedPorts.join(', ')
-    throw new TErrorMain(`Ports in use ${ports}`, ['error', 'portsAlreadyInUse'], {
+    throw createTErrorMain(['error', 'portsAlreadyInUse'], {
       replace: {ports},
     })
   }

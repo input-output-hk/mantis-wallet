@@ -479,7 +479,7 @@
       "burnProcessDescriptionForEthereum": "This will generate a Ethereum Address to which you can send Ethereum to be burned and converted into Midnight Tokens. These Midnight Tokens can be used to participate in an Auction to win spendable Dust Tokens. <strong>The Burn process is irreversible and the Ethereum Tokens burned will be unspendable forever.</strong><br /><br />I understand the process",
       "testnetWarning": "<strong>Warning:</strong> This is a Testnet edition.<br /> Do <strong>NOT</strong> burn real ETH or BTC for Proof of Burn.",
       "proverRewardTooltip": "This is a fee in Midnight Tokens that is the Prover reward and will be taken from your total burned amount.",
-      "proverRewardWarning": "<strong>Warning:</strong> If the fee is larger than burn amount, the burn will fail and cannot be recovered. Under such conditions, <strong>you will lose your source fund</strong>"
+      "proverRewardWarning": "<strong>Warning:</strong> If the fee is larger than burn amount, the burn will fail and cannot be recovered. Under such conditions, <strong>you will lose your source funds.</strong>"
     },
     "burnProcessStatus": {
       "foundTransaction": "Found Transaction",
@@ -511,7 +511,8 @@
       "closeModal": "Close",
       "goBackOneStep": "Go Back",
       "iUnderstand": "I understand",
-      "proceedToNextStep": "Proceed"
+      "proceedToNextStep": "Proceed",
+      "dismissNotificationMessage": "Dismiss"
     },
     "label": {
       "optionalField": "optional"
