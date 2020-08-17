@@ -253,7 +253,7 @@ export interface WalletAPI {
   remove(secrets: PassphraseSecrets): boolean
 
   // balances
-  getBalance(): Balance
+  getPrivateBalance(): Balance
   getTransparentWalletBalance(address: string): string // returns hex string
 
   // transactions
@@ -286,8 +286,8 @@ export interface WalletAPI {
   getAllTransactionBuildJobStatuses(): JobStatus[]
 
   // transparent addresses
-  listTransparentAddresses: PaginatedCallable<TransparentAddress>
-  generateTransparentAddress(): TransparentAddress
+  listTransparentAccounts: PaginatedCallable<TransparentAddress>
+  generateTransparentAccount(): TransparentAddress
 
   listAccounts(): Account[]
   getSynchronizationStatus(): RawSynchronizationStatus

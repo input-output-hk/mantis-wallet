@@ -42,13 +42,13 @@ const _BurnCoins = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>
   const cancel = (): void => routerState.navigate('BURN_CENTRE')
 
   if (walletState.transparentAccounts.length === 0) {
-    const generateTransparentAddress = (): Promise<void> => walletState.generateNewAddress()
+    const generateTransparentAccount = (): Promise<void> => walletState.generateNewAddress()
 
     return (
       <PobLayout title={t(['proofOfBurn', 'title', 'burnCoins'])}>
         <BurnCoinsTransparentAddress
           cancel={cancel}
-          generateTransparentAddress={generateTransparentAddress}
+          generateTransparentAccount={generateTransparentAccount}
         />
       </PobLayout>
     )

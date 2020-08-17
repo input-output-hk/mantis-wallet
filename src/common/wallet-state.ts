@@ -325,9 +325,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const error = getOrElse((): Error => Error('Unknown error'))(errorOption)
 
   const loadTransparentAccounts = async (): Promise<void> => {
-    const transparentAddresses: TransparentAddress[] = await loadAll(
-      wallet.listTransparentAddresses,
-    )
+    const transparentAddresses: TransparentAddress[] = await loadAll(wallet.listTransparentAccounts)
 
     const getLastKnownBalance = (index: number): BigNumber =>
       transparentAccounts[transparentAccounts.length - 1 - index]?.balance || new BigNumber(0)
@@ -368,7 +366,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const loadBalance = (): Promise<void> =>
-    wallet.getBalance().then((balance: Balance) => {
+    wallet.getPrivateBalance().then((balance: Balance) => {
       setTotalBalance(some(deserializeBigNumber(balance.totalBalance)))
       setAvailableBalance(some(deserializeBigNumber(balance.availableBalance)))
     })
@@ -461,7 +459,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const generateNewAddress = async (): Promise<void> => {
-    await wallet.generateTransparentAddress()
+    await wallet.generateTransparentAccount()
     await loadTransparentAccounts()
   }
 

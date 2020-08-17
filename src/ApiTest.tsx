@@ -140,7 +140,7 @@ export const ApiTest = (): JSX.Element => {
           Unlock
         </TestButton>
         <TestButton
-          onClick={(): Promise<TransparentAddress> => wallet.generateTransparentAddress()}
+          onClick={(): Promise<TransparentAddress> => wallet.generateTransparentAccount()}
         >
           Generate Transparent Address
         </TestButton>
