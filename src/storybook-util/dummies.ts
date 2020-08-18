@@ -147,10 +147,23 @@ export const dummyTransactions: ExtendedTransaction[] = [
         message: 'failed with a message',
       },
     },
-    txDirection: 'outgoing',
+    txDirection: 'internal',
     txValue: {
       value: '0x2cc4d205',
       fee: '0x1708f6e',
+    },
+  },
+  {
+    hash: '10',
+    txStatus: 'pending',
+    txDetails: {
+      txType: 'redeem',
+      usedTransparentAccountIndex: 0,
+    },
+    txDirection: 'internal',
+    txValue: {
+      value: '0x2e5a43ff',
+      fee: '0x5cef65',
     },
   },
 ]

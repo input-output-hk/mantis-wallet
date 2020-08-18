@@ -114,15 +114,18 @@ export const TxStatusCell = ({transaction}: TransactionCellProps): JSX.Element =
   )
 }
 
+const TX_DIRECTION_TRANSLATION: Record<Transaction['txDirection'], TKeyRenderer> = {
+  incoming: ['wallet', 'transactionType', 'received'],
+  outgoing: ['wallet', 'transactionType', 'sent'],
+  internal: ['wallet', 'transactionType', 'internal'],
+}
+
 export const TxTypeCell = ({
   transaction: {txDetails, txDirection},
 }: TransactionCellProps): JSX.Element => {
   const {t} = useTranslation()
 
-  const displayDirection =
-    txDirection === 'incoming'
-      ? t(['wallet', 'transactionType', 'received'])
-      : t(['wallet', 'transactionType', 'sent'])
+  const displayDirection = t(TX_DIRECTION_TRANSLATION[txDirection])
   const isTransparent = txDetails.txType === 'call'
 
   const {icon, typeText} = isTransparent
@@ -188,13 +191,13 @@ const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Ele
 export const TxAmountCell = ({transaction}: TransactionCellProps): JSX.Element => {
   const {txValue, txDirection} = transaction
   const {totalValue, fee} = processAmount(txValue)
-  const displayValue = txDirection === 'incoming' ? totalValue : totalValue.multipliedBy(-1)
+  const displayValue = txDirection === 'outgoing' ? totalValue.multipliedBy(-1) : totalValue
 
   return (
     <span className={classnames('amount', txDirection)}>
       <ShortNumber
         big={displayValue}
-        showSign={true}
+        showSign={txDirection !== 'internal'}
         content={
           txDirection === 'outgoing' && !fee.isZero() ? (
             <DetailedAmount transaction={transaction} />

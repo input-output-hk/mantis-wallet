@@ -70,18 +70,7 @@ const ShowTransparentAccount: FunctionComponent<ShowAccountProps> = ({
         </div>
         {transactionsVisible && transactions.length > 0 && (
           <div className="transactions-container">
-            <TransactionList
-              transactions={transactions.map(
-                (tx: ExtendedTransaction): ExtendedTransaction =>
-                  // this is necessary for txs between a single user's accounts
-                  // where it is always shown as outgoing
-                  tx.txDetails.txType === 'call' &&
-                  tx.txDirection === 'outgoing' &&
-                  tx.txDetails.transparentTransaction.receivingAddress === account.address
-                    ? {...tx, txDirection: 'incoming', txValue: tx.txValue.value}
-                    : tx,
-              )}
-            />
+            <TransactionList transactions={transactions} />
             <div className="transactions-footer">
               <span
                 className="transactions-collapse"

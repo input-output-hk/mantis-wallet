@@ -78,9 +78,10 @@ interface CoinbaseTxDetails {
   txType: 'coinbase'
 }
 
-// These can be either 'incoming' or 'outgoing'
+// These can be either 'incoming', 'outgoing' or 'internal'
 // Coinbase type is only 'incoming'
-export type TxDetailsIncAndOut = RedeemTxDetails | CallTxDetails | TransferTxDetails
+// Redeem type is only 'internal'
+export type TxDetailsIncAndOut = CallTxDetails | TransferTxDetails
 
 interface BaseTransaction {
   hash: string
@@ -100,7 +101,13 @@ interface OutgoingTransaction extends BaseTransaction {
   txDetails: TxDetailsIncAndOut
 }
 
-export type Transaction = IncomingTransaction | OutgoingTransaction
+interface InternalTransaction extends BaseTransaction {
+  txDirection: 'internal'
+  txValue: {value: string; fee: string}
+  txDetails: TxDetailsIncAndOut | RedeemTxDetails
+}
+
+export type Transaction = IncomingTransaction | OutgoingTransaction | InternalTransaction
 
 // Tx Build Jobs
 

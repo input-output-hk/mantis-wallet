@@ -226,6 +226,7 @@
     "transactionType": {
       "received": "Received",
       "sent": "Sent",
+      "internal": "Internal",
       "transparent": "Transparent",
       "confidential": "Confidential",
       "redeem": "Redeem Transaction",
