@@ -67,10 +67,12 @@ const DisplayDagStatus = ({
 }: {
   dag: {status: ProcessStatus; message?: string}
 }): JSX.Element => {
-  const {t} = useTranslation()
-
   if (status === 'finished')
-    return <span className="status success">{t(['status', 'componentStatus', 'loaded'])}</span>
+    return (
+      <span className="status success">
+        <Trans k={['status', 'componentStatus', 'loaded']} />
+      </span>
+    )
 
   if (status === 'failed') {
     const dagError = (message &&
@@ -79,14 +81,18 @@ const DisplayDagStatus = ({
       'error',
       'unexpectedError',
     ]
-    return <span className="status error">{t(dagError)}</span>
+    return (
+      <span className="status error">
+        <Trans k={dagError} />
+      </span>
+    )
   }
 
   const loadingStatus = localizeDagLoadingStatus(message)
   return loadingStatus == null ? (
     <>-</>
   ) : (
-    <>{(t(loadingStatus.tKey), {replace: {percentage: loadingStatus.percentage}})}</>
+    <Trans k={loadingStatus.tKey} values={{percentage: loadingStatus.percentage}} />
   )
 }
 
