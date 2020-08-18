@@ -57,7 +57,7 @@ test('Redeem works', async () => {
 
   const redeem = jest.fn()
   const cancel = jest.fn()
-  const {getByText, getAllByText, queryByText, getByTestId} = render(
+  const {getByText, queryByText, queryAllByText, getByTestId} = render(
     <SettingsState.Provider>
       <RedeemModal
         redeem={redeem}
@@ -82,21 +82,12 @@ test('Redeem works', async () => {
   await waitFor(() => expect(queryByText('Fast')).toBeInTheDocument())
 
   // Check correct fee estimates are shown for default (0) amount
-  await waitFor(() => {
-    Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmountForEnUS(Dust.fromBasic(estimate))
-      expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
-    })
-  })
+  await waitFor(() => expect(queryByText('0.00000123', {exact: false})).toBeInTheDocument())
+  await waitFor(() => expect(queryAllByText('0.00000456', {exact: false})).toHaveLength(2)) // Medium is used for total amount
+  await waitFor(() => expect(queryByText('0.00000789', {exact: false})).toBeInTheDocument())
 
-  // Apply confidentiality is the name of the title and the button too
-  const applyConfidentialityTexts = getAllByText('Apply Confidentiality')
-  expect(applyConfidentialityTexts).toHaveLength(2)
-
-  // 'Available amount' field and its value is in the document
-  expect(getByText('Available Amount')).toBeInTheDocument()
-  const {strict: availableBalanceFormatted} = abbreviateAmountForEnUS(availableDust)
-  expect(getByText(availableBalanceFormatted)).toBeInTheDocument()
+  // Check if title is correct
+  expect(getByText('Transparent → Confidential')).toBeInTheDocument()
 
   // 'Amount' field, 'Fee' field are in the document
   expect(getByText('Amount')).toBeInTheDocument()
@@ -105,7 +96,7 @@ test('Redeem works', async () => {
   // Description of the action is in the document
   expect(
     getByText(
-      'This transaction will move selected funds to a confidential address which will remove their visibility from the Midnight Blockchain.',
+      'This transaction will move selected funds to your confidential address which will remove their visibility from the Midnight Blockchain.',
     ),
   ).toBeInTheDocument()
 
@@ -142,7 +133,8 @@ test('Redeem works', async () => {
 
   // If the Apply Confidentiality button is clicked it should be called with the right params
   // Although custom estimate was clicked, it wasn't change, so it stayed on the Fast estimate
-  await act(async () => userEvent.click(applyConfidentialityTexts[1]))
+  const applyButton = getByText('Apply')
+  await act(async () => userEvent.click(applyButton))
   await waitFor(() =>
     expect(redeem).toBeCalledWith(
       transparentAddress,
@@ -170,7 +162,7 @@ test('Redeem works with Full Amount button', async () => {
   const redeem = jest.fn()
   const cancel = jest.fn()
 
-  const {getByText, getAllByText, queryByText, getByTestId} = render(
+  const {getByText, queryByText, getByTestId} = render(
     <SettingsState.Provider>
       <RedeemModal
         redeem={redeem}
@@ -216,13 +208,9 @@ test('Redeem works with Full Amount button', async () => {
     expect(txAmountInput).toHaveAttribute('value', availableDust.minus(usedFeeDust).toString(10)),
   )
 
-  // Apply confidentiality is the name of the title and the button too
-  const applyConfidentialityTexts = getAllByText('Apply Confidentiality')
-  expect(applyConfidentialityTexts).toHaveLength(2)
-  const applyConfidentialityButton = applyConfidentialityTexts[1]
-
   // If the Apply Confidentiality button is clicked it should be called with the right params
-  await act(async () => userEvent.click(applyConfidentialityButton))
+  const applyButton = getByText('Apply')
+  await act(async () => userEvent.click(applyButton))
   await waitFor(() =>
     expect(redeem).toBeCalledWith(
       transparentAddress,

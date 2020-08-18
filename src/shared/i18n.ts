@@ -3,10 +3,12 @@ import {ExtendableError} from './extendable-error'
 import {Path} from './typeUtils'
 
 export const DEFAULT_LANGUAGE = 'en'
+export const DEFAULT_NAMESPACE = 'translations'
 
 // LANGUAGES should be using BCP-47 language tag format
 export const LANGUAGES = [DEFAULT_LANGUAGE] as const
 export type Language = typeof LANGUAGES[number]
+export type Namespace = typeof DEFAULT_NAMESPACE
 
 export interface TypedTFunction<T extends object> {
   <TResult extends TFunctionResult = string, TInterpolationMap extends object = StringMap>(

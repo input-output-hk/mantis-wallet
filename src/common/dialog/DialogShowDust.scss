@@ -1,12 +1,11 @@
-@import '../../themify', '../../vars';
+@import '../../themify', '../../vars', '../../partial';
 
 .DialogShowDust {
   $height: 50px;
   margin-bottom: 12px;
 
   .label {
-    font-size: $font-size-xs;
-    text-transform: uppercase;
+    @extend %dialog-label;
 
     .note {
       opacity: $secondary-opacity;
@@ -17,6 +16,9 @@
   .container {
     display: grid;
     grid-template-columns: auto 1fr;
+    padding: 0 0.5rem;
+    border-radius: $dialog-component-border-radius;
+    cursor: not-allowed;
 
     .logo {
       width: 40px;
@@ -29,6 +31,19 @@
 
     .amount {
       line-height: $height;
+      word-break: break-word;
+    }
+
+    @include themify($themes) {
+      border: 1px solid themed('dialog-dark-input-bg');
+      background-color: themed('dialog-dark-input-bg');
+      color: themed('secondary-text-color');
+    }
+
+    &.invalid {
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+      }
     }
   }
 }
