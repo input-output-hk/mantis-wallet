@@ -1,7 +1,7 @@
 import React, {useState, FunctionComponent} from 'react'
 import _ from 'lodash/fp'
 import {ModalProps} from 'antd/lib/modal'
-import {LunaModal, ModalLocker} from '../../common/LunaModal'
+import {LunaModal, ModalLocker, ScrollableModalFooter} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {TransparentAddress, PrivateAddress} from '../../web3'
@@ -34,6 +34,7 @@ interface ReceiveTransactionProps {
   transparentAddresses: TransparentAddress[]
   privateAddresses: PrivateAddress[]
   defaultMode?: 'transparent' | 'confidential'
+  hideModeSwitch?: boolean
 }
 
 const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTabProps> = ({
@@ -137,6 +138,7 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
   onGenerateNewTransparent,
   onGenerateNewPrivate,
   defaultMode = 'confidential',
+  hideModeSwitch,
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
   const {t} = useTranslation()
@@ -149,16 +151,18 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
 
   // Address List Component
   const usedAddresses = addresses && addresses.length > 1 && (
-    <div className="ReceiveModalFooter">
-      <div className="title">
-        <Trans k={['wallet', 'label', 'lastUsedAddresses']} />
-      </div>
-      {addresses.slice(1).map(({address}) => (
-        <div key={address} className="address">
-          <CopyableLongText content={address} showQrCode />
+    <ScrollableModalFooter>
+      <div className="footer">
+        <div className="title">
+          <Trans k={['wallet', 'label', 'lastUsedAddresses']} />
         </div>
-      ))}
-    </div>
+        {addresses.slice(1).map(({address}) => (
+          <div key={address} className="address">
+            <CopyableLongText content={address} showQrCode />
+          </div>
+        ))}
+      </div>
+    </ScrollableModalFooter>
   )
 
   return (
@@ -171,14 +175,16 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
           doNotRender: true,
         }}
       >
-        <DialogTextSwitch
-          buttonClassName="mode-switch"
-          defaultMode={mode}
-          left={{label: t(['wallet', 'transactionType', 'transparent']), type: 'transparent'}}
-          right={{label: t(['wallet', 'transactionType', 'confidential']), type: 'confidential'}}
-          onChange={setMode}
-          disabled={isLoading}
-        />
+        {!hideModeSwitch && (
+          <DialogTextSwitch
+            buttonClassName="mode-switch"
+            defaultMode={mode}
+            left={{label: t(['wallet', 'transactionType', 'transparent']), type: 'transparent'}}
+            right={{label: t(['wallet', 'transactionType', 'confidential']), type: 'confidential'}}
+            onChange={setMode}
+            disabled={isLoading}
+          />
+        )}
       </Dialog>
       {mode === 'confidential' && (
         <ReceivePrivateTransaction

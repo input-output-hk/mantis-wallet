@@ -4,6 +4,7 @@ import React, {
   FunctionComponent,
   PropsWithChildren,
   RefForwardingComponent,
+  ReactNode,
 } from 'react'
 import classnames from 'classnames'
 import {Input, Form} from 'antd'
@@ -24,7 +25,7 @@ import './DialogInput.scss'
 
 interface DialogInputProps {
   id?: string
-  label?: string
+  label?: ReactNode
   className?: string
   optional?: boolean
   formItem?: Omit<FormItemProps, 'children'>

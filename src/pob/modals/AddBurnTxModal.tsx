@@ -77,7 +77,7 @@ const AddBurnTxDialog: FunctionComponent<AddBurnTxModalProps> = ({
           label: (
             <>
               ({t(['proofOfBurn', 'label', 'proverRewardShort'])}:{' '}
-              <ShortNumber big={reward} unit={POB_CHAINS[chainId].unitType} /> M-
+              <ShortNumber big={reward} unitOrDecimals={POB_CHAINS[chainId].unitType} /> M-
               {POB_CHAINS[chainId].symbol}) {burnAddress}
             </>
           ),

@@ -1,7 +1,7 @@
 @import '../themify', '../vars', '../partial';
 
 .BurnActivity {
-  margin-bottom: 64px;
+  margin-bottom: $main-content-padding;
 
   .toolbar {
     display: grid;
@@ -104,8 +104,6 @@
   }
 
   .no-activity {
-    margin: 20px auto;
-    font-size: $font-size-m;
-    text-align: center;
+    @extend %empty-list-message;
   }
 }

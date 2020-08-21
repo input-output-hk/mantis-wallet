@@ -15,7 +15,7 @@ import {abbreviateAmountForEnUS, DIALOG_VALIDATION_ERROR} from '../common/test-h
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
-import {CONFIDENTIAL_ADDRESS, TRANSPARENT_ADDRESSES} from '../storybook-util/dummies'
+import {CONFIDENTIAL_ADDRESS, dummyTransparentAccounts} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
 import {ExtendedTransaction} from './TransactionRow'
 
@@ -353,7 +353,7 @@ test('Send transparent transaction works', async () => {
   const availableDust = new BigNumber(1230)
   const usedDust = new BigNumber(951)
   const usedAtom = Dust.toBasic(usedDust)
-  const recipient = TRANSPARENT_ADDRESSES[0].address
+  const recipient = dummyTransparentAccounts[0].address
 
   const baseEstimates = {
     low: new BigNumber(123),
@@ -486,10 +486,10 @@ test('Receive modal shows up with confidential address', async () => {
 
 test('Receive modal works with transparent addresses', async () => {
   const getTransparentAddress = (index: number): string =>
-    TRANSPARENT_ADDRESSES[TRANSPARENT_ADDRESSES.length - 1 - index].address
+    dummyTransparentAccounts[dummyTransparentAccounts.length - 1 - index].address
 
   const {getByTestId, getByText, queryByText} = renderTxHistoryWithTransparentAddressGenerator(
-    TRANSPARENT_ADDRESSES,
+    dummyTransparentAccounts,
   )
   const receiveButton = getByTestId('receive-button')
   userEvent.click(receiveButton)

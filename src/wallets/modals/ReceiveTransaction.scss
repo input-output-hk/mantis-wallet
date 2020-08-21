@@ -1,55 +1,31 @@
-@import '../../themify', '../../partial', '../../vars';
-
-.ReceiveModalFooter {
-  max-height: 225px;
-  padding: 1.25rem 64px;
-  overflow: auto;
-  border-radius: 0 0 $dialog-component-border-radius * 2 $dialog-component-border-radius * 2;
-  text-align: left;
-
-  @include themify($themes) {
-    background-color: themed('dialog-dark-input-bg');
-  }
-
-  &::-webkit-scrollbar-track {
-    margin-bottom: 28px;
-  }
-
-  .title {
-    padding: 0 0 0.5rem;
-    opacity: $secondary-opacity;
-    font-size: $font-size-s;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-
-  .address {
-    @extend %monospace;
-    width: 508px;
-    padding: 0.5rem 0;
-    overflow: hidden;
-    opacity: $secondary-opacity;
-    font-size: $font-size-s;
-    white-space: nowrap;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  .link {
-    @extend %link;
-    display: block;
-    padding: 0.5rem 0;
-    font-size: $font-size-xs;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-}
+@import '../../partial', '../../vars';
 
 .ReceiveModal {
   .mode-switch {
     width: 172px;
     margin-bottom: 1rem;
+  }
+
+  .footer {
+    .title {
+      padding: 0 0 0.5rem;
+      opacity: $secondary-opacity;
+      font-size: $font-size-s;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .address {
+      width: 508px;
+      padding: 0.5rem 0;
+      overflow: hidden;
+      opacity: $secondary-opacity;
+      font-size: $font-size-s;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
 }

@@ -74,7 +74,11 @@ const TX_STATUS_TRANSLATION: Record<TxVisibleStatus, TKeyRenderer> = {
 }
 
 const getVisibleStatus = ({txStatus, txDetails}: ExtendedTransaction): TxVisibleStatus => {
-  if (txDetails.txType === 'call' && txDetails.callTxStatus.status === 'TransactionFailed') {
+  if (
+    txDetails.txType === 'call' &&
+    txDetails.callTxStatus.status === 'TransactionFailed' &&
+    txStatus !== 'failed'
+  ) {
     return 'failedToExecute'
   }
   return typeof txStatus === 'string' ? txStatus : txStatus.status
@@ -284,8 +288,14 @@ const TxGlacierTypeLabel = ({receivingAddress}: TxGlacierTypeLabel): JSX.Element
   }
 }
 
-const CallTxStatus = ({callTxStatus}: {callTxStatus: TransactionStatus}): JSX.Element => {
-  if (callTxStatus.status === 'TransactionPending' || callTxStatus.message === '') {
+const CallTxStatus = ({
+  callTxStatus,
+  failed,
+}: {
+  callTxStatus: TransactionStatus
+  failed: boolean
+}): JSX.Element => {
+  if (failed || callTxStatus.status !== 'TransactionFailed' || callTxStatus.message === '') {
     return <></>
   }
 
@@ -294,14 +304,7 @@ const CallTxStatus = ({callTxStatus}: {callTxStatus: TransactionStatus}): JSX.El
       <div>
         <Trans k={['wallet', 'label', 'contractCallMessage']} />
       </div>
-      <div
-        className={classnames(
-          'monospace',
-          callTxStatus.status === 'TransactionFailed' ? 'failure' : 'success',
-        )}
-      >
-        {callTxStatus.message}
-      </div>
+      <div className="monospace failure">{callTxStatus.message}</div>
     </>
   )
 }
@@ -355,7 +358,10 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
               <Trans k={['wallet', 'label', 'transactionGasPrice']} />:
             </div>
             <div className="monospace">{new BigNumber(gasPrice).toString(10)}</div>
-            <CallTxStatus callTxStatus={transaction.txDetails.callTxStatus} />
+            <CallTxStatus
+              callTxStatus={transaction.txDetails.callTxStatus}
+              failed={transaction.txStatus === 'failed'}
+            />
           </div>
         </div>
       )

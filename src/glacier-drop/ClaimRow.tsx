@@ -352,7 +352,8 @@ export const ClaimRow = ({
           <Trans k={['glacierDrop', 'title', 'claimNumber']} values={{number: index + 1}} />
         </div>
         <div className="exchange">
-          <ShortNumber big={externalAmount} unit={ETC_CHAIN.unitType} /> {ETC_CHAIN.symbol}
+          <ShortNumber big={externalAmount} unitOrDecimals={ETC_CHAIN.unitType} />{' '}
+          {ETC_CHAIN.symbol}
           <SVG src={exchangeIcon} className="icon" />
           <ShortNumber big={dustAmount} /> {DST_CHAIN.symbol}
         </div>

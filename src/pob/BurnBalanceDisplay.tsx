@@ -28,18 +28,18 @@ export const BurnBalanceDisplay: FunctionComponent<BurnBalanceDisplayProps> = ({
       <div className="available">
         <Trans k={['proofOfBurn', 'label', 'availableAmount']} />{' '}
         <span className="amount">
-          <ShortNumber big={available} unit={chain.unitType} /> {tokenSymbol}
+          <ShortNumber big={available} unitOrDecimals={chain.unitType} /> {tokenSymbol}
         </span>
       </div>
       <div className="rest">
         <SVG src={clockIcon} className="icon" />
         <Trans k={['proofOfBurn', 'label', 'pendingAmount']} /> ·{' '}
-        <ShortNumber big={pending} unit={chain.unitType} /> {tokenSymbol}
+        <ShortNumber big={pending} unitOrDecimals={chain.unitType} /> {tokenSymbol}
       </div>
       <div className="rest">
         <SVG src={sumIcon} className="icon" />
         <Trans k={['proofOfBurn', 'label', 'totalAmount']} /> ·{' '}
-        <ShortNumber big={available.plus(pending)} unit={chain.unitType} /> {tokenSymbol}
+        <ShortNumber big={available.plus(pending)} unitOrDecimals={chain.unitType} /> {tokenSymbol}
       </div>
     </div>
   )

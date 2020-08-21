@@ -134,15 +134,23 @@ const _Dialog: FunctionComponent<DialogProps> = ({
   return (
     <div className={classnames('Dialog', type, ...className)}>
       {title && <div className="title">{title}</div>}
-      <Form form={dialogForm} onValuesChange={() => setErrorMessage('')}>
-        <div className="dialog-children">{children}</div>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <Form
+          component={false}
+          form={dialogForm}
+          onValuesChange={() => {
+            if (errorMessage !== '') setErrorMessage('')
+          }}
+        >
+          <div className="dialog-children">{children}</div>
+        </Form>
         {(!doNotRenderLeft || !doNotRenderRight) && (
           <div className={classnames('actions', buttonDisplayMode)}>
             {!doNotRenderLeft && <Button data-testid="left-button" {...leftButtonPropsToUse} />}
             {!doNotRenderRight && <Button data-testid="right-button" {...rightButtonPropsToUse} />}
           </div>
         )}
-      </Form>
+      </form>
       {(footer || errorMessage) && (
         <div className="footer">
           {footer}

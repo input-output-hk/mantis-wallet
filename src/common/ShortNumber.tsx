@@ -6,21 +6,25 @@ import {UnitType, UNITS} from './units'
 
 interface ShortNumberProps {
   big: BigNumber | number
-  unit?: UnitType
+  unitOrDecimals?: UnitType | number
   showSign?: boolean
   content?: React.ReactNode
 }
 
 export const ShortNumber = ({
   big: maybeBig,
-  unit = 'Dust',
+  unitOrDecimals = 'Dust',
   showSign = false,
   content = null,
 }: ShortNumberProps): JSX.Element => {
   const {abbreviateAmount} = useFormatters()
 
   const big = new BigNumber(maybeBig)
-  const {relaxed, strict} = abbreviateAmount(UNITS[unit].fromBasic(big))
+  const inUnits =
+    typeof unitOrDecimals === 'number'
+      ? big.shiftedBy(-unitOrDecimals)
+      : UNITS[unitOrDecimals].fromBasic(big)
+  const {relaxed, strict} = abbreviateAmount(inUnits)
   const prefix = showSign && big.isGreaterThan(0) ? '+' : ''
 
   return (

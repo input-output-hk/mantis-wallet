@@ -10,16 +10,6 @@
       background-color: themed('input-bg');
       color: themed('text-color');
     }
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-  }
-
-  input[type='number'] {
-    -moz-appearance: textfield;
   }
 
   .options .button.inactive,

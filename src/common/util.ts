@@ -63,9 +63,14 @@ export const isLowerOrEqual = (maxValue: BigNumber.Value, message?: Translatable
 
 export const areFundsEnough = (
   funds: BigNumber,
-  unit: UnitType = 'Dust',
-): ReturnType<typeof isLowerOrEqual> =>
-  isLowerOrEqual(UNITS[unit].fromBasic(funds), {tKey: ['wallet', 'error', 'insufficientFunds']})
+  unitOrDecimals: number | UnitType = 'Dust',
+): ReturnType<typeof isLowerOrEqual> => {
+  const inUnits =
+    typeof unitOrDecimals === 'number'
+      ? funds.shiftedBy(-unitOrDecimals)
+      : UNITS[unitOrDecimals].fromBasic(funds)
+  return isLowerOrEqual(inUnits, {tKey: ['wallet', 'error', 'insufficientFunds']})
+}
 
 const messageForHasAtMostDecimalPlaces = (dp: number): Translatable =>
   dp === 0

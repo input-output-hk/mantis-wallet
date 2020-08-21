@@ -8,6 +8,7 @@ import {ProofOfBurnState} from './pob/pob-state'
 import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
 import {BuildJobState} from './common/build-job-state'
+import {TokensState} from './tokens/tokens-state'
 import {JobStatus} from './common/JobStatus'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
@@ -49,9 +50,11 @@ const App: React.FC = () => {
                 <WalletState.Provider initialState={{web3}}>
                   <ProofOfBurnState.Provider initialState={{store, web3}}>
                     <GlacierState.Provider initialState={{store}}>
-                      <Sidebar version={LUNA_VERSION} />
-                      <Router />
-                      <JobStatus />
+                      <TokensState.Provider initialState={{store, web3}}>
+                        <Sidebar version={LUNA_VERSION} />
+                        <Router />
+                        <JobStatus />
+                      </TokensState.Provider>
                     </GlacierState.Provider>
                   </ProofOfBurnState.Provider>
                 </WalletState.Provider>

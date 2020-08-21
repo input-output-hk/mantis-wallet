@@ -11,6 +11,7 @@ import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {AddBurnTxModal} from './modals/AddBurnTxModal'
 import {UNITS} from '../common/units'
+import {MIDNIGHT_TOKEN_CONTRACTS} from './pob-config'
 
 export default {
   title: 'Burn Actions',
@@ -41,9 +42,13 @@ export const dummyBurnActions = (): JSX.Element => {
           address: 'first-transparent-address',
           index: 0,
           balance: new BigNumber(0),
-          midnightTokens: {
-            BTC_TESTNET: UNITS[BTC_TESTNET.unitType].toBasic(new BigNumber(1000)),
-            ETH_TESTNET: UNITS[ETH_TESTNET.unitType].toBasic(new BigNumber(132.456)),
+          tokens: {
+            [MIDNIGHT_TOKEN_CONTRACTS.BTC_TESTNET]: UNITS[BTC_TESTNET.unitType].toBasic(
+              new BigNumber(1000),
+            ),
+            [MIDNIGHT_TOKEN_CONTRACTS.ETH_TESTNET]: UNITS[ETH_TESTNET.unitType].toBasic(
+              new BigNumber(132.456),
+            ),
           },
         },
       ]}

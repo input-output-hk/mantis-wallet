@@ -218,19 +218,19 @@ export const BurnStatusDisplay: FunctionComponent<BurnStatusDisplayProps> = ({
           </span>
           {burnStatus.tx_value && (
             <>
-              <ShortNumber big={burnStatus.tx_value} unit={chain.unitType} /> {chain.symbol}{' '}
-              <SVG src={exchangeIcon} className="exchange-icon" />{' '}
+              <ShortNumber big={burnStatus.tx_value} unitOrDecimals={chain.unitType} />{' '}
+              {chain.symbol} <SVG src={exchangeIcon} className="exchange-icon" />{' '}
               <span className="final-amount">
                 <ShortNumber
                   big={new BigNumber(burnStatus.tx_value).minus(burnAddressInfo.reward)}
-                  unit={chain.unitType}
+                  unitOrDecimals={chain.unitType}
                 />{' '}
                 M-
                 {chain.symbol}
               </span>
               <span className="prover-reward">
                 {' + '}
-                <ShortNumber big={burnAddressInfo.reward} unit={chain.unitType} /> M-
+                <ShortNumber big={burnAddressInfo.reward} unitOrDecimals={chain.unitType} /> M-
                 {chain.symbol} (<Trans k={['proofOfBurn', 'label', 'proverReward']} />)
               </span>
             </>

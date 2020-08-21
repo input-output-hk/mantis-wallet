@@ -19,7 +19,7 @@ export const Asset = ({chain, amount, children}: PropsWithChildren<AssetProps>):
           <SVG src={chain.logo} />
         </div>
         <div className="amount">
-          <ShortNumber big={amount} unit={chain.unitType} /> {chain.symbol}
+          <ShortNumber big={amount} unitOrDecimals={chain.unitType} /> {chain.symbol}
         </div>
       </div>
     </div>

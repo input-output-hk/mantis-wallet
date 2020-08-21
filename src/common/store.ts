@@ -13,11 +13,17 @@ import {
   defaultGlacierData,
   migrationsForGlacierData,
 } from '../glacier-drop/glacier-state'
+import {StoreTokensData, defaultTokensData, migrationsForTokensData} from '../tokens/tokens-state'
 import {DATADIR_VERSION} from '../shared/version'
 
-export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData
+export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData & StoreTokensData
 
-const defaultData: StoreData = _.mergeAll([defaultSettingsData, defaultPobData, defaultGlacierData])
+const defaultData: StoreData = _.mergeAll([
+  defaultSettingsData,
+  defaultPobData,
+  defaultGlacierData,
+  defaultTokensData,
+])
 
 const mergeMigrations = _.mergeAllWith(
   (
@@ -39,6 +45,7 @@ const migrations = mergeMigrations([
   migrationsForSettingsData,
   migrationsForPobData,
   migrationsForGlacierData,
+  migrationsForTokensData,
 ])
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)

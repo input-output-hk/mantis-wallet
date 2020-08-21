@@ -8,9 +8,8 @@ import {ProofOfBurnData} from './pob-state'
 import {ProverConfig} from '../config/type'
 import {TransparentAccount} from '../common/wallet-state'
 import {fillActionHandlers} from '../common/util'
-import {CHAINS_TO_USE_IN_POB} from './pob-config'
+import {CHAINS_TO_USE_IN_POB, MIDNIGHT_TOKEN_CONTRACTS} from './pob-config'
 import {prop} from '../shared/utils'
-import {PobChainId} from './pob-chains'
 import {Trans} from '../common/Trans'
 import './BurnActions.scss'
 
@@ -30,14 +29,18 @@ export const BurnActions: FunctionComponent<BurnActionsProps> = ({
 }: BurnActionsProps) => {
   const [showAddTxModal, setShowAddTxModal] = useState(false)
 
-  const availableBalances = transparentAccounts.map(prop('midnightTokens')).reduce(
-    _.mergeWith((a: BigNumber, b: BigNumber) => (a ? a.plus(b) : b)),
-    {},
-  ) as Partial<Record<PobChainId, BigNumber>>
+  const availableBalances = _.pipe(
+    _.map(prop<TransparentAccount, 'tokens'>('tokens')),
+    _.map(_.pick(Object.values(MIDNIGHT_TOKEN_CONTRACTS))),
+    _.reduce(
+      _.mergeWith((a: BigNumber, b: BigNumber) => (a ? a.plus(b) : b)),
+      {},
+    ),
+  )(transparentAccounts) as Record<string, BigNumber>
 
   const burnBalances = CHAINS_TO_USE_IN_POB.map((chain) => ({
     chain,
-    available: availableBalances[chain.id] || new BigNumber(0),
+    available: availableBalances[MIDNIGHT_TOKEN_CONTRACTS[chain.id]] || new BigNumber(0),
     pending: pendingBalances[chain.id] || new BigNumber(0),
   })).filter(({available, pending}) => !available.isZero() || !pending.isZero())
 
