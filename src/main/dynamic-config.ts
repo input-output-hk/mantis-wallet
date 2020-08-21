@@ -20,7 +20,7 @@ export async function getCoinbaseParams(
   spendingKey: string,
 ): Promise<Pick<LunaManagedConfig, 'pkd' | 'diversifier' | 'ovk'>> {
   const walletBackendExecPath = processExecutablePath(walletBackendConfig)
-  const command = `${walletBackendExecPath} coinbase-entry --format JSON --key ${spendingKey}`
+  const command = `${walletBackendExecPath} coinbase-entry --format JSON --key ${spendingKey} --for-account`
   try {
     const {stdout, stderr} = await promisify(exec)(command, {
       cwd: walletBackendConfig.packageDirectory,
