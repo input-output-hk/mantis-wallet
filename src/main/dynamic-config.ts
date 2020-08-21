@@ -8,8 +8,12 @@ import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
 import {mainLog} from './logger'
 import {createTErrorMain} from './i18n'
 
-const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
+// FIXME: PM-2519 remove as soon as fixed on backend
+const getOldPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
   `midnight.consensus.private-coinbase.${option}`
+
+const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
+  `midnight.mining.private-coinbase.${option}`
 
 export async function getCoinbaseParams(
   walletBackendConfig: ProcessConfig,
@@ -27,9 +31,9 @@ export async function getCoinbaseParams(
 
     const parsed = JSON.parse(stdout)
     return {
-      pkd: parsed[getPrivateCoinbaseOptionPath('pkd')],
-      diversifier: parsed[getPrivateCoinbaseOptionPath('diversifier')],
-      ovk: parsed[getPrivateCoinbaseOptionPath('ovk')],
+      pkd: parsed[getOldPrivateCoinbaseOptionPath('pkd')],
+      diversifier: parsed[getOldPrivateCoinbaseOptionPath('diversifier')],
+      ovk: parsed[getOldPrivateCoinbaseOptionPath('ovk')],
     }
   } catch (e) {
     mainLog.error(e)
@@ -50,7 +54,7 @@ export async function getMiningParams(): Promise<SettingsPerClient> {
   if (!currentConfig.miningEnabled) {
     return SettingsPerClient({
       node: {
-        'midnight.consensus.mining-enabled': 'false',
+        'midnight.mining.mining-enabled': 'false',
       },
     })
   } else {
@@ -59,7 +63,7 @@ export async function getMiningParams(): Promise<SettingsPerClient> {
         [getPrivateCoinbaseOptionPath('pkd')]: currentConfig.pkd,
         [getPrivateCoinbaseOptionPath('diversifier')]: currentConfig.diversifier,
         [getPrivateCoinbaseOptionPath('ovk')]: currentConfig.ovk,
-        'midnight.consensus.mining-enabled': 'true',
+        'midnight.mining.mining-enabled': 'true',
       },
     })
   }
