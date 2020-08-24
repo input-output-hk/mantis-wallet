@@ -110,7 +110,7 @@ const TX_STATUS_ORDER: Record<TxStatusString, number> = {
 const orderConfigs: Record<SortableProperty, Ord<ExtendedTransaction>> = {
   type: ord.contramap(ordString, ({txDetails}: ExtendedTransaction) => txDetails.txType),
   amount: ord.contramap(ordNumber, ({txDirection, txValue}: ExtendedTransaction) => {
-    const sign = txDirection === 'incoming' ? 1 : -1
+    const sign = txDirection === 'outgoing' ? -1 : 1
     return sign * parseInt(typeof txValue === 'string' ? txValue : txValue.value)
   }),
   time: ord.contramap(ordNumber, ({txStatus}: ExtendedTransaction) => {
