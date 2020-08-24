@@ -264,7 +264,7 @@ const _GlacierDropOverview = ({
       // Generate first transparent address
       setClaimDisabled(true)
       walletState
-        .generateNewAddress()
+        .generateTransparentAccount()
         .then(() => {
           message.info(t(['wallet', 'message', 'generatedYourFirstTransparentAddress']), 5)
           setActiveModal('EnterAddress')

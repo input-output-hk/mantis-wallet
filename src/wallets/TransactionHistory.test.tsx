@@ -5,7 +5,7 @@ import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {Account, makeWeb3Worker, TransparentAddress} from '../web3'
+import {makeWeb3Worker, TransparentAddress} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {GlacierState} from '../glacier-drop/glacier-state'
@@ -66,18 +66,25 @@ const tx2: ExtendedTransaction = {
   },
 }
 
-const accounts: Array<Required<Account>> = [
-  {
-    wallet: 'test-wallet',
-    address: 'test-address',
-    locked: false,
-  },
-]
-
 const transparentAddresses = [
   {
     address: 'transparent-address',
     index: 0,
+  },
+]
+
+const privateAddresses = [
+  {
+    address: CONFIDENTIAL_ADDRESS,
+    index: 0,
+  },
+  {
+    address: 'private-address-1',
+    index: 1,
+  },
+  {
+    address: 'private-address-2',
+    index: 2,
   },
 ]
 
@@ -110,13 +117,14 @@ const estimateFees = (): Promise<FeeEstimates> =>
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
   transparentAddresses: transparentAddresses,
-  accounts,
+  privateAddresses: privateAddresses,
   availableBalance: Dust.toBasic(new BigNumber(1234)),
   sendTransaction: jest.fn(),
   sendTxToTransparent: jest.fn(),
   estimateTransactionFee: estimateFees,
   estimatePublicTransactionFee: estimateFees,
-  generateAddress: jest.fn(),
+  generateTransparentAddress: jest.fn(),
+  generatePrivateAddress: jest.fn(),
   goToAccounts: jest.fn(),
 }
 
@@ -143,7 +151,7 @@ const TxHistoryWithTransparentAddressGenerator = ({
       <TransactionHistory
         {...defaultProps}
         transparentAddresses={transparentAddresses}
-        generateAddress={(): Promise<void> => {
+        generateTransparentAddress={(): Promise<void> => {
           setCounter(counter + 1)
           return Promise.resolve()
         }}
@@ -217,7 +225,6 @@ test('Send modal shows up', async () => {
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
-    accounts,
   })
   const sendButton = getByTestId('send-button')
   await act(async () => userEvent.click(sendButton))
@@ -270,7 +277,6 @@ test('Send confidential transaction works', async () => {
     queryAllByText,
   } = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
-    accounts,
     estimateTransactionFee: estimateFees,
     sendTransaction: send,
   })
@@ -370,7 +376,6 @@ test('Send transparent transaction works', async () => {
     queryAllByText,
   } = renderTransactionHistory({
     availableBalance: Dust.toBasic(availableDust),
-    accounts,
     estimatePublicTransactionFee: estimateFees,
     sendTxToTransparent: send,
   })
@@ -455,15 +460,7 @@ test('Send transparent transaction works', async () => {
 })
 
 test('Receive modal shows up with confidential address', async () => {
-  const {getByTestId, getByText} = renderTransactionHistory({
-    accounts: [
-      {
-        wallet: 'test-wallet',
-        address: CONFIDENTIAL_ADDRESS,
-        locked: false,
-      },
-    ],
-  })
+  const {getByTestId, getByText} = renderTransactionHistory({privateAddresses})
   const receiveButton = getByTestId('receive-button')
   userEvent.click(receiveButton)
 
@@ -521,19 +518,9 @@ test('Receive modal works with transparent addresses', async () => {
     expect(mockedCopyToClipboard).toBeCalledWith(getTransparentAddress(0), expect.any(String)),
   )
 
-  // Generating 5 more addresses
-  // eslint-disable-next-line
-  for (let i = 1; i < 6; i++) {
-    act(() => userEvent.click(generateNewButton))
-    // eslint-disable-next-line
-    await waitFor(() => expect(getByText(getTransparentAddress(i))).toBeInTheDocument())
-  }
-
-  // Only after the 7th address generation is a link shown to view all and the first address is no more visible
-  expect(queryByText('See all Transparent Addresses')).not.toBeInTheDocument()
+  // Generate 1 more address
   act(() => userEvent.click(generateNewButton))
-  await waitFor(() => expect(queryByText(getTransparentAddress(0))).not.toBeInTheDocument())
-  await waitFor(() => expect(getByText('See all Transparent Addresses')).toBeInTheDocument())
+  await waitFor(() => expect(getByText(getTransparentAddress(1))).toBeInTheDocument())
 })
 
 // Navigation

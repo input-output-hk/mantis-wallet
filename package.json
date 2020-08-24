@@ -18,6 +18,7 @@
   "homepage": "./",
   "scripts": {
     "start": "cross-env EXTEND_ESLINT=true BROWSER=none react-app-rewired start",
+    "start-main": "yarn build-main && yarn electron-dev",
     "build-renderer": "cross-env EXTEND_ESLINT=true react-app-rewired build",
     "build-main": "webpack --config webpack.main.config.js",
     "test": "cross-env EXTEND_ESLINT=true react-app-rewired test --env=jest-environment-jsdom-sixteen \"^((?!storyshots).)*$\"",

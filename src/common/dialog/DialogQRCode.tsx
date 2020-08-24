@@ -21,7 +21,7 @@ export const DialogQRCode: FunctionComponent<DialogQRCodeProps> = ({
   <div className={classnames('DialogQRCode', {blurred})}>
     <div className="display">
       <div className="qr-code">
-        <QRCode data-testid="qr-code" value={content} />
+        <QRCode data-testid="qr-code" value={content} size={100} />
       </div>
       <div className="qr-content">{content}</div>
     </div>

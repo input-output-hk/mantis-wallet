@@ -288,6 +288,13 @@ div#root {
   }
 }
 
+// modal
+.ant-modal-mask {
+  @include themify($themes) {
+    background-color: rgba(themed('component-background'), 0.75);
+  }
+}
+
 input::placeholder {
   opacity: 1;
 

@@ -7,6 +7,7 @@ import {
   TransparentAddress,
   Account,
   RawSynchronizationStatus,
+  PrivateAddress,
 } from './web3'
 import {getContractConfigs} from './config/renderer'
 import {WalletState} from './common/wallet-state'
@@ -142,7 +143,10 @@ export const ApiTest = (): JSX.Element => {
         <TestButton
           onClick={(): Promise<TransparentAddress> => wallet.generateTransparentAccount()}
         >
-          Generate Transparent Address
+          Generate Transparent Account
+        </TestButton>
+        <TestButton onClick={(): Promise<PrivateAddress> => wallet.generatePrivateAccount()}>
+          Generate Confidential Account
         </TestButton>
         <TestButton
           onClick={(): Promise<boolean> => wallet.restoreFromSpendingKey({passphrase, spendingKey})}

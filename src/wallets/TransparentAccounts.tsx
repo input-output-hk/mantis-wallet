@@ -162,7 +162,7 @@ export const TransparentAccounts: FunctionComponent<TransparentAccountsProps> = 
               }
             }}
           >
-            <Trans k={['wallet', 'button', 'generateNewTransparentAddress']} />
+            <Trans k={['wallet', 'button', 'generateNewAddress']} />
           </Button>
           <Button type="primary" className="action secondary" onClick={backToTransactions}>
             <Trans k={['wallet', 'button', 'goBackToOverview']} />

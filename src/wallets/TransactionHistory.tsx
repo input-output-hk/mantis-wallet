@@ -3,7 +3,7 @@ import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
-import {TransparentAddress, Account} from '../web3'
+import {TransparentAddress, PrivateAddress} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates} from '../common/wallet-state'
@@ -21,26 +21,28 @@ import './TransactionHistory.scss'
 export interface TransactionHistoryProps {
   transactions: ExtendedTransaction[]
   transparentAddresses: TransparentAddress[]
-  accounts: Account[]
+  privateAddresses: PrivateAddress[]
   availableBalance: BigNumber
   sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<void>
   estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
   sendTxToTransparent: (recipient: string, amount: BigNumber, fee: BigNumber) => Promise<void>
   estimatePublicTransactionFee: (amount: BigNumber, recipient: string) => Promise<FeeEstimates>
-  generateAddress: () => Promise<void>
+  generateTransparentAddress: () => Promise<void>
+  generatePrivateAddress: () => Promise<void>
   goToAccounts: () => void
 }
 
 export const TransactionHistory = ({
   transactions,
-  accounts,
   availableBalance,
   sendTransaction,
   estimateTransactionFee,
   sendTxToTransparent,
   estimatePublicTransactionFee,
-  generateAddress,
+  generateTransparentAddress,
+  generatePrivateAddress,
   transparentAddresses,
+  privateAddresses,
   goToAccounts,
 }: TransactionHistoryProps): JSX.Element => {
   const [shownTxNumber, setShownTxNumber] = useState(20)
@@ -132,11 +134,11 @@ export const TransactionHistory = ({
           />
           <ReceiveTransaction
             visible={showReceiveModal}
-            privateAddress={accounts[0].address || ''} // FIXME: PM-1555 - refactor to support multiple wallets
             onCancel={(): void => setShowReceiveModal(false)}
-            onGenerateNew={generateAddress}
+            onGenerateNewTransparent={generateTransparentAddress}
+            onGenerateNewPrivate={generatePrivateAddress}
             transparentAddresses={transparentAddresses}
-            goToAccounts={goToAccounts}
+            privateAddresses={privateAddresses}
           />
         </div>
       </div>

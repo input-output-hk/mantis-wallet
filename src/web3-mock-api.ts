@@ -26,6 +26,7 @@ import {
   AsyncTxResponse,
   CancelMiningResponse,
   EthBlock,
+  PrivateAddress,
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
@@ -34,8 +35,12 @@ import {POB_CHAINS, PobChainId} from './pob/pob-chains'
 const HIGHEST_KNOWN_BLOCK = 1000
 const ADDRESS =
   'm-test-shl-ad1x63kqrmyyuqxf38pqu4dxmf4mjfruncv0mpjsfkqug68jp2eqjv9mpdfn49n7g3p37t3jvxmuv5'
-const TRANSPARENT_ADDRESS: TransparentAddress = {
+const TRANSPARENT_ACCOUNT: TransparentAddress = {
   address: 'm-test-uns-ad17upzkhnpmuenuhk3lnrc64q5kr0l3ez44g8u7r',
+  index: 0,
+}
+const PRIVATE_ACCOUNT: TransparentAddress = {
+  address: ADDRESS,
   index: 0,
 }
 const JOB_STATUS: JobStatus = {
@@ -173,18 +178,30 @@ class MockWallet implements WalletAPI {
     return [JOB_STATUS]
   }
 
-  // transparent addresses
+  // transparent accounts
 
   listTransparentAccounts(): TransparentAddress[] {
     this._lockGuard()
-    return [TRANSPARENT_ADDRESS]
+    return [TRANSPARENT_ACCOUNT]
   }
   generateTransparentAccount(): TransparentAddress {
     this._lockGuard()
-    return TRANSPARENT_ADDRESS
+    return TRANSPARENT_ACCOUNT
+  }
+
+  // private accounts
+
+  listPrivateAccounts(): PrivateAddress[] {
+    this._lockGuard()
+    return [PRIVATE_ACCOUNT]
+  }
+  generatePrivateAccount(): PrivateAddress {
+    this._lockGuard()
+    return PRIVATE_ACCOUNT
   }
 
   // accounts
+
   listAccounts(): Account[] {
     const wallet = 'Wallet 1'
     if (this.isLocked) {

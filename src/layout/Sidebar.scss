@@ -9,6 +9,7 @@
   grid-template-rows: auto auto 1fr auto;
   width: $sidebar-width;
   height: 100vh;
+  user-select: none;
 
   @include themify($themes) {
     background-color: themed('secondary-background');
@@ -169,10 +170,14 @@
       letter-spacing: normal;
       text-align: center;
       text-transform: none;
+      user-select: text;
     }
   }
 
+  //
   // Mini Sidebar
+  //
+
   @media screen and #{$sidebar-collapse-query} {
     $mini-left-padding: 33px;
 

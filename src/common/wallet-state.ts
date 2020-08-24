@@ -29,6 +29,7 @@ import {
   Web3API,
   FeeLevel,
   CallParams,
+  PrivateAddress,
 } from '../web3'
 import {BuildJobState} from './build-job-state'
 import {CHAINS_TO_USE_IN_POB} from '../pob/pob-config'
@@ -102,13 +103,15 @@ export interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
   transparentAccounts: TransparentAccount[]
+  privateAccounts: PrivateAddress[]
   getOverviewProps: () => Overview
   callTxStatuses: CallTxStatuses
   reset: () => void
   remove: (secrets: PassphraseSecrets) => Promise<boolean>
   getSpendingKey: (secrets: PassphraseSecrets) => Promise<string>
   lock: (secrets: PassphraseSecrets) => Promise<boolean>
-  generateNewAddress: () => Promise<void>
+  generateTransparentAccount: () => Promise<void>
+  generatePrivateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<string>
   sendTxToTransparent: (
@@ -179,6 +182,7 @@ interface WalletStateParams {
   availableBalance: Option<BigNumber>
   transparentBalance: Option<BigNumber>
   transparentAccounts: Option<TransparentAccount[]>
+  privateAccounts: Option<PrivateAddress[]>
   accounts: Option<Account[]>
   transactions: Option<Transaction[]>
   callTxStatuses: CallTxStatuses
@@ -193,6 +197,7 @@ const DEFAULT_STATE: WalletStateParams = {
   availableBalance: none,
   transparentBalance: none,
   transparentAccounts: none,
+  privateAccounts: none,
   accounts: none,
   transactions: none,
   callTxStatuses: {},
@@ -256,8 +261,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [transparentAccountsOption, setTransparentAccounts] = useState<
     Option<TransparentAccount[]>
   >(_initialState.transparentAccounts)
+  const [privateAccountsOption, setPrivateAccounts] = useState<Option<PrivateAddress[]>>(
+    _initialState.privateAccounts,
+  )
 
   const transparentAccounts = getOrElse((): TransparentAccount[] => [])(transparentAccountsOption)
+  const privateAccounts = getOrElse((): PrivateAddress[] => [])(privateAccountsOption)
 
   const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
@@ -286,6 +295,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     isSome(transactionsOption) &&
     isSome(transparentBalanceOption) &&
     isSome(transparentAccountsOption) &&
+    isSome(privateAccountsOption) &&
     isSome(accountsOption) &&
     isSome(syncStatusOption)
 
@@ -323,6 +333,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const error = getOrElse((): Error => Error('Unknown error'))(errorOption)
+
+  const loadPrivateAccounts = async (): Promise<void> =>
+    loadAll(wallet.listPrivateAccounts).then((privateAccounts: PrivateAddress[]) => {
+      // eslint-disable-next-line fp/no-mutating-methods
+      setPrivateAccounts(some(_.reverse(privateAccounts)))
+    })
 
   const loadTransparentAccounts = async (): Promise<void> => {
     const transparentAddresses: TransparentAddress[] = await loadAll(wallet.listTransparentAccounts)
@@ -421,6 +437,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       loadTransactionHistory,
       loadBalance,
       loadTransparentAccounts,
+      loadPrivateAccounts,
       loadAccounts,
     ],
   ): void => {
@@ -458,9 +475,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
   }
 
-  const generateNewAddress = async (): Promise<void> => {
+  const generateTransparentAccount = async (): Promise<void> => {
     await wallet.generateTransparentAccount()
     await loadTransparentAccounts()
+  }
+
+  const generatePrivateAccount = async (): Promise<void> => {
+    await wallet.generatePrivateAccount()
+    await loadPrivateAccounts()
   }
 
   const sendTransaction = async (
@@ -583,7 +605,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     syncStatus,
     getOverviewProps,
     reset,
-    generateNewAddress,
+    generateTransparentAccount,
+    generatePrivateAccount,
     refreshSyncStatus,
     sendTransaction,
     sendTxToTransparent,
@@ -602,6 +625,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     getSpendingKey,
     getBurnAddress,
     transparentAccounts,
+    privateAccounts,
     callTxStatuses,
   }
 }

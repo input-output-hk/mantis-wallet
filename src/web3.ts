@@ -14,7 +14,11 @@ export interface Balance {
   totalBalance: BigNumberJSON
 }
 
+//
 // Accounts
+//
+
+// Root account
 
 export interface Account {
   wallet: string
@@ -22,16 +26,23 @@ export interface Account {
   address?: string
 }
 
-// Transparent addresses
+// Transparent accounts
 
 export interface TransparentAddress {
   address: string
   index: number
 }
 
+// Private accounts
+
+export type PrivateAddress = TransparentAddress
+
+//
 // Transaction
+//
 
 // Tx statuses
+
 interface ConfirmedTxStatus {
   status: 'confirmed'
   atBlock: string
@@ -47,6 +58,7 @@ export type TxStatus = 'pending' | 'failed' | ConfirmedTxStatus | PersistedTxSta
 export type TxStatusString = 'pending' | 'failed' | 'confirmed' | 'persisted'
 
 // Tx details
+
 interface RedeemTxDetails {
   txType: 'redeem'
   usedTransparentAccountIndex: number
@@ -88,6 +100,7 @@ interface BaseTransaction {
 }
 
 // Main tx types
+
 interface IncomingTransaction extends BaseTransaction {
   txDirection: 'incoming'
   txValue: string
@@ -137,7 +150,9 @@ interface JobStatusFailed {
 
 export type JobStatus = JobStatusNoSuchJob | JobStatusBuilding | JobStatusBuilt | JobStatusFailed
 
-// Contracts
+//
+// Contract-related types
+//
 
 export interface CallParams {
   from: ['Wallet', string] | 'Wallet' // WalletName, optional: transparentAddress (if missing, new one will be generated)
@@ -149,7 +164,9 @@ export interface CallParams {
   data?: string // smart contract deployment/calling code
 }
 
+//
 // Secrets
+//
 
 export interface PassphraseSecrets {
   passphrase: string
@@ -167,7 +184,9 @@ export interface EtcPrivateKeySecrets {
   etcPrivateKey: string
 }
 
-// SynchronizationStatus
+//
+// Synchronization status
+//
 
 export interface SynchronizationStatusOffline {
   mode: 'offline'
@@ -183,7 +202,9 @@ export interface SynchronizationStatusOnline {
 
 export type RawSynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
 
+//
 // Glacier Drop
+//
 
 export interface RawBalanceWithProof {
   balance: string // hex number string
@@ -235,7 +256,9 @@ interface NoMiningToCancel {
 
 export type CancelMiningResponse = MiningCanceled | NoMiningToCancel
 
-// Helpers
+//
+// Helper types
+//
 
 export type PaginatedCallable<T> = (count: number, drop: number) => T[]
 
@@ -285,9 +308,13 @@ export interface WalletAPI {
   getTransactionBuildJobStatus(jobHash: string): JobStatus
   getAllTransactionBuildJobStatuses(): JobStatus[]
 
-  // transparent addresses
+  // Transparent Accounts
   listTransparentAccounts: PaginatedCallable<TransparentAddress>
   generateTransparentAccount(): TransparentAddress
+
+  // Private Accounts
+  listPrivateAccounts: PaginatedCallable<PrivateAddress>
+  generatePrivateAccount(): PrivateAddress
 
   listAccounts(): Account[]
   getSynchronizationStatus(): RawSynchronizationStatus

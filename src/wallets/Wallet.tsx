@@ -17,7 +17,6 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
     availableBalance,
     pendingBalance,
     transparentAccounts,
-    accounts,
   } = walletState.getOverviewProps()
   const {callTxStatuses} = walletState
 
@@ -47,7 +46,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
         <TransactionHistory
           transactions={extendedTransactions}
           transparentAddresses={transparentAccounts}
-          accounts={accounts}
+          privateAddresses={walletState.privateAccounts}
           availableBalance={availableBalance}
           sendTransaction={async (recipient: string, amount: number, fee: number, memo: string) => {
             await walletState.sendTransaction(recipient, amount, fee, memo)
@@ -61,14 +60,15 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
           }}
           estimateTransactionFee={walletState.estimateTransactionFee}
           estimatePublicTransactionFee={walletState.estimatePublicTransactionFee}
-          generateAddress={walletState.generateNewAddress}
+          generateTransparentAddress={walletState.generateTransparentAccount}
+          generatePrivateAddress={walletState.generatePrivateAccount}
           goToAccounts={() => setViewType('accounts')}
         />
       )}
       {viewType === 'accounts' && (
         <TransparentAccounts
           transparentAccounts={transparentAccounts}
-          generateAddress={walletState.generateNewAddress}
+          generateAddress={walletState.generateTransparentAccount}
           redeem={async (address: string, amount: number, fee: number): Promise<void> => {
             await walletState.redeemValue(address, amount, fee)
           }}

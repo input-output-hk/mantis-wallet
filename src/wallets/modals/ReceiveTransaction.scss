@@ -1,12 +1,18 @@
 @import '../../themify', '../../partial', '../../vars';
 
 .ReceiveModalFooter {
-  padding: 1.5rem 64px;
+  max-height: 225px;
+  padding: 1.25rem 64px;
+  overflow: auto;
   border-radius: 0 0 $dialog-component-border-radius * 2 $dialog-component-border-radius * 2;
   text-align: left;
 
   @include themify($themes) {
     background-color: themed('dialog-dark-input-bg');
+  }
+
+  &::-webkit-scrollbar-track {
+    margin-bottom: 28px;
   }
 
   .title {
