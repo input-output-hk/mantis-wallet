@@ -358,6 +358,10 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
 
 export const config = loadConfigs([
   {
+    name: 'configuration file from home directory',
+    path: path.resolve(homedir(), 'luna-config.json5'),
+  },
+  {
     name: 'platform-specific configuration',
     path: path.resolve(__dirname, '..', '..', 'config-platform.json5'),
   },
