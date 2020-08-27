@@ -8,10 +8,6 @@ import {loadLunaManagedConfig, lunaManagedConfigPath} from '../config/main'
 import {mainLog} from './logger'
 import {createTErrorMain} from './i18n'
 
-// FIXME: PM-2519 remove as soon as fixed on backend
-const getOldPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
-  `midnight.consensus.private-coinbase.${option}`
-
 const getPrivateCoinbaseOptionPath = (option: 'pkd' | 'diversifier' | 'ovk'): string =>
   `midnight.mining.private-coinbase.${option}`
 
@@ -31,9 +27,9 @@ export async function getCoinbaseParams(
 
     const parsed = JSON.parse(stdout)
     return {
-      pkd: parsed[getOldPrivateCoinbaseOptionPath('pkd')],
-      diversifier: parsed[getOldPrivateCoinbaseOptionPath('diversifier')],
-      ovk: parsed[getOldPrivateCoinbaseOptionPath('ovk')],
+      pkd: parsed[getPrivateCoinbaseOptionPath('pkd')],
+      diversifier: parsed[getPrivateCoinbaseOptionPath('diversifier')],
+      ovk: parsed[getPrivateCoinbaseOptionPath('ovk')],
     }
   } catch (e) {
     mainLog.error(e)
