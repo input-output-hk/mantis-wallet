@@ -5,7 +5,13 @@ with cfg.steps.commands; {
   steps.commands = {
     midnight-dist = {
       label = ":clock12::darwin::linux::windows:";
-      branches = "develop release/*";
+
+      "if" = ''
+        build.message =~ /ci pkg/ ||
+          build.branch =~ /^release\// ||
+          build.branch == "develop"
+      '';
+
       command = ''
         (cd midnight; nix-shell --run 'sbt -v -mem 2048 -J-Xmx4g dist')
 
@@ -50,7 +56,7 @@ with cfg.steps.commands; {
 
     dtslint = {
       dependsOn = [ node_modules ];
-      label = ":dtslint:";
+      label = ":tslint:";
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         tar xzf node_modules.tgz
@@ -88,7 +94,11 @@ with cfg.steps.commands; {
 
     electron-darwin = {
       dependsOn = [ build midnight-dist ];
-      branches = "develop release/*";
+      "if" = ''
+        build.message =~ /ci pkg darwin/ ||
+          build.branch =~ /^release\// ||
+          build.branch == "develop"
+      '';
       label = ":electron::darwin:";
       command = ''
         buildkite-agent artifact download build.tgz .
@@ -117,8 +127,14 @@ with cfg.steps.commands; {
 
     electron-linux = {
       dependsOn = [ build midnight-dist node_modules ];
-      branches = "develop release/*";
       label = ":electron::linux:";
+
+      "if" = ''
+        build.message =~ /ci pkg linux/ ||
+          build.branch =~ /^release\// ||
+          build.branch == "develop"
+      '';
+
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
@@ -146,8 +162,14 @@ with cfg.steps.commands; {
 
     electron-win = {
       dependsOn = [ node_modules build midnight-dist ];
-      branches = "develop release/*";
       label = ":electron::windows:";
+
+      "if" = ''
+        build.message =~ /ci pkg win/ ||
+          build.branch =~ /^release\// ||
+          build.branch == "develop"
+      '';
+
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
