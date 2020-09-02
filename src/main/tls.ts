@@ -47,7 +47,7 @@ export const httpRpcOverTLS = {
 
 export const nodeTLSConfig = {
   ...httpRpcOverTLS,
-  'midnight.blockchain.blocks-streaming.use-tls': true,
+  'midnight.data.blocks-streaming.use-tls': true,
 }
 
 export const walletTLSConfig = {

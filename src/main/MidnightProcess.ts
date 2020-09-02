@@ -97,8 +97,6 @@ const buildPortConfig = (name: ClientName): ClientSettings => {
       return {
         'wallet.node-rpc-address': config.nodeRpcAddress,
         'midnight.network.rpc.http.port': config.walletRpcPort,
-        'midnight.network.discovery.port': config.discoveryPort,
-        'midnight.network.server-address.port': config.p2pMessagingPort,
         'wallet.sync.blocks-streaming-server-address': `127.0.0.1:${config.blocksStreamingPort}`,
       }
     case 'node':
@@ -106,7 +104,7 @@ const buildPortConfig = (name: ClientName): ClientSettings => {
         'midnight.network.rpc.http.port': config.nodeRpcPort,
         'midnight.network.discovery.port': config.discoveryPort,
         'midnight.network.server-address.port': config.p2pMessagingPort,
-        'midnight.blockchain.blocks-streaming.server-address': `0.0.0.0:${config.blocksStreamingPort}`,
+        'midnight.data.blocks-streaming.server-address': `0.0.0.0:${config.blocksStreamingPort}`,
       }
   }
 }
