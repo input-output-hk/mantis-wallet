@@ -15,7 +15,7 @@ export default {
 }
 
 export const shortNumber = (): JSX.Element => (
-  <ShortNumber big={dust('Number', 123456789)} unit="Dust" />
+  <ShortNumber big={dust('Number', 123456789)} unitOrDecimals="Dust" />
 )
 
 export const loading = (): JSX.Element => (

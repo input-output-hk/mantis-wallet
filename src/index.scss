@@ -361,4 +361,16 @@ input::placeholder {
     padding: ($dialog-component-border-radius / 2) 0;
     border-radius: ($dialog-component-border-radius / 2);
   }
+
+  .ant-input {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
 }

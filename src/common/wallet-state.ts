@@ -15,7 +15,7 @@ import {
   bech32toHex,
   returnDataToHumanReadable,
 } from './util'
-import {PobChain, PobChainId} from '../pob/pob-chains'
+import {PobChain} from '../pob/pob-chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
   makeWeb3Worker,
@@ -30,10 +30,12 @@ import {
   FeeLevel,
   CallParams,
   PrivateAddress,
+  WalletAPI,
 } from '../web3'
 import {BuildJobState} from './build-job-state'
-import {CHAINS_TO_USE_IN_POB} from '../pob/pob-config'
+import {MIDNIGHT_TOKEN_CONTRACTS} from '../pob/pob-config'
 import {rendererLog} from './logger'
+import {ERC20Contract} from '../tokens/tokens-utils'
 
 // API Types
 
@@ -64,7 +66,7 @@ export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
 
 export type TransparentAccount = TransparentAddress & {
   balance: BigNumber
-  midnightTokens: Partial<Record<PobChainId, BigNumber>>
+  tokens: Record<string, BigNumber>
 }
 
 export type FeeEstimates = t.TypeOf<typeof FeeEstimates>
@@ -131,6 +133,9 @@ export interface LoadedState {
     reward: number,
     autoConversion: boolean,
   ) => Promise<string>
+  addTokenToTrack: (tokenAddress: string) => void
+  addTokensToTrack: (tokenAddresses: string[]) => void
+  wallet: Remote<WalletAPI>
 }
 
 export interface LockedState {
@@ -210,6 +215,8 @@ export const canRemoveWallet = (
   walletState.walletStatus === 'LOCKED' ||
   walletState.walletStatus === 'ERROR'
 
+const tokensAlwaysTracked = Object.values(MIDNIGHT_TOKEN_CONTRACTS)
+
 const getPublicTransactionParams = (
   amount: BigNumber,
   gasPrice: BigNumber | number,
@@ -225,7 +232,6 @@ const getPublicTransactionParams = (
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const {
-    erc20,
     eth,
     midnight: {wallet},
   } = _initialState.web3
@@ -264,6 +270,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [privateAccountsOption, setPrivateAccounts] = useState<Option<PrivateAddress[]>>(
     _initialState.privateAccounts,
   )
+
+  // tokens
+  const [trackedTokens, setTrackedTokens] = useState<string[]>(tokensAlwaysTracked)
 
   const transparentAccounts = getOrElse((): TransparentAccount[] => [])(transparentAccountsOption)
   const privateAccounts = getOrElse((): PrivateAddress[] => [])(privateAccountsOption)
@@ -340,7 +349,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       setPrivateAccounts(some(_.reverse(privateAccounts)))
     })
 
-  const loadTransparentAccounts = async (): Promise<void> => {
+  const loadTransparentAccounts = async (tokens = trackedTokens): Promise<void> => {
     const transparentAddresses: TransparentAddress[] = await loadAll(wallet.listTransparentAccounts)
 
     const getLastKnownBalance = (index: number): BigNumber =>
@@ -357,20 +366,27 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
                 ? getLastKnownBalance(address.index)
                 : Promise.reject(e),
             )
-          const midnightTokens = await Promise.all(
-            CHAINS_TO_USE_IN_POB.map(({id}) =>
-              erc20[id]
-                .balanceOf(bech32toHex(address.address))
-                .then((balance) => [id, deserializeBigNumber(balance)])
-                .catch((err) => {
-                  rendererLog.error(err)
-                  return [id, new BigNumber(0)]
-                }),
-            ),
+          const tokenBalances = await Promise.all(
+            tokens.map(async (contractAddress) => {
+              const data = ERC20Contract.balanceOf.getData(bech32toHex(address.address))
+              try {
+                const balance = await eth.call(
+                  {
+                    to: contractAddress,
+                    data,
+                  },
+                  'latest',
+                )
+                return [contractAddress, new BigNumber(balance)]
+              } catch (err) {
+                rendererLog.error(err)
+                return [contractAddress, new BigNumber(0)]
+              }
+            }),
           )
           return {
             balance: new BigNumber(balance),
-            midnightTokens: _.fromPairs(midnightTokens),
+            tokens: _.fromPairs(tokenBalances),
             ...address,
           }
         },
@@ -400,12 +416,17 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
 
     const receipt = await eth.getTransactionReceipt(transactionHash)
-    return receipt === null
-      ? {status: 'TransactionPending'}
-      : {
-          status: parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed',
-          message: receipt.returnData ? returnDataToHumanReadable(receipt.returnData) : '',
-        }
+    if (receipt === null) {
+      return {status: 'TransactionPending'}
+    }
+
+    const status = parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed'
+    const message =
+      status === 'TransactionFailed' && receipt.returnData
+        ? returnDataToHumanReadable(receipt.returnData)
+        : receipt.returnData
+
+    return {status, message}
   }
 
   const _updateCallTxStatuses = async (transactions: Transaction[]): Promise<void> => {
@@ -599,6 +620,23 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const estimateCallFee = (callParams: CallParams): Promise<FeeEstimates> =>
     wallet.estimateFees('call', callParams).then((res) => tPromise.decode(FeeEstimates, res))
 
+  const addTokenToTrack = (tokenAddress: string): void => {
+    if (!trackedTokens.includes(tokenAddress)) {
+      const newTrackedTokens = [...trackedTokens, tokenAddress]
+      setTrackedTokens(newTrackedTokens)
+      loadTransparentAccounts(newTrackedTokens)
+    }
+  }
+
+  const addTokensToTrack = (tokenAddresses: string[]): void => {
+    const notTrackedAddresses = _.difference(tokenAddresses)(trackedTokens)
+    if (notTrackedAddresses.length > 0) {
+      const newTrackedTokens = [...trackedTokens, ...notTrackedAddresses]
+      setTrackedTokens(newTrackedTokens)
+      loadTransparentAccounts(newTrackedTokens)
+    }
+  }
+
   return {
     walletStatus,
     error,
@@ -627,6 +665,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     transparentAccounts,
     privateAccounts,
     callTxStatuses,
+    addTokenToTrack,
+    addTokensToTrack,
+    wallet,
   }
 }
 

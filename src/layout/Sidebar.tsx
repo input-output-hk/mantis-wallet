@@ -18,6 +18,7 @@ import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
 import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
+import {TokensState} from '../tokens/tokens-state'
 import {isTestnet} from '../shared/version'
 import {Trans} from '../common/Trans'
 import {createTErrorRenderer} from '../common/i18n'
@@ -65,6 +66,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const routerState = RouterState.useContainer()
   const pobState = ProofOfBurnState.useContainer()
   const glacierState = GlacierState.useContainer()
+  const tokensState = TokensState.useContainer()
   const {networkTag} = BackendState.useContainer()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
@@ -189,6 +191,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
             }
             pobState.reset()
             glacierState.removeClaims()
+            tokensState.reset()
             setActiveModal('none')
           }}
           onCancel={() => setActiveModal('none')}

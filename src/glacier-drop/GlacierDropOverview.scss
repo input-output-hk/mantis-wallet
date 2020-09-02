@@ -2,7 +2,7 @@
 
 .GlacierDropOverview {
   .content {
-    margin: 64px 64px 0;
+    margin: $main-content-padding $main-content-padding 0;
 
     > .error {
       font-size: $font-size-m;

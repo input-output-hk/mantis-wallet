@@ -6,7 +6,8 @@
     "wallets": "Wallets",
     "proofOfBurn": "Proof of Burn",
     "glacierDrop": "Glacier Drop",
-    "settings": "Settings"
+    "settings": "Settings",
+    "tokens": "Tokens"
   },
   "settings": {
     "title": {
@@ -171,7 +172,7 @@
       "lockWalletDescription": "Enter your password to lock your wallet. You can access your wallet later by unlocking it with your password.",
       "removeWalletInstruction": "Enter your password to remove your wallet.",
       "removeWalletApproval1": "I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase.",
-      "removeWalletApproval2": "I understand that all my Burn Addresses and Glacier Drop Claims will be deleted from this machine.",
+      "removeWalletApproval2": "I understand that all my Burn Addresses, Glacier Drop Claims and tracked Tokens will be deleted from this machine.",
       "noKnownTransparentAddresses": "No known addresses",
       "transparentAddressWarning": "<strong>Warning:</strong> By using a transparent address your transaction will not stay confidential.",
       "applyConfidentialityDescription": "This transaction will move selected funds to your confidential address which will remove their visibility from the Midnight Blockchain.",
@@ -497,6 +498,46 @@
       "provingConfirmedInProgressDescription": "Waiting for confirmations on Midnight.",
       "provingConfirmedFinishedDescription": "Burn Process complete. Midnight Tokens are now available.",
       "alreadyProved": "Already Proved"
+    }
+  },
+  "tokens": {
+    "title": {
+      "addNewToken": "Add New Token",
+      "hideToken": "Hide {{tokenSymbol}} Token",
+      "sendToken": "Send {{tokenSymbol}} Token"
+    },
+    "button": {
+      "addToken": "Add Token",
+      "sendToken": "Send",
+      "receiveToken": "Receive",
+      "hideToken": "Hide",
+      "proceedHidingToken": "Proceed",
+      "collapseAccounts": "Collapse Accounts"
+    },
+    "label": {
+      "smartContractAddress": "Contract Address",
+      "decimals": "Decimals",
+      "tokenSymbol": "Token Symbol",
+      "tokenName": "Token Name",
+      "transparentAddress": "Address",
+      "recipient": "Recipient",
+      "transactionAmount": "Amount ({{tokenSymbol}})",
+      "transactionFee": "Fee (DST)",
+      "balance": "Balance",
+      "availableAmount": "Available Amount"
+    },
+    "message": {
+      "contractDetailsApproval": "I've checked the contract details to make sure the above information is correct",
+      "noTokensToShow": "No tokens to show, click on \"$t(tokens.button.addToken)\" to add one",
+      "hideTokenMessage": "You can add this token back in the future by clicking on \"$t(tokens.button.addToken)\".",
+      "contractAddressInfo": "The ERC20 token contract is deployed at this address, it could be used as a safe identifier of the token"
+    },
+    "error": {
+      "tokenAddressAlreadyTracked": "The provided address is already in your list for the following token: {{tokenName}}",
+      "tokenSymbolMustBeSet": "Token symbol must be set",
+      "tokenNameMustBeSet": "Token name must be set",
+      "invalidERC20Contract": "There is no valid ERC20 contract deployed at the address",
+      "invalidERC20ContractShort": "Invalid ERC20 contract address"
     }
   },
   "common": {

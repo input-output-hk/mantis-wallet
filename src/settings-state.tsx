@@ -37,7 +37,7 @@ export type TimeFormat = typeof TIME_FORMATS[number]
 
 const HASHRATE_SUFFIX = ['hash/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s', 'EH/s', 'ZH/s', 'YH/s']
 
-interface Formatters {
+export interface Formatters {
   formatDate: (date: Date) => string
   toDurationString: (seconds: number) => string
 

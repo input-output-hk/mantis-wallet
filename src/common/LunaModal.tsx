@@ -1,7 +1,8 @@
-import React, {useState, FunctionComponent} from 'react'
+import React, {useState, FunctionComponent, PropsWithChildren} from 'react'
 import {CloseOutlined} from '@ant-design/icons'
 import {Modal, message} from 'antd'
 import {ModalProps} from 'antd/lib/modal'
+import {EmptyProps} from 'antd/lib/empty'
 import {createContainer} from 'unstated-next'
 import {useTranslation} from '../settings-state'
 import './LunaModal.scss'
@@ -73,3 +74,7 @@ export const wrapWithModal = <TProps extends object>(
     </LunaModal>
   )
 }
+
+export const ScrollableModalFooter = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => (
+  <div className="ScrollableModalFooter">{children}</div>
+)

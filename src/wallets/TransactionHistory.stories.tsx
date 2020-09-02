@@ -13,7 +13,7 @@ import {
   dummyTransactions,
   estimateFeesWithRandomDelay,
   CONFIDENTIAL_ADDRESS,
-  TRANSPARENT_ADDRESSES,
+  dummyTransparentAccounts,
 } from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
@@ -174,7 +174,7 @@ export const receiveConfidentialTransaction = (): JSX.Element => (
 
 export const receiveTransparentTransaction = (): JSX.Element => (
   <ReceiveTransaction
-    transparentAddresses={TRANSPARENT_ADDRESSES}
+    transparentAddresses={dummyTransparentAccounts}
     privateAddresses={[{address: text('Private address', CONFIDENTIAL_ADDRESS), index: 0}]}
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNewTransparent={asyncAction('generate-new-transparent')}

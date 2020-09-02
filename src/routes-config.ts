@@ -6,16 +6,18 @@ import {BurnCentre} from './pob/BurnCentre'
 import {BurnCoins} from './pob/BurnCoins'
 import {Settings} from './Settings'
 import {GlacierDropOverview} from './glacier-drop/GlacierDropOverview'
+import {Tokens} from './tokens/Tokens'
+import {TKeyRenderer} from './common/i18n'
 // Assets
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuPobIcon from './assets/icons/menu-pob.svg'
 import menuGlacierIcon from './assets/icons/menu-glacier.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
-import {TKeyRenderer} from './common/i18n'
+import menuTokensIcon from './assets/icons/menu-tokens.svg'
 
 // Menu
 
-export type MenuId = 'WALLETS' | 'PROOF_OF_BURN' | 'GLACIER_DROP' | 'SETTINGS'
+export type MenuId = 'WALLETS' | 'PROOF_OF_BURN' | 'GLACIER_DROP' | 'SETTINGS' | 'TOKENS'
 
 export interface MenuItem {
   title: TKeyRenderer
@@ -43,6 +45,11 @@ export const MENU: Menu = {
     route: 'GLACIER_DROP',
     icon: menuGlacierIcon,
   },
+  TOKENS: {
+    title: ['title', 'tokens'],
+    route: 'TOKENS',
+    icon: menuTokensIcon,
+  },
   SETTINGS: {
     title: ['title', 'settings'],
     route: 'SETTINGS',
@@ -61,6 +68,7 @@ export type RouteId =
   | 'GLACIER_DROP'
   | 'SETTINGS'
   | 'API_TEST'
+  | 'TOKENS'
 
 export interface Route {
   component: React.ComponentType
@@ -103,5 +111,9 @@ export const ROUTES: Routes = {
   API_TEST: {
     component: ApiTest,
     menu: 'SETTINGS',
+  },
+  TOKENS: {
+    component: Tokens,
+    menu: 'TOKENS',
   },
 }

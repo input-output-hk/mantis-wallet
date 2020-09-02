@@ -22,6 +22,7 @@ import {RealBurnStatus, BurnAddressInfo} from './pob-state'
 import {ProverConfig} from '../config/type'
 import {SettingsState} from '../settings-state'
 import {createTErrorRenderer} from '../common/i18n'
+import {MIDNIGHT_TOKEN_CONTRACTS} from './pob-config'
 
 const {ETH_TESTNET} = POB_CHAINS
 
@@ -45,8 +46,8 @@ test('Burn Centre shows correct burn balances and its buttons work as expected',
           address: 'first-transparent-address',
           index: 0,
           balance: new BigNumber(0),
-          midnightTokens: {
-            ETH_TESTNET: available,
+          tokens: {
+            [MIDNIGHT_TOKEN_CONTRACTS.ETH_TESTNET]: available,
           },
         },
       ]}

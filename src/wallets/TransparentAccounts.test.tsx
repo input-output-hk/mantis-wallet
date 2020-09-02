@@ -66,7 +66,7 @@ test('Redeem works', async () => {
           address: transparentAddress,
           index: 1,
           balance: availableAtom,
-          midnightTokens: {},
+          tokens: {},
         }}
         onCancel={cancel}
         visible
@@ -171,7 +171,7 @@ test('Redeem works with Full Amount button', async () => {
           address: transparentAddress,
           index: 1,
           balance: availableAtom,
-          midnightTokens: {},
+          tokens: {},
         }}
         onCancel={cancel}
         visible
@@ -225,19 +225,19 @@ export const transparentAccounts: TransparentAccount[] = [
     address: 'third-transparent-address',
     index: 2,
     balance: new BigNumber(0),
-    midnightTokens: {},
+    tokens: {},
   },
   {
     address: 'second-transparent-address',
     index: 1,
     balance: new BigNumber(0),
-    midnightTokens: {},
+    tokens: {},
   },
   {
     address: 'first-transparent-address',
     index: 0,
     balance: new BigNumber(1234),
-    midnightTokens: {},
+    tokens: {},
   },
 ]
 

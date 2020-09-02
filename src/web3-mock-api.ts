@@ -1,7 +1,6 @@
 /* eslint-disable fp/no-mutation */
 /* eslint-disable fp/no-mutating-methods */
 import BigNumber from 'bignumber.js'
-import _ from 'lodash'
 import {
   Web3API,
   PassphraseSecrets,
@@ -13,7 +12,6 @@ import {
   TransparentAddress,
   RawSynchronizationStatus,
   BigNumberJSON,
-  ERC20Contract,
   EthTransaction,
   RawBalanceWithProof,
   RawAuthorizationSignature,
@@ -30,7 +28,6 @@ import {
 } from './web3'
 import {toHex} from './common/util'
 import {WALLET_DOES_NOT_EXIST, WALLET_IS_LOCKED, WALLET_ALREADY_EXISTS} from './common/errors'
-import {POB_CHAINS, PobChainId} from './pob/pob-chains'
 
 const HIGHEST_KNOWN_BLOCK = 1000
 const ADDRESS =
@@ -155,6 +152,10 @@ class MockWallet implements WalletAPI {
   getTransactionHistory(): Transaction[] {
     this._lockGuard()
     return this.transactions
+  }
+
+  estimateGas(_callParams: CallParams): number {
+    return 10000
   }
 
   estimateFees(_txType: string, _amount: number | CallParams): Record<FeeLevel, string> {
@@ -288,11 +289,6 @@ class MockGlacierDrop {
   }
 }
 
-const mockErc20Contracts = _.values(POB_CHAINS).map(({id}): [PobChainId, ERC20Contract] => [
-  id,
-  {balanceOf: () => new BigNumber(1) as BigNumberJSON},
-])
-
 export const Web3MockApi: Web3API = {
   eth: {
     getTransaction: (hash: string): EthTransaction => ({
@@ -323,5 +319,4 @@ export const Web3MockApi: Web3API = {
   config: {
     getNetworkTag: () => ({networkTag: 'testnet'}),
   },
-  erc20: _.fromPairs(mockErc20Contracts) as Record<PobChainId, ERC20Contract>,
 }

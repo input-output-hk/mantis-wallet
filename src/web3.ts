@@ -1,7 +1,6 @@
 import * as Comlink from 'comlink'
 import {MockWorker} from './stubs'
 import {config} from './config/renderer'
-import {PobChainId} from './pob/pob-chains'
 
 export interface BigNumberJSON {
   s: number
@@ -165,8 +164,8 @@ export interface CallParams {
   from: ['Wallet', string] | 'Wallet' // WalletName, optional: transparentAddress (if missing, new one will be generated)
   to?: string // transparent contract address in bech32 format
   value?: string // value of transaction
-  gasLimit: string // decimal as string, if not specified, default is equal to 90000
-  gasPrice: string // decimal as string, if not specified, default is equal to 20000000000
+  gasLimit?: string // decimal as string, if not specified, default is equal to 90000
+  gasPrice?: string // decimal as string, if not specified, default is equal to 20000000000
   nonce?: string // If not specified, default is equal to current transparent sender nonce
   data?: string // smart contract deployment/calling code
 }
@@ -303,6 +302,7 @@ export interface WalletAPI {
   ): AsyncTxResponse
   callContract(callParams: CallParams, waitForBuild: false): AsyncTxResponse
   getTransactionHistory: PaginatedCallable<Transaction>
+  estimateGas(callParams: CallParams): number
   estimateFees: {
     (txType: 'call', callParams: CallParams): Record<FeeLevel, string>
     (txType: 'redeem' | 'transfer', amount: number): Record<FeeLevel, string>
@@ -342,10 +342,6 @@ export interface GlacierDropAPI {
   ): MineResponse
   cancelMining(): CancelMiningResponse
   getMiningState(): GetMiningStateResponse
-}
-
-export interface ERC20Contract {
-  balanceOf: (address: string) => BigNumberJSON
 }
 
 // This interface isn't complete, check documentation if it needs to be expanded:
@@ -401,7 +397,6 @@ export interface Web3API {
     ethereum: string
   }
   config: ConfigApi
-  erc20: Record<PobChainId, ERC20Contract>
 }
 
 // for testing: ReactDOM doesn't know about workers
