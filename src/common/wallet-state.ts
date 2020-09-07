@@ -15,7 +15,6 @@ import {
   bech32toHex,
   returnDataToHumanReadable,
 } from './util'
-import {PobChain} from '../pob/pob-chains'
 import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
 import {
   makeWeb3Worker,
@@ -33,7 +32,6 @@ import {
   WalletAPI,
 } from '../web3'
 import {BuildJobState} from './build-job-state'
-import {MIDNIGHT_TOKEN_CONTRACTS} from '../pob/pob-config'
 import {rendererLog} from './logger'
 import {ERC20Contract} from '../tokens/tokens-utils'
 
@@ -127,12 +125,6 @@ export interface LoadedState {
   estimateCallFee(callParams: CallParams): Promise<FeeEstimates>
   estimateTransactionFee(amount: BigNumber): Promise<FeeEstimates>
   estimateRedeemFee(amount: BigNumber): Promise<FeeEstimates>
-  getBurnAddress: (
-    address: string,
-    chain: PobChain,
-    reward: number,
-    autoConversion: boolean,
-  ) => Promise<string>
   addTokenToTrack: (tokenAddress: string) => void
   addTokensToTrack: (tokenAddresses: string[]) => void
   wallet: Remote<WalletAPI>
@@ -215,8 +207,6 @@ export const canRemoveWallet = (
   walletState.walletStatus === 'LOCKED' ||
   walletState.walletStatus === 'ERROR'
 
-const tokensAlwaysTracked = Object.values(MIDNIGHT_TOKEN_CONTRACTS)
-
 const getPublicTransactionParams = (
   amount: BigNumber,
   gasPrice: BigNumber | number,
@@ -272,7 +262,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   )
 
   // tokens
-  const [trackedTokens, setTrackedTokens] = useState<string[]>(tokensAlwaysTracked)
+  const [trackedTokens, setTrackedTokens] = useState<string[]>([])
 
   const transparentAccounts = getOrElse((): TransparentAccount[] => [])(transparentAccountsOption)
   const privateAccounts = getOrElse((): PrivateAddress[] => [])(privateAccountsOption)
@@ -590,13 +580,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return spendingKey
   }
 
-  const getBurnAddress = async (
-    address: string,
-    chain: PobChain,
-    reward: number,
-    autoConversion: boolean,
-  ): Promise<string> => wallet.getBurnAddress(address, chain.numericId, reward, autoConversion)
-
   const estimateFees = (txType: 'redeem' | 'transfer', amount: BigNumber): Promise<FeeEstimates> =>
     wallet.estimateFees(txType, amount.toNumber()).then((res) => tPromise.decode(FeeEstimates, res))
 
@@ -661,7 +644,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     restoreFromSeedPhrase,
     remove,
     getSpendingKey,
-    getBurnAddress,
     transparentAccounts,
     privateAccounts,
     callTxStatuses,

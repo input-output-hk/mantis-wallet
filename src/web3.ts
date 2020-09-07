@@ -271,7 +271,6 @@ export interface WalletAPI {
 
   listAccounts(): Account[]
   getSynchronizationStatus(): RawSynchronizationStatus
-  getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
 }
 
 // This interface isn't complete, check documentation if it needs to be expanded:

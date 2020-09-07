@@ -4,8 +4,6 @@ import BigNumber from 'bignumber.js'
 import {waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {SettingsState} from '../settings-state'
-import {BurnStatusType} from '../pob/api/prover'
-import {RealBurnStatus} from '../pob/pob-state'
 import {abbreviateAmount} from './formatters'
 import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
 
@@ -31,33 +29,6 @@ export const findExactlyOneByTag = (element: HTMLElement, tagName: string): Elem
   expect(possibleElementsByTag).toHaveLength(1)
   return possibleElementsByTag[0]
 }
-
-export const createBurnStatus = (
-  status: BurnStatusType,
-  txValue: number,
-  txid = 'source-chain-burn-transaction-id',
-): RealBurnStatus & {tx_value: number} => ({
-  status,
-  txid,
-  chain: null,
-  commitment_txid: 'midnight-transaction-id',
-  commitment_tx_height: 10,
-  redeem_txid: null,
-  redeem_tx_height: null,
-  redeem_tx_timestamp: null,
-  fail_reason: null,
-  burn_tx_height: 1,
-  current_source_height: 1,
-  processing_start_height: 1,
-  last_tag_height: 1,
-  tx_value: txValue,
-  isHidden: false,
-  timestamps: {
-    tx_found: new Date(2020, 4, 17, 3, 24, 0),
-    commitment_submitted: null,
-    redeem_submitted: null,
-  },
-})
 
 export const abbreviateAmountForEnUS = (bg: BigNumber): ReturnType<typeof abbreviateAmount> =>
   abbreviateAmount(bg, EN_US_BIG_NUMBER_FORMAT)

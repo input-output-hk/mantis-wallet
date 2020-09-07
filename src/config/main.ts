@@ -8,23 +8,10 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {ClientName, Config, ProcessConfig, ProverConfig, LunaManagedConfig} from './type'
+import {ClientName, Config, ProcessConfig, LunaManagedConfig} from './type'
 import {tildeToHome} from '../main/pathUtils'
 import {mapProp, optionZip, through} from '../shared/utils'
 import {TLSConfig} from '../main/tls'
-
-const proverConfig: convict.Schema<ProverConfig> = {
-  name: {
-    default: '',
-    doc: 'Name of the prover',
-    format: String,
-  },
-  address: {
-    default: '',
-    doc: 'Address of the prover',
-    format: 'url',
-  },
-}
 
 convict.addFormats({
   'existing-directory': {
@@ -65,25 +52,6 @@ convict.addFormats({
       } else {
         throw Error(`Couldn't parse ${JSON.stringify(val)} to settings map`)
       }
-    },
-  },
-  'list-of-provers': {
-    validate(val: unknown): void {
-      if (!_.isArray(val)) {
-        throw Error('Must be of type Array')
-      }
-
-      val.forEach((possibleProver) => {
-        convict(proverConfig)
-          .load(possibleProver)
-          .validate()
-        if (!possibleProver.address) {
-          throw Error("Address shouldn't be empty for prover")
-        }
-        if (!possibleProver.name) {
-          throw Error("Name shouldn't be empty for prover")
-        }
-      })
     },
   },
 })
@@ -170,22 +138,6 @@ const configGetter = convict({
     arg: 'blocks-streaming-port',
     env: 'LUNA_BLOCKS_STREAMING_PORT',
     doc: 'Port used for blocks streaming',
-  },
-  provers: {
-    default: [
-      {
-        name: 'Sonic testnet',
-        address: 'http://pob-prover-1.testnet-sonic.project42.iohkdev.io',
-      },
-      {
-        name: 'VacuumLabs',
-        address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com',
-      },
-    ],
-    format: 'list-of-provers',
-    arg: 'provers',
-    env: 'LUNA_PROVERS',
-    doc: 'A list of provers.',
   },
   openDevTools: {
     default: false,

@@ -19,11 +19,6 @@ export interface ProcessConfig {
   additionalSettings: ClientSettings
 }
 
-export interface ProverConfig {
-  name: string
-  address: string
-}
-
 export type ClientName = 'node' | 'wallet'
 export const clientNames: ClientName[] = ['node', 'wallet']
 
@@ -35,7 +30,6 @@ export interface Config {
   discoveryPort: number
   p2pMessagingPort: number
   blocksStreamingPort: number
-  provers: ProverConfig[]
   dataDir: string
   distPackagesDir: string
   runClients: boolean

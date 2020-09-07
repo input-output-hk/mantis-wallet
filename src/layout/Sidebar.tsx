@@ -12,7 +12,6 @@ import {Link} from '../common/Link'
 import {StatusModal} from '../common/StatusModal'
 import {SupportModal} from '../common/SupportModal'
 import {fillActionHandlers} from '../common/util'
-import {ProofOfBurnState} from '../pob/pob-state'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
 import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
@@ -63,7 +62,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
 
   const walletState = WalletState.useContainer()
   const routerState = RouterState.useContainer()
-  const pobState = ProofOfBurnState.useContainer()
   const tokensState = TokensState.useContainer()
   const {networkTag} = BackendState.useContainer()
 
@@ -187,7 +185,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
             if (!removed) {
               throw createTErrorRenderer(['wallet', 'error', 'couldNotRemoveWallet'])
             }
-            pobState.reset()
             tokensState.reset()
             setActiveModal('none')
           }}

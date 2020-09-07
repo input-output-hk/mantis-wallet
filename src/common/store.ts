@@ -5,13 +5,12 @@ import ElectronStore from 'electron-store'
 import {gt} from 'semver'
 import {StoreSettingsData, defaultSettingsData, migrationsForSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
-import {StorePobData, defaultPobData, migrationsForPobData} from '../pob/pob-state'
 import {StoreTokensData, defaultTokensData, migrationsForTokensData} from '../tokens/tokens-state'
 import {DATADIR_VERSION} from '../shared/version'
 
-export type StoreData = StoreSettingsData & StorePobData & StoreTokensData
+export type StoreData = StoreSettingsData & StoreTokensData
 
-const defaultData: StoreData = _.mergeAll([defaultSettingsData, defaultPobData, defaultTokensData])
+const defaultData: StoreData = _.mergeAll([defaultSettingsData, defaultTokensData])
 
 const mergeMigrations = _.mergeAllWith(
   (
@@ -29,11 +28,7 @@ const mergeMigrations = _.mergeAllWith(
   },
 )
 
-const migrations = mergeMigrations([
-  migrationsForSettingsData,
-  migrationsForPobData,
-  migrationsForTokensData,
-])
+const migrations = mergeMigrations([migrationsForSettingsData, migrationsForTokensData])
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 

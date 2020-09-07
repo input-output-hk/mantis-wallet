@@ -4,7 +4,6 @@ import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
 import {SettingsState} from './settings-state'
-import {ProofOfBurnState} from './pob/pob-state'
 import {RouterState} from './router-state'
 import {BuildJobState} from './common/build-job-state'
 import {TokensState} from './tokens/tokens-state'
@@ -47,13 +46,11 @@ const App: React.FC = () => {
             <RouterState.Provider>
               <BuildJobState.Provider initialState={{web3}}>
                 <WalletState.Provider initialState={{web3}}>
-                  <ProofOfBurnState.Provider initialState={{store, web3}}>
-                    <TokensState.Provider initialState={{store, web3}}>
-                      <Sidebar version={LUNA_VERSION} />
-                      <Router />
-                      <JobStatus />
-                    </TokensState.Provider>
-                  </ProofOfBurnState.Provider>
+                  <TokensState.Provider initialState={{store, web3}}>
+                    <Sidebar version={LUNA_VERSION} />
+                    <Router />
+                    <JobStatus />
+                  </TokensState.Provider>
                 </WalletState.Provider>
               </BuildJobState.Provider>
             </RouterState.Provider>

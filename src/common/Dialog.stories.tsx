@@ -18,10 +18,11 @@ import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
-import {selectChain, dust} from '../storybook-util/custom-knobs'
+import {dust} from '../storybook-util/custom-knobs'
 import {DialogShowDust} from './dialog/DialogShowDust'
 import {DialogTextSwitch} from './dialog/DialogTextSwitch'
 import {DialogFee} from './dialog/DialogFee'
+import {ETC_CHAIN} from './chains'
 
 export default {
   title: 'Dialog',
@@ -52,10 +53,7 @@ export const InteractiveDialog: FunctionComponent<{}> = () => (
 
 export const InteractiveAddress: FunctionComponent<{}> = () => (
   <Dialog title="Dialog Address">
-    <DialogAddress
-      svgLogo={selectChain().burnLogo}
-      address={text('Address to show', 'test-address')}
-    />
+    <DialogAddress svgLogo={ETC_CHAIN.logo} address={text('Address to show', 'test-address')} />
   </Dialog>
 )
 

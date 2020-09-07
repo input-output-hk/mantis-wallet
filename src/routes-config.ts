@@ -2,20 +2,17 @@ import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
-import {BurnCentre} from './pob/BurnCentre'
-import {BurnCoins} from './pob/BurnCoins'
 import {Settings} from './Settings'
 import {Tokens} from './tokens/Tokens'
 import {TKeyRenderer} from './common/i18n'
 // Assets
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
-import menuPobIcon from './assets/icons/menu-pob.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
 import menuTokensIcon from './assets/icons/menu-tokens.svg'
 
 // Menu
 
-export type MenuId = 'WALLETS' | 'PROOF_OF_BURN' | 'SETTINGS' | 'TOKENS'
+export type MenuId = 'WALLETS' | 'TOKENS' | 'SETTINGS'
 
 export interface MenuItem {
   title: TKeyRenderer
@@ -32,11 +29,6 @@ export const MENU: Menu = {
     title: ['title', 'wallets'],
     route: 'WALLETS',
     icon: menuWalletsIcon,
-  },
-  PROOF_OF_BURN: {
-    title: ['title', 'proofOfBurn'],
-    route: 'BURN_CENTRE',
-    icon: menuPobIcon,
   },
   TOKENS: {
     title: ['title', 'tokens'],
@@ -56,8 +48,6 @@ export type RouteId =
   | 'WALLETS'
   | 'WALLET_SETUP'
   | 'WALLET_UNLOCK'
-  | 'BURN_CENTRE'
-  | 'BURN_COINS'
   | 'SETTINGS'
   | 'API_TEST'
   | 'TOKENS'
@@ -83,14 +73,6 @@ export const ROUTES: Routes = {
   WALLET_UNLOCK: {
     component: WalletUnlock,
     menu: 'WALLETS',
-  },
-  BURN_CENTRE: {
-    component: BurnCentre,
-    menu: 'PROOF_OF_BURN',
-  },
-  BURN_COINS: {
-    component: BurnCoins,
-    menu: 'PROOF_OF_BURN',
   },
   SETTINGS: {
     component: Settings,

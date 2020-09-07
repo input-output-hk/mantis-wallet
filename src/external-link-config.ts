@@ -1,8 +1,6 @@
 const MIDNIGHT_HOME_PAGE = 'https://www.testnet-sonic.project42.iohkdev.io'
 
 export const LINKS = {
-  aboutPoB: `${MIDNIGHT_HOME_PAGE}/en/get-started/proof-of-burn/`,
-  proverListMetrics: `${MIDNIGHT_HOME_PAGE}/en/get-started/proof-of-burn/`,
   faucet: `${MIDNIGHT_HOME_PAGE}/en/tools/faucet/`,
   explorer: 'https://explorer.testnet-sonic.project42.iohkdev.io',
   support: 'https://input-output-rnd.slack.com/archives/C013F4GFSTX',

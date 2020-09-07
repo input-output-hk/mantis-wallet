@@ -218,16 +218,6 @@ class MockWallet implements WalletAPI {
     }
   }
 
-  getBurnAddress(
-    _address: string,
-    _chainId: number,
-    _reward: number,
-    _autoConversion: boolean,
-  ): string {
-    this._lockGuard()
-    return 'example-burn-address'
-  }
-
   _existGuard(): void {
     if (!this.walletExists) throw Error(WALLET_DOES_NOT_EXIST)
   }
