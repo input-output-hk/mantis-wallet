@@ -3,16 +3,16 @@ import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
 import {Settings} from './Settings'
-import {Tokens} from './tokens/Tokens'
+// import {Tokens} from './tokens/Tokens'
 import {TKeyRenderer} from './common/i18n'
 // Assets
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
-import menuTokensIcon from './assets/icons/menu-tokens.svg'
+// import menuTokensIcon from './assets/icons/menu-tokens.svg'
 
 // Menu
 
-export type MenuId = 'WALLETS' | 'TOKENS' | 'SETTINGS'
+export type MenuId = 'WALLETS' | 'SETTINGS' // | 'TOKENS'
 
 export interface MenuItem {
   title: TKeyRenderer
@@ -30,11 +30,11 @@ export const MENU: Menu = {
     route: 'WALLETS',
     icon: menuWalletsIcon,
   },
-  TOKENS: {
-    title: ['title', 'tokens'],
-    route: 'TOKENS',
-    icon: menuTokensIcon,
-  },
+  // TOKENS: {
+  //   title: ['title', 'tokens'],
+  //   route: 'TOKENS',
+  //   icon: menuTokensIcon,
+  // },
   SETTINGS: {
     title: ['title', 'settings'],
     route: 'SETTINGS',
@@ -44,13 +44,7 @@ export const MENU: Menu = {
 
 // Routes
 
-export type RouteId =
-  | 'WALLETS'
-  | 'WALLET_SETUP'
-  | 'WALLET_UNLOCK'
-  | 'SETTINGS'
-  | 'API_TEST'
-  | 'TOKENS'
+export type RouteId = 'WALLETS' | 'WALLET_SETUP' | 'WALLET_UNLOCK' | 'SETTINGS' | 'API_TEST' // | 'TOKENS'
 
 export interface Route {
   component: React.ComponentType
@@ -82,8 +76,8 @@ export const ROUTES: Routes = {
     component: ApiTest,
     menu: 'SETTINGS',
   },
-  TOKENS: {
-    component: Tokens,
-    menu: 'TOKENS',
-  },
+  // TOKENS: {
+  //   component: Tokens,
+  //   menu: 'TOKENS',
+  // },
 }
