@@ -4,7 +4,6 @@ build
 coverage
 dist
 storybook-static
-midnight-remix
 midnight
 .*
 

@@ -7,7 +7,6 @@ Wallet for Midnight.
 * [Node.js](https://nodejs.org/en/) - v12 is currently used for Luna, tested with v12.16.2.
   * (optional) [nvm](https://github.com/nvm-sh/nvm) - you can use nvm to automatically pick-up the Node version you need
 * [yarn](https://classic.yarnpkg.com/en/) - tested with 1.21.1
-* (optional) If you want to use Remix from Luna, you will have to setup [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules#_cloning_submodules) in your project directory. Running these two commands should do the trick: `git submodule init` and `git submodule update`.
 
 ## Initialize the project
 
@@ -37,17 +36,13 @@ Runs the renderer in development mode, it can be accessed at [http://localhost:3
 
 ### `yarn dev`
 
-This runs [`yarn build-main`](#yarn-build-main) and [`yarn copy-remix`](#yarn-copy-remix) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
+This runs [`yarn build-main`](#yarn-build-main) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
 
 `yarn dev:hot` runs with `yarn build-main --watch` for automatic reload and `yarn electron-dev:hot` for automatic restart on change.
 
 ### `yarn storybook`
 
 Starts storybook in debug mode.
-
-### `yarn copy-remix`
-
-Copies `midnight-remix` files to build directory. This step is mandatory, if you want to run Remix from Luna.
 
 ## Testing and code health related scripts
 
@@ -104,5 +99,3 @@ Remember to clone the repo with `autocrlf` disabled in git.
 If you're making a new release, don't forget to:
 - Bump `version` in `package.json`
 - Update `compatibleMidnightVersions` in `package.json` to the range of acceptable backend versions (regarding data directory / database compatibility)
-- Make sure git submodules are up to date - backend / remix versions are correct
-- Make sure the value of `DEFAULT_CONTRACT_ADDRESSES` is correct in `config.ts`, update in case of testnet reboot / new non-genesis default contract

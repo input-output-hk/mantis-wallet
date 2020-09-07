@@ -41,25 +41,17 @@ const localizedSharedMenu = (t: TFunctionMain): MenuItemConstructorOptions[] => 
   },
 ]
 
-export const buildMenu = (openRemix: () => void, t: TFunctionMain): Menu => {
+export const buildMenu = (t: TFunctionMain): Menu => {
   const template: MenuItemConstructorOptions[] = [
     {
       label: t(['menu', 'Luna']),
       submenu: [
-        {label: t(['menu', 'openRemix']), click: openRemix},
-        {type: 'separator'},
         ...(isMac ? localizedAppMenuForMac(t) : []),
         {label: t(['menu', 'quit']), role: 'quit'},
       ],
     },
     ...localizedSharedMenu(t),
   ]
-
-  return Menu.buildFromTemplate(template)
-}
-
-export const buildRemixMenu = (t: TFunctionMain): Menu => {
-  const template: MenuItemConstructorOptions[] = localizedSharedMenu(t)
 
   return Menu.buildFromTemplate(template)
 }
