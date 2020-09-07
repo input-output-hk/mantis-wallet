@@ -209,60 +209,6 @@ export interface SynchronizationStatusOnline {
 export type RawSynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
 
 //
-// Glacier Drop
-//
-
-export interface RawBalanceWithProof {
-  balance: string // hex number string
-  proof: string // hex string
-}
-
-export interface RawAuthorizationSignature {
-  r: string // hex string
-  s: string // hex string
-  v: number
-}
-
-export interface NewMineStarted {
-  status: 'NewMineStarted'
-  estimatedTime: number
-  estimatedBlockOfTxInclusion: string // hex number string
-  message: string
-}
-
-export interface MiningInProgress {
-  status: 'MiningInProgress'
-  currentNonce: string // hex number string
-  message: string
-}
-
-export type MineResponse = NewMineStarted | MiningInProgress
-
-interface MiningSuccessful {
-  status: 'MiningSuccessful'
-  nonce: string // hex number string
-  mixHash: string // hex string
-}
-
-interface MiningNotStarted {
-  status: 'MiningNotStarted'
-}
-
-export type GetMiningStateResponse = MiningInProgress | MiningSuccessful | MiningNotStarted
-
-interface MiningCanceled {
-  status: 'MiningCanceled'
-  message: string
-}
-
-interface NoMiningToCancel {
-  status: 'NoMiningToCancel'
-  message: string
-}
-
-export type CancelMiningResponse = MiningCanceled | NoMiningToCancel
-
-//
 // Helper types
 //
 
@@ -328,22 +274,6 @@ export interface WalletAPI {
   getBurnAddress(address: string, chainId: number, reward: number, autoConversion: boolean): string
 }
 
-export interface GlacierDropAPI {
-  getEtcSnapshotBalanceWithProof(etcAddress: string): RawBalanceWithProof
-  authorizationSign(
-    transparentAddress: string,
-    secrets: EtcPrivateKeySecrets,
-  ): RawAuthorizationSignature
-  mine(
-    externalAmount: string,
-    etcAddress: string,
-    unlockingStartBlock: number,
-    unlockingEndBlock: number,
-  ): MineResponse
-  cancelMining(): CancelMiningResponse
-  getMiningState(): GetMiningStateResponse
-}
-
 // This interface isn't complete, check documentation if it needs to be expanded:
 // https://eth.wiki/json-rpc/API#eth_gettransactionbyhash
 export interface EthTransaction {
@@ -391,7 +321,6 @@ export interface Web3API {
   eth: EthApi
   midnight: {
     wallet: WalletAPI
-    glacierDrop: GlacierDropAPI
   }
   version: {
     ethereum: string

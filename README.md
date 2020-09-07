@@ -106,4 +106,3 @@ If you're making a new release, don't forget to:
 - Update `compatibleMidnightVersions` in `package.json` to the range of acceptable backend versions (regarding data directory / database compatibility)
 - Make sure git submodules are up to date - backend / remix versions are correct
 - Make sure the value of `DEFAULT_CONTRACT_ADDRESSES` is correct in `config.ts`, update in case of testnet reboot / new non-genesis default contract
-- Optional: Update `BLOCK_TIME_SECONDS` constant in `glacier-config.ts` based on new statistics

@@ -13,16 +13,11 @@ import {
   RawSynchronizationStatus,
   BigNumberJSON,
   EthTransaction,
-  RawBalanceWithProof,
-  RawAuthorizationSignature,
   CallParams,
-  MineResponse,
-  GetMiningStateResponse,
   WalletAPI,
   FeeLevel,
   JobStatus,
   AsyncTxResponse,
-  CancelMiningResponse,
   EthBlock,
   PrivateAddress,
 } from './web3'
@@ -243,52 +238,6 @@ class MockWallet implements WalletAPI {
   }
 }
 
-class MockGlacierDrop {
-  getEtcSnapshotBalanceWithProof(_etcAddress: string): RawBalanceWithProof {
-    return {
-      balance: toHex(123456789),
-      proof: 'abcdefg',
-    }
-  }
-
-  authorizationSign(_midnightAddress: string): RawAuthorizationSignature {
-    return {
-      r: '0xe316ff5f701f3414ea61bd66540ed46aeed2f9abdee39c4c6deda66fdc7814fd',
-      s: '0x4292396321c366bda216ef6eec700d6e3abde3e50ab2b106315953777f4a5799',
-      v: 28,
-    }
-  }
-
-  mine(
-    _externalAmount: string,
-    _etcAddress: string,
-    _unlockingStartBlock: number,
-    _unlockingEndBlock: number,
-  ): MineResponse {
-    return {
-      status: 'NewMineStarted',
-      estimatedTime: 123,
-      estimatedBlockOfTxInclusion: '0x123',
-      message: '',
-    }
-  }
-
-  cancelMining(): CancelMiningResponse {
-    return {
-      status: 'MiningCanceled',
-      message: 'Mining canceled',
-    }
-  }
-
-  getMiningState(): GetMiningStateResponse {
-    return {
-      status: 'MiningSuccessful',
-      nonce: '0x0',
-      mixHash: '0x0',
-    }
-  }
-}
-
 export const Web3MockApi: Web3API = {
   eth: {
     getTransaction: (hash: string): EthTransaction => ({
@@ -311,7 +260,6 @@ export const Web3MockApi: Web3API = {
   },
   midnight: {
     wallet: new MockWallet(),
-    glacierDrop: new MockGlacierDrop(),
   },
   version: {
     ethereum: 'mocked',

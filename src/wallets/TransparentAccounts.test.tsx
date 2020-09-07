@@ -6,7 +6,6 @@ import {render, fireEvent, waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {FeeEstimates, TransparentAccount, WalletState, WalletStatus} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
-import {GlacierState} from '../glacier-drop/glacier-state'
 import {RedeemModal} from './modals/RedeemModal'
 import {UNITS} from '../common/units'
 import {createInMemoryStore} from '../common/store'
@@ -30,9 +29,7 @@ const WithProviders = ({children}: {children?: React.ReactNode}): JSX.Element =>
   return (
     <SettingsState.Provider initialState={{store: createInMemoryStore(defaultSettingsData)}}>
       <BuildJobState.Provider>
-        <WalletState.Provider initialState={initialState}>
-          <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
-        </WalletState.Provider>
+        <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
       </BuildJobState.Provider>
     </SettingsState.Provider>
   )

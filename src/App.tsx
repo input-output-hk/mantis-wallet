@@ -5,7 +5,6 @@ import {WalletState} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
 import {SettingsState} from './settings-state'
 import {ProofOfBurnState} from './pob/pob-state'
-import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
 import {BuildJobState} from './common/build-job-state'
 import {TokensState} from './tokens/tokens-state'
@@ -49,13 +48,11 @@ const App: React.FC = () => {
               <BuildJobState.Provider initialState={{web3}}>
                 <WalletState.Provider initialState={{web3}}>
                   <ProofOfBurnState.Provider initialState={{store, web3}}>
-                    <GlacierState.Provider initialState={{store}}>
-                      <TokensState.Provider initialState={{store, web3}}>
-                        <Sidebar version={LUNA_VERSION} />
-                        <Router />
-                        <JobStatus />
-                      </TokensState.Provider>
-                    </GlacierState.Provider>
+                    <TokensState.Provider initialState={{store, web3}}>
+                      <Sidebar version={LUNA_VERSION} />
+                      <Router />
+                      <JobStatus />
+                    </TokensState.Provider>
                   </ProofOfBurnState.Provider>
                 </WalletState.Provider>
               </BuildJobState.Provider>

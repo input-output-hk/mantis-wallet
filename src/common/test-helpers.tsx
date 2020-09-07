@@ -1,37 +1,13 @@
 import '@testing-library/jest-dom/extend-expect'
-import React, {FunctionComponent, ReactNode, ReactElement} from 'react'
+import React, {FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
-import {render, RenderResult, waitFor, act} from '@testing-library/react'
+import {waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {mockWeb3Worker} from '../web3-mock'
-import {makeWeb3Worker} from '../web3'
-import {GlacierState} from '../glacier-drop/glacier-state'
-import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
-import {WalletState, WalletStatus} from './wallet-state'
 import {BurnStatusType} from '../pob/api/prover'
 import {RealBurnStatus} from '../pob/pob-state'
 import {abbreviateAmount} from './formatters'
 import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
-
-const web3 = makeWeb3Worker(mockWeb3Worker)
-
-const WithGlacierProviders: FunctionComponent = ({children}: {children?: ReactNode}) => {
-  const initialWalletState = {walletStatus: 'LOADED' as WalletStatus, web3}
-
-  return (
-    <SettingsState.Provider>
-      <BuildJobState.Provider initialState={{web3}}>
-        <WalletState.Provider initialState={initialWalletState}>
-          <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
-        </WalletState.Provider>
-      </BuildJobState.Provider>
-    </SettingsState.Provider>
-  )
-}
-
-export const glacierWrappedRender = (ui: ReactElement): RenderResult =>
-  render(ui, {wrapper: WithGlacierProviders})
 
 export const WithSettingsProvider: FunctionComponent = ({
   children,

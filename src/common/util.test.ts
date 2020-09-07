@@ -231,9 +231,9 @@ it('converts contract return data to human-readable ASCII', () => {
 
 it('validates ethereum address', () => {
   assert.equal(validateEthAddress('0x5749EB6A6D6Aebef98880f0712b60abFd97e0eC7'), 'OK')
-  assert.deepEqual(validateEthAddress(''), {tKey: ['glacierDrop', 'error', 'ethAddressMustBeSet']})
+  assert.deepEqual(validateEthAddress(''), {tKey: ['ethereum', 'error', 'ethAddressMustBeSet']})
   assert.deepEqual(validateEthAddress('foobar'), {
-    tKey: ['glacierDrop', 'error', 'invalidEthAddress'],
+    tKey: ['ethereum', 'error', 'invalidEthAddress'],
   })
 })
 

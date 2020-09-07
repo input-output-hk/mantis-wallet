@@ -4,7 +4,6 @@ import {action} from '@storybook/addon-actions'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {withRouterState} from '../storybook-util/router-state-decorator'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
 import {dummyTransactions, estimateFeesWithRandomDelay} from '../storybook-util/dummies'
@@ -15,13 +14,7 @@ import {RedeemModal} from './modals/RedeemModal'
 
 export default {
   title: 'Wallets',
-  decorators: [
-    ...ESSENTIAL_DECORATORS,
-    withRouterState,
-    withWalletState,
-    withGlacierState,
-    withBuildJobState,
-  ],
+  decorators: [...ESSENTIAL_DECORATORS, withRouterState, withWalletState, withBuildJobState],
 }
 
 // `useState` cannot be used in stories

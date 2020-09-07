@@ -8,7 +8,6 @@ import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {makeWeb3Worker, TransparentAddress} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
-import {GlacierState} from '../glacier-drop/glacier-state'
 import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS, DIALOG_VALIDATION_ERROR} from '../common/test-helpers'
@@ -98,9 +97,7 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
     <SettingsState.Provider>
       <BackendState.Provider initialState={{web3}}>
         <BuildJobState.Provider initialState={{web3}}>
-          <WalletState.Provider initialState={initialState}>
-            <GlacierState.Provider initialState={{web3}}>{children}</GlacierState.Provider>
-          </WalletState.Provider>
+          <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
         </BuildJobState.Provider>
       </BackendState.Provider>
     </SettingsState.Provider>

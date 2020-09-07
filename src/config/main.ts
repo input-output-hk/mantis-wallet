@@ -8,15 +8,7 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {DEFAULT_CONTRACT_ADDRESSES} from '../shared/config'
-import {
-  ClientName,
-  Config,
-  ProcessConfig,
-  ProverConfig,
-  ContractConfigItem,
-  LunaManagedConfig,
-} from './type'
+import {ClientName, Config, ProcessConfig, ProverConfig, LunaManagedConfig} from './type'
 import {tildeToHome} from '../main/pathUtils'
 import {mapProp, optionZip, through} from '../shared/utils'
 import {TLSConfig} from '../main/tls'
@@ -31,24 +23,6 @@ const proverConfig: convict.Schema<ProverConfig> = {
     default: '',
     doc: 'Address of the prover',
     format: 'url',
-  },
-}
-
-const contractConfigItemSchema: convict.Schema<ContractConfigItem> = {
-  networkName: {
-    doc: 'Name of the network',
-    format: String,
-    default: '',
-  },
-  glacierDrop: {
-    doc: 'Glacier Drop contract address',
-    format: 'bech32',
-    default: '',
-  },
-  constantsRepo: {
-    doc: 'Constants Repository contract address',
-    format: 'bech32',
-    default: '',
   },
 }
 
@@ -93,7 +67,7 @@ convict.addFormats({
       }
     },
   },
-  ['list-of-provers']: {
+  'list-of-provers': {
     validate(val: unknown): void {
       if (!_.isArray(val)) {
         throw Error('Must be of type Array')
@@ -109,27 +83,6 @@ convict.addFormats({
         if (!possibleProver.name) {
           throw Error("Name shouldn't be empty for prover")
         }
-      })
-    },
-  },
-  'contract-config': {
-    validate(contractConfigs: unknown) {
-      if (!_.isArray(contractConfigs)) {
-        throw Error('Must be Array')
-      }
-
-      const networkNames = new Set()
-
-      contractConfigs.forEach((item) => {
-        convict(contractConfigItemSchema)
-          .load(item)
-          .validate()
-
-        if (networkNames.has(item.networkName)) {
-          throw Error(`Contract config contains ${item.networkName} more than once.`)
-        }
-
-        networkNames.add(item.networkName)
       })
     },
   },
@@ -299,11 +252,6 @@ const configGetter = convict({
       },
     }),
   },
-  contractConfig: {
-    doc: 'A collection of contract address configs',
-    format: 'contract-config',
-    default: [DEFAULT_CONTRACT_ADDRESSES],
-  },
 })
 
 interface ConfigSource {
@@ -366,10 +314,6 @@ export const config = loadConfigs([
     path: path.resolve(__dirname, '..', '..', 'config-platform.json5'),
   },
   {name: 'user configuration', path: path.resolve(__dirname, '..', '..', 'config.json5')},
-  {
-    name: 'contract address config',
-    path: path.resolve(__dirname, '..', '..', 'config-contract.json5'),
-  },
   {name: 'environment variable LUNA_CONFIG_FILE', path: process.env.LUNA_CONFIG_FILE || ''},
 ])
 

@@ -1,8 +1,0 @@
-@import '../partial';
-
-.SubmitProofOfUnlock {
-  .DialogMessage .description {
-    @extend %monospace;
-    font-weight: bold;
-  }
-}

@@ -144,10 +144,9 @@ const ETC_ADDRESS_REGEX = new RegExp('^0x[a-fA-F0-9]{40}$')
 
 export function validateEthAddress(rawInput?: string): ValidationResult {
   if (rawInput == null || rawInput.length === 0)
-    return {tKey: ['glacierDrop', 'error', 'ethAddressMustBeSet']}
+    return {tKey: ['ethereum', 'error', 'ethAddressMustBeSet']}
   // Note: use isChecksumAddress for checksum check
-  if (!ETC_ADDRESS_REGEX.test(rawInput))
-    return {tKey: ['glacierDrop', 'error', 'invalidEthAddress']}
+  if (!ETC_ADDRESS_REGEX.test(rawInput)) return {tKey: ['ethereum', 'error', 'invalidEthAddress']}
   return 'OK'
 }
 
@@ -157,15 +156,15 @@ const MAX_KEY_VALUE = new BigNumber(
 
 export function validateEthPrivateKey(privateKey?: string): ValidationResult {
   if (privateKey == null || privateKey.length === 0) {
-    return {tKey: ['glacierDrop', 'error', 'ethPrivateKeyMustBeSet']}
+    return {tKey: ['ethereum', 'error', 'ethPrivateKeyMustBeSet']}
   }
   try {
     const k = new BigNumber(privateKey)
     if (!k.isFinite() || k.isZero() || k.isGreaterThan(MAX_KEY_VALUE)) {
-      return {tKey: ['glacierDrop', 'error', 'invalidEthPrivateKey']}
+      return {tKey: ['ethereum', 'error', 'invalidEthPrivateKey']}
     }
   } catch (e) {
-    return {tKey: ['glacierDrop', 'error', 'invalidEthPrivateKey']}
+    return {tKey: ['ethereum', 'error', 'invalidEthPrivateKey']}
   }
   return 'OK'
 }

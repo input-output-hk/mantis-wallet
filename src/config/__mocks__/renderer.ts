@@ -1,4 +1,4 @@
-import {Config, ContractConfigItem, LunaManagedConfig} from '../type'
+import {Config, LunaManagedConfig} from '../type'
 
 export const config: Config = {
   rpcAddress: 'localhost:1234',
@@ -35,12 +35,4 @@ export const loadLunaManagedConfig = (): LunaManagedConfig => ({
   pkd: '',
   ovk: '',
   diversifier: '',
-})
-
-export const getContractConfigs = (): Record<string, ContractConfigItem> => ({
-  testnet: {
-    networkName: 'testnet',
-    glacierDrop: '',
-    constantsRepo: '',
-  },
 })

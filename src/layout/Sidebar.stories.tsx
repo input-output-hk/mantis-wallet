@@ -4,7 +4,6 @@ import {action} from '@storybook/addon-actions'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withPobState} from '../storybook-util/pob-state-decorator'
-import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {RouterState} from '../router-state'
 import {Sidebar} from './Sidebar'
@@ -20,7 +19,6 @@ export default {
     ...ESSENTIAL_DECORATORS,
     withWalletState,
     withPobState,
-    withGlacierState,
     withTokensState,
     withBuildJobState,
     toFullScreen,
