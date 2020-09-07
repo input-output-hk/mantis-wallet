@@ -307,9 +307,6 @@ export interface EthApi {
   // used to get constant values from contracts:
   call(callParams: Partial<CallParams>, version: 'latest'): string
   getGasPriceEstimation(): Record<FeeLevel, number>
-  // mining state
-  mining: boolean
-  hashrate: number
 }
 
 export interface ConfigApi {

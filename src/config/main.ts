@@ -8,7 +8,7 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {ClientName, Config, ProcessConfig, LunaManagedConfig} from './type'
+import {ClientName, Config, ProcessConfig} from './type'
 import {tildeToHome} from '../main/pathUtils'
 import {mapProp, optionZip, through} from '../shared/utils'
 import {TLSConfig} from '../main/tls'
@@ -268,36 +268,3 @@ export const config = loadConfigs([
   {name: 'user configuration', path: path.resolve(__dirname, '..', '..', 'config.json5')},
   {name: 'environment variable LUNA_CONFIG_FILE', path: process.env.LUNA_CONFIG_FILE || ''},
 ])
-
-// Luna managed config
-
-const lunaManagedConfigSchema = {
-  miningEnabled: {
-    doc: 'Whether mining is enabled or not',
-    format: Boolean,
-    default: false,
-  },
-  pkd: {
-    format: String,
-    default: '',
-  },
-  diversifier: {
-    format: String,
-    default: '',
-  },
-  ovk: {
-    format: String,
-    default: '',
-  },
-}
-
-export const lunaManagedConfigPath = path.resolve(config.dataDir, 'config-luna-managed.json')
-
-export const loadLunaManagedConfig = (): LunaManagedConfig => {
-  const lunaManagedConfigGetter = convict(lunaManagedConfigSchema)
-  if (fs.existsSync(lunaManagedConfigPath)) {
-    lunaManagedConfigGetter.loadFile(lunaManagedConfigPath)
-  }
-  lunaManagedConfigGetter.validate()
-  return lunaManagedConfigGetter.getProperties()
-}

@@ -245,8 +245,6 @@ export const Web3MockApi: Web3API = {
       medium: 2,
       high: 3,
     }),
-    mining: true,
-    hashrate: 3000000,
   },
   midnight: {
     wallet: new MockWallet(),

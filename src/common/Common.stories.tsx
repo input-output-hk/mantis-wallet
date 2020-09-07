@@ -1,5 +1,5 @@
 import React from 'react'
-import {text, number, boolean} from '@storybook/addon-knobs'
+import {text, number} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {dust} from '../storybook-util/custom-knobs'
 import {ShortNumber} from './ShortNumber'
@@ -7,7 +7,6 @@ import {Loading} from './Loading'
 import {CopyableLongText} from './CopyableLongText'
 import {StatusModal} from './StatusModal'
 import {SupportModal} from './SupportModal'
-import {MiningStatus} from './MiningStatus'
 
 export default {
   title: 'Common',
@@ -59,13 +58,8 @@ export const statusModal = (): JSX.Element => (
       dataDir: text('data dir', '~/.luna'),
       rpcAddress: text('RPC address', 'https://127.0.0.1:8546'),
     }}
-    managedConfig={{
-      miningEnabled: boolean('Mining enabled', true),
-    }}
     visible
   />
 )
-
-export const miningStatus = (): JSX.Element => <MiningStatus />
 
 export const supportModal = (): JSX.Element => <SupportModal visible />

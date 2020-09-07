@@ -1,4 +1,4 @@
-import {Config, LunaManagedConfig} from '../type'
+import {Config} from '../type'
 
 export const config: Config = {
   rpcAddress: 'localhost:1234',
@@ -28,11 +28,4 @@ export const loadLunaStatus = (): LunaStatus => ({
     lunaVersion: '0.11.0',
     mainPid: 1234,
   },
-})
-
-export const loadLunaManagedConfig = (): LunaManagedConfig => ({
-  miningEnabled: false,
-  pkd: '',
-  ovk: '',
-  diversifier: '',
 })

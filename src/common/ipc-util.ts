@@ -22,14 +22,6 @@ export const ipcSend = (channel: IPCFromRendererChannelName, ...args: any[]): vo
 
 // Specific actions
 
-export const restartClients = (): void => {
-  ipcSend('restart-clients')
-}
-
-export const updateMiningConfig = (spendingKey: string | null): void => {
-  ipcSend('update-mining-config', spendingKey)
-}
-
 export const updateNetworkTag = (networkTag: NetworkTag): void => {
   ipcSend('update-network-tag', networkTag)
 }

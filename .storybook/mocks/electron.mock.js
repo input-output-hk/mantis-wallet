@@ -1,6 +1,5 @@
 const mockedGlobal = {
   lunaConfig: {},
-  lunaManagedConfig: {},
   lunaStatus: {
     fetchParams: {
       status: 'not-running',

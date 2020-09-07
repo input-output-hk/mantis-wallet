@@ -28,8 +28,7 @@ import {
   setupOwnTLS,
 } from './tls'
 import {flatTap, prop} from '../shared/utils'
-import {config, loadLunaManagedConfig} from '../config/main'
-import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
+import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {inspectLineForDAGStatus, setFetchParamsStatus, setNetworkTag, status} from './status'
@@ -122,7 +121,6 @@ const openLuna = (t: TFunctionMain): Promise<void> => app.whenReady().then(() =>
 const shared = {
   lunaConfig: () => config,
   lunaStatus: () => status,
-  lunaManagedConfig: () => loadLunaManagedConfig(),
 }
 
 // Make configuration available for renderer process
@@ -141,29 +139,6 @@ app.on('second-instance', () => {
   if (mainWindowHandle) {
     if (mainWindowHandle.isMinimized()) mainWindowHandle.restore()
     mainWindowHandle.focus()
-  }
-})
-
-ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | null) => {
-  if (!spendingKey) {
-    mainLog.info('Disabling mining')
-    try {
-      await updateConfig({miningEnabled: false})
-    } catch (e) {
-      return event.reply('disable-mining-failure', e.message)
-    }
-    event.reply('disable-mining-success')
-    event.reply('update-config-success')
-  } else {
-    mainLog.info(`Enabling mining`)
-    try {
-      const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
-      await updateConfig({miningEnabled: true, ...coinbaseParams})
-    } catch (e) {
-      return event.reply('enable-mining-failure', translateErrorMain(t, e))
-    }
-    event.reply('enable-mining-success')
-    event.reply('update-config-success')
   }
 })
 
@@ -334,8 +309,8 @@ if (config.runClients) {
   }
 
   const startClients = (): Promise<void> =>
-    Promise.all([getMiningParams(), initializationPromise.then(prop('tlsParams'))])
-      .then(_.mergeAll)
+    initializationPromise
+      .then(prop('tlsParams'))
       .then(spawnClients)
       .catch((error) => {
         mainLog.error(error)
@@ -365,17 +340,6 @@ if (config.runClients) {
   app.on('before-quit', killAndQuit)
   app.on('will-quit', killAndQuit)
   app.on('window-all-closed', killAndQuit)
-
-  ipcListenToRenderer('restart-clients', async (event) => {
-    try {
-      //FIXME: PM-2413 (see: https://github.com/input-output-hk/luna-wallet/pull/256#issuecomment-668522392)
-      killClients()
-      event.reply('restart-clients-success')
-    } catch (e) {
-      mainLog.error(e)
-      event.reply('restart-clients-failure', e.message)
-    }
-  })
 } else {
   openLuna(t)
 }

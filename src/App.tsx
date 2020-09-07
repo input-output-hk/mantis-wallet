@@ -11,7 +11,6 @@ import {JobStatus} from './common/JobStatus'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
-import {RemoteSettingsManager} from './RemoteSettingsManager'
 import {LUNA_VERSION} from './shared/version'
 import {rendererLog} from './common/logger'
 import './App.scss'
@@ -54,7 +53,6 @@ const App: React.FC = () => {
                 </WalletState.Provider>
               </BuildJobState.Provider>
             </RouterState.Provider>
-            <RemoteSettingsManager setBackendRunning={setBackendRunning} />
           </div>
         ) : (
           <SplashScreen />

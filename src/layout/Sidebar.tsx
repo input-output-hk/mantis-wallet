@@ -5,7 +5,7 @@ import classnames from 'classnames'
 import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
-import {loadLunaStatus, loadConfig, loadLunaManagedConfig} from '../config/renderer'
+import {loadLunaStatus, loadConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
 import {Link} from '../common/Link'
@@ -41,7 +41,6 @@ const UpdatingStatusModal = ({
     <StatusModal
       status={lunaStatus}
       config={loadConfig()}
-      managedConfig={loadLunaManagedConfig()}
       syncStatus={syncStatus}
       onCancel={onCancel}
       visible

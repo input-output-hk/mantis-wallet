@@ -37,10 +37,3 @@ export interface Config {
   openDevTools: boolean
   tls: Option<TLSConfig>
 }
-
-export interface LunaManagedConfig {
-  miningEnabled: boolean
-  pkd: string
-  diversifier: string
-  ovk: string
-}
