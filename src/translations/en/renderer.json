@@ -259,14 +259,6 @@
       "cannotGenerateDagFile": "Cannot generate DAG file"
     }
   },
-  "ethereum": {
-    "error": {
-      "ethAddressMustBeSet": "Address must be set",
-      "invalidEthAddress": "Invalid address",
-      "ethPrivateKeyMustBeSet": "Private key must be set",
-      "invalidEthPrivateKey": "Invalid private key"
-    }
-  },
   "tokens": {
     "title": {
       "addNewToken": "Add New Token",
@@ -377,7 +369,11 @@
       "itMustBeAnInteger": "It must be an integer value",
       "atMostDecimalPlacesArePermitted": "At most {{count}} decimal place is permitted",
       "atMostDecimalPlacesArePermitted_plural": "At most {{count}} decimal places are permitted",
-      "noAvailableOptionForDropdown": "No available option"
+      "noAvailableOptionForDropdown": "No available option",
+      "ethAddressMustBeSet": "Address must be set",
+      "invalidEthAddress": "Invalid address",
+      "ethPrivateKeyMustBeSet": "Private key must be set",
+      "invalidEthPrivateKey": "Invalid private key"
     },
     "networkTag": {
       "testnet": "Testnet",
