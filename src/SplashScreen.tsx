@@ -2,7 +2,7 @@ import React, {useState, FunctionComponent} from 'react'
 import {LoadingOutlined} from '@ant-design/icons'
 import _ from 'lodash/fp'
 import {LunaWalletLoader} from 'luna-wallet-loader'
-import {config, loadLunaManagedConfig, loadLunaStatus} from './config/renderer'
+import {config, loadLunaStatus} from './config/renderer'
 import {SettingsState} from './settings-state'
 import {fillActionHandlers} from './common/util'
 import {useInterval} from './common/hook-utils'
@@ -44,7 +44,6 @@ export const SplashScreen: FunctionComponent<{}> = () => {
       <StatusModal
         status={lunaStatus}
         config={config}
-        managedConfig={loadLunaManagedConfig()}
         visible={showStatus}
         onCancel={() => setShowStatus(false)}
       />

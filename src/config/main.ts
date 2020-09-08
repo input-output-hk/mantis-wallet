@@ -8,49 +8,10 @@ import * as array from 'fp-ts/lib/Array'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {DEFAULT_CONTRACT_ADDRESSES} from '../shared/config'
-import {
-  ClientName,
-  Config,
-  ProcessConfig,
-  ProverConfig,
-  ContractConfigItem,
-  LunaManagedConfig,
-} from './type'
+import {ClientName, Config, ProcessConfig} from './type'
 import {tildeToHome} from '../main/pathUtils'
 import {mapProp, optionZip, through} from '../shared/utils'
 import {TLSConfig} from '../main/tls'
-
-const proverConfig: convict.Schema<ProverConfig> = {
-  name: {
-    default: '',
-    doc: 'Name of the prover',
-    format: String,
-  },
-  address: {
-    default: '',
-    doc: 'Address of the prover',
-    format: 'url',
-  },
-}
-
-const contractConfigItemSchema: convict.Schema<ContractConfigItem> = {
-  networkName: {
-    doc: 'Name of the network',
-    format: String,
-    default: '',
-  },
-  glacierDrop: {
-    doc: 'Glacier Drop contract address',
-    format: 'bech32',
-    default: '',
-  },
-  constantsRepo: {
-    doc: 'Constants Repository contract address',
-    format: 'bech32',
-    default: '',
-  },
-}
 
 convict.addFormats({
   'existing-directory': {
@@ -91,46 +52,6 @@ convict.addFormats({
       } else {
         throw Error(`Couldn't parse ${JSON.stringify(val)} to settings map`)
       }
-    },
-  },
-  ['list-of-provers']: {
-    validate(val: unknown): void {
-      if (!_.isArray(val)) {
-        throw Error('Must be of type Array')
-      }
-
-      val.forEach((possibleProver) => {
-        convict(proverConfig)
-          .load(possibleProver)
-          .validate()
-        if (!possibleProver.address) {
-          throw Error("Address shouldn't be empty for prover")
-        }
-        if (!possibleProver.name) {
-          throw Error("Name shouldn't be empty for prover")
-        }
-      })
-    },
-  },
-  'contract-config': {
-    validate(contractConfigs: unknown) {
-      if (!_.isArray(contractConfigs)) {
-        throw Error('Must be Array')
-      }
-
-      const networkNames = new Set()
-
-      contractConfigs.forEach((item) => {
-        convict(contractConfigItemSchema)
-          .load(item)
-          .validate()
-
-        if (networkNames.has(item.networkName)) {
-          throw Error(`Contract config contains ${item.networkName} more than once.`)
-        }
-
-        networkNames.add(item.networkName)
-      })
     },
   },
 })
@@ -218,22 +139,6 @@ const configGetter = convict({
     env: 'LUNA_BLOCKS_STREAMING_PORT',
     doc: 'Port used for blocks streaming',
   },
-  provers: {
-    default: [
-      {
-        name: 'Sonic testnet',
-        address: 'http://pob-prover-1.testnet-sonic.project42.iohkdev.io',
-      },
-      {
-        name: 'VacuumLabs',
-        address: 'http://ec2-63-33-28-52.eu-west-1.compute.amazonaws.com',
-      },
-    ],
-    format: 'list-of-provers',
-    arg: 'provers',
-    env: 'LUNA_PROVERS',
-    doc: 'A list of provers.',
-  },
   openDevTools: {
     default: false,
     arg: 'open-dev-tools',
@@ -299,11 +204,6 @@ const configGetter = convict({
       },
     }),
   },
-  contractConfig: {
-    doc: 'A collection of contract address configs',
-    format: 'contract-config',
-    default: [DEFAULT_CONTRACT_ADDRESSES],
-  },
 })
 
 interface ConfigSource {
@@ -366,42 +266,5 @@ export const config = loadConfigs([
     path: path.resolve(__dirname, '..', '..', 'config-platform.json5'),
   },
   {name: 'user configuration', path: path.resolve(__dirname, '..', '..', 'config.json5')},
-  {
-    name: 'contract address config',
-    path: path.resolve(__dirname, '..', '..', 'config-contract.json5'),
-  },
   {name: 'environment variable LUNA_CONFIG_FILE', path: process.env.LUNA_CONFIG_FILE || ''},
 ])
-
-// Luna managed config
-
-const lunaManagedConfigSchema = {
-  miningEnabled: {
-    doc: 'Whether mining is enabled or not',
-    format: Boolean,
-    default: false,
-  },
-  pkd: {
-    format: String,
-    default: '',
-  },
-  diversifier: {
-    format: String,
-    default: '',
-  },
-  ovk: {
-    format: String,
-    default: '',
-  },
-}
-
-export const lunaManagedConfigPath = path.resolve(config.dataDir, 'config-luna-managed.json')
-
-export const loadLunaManagedConfig = (): LunaManagedConfig => {
-  const lunaManagedConfigGetter = convict(lunaManagedConfigSchema)
-  if (fs.existsSync(lunaManagedConfigPath)) {
-    lunaManagedConfigGetter.loadFile(lunaManagedConfigPath)
-  }
-  lunaManagedConfigGetter.validate()
-  return lunaManagedConfigGetter.getProperties()
-}

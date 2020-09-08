@@ -8,7 +8,6 @@ import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString, CallTxDetails} from '../web3'
 import {SettingsState, useFormatters, useTranslation} from '../settings-state'
-import {GlacierState} from '../glacier-drop/glacier-state'
 import {UNITS} from '../common/units'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
@@ -24,7 +23,6 @@ import checkIcon from '../assets/icons/check.svg'
 import checkDoubleIcon from '../assets/icons/check-double.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import crossIcon from '../assets/icons/cross.svg'
-import glacierIcon from '../assets/icons/menu-glacier.svg'
 import './TransactionRow.scss'
 
 interface ExtendedCallTxDetails extends CallTxDetails {
@@ -263,31 +261,6 @@ const TxTypeLabel = ({
   </div>
 )
 
-interface TxGlacierTypeLabel {
-  receivingAddress: string | null
-}
-
-const TxGlacierTypeLabel = ({receivingAddress}: TxGlacierTypeLabel): JSX.Element => {
-  const {
-    contractAddresses: {glacierDrop},
-  } = GlacierState.useContainer()
-
-  const wrapper = (content: React.ReactNode): JSX.Element => {
-    return (
-      <div className="type-label">
-        <SVG className="svg glacier-icon" src={glacierIcon} />
-        &nbsp;{content}
-      </div>
-    )
-  }
-
-  if (receivingAddress === glacierDrop) {
-    return wrapper(<Trans k={['wallet', 'transactionType', 'glacierDropContractCall']} />)
-  } else {
-    return <></>
-  }
-}
-
 const CallTxStatus = ({
   callTxStatus,
   failed,
@@ -339,7 +312,6 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
       } = transaction.txDetails.transparentTransaction
       return (
         <div>
-          <TxGlacierTypeLabel receivingAddress={receivingAddress} />
           <TxTypeLabel transaction={transaction} />
           <div className="call-details two-col-table">
             <div>

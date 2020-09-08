@@ -28,9 +28,8 @@ import {
   setupOwnTLS,
 } from './tls'
 import {flatTap, prop} from '../shared/utils'
-import {config, loadLunaManagedConfig} from '../config/main'
-import {getCoinbaseParams, getMiningParams, updateConfig} from './dynamic-config'
-import {buildMenu, buildRemixMenu} from './menu'
+import {config} from '../config/main'
+import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {inspectLineForDAGStatus, setFetchParamsStatus, setNetworkTag, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
@@ -53,8 +52,6 @@ const LINUX_ICON = path.join(__dirname, '/../icon.png')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindowHandle: BrowserWindow | null = null
 
-let remixWindowHandle: BrowserWindow | null = null
-
 let shuttingDown = false
 
 if (!app.requestSingleInstanceLock()) {
@@ -63,46 +60,6 @@ if (!app.requestSingleInstanceLock()) {
 
 const i18n = createAndInitI18nForMain(store.get('settings.language') || DEFAULT_LANGUAGE)
 const t = createTFunctionMain(i18n)
-
-function createRemixWindow(t: TFunctionMain): void {
-  const {width, height} = screen.getPrimaryDisplay().workAreaSize
-
-  const remixWindow = new BrowserWindow({
-    icon: IS_LINUX ? LINUX_ICON : undefined,
-    width,
-    height,
-  })
-
-  const remixUrl = url.format({
-    pathname: path.join(__dirname, '/../remix-ide/index.html'),
-    protocol: 'file:',
-    slashes: true,
-  })
-
-  remixWindow.setMenu(buildRemixMenu(t))
-  remixWindow.loadURL(remixUrl)
-
-  // Work-around for electron/chrome 51+ onbeforeunload behavior
-  // which prevents the app window to close if not invalidated.
-  remixWindow.webContents.on('dom-ready', () => {
-    remixWindow.webContents.executeJavaScript('window.onbeforeunload = null')
-  })
-
-  remixWindow.on('closed', () => {
-    remixWindowHandle = null
-  })
-
-  remixWindowHandle = remixWindow
-}
-
-const openRemix = (t: TFunctionMain) => (): void => {
-  if (remixWindowHandle) {
-    if (remixWindowHandle.isMinimized()) remixWindowHandle.restore()
-    remixWindowHandle.focus()
-  } else {
-    createRemixWindow(t)
-  }
-}
 
 function createWindow(t: TFunctionMain): void {
   mainLog.info({
@@ -125,7 +82,7 @@ function createWindow(t: TFunctionMain): void {
     // titleBarStyle: 'hidden', FIXME: PM-2413
   })
 
-  Menu.setApplicationMenu(buildMenu(openRemix(t), t))
+  Menu.setApplicationMenu(buildMenu(t))
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
@@ -143,13 +100,6 @@ function createWindow(t: TFunctionMain): void {
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
-    if (remixWindowHandle) {
-      remixWindowHandle.close()
-    }
-    if (remixWindowHandle) {
-      remixWindowHandle.destroy()
-    }
-
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -171,7 +121,6 @@ const openLuna = (t: TFunctionMain): Promise<void> => app.whenReady().then(() =>
 const shared = {
   lunaConfig: () => config,
   lunaStatus: () => status,
-  lunaManagedConfig: () => loadLunaManagedConfig(),
 }
 
 // Make configuration available for renderer process
@@ -190,29 +139,6 @@ app.on('second-instance', () => {
   if (mainWindowHandle) {
     if (mainWindowHandle.isMinimized()) mainWindowHandle.restore()
     mainWindowHandle.focus()
-  }
-})
-
-ipcListenToRenderer('update-mining-config', async (event, spendingKey: string | null) => {
-  if (!spendingKey) {
-    mainLog.info('Disabling mining')
-    try {
-      await updateConfig({miningEnabled: false})
-    } catch (e) {
-      return event.reply('disable-mining-failure', e.message)
-    }
-    event.reply('disable-mining-success')
-    event.reply('update-config-success')
-  } else {
-    mainLog.info(`Enabling mining`)
-    try {
-      const coinbaseParams = await getCoinbaseParams(config.clientConfigs.wallet, spendingKey)
-      await updateConfig({miningEnabled: true, ...coinbaseParams})
-    } catch (e) {
-      return event.reply('enable-mining-failure', translateErrorMain(t, e))
-    }
-    event.reply('enable-mining-success')
-    event.reply('update-config-success')
   }
 })
 
@@ -248,11 +174,8 @@ ipcListenToRenderer('update-language', (_event, language: Language) => {
   if (mainWindowHandle) {
     i18n.changeLanguage(language).then(() => {
       const t = createTFunctionMain(i18n)
-      Menu.setApplicationMenu(buildMenu(openRemix(t), t))
+      Menu.setApplicationMenu(buildMenu(t))
       mainWindowHandle?.setTitle(getTitle(t, status.info.networkTag))
-      if (remixWindowHandle) {
-        remixWindowHandle.setMenu(buildRemixMenu(t))
-      }
     })
   }
 })
@@ -386,8 +309,8 @@ if (config.runClients) {
   }
 
   const startClients = (): Promise<void> =>
-    Promise.all([getMiningParams(), initializationPromise.then(prop('tlsParams'))])
-      .then(_.mergeAll)
+    initializationPromise
+      .then(prop('tlsParams'))
       .then(spawnClients)
       .catch((error) => {
         mainLog.error(error)
@@ -417,17 +340,6 @@ if (config.runClients) {
   app.on('before-quit', killAndQuit)
   app.on('will-quit', killAndQuit)
   app.on('window-all-closed', killAndQuit)
-
-  ipcListenToRenderer('restart-clients', async (event) => {
-    try {
-      //FIXME: PM-2413 (see: https://github.com/input-output-hk/luna-wallet/pull/256#issuecomment-668522392)
-      killClients()
-      event.reply('restart-clients-success')
-    } catch (e) {
-      mainLog.error(e)
-      event.reply('restart-clients-failure', e.message)
-    }
-  })
 } else {
   openLuna(t)
 }

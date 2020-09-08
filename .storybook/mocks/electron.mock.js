@@ -1,13 +1,5 @@
 const mockedGlobal = {
-  lunaConfig: {
-    provers: [
-      {
-        name: 'Test prover',
-        address: 'test-address',
-      },
-    ],
-  },
-  lunaManagedConfig: {},
+  lunaConfig: {},
   lunaStatus: {
     fetchParams: {
       status: 'not-running',

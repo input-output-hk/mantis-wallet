@@ -3,9 +3,8 @@ import {Modal} from 'antd'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
 import {isNone} from 'fp-ts/lib/Option'
-import {Config, LunaManagedConfig} from '../config/type'
+import {Config} from '../config/type'
 import {SynchronizationStatus} from './wallet-state'
-import {MiningStatus} from './MiningStatus'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
 import {BackendState} from './backend-state'
@@ -99,14 +98,12 @@ const DisplayDagStatus = ({
 interface StatusModalProps extends Pick<ModalProps, 'visible' | 'onCancel'> {
   status: LunaStatus
   config: Pick<Config, 'dataDir' | 'rpcAddress'>
-  managedConfig: Pick<LunaManagedConfig, 'miningEnabled'>
   syncStatus?: SynchronizationStatus
 }
 
 export const StatusModal = ({
   status,
   config,
-  managedConfig,
   syncStatus,
   ...props
 }: StatusModalProps): JSX.Element => {
@@ -204,22 +201,6 @@ export const StatusModal = ({
             <div>{getLabel(['status', 'label', 'walletRpcAddress'])}</div>
             <div className="info-value">
               <CopyableLongText content={config.rpcAddress} />
-            </div>
-          </div>
-          <div className="info-item">
-            <div>{getLabel(['status', 'label', 'miningEnabled'])}</div>
-            <div className="info-value">
-              <span className={classnames('status', {success: managedConfig.miningEnabled})}>
-                {managedConfig.miningEnabled
-                  ? t(['common', 'answer', 'yes'])
-                  : t(['common', 'answer', 'no'])}
-              </span>
-            </div>
-          </div>
-          <div className="info-item">
-            <div>{getLabel(['status', 'label', 'miningStatus'])}</div>
-            <div className="info-value">
-              <MiningStatus />
             </div>
           </div>
           <div className="info-item">

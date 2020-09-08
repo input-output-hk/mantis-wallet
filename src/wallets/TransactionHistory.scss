@@ -6,12 +6,6 @@
   margin: 0 0 100px;
 
   .svg {
-    &.glacier-icon {
-      @include themify($themes) {
-        stroke: none;
-      }
-    }
-
     @include themify($themes) {
       stroke: themed('text-color');
       fill: themed('text-color');

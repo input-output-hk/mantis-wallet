@@ -3,38 +3,21 @@
     "luna": "Luna",
     "lunaWallet": "Luna Wallet",
     "testnetEdition": "Testnet Edition",
-    "wallets": "Wallets",
-    "proofOfBurn": "Proof of Burn",
-    "glacierDrop": "Glacier Drop",
+    "wallets": "Wallet",
     "settings": "Settings",
     "tokens": "Tokens"
   },
   "settings": {
-    "title": {
-      "enableMining": "Enable Mining",
-      "backendConfigChanged": "Backend Configuration Changed"
-    },
     "button": {
       "enable": "Enable",
-      "restart": "Restart",
       "exportPrivateKey": "Export Private Key"
     },
     "label": {
-      "privateKeyForMining": "Private key for mining rewards",
       "enableDarkMode": "Enable Dark Mode",
-      "enableMining": "Enable Mining",
       "language": "Language",
       "dateFormat": "Date Format",
       "timeFormat": "Time Format",
       "exportPrivateKey": "Export"
-    },
-    "message": {
-      "enableMining": "By setting a private key, you'll enable mining on your computer.<br />It's crucial that your node is fully synced when mining, otherwise it won't work.",
-      "backendRestartPrompt": "<p>The backend must be restarted to apply configuration changes.</p><p>Do you want to restart now?</p>"
-    },
-    "error": {
-      "configFailed": "Configuration update failed. Error: {{reason}}",
-      "backendRestartFailed": "Backend restart failed. Error: {{reason}}"
     },
     "timeFormat": {
       "12hour": "12-hour",
@@ -172,7 +155,7 @@
       "lockWalletDescription": "Enter your password to lock your wallet. You can access your wallet later by unlocking it with your password.",
       "removeWalletInstruction": "Enter your password to remove your wallet.",
       "removeWalletApproval1": "I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase.",
-      "removeWalletApproval2": "I understand that all my Burn Addresses, Glacier Drop Claims and tracked Tokens will be deleted from this machine.",
+      "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
       "noKnownTransparentAddresses": "No known addresses",
       "transparentAddressWarning": "<strong>Warning:</strong> By using a transparent address your transaction will not stay confidential.",
       "applyConfidentialityDescription": "This transaction will move selected funds to your confidential address which will remove their visibility from the Midnight Blockchain.",
@@ -186,12 +169,6 @@
       "low": "Slow",
       "medium": "Average",
       "high": "Fast"
-    },
-    "miningStatus": {
-      "loadingMiningStatus": "Loading mining status",
-      "notMining": "Not mining",
-      "miningAtHashrate": "Mining {{hashrate}}",
-      "invalidHashrate": "Invalid hashrate"
     },
     "syncStatus": {
       "syncConnecting": "Connecting",
@@ -236,8 +213,7 @@
       "redeemDescription": "A transfer transaction from a transparent address to a confidential address",
       "callDescription": "A smart contract call transaction",
       "transferDescription": "A fully confidential transfer of funds",
-      "coinbaseDescription": "A transfer of mining rewards",
-      "glacierDropContractCall": "Glacier Drop Contract Call"
+      "coinbaseDescription": "A transfer of mining rewards"
     }
   },
   "status": {
@@ -259,8 +235,6 @@
       "walletStatus": "Wallet status",
       "walletProcessID": "Wallet process ID",
       "walletRpcAddress": "Wallet RPC address",
-      "miningEnabled": "Mining enabled",
-      "miningStatus": "Mining status",
       "lastDagInformation": "Last DAG information",
       "synchronizationStatus": "Synchronization",
       "currentBlock": "Current block",
@@ -283,221 +257,6 @@
       "invalidDagFilePrefix": "Invalid DAG file prefix",
       "cannotReadDagFromFile": "Cannot read DAG from file",
       "cannotGenerateDagFile": "Cannot generate DAG file"
-    }
-  },
-  "glacierDrop": {
-    "title": {
-      "glacierDrop": "Glacier Drop",
-      "claimNumber": "Claim #{{number}}",
-      "epochs": "Epochs",
-      "claimHistory": "Claim History",
-      "submitProofOfUnlock": "Submit Proof of Unlock",
-      "withdrawAvailableDust": "Withdraw Available Dust",
-      "claimDustWithPrivateKey": "Claim Dust with Private Key",
-      "claimDustWithSignedMessage": "Claim Dust with Signed Message",
-      "claimDust": "Claim Dust"
-    },
-    "button": {
-      "submitProofOfUnlock": "Submit Proof of Unlock",
-      "submitProofOfUnlockShort": "Submit",
-      "withdrawAvailableDust": "Withdraw Available Dust",
-      "withdrawAvailableDustShort": "Withdraw",
-      "claimDust": "Claim Dust",
-      "unlockAndInitiatePoW": "Unlock and initiate Proof of Work puzzle",
-      "goToUnlocking": "Go to Unlocking",
-      "copyGeneratedMessage": "Copy Message",
-      "confirmAuthorization": "Confirm",
-      "continueWithPrivateKey": "Continue",
-      "createMessage": "Create",
-      "generateMessage": "Generate Message",
-      "useSignedMessage": "Use Signed",
-      "removeClaim": "Remove Claim"
-    },
-    "link": {
-      "viewUnfreezingProgress": "view unfreezing progress",
-      "viewUnlockTxnId": "view unlock txn-id",
-      "viewLatestWithdrawalTxnId": "view latest withdrawal txn-id",
-      "remainingEpochsUntilFullUnfreeze": "{{count}} epoch until full unfreeze",
-      "remainingEpochsUntilFullUnfreeze_plural": "{{count}} epochs until full unfreeze",
-      "learnMoreAboutGlacierDrop": "Learn more about Glacier Drop",
-      "getDust": "get Dust",
-      "viewCompatibleWalletsAndSoftware": "view compatible wallets & software",
-      "readMoreAboutGlacierDrop": "read more on website"
-    },
-    "label": {
-      "totalTimeToUnlockFunds": "Total time to unlock",
-      "etcAddress": "ETC Address",
-      "etcPublicAddress": "ETC Public Address",
-      "midnightTransparentAddress": "Midnight Transparent Address",
-      "midnightAddress": "Midnight Address",
-      "eligibleAmount": "Eligible Amount",
-      "transactionFee": "Fee",
-      "etcPrivateKey": "ETC Private Key",
-      "etcPrivateKeyFromYourWallet": "ETC Private Key from your ETC Wallet",
-      "asset": "Asset",
-      "estimatedDust": "Estimated Dust",
-      "inputSignedMessage": "Input Signed Message",
-      "etcBalance": "ETC Balance",
-      "youAreEligibleDust": "You are eligible for at least",
-      "availableDust": "Currently Available Dust",
-      "signedMessages": "Messages",
-      "generatedMessage": "Generated Message"
-    },
-    "error": {
-      "alreadyClaimed": "Already claimed",
-      "ethAddressMustBeSet": "Address must be set",
-      "invalidEthAddress": "Invalid address",
-      "invalidEthPrivateKey": "Invalid private key",
-      "ethPrivateKeyMustBeSet": "Private key must be set",
-      "failedToLoadConstantsFromContract": "Failed to load Glacier Drop constants from smart contract",
-      "glacierConstantsNotLoaded": "Glacier Drop constants not loaded",
-      "puzzleNotSolvedYet": "Puzzle is not solved yet",
-      "puzzleIsInInvalidStatus": "Puzzle is in invalid status",
-      "invalidSignedMessage": "Invalid signed message",
-      "signedMessageMustBeSet": "Message must be set",
-      "lowEtcBalanceError": "ETC account balance should be at least {{amount}}"
-    },
-    "message": {
-      "notEnoughTimeForPuzzleWarning": "There may not be enough time to solve the puzzle and unlock eligible funds before the unlocking period ends.",
-      "youCanNoLongerSubmitProof": "You can no longer submit your Proof of Unlock.",
-      "epochNFinishes": "Epoch {{currentEpoch}} finishes in {{duration}}",
-      "totalDust": "Total Dust",
-      "youHaveNotMadeClaimsYet": "You haven't made claims yet",
-      "powPuzzleComplete": "PoW Puzzle Complete",
-      "youHaveTimeLeftToSubmitYourProof": "You have {{timeLeft}} to submit your Proof of Unlock for Glacier Drop",
-      "shouldKeepLunaOpenWhileUnlocking": "I'm aware that I have to keep my Luna wallet open during unlocking",
-      "estimatedDustNote": "The minimum amount of Dust you'll get",
-      "confirmEtcBalance": "Confirm ETC Balance OK",
-      "confirmFeeMessage": "To complete the Unlocking of Dust and 1 Withdrawal Transaction, you will require est 0.5 (0.25 × 2). Please, ensure you have an available balance to cover these fees.",
-      "registerForDustMessage": "You can register for Dust using two methods. Please, select the most appropriate for you."
-    },
-    "transactionStatus": {
-      "pending": "Transaction is pending",
-      "failed": "Transaction failed",
-      "successful": "Transaction successful"
-    },
-    "powStatus": {
-      "solvingPuzzle": "Solving Puzzle",
-      "puzzleSolved": "Puzzle Solved",
-      "powPuzzleSubmitted": "PoW Puzzle Submitted"
-    },
-    "claimStatus": {
-      "claimed": "Claimed",
-      "unlocked": "Unlocked",
-      "unfrozen": "Unfrozen",
-      "withdrawn": "Withdrawn"
-    },
-    "epochHeader": {
-      "midnightAddress": "Midnight Address",
-      "totalDust": "Total Dust",
-      "epochNumber": "Epoch {{epochNumber}}"
-    },
-    "periodStatus": {
-      "unlockingNotStarted": "Unlocking not yet started",
-      "unlocking": "Unlocking Period in Progress",
-      "unlockingEnded": "Unlocking Period Ended",
-      "unfreezing": "Unfreezing Period in Progress",
-      "timeUntilUnlockingStarts": "{{duration}} until Unlocking starts",
-      "timeLeftToUnlockDust": "{{duration}} left to unlock Dust",
-      "timeUntilUnfreezing": "{{duration}} until Unfreezing",
-      "unfreezingPeriodStartsIn": "Unfreezing Period starts in {{duration}}"
-    }
-  },
-  "proofOfBurn": {
-    "title": {
-      "burnCentre": "Burn Centre",
-      "burnActivity": "Burn Activity",
-      "burnCoins": "Burn Coins",
-      "tokenBurn": "Token Burn",
-      "burnBitcoin": "Burn Bitcoin",
-      "burnEthereum": "Burn Ethereum",
-      "showBurnAddress": "Burn Address",
-      "bitcoinBurnAddress": "Bitcoin Burn Address",
-      "ethereumBurnAddress": "Ethereum Burn Address",
-      "burnDetails": "Burn Details",
-      "changeProverReward": "Change Prover Reward",
-      "enterBurnTransactionManually": "Enter burn transaction manually"
-    },
-    "button": {
-      "manualBurn": "Manual Burn",
-      "burnCoins": "Burn Coins",
-      "showHidden": "Show Hidden",
-      "burnBitcoinForMBtc": "Burn Bitcoin for M-BTC",
-      "burnEthereumForMEth": "Burn Ethereum for M-ETH",
-      "generateBtcAddress": "Generate BTC Address",
-      "generateEthAddress": "Generate ETH Address",
-      "changeProverReward": "Change Reward",
-      "goBackToBurnCentre": "Go Back to Burn Centre",
-      "copyAddress": "Copy Address",
-      "processBurn": "Process Burn"
-    },
-    "link": {
-      "learnMoreAboutPoB": "Learn more about Proof of Burn",
-      "seeProverListMetrics": "See Prover List Metrics"
-    },
-    "label": {
-      "searchForBurnTx": "Search for Burn Tx ID",
-      "availableAmount": "Available",
-      "pendingAmount": "Pending Amount",
-      "totalAmount": "Total Amount",
-      "burnAmountToMidnightToken": "Burn Amount / Midnight Token",
-      "burnAddress": "Burn address",
-      "associatedMidnightAddress": "Associated midnight address",
-      "prover": "Prover",
-      "proverReward": "Prover's reward",
-      "proverRewardShort": "Reward",
-      "burnTransaction": "Burn transaction",
-      "burnTransactionId": "Burn Transaction Id",
-      "commitmentContractSubmissionTxId": "Commitment contract submission",
-      "redeemContractSubmissionTxId": "Redeem contract submission",
-      "tokenExchangeRate": "Token Exchange Rate",
-      "selectReceiveAddress": "Select Receive Address",
-      "proverRewardInMBtc": "Assign reward in M-BTC for your prover",
-      "proverRewardInMEth": "Assign reward in M-ETH for your prover"
-    },
-    "error": {
-      "noAvailableProvers": "No available provers.",
-      "noAvailableProversForThisToken": "No available provers for this token at the moment.",
-      "gatheringBurnActivityFromProverFailed": "Gathering burn activity for {{burnAddress}} from prover \"{{proverName}}\" failed with the following error: <br />{{errorMessage}}",
-      "noBurnsObserved": "No burn transactions observed for burn address {{burnAddress}} by prover \"{{proverName}}\".",
-      "infoMightBeOutdated": "Information about burn progress might be outdated. Gathering burn activity from prover \"{{proverName}}\" failed with the following error: <br /> {{errorMessage}}",
-      "burnAddressesDoNotMatch": "Something went wrong, wallet and prover generated different burn-addresses: {{burnAddress}} vs {{burnAddressFromProver}}",
-      "rewardTooLowForProver": "Reward is too low for the selected prover.",
-      "unexpectedResponseFromProver": "Unexpected response from prover.",
-      "failedCommunicationWithProver": "Unexpected error while communicating with prover.",
-      "noProverWasSelected": "No prover was selected.",
-      "burnTxMustBeSet": "Burn transaction must be set"
-    },
-    "message": {
-      "manualBurnDescription": "Enter burn transaction manually",
-      "noBurnsInProgress": "You have no burns in progress, to start a burn, click here.",
-      "unhideThisBurnAddress": "Unhide this burn address",
-      "hideThisBurnAddress": "Hide this burn address",
-      "searchByTxIdFieldPlaceholder": "Burn Tx ID",
-      "noBurnActivity": "No burn activity to show.",
-      "unhideThisBurnProcess": "Unhide this burn process",
-      "hideThisBurnProcess": "Hide this burn process",
-      "commitmentTxDescription": "Tagging Federation has monitored Source chains and published commitments to them on the Midnight Network",
-      "redeemTxDescription": "Prover is certain that the burn can be redeemed and has created Midnight Tokens",
-      "burnProcessDescriptionForBitcoin": "This will generate a Bitcoin Address to which you can send Bitcoin to be burned and converted into Midnight Tokens. These Midnight Tokens can be used to participate in an Auction to win spendable Dust Tokens. <strong>The Burn process is irreversible and the Bitcoin Tokens burned will be unspendable forever.</strong><br /><br />I understand the process",
-      "burnProcessDescriptionForEthereum": "This will generate a Ethereum Address to which you can send Ethereum to be burned and converted into Midnight Tokens. These Midnight Tokens can be used to participate in an Auction to win spendable Dust Tokens. <strong>The Burn process is irreversible and the Ethereum Tokens burned will be unspendable forever.</strong><br /><br />I understand the process",
-      "testnetWarning": "<strong>Warning:</strong> This is a Testnet edition.<br /> Do <strong>NOT</strong> burn real ETH or BTC for Proof of Burn.",
-      "proverRewardTooltip": "This is a fee in Midnight Tokens that is the Prover reward and will be taken from your total burned amount.",
-      "proverRewardWarning": "<strong>Warning:</strong> If the fee is larger than burn amount, the burn will fail and cannot be recovered. Under such conditions, <strong>you will lose your source funds.</strong>"
-    },
-    "burnProcessStatus": {
-      "foundTransaction": "Found Transaction",
-      "foundTransactionDescription": "Your burn transaction has been found on source blockchain.",
-      "provingStarted": "Proving Started",
-      "provingStartedInProgressDescription": "Waiting for enough confirmations from source blockchain to start.",
-      "provingStartedFinishedDescription": "Confirmations received from source blockchain.",
-      "provingSuccessful": "Proving Successful",
-      "provingSuccessfulInProgressDescription": "Proving underway.",
-      "provingSuccessfulFinishedDescription": "Prover has successfully proved the burn transaction.",
-      "provingConfirmed": "Proving Confirmed",
-      "provingConfirmedInProgressDescription": "Waiting for confirmations on Midnight.",
-      "provingConfirmedFinishedDescription": "Burn Process complete. Midnight Tokens are now available.",
-      "alreadyProved": "Already Proved"
     }
   },
   "tokens": {
@@ -610,7 +369,11 @@
       "itMustBeAnInteger": "It must be an integer value",
       "atMostDecimalPlacesArePermitted": "At most {{count}} decimal place is permitted",
       "atMostDecimalPlacesArePermitted_plural": "At most {{count}} decimal places are permitted",
-      "noAvailableOptionForDropdown": "No available option"
+      "noAvailableOptionForDropdown": "No available option",
+      "ethAddressMustBeSet": "Address must be set",
+      "invalidEthAddress": "Invalid address",
+      "ethPrivateKeyMustBeSet": "Private key must be set",
+      "invalidEthPrivateKey": "Invalid private key"
     },
     "networkTag": {
       "testnet": "Testnet",

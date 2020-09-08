@@ -7,7 +7,6 @@ import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
-import {withGlacierState} from '../storybook-util/glacier-state-decorator'
 import {dust, asyncAction} from '../storybook-util/custom-knobs'
 import {
   dummyTransactions,
@@ -22,7 +21,7 @@ import {ExtendedTransaction} from './TransactionRow'
 
 export default {
   title: 'Transaction History',
-  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withGlacierState, withBuildJobState],
+  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
 }
 
 const privateAddresses = _.range(0, 20).map((index) => ({

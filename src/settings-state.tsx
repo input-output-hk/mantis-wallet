@@ -70,9 +70,6 @@ export interface SettingsState {
   // Wallet settings
   areEmptyTransparentAccountsHidden: boolean
   hideEmptyTransparentAccounts(hide: boolean): void
-  // PoB settings
-  areHiddenBurnsVisible: boolean
-  setHiddenBurnsVisible(visible: boolean): void
   // Locale settings
   dateFormat: DateFormat
   setDateFormat(dateFormat: DateFormat): void
@@ -92,7 +89,6 @@ export type StoreSettingsData = {
   settings: {
     theme: Theme
     areEmptyTransparentAccountsHidden: boolean
-    areHiddenBurnsVisible: boolean
     dateFormat: DateFormat
     timeFormat: TimeFormat
     language: Language
@@ -103,7 +99,6 @@ export const defaultSettingsData: StoreSettingsData = {
   settings: {
     theme: 'dark',
     areEmptyTransparentAccountsHidden: false,
-    areHiddenBurnsVisible: false,
     dateFormat: 'MM/DD/YYYY',
     timeFormat: '12-hour',
     language: DEFAULT_LANGUAGE,
@@ -132,12 +127,6 @@ function useSettingsState({
     store,
     ['settings', 'areEmptyTransparentAccountsHidden'],
   )
-
-  // PoB settings
-  const [areHiddenBurnsVisible, setHiddenBurnsVisible] = usePersistedState(store, [
-    'settings',
-    'areHiddenBurnsVisible',
-  ])
 
   // Locale settings
   const [dateFormat, setDateFormat] = usePersistedState(store, ['settings', 'dateFormat'])
@@ -218,8 +207,6 @@ function useSettingsState({
     switchTheme,
     areEmptyTransparentAccountsHidden,
     hideEmptyTransparentAccounts,
-    areHiddenBurnsVisible,
-    setHiddenBurnsVisible,
     dateFormat,
     setDateFormat,
     timeFormat,
@@ -254,7 +241,6 @@ export const migrationsForSettingsData = {
   '0.14.0-alpha.2': (store: Store<StoreSettingsData>) => {
     store.set('settings', {
       ...store.get('settings'),
-      areHiddenBurnsVisible: defaultSettingsData.settings.areHiddenBurnsVisible,
       dateFormat: defaultSettingsData.settings.dateFormat,
       timeFormat: defaultSettingsData.settings.timeFormat,
     })

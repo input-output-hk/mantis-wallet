@@ -1,8 +1,0 @@
-@import '../../partial';
-
-.ClaimWith {
-  .DialogMessage .description {
-    @extend %monospace;
-    font-weight: bold;
-  }
-}

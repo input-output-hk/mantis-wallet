@@ -2,28 +2,15 @@ import _ from 'lodash/fp'
 import {set as mutatingSet} from 'lodash'
 // eslint-disable-next-line import/default
 import ElectronStore from 'electron-store'
-import BigNumber from 'bignumber.js'
 import {gt} from 'semver'
 import {StoreSettingsData, defaultSettingsData, migrationsForSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
-import {StorePobData, defaultPobData, migrationsForPobData} from '../pob/pob-state'
-import {
-  Claim,
-  StoreGlacierData,
-  defaultGlacierData,
-  migrationsForGlacierData,
-} from '../glacier-drop/glacier-state'
 import {StoreTokensData, defaultTokensData, migrationsForTokensData} from '../tokens/tokens-state'
 import {DATADIR_VERSION} from '../shared/version'
 
-export type StoreData = StoreSettingsData & StorePobData & StoreGlacierData & StoreTokensData
+export type StoreData = StoreSettingsData & StoreTokensData
 
-const defaultData: StoreData = _.mergeAll([
-  defaultSettingsData,
-  defaultPobData,
-  defaultGlacierData,
-  defaultTokensData,
-])
+const defaultData: StoreData = _.mergeAll([defaultSettingsData, defaultTokensData])
 
 const mergeMigrations = _.mergeAllWith(
   (
@@ -41,12 +28,7 @@ const mergeMigrations = _.mergeAllWith(
   },
 )
 
-const migrations = mergeMigrations([
-  migrationsForSettingsData,
-  migrationsForPobData,
-  migrationsForGlacierData,
-  migrationsForTokensData,
-])
+const migrations = mergeMigrations([migrationsForSettingsData, migrationsForTokensData])
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 
@@ -85,28 +67,6 @@ export function createInMemoryStore<TObject extends object>(initial: TObject): S
   }
 }
 
-// deserializers
-
-interface SerializedClaim {
-  added: number
-  dustAmount: string
-  externalAmount: string
-  withdrawnDustAmount: string
-}
-
-const deserializeClaim = (serializedClaim: SerializedClaim): Claim => {
-  const {added, dustAmount, externalAmount, withdrawnDustAmount} = serializedClaim
-
-  return {
-    ...serializedClaim,
-    added: new Date(added),
-    dustAmount: new BigNumber(dustAmount),
-    externalAmount: new BigNumber(externalAmount),
-    withdrawnDustAmount: new BigNumber(withdrawnDustAmount),
-    txBuildInProgress: false, // fixes stuck builds in case of restart while build in progress
-  } as Claim // FIXME: PM-1658
-}
-
 export function createPersistentStore(): Store<StoreData> {
   const store = new ElectronStore({
     defaults: defaultData,
@@ -116,10 +76,7 @@ export function createPersistentStore(): Store<StoreData> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     projectVersion,
-    deserialize: (text: string) =>
-      _.update(['glacierDrop', 'claims'], (v) => {
-        return _.mapValues(deserializeClaim)(v)
-      })(JSON.parse(text)),
+    deserialize: (text: string) => JSON.parse(text),
   })
 
   function get<K1 extends keyof StoreData, K2 extends keyof StoreData[K1]>(

@@ -4,8 +4,6 @@ import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
 import {SettingsState} from './settings-state'
-import {ProofOfBurnState} from './pob/pob-state'
-import {GlacierState} from './glacier-drop/glacier-state'
 import {RouterState} from './router-state'
 import {BuildJobState} from './common/build-job-state'
 import {TokensState} from './tokens/tokens-state'
@@ -13,7 +11,6 @@ import {JobStatus} from './common/JobStatus'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
-import {RemoteSettingsManager} from './RemoteSettingsManager'
 import {LUNA_VERSION} from './shared/version'
 import {rendererLog} from './common/logger'
 import './App.scss'
@@ -48,19 +45,14 @@ const App: React.FC = () => {
             <RouterState.Provider>
               <BuildJobState.Provider initialState={{web3}}>
                 <WalletState.Provider initialState={{web3}}>
-                  <ProofOfBurnState.Provider initialState={{store, web3}}>
-                    <GlacierState.Provider initialState={{store}}>
-                      <TokensState.Provider initialState={{store, web3}}>
-                        <Sidebar version={LUNA_VERSION} />
-                        <Router />
-                        <JobStatus />
-                      </TokensState.Provider>
-                    </GlacierState.Provider>
-                  </ProofOfBurnState.Provider>
+                  <TokensState.Provider initialState={{store, web3}}>
+                    <Sidebar version={LUNA_VERSION} />
+                    <Router />
+                    <JobStatus />
+                  </TokensState.Provider>
                 </WalletState.Provider>
               </BuildJobState.Provider>
             </RouterState.Provider>
-            <RemoteSettingsManager setBackendRunning={setBackendRunning} />
           </div>
         ) : (
           <SplashScreen />

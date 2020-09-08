@@ -13,16 +13,11 @@ import {
   RawSynchronizationStatus,
   BigNumberJSON,
   EthTransaction,
-  RawBalanceWithProof,
-  RawAuthorizationSignature,
   CallParams,
-  MineResponse,
-  GetMiningStateResponse,
   WalletAPI,
   FeeLevel,
   JobStatus,
   AsyncTxResponse,
-  CancelMiningResponse,
   EthBlock,
   PrivateAddress,
 } from './web3'
@@ -223,16 +218,6 @@ class MockWallet implements WalletAPI {
     }
   }
 
-  getBurnAddress(
-    _address: string,
-    _chainId: number,
-    _reward: number,
-    _autoConversion: boolean,
-  ): string {
-    this._lockGuard()
-    return 'example-burn-address'
-  }
-
   _existGuard(): void {
     if (!this.walletExists) throw Error(WALLET_DOES_NOT_EXIST)
   }
@@ -240,52 +225,6 @@ class MockWallet implements WalletAPI {
   _lockGuard(): void {
     this._existGuard()
     if (this.isLocked) throw Error(WALLET_IS_LOCKED)
-  }
-}
-
-class MockGlacierDrop {
-  getEtcSnapshotBalanceWithProof(_etcAddress: string): RawBalanceWithProof {
-    return {
-      balance: toHex(123456789),
-      proof: 'abcdefg',
-    }
-  }
-
-  authorizationSign(_midnightAddress: string): RawAuthorizationSignature {
-    return {
-      r: '0xe316ff5f701f3414ea61bd66540ed46aeed2f9abdee39c4c6deda66fdc7814fd',
-      s: '0x4292396321c366bda216ef6eec700d6e3abde3e50ab2b106315953777f4a5799',
-      v: 28,
-    }
-  }
-
-  mine(
-    _externalAmount: string,
-    _etcAddress: string,
-    _unlockingStartBlock: number,
-    _unlockingEndBlock: number,
-  ): MineResponse {
-    return {
-      status: 'NewMineStarted',
-      estimatedTime: 123,
-      estimatedBlockOfTxInclusion: '0x123',
-      message: '',
-    }
-  }
-
-  cancelMining(): CancelMiningResponse {
-    return {
-      status: 'MiningCanceled',
-      message: 'Mining canceled',
-    }
-  }
-
-  getMiningState(): GetMiningStateResponse {
-    return {
-      status: 'MiningSuccessful',
-      nonce: '0x0',
-      mixHash: '0x0',
-    }
   }
 }
 
@@ -306,12 +245,9 @@ export const Web3MockApi: Web3API = {
       medium: 2,
       high: 3,
     }),
-    mining: true,
-    hashrate: 3000000,
   },
   midnight: {
     wallet: new MockWallet(),
-    glacierDrop: new MockGlacierDrop(),
   },
   version: {
     ethereum: 'mocked',

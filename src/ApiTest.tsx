@@ -9,12 +9,9 @@ import {
   RawSynchronizationStatus,
   PrivateAddress,
 } from './web3'
-import {getContractConfigs} from './config/renderer'
 import {WalletState} from './common/wallet-state'
-import {GlacierState} from './glacier-drop/glacier-state'
 import {SettingsState} from './settings-state'
 import {BorderlessInput} from './common/BorderlessInput'
-import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {rendererLog} from './common/logger'
 import './ApiTest.scss'
 
@@ -24,12 +21,7 @@ const wallet = web3.midnight.wallet
 // FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
   const walletState = WalletState.useContainer()
-  const glacierState = GlacierState.useContainer()
   const settingState = SettingsState.useContainer()
-
-  const contractAddresses = getContractConfigs()
-  const networks = Object.keys(contractAddresses)
-  const selectedNetworkIndex = networks.indexOf(glacierState.selectedNetwork)
 
   const [message, setMessage] = useState<string>('')
 
@@ -118,17 +110,6 @@ export const ApiTest = (): JSX.Element => {
           />
         </div>
 
-        {networks.length > 1 && (
-          <div>
-            <DialogDropdown
-              label="Selected Network"
-              options={networks}
-              defaultOptionIndex={selectedNetworkIndex}
-              onChange={glacierState.updateSelectedNetwork}
-            />
-          </div>
-        )}
-
         <h2>Actions</h2>
         <TestButton onClick={(): Promise<SpendingKey & SeedPhrase> => wallet.create({passphrase})}>
           Create
@@ -165,9 +146,6 @@ export const ApiTest = (): JSX.Element => {
           onClick={(): Promise<RawSynchronizationStatus> => wallet.getSynchronizationStatus()}
         >
           Sync Status
-        </TestButton>
-        <TestButton onClick={(): Promise<void> => glacierState.removeClaims()}>
-          Remove Claims
         </TestButton>
       </div>
 

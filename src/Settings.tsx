@@ -1,26 +1,21 @@
-import React, {useState, useEffect, PropsWithChildren} from 'react'
+import React, {useState, PropsWithChildren} from 'react'
 import _ from 'lodash/fp'
 import {Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './settings-state'
-import {IPCToRendererChannelName} from './shared/ipc-types'
 import {LoadedState} from './common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from './common/wallet-status-guard'
-import {updateMiningConfig, ipcRemoveAllListeners, ipcListenToMain} from './common/ipc-util'
 import {fillActionHandlers} from './common/util'
 import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {NoWallet} from './wallets/NoWallet'
 import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
-import {MiningConfigModal, miningConfigChannels} from './RemoteSettingsManager'
-import {loadLunaManagedConfig} from './config/renderer'
-import {LunaManagedConfig} from './config/type'
 import {Trans} from './common/Trans'
 import {TKeyRenderer} from './common/i18n'
 import {LANGUAGES, Language} from './shared/i18n'
 import './Settings.scss'
 
-type ModalId = 'none' | 'MiningConfig' | 'ExportPrivateKey'
+type ModalId = 'none' | 'ExportPrivateKey'
 
 const TIME_FORMAT_LABELS: Record<TimeFormat, TKeyRenderer> = {
   '12-hour': ['settings', 'timeFormat', '12hour'],
@@ -57,17 +52,6 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
 
-  const [lunaManagedConfig, setLunaManagedConfig] = useState<LunaManagedConfig>(
-    loadLunaManagedConfig(),
-  )
-  const reloadConfig = (): void => setLunaManagedConfig(loadLunaManagedConfig())
-  const reloadTriggers: IPCToRendererChannelName[] = ['disable-mining-success']
-
-  useEffect(() => {
-    reloadTriggers.forEach((channel) => ipcListenToMain(channel, reloadConfig))
-    return () => reloadTriggers.forEach(ipcRemoveAllListeners)
-  }, [])
-
   return (
     <SettingsWrapper>
       {/* Theme */}
@@ -80,26 +64,6 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
             aria-label={t(['settings', 'label', 'enableDarkMode'])}
             checked={theme === 'dark'}
             onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
-          />
-        </div>
-      </div>
-
-      {/* Mining */}
-      <div className="settings-item">
-        <div className="settings-label">
-          <Trans k={['settings', 'label', 'enableMining']} />
-        </div>
-        <div className="settings-input">
-          <Switch
-            aria-label={t(['settings', 'label', 'enableMining'])}
-            checked={lunaManagedConfig.miningEnabled}
-            onChange={(miningEnabled) => {
-              if (miningEnabled) {
-                setActiveModal('MiningConfig')
-              } else {
-                updateMiningConfig(null)
-              }
-            }}
           />
         </div>
       </div>
@@ -148,14 +112,6 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
         visible={activeModal === 'ExportPrivateKey'}
         getSpendingKey={walletState.getSpendingKey}
         onCancel={() => setActiveModal('none')}
-      />
-      <MiningConfigModal
-        visible={activeModal === 'MiningConfig'}
-        onCancel={() => {
-          miningConfigChannels.forEach(ipcRemoveAllListeners)
-          setActiveModal('none')
-        }}
-        onFinish={reloadConfig}
       />
     </SettingsWrapper>
   )

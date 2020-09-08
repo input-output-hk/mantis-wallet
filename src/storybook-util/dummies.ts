@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import {wait} from '../shared/utils'
 import {FeeEstimates, TransparentAccount} from '../common/wallet-state'
-import {PeriodConfig} from '../glacier-drop/glacier-state'
 import {ExtendedTransaction} from '../wallets/TransactionRow'
 import {Token} from '../tokens/tokens-state'
 
@@ -177,14 +176,6 @@ export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEsti
       high: new BigNumber(7).times(amount && !amount.isEqualTo(0) ? amount : 1),
     }),
   )
-
-export const DUMMY_PERIOD_CONFIG: PeriodConfig = {
-  unlockingStartBlock: 100,
-  unlockingEndBlock: 200,
-  unfreezingStartBlock: 300,
-  numberOfEpochs: 10,
-  epochLength: 10,
-}
 
 export const CONFIDENTIAL_ADDRESS =
   'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5'

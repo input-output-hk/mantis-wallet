@@ -1,6 +1,5 @@
 import React, {PropsWithChildren} from 'react'
 import {SyncStatus} from './SyncStatus'
-import {MiningStatus} from './MiningStatus'
 import {Link} from './Link'
 import './HeaderWithSyncStatus.scss'
 
@@ -18,9 +17,6 @@ export const HeaderWithSyncStatus = ({
   <div className="HeaderWithSyncStatus">
     <div className="right">
       <SyncStatus />
-      <div className="MiningStatus">
-        <MiningStatus />
-      </div>
     </div>
     <div className="main-title">
       {children}

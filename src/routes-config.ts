@@ -2,22 +2,17 @@ import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {WalletUnlock} from './wallets/WalletUnlock'
-import {BurnCentre} from './pob/BurnCentre'
-import {BurnCoins} from './pob/BurnCoins'
 import {Settings} from './Settings'
-import {GlacierDropOverview} from './glacier-drop/GlacierDropOverview'
-import {Tokens} from './tokens/Tokens'
+// import {Tokens} from './tokens/Tokens'
 import {TKeyRenderer} from './common/i18n'
 // Assets
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
-import menuPobIcon from './assets/icons/menu-pob.svg'
-import menuGlacierIcon from './assets/icons/menu-glacier.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
-import menuTokensIcon from './assets/icons/menu-tokens.svg'
+// import menuTokensIcon from './assets/icons/menu-tokens.svg'
 
 // Menu
 
-export type MenuId = 'WALLETS' | 'PROOF_OF_BURN' | 'GLACIER_DROP' | 'SETTINGS' | 'TOKENS'
+export type MenuId = 'WALLETS' | 'SETTINGS' // | 'TOKENS'
 
 export interface MenuItem {
   title: TKeyRenderer
@@ -35,21 +30,11 @@ export const MENU: Menu = {
     route: 'WALLETS',
     icon: menuWalletsIcon,
   },
-  PROOF_OF_BURN: {
-    title: ['title', 'proofOfBurn'],
-    route: 'BURN_CENTRE',
-    icon: menuPobIcon,
-  },
-  GLACIER_DROP: {
-    title: ['title', 'glacierDrop'],
-    route: 'GLACIER_DROP',
-    icon: menuGlacierIcon,
-  },
-  TOKENS: {
-    title: ['title', 'tokens'],
-    route: 'TOKENS',
-    icon: menuTokensIcon,
-  },
+  // TOKENS: {
+  //   title: ['title', 'tokens'],
+  //   route: 'TOKENS',
+  //   icon: menuTokensIcon,
+  // },
   SETTINGS: {
     title: ['title', 'settings'],
     route: 'SETTINGS',
@@ -59,16 +44,7 @@ export const MENU: Menu = {
 
 // Routes
 
-export type RouteId =
-  | 'WALLETS'
-  | 'WALLET_SETUP'
-  | 'WALLET_UNLOCK'
-  | 'BURN_CENTRE'
-  | 'BURN_COINS'
-  | 'GLACIER_DROP'
-  | 'SETTINGS'
-  | 'API_TEST'
-  | 'TOKENS'
+export type RouteId = 'WALLETS' | 'WALLET_SETUP' | 'WALLET_UNLOCK' | 'SETTINGS' | 'API_TEST' // | 'TOKENS'
 
 export interface Route {
   component: React.ComponentType
@@ -92,18 +68,6 @@ export const ROUTES: Routes = {
     component: WalletUnlock,
     menu: 'WALLETS',
   },
-  BURN_CENTRE: {
-    component: BurnCentre,
-    menu: 'PROOF_OF_BURN',
-  },
-  BURN_COINS: {
-    component: BurnCoins,
-    menu: 'PROOF_OF_BURN',
-  },
-  GLACIER_DROP: {
-    component: GlacierDropOverview,
-    menu: 'GLACIER_DROP',
-  },
   SETTINGS: {
     component: Settings,
     menu: 'SETTINGS',
@@ -112,8 +76,8 @@ export const ROUTES: Routes = {
     component: ApiTest,
     menu: 'SETTINGS',
   },
-  TOKENS: {
-    component: Tokens,
-    menu: 'TOKENS',
-  },
+  // TOKENS: {
+  //   component: Tokens,
+  //   menu: 'TOKENS',
+  // },
 }

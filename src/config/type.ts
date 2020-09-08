@@ -19,18 +19,6 @@ export interface ProcessConfig {
   additionalSettings: ClientSettings
 }
 
-export interface ProverConfig {
-  name: string
-  address: string
-}
-
-// Contract addresses / network
-export interface ContractConfigItem {
-  networkName: string
-  glacierDrop: string
-  constantsRepo: string
-}
-
 export type ClientName = 'node' | 'wallet'
 export const clientNames: ClientName[] = ['node', 'wallet']
 
@@ -42,19 +30,10 @@ export interface Config {
   discoveryPort: number
   p2pMessagingPort: number
   blocksStreamingPort: number
-  provers: ProverConfig[]
-  contractConfig: ContractConfigItem[]
   dataDir: string
   distPackagesDir: string
   runClients: boolean
   clientConfigs: Record<ClientName, ProcessConfig>
   openDevTools: boolean
   tls: Option<TLSConfig>
-}
-
-export interface LunaManagedConfig {
-  miningEnabled: boolean
-  pkd: string
-  diversifier: string
-  ovk: string
 }
