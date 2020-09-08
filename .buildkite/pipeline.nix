@@ -1,8 +1,8 @@
 { cfg, pkgs, ... }:
 
-with cfg.steps.commands; 
+with cfg.steps.commands;
 
-let 
+let
   shouldBuild = platform: ''
         build.message =~ /ci pkg${platform}/ ||
           build.branch =~ /^release\// ||
@@ -10,7 +10,7 @@ let
           build.branch == "luna-mantis"
       '';
 
-in 
+in
 
 {
   steps.commands = {
