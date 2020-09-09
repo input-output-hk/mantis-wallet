@@ -4,7 +4,7 @@ with cfg.steps.commands;
 
 let
   shouldBuild = platform: ''
-        build.message =~ /ci pkg${platform}/ ||
+        build.message =~ /ci pkg${if platform == "all" then "" else " ${platform}"}/ ||
           build.branch =~ /^release\// ||
           build.branch == "develop" ||
           build.branch == "luna-mantis"
@@ -16,7 +16,7 @@ in
   steps.commands = {
     midnight-dist = {
       label = ":clock12::darwin::linux::windows:";
-      "if" = shouldBuild "";
+      "if" = shouldBuild "all";
       command = ''
         (cd midnight; nix-shell --run 'sbt -v -mem 2048 -J-Xmx4g dist')
 
@@ -99,7 +99,7 @@ in
 
     electron-darwin = {
       dependsOn = [ build midnight-dist ];
-      "if" = shouldBuild " darwin";
+      "if" = shouldBuild "darwin";
       label = ":electron::darwin:";
       command = ''
         buildkite-agent artifact download build.tgz .
@@ -129,7 +129,7 @@ in
     electron-linux = {
       dependsOn = [ build midnight-dist node_modules ];
       label = ":electron::linux:";
-      "if" = shouldBuild " linux";
+      "if" = shouldBuild "linux";
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
@@ -158,7 +158,7 @@ in
     electron-win = {
       dependsOn = [ node_modules build midnight-dist ];
       label = ":electron::windows:";
-      "if" = shouldBuild " win";
+      "if" = shouldBuild "win";
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
