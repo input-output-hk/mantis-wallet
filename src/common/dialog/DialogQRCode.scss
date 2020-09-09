@@ -19,6 +19,7 @@
 
   .qr-content {
     @extend %monospace;
+    font-size: $font-size-m;
   }
 
   .download {
