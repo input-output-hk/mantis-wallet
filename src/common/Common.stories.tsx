@@ -1,7 +1,7 @@
 import React from 'react'
 import {text, number} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
-import {dust} from '../storybook-util/custom-knobs'
+import {ether} from '../storybook-util/custom-knobs'
 import {ShortNumber} from './ShortNumber'
 import {Loading} from './Loading'
 import {CopyableLongText} from './CopyableLongText'
@@ -14,7 +14,7 @@ export default {
 }
 
 export const shortNumber = (): JSX.Element => (
-  <ShortNumber big={dust('Number', 123456789)} unitOrDecimals="Dust" />
+  <ShortNumber big={ether('Number', 123456789)} unitOrDecimals="Ether" />
 )
 
 export const loading = (): JSX.Element => (

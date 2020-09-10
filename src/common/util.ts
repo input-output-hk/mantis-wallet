@@ -63,7 +63,7 @@ export const isLowerOrEqual = (maxValue: BigNumber.Value, message?: Translatable
 
 export const areFundsEnough = (
   funds: BigNumber,
-  unitOrDecimals: number | UnitType = 'Dust',
+  unitOrDecimals: number | UnitType = 'Ether',
 ): ReturnType<typeof isLowerOrEqual> => {
   const inUnits =
     typeof unitOrDecimals === 'number'

@@ -22,7 +22,7 @@ import {
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
 
-const toDust = (v: BigNumber.Value): BigNumber => UNITS.Dust.toBasic(new BigNumber(v))
+const toEther = (v: BigNumber.Value): BigNumber => UNITS.Ether.toBasic(new BigNumber(v))
 
 it('deserializes BigNumber correctly', () => {
   ;[2, -2, 2.3, 23.4].map((n: number): void => {
@@ -63,8 +63,8 @@ it('validates amount correctly', () => {
     tKey: ['common', 'error', 'mustBeAtMost'],
     options: {replace: {maxValue: 5}},
   })
-  assert.equal(validateAmount('5', [areFundsEnough(toDust(5))]), 'OK')
-  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toDust(5))]), {
+  assert.equal(validateAmount('5', [areFundsEnough(toEther(5))]), 'OK')
+  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toEther(5))]), {
     tKey: ['wallet', 'error', 'insufficientFunds'],
   })
 })

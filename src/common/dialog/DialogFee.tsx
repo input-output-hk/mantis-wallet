@@ -6,7 +6,7 @@ import {LoadingOutlined} from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 import {InlineError, InlineErrorProps} from '../InlineError'
 import {DialogState} from '../Dialog'
-import {DST_CHAIN} from '../chains'
+import {ETC_CHAIN} from '../chains'
 import {FeeEstimates} from '../wallet-state'
 import {useFormatters} from '../../settings-state'
 import {UNITS} from '../units'
@@ -19,7 +19,7 @@ import {TKeyRenderer} from '../i18n'
 import {Trans} from '../Trans'
 import './DialogFee.scss'
 
-const {Dust} = UNITS
+const {Ether} = UNITS
 
 interface DialogFeeProps {
   id?: string
@@ -45,7 +45,7 @@ const feeLevelIcons: Record<FeeLevel, React.ReactNode> = {
   high: <SVG src={speedHigh} className="icon" title="High" />,
 }
 
-const fieldDisplayAmount = (amount: BigNumber): string => Dust.fromBasic(amount).toString(10)
+const fieldDisplayAmount = (amount: BigNumber): string => Ether.fromBasic(amount).toString(10)
 
 export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = ({
   label,
@@ -66,7 +66,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
   const {abbreviateAmount} = useFormatters()
 
   const displayAmount = (amount: BigNumber): string =>
-    abbreviateAmount(Dust.fromBasic(amount)).relaxed
+    abbreviateAmount(Ether.fromBasic(amount)).relaxed
 
   useEffect(() => {
     if (feeLevel != null && feeEstimates) {
@@ -149,7 +149,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
                 <Popover
                   content={
                     <span>
-                      {displayAmount(feeEstimates[level])} {DST_CHAIN.symbol}
+                      {displayAmount(feeEstimates[level])} {ETC_CHAIN.symbol}
                     </span>
                   }
                 >
@@ -160,7 +160,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
                   <Trans k={feeLevelLabels[level]} />
                   <br />
                   <span className="fee-amount">
-                    {displayAmount(feeEstimates[level])} {DST_CHAIN.symbol}
+                    {displayAmount(feeEstimates[level])} {ETC_CHAIN.symbol}
                   </span>
                 </span>
               )}

@@ -1,7 +1,7 @@
 import React from 'react'
 import {select} from '@storybook/addon-knobs'
 import BigNumber from 'bignumber.js'
-import {dust} from '../storybook-util/custom-knobs'
+import {ether} from '../storybook-util/custom-knobs'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {SyncStatusContent} from '../common/SyncStatus'
@@ -15,21 +15,11 @@ export default {
 }
 
 export const withZeroBalance = (): JSX.Element => (
-  <WalletOverview
-    pending={new BigNumber(0)}
-    transparent={new BigNumber(0)}
-    confidential={new BigNumber(0)}
-  />
+  <WalletOverview availableBalance={new BigNumber(0)} />
 )
 
 export const interactive = (): JSX.Element => {
-  return (
-    <WalletOverview
-      confidential={dust('Confidential', 15262.4578)}
-      transparent={dust('Transparent', 6359.36)}
-      pending={dust('Pending', 3815.62)}
-    />
-  )
+  return <WalletOverview availableBalance={ether('Available Balance', 15262.4578)} />
 }
 
 export const syncStatus = (): JSX.Element => {

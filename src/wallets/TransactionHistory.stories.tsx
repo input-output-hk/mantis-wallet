@@ -7,7 +7,7 @@ import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
-import {dust, asyncAction} from '../storybook-util/custom-knobs'
+import {ether, asyncAction} from '../storybook-util/custom-knobs'
 import {
   dummyTransactions,
   estimateFeesWithRandomDelay,
@@ -41,7 +41,6 @@ export const withNoTransactions = (): JSX.Element => (
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateTransparentAddress={asyncAction('on-generate-transparent-address')}
     generatePrivateAddress={asyncAction('on-generate-private-address')}
-    goToAccounts={action('on-go-to-accounts')}
   />
 )
 
@@ -50,14 +49,13 @@ export const withDemoTransactions = (): JSX.Element => (
     transactions={dummyTransactions}
     transparentAddresses={[]}
     privateAddresses={privateAddresses}
-    availableBalance={dust('Available Balance', 1000)}
+    availableBalance={ether('Available Balance', 1000)}
     sendTransaction={asyncAction('on-send-transaction')}
     sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateTransparentAddress={asyncAction('on-generate-transparent-address')}
     generatePrivateAddress={asyncAction('on-generate-private-address')}
-    goToAccounts={action('on-go-to-accounts')}
   />
 )
 
@@ -118,21 +116,20 @@ export const interactive = (): JSX.Element => {
         },
       ]}
       privateAddresses={privateAddresses}
-      availableBalance={dust('Available Balance', 1000)}
+      availableBalance={ether('Available Balance', 1000)}
       sendTransaction={asyncAction('on-send-transaction')}
       sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
       estimatePublicTransactionFee={estimateFeesWithRandomDelay}
       generateTransparentAddress={asyncAction('on-generate-transparent-address')}
       generatePrivateAddress={asyncAction('on-generate-private-address')}
-      goToAccounts={action('on-go-to-accounts')}
     />
   )
 }
 
 export const sendConfidentialTransaction = (): JSX.Element => (
   <SendTransaction
-    availableAmount={dust('Available Amount', 123.456)}
+    availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     onSendToConfidential={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}
@@ -145,7 +142,7 @@ export const sendConfidentialTransaction = (): JSX.Element => (
 
 export const sendTransparentTransaction = (): JSX.Element => (
   <SendTransaction
-    availableAmount={dust('Available Amount', 123.456)}
+    availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     onSendToConfidential={asyncAction('on-send')}
     onSendToTransparent={asyncAction('on-send-to-transparent')}

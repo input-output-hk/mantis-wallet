@@ -18,8 +18,8 @@ import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
 import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
-import {dust} from '../storybook-util/custom-knobs'
-import {DialogShowDust} from './dialog/DialogShowDust'
+import {ether} from '../storybook-util/custom-knobs'
+import {DialogShowAmount} from './dialog/DialogShowAmount'
 import {DialogTextSwitch} from './dialog/DialogTextSwitch'
 import {DialogFee} from './dialog/DialogFee'
 import {ETC_CHAIN} from './chains'
@@ -139,9 +139,9 @@ export const InteractiveFee: FunctionComponent<{}> = () => (
     <DialogFee
       label={text('Fee label', 'Fee label')}
       feeEstimates={{
-        low: dust('Fee low estimate', 0.01),
-        medium: dust('Fee medium estimate', 0.02),
-        high: dust('Fee high estimate', 0.03),
+        low: ether('Fee low estimate', 0.01),
+        medium: ether('Fee medium estimate', 0.02),
+        high: ether('Fee high estimate', 0.03),
       }}
       onChange={action('on-change')}
       errorMessage={text('Error message', '')}
@@ -214,12 +214,12 @@ export const InteractiveSecrets: FunctionComponent<{}> = () => {
   )
 }
 
-export const InteractiveShowDust: FunctionComponent<{}> = () => {
+export const InteractiveShowAmount: FunctionComponent<{}> = () => {
   return (
     <Dialog title="Dialog Secrets">
-      <DialogShowDust amount={dust('Dust amount', 123.456)}>
-        {text('Show Dust label', 'Dust amount')}
-      </DialogShowDust>
+      <DialogShowAmount amount={ether('ETC amount', 123.456)}>
+        {text('Show Amount label', 'ETC amount')}
+      </DialogShowAmount>
     </Dialog>
   )
 }

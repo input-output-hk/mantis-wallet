@@ -29,7 +29,6 @@ export interface TransactionHistoryProps {
   estimatePublicTransactionFee: (amount: BigNumber, recipient: string) => Promise<FeeEstimates>
   generateTransparentAddress: () => Promise<void>
   generatePrivateAddress: () => Promise<void>
-  goToAccounts: () => void
 }
 
 export const TransactionHistory = ({
@@ -43,7 +42,6 @@ export const TransactionHistory = ({
   generatePrivateAddress,
   transparentAddresses,
   privateAddresses,
-  goToAccounts,
 }: TransactionHistoryProps): JSX.Element => {
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -99,14 +97,6 @@ export const TransactionHistory = ({
             onClick={(): void => setShowReceiveModal(true)}
           >
             <Trans k={['wallet', 'button', 'receiveTransaction']} />
-          </Button>
-          <Button
-            type="primary"
-            disabled={transparentAddresses.length === 0}
-            className="action secondary"
-            onClick={goToAccounts}
-          >
-            <Trans k={['wallet', 'button', 'goToTransparentAccounts']} />
           </Button>
           <SendTransaction
             visible={showSendModal}

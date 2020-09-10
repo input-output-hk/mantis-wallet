@@ -26,9 +26,8 @@
   },
   "wallet": {
     "title": {
-      "walletOverview": "Wallet Overview",
+      "lunaMantis": "Luna Mantis",
       "transactionHistory": "Transaction History",
-      "transparentAccounts": "Transparent Accounts",
       "createNewWallet": "Create New Wallet",
       "restoreWallet": "Restore Wallet",
       "walletSetup": "Wallet Setup",
@@ -51,9 +50,6 @@
       "sortByDropdown": "Sort by",
       "sendTransaction": "Send",
       "receiveTransaction": "Receive",
-      "goToTransparentAccounts": "Transparent Accounts",
-      "applyConfidentiality": "Apply Confidentiality",
-      "applyConfidentialityShort": "Apply",
       "showTransactions": "Transactions",
       "collapseTransactions": "Collapse Transactions",
       "generateNewAddress": "Generate New Address",
@@ -73,8 +69,7 @@
       "generateTransparentAccount": "Generate Transparent Address"
     },
     "link": {
-      "viewInExplorer": "View in Explorer",
-      "whereToGetDust": "Where to get Dust?"
+      "viewInExplorer": "View in Explorer"
     },
     "label": {
       "enterPassword": "Enter Password",

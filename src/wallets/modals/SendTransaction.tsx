@@ -16,9 +16,8 @@ import {
   toAntValidator,
 } from '../../common/util'
 import {UNITS} from '../../common/units'
-import {DialogShowDust} from '../../common/dialog/DialogShowDust'
+import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
-import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
 import {useAsyncUpdate} from '../../common/hook-utils'
@@ -27,7 +26,7 @@ import {useTranslation} from '../../settings-state'
 import {Trans} from '../../common/Trans'
 import './SendTransaction.scss'
 
-const {Dust} = UNITS
+const {Ether} = UNITS
 
 const MAX_MEMO_LENGTH_IN_BYTES = 512
 const RECIPIENT_FIELD = 'recipient-address'
@@ -109,12 +108,12 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
           title: t(['wallet', 'title', 'sendFromConfidentialToConfidential']),
           rawAddressValidator: createConfidentialAddressValidator(networkTag),
           estimateTransactionFee: (): Promise<FeeEstimates> =>
-            estimatePrivateTransactionFee(Dust.toBasic(new BigNumber(amount))),
+            estimatePrivateTransactionFee(Ether.toBasic(new BigNumber(amount))),
           onSend: (): Promise<void> =>
             onSendToConfidential(
               recipient,
-              Number(Dust.toBasic(amount)),
-              Number(Dust.toBasic(fee)),
+              Number(Ether.toBasic(amount)),
+              Number(Ether.toBasic(fee)),
               memo,
             ),
         }
@@ -122,12 +121,12 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
           title: t(['wallet', 'title', 'sendFromConfidentialToTransparent']),
           rawAddressValidator: createTransparentAddressValidator(networkTag),
           estimateTransactionFee: (): Promise<FeeEstimates> =>
-            estimatePublicTransactionFee(Dust.toBasic(new BigNumber(amount)), recipient),
+            estimatePublicTransactionFee(Ether.toBasic(new BigNumber(amount)), recipient),
           onSend: (): Promise<void> =>
             onSendToTransparent(
               recipient,
-              new BigNumber(Dust.toBasic(amount)),
-              new BigNumber(Dust.toBasic(fee)),
+              new BigNumber(Ether.toBasic(amount)),
+              new BigNumber(Ether.toBasic(fee)),
             ),
         }
 
@@ -149,7 +148,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
     },
   )
 
-  const totalAmount = new BigNumber(Dust.toBasic(amount)).plus(new BigNumber(Dust.toBasic(fee)))
+  const totalAmount = new BigNumber(Ether.toBasic(amount)).plus(new BigNumber(Ether.toBasic(fee)))
   const remainingBalance = totalAmount.isFinite()
     ? availableAmount.minus(totalAmount)
     : availableAmount
@@ -215,19 +214,13 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
             }}
           />
         )}
-        {mode === 'transparent' && (
-          <DialogApproval
-            id="no-longer-confidential-warning"
-            description={<Trans k={['wallet', 'message', 'transparentTransactionWarning']} />}
-          />
-        )}
         <DialogColumns>
-          <DialogShowDust amount={totalAmount} displayExact>
+          <DialogShowAmount amount={totalAmount} displayExact>
             <Trans k={['wallet', 'label', 'totalTransactionAmount']} />
-          </DialogShowDust>
-          <DialogShowDust amount={remainingBalance} displayExact>
+          </DialogShowAmount>
+          <DialogShowAmount amount={remainingBalance} displayExact>
             <Trans k={['wallet', 'label', 'remainingBalance']} />
-          </DialogShowDust>
+          </DialogShowAmount>
         </DialogColumns>
       </Dialog>
     </>

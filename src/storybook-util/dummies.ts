@@ -171,9 +171,9 @@ export const dummyTransactions: ExtendedTransaction[] = [
 export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEstimates> =>
   wait(Math.floor(Math.random() * Math.floor(200))).then(() =>
     Promise.resolve({
-      low: new BigNumber(3).times(amount && !amount.isEqualTo(0) ? amount : 1),
-      medium: new BigNumber(5).times(amount && !amount.isEqualTo(0) ? amount : 1),
-      high: new BigNumber(7).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      low: new BigNumber(30000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      medium: new BigNumber(50000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      high: new BigNumber(70000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
     }),
   )
 

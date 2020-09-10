@@ -99,7 +99,7 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
             account.address,
             recipient,
             new BigNumber(amount),
-            UNITS.Dust.toBasic(new BigNumber(fee)),
+            UNITS.Ether.toBasic(new BigNumber(fee)),
           ),
         disabled: sendDisabled,
       }}

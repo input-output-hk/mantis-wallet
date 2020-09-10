@@ -10,7 +10,7 @@ import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
-import {abbreviateAmountForEnUS, DIALOG_VALIDATION_ERROR} from '../common/test-helpers'
+import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
@@ -18,7 +18,7 @@ import {CONFIDENTIAL_ADDRESS, dummyTransparentAccounts} from '../storybook-util/
 import {mockedCopyToClipboard} from '../jest.setup'
 import {ExtendedTransaction} from './TransactionRow'
 
-const {Dust} = UNITS
+const {Ether} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -30,7 +30,7 @@ const tx1: ExtendedTransaction = {
     atBlock: '0x1',
     timestamp: 1584527520,
   },
-  txValue: Dust.toBasic('123'),
+  txValue: Ether.toBasic('123'),
   txDetails: {
     txType: 'transfer',
     memo: null,
@@ -42,8 +42,8 @@ const tx2: ExtendedTransaction = {
   txDirection: 'outgoing',
   txStatus: 'pending',
   txValue: {
-    value: Dust.toBasic('123456789'),
-    fee: Dust.toBasic('100'),
+    value: Ether.toBasic('123456789'),
+    fee: Ether.toBasic('100'),
   },
   txDetails: {
     txType: 'call',
@@ -115,14 +115,13 @@ const defaultProps: TransactionHistoryProps = {
   transactions: [],
   transparentAddresses: transparentAddresses,
   privateAddresses: privateAddresses,
-  availableBalance: Dust.toBasic(new BigNumber(1234)),
+  availableBalance: Ether.toBasic(new BigNumber(1234)),
   sendTransaction: jest.fn(),
   sendTxToTransparent: jest.fn(),
   estimateTransactionFee: estimateFees,
   estimatePublicTransactionFee: estimateFees,
   generateTransparentAddress: jest.fn(),
   generatePrivateAddress: jest.fn(),
-  goToAccounts: jest.fn(),
 }
 
 const renderTransactionHistory = (props: Partial<TransactionHistoryProps> = {}): RenderResult => {
@@ -218,10 +217,10 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 
 // Modals
 test('Send modal shows up', async () => {
-  const availableDust = new BigNumber(123)
+  const availableEther = new BigNumber(123)
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
-    availableBalance: Dust.toBasic(availableDust),
+    availableBalance: Ether.toBasic(availableEther),
   })
   const sendButton = getByTestId('send-button')
   await act(async () => userEvent.click(sendButton))
@@ -250,14 +249,14 @@ test('Send modal shows up', async () => {
 })
 
 test('Send confidential transaction works', async () => {
-  const availableDust = new BigNumber(1230)
-  const usedDust = new BigNumber(951)
-  const usedAtom = Dust.toBasic(usedDust)
+  const availableEther = new BigNumber(1230)
+  const usedEther = new BigNumber(951)
+  const usedWei = Ether.toBasic(usedEther)
 
   const baseEstimates = {
-    low: new BigNumber(123),
-    medium: new BigNumber(456),
-    high: new BigNumber(789),
+    low: new BigNumber(1230000000000),
+    medium: new BigNumber(4560000000000),
+    high: new BigNumber(7890000000000),
   }
   const mockEstimateCalculator = (amount: BigNumber) => (base: BigNumber): BigNumber =>
     base.plus(amount.dividedBy(1e7))
@@ -273,7 +272,7 @@ test('Send confidential transaction works', async () => {
     queryByText,
     queryAllByText,
   } = renderTransactionHistory({
-    availableBalance: Dust.toBasic(availableDust),
+    availableBalance: Ether.toBasic(availableEther),
     estimateTransactionFee: estimateFees,
     sendTransaction: send,
   })
@@ -309,7 +308,7 @@ test('Send confidential transaction works', async () => {
   await waitFor(() => expect(queryByText('Must be a number greater than 0')).toBeInTheDocument())
 
   // Set amount to too high value, error changes
-  fireEvent.change(confidentialAmount, {target: {value: `${usedDust.toString(10)}0`}})
+  fireEvent.change(confidentialAmount, {target: {value: `${usedEther.toString(10)}0`}})
   await waitFor(() =>
     expect(queryByText('Must be a number greater than 0')).not.toBeInTheDocument(),
   )
@@ -323,7 +322,7 @@ test('Send confidential transaction works', async () => {
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
       const {strict: estimateFormatted} = abbreviateAmountForEnUS(
-        Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
+        Ether.fromBasic(mockEstimateCalculator(usedWei)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })
@@ -339,23 +338,23 @@ test('Send confidential transaction works', async () => {
   await waitFor(() =>
     expect(send).toBeCalledWith(
       CONFIDENTIAL_ADDRESS, // the confidential address used
-      usedAtom.toNumber(), // the amount used
-      mockEstimateCalculator(usedAtom)(baseEstimates.low).toNumber(), // the lowest fee used
+      usedWei.toNumber(), // the amount used
+      mockEstimateCalculator(usedWei)(baseEstimates.low).toNumber(), // the lowest fee used
       '',
     ),
   )
 })
 
 test('Send transparent transaction works', async () => {
-  const availableDust = new BigNumber(1230)
-  const usedDust = new BigNumber(951)
-  const usedAtom = Dust.toBasic(usedDust)
+  const availableEther = new BigNumber(1230)
+  const usedEther = new BigNumber(951)
+  const usedWei = Ether.toBasic(usedEther)
   const recipient = dummyTransparentAccounts[0].address
 
   const baseEstimates = {
-    low: new BigNumber(123),
-    medium: new BigNumber(456),
-    high: new BigNumber(789),
+    low: new BigNumber(1230000000000),
+    medium: new BigNumber(4560000000000),
+    high: new BigNumber(7890000000000),
   }
   const mockEstimateCalculator = (amount: BigNumber) => (base: BigNumber): BigNumber =>
     base.plus(amount.dividedBy(1e7))
@@ -372,7 +371,7 @@ test('Send transparent transaction works', async () => {
     getByLabelText,
     queryAllByText,
   } = renderTransactionHistory({
-    availableBalance: Dust.toBasic(availableDust),
+    availableBalance: Ether.toBasic(availableEther),
     estimatePublicTransactionFee: estimateFees,
     sendTxToTransparent: send,
   })
@@ -412,7 +411,7 @@ test('Send transparent transaction works', async () => {
   await waitFor(() => expect(queryByText('Must be a number greater than 0')).toBeInTheDocument())
 
   // Set amount to too high value, error changes
-  fireEvent.change(confidentialAmount, {target: {value: `${usedDust.toString(10)}0`}})
+  fireEvent.change(confidentialAmount, {target: {value: `${usedEther.toString(10)}0`}})
   await waitFor(() =>
     expect(queryByText('Must be a number greater than 0')).not.toBeInTheDocument(),
   )
@@ -426,32 +425,20 @@ test('Send transparent transaction works', async () => {
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
       const {strict: estimateFormatted} = abbreviateAmountForEnUS(
-        Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
+        Ether.fromBasic(mockEstimateCalculator(usedWei)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })
   })
 
-  // Click correct send button, it fails since checkbox was not clicked
-  const sendButton = getAllByText(/Send.*/)[1]
-  await act(async () => userEvent.click(sendButton))
-  await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
-
-  // When checkbox is clicked the error message should disappear
-  const warningCheckbox = getByLabelText(
-    'I understand that the funds included in this transaction will no longer be confidential.',
-    {exact: false},
-  )
-  await act(async () => userEvent.click(warningCheckbox))
-  await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).not.toBeInTheDocument())
-
   // Click correct send button and check if it was called with correct params
+  const sendButton = getAllByText(/Send.*/)[1]
   await act(async () => userEvent.click(sendButton))
   await waitFor(() =>
     expect(send).toBeCalledWith(
       recipient,
-      usedAtom,
-      mockEstimateCalculator(usedAtom)(baseEstimates.medium),
+      usedWei,
+      mockEstimateCalculator(usedWei)(baseEstimates.medium),
     ),
   )
 })
@@ -518,14 +505,4 @@ test('Receive modal works with transparent addresses', async () => {
   // Generate 1 more address
   act(() => userEvent.click(generateNewButton))
   await waitFor(() => expect(getByText(getTransparentAddress(1))).toBeInTheDocument())
-})
-
-// Navigation
-test('Should navigation to accounts', async () => {
-  const goToAccounts = jest.fn()
-  const {getByText} = renderTransactionHistory({goToAccounts})
-  const transparentAccounts = getByText('Transparent Accounts')
-  userEvent.click(transparentAccounts)
-
-  expect(goToAccounts).toBeCalled()
 })
