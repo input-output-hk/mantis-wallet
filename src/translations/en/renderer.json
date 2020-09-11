@@ -40,9 +40,7 @@
       "removeWallet": "Remove Wallet",
       "yourConfidentialAddress": "Your Confidential Address",
       "receiveTransparentAccount": "Receive Account {{index}}",
-      "sendFromConfidentialToConfidential": "Confidential → Confidential",
-      "sendFromConfidentialToTransparent": "Confidential → Transparent",
-      "sendFromTransparentToConfidential": "Transparent → Confidential"
+      "send": "Send Transaction"
     },
     "button": {
       "clearRecoveryPhraseInput": "Clear",
@@ -90,12 +88,9 @@
       "transactionId": "Transaction ID",
       "transparentAccountAddress": "Account",
       "accountTotalBalance": "Total Balance",
-      "accountConfidentialBalance": "Confidential",
-      "accountTransparentBalance": "Transparent",
       "walletName": "Wallet Name",
       "revealPrivateKey": "Reveal Private Key",
       "lastUsedAddresses": "Last used addresses",
-      "selectAccount": "Select Account",
       "encryptedMemo": "Encrypted Memo",
       "contractCallMessage": "Contract Message"
     },
@@ -117,8 +112,7 @@
       "walletNameShouldNotBeEmpty": "Name shouldn't be empty",
       "recipientMustBe": "Recipient must be set",
       "couldNotRestoreWallet": "Couldn't restore wallet with the provided information",
-      "textIsLimitedToBytes": "The text is limited to {{count}} byte",
-      "textIsLimitedToBytes_plural": "The text is limited to {{count}} bytes"
+      "textIsLimitedToBytes": "The text is limited to {{count}} byte"
     },
     "message": {
       "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",

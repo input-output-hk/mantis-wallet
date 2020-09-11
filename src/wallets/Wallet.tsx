@@ -1,6 +1,5 @@
 import React from 'react'
 import {EmptyProps} from 'antd/lib/empty'
-import BigNumber from 'bignumber.js'
 import {WalletOverview} from './WalletOverview'
 import {TransactionHistory} from './TransactionHistory'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
@@ -35,15 +34,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
         sendTransaction={async (recipient: string, amount: number, fee: number, memo: string) => {
           await walletState.sendTransaction(recipient, amount, fee, memo)
         }}
-        sendTxToTransparent={async (
-          recipient: string,
-          amount: BigNumber,
-          fee: BigNumber,
-        ): Promise<void> => {
-          await walletState.sendTxToTransparent(recipient, amount, fee)
-        }}
         estimateTransactionFee={walletState.estimateTransactionFee}
-        estimatePublicTransactionFee={walletState.estimatePublicTransactionFee}
         generateTransparentAddress={walletState.generateTransparentAccount}
         generatePrivateAddress={walletState.generatePrivateAccount}
       />

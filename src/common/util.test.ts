@@ -45,9 +45,9 @@ it('validates amount correctly', () => {
     tKey: ['common', 'error', 'mustBeANumberGreaterThan'],
     options: {replace: {minValue: 0}},
   })
-  assert.deepEqual(validateAmount('0.000000001'), {
+  assert.deepEqual(validateAmount('0.0000000000000000001'), {
     tKey: ['common', 'error', 'atMostDecimalPlacesArePermitted'],
-    options: {count: 8},
+    options: {count: 18},
   })
   assert.equal(validateAmount('0.00000001'), 'OK')
   assert.equal(validateAmount('0.000001'), 'OK')

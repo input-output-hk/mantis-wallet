@@ -77,7 +77,7 @@ const messageForHasAtMostDecimalPlaces = (dp: number): Translatable =>
     ? {tKey: ['common', 'error', 'itMustBeAnInteger']}
     : {tKey: ['common', 'error', 'atMostDecimalPlacesArePermitted'], options: {count: dp}}
 
-export const hasAtMostDecimalPlaces = (dp = 8) => (b: BigNumber): ValidationResult =>
+export const hasAtMostDecimalPlaces = (dp = 18) => (b: BigNumber): ValidationResult =>
   b.dp() > dp ? messageForHasAtMostDecimalPlaces(dp) : 'OK'
 
 export function validateAmount(

@@ -36,9 +36,7 @@ export const withNoTransactions = (): JSX.Element => (
     privateAddresses={privateAddresses}
     availableBalance={new BigNumber(0)}
     sendTransaction={asyncAction('on-send-transaction')}
-    sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
-    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateTransparentAddress={asyncAction('on-generate-transparent-address')}
     generatePrivateAddress={asyncAction('on-generate-private-address')}
   />
@@ -51,9 +49,7 @@ export const withDemoTransactions = (): JSX.Element => (
     privateAddresses={privateAddresses}
     availableBalance={ether('Available Balance', 1000)}
     sendTransaction={asyncAction('on-send-transaction')}
-    sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
-    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
     generateTransparentAddress={asyncAction('on-generate-transparent-address')}
     generatePrivateAddress={asyncAction('on-generate-private-address')}
   />
@@ -118,9 +114,7 @@ export const interactive = (): JSX.Element => {
       privateAddresses={privateAddresses}
       availableBalance={ether('Available Balance', 1000)}
       sendTransaction={asyncAction('on-send-transaction')}
-      sendTxToTransparent={asyncAction('on-send-tx-to-transparent')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
-      estimatePublicTransactionFee={estimateFeesWithRandomDelay}
       generateTransparentAddress={asyncAction('on-generate-transparent-address')}
       generatePrivateAddress={asyncAction('on-generate-private-address')}
     />
@@ -132,10 +126,7 @@ export const sendConfidentialTransaction = (): JSX.Element => (
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     onSendToConfidential={asyncAction('on-send')}
-    onSendToTransparent={asyncAction('on-send-to-transparent')}
     estimatePrivateTransactionFee={estimateFeesWithRandomDelay}
-    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
-    defaultMode="confidential"
     visible
   />
 )
@@ -145,10 +136,7 @@ export const sendTransparentTransaction = (): JSX.Element => (
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     onSendToConfidential={asyncAction('on-send')}
-    onSendToTransparent={asyncAction('on-send-to-transparent')}
     estimatePrivateTransactionFee={estimateFeesWithRandomDelay}
-    estimatePublicTransactionFee={estimateFeesWithRandomDelay}
-    defaultMode="transparent"
     visible
   />
 )
@@ -163,7 +151,6 @@ export const receiveConfidentialTransaction = (): JSX.Element => (
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNewTransparent={asyncAction('generate-new-transparent')}
     onGenerateNewPrivate={asyncAction('generate-new-private')}
-    defaultMode="confidential"
     visible
   />
 )
@@ -175,7 +162,6 @@ export const receiveTransparentTransaction = (): JSX.Element => (
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNewTransparent={asyncAction('generate-new-transparent')}
     onGenerateNewPrivate={asyncAction('generate-new-private')}
-    defaultMode="transparent"
     visible
   />
 )
@@ -187,7 +173,6 @@ export const receiveTransparentTransactionEmptyModal = (): JSX.Element => (
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNewTransparent={asyncAction('generate-new-transparent')}
     onGenerateNewPrivate={asyncAction('generate-new-private')}
-    defaultMode="transparent"
     visible
   />
 )
