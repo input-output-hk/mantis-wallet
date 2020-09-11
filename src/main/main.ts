@@ -225,7 +225,7 @@ if (config.runClients) {
   let runningClients: SpawnedMidnightProcess[] | null = null
 
   async function fetchParams(): Promise<void> {
-    mainLog.info('Fetching Sonics parameters')
+    mainLog.info('Fetching parameters')
     setFetchParamsStatus('running')
     const nodeConfig = config.clientConfigs.node
     const nodePath = processExecutablePath(nodeConfig)
@@ -246,7 +246,7 @@ if (config.runClients) {
         showErrorBox(
           t,
           t(['dialog', 'title', 'startupError']),
-          t(['dialog', 'error', 'sonicsParamsFetching']),
+          t(['dialog', 'error', 'paramsFetching']),
         )
         app.exit(1)
         return Promise.reject(error)

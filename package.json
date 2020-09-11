@@ -2,7 +2,7 @@
   "name": "luna-wallet",
   "productName": "Luna",
   "version": "0.14.0",
-  "compatibleMidnightVersions": "0.14.x",
+  "compatibleNodeVersions": "0.14.x",
   "private": true,
   "engines": {
     "node": "^12.13.0"

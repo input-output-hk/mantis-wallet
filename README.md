@@ -1,6 +1,6 @@
-# Luna Wallet
+# Luna Mantis
 
-Wallet for Midnight.
+Wallet for ETC Mantis.
 
 ## Prerequisites
 
@@ -98,4 +98,4 @@ Remember to clone the repo with `autocrlf` disabled in git.
 
 If you're making a new release, don't forget to:
 - Bump `version` in `package.json`
-- Update `compatibleMidnightVersions` in `package.json` to the range of acceptable backend versions (regarding data directory / database compatibility)
+- Update `compatibleNodeVersions` in `package.json` to the range of acceptable backend versions (regarding data directory / database compatibility)

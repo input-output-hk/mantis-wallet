@@ -50,12 +50,8 @@
       "sortByDropdown": "Sort by",
       "sendTransaction": "Send",
       "receiveTransaction": "Receive",
-      "showTransactions": "Transactions",
-      "collapseTransactions": "Collapse Transactions",
       "generateNewAddress": "Generate New Address",
       "generateNewAddressShort": "Generate New",
-      "goBackToOverview": "Back to Overview",
-      "hideEmptyAccounts": "Hide Empty Accounts",
       "showErrorStacktrace": "Show Stacktrace",
       "reloadWalletNow": "Reload Now",
       "createWallet": "Create",
@@ -65,7 +61,6 @@
       "logOutOfWallet": "Log Out",
       "removeWallet": "Remove Wallet",
       "copyAddress": "Copy Address",
-      "useFullAmount": "Full Amount",
       "generateTransparentAccount": "Generate Transparent Address"
     },
     "link": {
@@ -135,8 +130,6 @@
       "transparentAddressWasGenerated": "New transparent address was generated",
       "noTransparentAccounts": "You have no transparent accounts. Click on \"$t(wallet.button.generateNewAddress)\" to generate one.",
       "reloadingWalletInCount": "Reloading wallet in <strong>{{countdown}}</strong>…",
-      "transparentFundsDescription": "These funds are transparent and can be visible to other Midnight users, we recommend you move them to a confidential address.",
-      "howToViewTransparentBalancesInfo": "To view your transparent balances, click the Transparent Accounts button below.",
       "createNewWalletDescription": "Create a New Wallet",
       "restoreWalletDescription": "Restore wallet using Backup\u00a0Recovery\u00a0Phrase or Private\u00a0Key",
       "recoveryPhraseDescription1": "This is your wallet backup phrase. It can be entered into any version of Luna Wallet in order to restore your wallet",
@@ -153,11 +146,8 @@
       "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
       "noKnownTransparentAddresses": "No known addresses",
       "transparentAddressWarning": "<strong>Warning:</strong> By using a transparent address your transaction will not stay confidential.",
-      "applyConfidentialityDescription": "This transaction will move selected funds to your confidential address which will remove their visibility from the Midnight Blockchain.",
-      "transparentTransactionWarning": "<strong>Warning:</strong> I understand that the funds included in this transaction will no longer be confidential.",
       "transparentAddressNeeded": "You need a transparent address to continue",
-      "walletIsNotSyncing": "Wallet is not syncing.",
-      "generatedYourFirstTransparentAddress": "We generated your first transparent address."
+      "walletIsNotSyncing": "Wallet is not syncing."
     },
     "feeEstimateLevels": {
       "custom": "Custom",
@@ -177,19 +167,14 @@
       "buildingTransaction_plural": "Building {{count}} transactions",
       "finishedTxBuilding": "Finished"
     },
-    "balanceType": {
-      "confidentialPercentage": "{{percentage}} Confidential",
-      "transparentPercentage": "{{percentage}} Transparent",
-      "pendingPercentage": "{{percentage}} Pending"
-    },
     "transactionStatus": {
       "pending": "Pending",
       "confirmed": "Confirmed",
       "persisted": "Persisted",
       "failed": "Failed",
       "failedToExecute": "Failed to execute",
-      "pendingDescription": "Transaction waiting to be added to a block in the Midnight Chain",
-      "confirmedDescription": "Transaction has been added to a block in the Midnight Chain",
+      "pendingDescription": "Transaction waiting to be added to a block in the chain",
+      "confirmedDescription": "Transaction has been added to a block in the chain",
       "persistedDescription": "Transaction cannot be rolled back",
       "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed",
       "failedToExecuteDescription": "Transaction was added to blockchain but smart contract call resulted with error",
@@ -222,9 +207,9 @@
       "lunaMainProcessID": "Luna main process ID",
       "lunaRendererProcessID": "Luna renderer process ID",
       "lunaLocalDirectory": "Luna local directory",
-      "midnightBackend": "Midnight backend",
+      "backend": "Backend",
       "network": "Network",
-      "sonicsParamsFetching": "Sonics params fetching",
+      "paramsFetching": "Params fetching",
       "nodeStatus": "Node status",
       "nodeProcessID": "Node process ID",
       "walletStatus": "Wallet status",
@@ -331,13 +316,12 @@
       "support": "Support",
       "status": "Status",
       "showDetails": "Show details",
-      "learnMore": "Learn more",
-      "whatIsThis": "What is this?"
+      "learnMore": "Learn more"
     },
     "initializationStatus": {
       "initLuna": "Initializing Luna",
-      "sonicsParamsFetching": "Sonics params fetching",
-      "startingMidnight": "Starting Midnight node",
+      "paramsFetching": "Params fetching",
+      "startingNode": "Starting node",
       "connectingToWallet": "Connecting to wallet",
       "loading": "Loading"
     },
