@@ -1,153 +1,29 @@
-import React, {useState, FunctionComponent} from 'react'
+import React, {FunctionComponent} from 'react'
 import _ from 'lodash/fp'
 import {ModalProps} from 'antd/lib/modal'
 import {LunaModal, ModalLocker, ScrollableModalFooter} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
-import {TransparentAddress, PrivateAddress} from '../../web3'
-import {useLocalizedUtilities, useTranslation} from '../../settings-state'
-import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
+import {PrivateAddress} from '../../web3'
+import {useLocalizedUtilities} from '../../settings-state'
 import {CopyableLongText} from '../../common/CopyableLongText'
-import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {Trans} from '../../common/Trans'
 import './ReceiveTransaction.scss'
 
 type OnGenerateNewCallback = () => Promise<void>
 
-interface BaseReceiveTabProps {
-  onGenerateNew: OnGenerateNewCallback
-  newestAddress?: TransparentAddress | PrivateAddress
-  onSetLoading: (isLoading: boolean) => void
-}
-
-interface ReceivePrivateTabProps extends BaseReceiveTabProps {
-  newestAddress: PrivateAddress
-}
-
-interface ReceivePublicTabProps extends BaseReceiveTabProps {
-  newestAddress?: TransparentAddress
-}
-
 interface ReceiveTransactionProps {
-  onGenerateNewTransparent: OnGenerateNewCallback
-  onGenerateNewPrivate: OnGenerateNewCallback
-  transparentAddresses: TransparentAddress[]
-  privateAddresses: PrivateAddress[]
-  defaultMode?: 'transparent' | 'confidential'
-  hideModeSwitch?: boolean
-}
-
-const ReceivePrivateTransaction: FunctionComponent<ReceivePrivateTabProps> = ({
-  onGenerateNew,
-  newestAddress,
-  onSetLoading,
-}: ReceivePrivateTabProps) => {
-  const modalLocker = ModalLocker.useContainer()
-  const {copyToClipboard} = useLocalizedUtilities()
-
-  const handleLoading = (isLoading: boolean): void => {
-    onSetLoading(isLoading)
-    modalLocker.setLocked(isLoading)
-  }
-
-  return (
-    <Dialog
-      leftButtonProps={{
-        children: <Trans k={['wallet', 'button', 'copyAddress']} />,
-        autoFocus: true,
-        onClick: async (): Promise<void> => {
-          if (newestAddress) {
-            await copyToClipboard(newestAddress.address)
-          }
-        },
-      }}
-      rightButtonProps={{
-        type: 'default',
-        children: <Trans k={['wallet', 'button', 'generateNewAddressShort']} />,
-        onClick: onGenerateNew,
-      }}
-      onSetLoading={handleLoading}
-      type="dark"
-    >
-      <div className="title">
-        <Trans k={['wallet', 'title', 'yourConfidentialAddress']} />
-      </div>
-      <DialogQRCode content={newestAddress.address} />
-    </Dialog>
-  )
-}
-
-const ReceivePublicTransaction: FunctionComponent<ReceivePublicTabProps> = ({
-  onGenerateNew,
-  newestAddress,
-  onSetLoading,
-}: ReceivePublicTabProps) => {
-  const modalLocker = ModalLocker.useContainer()
-  const {copyToClipboard} = useLocalizedUtilities()
-
-  const title = newestAddress ? (
-    <Trans
-      k={['wallet', 'title', 'receiveTransparentAccount']}
-      values={{index: newestAddress.index}}
-    />
-  ) : (
-    <Trans k={['wallet', 'message', 'noKnownTransparentAddresses']} />
-  )
-
-  const handleLoading = (isLoading: boolean): void => {
-    onSetLoading(isLoading)
-    modalLocker.setLocked(isLoading)
-  }
-
-  return (
-    <Dialog
-      leftButtonProps={{
-        children: <Trans k={['wallet', 'button', 'copyAddress']} />,
-        autoFocus: true,
-        onClick: async (): Promise<void> => {
-          if (newestAddress) {
-            await copyToClipboard(newestAddress.address)
-          }
-        },
-        disabled: !newestAddress,
-      }}
-      rightButtonProps={{
-        type: 'default',
-        children: <Trans k={['wallet', 'button', 'generateNewAddressShort']} />,
-        onClick: onGenerateNew,
-      }}
-      onSetLoading={handleLoading}
-      type="dark"
-    >
-      <div className="title">{title}</div>
-      {newestAddress && (
-        <>
-          <DialogQRCode content={newestAddress.address} />
-          <DialogMessage type="highlight">
-            <Trans k={['wallet', 'message', 'transparentAddressWarning']} />
-          </DialogMessage>
-        </>
-      )}
-    </Dialog>
-  )
+  onGenerateNew: OnGenerateNewCallback
+  addresses: PrivateAddress[]
 }
 
 export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & ModalProps> = ({
-  transparentAddresses,
-  privateAddresses,
-  onGenerateNewTransparent,
-  onGenerateNewPrivate,
-  defaultMode = 'confidential',
-  hideModeSwitch,
+  addresses,
+  onGenerateNew,
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
-  const {t} = useTranslation()
-  const [mode, setMode] = useState(defaultMode)
-  const [isLoading, setLoading] = useState(false)
-
-  const addresses = mode === 'transparent' ? transparentAddresses : privateAddresses
-
-  const newestAddress = _.head(addresses)
+  const newestAddress = _.head(addresses) as PrivateAddress
+  const {copyToClipboard} = useLocalizedUtilities()
 
   // Address List Component
   const usedAddresses = addresses && addresses.length > 1 && (
@@ -165,41 +41,41 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
     </ScrollableModalFooter>
   )
 
-  return (
-    <LunaModal footer={usedAddresses} wrapClassName="ReceiveModal" {...props}>
+  const ReceiveDialog = (): JSX.Element => {
+    const modalLocker = ModalLocker.useContainer()
+    const handleLoading = (isLoading: boolean): void => {
+      modalLocker.setLocked(isLoading)
+    }
+    return (
       <Dialog
         leftButtonProps={{
-          doNotRender: true,
+          children: <Trans k={['wallet', 'button', 'copyAddress']} />,
+          autoFocus: true,
+          onClick: async (): Promise<void> => {
+            if (newestAddress) {
+              await copyToClipboard(newestAddress.address)
+            }
+          },
         }}
         rightButtonProps={{
-          doNotRender: true,
+          type: 'default',
+          children: <Trans k={['wallet', 'button', 'generateNewAddressShort']} />,
+          onClick: onGenerateNew,
         }}
+        onSetLoading={handleLoading}
+        type="dark"
       >
-        {!hideModeSwitch && (
-          <DialogTextSwitch
-            buttonClassName="mode-switch"
-            defaultMode={mode}
-            left={{label: t(['wallet', 'transactionType', 'transparent']), type: 'transparent'}}
-            right={{label: t(['wallet', 'transactionType', 'confidential']), type: 'confidential'}}
-            onChange={setMode}
-            disabled={isLoading}
-          />
-        )}
+        <div className="title">
+          <Trans k={['wallet', 'title', 'yourAddress']} />
+        </div>
+        <DialogQRCode content={newestAddress.address} />
       </Dialog>
-      {mode === 'confidential' && (
-        <ReceivePrivateTransaction
-          newestAddress={newestAddress as PrivateAddress} // There's always at least one private address in the array
-          onGenerateNew={onGenerateNewPrivate}
-          onSetLoading={setLoading}
-        />
-      )}
-      {mode === 'transparent' && (
-        <ReceivePublicTransaction
-          newestAddress={newestAddress}
-          onGenerateNew={onGenerateNewTransparent}
-          onSetLoading={setLoading}
-        />
-      )}
+    )
+  }
+
+  return (
+    <LunaModal footer={usedAddresses} wrapClassName="ReceiveModal" {...props}>
+      <ReceiveDialog />
     </LunaModal>
   )
 }

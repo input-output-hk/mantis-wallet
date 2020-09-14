@@ -29,8 +29,8 @@ const RECIPIENT_FIELD = 'recipient-address'
 
 interface SendTransactionProps {
   availableAmount: BigNumber
-  onSendToConfidential: (recipient: string, amount: number, fee: number) => Promise<void>
-  estimatePrivateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
+  onSend: (recipient: string, amount: number, fee: number) => Promise<void>
+  estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
 }
 
 const AddressField = ({
@@ -60,8 +60,8 @@ const AddressField = ({
 
 export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
   availableAmount,
-  onSendToConfidential,
-  estimatePrivateTransactionFee,
+  onSend,
+  estimateTransactionFee,
   onCancel,
 }: SendTransactionProps & ModalProps) => {
   const {networkTag: optionalNetworkTag} = BackendState.useContainer()
@@ -74,17 +74,15 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
   const [recipient, setRecipient] = useState('')
 
   const rawAddressValidator = createConfidentialAddressValidator(networkTag)
-  const estimateTransactionFee = (): Promise<FeeEstimates> =>
-    estimatePrivateTransactionFee(Ether.toBasic(new BigNumber(amount)))
-  const onSend = (): Promise<void> =>
-    onSendToConfidential(recipient, Number(Ether.toBasic(amount)), Number(Ether.toBasic(fee)))
+  const _estimateTransactionFee = (): Promise<FeeEstimates> =>
+    estimateTransactionFee(Ether.toBasic(new BigNumber(amount)))
 
   const feeValidationResult = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(t, availableAmount)
   const addressValidator = toAntValidator(t, rawAddressValidator)
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
-    estimateTransactionFee,
+    _estimateTransactionFee,
     [amount, recipient, networkTag],
     async (): Promise<void> => {
       if (amount !== '0') {
@@ -111,7 +109,8 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'sendTransaction']),
-          onClick: onSend,
+          onClick: (): Promise<void> =>
+            onSend(recipient, Number(Ether.toBasic(amount)), Number(Ether.toBasic(fee))),
           disabled: disableSend,
         }}
         onSetLoading={modalLocker.setLocked}

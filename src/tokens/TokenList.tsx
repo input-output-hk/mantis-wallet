@@ -54,7 +54,7 @@ const Accounts = ({
     <div className="accounts">
       <div className="accounts-header">
         <div>
-          <Trans k={['tokens', 'label', 'transparentAddress']} />
+          <Trans k={['tokens', 'label', 'address']} />
         </div>
         <div>
           <Trans k={['tokens', 'label', 'balance']} />

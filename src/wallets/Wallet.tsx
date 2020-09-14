@@ -7,7 +7,7 @@ import {LoadedState} from '../common/wallet-state'
 import {ExtendedTransaction} from './TransactionRow'
 
 const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
-  const {transactions, availableBalance, transparentAccounts} = walletState.getOverviewProps()
+  const {transactions, availableBalance} = walletState.getOverviewProps()
   const {callTxStatuses} = walletState
 
   const extendedTransactions = transactions.map(
@@ -28,15 +28,13 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
       <WalletOverview availableBalance={availableBalance} />
       <TransactionHistory
         transactions={extendedTransactions}
-        transparentAddresses={transparentAccounts}
-        privateAddresses={walletState.privateAccounts}
+        addresses={walletState.privateAccounts}
         availableBalance={availableBalance}
         sendTransaction={async (recipient: string, amount: number, fee: number, memo: string) => {
           await walletState.sendTransaction(recipient, amount, fee, memo)
         }}
         estimateTransactionFee={walletState.estimateTransactionFee}
-        generateTransparentAddress={walletState.generateTransparentAccount}
-        generatePrivateAddress={walletState.generatePrivateAccount}
+        generateAddress={walletState.generatePrivateAccount}
       />
     </div>
   )

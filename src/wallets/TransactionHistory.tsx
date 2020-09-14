@@ -3,7 +3,7 @@ import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
-import {TransparentAddress, PrivateAddress} from '../web3'
+import {PrivateAddress} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates} from '../common/wallet-state'
@@ -20,13 +20,11 @@ import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
   transactions: ExtendedTransaction[]
-  transparentAddresses: TransparentAddress[]
-  privateAddresses: PrivateAddress[]
+  addresses: PrivateAddress[]
   availableBalance: BigNumber
   sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<void>
   estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
-  generateTransparentAddress: () => Promise<void>
-  generatePrivateAddress: () => Promise<void>
+  generateAddress: () => Promise<void>
 }
 
 export const TransactionHistory = ({
@@ -34,10 +32,8 @@ export const TransactionHistory = ({
   availableBalance,
   sendTransaction,
   estimateTransactionFee,
-  generateTransparentAddress,
-  generatePrivateAddress,
-  transparentAddresses,
-  privateAddresses,
+  generateAddress,
+  addresses,
 }: TransactionHistoryProps): JSX.Element => {
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -98,23 +94,17 @@ export const TransactionHistory = ({
             visible={showSendModal}
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
-            onSendToConfidential={async (
-              recipient: string,
-              amount: number,
-              fee: number,
-            ): Promise<void> => {
+            onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
               await sendTransaction(recipient, amount, fee, '')
               setShowSendModal(false)
             }}
-            estimatePrivateTransactionFee={estimateTransactionFee}
+            estimateTransactionFee={estimateTransactionFee}
           />
           <ReceiveTransaction
             visible={showReceiveModal}
             onCancel={(): void => setShowReceiveModal(false)}
-            onGenerateNewTransparent={generateTransparentAddress}
-            onGenerateNewPrivate={generatePrivateAddress}
-            transparentAddresses={transparentAddresses}
-            privateAddresses={privateAddresses}
+            onGenerateNew={generateAddress}
+            addresses={addresses}
           />
         </div>
       </div>

@@ -38,8 +38,8 @@
       "exportPrivateKey": "Export Private Key",
       "logOutOfWallet": "Log Out",
       "removeWallet": "Remove Wallet",
-      "yourConfidentialAddress": "Your Confidential Address",
-      "receiveTransparentAccount": "Receive Account {{index}}",
+      "yourAddress": "Your Address",
+      "receiveAccount": "Receive Account {{index}}",
       "send": "Send Transaction"
     },
     "button": {
@@ -58,8 +58,7 @@
       "unlockPrivateKey": "Unlock",
       "logOutOfWallet": "Log Out",
       "removeWallet": "Remove Wallet",
-      "copyAddress": "Copy Address",
-      "generateTransparentAccount": "Generate Transparent Address"
+      "copyAddress": "Copy Address"
     },
     "link": {
       "viewInExplorer": "View in Explorer"
@@ -86,7 +85,6 @@
       "transactionGasPrice": "Gas Price",
       "transactionConfirmations": "Confirmations",
       "transactionId": "Transaction ID",
-      "transparentAccountAddress": "Account",
       "accountTotalBalance": "Total Balance",
       "walletName": "Wallet Name",
       "revealPrivateKey": "Reveal Private Key",
@@ -103,8 +101,7 @@
       "insufficientFunds": "Insufficient funds",
       "recoveryPhraseIsIncorrect": "The phrase is incorrect",
       "addressMustBeSet": "Address must be set",
-      "invalidTransparentAddress": "Invalid transparent address",
-      "invalidConfidentialAddress": "Invalid confidential address",
+      "invalidAddress": "Invalid address",
       "missingCharacterTypeForPassword": "Password needs to have at least 1 uppercase, 1 lowercase and 1 number character",
       "passwordMustBeAtLeast8Characters": "Password needs to be at least 8 characters",
       "walletAlreadyExists": "Wallet already exists",
@@ -121,8 +118,6 @@
       "inputRecoveryPhraseInstructions": "Re-input recovery phrase by selecting words from selection",
       "unlockedWalletNeeded": "You need an unlocked wallet to continue",
       "noTransactions": "You haven't made a transaction",
-      "transparentAddressWasGenerated": "New transparent address was generated",
-      "noTransparentAccounts": "You have no transparent accounts. Click on \"$t(wallet.button.generateNewAddress)\" to generate one.",
       "reloadingWalletInCount": "Reloading wallet in <strong>{{countdown}}</strong>…",
       "createNewWalletDescription": "Create a New Wallet",
       "restoreWalletDescription": "Restore wallet using Backup\u00a0Recovery\u00a0Phrase or Private\u00a0Key",
@@ -138,9 +133,7 @@
       "removeWalletInstruction": "Enter your password to remove your wallet.",
       "removeWalletApproval1": "I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase.",
       "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
-      "noKnownTransparentAddresses": "No known addresses",
-      "transparentAddressWarning": "<strong>Warning:</strong> By using a transparent address your transaction will not stay confidential.",
-      "transparentAddressNeeded": "You need a transparent address to continue",
+      "noKnownAddresses": "No known addresses",
       "walletIsNotSyncing": "Wallet is not syncing."
     },
     "feeEstimateLevels": {
@@ -186,7 +179,7 @@
       "coinbase": "Coinbase Transaction",
       "redeemDescription": "A transfer transaction from a transparent address to a confidential address",
       "callDescription": "A smart contract call transaction",
-      "transferDescription": "A fully confidential transfer of funds",
+      "transferDescription": "A transfer of funds",
       "coinbaseDescription": "A transfer of mining rewards"
     }
   },
@@ -252,7 +245,7 @@
       "decimals": "Decimals",
       "tokenSymbol": "Token Symbol",
       "tokenName": "Token Name",
-      "transparentAddress": "Address",
+      "address": "Address",
       "recipient": "Recipient",
       "transactionAmount": "Amount ({{tokenSymbol}})",
       "transactionFee": "Fee (DST)",

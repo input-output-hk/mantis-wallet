@@ -225,12 +225,7 @@ export const createTransparentAddressValidator = (networkTag: NetworkTag) => (
   value?: string,
 ): ValidationResult => {
   const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-uns-ad`
-  return validateBech32Address(
-    prefix,
-    20,
-    {tKey: ['wallet', 'error', 'invalidTransparentAddress']},
-    value,
-  )
+  return validateBech32Address(prefix, 20, {tKey: ['wallet', 'error', 'invalidAddress']}, value)
 }
 
 export const createConfidentialAddressValidator = (networkTag: NetworkTag) => (
@@ -241,7 +236,7 @@ export const createConfidentialAddressValidator = (networkTag: NetworkTag) => (
     prefix,
     43,
     {
-      tKey: ['wallet', 'error', 'invalidConfidentialAddress'],
+      tKey: ['wallet', 'error', 'invalidAddress'],
     },
     value,
   )

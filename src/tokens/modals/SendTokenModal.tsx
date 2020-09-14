@@ -106,7 +106,7 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
       onSetLoading={modalLocker.setLocked}
     >
       <DialogDropdown
-        label={t(['tokens', 'label', 'transparentAddress'])}
+        label={t(['tokens', 'label', 'address'])}
         options={accounts.map((ta) => ta.address)}
         onChange={(address) => {
           const account = accounts.find((ta) => ta.address === address)

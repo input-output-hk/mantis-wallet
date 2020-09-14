@@ -4,7 +4,6 @@ import {
   makeWeb3Worker,
   SpendingKey,
   SeedPhrase,
-  TransparentAddress,
   Account,
   RawSynchronizationStatus,
   PrivateAddress,
@@ -121,13 +120,8 @@ export const ApiTest = (): JSX.Element => {
         <TestButton onClick={(): Promise<boolean> => wallet.unlock({passphrase})}>
           Unlock
         </TestButton>
-        <TestButton
-          onClick={(): Promise<TransparentAddress> => wallet.generateTransparentAccount()}
-        >
-          Generate Transparent Account
-        </TestButton>
         <TestButton onClick={(): Promise<PrivateAddress> => wallet.generatePrivateAccount()}>
-          Generate Confidential Account
+          Generate Account
         </TestButton>
         <TestButton
           onClick={(): Promise<boolean> => wallet.restoreFromSpendingKey({passphrase, spendingKey})}

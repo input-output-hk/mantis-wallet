@@ -8,12 +8,7 @@ import {toHex} from '../common/util'
 import {withWalletState} from '../storybook-util/wallet-state-decorator'
 import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {ether, asyncAction} from '../storybook-util/custom-knobs'
-import {
-  dummyTransactions,
-  estimateFeesWithRandomDelay,
-  CONFIDENTIAL_ADDRESS,
-  dummyTransparentAccounts,
-} from '../storybook-util/dummies'
+import {dummyTransactions, estimateFeesWithRandomDelay, ADDRESS} from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
@@ -24,34 +19,30 @@ export default {
   decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
 }
 
-const privateAddresses = _.range(0, 20).map((index) => ({
+const addresses = _.range(0, 20).map((index) => ({
   index,
-  address: `private-address-${index}`,
+  address: `address-${index}`,
 }))
 
 export const withNoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={[]}
-    transparentAddresses={[]}
-    privateAddresses={privateAddresses}
+    addresses={addresses}
     availableBalance={new BigNumber(0)}
     sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
-    generateTransparentAddress={asyncAction('on-generate-transparent-address')}
-    generatePrivateAddress={asyncAction('on-generate-private-address')}
+    generateAddress={asyncAction('on-generate-address')}
   />
 )
 
 export const withDemoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={dummyTransactions}
-    transparentAddresses={[]}
-    privateAddresses={privateAddresses}
+    addresses={addresses}
     availableBalance={ether('Available Balance', 1000)}
     sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
-    generateTransparentAddress={asyncAction('on-generate-transparent-address')}
-    generatePrivateAddress={asyncAction('on-generate-private-address')}
+    generateAddress={asyncAction('on-generate-address')}
   />
 )
 
@@ -101,78 +92,39 @@ export const interactive = (): JSX.Element => {
           },
         }),
       ]}
-      transparentAddresses={[
-        {
-          address: text('Old address', 'old-address'),
-          index: 0,
-        },
-        {
-          address: text('New address', 'new-address'),
-          index: 1,
-        },
-      ]}
-      privateAddresses={privateAddresses}
+      addresses={addresses}
       availableBalance={ether('Available Balance', 1000)}
       sendTransaction={asyncAction('on-send-transaction')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
-      generateTransparentAddress={asyncAction('on-generate-transparent-address')}
-      generatePrivateAddress={asyncAction('on-generate-private-address')}
+      generateAddress={asyncAction('on-generate-address')}
     />
   )
 }
 
-export const sendConfidentialTransaction = (): JSX.Element => (
+export const sendTransaction = (): JSX.Element => (
   <SendTransaction
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
-    onSendToConfidential={asyncAction('on-send')}
-    estimatePrivateTransactionFee={estimateFeesWithRandomDelay}
+    onSend={asyncAction('on-send')}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
     visible
   />
 )
 
-export const sendTransparentTransaction = (): JSX.Element => (
-  <SendTransaction
-    availableAmount={ether('Available Amount', 123.456)}
-    onCancel={action('send-transaction-cancelled')}
-    onSendToConfidential={asyncAction('on-send')}
-    estimatePrivateTransactionFee={estimateFeesWithRandomDelay}
-    visible
-  />
-)
-
-export const receiveConfidentialTransaction = (): JSX.Element => (
+export const receiveTransaction = (): JSX.Element => (
   <ReceiveTransaction
-    transparentAddresses={[]}
-    privateAddresses={[
-      {address: text('Private address', CONFIDENTIAL_ADDRESS), index: 1},
-      ...privateAddresses,
-    ]}
+    addresses={[{address: text('Address', ADDRESS), index: 1}, ...addresses]}
     onCancel={action('receive-transaction-cancelled')}
-    onGenerateNewTransparent={asyncAction('generate-new-transparent')}
-    onGenerateNewPrivate={asyncAction('generate-new-private')}
+    onGenerateNew={asyncAction('generate-new')}
     visible
   />
 )
 
-export const receiveTransparentTransaction = (): JSX.Element => (
+export const receiveTransactionEmptyModal = (): JSX.Element => (
   <ReceiveTransaction
-    transparentAddresses={dummyTransparentAccounts}
-    privateAddresses={[{address: text('Private address', CONFIDENTIAL_ADDRESS), index: 0}]}
+    addresses={[{address: text('Address', ADDRESS), index: 0}]}
     onCancel={action('receive-transaction-cancelled')}
-    onGenerateNewTransparent={asyncAction('generate-new-transparent')}
-    onGenerateNewPrivate={asyncAction('generate-new-private')}
-    visible
-  />
-)
-
-export const receiveTransparentTransactionEmptyModal = (): JSX.Element => (
-  <ReceiveTransaction
-    transparentAddresses={[]}
-    privateAddresses={[{address: text('Private address', CONFIDENTIAL_ADDRESS), index: 0}]}
-    onCancel={action('receive-transaction-cancelled')}
-    onGenerateNewTransparent={asyncAction('generate-new-transparent')}
-    onGenerateNewPrivate={asyncAction('generate-new-private')}
+    onGenerateNew={asyncAction('generate-new')}
     visible
   />
 )
