@@ -14,12 +14,6 @@ export const ETC_CHAIN: Chain = {
   unitType: 'Ether',
 }
 
-export const ETH_CHAIN: Chain = {
-  symbol: 'ETH',
-  logo: ethereumLogo,
-  unitType: 'Ether',
-}
-
 export const BTC_CHAIN: Chain = {
   symbol: 'BTC',
   logo: bitcoinLogo,

@@ -1,7 +1,6 @@
 // FIXME
 export const LINKS = {
-  faucet: `faucet.example`,
-  explorer: 'explorer.example',
-  support: 'slack-url.example',
-  feedback: 'feedback-form.example',
+  explorer: 'https://ethereumclassic.org/',
+  support: 'https://ethereumclassic.org/',
+  feedback: 'https://ethereumclassic.org/',
 }
