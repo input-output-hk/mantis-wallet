@@ -1,7 +1,7 @@
 import React, {useState, FunctionComponent} from 'react'
 import {LoadingOutlined} from '@ant-design/icons'
 import _ from 'lodash/fp'
-import {LunaWalletLoader} from 'luna-wallet-loader'
+import {LunaWalletLoader} from 'luna-wallet-etc-loader'
 import {config, loadLunaStatus} from './config/renderer'
 import {SettingsState} from './settings-state'
 import {fillActionHandlers} from './common/util'
