@@ -5,20 +5,20 @@ import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {makeWeb3Worker, TransparentAddress} from '../web3'
+import {makeWeb3Worker, PrivateAddress} from '../web3'
 import {mockWeb3Worker} from '../web3-mock'
 import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {BuildJobState} from '../common/build-job-state'
 import {SettingsState} from '../settings-state'
-import {abbreviateAmountForEnUS, DIALOG_VALIDATION_ERROR} from '../common/test-helpers'
+import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {toHex} from '../common/util'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
-import {CONFIDENTIAL_ADDRESS, dummyTransparentAccounts} from '../storybook-util/dummies'
+import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
 import {ExtendedTransaction} from './TransactionRow'
 
-const {Dust} = UNITS
+const {Ether} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
@@ -30,7 +30,7 @@ const tx1: ExtendedTransaction = {
     atBlock: '0x1',
     timestamp: 1584527520,
   },
-  txValue: Dust.toBasic('123'),
+  txValue: Ether.toBasic('123'),
   txDetails: {
     txType: 'transfer',
     memo: null,
@@ -42,8 +42,8 @@ const tx2: ExtendedTransaction = {
   txDirection: 'outgoing',
   txStatus: 'pending',
   txValue: {
-    value: Dust.toBasic('123456789'),
-    fee: Dust.toBasic('100'),
+    value: Ether.toBasic('123456789'),
+    fee: Ether.toBasic('100'),
   },
   txDetails: {
     txType: 'call',
@@ -65,16 +65,9 @@ const tx2: ExtendedTransaction = {
   },
 }
 
-const transparentAddresses = [
+const addresses = [
   {
-    address: 'transparent-address',
-    index: 0,
-  },
-]
-
-const privateAddresses = [
-  {
-    address: CONFIDENTIAL_ADDRESS,
+    address: ADDRESS,
     index: 0,
   },
   {
@@ -113,16 +106,11 @@ const estimateFees = (): Promise<FeeEstimates> =>
 
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
-  transparentAddresses: transparentAddresses,
-  privateAddresses: privateAddresses,
-  availableBalance: Dust.toBasic(new BigNumber(1234)),
+  addresses: addresses,
+  availableBalance: Ether.toBasic(new BigNumber(1234)),
   sendTransaction: jest.fn(),
-  sendTxToTransparent: jest.fn(),
   estimateTransactionFee: estimateFees,
-  estimatePublicTransactionFee: estimateFees,
-  generateTransparentAddress: jest.fn(),
-  generatePrivateAddress: jest.fn(),
-  goToAccounts: jest.fn(),
+  generateAddress: jest.fn(),
 }
 
 const renderTransactionHistory = (props: Partial<TransactionHistoryProps> = {}): RenderResult => {
@@ -134,21 +122,21 @@ const renderTransactionHistory = (props: Partial<TransactionHistoryProps> = {}):
   return render(<TransactionHistory {...usedProps} />, {wrapper: WithProviders})
 }
 
-const TxHistoryWithTransparentAddressGenerator = ({
-  preparedTransparentAddresses,
+const TxHistoryWithAddressGenerator = ({
+  preparedAddresses,
 }: {
-  preparedTransparentAddresses: TransparentAddress[]
+  preparedAddresses: PrivateAddress[]
 }): JSX.Element => {
-  const [counter, setCounter] = useState(0)
+  const [counter, setCounter] = useState(1)
 
-  const transparentAddresses = counter === 0 ? [] : preparedTransparentAddresses.slice(-counter)
+  const addresses = preparedAddresses.slice(-counter)
 
   return (
     <>
       <TransactionHistory
         {...defaultProps}
-        transparentAddresses={transparentAddresses}
-        generateTransparentAddress={(): Promise<void> => {
+        addresses={addresses}
+        generateAddress={(): Promise<void> => {
           setCounter(counter + 1)
           return Promise.resolve()
         }}
@@ -157,17 +145,12 @@ const TxHistoryWithTransparentAddressGenerator = ({
   )
 }
 
-const renderTxHistoryWithTransparentAddressGenerator = (
-  preparedTransparentAddresses: TransparentAddress[] = [],
+const renderTxHistoryWithAddressGenerator = (
+  preparedAddresses: PrivateAddress[] = [],
 ): RenderResult =>
-  render(
-    <TxHistoryWithTransparentAddressGenerator
-      preparedTransparentAddresses={preparedTransparentAddresses}
-    />,
-    {
-      wrapper: WithProviders,
-    },
-  )
+  render(<TxHistoryWithAddressGenerator preparedAddresses={preparedAddresses} />, {
+    wrapper: WithProviders,
+  })
 
 test('TransactionHistory shows proper message with empty tx list', () => {
   const {getByText} = renderTransactionHistory()
@@ -218,16 +201,16 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 
 // Modals
 test('Send modal shows up', async () => {
-  const availableDust = new BigNumber(123)
+  const availableEther = new BigNumber(123)
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
-    availableBalance: Dust.toBasic(availableDust),
+    availableBalance: Ether.toBasic(availableEther),
   })
   const sendButton = getByTestId('send-button')
   await act(async () => userEvent.click(sendButton))
 
-  // Default title is 'Confidential → Confidential'
-  expect(getByText('Confidential → Confidential')).toBeInTheDocument()
+  // Default title is 'Send Transaction'
+  expect(getByText('Send Transaction')).toBeInTheDocument()
 
   // Fee estimates are shown
   expect(getByText('Fee')).toBeInTheDocument()
@@ -236,28 +219,23 @@ test('Send modal shows up', async () => {
   await waitFor(() => expect(queryByText('Fast')).toBeInTheDocument())
   await waitFor(() => expect(queryByText('Custom')).toBeInTheDocument())
 
-  // 'Tx type' field and its buttons are in the document
-  expect(getByText('Transaction Type')).toBeInTheDocument()
-  expect(getByText('Confidential')).toBeInTheDocument()
-  expect(getByText('Transparent')).toBeInTheDocument()
-
   // 'Recipient' and 'Amount' fields are two times in the document
   expect(getByText('Recipient')).toBeInTheDocument()
   expect(getByText('Amount')).toBeInTheDocument()
 
-  // Two Send buttons appeared (plus the one in TxHistory)
-  expect(getAllByText(/Send.*/)).toHaveLength(2)
+  // Send button appeared (plus the one in TxHistory)
+  expect(getAllByText(/Send.*/)).toHaveLength(3)
 })
 
-test('Send confidential transaction works', async () => {
-  const availableDust = new BigNumber(1230)
-  const usedDust = new BigNumber(951)
-  const usedAtom = Dust.toBasic(usedDust)
+test('Send transaction works', async () => {
+  const availableEther = new BigNumber(1230)
+  const usedEther = new BigNumber(951)
+  const usedWei = Ether.toBasic(usedEther)
 
   const baseEstimates = {
-    low: new BigNumber(123),
-    medium: new BigNumber(456),
-    high: new BigNumber(789),
+    low: new BigNumber(1230000000000),
+    medium: new BigNumber(4560000000000),
+    high: new BigNumber(7890000000000),
   }
   const mockEstimateCalculator = (amount: BigNumber) => (base: BigNumber): BigNumber =>
     base.plus(amount.dividedBy(1e7))
@@ -273,7 +251,7 @@ test('Send confidential transaction works', async () => {
     queryByText,
     queryAllByText,
   } = renderTransactionHistory({
-    availableBalance: Dust.toBasic(availableDust),
+    availableBalance: Ether.toBasic(availableEther),
     estimateTransactionFee: estimateFees,
     sendTransaction: send,
   })
@@ -281,18 +259,18 @@ test('Send confidential transaction works', async () => {
   await act(async () => userEvent.click(openSendModalButton))
 
   // Set recipient to a invalid address, error pops up
-  const confidentialRecipient = getByLabelText('Recipient')
-  fireEvent.change(confidentialRecipient, {target: {value: 'not-an-address'}})
-  await waitFor(() => expect(queryByText('Invalid confidential address')).toBeInTheDocument())
+  const recipient = getByLabelText('Recipient')
+  fireEvent.change(recipient, {target: {value: 'not-an-address'}})
+  await waitFor(() => expect(queryByText('Invalid address')).toBeInTheDocument())
 
   // Clear recipient, error message changes
-  act(() => userEvent.clear(confidentialRecipient))
-  await waitFor(() => expect(confidentialRecipient).toHaveAttribute('value', ''))
-  await waitFor(() => expect(queryByText('Invalid confidential address')).not.toBeInTheDocument())
+  act(() => userEvent.clear(recipient))
+  await waitFor(() => expect(recipient).toHaveAttribute('value', ''))
+  await waitFor(() => expect(queryByText('Invalid address')).not.toBeInTheDocument())
   await waitFor(() => expect(queryByText('Recipient must be set')).toBeInTheDocument())
 
   // Set recipient to a valid address
-  fireEvent.change(confidentialRecipient, {target: {value: CONFIDENTIAL_ADDRESS}})
+  fireEvent.change(recipient, {target: {value: ADDRESS}})
   await waitFor(() => expect(queryByText('Recipient must be set')).not.toBeInTheDocument())
 
   // Check correct fee estimates are shown for default (0) amount
@@ -301,231 +279,94 @@ test('Send confidential transaction works', async () => {
   await waitFor(() => expect(queryByText('0.00000789', {exact: false})).toBeInTheDocument())
 
   // Amount should be set to 0 by default
-  const confidentialAmount = getByLabelText('Amount')
-  expect(confidentialAmount).toHaveAttribute('value', '0')
+  const amount = getByLabelText('Amount')
+  expect(amount).toHaveAttribute('value', '0')
 
   // Clear amount, error pops up
-  await act(async () => userEvent.clear(confidentialAmount))
+  await act(async () => userEvent.clear(amount))
   await waitFor(() => expect(queryByText('Must be a number greater than 0')).toBeInTheDocument())
 
   // Set amount to too high value, error changes
-  fireEvent.change(confidentialAmount, {target: {value: `${usedDust.toString(10)}0`}})
+  fireEvent.change(amount, {target: {value: `${usedEther.toString(10)}0`}})
   await waitFor(() =>
     expect(queryByText('Must be a number greater than 0')).not.toBeInTheDocument(),
   )
   await waitFor(() => expect(queryByText('Insufficient funds')).toBeInTheDocument())
 
   // Set amount to correct value by deleting last digit, error disappears
-  await act(() => userEvent.type(confidentialAmount, '{backspace}'))
+  await act(() => userEvent.type(amount, '{backspace}'))
   await waitFor(() => expect(queryByText('Insufficient funds')).not.toBeInTheDocument())
 
   // Check correct fee estimates are shown for default used amount
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
       const {strict: estimateFormatted} = abbreviateAmountForEnUS(
-        Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
+        Ether.fromBasic(mockEstimateCalculator(usedWei)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })
   })
 
   // Choose slow fee
-  const slowConfidentialFeeEstimate = getAllByText('Slow')[0]
-  await act(async () => userEvent.click(slowConfidentialFeeEstimate))
+  const slowFeeEstimate = getAllByText('Slow')[0]
+  await act(async () => userEvent.click(slowFeeEstimate))
 
   // Click correct send button and check if it was called with correct params
-  const sendButton = getAllByText(/Send.*/)[1]
+  const sendButton = getAllByText(/Send.*/)[2]
   await act(async () => userEvent.click(sendButton))
   await waitFor(() =>
     expect(send).toBeCalledWith(
-      CONFIDENTIAL_ADDRESS, // the confidential address used
-      usedAtom.toNumber(), // the amount used
-      mockEstimateCalculator(usedAtom)(baseEstimates.low).toNumber(), // the lowest fee used
+      ADDRESS, // the address used
+      usedWei.toNumber(), // the amount used
+      mockEstimateCalculator(usedWei)(baseEstimates.low).toNumber(), // the lowest fee used
       '',
     ),
   )
 })
 
-test('Send transparent transaction works', async () => {
-  const availableDust = new BigNumber(1230)
-  const usedDust = new BigNumber(951)
-  const usedAtom = Dust.toBasic(usedDust)
-  const recipient = dummyTransparentAccounts[0].address
-
-  const baseEstimates = {
-    low: new BigNumber(123),
-    medium: new BigNumber(456),
-    high: new BigNumber(789),
-  }
-  const mockEstimateCalculator = (amount: BigNumber) => (base: BigNumber): BigNumber =>
-    base.plus(amount.dividedBy(1e7))
-  const estimateFees = (amount: BigNumber): Promise<FeeEstimates> =>
-    Promise.resolve(_.mapValues(mockEstimateCalculator(amount))(baseEstimates) as FeeEstimates)
-
-  const send = jest.fn()
-
-  const {
-    getByTestId,
-    getAllByText,
-    getByText,
-    queryByText,
-    getByLabelText,
-    queryAllByText,
-  } = renderTransactionHistory({
-    availableBalance: Dust.toBasic(availableDust),
-    estimatePublicTransactionFee: estimateFees,
-    sendTxToTransparent: send,
-  })
-  const openSendModalButton = getByTestId('send-button')
-  await act(async () => userEvent.click(openSendModalButton))
-
-  // Change Transaction Type to transparent, title should change with it
-  await act(async () => userEvent.click(getByText('Transparent')))
-  await waitFor(() => expect(getByText('Confidential → Transparent')).toBeInTheDocument())
-
-  // Set recipient to a confidential address, error pops up
-  const confidentialRecipient = getByLabelText('Recipient')
-  fireEvent.change(confidentialRecipient, {target: {value: CONFIDENTIAL_ADDRESS}})
-  await waitFor(() => expect(queryByText('Invalid transparent address')).toBeInTheDocument())
-
-  // Clear recipient, error message changes
-  act(() => userEvent.clear(confidentialRecipient))
-  await waitFor(() => expect(confidentialRecipient).toHaveAttribute('value', ''))
-  await waitFor(() => expect(queryByText('Invalid transparent address')).not.toBeInTheDocument())
-  await waitFor(() => expect(queryByText('Recipient must be set')).toBeInTheDocument())
-
-  // Set recipient to an valid address
-  fireEvent.change(confidentialRecipient, {target: {value: recipient}})
-  await waitFor(() => expect(queryByText('Recipient must be set')).not.toBeInTheDocument())
-
-  // Check correct fee estimates are shown for default (0) amount
-  await waitFor(() => expect(queryByText('0.00000123', {exact: false})).toBeInTheDocument())
-  await waitFor(() => expect(queryAllByText('0.00000456', {exact: false})).toHaveLength(2)) // Medium is used for total amount
-  await waitFor(() => expect(queryByText('0.00000789', {exact: false})).toBeInTheDocument())
-
-  // Amount should be set to 0 by default
-  const confidentialAmount = getByLabelText('Amount')
-  expect(confidentialAmount).toHaveAttribute('value', '0')
-
-  // Clear amount, error pops up
-  await act(async () => userEvent.clear(confidentialAmount))
-  await waitFor(() => expect(queryByText('Must be a number greater than 0')).toBeInTheDocument())
-
-  // Set amount to too high value, error changes
-  fireEvent.change(confidentialAmount, {target: {value: `${usedDust.toString(10)}0`}})
-  await waitFor(() =>
-    expect(queryByText('Must be a number greater than 0')).not.toBeInTheDocument(),
-  )
-  await waitFor(() => expect(queryByText('Insufficient funds')).toBeInTheDocument())
-
-  // Set amount to correct value by deleting last digit, error disappears
-  await act(() => userEvent.type(confidentialAmount, '{backspace}'))
-  await waitFor(() => expect(queryByText('Insufficient funds')).not.toBeInTheDocument())
-
-  // Check correct fee estimates are shown for default used amount
-  await waitFor(() => {
-    Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmountForEnUS(
-        Dust.fromBasic(mockEstimateCalculator(usedAtom)(estimate)),
-      )
-      expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
-    })
-  })
-
-  // Click correct send button, it fails since checkbox was not clicked
-  const sendButton = getAllByText(/Send.*/)[1]
-  await act(async () => userEvent.click(sendButton))
-  await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).toBeInTheDocument())
-
-  // When checkbox is clicked the error message should disappear
-  const warningCheckbox = getByLabelText(
-    'I understand that the funds included in this transaction will no longer be confidential.',
-    {exact: false},
-  )
-  await act(async () => userEvent.click(warningCheckbox))
-  await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).not.toBeInTheDocument())
-
-  // Click correct send button and check if it was called with correct params
-  await act(async () => userEvent.click(sendButton))
-  await waitFor(() =>
-    expect(send).toBeCalledWith(
-      recipient,
-      usedAtom,
-      mockEstimateCalculator(usedAtom)(baseEstimates.medium),
-    ),
-  )
-})
-
-test('Receive modal shows up with confidential address', async () => {
-  const {getByTestId, getByText} = renderTransactionHistory({privateAddresses})
+test('Receive modal shows up with address', async () => {
+  const {getByTestId, getByText} = renderTransactionHistory({addresses: addresses})
   const receiveButton = getByTestId('receive-button')
   userEvent.click(receiveButton)
 
-  // Switch between confidential and transparent view is visible
-  expect(getByText('Confidential')).toBeInTheDocument()
-  expect(getByText('Transparent')).toBeInTheDocument()
-
   // Title is visible
-  expect(getByText('Your Confidential Address')).toBeInTheDocument()
+  expect(getByText('Your Address')).toBeInTheDocument()
 
   // Address and QR code is visible
-  expect(getByText(CONFIDENTIAL_ADDRESS)).toBeInTheDocument()
+  expect(getByText(ADDRESS)).toBeInTheDocument()
   expect(getByTestId('qr-code')).toBeInTheDocument()
 
   // Address can be copied
   const copyAddressButton = getByText('Copy Address')
   act(() => userEvent.click(copyAddressButton))
-  await waitFor(() =>
-    expect(mockedCopyToClipboard).toBeCalledWith(CONFIDENTIAL_ADDRESS, expect.any(String)),
-  )
+  await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(ADDRESS, expect.any(String)))
   expect(mockedCopyToClipboard).toHaveBeenCalledTimes(1)
 })
 
-test('Receive modal works with transparent addresses', async () => {
-  const getTransparentAddress = (index: number): string =>
-    dummyTransparentAccounts[dummyTransparentAccounts.length - 1 - index].address
+test('Receive modal works with multiple addresses', async () => {
+  const getAddress = (index: number): string => addresses[addresses.length - 1 - index].address
 
-  const {getByTestId, getByText, queryByText} = renderTxHistoryWithTransparentAddressGenerator(
-    dummyTransparentAccounts,
-  )
+  const {getByTestId, getByText, queryByText} = renderTxHistoryWithAddressGenerator(addresses)
   const receiveButton = getByTestId('receive-button')
   userEvent.click(receiveButton)
 
-  const switchToTransparentButton = getByText('Transparent')
-  act(() => userEvent.click(switchToTransparentButton))
+  // One can generate a new address
+  await waitFor(() => expect(getByText(getAddress(0))).toBeInTheDocument())
+  await waitFor(() => expect(queryByText(getAddress(1))).not.toBeInTheDocument())
 
-  // Should say there are no addresses
-  expect(getByText('No known addresses')).toBeInTheDocument()
-
-  // No address can be copied
-  const copyAddressButton = getByText('Copy Address')
-  act(() => userEvent.click(copyAddressButton))
-  await waitFor(() => expect(mockedCopyToClipboard).not.toBeCalled())
-
-  // One can generate a new address and 'No known addresses disappears' and new address is shown
   const generateNewButton = getByText('Generate New', {exact: false})
   act(() => userEvent.click(generateNewButton))
-  await waitFor(() => expect(queryByText('No known addresses')).not.toBeInTheDocument())
-  await waitFor(() => expect(getByText(getTransparentAddress(0))).toBeInTheDocument())
+  await waitFor(() => expect(getByText(getAddress(1))).toBeInTheDocument())
 
   // QR code is also visible and address can be copied
   expect(getByTestId('qr-code')).toBeInTheDocument()
+  const copyAddressButton = getByText('Copy Address')
   act(() => userEvent.click(copyAddressButton))
   await waitFor(() =>
-    expect(mockedCopyToClipboard).toBeCalledWith(getTransparentAddress(0), expect.any(String)),
+    expect(mockedCopyToClipboard).toBeCalledWith(getAddress(1), expect.any(String)),
   )
 
   // Generate 1 more address
   act(() => userEvent.click(generateNewButton))
-  await waitFor(() => expect(getByText(getTransparentAddress(1))).toBeInTheDocument())
-})
-
-// Navigation
-test('Should navigation to accounts', async () => {
-  const goToAccounts = jest.fn()
-  const {getByText} = renderTransactionHistory({goToAccounts})
-  const transparentAccounts = getByText('Transparent Accounts')
-  userEvent.click(transparentAccounts)
-
-  expect(goToAccounts).toBeCalled()
+  await waitFor(() => expect(getByText(getAddress(1))).toBeInTheDocument())
 })

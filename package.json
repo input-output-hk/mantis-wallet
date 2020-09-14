@@ -2,7 +2,7 @@
   "name": "luna-wallet",
   "productName": "Luna",
   "version": "0.14.0",
-  "compatibleMidnightVersions": "0.14.x",
+  "compatibleNodeVersions": "0.14.x",
   "private": true,
   "engines": {
     "node": "^12.13.0"
@@ -99,7 +99,7 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.19",
-    "luna-wallet-loader": "git+ssh://git@github.com/input-output-hk/luna-wallet-loader.git#1315f47ca9a9414a9f72a6c2068dbc858e08cfe7",
+    "luna-wallet-etc-loader": "git+ssh://git@github.com/input-output-hk/luna-wallet-loader.git#1315f47ca9a9414a9f72a6c2068dbc858e08cfe7",
     "node-forge": "^0.9.1",
     "portfinder": "^1.0.28",
     "ps-tree": "^1.2.0",

@@ -171,13 +171,13 @@ export const dummyTransactions: ExtendedTransaction[] = [
 export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEstimates> =>
   wait(Math.floor(Math.random() * Math.floor(200))).then(() =>
     Promise.resolve({
-      low: new BigNumber(3).times(amount && !amount.isEqualTo(0) ? amount : 1),
-      medium: new BigNumber(5).times(amount && !amount.isEqualTo(0) ? amount : 1),
-      high: new BigNumber(7).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      low: new BigNumber(30000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      medium: new BigNumber(50000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      high: new BigNumber(70000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
     }),
   )
 
-export const CONFIDENTIAL_ADDRESS =
+export const ADDRESS =
   'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5'
 
 const FIRST_ERC20_TOKEN_ADDRESS = 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v6'

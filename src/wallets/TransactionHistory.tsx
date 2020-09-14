@@ -3,7 +3,7 @@ import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
-import {TransparentAddress, PrivateAddress} from '../web3'
+import {PrivateAddress} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates} from '../common/wallet-state'
@@ -20,16 +20,11 @@ import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
   transactions: ExtendedTransaction[]
-  transparentAddresses: TransparentAddress[]
-  privateAddresses: PrivateAddress[]
+  addresses: PrivateAddress[]
   availableBalance: BigNumber
   sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<void>
   estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
-  sendTxToTransparent: (recipient: string, amount: BigNumber, fee: BigNumber) => Promise<void>
-  estimatePublicTransactionFee: (amount: BigNumber, recipient: string) => Promise<FeeEstimates>
-  generateTransparentAddress: () => Promise<void>
-  generatePrivateAddress: () => Promise<void>
-  goToAccounts: () => void
+  generateAddress: () => Promise<void>
 }
 
 export const TransactionHistory = ({
@@ -37,13 +32,8 @@ export const TransactionHistory = ({
   availableBalance,
   sendTransaction,
   estimateTransactionFee,
-  sendTxToTransparent,
-  estimatePublicTransactionFee,
-  generateTransparentAddress,
-  generatePrivateAddress,
-  transparentAddresses,
-  privateAddresses,
-  goToAccounts,
+  generateAddress,
+  addresses,
 }: TransactionHistoryProps): JSX.Element => {
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -100,45 +90,21 @@ export const TransactionHistory = ({
           >
             <Trans k={['wallet', 'button', 'receiveTransaction']} />
           </Button>
-          <Button
-            type="primary"
-            disabled={transparentAddresses.length === 0}
-            className="action secondary"
-            onClick={goToAccounts}
-          >
-            <Trans k={['wallet', 'button', 'goToTransparentAccounts']} />
-          </Button>
           <SendTransaction
             visible={showSendModal}
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
-            onSendToConfidential={async (
-              recipient: string,
-              amount: number,
-              fee: number,
-              memo: string,
-            ): Promise<void> => {
-              await sendTransaction(recipient, amount, fee, memo)
+            onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
+              await sendTransaction(recipient, amount, fee, '')
               setShowSendModal(false)
             }}
-            estimatePrivateTransactionFee={estimateTransactionFee}
-            onSendToTransparent={async (
-              recipient: string,
-              amount: BigNumber,
-              fee: BigNumber,
-            ): Promise<void> => {
-              await sendTxToTransparent(recipient, amount, fee)
-              setShowSendModal(false)
-            }}
-            estimatePublicTransactionFee={estimatePublicTransactionFee}
+            estimateTransactionFee={estimateTransactionFee}
           />
           <ReceiveTransaction
             visible={showReceiveModal}
             onCancel={(): void => setShowReceiveModal(false)}
-            onGenerateNewTransparent={generateTransparentAddress}
-            onGenerateNewPrivate={generatePrivateAddress}
-            transparentAddresses={transparentAddresses}
-            privateAddresses={privateAddresses}
+            onGenerateNew={generateAddress}
+            addresses={addresses}
           />
         </div>
       </div>

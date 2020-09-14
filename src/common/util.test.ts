@@ -22,7 +22,7 @@ import {
 import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
 
-const toDust = (v: BigNumber.Value): BigNumber => UNITS.Dust.toBasic(new BigNumber(v))
+const toEther = (v: BigNumber.Value): BigNumber => UNITS.Ether.toBasic(new BigNumber(v))
 
 it('deserializes BigNumber correctly', () => {
   ;[2, -2, 2.3, 23.4].map((n: number): void => {
@@ -45,9 +45,9 @@ it('validates amount correctly', () => {
     tKey: ['common', 'error', 'mustBeANumberGreaterThan'],
     options: {replace: {minValue: 0}},
   })
-  assert.deepEqual(validateAmount('0.000000001'), {
+  assert.deepEqual(validateAmount('0.0000000000000000001'), {
     tKey: ['common', 'error', 'atMostDecimalPlacesArePermitted'],
-    options: {count: 8},
+    options: {count: 18},
   })
   assert.equal(validateAmount('0.00000001'), 'OK')
   assert.equal(validateAmount('0.000001'), 'OK')
@@ -63,8 +63,8 @@ it('validates amount correctly', () => {
     tKey: ['common', 'error', 'mustBeAtMost'],
     options: {replace: {maxValue: 5}},
   })
-  assert.equal(validateAmount('5', [areFundsEnough(toDust(5))]), 'OK')
-  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toDust(5))]), {
+  assert.equal(validateAmount('5', [areFundsEnough(toEther(5))]), 'OK')
+  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toEther(5))]), {
     tKey: ['wallet', 'error', 'insufficientFunds'],
   })
 })

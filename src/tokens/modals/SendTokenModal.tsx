@@ -99,14 +99,14 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
             account.address,
             recipient,
             new BigNumber(amount),
-            UNITS.Dust.toBasic(new BigNumber(fee)),
+            UNITS.Ether.toBasic(new BigNumber(fee)),
           ),
         disabled: sendDisabled,
       }}
       onSetLoading={modalLocker.setLocked}
     >
       <DialogDropdown
-        label={t(['tokens', 'label', 'transparentAddress'])}
+        label={t(['tokens', 'label', 'address'])}
         options={accounts.map((ta) => ta.address)}
         onChange={(address) => {
           const account = accounts.find((ta) => ta.address === address)

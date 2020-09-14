@@ -169,7 +169,7 @@ const configGetter = convict({
     default: true,
     arg: 'run-clients',
     env: 'LUNA_RUN_CLIENTS',
-    doc: 'Whether to run wallet backend and Midnight node on its own or not',
+    doc: 'Whether to run wallet backend and node on its own or not',
   },
   distPackagesDir: {
     default: defaultDistPackagesDir,

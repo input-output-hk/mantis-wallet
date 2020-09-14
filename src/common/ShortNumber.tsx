@@ -13,7 +13,7 @@ interface ShortNumberProps {
 
 export const ShortNumber = ({
   big: maybeBig,
-  unitOrDecimals = 'Dust',
+  unitOrDecimals = 'Ether',
   showSign = false,
   content = null,
 }: ShortNumberProps): JSX.Element => {

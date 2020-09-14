@@ -162,7 +162,7 @@ export const StatusModal = ({
           </div>
         </div>
         <div>
-          <div className="title">{t(['status', 'label', 'midnightBackend'])}</div>
+          <div className="title">{t(['status', 'label', 'backend'])}</div>
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'network'])}</div>
             <div className="info-value">
@@ -172,7 +172,7 @@ export const StatusModal = ({
             </div>
           </div>
           <div className="info-item">
-            <div>{getLabel(['status', 'label', 'sonicsParamsFetching'])}</div>
+            <div>{getLabel(['status', 'label', 'paramsFetching'])}</div>
             <div className="info-value">
               <VisibleStatus status={status.fetchParams.status} />
             </div>

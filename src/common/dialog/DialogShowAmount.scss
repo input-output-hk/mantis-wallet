@@ -1,8 +1,15 @@
 @import '../../themify', '../../vars', '../../partial';
 
-.DialogShowDust {
+.DialogShowAmount {
   $height: 50px;
   margin-bottom: 12px;
+
+  .svg {
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
+  }
 
   .label {
     @extend %dialog-label;
@@ -16,16 +23,17 @@
   .container {
     display: grid;
     grid-template-columns: auto 1fr;
-    padding: 0 0.5rem;
+    padding: 0 0.75rem;
     border-radius: $dialog-component-border-radius;
     cursor: not-allowed;
 
     .logo {
-      width: 40px;
+      width: 27px;
 
-      img {
-        width: auto;
-        height: $height;
+      .asset-icon {
+        position: relative;
+        top: 11px;
+        height: 2em;
       }
     }
 

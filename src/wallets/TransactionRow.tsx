@@ -7,16 +7,15 @@ import classnames from 'classnames'
 import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString, CallTxDetails} from '../web3'
-import {SettingsState, useFormatters, useTranslation} from '../settings-state'
+import {useFormatters, useTranslation} from '../settings-state'
 import {UNITS} from '../common/units'
+import {ETC_CHAIN} from '../common/chains'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
 import {Link} from '../common/Link'
 import {WalletState, TransactionStatus} from '../common/wallet-state'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
-import dustIconDark from '../assets/dark/dust.png'
-import dustIconLight from '../assets/light/dust.png'
 import transparentIcon from '../assets/icons/transparent.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import checkIcon from '../assets/icons/check.svg'
@@ -167,8 +166,8 @@ const processAmount = (
 const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Element => {
   const {abbreviateAmount} = useFormatters()
   const {value, fee, totalValue} = processAmount(txValue)
-  const abbreviateDust = (big: BigNumber): string =>
-    abbreviateAmount(UNITS.Dust.fromBasic(big)).relaxed
+  const abbreviateEther = (big: BigNumber): string =>
+    abbreviateAmount(UNITS.Ether.fromBasic(big)).relaxed
 
   return fee.isZero() ? (
     <></>
@@ -177,15 +176,15 @@ const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Ele
       <div>
         <Trans k={['wallet', 'label', 'transactionValue']} />:
       </div>
-      <div className="monospace">{abbreviateDust(value)}</div>
+      <div className="monospace">{abbreviateEther(value)}</div>
       <div>
         <Trans k={['wallet', 'label', 'transactionFee']} />:
       </div>
-      <div className="monospace">{abbreviateDust(fee)}</div>
+      <div className="monospace">{abbreviateEther(fee)}</div>
       <div>
         <Trans k={['wallet', 'label', 'transactionTotal']} />:
       </div>
-      <div className="monospace">{abbreviateDust(totalValue)}</div>
+      <div className="monospace">{abbreviateEther(totalValue)}</div>
     </div>
   )
 }
@@ -222,13 +221,10 @@ export const TxTimeCell = ({transaction: {txStatus}}: TransactionCellProps): JSX
 }
 
 export const TxAssetCell = ({}: TransactionCellProps): JSX.Element => {
-  const {theme} = SettingsState.useContainer()
-  const dustIcon = theme === 'dark' ? dustIconDark : dustIconLight
-
   return (
     <>
-      <img src={dustIcon} alt="dust" className="dust" />
-      <span>DUST</span>
+      <SVG src={ETC_CHAIN.logo} title={ETC_CHAIN.symbol} className="asset-icon svg" />
+      <span>{ETC_CHAIN.symbol}</span>
     </>
   )
 }

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 import {fromWei, toWei} from 'web3/lib/utils/utils.js'
 
-export type UnitType = 'Dust' | 'Ether' | 'Bitcoin'
+export type UnitType = 'Ether' | 'Bitcoin'
 
 interface Unit {
   fromBasic: {
@@ -15,7 +15,6 @@ interface Unit {
   }
 }
 
-const DUST_TO_ATOM = new BigNumber('1e8')
 const BITCOIN_TO_SATOSHI = new BigNumber('1e8')
 
 const createConverters = (unitToBasic: BigNumber): Unit => {
@@ -40,7 +39,6 @@ const createConverters = (unitToBasic: BigNumber): Unit => {
 }
 
 export const UNITS: Record<UnitType, Unit> = {
-  Dust: createConverters(DUST_TO_ATOM),
   Ether: {
     fromBasic: fromWei,
     toBasic: toWei,

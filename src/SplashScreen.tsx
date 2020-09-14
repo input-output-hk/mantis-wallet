@@ -1,7 +1,7 @@
 import React, {useState, FunctionComponent} from 'react'
 import {LoadingOutlined} from '@ant-design/icons'
 import _ from 'lodash/fp'
-import {LunaWalletLoader} from 'luna-wallet-loader'
+import {LunaWalletLoader} from 'luna-wallet-etc-loader'
 import {config, loadLunaStatus} from './config/renderer'
 import {SettingsState} from './settings-state'
 import {fillActionHandlers} from './common/util'
@@ -16,9 +16,9 @@ const getStatusMessage = (lunaStatus: LunaStatus): TKeyRenderer => {
   if (lunaStatus.fetchParams.status === 'notRunning') {
     return ['common', 'initializationStatus', 'initLuna']
   } else if (lunaStatus.fetchParams.status === 'running') {
-    return ['common', 'initializationStatus', 'sonicsParamsFetching']
+    return ['common', 'initializationStatus', 'paramsFetching']
   } else if (lunaStatus.fetchParams.status === 'finished') {
-    return ['common', 'initializationStatus', 'startingMidnight']
+    return ['common', 'initializationStatus', 'startingNode']
   } else if (lunaStatus.node.status === 'running' && lunaStatus.wallet.status === 'running') {
     return ['common', 'initializationStatus', 'connectingToWallet']
   }

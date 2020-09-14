@@ -115,9 +115,11 @@
     }
   }
 
-  .dust {
+  .asset-icon {
+    position: relative;
+    top: 6px;
+    height: 2em;
     margin-right: 6px;
-    float: left;
   }
 
   .amount {
@@ -167,7 +169,7 @@
 }
 
 .DetailedAmount {
-  max-width: 150px;
+  max-width: 200px;
 }
 
 .monospace {

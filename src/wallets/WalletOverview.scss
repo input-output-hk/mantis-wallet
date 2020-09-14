@@ -1,10 +1,5 @@
 @import '../themify', '../vars';
 
-$balance-padding: 24px 24px 0;
-
-$balance-width: 400px;
-$balance-min-width: 285px;
-
 .WalletOverview {
   margin: 0 0 100px;
 
@@ -13,99 +8,6 @@ $balance-min-width: 285px;
   }
 
   .balances {
-    display: grid;
-    grid-template-areas: 'left confidential total transparent right';
-    grid-template-columns:
-      1fr minmax($balance-min-width, $balance-width) minmax($balance-min-width, $balance-width)
-      minmax($balance-min-width, $balance-width) 1fr;
-    height: $balance-width;
-
-    .svg {
-      @include themify($themes) {
-        stroke-width: 0.5;
-        stroke: themed('text-color');
-        fill: themed('text-color');
-      }
-    }
-
-    .graph {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      transform: translate(-50%, -50%);
-    }
-
-    %balance {
-      height: 115px;
-      margin: auto;
-      padding: $balance-padding;
-      white-space: nowrap;
-    }
-
-    .total {
-      @extend %balance;
-      position: relative;
-      grid-area: total;
-      width: 100%;
-      text-align: center;
-    }
-
-    .confidential {
-      @extend %balance;
-      grid-area: confidential;
-      justify-self: right;
-      margin-right: 20px;
-    }
-
-    .transparent {
-      @extend %balance;
-      grid-area: transparent;
-      width: 100%;
-      justify-self: left;
-      margin-left: 20px;
-      border-radius: 20px;
-
-      @include themify($themes) {
-        background-color: themed('secondary-background');
-      }
-    }
-
-    .box-text {
-      margin-bottom: 4px;
-      font-size: $font-size-s;
-      font-weight: bold;
-      letter-spacing: $letter-spacing-large;
-      line-height: 20px;
-      text-transform: uppercase;
-    }
-
-    .box-icon {
-      display: inline;
-      position: relative;
-      top: 1px;
-      margin-right: 0.5em;
-    }
-
-    .box-amount {
-      position: relative;
-      z-index: 10;
-      font-size: 30px;
-      font-weight: 300;
-      letter-spacing: 0.69px;
-      line-height: 44px;
-    }
-
-    .dust {
-      display: inline;
-      position: relative;
-      top: -2px;
-      margin-right: 0.5em;
-    }
-
-    .get-dust {
-      padding-left: 4px;
-      font-size: $font-size-s;
-    }
+    font-size: $font-size-l;
   }
 }

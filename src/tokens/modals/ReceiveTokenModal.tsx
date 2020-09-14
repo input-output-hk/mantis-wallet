@@ -37,12 +37,9 @@ const ReceiveTokenDialog: FunctionComponent<ReceiveTokenDialogProps> = ({
   const availableBalance = newestAccount?.tokens[token.address] ?? new BigNumber(0)
 
   const title = newestAccount ? (
-    <Trans
-      k={['wallet', 'title', 'receiveTransparentAccount']}
-      values={{index: newestAccount.index}}
-    />
+    <Trans k={['wallet', 'title', 'receiveAccount']} values={{index: newestAccount.index}} />
   ) : (
-    <Trans k={['wallet', 'message', 'noKnownTransparentAddresses']} />
+    <Trans k={['wallet', 'message', 'noKnownAddresses']} />
   )
 
   return (

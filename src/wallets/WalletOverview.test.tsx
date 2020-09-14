@@ -12,21 +12,13 @@ import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
 
-const {Dust} = UNITS
+const {Ether} = UNITS
 
 const web3 = makeWeb3Worker(mockWeb3Worker)
 
 test('WalletOverview shows properly formatted balance', () => {
-  const confidential = Dust.toBasic(new BigNumber(12345))
-  const transparent = Dust.toBasic(new BigNumber(98765))
-  const pending = Dust.toBasic(new BigNumber(3456789))
-  const total = confidential.plus(transparent).plus(pending)
-
-  const balance = {
-    confidential,
-    transparent,
-    pending,
-  }
+  const availableEther = new BigNumber(12345)
+  const availableBalance = Ether.toBasic(availableEther)
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {getByText} = render(
@@ -34,19 +26,13 @@ test('WalletOverview shows properly formatted balance', () => {
       <BuildJobState.Provider initialState={{web3}}>
         <WalletState.Provider initialState={initialState}>
           <BackendState.Provider initialState={{web3}}>
-            <WalletOverview {...balance} />
+            <WalletOverview availableBalance={availableBalance} />
           </BackendState.Provider>
         </WalletState.Provider>
       </BuildJobState.Provider>
     </SettingsState.Provider>,
   )
 
-  const numbers = [confidential, transparent, total].map((big) => {
-    return abbreviateAmountForEnUS(Dust.fromBasic(big)).strict
-  })
-
-  numbers.map((formattedNumber) => {
-    // abbreviated numbers are present
-    expect(getByText(formattedNumber)).toBeInTheDocument()
-  })
+  const formattedNumber = abbreviateAmountForEnUS(Ether.fromBasic(availableBalance)).strict
+  expect(getByText(formattedNumber)).toBeInTheDocument()
 })

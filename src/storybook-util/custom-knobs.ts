@@ -3,8 +3,8 @@ import {action, ActionOptions} from '@storybook/addon-actions'
 import BigNumber from 'bignumber.js'
 import {UNITS} from '../common/units'
 
-export const dust = (name: string, value: number): BigNumber =>
-  UNITS.Dust.toBasic(new BigNumber(number(name, value)))
+export const ether = (name: string, value: number): BigNumber =>
+  UNITS.Ether.toBasic(new BigNumber(number(name, value)))
 
 export const asyncAction = (
   name: string,

@@ -13,7 +13,7 @@
       "deleteCurrentDataDir": "Delete my current data directory instead"
     },
     "error": {
-      "sonicsParamsFetching": "Failed to fetch Sonics parameters"
+      "paramsFetching": "Failed to fetch parameters"
     },
     "fileFilter": {
       "zipArchives": "Zip Archives"
@@ -34,7 +34,7 @@
   "error": {
     "invalidSpendingKey": "Possibly invalid spending key",
     "couldNotExtractCertificateData": "Could not extract generated certificate data",
-    "portsAlreadyInUse": "It seems like Midnight node is already running which prevents Luna from launching. The following ports are in use: {{ports}}"
+    "portsAlreadyInUse": "It seems like the node is already running which prevents Luna from launching. The following ports are in use: {{ports}}"
   },
   "menu": {
     "Luna": "Luna",
