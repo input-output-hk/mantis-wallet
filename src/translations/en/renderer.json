@@ -109,7 +109,10 @@
       "walletNameShouldNotBeEmpty": "Name shouldn't be empty",
       "recipientMustBe": "Recipient must be set",
       "couldNotRestoreWallet": "Couldn't restore wallet with the provided information",
-      "textIsLimitedToBytes": "The text is limited to {{count}} byte"
+      "textIsLimitedToBytes": "The text is limited to {{count}} byte",
+      "textIsLimitedToBytes_plural": "The text is limited to {{count}} bytes",
+      "noAccountWasSelected": "No account was selected to complete this action",
+      "accountNotFound": "The account {{currentAddress}} was not found. Available accounts: {{accounts}}"
     },
     "message": {
       "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",
@@ -339,7 +342,9 @@
       "ethAddressMustBeSet": "Address must be set",
       "invalidEthAddress": "Invalid address",
       "ethPrivateKeyMustBeSet": "Private key must be set",
-      "invalidEthPrivateKey": "Invalid private key"
+      "invalidEthPrivateKey": "Invalid private key",
+      "invalidSeedPhrase": "Invalid seed phrase",
+      "wrongPassword": "Key derivation failed - possibly wrong password"
     },
     "networkTag": {
       "testnet": "Testnet",

@@ -6,7 +6,7 @@ import {useTranslation} from '../../settings-state'
 
 interface WalletCreateDefineStepProps {
   cancel: () => void
-  next: (walletName: string, passphrase: string) => Promise<void>
+  next: (walletName: string, password: string) => Promise<void>
   errors?: React.ReactNode
 }
 
@@ -17,14 +17,14 @@ export const WalletCreateDefineStep: FunctionComponent<WalletCreateDefineStepPro
 }: WalletCreateDefineStepProps) => {
   const {t} = useTranslation()
   const [walletName, setWalletName] = useState('')
-  const [passphrase, setPassphrase] = useState('')
+  const [password, setPassword] = useState('')
 
   return (
     <Dialog
       title={t(['wallet', 'title', 'walletCreationFirstStep'])}
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
-        onClick: async (): Promise<void> => next(walletName, passphrase),
+        onClick: async (): Promise<void> => next(walletName, password),
       }}
       footer={errors}
     >
@@ -38,7 +38,7 @@ export const WalletCreateDefineStep: FunctionComponent<WalletCreateDefineStepPro
           rules: [{required: true, message: t(['wallet', 'error', 'walletNameShouldNotBeEmpty'])}],
         }}
       />
-      <DialogPassword onChange={setPassphrase} />
+      <DialogPassword onChange={setPassword} />
     </Dialog>
   )
 }

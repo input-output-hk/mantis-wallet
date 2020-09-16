@@ -4,11 +4,9 @@ import React, {FunctionComponent, useState} from 'react'
 import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BigNumber from 'bignumber.js'
+import Web3 from 'web3'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {makeWeb3Worker, PrivateAddress} from '../web3'
-import {mockWeb3Worker} from '../web3-mock'
-import {WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
-import {BuildJobState} from '../common/build-job-state'
+import {PrivateAddress, WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {toHex} from '../common/util'
@@ -20,7 +18,7 @@ import {ExtendedTransaction} from './TransactionRow'
 
 const {Ether} = UNITS
 
-const web3 = makeWeb3Worker(mockWeb3Worker)
+const web3 = new Web3()
 
 const tx1: ExtendedTransaction = {
   hash: '1',
@@ -89,9 +87,7 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
   return (
     <SettingsState.Provider>
       <BackendState.Provider initialState={{web3}}>
-        <BuildJobState.Provider initialState={{web3}}>
-          <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
-        </BuildJobState.Provider>
+        <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
       </BackendState.Provider>
     </SettingsState.Provider>
   )

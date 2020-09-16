@@ -6,16 +6,12 @@ import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
-import {BigNumberJSON, PaginatedCallable} from '../web3'
+import {PaginatedCallable} from '../web3'
 import {UnitType, UNITS} from './units'
 import {NETWORK_CONSTANTS} from './constants/network'
 import {Translatable, TFunctionRenderer, createTErrorRenderer} from './i18n'
 
 export type ValidationResult = Translatable | 'OK'
-
-export function deserializeBigNumber(json: BigNumberJSON): BigNumber {
-  return new BigNumber({_isBigNumber: true, ...json})
-}
 
 export const toHex = (n: number | BigNumber): string => {
   const asString = n.toString(16)

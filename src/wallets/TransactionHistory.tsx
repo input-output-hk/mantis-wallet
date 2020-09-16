@@ -3,10 +3,9 @@ import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
-import {PrivateAddress} from '../web3'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {FeeEstimates} from '../common/wallet-state'
+import {FeeEstimates, PrivateAddress} from '../common/wallet-state'
 import {
   TransactionList,
   updateSorting,

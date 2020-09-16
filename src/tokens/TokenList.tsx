@@ -21,7 +21,6 @@ interface TokenListProps {
   onRemoveToken: (tokenAddress: string) => void
   sendToken: TokensData['sendToken']
   estimateCallFee: LoadedState['estimateCallFee']
-  generateTransparentAccount: LoadedState['generateTransparentAccount']
   sendDisabled?: boolean
 }
 
@@ -31,7 +30,6 @@ interface DisplayTokenProps {
   onHideToken: (token: Token) => void
   sendToken: TokensData['sendToken']
   estimateCallFee: LoadedState['estimateCallFee']
-  generateTransparentAccount: LoadedState['generateTransparentAccount']
   sendDisabled: boolean
 }
 
@@ -99,7 +97,6 @@ const DisplayToken = ({
   onHideToken,
   sendToken,
   estimateCallFee,
-  generateTransparentAccount,
   sendDisabled,
 }: DisplayTokenProps): JSX.Element => {
   const [detailsShown, setDetailsShown] = useState(false)
@@ -196,7 +193,6 @@ const DisplayToken = ({
       )}
       <ReceiveTokenModal
         visible={showReceiveToken}
-        onGenerateAddress={generateTransparentAccount}
         onCancel={() => setShowReceiveToken(false)}
         token={token}
         accounts={transparentAccounts}
@@ -210,7 +206,6 @@ export const TokenList = ({
   sendToken,
   estimateCallFee,
   transparentAccounts,
-  generateTransparentAccount,
   onRemoveToken,
   sendDisabled = false,
 }: TokenListProps): JSX.Element => {
@@ -233,7 +228,6 @@ export const TokenList = ({
               onHideToken={setTokenToHide}
               estimateCallFee={estimateCallFee}
               sendToken={sendToken}
-              generateTransparentAccount={generateTransparentAccount}
               sendDisabled={sendDisabled}
             />
           ))}

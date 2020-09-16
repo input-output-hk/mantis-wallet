@@ -1,13 +1,7 @@
-import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
-import erc20abi from '../assets/contracts/ERC20.json'
-import {CallParams} from '../web3'
 import {Token} from './tokens-state'
 import {Formatters} from '../settings-state'
-import {bech32toHex, toHex} from '../common/util'
-
-const web3sync = new Web3()
-export const ERC20Contract = web3sync.eth.contract(erc20abi).at()
+import {CallParams} from '../common/wallet-state'
 
 export function getSendTokenParams(
   token: Token,
@@ -15,10 +9,7 @@ export function getSendTokenParams(
   recipientAddress: string,
   amount: BigNumber,
 ): CallParams {
-  const data = ERC20Contract.transfer.getData(
-    bech32toHex(recipientAddress),
-    toHex(amount.shiftedBy(token.decimals)),
-  )
+  const data = `fake data ${recipientAddress} ${amount.toString(10)}` //FIXME ETCM-115
 
   return {
     from: ['Wallet', senderAddress],

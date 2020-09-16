@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
-import {fromWei, toWei} from 'web3/lib/utils/utils.js'
 
 export type UnitType = 'Ether' | 'Bitcoin'
 
@@ -16,6 +15,7 @@ interface Unit {
 }
 
 const BITCOIN_TO_SATOSHI = new BigNumber('1e8')
+const ETHER_TO_WEI = new BigNumber('1e18')
 
 const createConverters = (unitToBasic: BigNumber): Unit => {
   function toBasic(number: string): string
@@ -39,9 +39,6 @@ const createConverters = (unitToBasic: BigNumber): Unit => {
 }
 
 export const UNITS: Record<UnitType, Unit> = {
-  Ether: {
-    fromBasic: fromWei,
-    toBasic: toWei,
-  },
+  Ether: createConverters(ETHER_TO_WEI), // FIXME ETCM-113 use web3
   Bitcoin: createConverters(BITCOIN_TO_SATOSHI),
 } as const

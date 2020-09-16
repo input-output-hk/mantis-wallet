@@ -1,12 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import addons, {makeDecorator, StoryContext, StoryGetter, StoryWrapper} from '@storybook/addons'
 import {some} from 'fp-ts/lib/Option'
+import Web3 from 'web3'
 import {BackendState} from '../common/backend-state'
-import {makeWeb3Worker} from '../web3'
-import {mockWeb3Worker} from '../web3-mock'
 import {NETWORK_SWITCHER_CHANGE} from './shared-constants'
-
-const web3 = makeWeb3Worker(mockWeb3Worker)
 
 const store: {
   networkTag: NetworkTag
@@ -22,7 +19,7 @@ const WithBackendState: StoryWrapper = (
   const channel = addons.getChannel()
 
   const [networkTag, setNetworkTag] = useState<NetworkTag>(store.networkTag)
-  const initialState = {web3, networkTag: some(networkTag)}
+  const initialState = {web3: new Web3(), networkTag: some(networkTag)}
 
   const updateNetworkTag = (networkTag: NetworkTag): void => {
     setNetworkTag(networkTag)

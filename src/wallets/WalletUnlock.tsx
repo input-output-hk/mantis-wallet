@@ -12,13 +12,13 @@ export const WalletUnlock = (): JSX.Element => {
   const isLocked = walletState.walletStatus === 'LOCKED'
 
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [passphrase, setPassphrase] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
 
   const unlock = async (): Promise<void> => {
     if (walletState.walletStatus !== 'LOCKED') return
 
     try {
-      await walletState.unlock({passphrase})
+      await walletState.unlock(password)
     } catch (e) {
       setErrorMessage(translateError(e))
     }
@@ -42,7 +42,7 @@ export const WalletUnlock = (): JSX.Element => {
             autoFocus
             label={t(['wallet', 'label', 'enterPassword'])}
             errorMessage={errorMessage}
-            onChange={(e): void => setPassphrase(e.target.value)}
+            onChange={(e): void => setPassword(e.target.value)}
           />
         </Dialog>
       </div>

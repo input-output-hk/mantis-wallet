@@ -1,14 +1,11 @@
 import {createContainer} from 'unstated-next'
 import _ from 'lodash/fp'
-import {Remote} from 'comlink'
 import BigNumber from 'bignumber.js'
+import Web3 from 'web3'
 import {Store, createInMemoryStore} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {createTErrorRenderer} from '../common/i18n'
-import {makeWeb3Worker, Web3API} from '../web3'
-import {getSendTokenParams, ERC20Contract} from './tokens-utils'
-import {toHex, bech32toHex, returnDataToHumanReadable} from '../common/util'
-import {BuildJobState} from '../common/build-job-state'
+import {returnDataToHumanReadable} from '../common/util'
 import {rendererLog} from '../common/logger'
 
 export interface Token {
@@ -42,7 +39,7 @@ export interface StoreTokensData {
 
 interface TokensInitialState {
   store: Store<StoreTokensData>
-  web3: Remote<Web3API>
+  web3: Web3
 }
 
 export const defaultTokensData = {
@@ -54,20 +51,13 @@ export const defaultTokensData = {
 function useTokenState(
   {store, web3}: TokensInitialState = {
     store: createInMemoryStore(defaultTokensData),
-    web3: makeWeb3Worker(),
+    web3: new Web3(),
   },
 ): TokensData {
-  const buildJobState = BuildJobState.useContainer()
-
-  const {
-    eth,
-    midnight: {wallet},
-  } = web3
-
   const [tokens, setTokens] = usePersistedState(store, ['tokens', 'watched'])
 
   const contractCall = async (tokenAddress: string, data: string): Promise<string> =>
-    eth.call(
+    web3.eth.call(
       {
         to: tokenAddress,
         data,
@@ -79,9 +69,9 @@ function useTokenState(
     try {
       const balance = await contractCall(
         tokenAddress,
-        ERC20Contract.balanceOf.getData(bech32toHex(tokenAddress)),
+        'ERC20Contract.balanceOf.getData(bech32toHex(tokenAddress))',
       )
-      const totalSupply = await contractCall(tokenAddress, ERC20Contract.totalSupply.getData())
+      const totalSupply = await contractCall(tokenAddress, 'ERC20Contract.totalSupply.getData()')
       return balance !== '0x' && totalSupply !== '0x'
     } catch (err) {
       rendererLog.error(err)
@@ -123,34 +113,27 @@ function useTokenState(
     amount: BigNumber,
     fee: BigNumber,
   ): Promise<void> => {
-    const callParams = getSendTokenParams(token, senderAddress, recipientAddress, amount)
-    const gasLimit = await wallet.estimateGas(callParams)
-    const gasPrice = await wallet.calculateGasPrice('call', fee.toNumber(), callParams)
-    const {jobHash} = await wallet.callContract(
-      {
-        ...callParams,
-        gasPrice: gasPrice.toString(10),
-        gasLimit: toHex(gasLimit),
-      },
-      false,
-    )
-    await buildJobState.submitJob(jobHash)
+    // FIXME ETCM-115 finish this for mantis and test tokens in overall
+    rendererLog.log(token, senderAddress, recipientAddress, amount, fee)
   }
 
   const getTokenName = async (tokenAddress: string): Promise<Partial<Token>> => {
-    const nameFromContract = await contractCall(tokenAddress, ERC20Contract.name.getData())
+    const nameFromContract = await contractCall(tokenAddress, 'ERC20Contract.name.getData()')
     const name = returnDataToHumanReadable(nameFromContract)
     return name ? {name} : {}
   }
 
   const getTokenSymbol = async (tokenAddress: string): Promise<Partial<Token>> => {
-    const symbolFromContract = await contractCall(tokenAddress, ERC20Contract.symbol.getData())
+    const symbolFromContract = await contractCall(tokenAddress, 'ERC20Contract.symbol.getData()')
     const symbol = returnDataToHumanReadable(symbolFromContract)
     return symbol ? {symbol} : {}
   }
 
   const getTokenDecimals = async (tokenAddress: string): Promise<Partial<Token>> => {
-    const decimalsFromContract = await contractCall(tokenAddress, ERC20Contract.decimals.getData())
+    const decimalsFromContract = await contractCall(
+      tokenAddress,
+      'ERC20Contract.decimals.getData()',
+    )
     const decimals = new BigNumber(decimalsFromContract)
     return decimalsFromContract !== '0x' && decimals.isFinite()
       ? {decimals: decimals.toNumber()}
@@ -177,11 +160,3 @@ function useTokenState(
 }
 
 export const TokensState = createContainer(useTokenState)
-
-export const migrationsForTokensData = {
-  '0.14.1-alpha.1': (store: Store<StoreTokensData>) => {
-    store.set('tokens', {
-      watched: {},
-    })
-  },
-}

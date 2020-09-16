@@ -8,6 +8,7 @@ import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
 import {useTranslation} from '../settings-state'
+import {createNewAccount} from '../common/mnemonic'
 
 interface WalletCreateProps {
   cancel: () => void
@@ -25,23 +26,22 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
   const [walletCreateError, setWalletCreateError] = useState('')
   const createErrors = walletCreateError ? <DialogError>{walletCreateError}</DialogError> : null
 
-  const [, setWalletName] = useState('')
-  const [passphrase, setPassphrase] = useState('')
-  const [spendingKey, setSpendingKey] = useState('')
+  const [walletName, setWalletName] = useState('')
+  const [password, setPassword] = useState('')
+  const [privateKey, setPrivateKey] = useState('')
   const [seedPhrase, setSeedPhrase] = useState<string[]>([])
 
   const cancelCreate = async (): Promise<void> => {
-    if (walletState.walletStatus === 'LOCKED') {
-      const removed = await walletState.remove({passphrase})
-      if (removed) {
-        cancel()
-        routerState.setLocked(false)
-      }
-    }
+    cancel()
+    routerState.setLocked(false)
   }
 
-  const finishCreate = (): void => {
+  const finishCreate = async (): Promise<void> => {
     routerState.setLocked(false)
+    if (walletState.walletStatus !== 'NO_WALLET') {
+      return setWalletCreateError(t(['wallet', 'error', 'walletAlreadyExists']))
+    }
+    walletState.addAccount(walletName, privateKey, password)
     finish()
   }
 
@@ -50,7 +50,7 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
       return (
         <WalletCreateDefineStep
           cancel={cancel}
-          next={async (walletName, passphrase): Promise<void> => {
+          next={async (walletName, password): Promise<void> => {
             if (walletState.walletStatus !== 'NO_WALLET') {
               return setWalletCreateError(t(['wallet', 'error', 'walletAlreadyExists']))
             }
@@ -58,14 +58,12 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
             setWalletCreateError('')
             try {
               const {
-                spendingKey: newSpendingKey,
+                privateKey: newPrivateKey,
                 seedPhrase: newSeedPhrase,
-              } = await walletState.create({
-                passphrase,
-              })
+              } = await createNewAccount()
               setWalletName(walletName)
-              setPassphrase(passphrase)
-              setSpendingKey(newSpendingKey)
+              setPassword(password)
+              setPrivateKey(newPrivateKey)
               setSeedPhrase(newSeedPhrase)
               setStep('SECURITY')
             } catch (e) {
@@ -81,7 +79,7 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
         <WalletCreateSecurityStep
           cancel={cancelCreate}
           next={(): void => setStep('DISPLAY_RECOVERY')}
-          spendingKey={spendingKey}
+          spendingKey={privateKey}
         />
       )
     case 'DISPLAY_RECOVERY':

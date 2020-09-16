@@ -15,7 +15,6 @@ let
       chmod +w $_
     done
 
-    cat package.json | jq -r '.dependencies["web3"]' | cut -d# -f2 | xargs -I% sed -i 's/%":$/develop":/' yarn.lock
     cat package.json | jq -r '.dependencies["luna-wallet-etc-loader"]' | cut -d# -f2 | xargs -I% sed -i 's/%":$/master":/' yarn.lock
     mv yarn.lock $out
   '';

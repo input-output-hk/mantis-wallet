@@ -16,19 +16,16 @@ import './ReceiveTokenModal.scss'
 
 interface ReceiveTokenDialogProps {
   token: Token
-  onGenerateAddress: () => Promise<void>
   newestAccount?: TransparentAccount
 }
 
 interface ReceiveTokenModalProps {
   token: Token
-  onGenerateAddress: () => Promise<void>
   accounts: TransparentAccount[]
 }
 
 const ReceiveTokenDialog: FunctionComponent<ReceiveTokenDialogProps> = ({
   token,
-  onGenerateAddress,
   newestAccount,
 }: ReceiveTokenDialogProps) => {
   const {abbreviateAmount} = useFormatters()
@@ -54,11 +51,7 @@ const ReceiveTokenDialog: FunctionComponent<ReceiveTokenDialogProps> = ({
         },
         disabled: !newestAccount,
       }}
-      rightButtonProps={{
-        type: 'default',
-        children: <Trans k={['wallet', 'button', 'generateNewAddressShort']} />,
-        onClick: onGenerateAddress,
-      }}
+      rightButtonProps={{doNotRender: true}}
       type="dark"
     >
       <div className="title">{title}</div>
@@ -79,7 +72,6 @@ const ReceiveTokenDialog: FunctionComponent<ReceiveTokenDialogProps> = ({
 export const ReceiveTokenModal: FunctionComponent<ReceiveTokenModalProps & ModalProps> = ({
   token,
   accounts,
-  onGenerateAddress,
   ...props
 }: ReceiveTokenModalProps & ModalProps) => {
   const {abbreviateAmount} = useFormatters()
@@ -112,11 +104,7 @@ export const ReceiveTokenModal: FunctionComponent<ReceiveTokenModalProps & Modal
 
   return (
     <LunaModal footer={usedAddresses} wrapClassName="ReceiveTokenModal" {...props}>
-      <ReceiveTokenDialog
-        token={token}
-        newestAccount={newestAccount}
-        onGenerateAddress={onGenerateAddress}
-      />
+      <ReceiveTokenDialog token={token} newestAccount={newestAccount} />
     </LunaModal>
   )
 }

@@ -11,7 +11,7 @@ import {Trans} from '../../common/Trans'
 import './LockWalletModal.scss'
 
 interface LockWalletModalProps extends ModalOnCancel {
-  lock: (passphrase: string) => Promise<void>
+  lock: (password: string) => Promise<void>
   toRemoveWallet: () => void
 }
 
@@ -21,7 +21,7 @@ const LockWalletDialog: FunctionComponent<LockWalletModalProps> = ({
   onCancel,
 }: LockWalletModalProps) => {
   const {t} = useTranslation()
-  const [passphrase, setPassphrase] = useState('')
+  const [password, setPassword] = useState('')
   const modalLocker = ModalLocker.useContainer()
 
   return (
@@ -32,7 +32,7 @@ const LockWalletDialog: FunctionComponent<LockWalletModalProps> = ({
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
-        onClick: (): Promise<void> => lock(passphrase),
+        onClick: (): Promise<void> => lock(password),
         children: t(['wallet', 'button', 'logOutOfWallet']),
       }}
       onSetLoading={modalLocker.setLocked}
@@ -41,7 +41,7 @@ const LockWalletDialog: FunctionComponent<LockWalletModalProps> = ({
         <DialogMessage>
           <Trans k={['wallet', 'message', 'lockWalletDescription']} />
         </DialogMessage>
-        <DialogInputPassword onChange={(e) => setPassphrase(e.target.value)} autoFocus />
+        <DialogInputPassword onChange={(e) => setPassword(e.target.value)} autoFocus />
         <DialogColumns>
           <Button danger {...fillActionHandlers(toRemoveWallet)}>
             <Trans k={['wallet', 'button', 'removeWallet']} />

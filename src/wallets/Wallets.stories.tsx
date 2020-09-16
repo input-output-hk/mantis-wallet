@@ -1,15 +1,12 @@
 import React, {useState, FunctionComponent} from 'react'
 import {text} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
-import {withRouterState} from '../storybook-util/router-state-decorator'
-import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {WalletListSidebar} from './WalletListSidebar'
 import {NoWallet} from './NoWallet'
 
 export default {
   title: 'Wallets',
-  decorators: [...ESSENTIAL_DECORATORS, withRouterState, withWalletState, withBuildJobState],
+  decorators: ESSENTIAL_DECORATORS,
 }
 
 // `useState` cannot be used in stories

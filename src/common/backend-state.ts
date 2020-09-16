@@ -1,9 +1,8 @@
 import {useEffect, useState} from 'react'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
+import Web3 from 'web3'
 import {none, some, Option, isNone, getOrElse} from 'fp-ts/lib/Option'
-import {Remote} from 'comlink'
-import {makeWeb3Worker, Web3API} from '../web3'
 import {waitUntil} from '../shared/utils'
 import {updateNetworkTag} from './ipc-util'
 
@@ -12,12 +11,12 @@ export interface BackendState {
 }
 
 interface BackendStateParams {
-  web3: Remote<Web3API>
+  web3: Web3
   networkTag: Option<NetworkTag>
 }
 
 const DEFAULT_STATE: BackendStateParams = {
-  web3: makeWeb3Worker(),
+  web3: new Web3(),
   networkTag: none,
 }
 
@@ -27,13 +26,14 @@ export const getNetworkTagOrTestnet: (networkTag: Option<NetworkTag>) => Network
 
 function useBackendState(initialState?: Partial<BackendStateParams>): BackendState {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
-  const {config} = _initialState.web3
 
   const [networkTag, setNetworkTag] = useState(_initialState.networkTag)
 
   const loadNetworkTag = async (): Promise<boolean> => {
     try {
-      const {networkTag} = await config.getNetworkTag()
+      const protocolVersion = await _initialState.web3.eth.getProtocolVersion()
+      // FIXME ETCM-112 we might want to show more info about version
+      const networkTag = protocolVersion === '0x1' ? 'mainnet' : 'testnet'
       setNetworkTag(some(networkTag))
       updateNetworkTag(networkTag)
       return true

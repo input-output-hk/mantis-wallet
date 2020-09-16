@@ -23,14 +23,7 @@ export const _Tokens = ({
     isValidContract,
     getTokenInfo,
   } = TokensState.useContainer()
-  const {
-    addTokensToTrack,
-    addTokenToTrack,
-    transparentAccounts,
-    estimateCallFee,
-    generateTransparentAccount,
-    getOverviewProps,
-  } = walletState
+  const {addTokensToTrack, addTokenToTrack, estimateCallFee, getOverviewProps} = walletState
 
   const [showAddToken, setShowAddToken] = useState(false)
 
@@ -57,8 +50,7 @@ export const _Tokens = ({
         </div>
         <TokenList
           tokens={orderedTokens}
-          transparentAccounts={transparentAccounts}
-          generateTransparentAccount={generateTransparentAccount}
+          transparentAccounts={[]} // FIXME ETCM-115 get accounts
           onRemoveToken={removeToken}
           sendToken={sendToken}
           estimateCallFee={estimateCallFee}

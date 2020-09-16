@@ -4,10 +4,10 @@ import {ModalProps} from 'antd/lib/modal'
 import {LunaModal, ModalLocker, ScrollableModalFooter} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
-import {PrivateAddress} from '../../web3'
 import {useLocalizedUtilities} from '../../settings-state'
 import {CopyableLongText} from '../../common/CopyableLongText'
 import {Trans} from '../../common/Trans'
+import {PrivateAddress} from '../../common/wallet-state'
 import './ReceiveTransaction.scss'
 
 type OnGenerateNewCallback = () => Promise<void>

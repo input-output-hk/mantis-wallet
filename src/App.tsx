@@ -1,21 +1,20 @@
 import React, {useState, useEffect} from 'react'
-import {makeWeb3Worker} from './web3'
+import Web3 from 'web3'
 import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
 import {SettingsState} from './settings-state'
 import {RouterState} from './router-state'
-import {BuildJobState} from './common/build-job-state'
 import {TokensState} from './tokens/tokens-state'
-import {JobStatus} from './common/JobStatus'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
 import {LUNA_VERSION} from './shared/version'
 import {rendererLog} from './common/logger'
+import {config} from './config/renderer'
 import './App.scss'
 
-const web3 = makeWeb3Worker()
+const web3 = new Web3(new Web3.providers.HttpProvider(config.rpcAddress))
 const store = createPersistentStore()
 
 const App: React.FC = () => {
@@ -24,7 +23,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const checkBackend = async (): Promise<void> => {
       try {
-        await Promise.all([web3.midnight.wallet.listAccounts(), web3.version.ethereum])
+        await web3.eth.getProtocolVersion()
         setBackendRunning(true)
         setTimeout(checkBackend, 5000)
       } catch (e) {
@@ -43,15 +42,12 @@ const App: React.FC = () => {
         {isBackendRunning ? (
           <div className="App">
             <RouterState.Provider>
-              <BuildJobState.Provider initialState={{web3}}>
-                <WalletState.Provider initialState={{web3}}>
-                  <TokensState.Provider initialState={{store, web3}}>
-                    <Sidebar version={LUNA_VERSION} />
-                    <Router />
-                    <JobStatus />
-                  </TokensState.Provider>
-                </WalletState.Provider>
-              </BuildJobState.Provider>
+              <WalletState.Provider initialState={{web3, store}}>
+                <TokensState.Provider initialState={{store, web3}}>
+                  <Sidebar version={LUNA_VERSION} />
+                  <Router />
+                </TokensState.Provider>
+              </WalletState.Provider>
             </RouterState.Provider>
           </div>
         ) : (

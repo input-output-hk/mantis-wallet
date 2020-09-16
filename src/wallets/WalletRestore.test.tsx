@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
+import Web3 from 'web3'
 import {render, fireEvent, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
@@ -8,12 +9,9 @@ import {
   WithSettingsProvider,
 } from '../common/test-helpers'
 import {WalletState, WalletStatus} from '../common/wallet-state'
-import {BuildJobState} from '../common/build-job-state'
-import {makeWeb3Worker} from '../web3'
 import {WalletRestore} from './WalletRestore'
-import {mockWeb3Worker} from '../web3-mock'
 
-const web3 = makeWeb3Worker(mockWeb3Worker)
+const web3 = new Web3()
 
 const seedPhrase = [
   'vengeful',
@@ -41,11 +39,9 @@ test('WalletRestore', async () => {
 
   const initialState = {walletStatus: 'NO_WALLET' as WalletStatus, web3}
   const {getByLabelText, getByText, queryByText, getByTestId} = render(
-    <BuildJobState.Provider initialState={{web3}}>
-      <WalletState.Provider initialState={initialState}>
-        <WalletRestore cancel={cancel} finish={finish} />
-      </WalletState.Provider>
-    </BuildJobState.Provider>,
+    <WalletState.Provider initialState={initialState}>
+      <WalletRestore cancel={cancel} finish={finish} />
+    </WalletState.Provider>,
     {wrapper: WithSettingsProvider},
   )
 

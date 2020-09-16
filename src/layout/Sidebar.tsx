@@ -166,8 +166,8 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         <LockWalletModal
           visible={activeModal === 'LockWallet'}
           toRemoveWallet={() => setActiveModal('RemoveWallet')}
-          lock={async (passphrase: string): Promise<void> => {
-            const isLocked = await walletState.lock({passphrase})
+          lock={async (password: string): Promise<void> => {
+            const isLocked = await walletState.lock(password)
             if (!isLocked) {
               throw createTErrorRenderer(['wallet', 'error', 'couldNotLockWallet'])
             }
@@ -179,8 +179,8 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <RemoveWalletModal
           visible={activeModal === 'RemoveWallet'}
-          onRemoveWallet={async (passphrase: string): Promise<void> => {
-            const removed = await walletState.remove({passphrase})
+          onRemoveWallet={async (password: string): Promise<void> => {
+            const removed = await walletState.remove(password)
             if (!removed) {
               throw createTErrorRenderer(['wallet', 'error', 'couldNotRemoveWallet'])
             }

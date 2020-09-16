@@ -5,8 +5,6 @@ import {action} from '@storybook/addon-actions'
 import {object, text} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {toHex} from '../common/util'
-import {withWalletState} from '../storybook-util/wallet-state-decorator'
-import {withBuildJobState} from '../storybook-util/build-job-state-decorator'
 import {ether, asyncAction} from '../storybook-util/custom-knobs'
 import {dummyTransactions, estimateFeesWithRandomDelay, ADDRESS} from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
@@ -16,7 +14,7 @@ import {ExtendedTransaction} from './TransactionRow'
 
 export default {
   title: 'Transaction History',
-  decorators: [...ESSENTIAL_DECORATORS, withWalletState, withBuildJobState],
+  decorators: ESSENTIAL_DECORATORS,
 }
 
 const addresses = _.range(0, 20).map((index) => ({

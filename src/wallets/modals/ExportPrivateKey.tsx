@@ -59,7 +59,7 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
   onCancel,
 }: ExportPrivateKeyModalProps) => {
   const {t} = useTranslation()
-  const [passphrase, setPassphrase] = useState('')
+  const [password, setPassword] = useState('')
   const [privateKey, setPrivateKey] = useState<Option<string>>(none)
 
   const modalLocker = ModalLocker.useContainer()
@@ -75,7 +75,7 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
       }}
       rightButtonProps={{
         onClick: async (): Promise<void> => {
-          const privateKey = await getSpendingKey({passphrase})
+          const privateKey = await getSpendingKey(password)
           setPrivateKey(some(privateKey))
         },
         children: t(['wallet', 'button', 'unlockPrivateKey']),
@@ -85,7 +85,7 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
       onSetLoading={modalLocker.setLocked}
     >
       {isNone(privateKey) ? (
-        <PasswordStep setPassphrase={setPassphrase} />
+        <PasswordStep setPassphrase={setPassword} />
       ) : (
         <RevealStep privateKey={privateKey.value} />
       )}

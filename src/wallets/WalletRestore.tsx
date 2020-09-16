@@ -6,7 +6,7 @@ import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
 import {useTranslation} from '../settings-state'
-import {createTErrorRenderer} from '../common/i18n'
+import {generatePrivateKeyFromSeedPhrase} from '../common/mnemonic'
 
 interface WalletRestoreProps {
   cancel: () => void
@@ -19,20 +19,18 @@ const _WalletRestore = ({
   walletState,
 }: PropsWithWalletState<WalletRestoreProps, NoWalletState>): JSX.Element => {
   const {t} = useTranslation()
-  const [, setWalletName] = useState('')
+  const [walletName, setWalletName] = useState('')
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
-  const [passphrase, setPassphrase] = useState('')
+  const [password, setPassword] = useState('')
   const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('spendingKey')
 
-  const restore = async (): Promise<boolean> => {
-    switch (recoveryMethod) {
-      case 'spendingKey':
-        return walletState.restoreFromSpendingKey({passphrase, spendingKey})
-      case 'seedPhrase':
-        const seedPhrase = seedPhraseString.split(' ')
-        return walletState.restoreFromSeedPhrase({passphrase, seedPhrase})
-    }
+  const restore = async (): Promise<void> => {
+    const privateKey =
+      recoveryMethod === 'seedPhrase'
+        ? await generatePrivateKeyFromSeedPhrase(seedPhraseString)
+        : spendingKey
+    walletState.addAccount(walletName, privateKey, password)
   }
 
   return (
@@ -41,10 +39,7 @@ const _WalletRestore = ({
       leftButtonProps={{onClick: cancel}}
       rightButtonProps={{
         onClick: async (): Promise<void> => {
-          const isRestored = await restore()
-          if (!isRestored) {
-            throw createTErrorRenderer(['wallet', 'error', 'couldNotRestoreWallet'])
-          }
+          await restore()
           finish()
         },
       }}
@@ -64,7 +59,7 @@ const _WalletRestore = ({
         onSpendingKeyChange={setSpendingKey}
         onSeedPhraseChange={setSeedPhrase}
       />
-      <DialogPassword onChange={setPassphrase} />
+      <DialogPassword onChange={setPassword} />
     </Dialog>
   )
 }

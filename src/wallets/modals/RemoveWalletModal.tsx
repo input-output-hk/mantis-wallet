@@ -7,7 +7,7 @@ import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {useTranslation} from '../../settings-state'
 
 interface RemoveWalletModalProps extends ModalOnCancel {
-  onRemoveWallet: (passphrase: string) => Promise<void>
+  onRemoveWallet: (password: string) => Promise<void>
 }
 
 const RemoveWalletDialog: FunctionComponent<RemoveWalletModalProps> = ({
@@ -15,7 +15,7 @@ const RemoveWalletDialog: FunctionComponent<RemoveWalletModalProps> = ({
   onCancel,
 }: RemoveWalletModalProps) => {
   const {t} = useTranslation()
-  const [passphrase, setPassphrase] = useState('')
+  const [password, setPassphrase] = useState('')
   const modalLocker = ModalLocker.useContainer()
 
   return (
@@ -26,7 +26,7 @@ const RemoveWalletDialog: FunctionComponent<RemoveWalletModalProps> = ({
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
-        onClick: (): Promise<void> => onRemoveWallet(passphrase),
+        onClick: (): Promise<void> => onRemoveWallet(password),
         children: t(['wallet', 'button', 'removeWallet']),
         danger: true,
       }}

@@ -229,26 +229,3 @@ export const useTranslation = (): Translation => SettingsState.useContainer().tr
 
 export const useLocalizedUtilities = (): LocalizedUtilities =>
   SettingsState.useContainer().localizedUtilities
-
-export const migrationsForSettingsData = {
-  '0.14.0-alpha.1': (store: Store<StoreSettingsData>) => {
-    store.set('settings', {
-      ...store.get('settings'),
-      areEmptyTransparentAccountsHidden:
-        defaultSettingsData.settings.areEmptyTransparentAccountsHidden,
-    })
-  },
-  '0.14.0-alpha.2': (store: Store<StoreSettingsData>) => {
-    store.set('settings', {
-      ...store.get('settings'),
-      dateFormat: defaultSettingsData.settings.dateFormat,
-      timeFormat: defaultSettingsData.settings.timeFormat,
-    })
-  },
-  '0.14.0-alpha.4': (store: Store<StoreSettingsData>) => {
-    store.set('settings', {
-      ...store.get('settings'),
-      language: defaultSettingsData.settings.language,
-    })
-  },
-}

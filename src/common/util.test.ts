@@ -2,7 +2,6 @@ import {assert} from 'chai'
 import {some, none} from 'fp-ts/lib/Option'
 import BigNumber from 'bignumber.js'
 import {
-  deserializeBigNumber,
   validateAmount,
   isGreaterOrEqual,
   validateEthAddress,
@@ -19,18 +18,9 @@ import {
   ValidationResult,
   utf8Length,
 } from './util'
-import {BigNumberJSON} from '../web3'
 import {UNITS} from './units'
 
 const toEther = (v: BigNumber.Value): BigNumber => UNITS.Ether.toBasic(new BigNumber(v))
-
-it('deserializes BigNumber correctly', () => {
-  ;[2, -2, 2.3, 23.4].map((n: number): void => {
-    const bigNum = new BigNumber(n)
-    const {s, e, c} = bigNum
-    assert.deepEqual(deserializeBigNumber({s, e, c} as BigNumberJSON), bigNum)
-  })
-})
 
 it('validates amount correctly', () => {
   assert.deepEqual(validateAmount('x'), {
