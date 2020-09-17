@@ -1,15 +1,16 @@
 import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import * as bech32 from 'bech32-buffer'
+import {Unit, toWei as web3ToWei, fromWei as web3FromWei} from 'web3-utils'
 import _ from 'lodash'
 import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
 import {PaginatedCallable} from '../web3'
-import {UnitType, UNITS} from './units'
 import {NETWORK_CONSTANTS} from './constants/network'
 import {Translatable, TFunctionRenderer, createTErrorRenderer} from './i18n'
+import {ETC_CHAIN} from './chains'
 
 export type ValidationResult = Translatable | 'OK'
 
@@ -59,13 +60,11 @@ export const isLowerOrEqual = (maxValue: BigNumber.Value, message?: Translatable
 
 export const areFundsEnough = (
   funds: BigNumber,
-  unitOrDecimals: number | UnitType = 'Ether',
+  decimals: number = ETC_CHAIN.decimals,
 ): ReturnType<typeof isLowerOrEqual> => {
-  const inUnits =
-    typeof unitOrDecimals === 'number'
-      ? funds.shiftedBy(-unitOrDecimals)
-      : UNITS[unitOrDecimals].fromBasic(funds)
-  return isLowerOrEqual(inUnits, {tKey: ['wallet', 'error', 'insufficientFunds']})
+  return isLowerOrEqual(funds.shiftedBy(-decimals), {
+    tKey: ['wallet', 'error', 'insufficientFunds'],
+  })
 }
 
 const messageForHasAtMostDecimalPlaces = (dp: number): Translatable =>
@@ -289,3 +288,23 @@ export const validateUtf8Length = (lengthInBytes: number) => (value?: string): V
   value != null && utf8Length(value) > lengthInBytes
     ? {tKey: ['wallet', 'error', 'textIsLimitedToBytes'], options: {count: lengthInBytes}}
     : 'OK'
+
+interface UnitConverter {
+  (number: string): string
+  (number: BigNumber): BigNumber
+}
+
+function wrapWithBigNumberSupport(fn: typeof web3ToWei | typeof web3FromWei): UnitConverter {
+  function unitConverter(number: string, unit?: Unit): string
+  function unitConverter(number: BigNumber, unit?: Unit): BigNumber
+  function unitConverter(number: string | BigNumber, unit?: Unit): string | BigNumber {
+    const bn = new BigNumber(number)
+    const v = bn.isFinite() ? fn(bn.toString(10), unit) : bn.toString(10)
+    return _.isString(number) ? v : new BigNumber(v)
+  }
+
+  return unitConverter
+}
+
+export const toWei = wrapWithBigNumberSupport(web3ToWei)
+export const fromWei = wrapWithBigNumberSupport(web3FromWei)

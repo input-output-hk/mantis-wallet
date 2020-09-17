@@ -18,11 +18,11 @@ import {
   areFundsEnough,
   validateFee,
   translateValidationResult,
+  toWei,
 } from '../../common/util'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {getSendTokenParams, formatTokenAmount} from '../tokens-utils'
-import {UNITS} from '../../common/units'
 
 interface SendTokenModalProps extends ModalOnCancel {
   estimateCallFee: LoadedState['estimateCallFee']
@@ -99,7 +99,7 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
             account.address,
             recipient,
             new BigNumber(amount),
-            UNITS.Ether.toBasic(new BigNumber(fee)),
+            toWei(new BigNumber(fee)),
           ),
         disabled: sendDisabled,
       }}

@@ -12,8 +12,8 @@ import {
   createConfidentialAddressValidator,
   translateValidationResult,
   toAntValidator,
+  toWei,
 } from '../../common/util'
-import {UNITS} from '../../common/units'
 import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates} from '../../common/wallet-state'
@@ -22,8 +22,6 @@ import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 import {useTranslation} from '../../settings-state'
 import {Trans} from '../../common/Trans'
 import './SendTransaction.scss'
-
-const {Ether} = UNITS
 
 const RECIPIENT_FIELD = 'recipient-address'
 
@@ -75,7 +73,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
 
   const rawAddressValidator = createConfidentialAddressValidator(networkTag)
   const _estimateTransactionFee = (): Promise<FeeEstimates> =>
-    estimateTransactionFee(Ether.toBasic(new BigNumber(amount)))
+    estimateTransactionFee(toWei(new BigNumber(amount)))
 
   const feeValidationResult = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(t, availableAmount)
@@ -91,7 +89,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
     },
   )
 
-  const totalAmount = new BigNumber(Ether.toBasic(amount)).plus(new BigNumber(Ether.toBasic(fee)))
+  const totalAmount = new BigNumber(toWei(amount)).plus(new BigNumber(toWei(fee)))
   const remainingBalance = totalAmount.isFinite()
     ? availableAmount.minus(totalAmount)
     : availableAmount
@@ -110,7 +108,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
         rightButtonProps={{
           children: t(['wallet', 'button', 'sendTransaction']),
           onClick: (): Promise<void> =>
-            onSend(recipient, Number(Ether.toBasic(amount)), Number(Ether.toBasic(fee))),
+            onSend(recipient, Number(toWei(amount)), Number(toWei(fee))),
           disabled: disableSend,
         }}
         onSetLoading={modalLocker.setLocked}

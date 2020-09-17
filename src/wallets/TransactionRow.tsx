@@ -8,7 +8,6 @@ import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import {Transaction, TxStatusString, CallTxDetails} from '../web3'
 import {useFormatters, useTranslation} from '../settings-state'
-import {UNITS} from '../common/units'
 import {ETC_CHAIN} from '../common/chains'
 import {ShortNumber} from '../common/ShortNumber'
 import {LINKS} from '../external-link-config'
@@ -23,6 +22,7 @@ import checkDoubleIcon from '../assets/icons/check-double.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import crossIcon from '../assets/icons/cross.svg'
 import './TransactionRow.scss'
+import {fromWei} from '../common/util'
 
 interface ExtendedCallTxDetails extends CallTxDetails {
   callTxStatus: TransactionStatus
@@ -166,8 +166,7 @@ const processAmount = (
 const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Element => {
   const {abbreviateAmount} = useFormatters()
   const {value, fee, totalValue} = processAmount(txValue)
-  const abbreviateEther = (big: BigNumber): string =>
-    abbreviateAmount(UNITS.Ether.fromBasic(big)).relaxed
+  const abbreviateEther = (big: BigNumber): string => abbreviateAmount(fromWei(big)).relaxed
 
   return fee.isZero() ? (
     <></>

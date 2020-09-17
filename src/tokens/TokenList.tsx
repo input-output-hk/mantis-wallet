@@ -67,7 +67,7 @@ const Accounts = ({
           <div>
             <ShortNumber
               big={account.tokens[token.address] ?? new BigNumber(0)}
-              unitOrDecimals={token.decimals}
+              decimals={token.decimals}
             />
           </div>
           <div className="actions">
@@ -126,7 +126,7 @@ const DisplayToken = ({
         <div>{token.name}</div>
         <div>
           <span className="amount">
-            <ShortNumber big={availableBalance} unitOrDecimals={token.decimals} />
+            <ShortNumber big={availableBalance} decimals={token.decimals} />
           </span>
         </div>
         <div className="actions">

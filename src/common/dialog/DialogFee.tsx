@@ -9,7 +9,6 @@ import {DialogState} from '../Dialog'
 import {ETC_CHAIN} from '../chains'
 import {FeeEstimates} from '../wallet-state'
 import {useFormatters} from '../../settings-state'
-import {UNITS} from '../units'
 import speedLow from '../../assets/icons/speed-low.svg'
 import speedMedium from '../../assets/icons/speed-medium.svg'
 import speedHigh from '../../assets/icons/speed-high.svg'
@@ -17,9 +16,8 @@ import {FeeLevel, allFeeLevels} from '../../web3'
 import {DialogError} from './DialogError'
 import {TKeyRenderer} from '../i18n'
 import {Trans} from '../Trans'
+import {fromWei} from '../util'
 import './DialogFee.scss'
-
-const {Ether} = UNITS
 
 interface DialogFeeProps {
   id?: string
@@ -45,7 +43,7 @@ const feeLevelIcons: Record<FeeLevel, React.ReactNode> = {
   high: <SVG src={speedHigh} className="icon" title="High" />,
 }
 
-const fieldDisplayAmount = (amount: BigNumber): string => Ether.fromBasic(amount).toString(10)
+const fieldDisplayAmount = (amount: BigNumber): string => fromWei(amount).toString(10)
 
 export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = ({
   label,
@@ -65,8 +63,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
   const {setErrorMessage} = DialogState.useContainer()
   const {abbreviateAmount} = useFormatters()
 
-  const displayAmount = (amount: BigNumber): string =>
-    abbreviateAmount(Ether.fromBasic(amount)).relaxed
+  const displayAmount = (amount: BigNumber): string => abbreviateAmount(fromWei(amount)).relaxed
 
   useEffect(() => {
     if (feeLevel != null && feeEstimates) {

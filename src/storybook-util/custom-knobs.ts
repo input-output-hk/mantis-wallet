@@ -1,10 +1,10 @@
 import {number} from '@storybook/addon-knobs'
 import {action, ActionOptions} from '@storybook/addon-actions'
 import BigNumber from 'bignumber.js'
-import {UNITS} from '../common/units'
+import {toWei} from '../common/util'
 
 export const ether = (name: string, value: number): BigNumber =>
-  UNITS.Ether.toBasic(new BigNumber(number(name, value)))
+  toWei(new BigNumber(number(name, value)))
 
 export const asyncAction = (
   name: string,

@@ -7,16 +7,14 @@ import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS} from '../common/test-helpers'
-import {UNITS} from '../common/units'
 import {BackendState} from '../common/backend-state'
-
-const {Ether} = UNITS
+import {toWei, fromWei} from '../common/util'
 
 const web3 = new Web3()
 
 test('WalletOverview shows properly formatted balance', () => {
   const availableEther = new BigNumber(12345)
-  const availableBalance = Ether.toBasic(availableEther)
+  const availableBalance = toWei(availableEther)
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {getByText} = render(
@@ -29,6 +27,6 @@ test('WalletOverview shows properly formatted balance', () => {
     </SettingsState.Provider>,
   )
 
-  const formattedNumber = abbreviateAmountForEnUS(Ether.fromBasic(availableBalance)).strict
+  const formattedNumber = abbreviateAmountForEnUS(fromWei(availableBalance)).strict
   expect(getByText(formattedNumber)).toBeInTheDocument()
 })

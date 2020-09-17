@@ -6,7 +6,7 @@ import {StopOutlined} from '@ant-design/icons'
 import {useFormatters} from '../../settings-state'
 import {ShortNumber} from '../ShortNumber'
 import {ETC_CHAIN} from '../chains'
-import {UNITS} from '../units'
+import {fromWei} from '../util'
 import './DialogShowAmount.scss'
 
 interface DialogShowAmountProps {
@@ -22,7 +22,7 @@ const ShowAmount = ({amount, displayExact}: DialogShowAmountProps): JSX.Element 
   }
 
   return displayExact ? (
-    <>{abbreviateAmount(UNITS[ETC_CHAIN.unitType].fromBasic(amount)).relaxed}</>
+    <>{abbreviateAmount(fromWei(amount)).relaxed}</>
   ) : (
     <ShortNumber big={amount} />
   )
