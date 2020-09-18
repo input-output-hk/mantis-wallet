@@ -17,10 +17,10 @@ import {
   optionHasValue,
   ValidationResult,
   utf8Length,
+  toWei,
 } from './util'
-import {UNITS} from './units'
 
-const toEther = (v: BigNumber.Value): BigNumber => UNITS.Ether.toBasic(new BigNumber(v))
+const toWeiFromNumber = (v: BigNumber.Value): BigNumber => toWei(new BigNumber(v))
 
 it('validates amount correctly', () => {
   assert.deepEqual(validateAmount('x'), {
@@ -53,8 +53,8 @@ it('validates amount correctly', () => {
     tKey: ['common', 'error', 'mustBeAtMost'],
     options: {replace: {maxValue: 5}},
   })
-  assert.equal(validateAmount('5', [areFundsEnough(toEther(5))]), 'OK')
-  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toEther(5))]), {
+  assert.equal(validateAmount('5', [areFundsEnough(toWeiFromNumber(5))]), 'OK')
+  assert.deepEqual(validateAmount('5.1', [areFundsEnough(toWeiFromNumber(5))]), {
     tKey: ['wallet', 'error', 'insufficientFunds'],
   })
 })

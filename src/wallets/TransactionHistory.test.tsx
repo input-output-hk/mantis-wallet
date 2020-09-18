@@ -9,14 +9,11 @@ import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {PrivateAddress, WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS} from '../common/test-helpers'
-import {toHex} from '../common/util'
-import {UNITS} from '../common/units'
+import {toHex, toWei, fromWei} from '../common/util'
 import {BackendState} from '../common/backend-state'
 import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
 import {ExtendedTransaction} from './TransactionRow'
-
-const {Ether} = UNITS
 
 const web3 = new Web3()
 
@@ -28,7 +25,7 @@ const tx1: ExtendedTransaction = {
     atBlock: '0x1',
     timestamp: 1584527520,
   },
-  txValue: Ether.toBasic('123'),
+  txValue: toWei('123'),
   txDetails: {
     txType: 'transfer',
     memo: null,
@@ -40,8 +37,8 @@ const tx2: ExtendedTransaction = {
   txDirection: 'outgoing',
   txStatus: 'pending',
   txValue: {
-    value: Ether.toBasic('123456789'),
-    fee: Ether.toBasic('100'),
+    value: toWei('123456789'),
+    fee: toWei('100'),
   },
   txDetails: {
     txType: 'call',
@@ -103,7 +100,7 @@ const estimateFees = (): Promise<FeeEstimates> =>
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
   addresses: addresses,
-  availableBalance: Ether.toBasic(new BigNumber(1234)),
+  availableBalance: toWei(new BigNumber(1234)),
   sendTransaction: jest.fn(),
   estimateTransactionFee: estimateFees,
   generateAddress: jest.fn(),
@@ -200,7 +197,7 @@ test('Send modal shows up', async () => {
   const availableEther = new BigNumber(123)
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
-    availableBalance: Ether.toBasic(availableEther),
+    availableBalance: toWei(availableEther),
   })
   const sendButton = getByTestId('send-button')
   await act(async () => userEvent.click(sendButton))
@@ -226,7 +223,7 @@ test('Send modal shows up', async () => {
 test('Send transaction works', async () => {
   const availableEther = new BigNumber(1230)
   const usedEther = new BigNumber(951)
-  const usedWei = Ether.toBasic(usedEther)
+  const usedWei = toWei(usedEther)
 
   const baseEstimates = {
     low: new BigNumber(1230000000000),
@@ -247,7 +244,7 @@ test('Send transaction works', async () => {
     queryByText,
     queryAllByText,
   } = renderTransactionHistory({
-    availableBalance: Ether.toBasic(availableEther),
+    availableBalance: toWei(availableEther),
     estimateTransactionFee: estimateFees,
     sendTransaction: send,
   })
@@ -297,7 +294,7 @@ test('Send transaction works', async () => {
   await waitFor(() => {
     Object.values(baseEstimates).forEach((estimate) => {
       const {strict: estimateFormatted} = abbreviateAmountForEnUS(
-        Ether.fromBasic(mockEstimateCalculator(usedWei)(estimate)),
+        fromWei(mockEstimateCalculator(usedWei)(estimate)),
       )
       expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
     })

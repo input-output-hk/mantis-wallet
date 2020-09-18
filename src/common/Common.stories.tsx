@@ -7,6 +7,7 @@ import {Loading} from './Loading'
 import {CopyableLongText} from './CopyableLongText'
 import {StatusModal} from './StatusModal'
 import {SupportModal} from './SupportModal'
+import {ETC_CHAIN} from './chains'
 
 export default {
   title: 'Common',
@@ -14,7 +15,7 @@ export default {
 }
 
 export const shortNumber = (): JSX.Element => (
-  <ShortNumber big={ether('Number', 123456789)} unitOrDecimals="Ether" />
+  <ShortNumber big={ether('Number', 123456789)} decimals={ETC_CHAIN.decimals} />
 )
 
 export const loading = (): JSX.Element => (
