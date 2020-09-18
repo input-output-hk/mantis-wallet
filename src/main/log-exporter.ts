@@ -2,13 +2,12 @@ import fs from 'fs'
 import path from 'path'
 import archiver from 'archiver'
 import {status} from './status'
-import {ClientName} from '../config/type'
-import {config} from '../config/main'
+import {Config} from '../config/type'
 
-const getBackendLogPath = (clientName: ClientName): string =>
-  path.join(config.dataDir, config.clientConfigs[clientName].dataDir.directoryName, 'logs')
+const getBackendLogPath = (config: Config): string =>
+  path.join(config.dataDir, config.mantis.dataDirName, 'logs')
 
-export const saveLogsArchive = (filePath: string): void => {
+export const saveLogsArchive = async (config: Config, filePath: string): Promise<void> => {
   const lunaStatus = JSON.stringify({config, status}, null, 2)
 
   // Create and save archive
@@ -16,12 +15,11 @@ export const saveLogsArchive = (filePath: string): void => {
     zlib: {level: 9},
   })
 
-  archive.directory(getBackendLogPath('node'), false)
-  archive.directory(getBackendLogPath('wallet'), false)
+  archive.directory(getBackendLogPath(config), false)
   archive.directory(path.join(config.dataDir, 'logs'), false)
   archive.append(lunaStatus, {name: 'luna-status.log'})
 
   const output = fs.createWriteStream(filePath)
   archive.pipe(output)
-  archive.finalize()
+  await archive.finalize()
 }

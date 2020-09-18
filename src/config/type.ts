@@ -1,39 +1,30 @@
+import {URL} from 'url'
 import {Option} from 'fp-ts/lib/Option'
+import * as T from 'io-ts'
 import {TLSConfig} from '../main/tls'
 
 export type ClientSettings = Record<string, string | boolean | number | null>
-export type SettingsPerClient = Record<ClientName, ClientSettings>
-export const SettingsPerClient = (data: Partial<SettingsPerClient>): SettingsPerClient => ({
-  node: {},
-  wallet: {},
-  ...data,
-})
 
-export interface ProcessConfig {
+export interface MantisConfig {
   packageDirectory: string
   executableName: string
-  dataDir: {
-    settingName: string
-    directoryName: string
-  }
+  dataDirName: string
   additionalSettings: ClientSettings
 }
 
-export type ClientName = 'node' | 'wallet'
-export const clientNames: ClientName[] = ['node', 'wallet']
+export const NetworkName = T.union(
+  [T.literal('etc'), T.literal('mordor'), T.literal('private'), T.literal('test')],
+  'networkName',
+)
+export type NetworkName = T.TypeOf<typeof NetworkName>
 
 export interface Config {
-  rpcAddress: string
-  nodeRpcAddress: string
-  nodeRpcPort: number
-  walletRpcPort: number
-  discoveryPort: number
-  p2pMessagingPort: number
-  blocksStreamingPort: number
+  rpcAddress: URL
+  networkName: NetworkName
   dataDir: string
   distPackagesDir: string
-  runClients: boolean
-  clientConfigs: Record<ClientName, ProcessConfig>
+  runNode: boolean
+  mantis: MantisConfig
   openDevTools: boolean
   tls: Option<TLSConfig>
 }

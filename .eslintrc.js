@@ -1,3 +1,44 @@
+const set = require('lodash/fp/set')
+
+const tsOverrides = {
+  //TS-only
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2019,
+    sourceType: 'module',
+    project: './tsconfig.json',
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  files: ['**/*.ts?(x)'],
+  plugins: ['@typescript-eslint'],
+  extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint'],
+  rules: {
+    // TS
+    '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
+    '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
+    '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
+    '@typescript-eslint/camelcase': [
+      'error',
+      {properties: 'never', ignoreDestructuring: true, ignoreImports: false},
+    ],
+    '@typescript-eslint/explicit-function-return-type': [
+      'error',
+      {
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true,
+      },
+    ],
+  },
+}
+
+const binOverrides = [
+  set('parserOptions.project', './tsconfig.bin.json'),
+  set('files', 'bin/**/*.ts'),
+].reduce((cfg, adjuster) => adjuster(cfg), tsOverrides)
+
 module.exports = {
   extends: [
     'plugin:prettier/recommended',
@@ -74,39 +115,5 @@ module.exports = {
     // a11y
     'jsx-a11y/no-autofocus': 0,
   },
-  overrides: [
-    {
-      //TS-only
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        ecmaVersion: 2019,
-        sourceType: 'module',
-        project: './tsconfig.json',
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-      files: ['**/*.ts?(x)'],
-      plugins: ['@typescript-eslint'],
-      extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint'],
-      rules: {
-        // TS
-        '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
-        '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
-        '@typescript-eslint/no-use-before-define': ['error', {functions: false}],
-        '@typescript-eslint/camelcase': [
-          'error',
-          {properties: 'never', ignoreDestructuring: true, ignoreImports: false},
-        ],
-        '@typescript-eslint/explicit-function-return-type': [
-          'error',
-          {
-            allowExpressions: true,
-            allowTypedFunctionExpressions: true,
-            allowHigherOrderFunctions: true,
-          },
-        ],
-      },
-    },
-  ],
+  overrides: [tsOverrides, binOverrides],
 }

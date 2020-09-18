@@ -3,25 +3,20 @@ import * as path from 'path'
 import * as childProcess from 'child_process'
 import {promisify} from 'util'
 import * as os from 'os'
+import {URL} from 'url'
 import {generate as generatePassword} from 'generate-password'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as forge from 'node-forge'
 import {array, option} from 'fp-ts'
 import * as T from 'io-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {processEnv, processExecutablePath} from './MidnightProcess'
+import {processEnv, processExecutablePath} from './MantisProcess'
 import {optionZip, prop, through} from '../shared/utils'
-import {
-  ClientName,
-  clientNames,
-  ClientSettings,
-  ProcessConfig,
-  SettingsPerClient,
-} from '../config/type'
+import {ClientSettings, MantisConfig} from '../config/type'
 import {mainLog} from './logger'
 import {createTErrorMain} from './i18n'
 
-const keyStoreFilename = 'midnightCA.p12'
+const keyStoreFilename = 'mantisCA.p12'
 const passwordFilename = 'password'
 
 export const tlsConfig = T.type({
@@ -42,39 +37,22 @@ export type TLSData = TLSConfig & {
 }
 
 export const httpRpcOverTLS = {
-  'midnight.network.rpc.http.mode': 'https',
+  'mantis.network.rpc.http.mode': 'https',
 }
 
-export const nodeTLSConfig = {
-  ...httpRpcOverTLS,
-  'midnight.blockchain.blocks-streaming.use-tls': true,
-}
-
-export const walletTLSConfig = {
-  ...httpRpcOverTLS,
-  'wallet.sync.connect-with-tls': true,
-}
-
-export const configToParams = (config: TLSConfig): SettingsPerClient => {
+export const configToParams = (config: TLSConfig): ClientSettings => {
   const keystoreParams = pipe(
     {
-      'keystore-path': config.keyStorePath,
-      'password-file': config.passwordPath,
-      'keystore-type': 'PKCS12',
+      'certificate-keystore-path': config.keyStorePath,
+      'certificate-password-file': config.passwordPath,
+      'certificate-keystore-type': 'PKCS12',
     },
     Object.entries,
-    array.map(([key, value]) => [`midnight.network.ssl.${key}`, value]),
+    array.map(([key, value]) => [`mantis.network.rpc.http.${key}`, value]),
     Object.fromEntries,
   )
 
-  const clientSpecificParams = (name: ClientName): ClientSettings =>
-    name === 'node' ? nodeTLSConfig : walletTLSConfig
-
-  return pipe(
-    clientNames,
-    array.map((name) => [name, {...keystoreParams, ...clientSpecificParams(name)}]),
-    Object.fromEntries,
-  )
+  return {...keystoreParams, ...httpRpcOverTLS}
 }
 
 const calculateFingerprint = (cert: forge.pki.Certificate): Option<string> => {
@@ -106,13 +84,13 @@ const calculateFingerprint = (cert: forge.pki.Certificate): Option<string> => {
   )
 }
 
-export const verifyCertificate = (tlsData: TLSData, expectedUrl: string) => (
-  requestUrl: string,
+export const verifyCertificate = (tlsData: TLSData, expectedUrl: URL) => (
+  requestUrl: URL,
   certificate: Electron.Certificate,
 ): boolean => {
   const forgeCert = forge.pki.certificateFromPem(certificate.data)
 
-  const urlMatch = requestUrl === expectedUrl
+  const urlMatch = requestUrl.href === expectedUrl.href
   const issuerMatch = certificate.subjectName === tlsData.certData.issuer
   const serialNumberMatch =
     forgeCert.serialNumber.toLowerCase() === tlsData.certData.serialNumber.toLowerCase()
@@ -153,7 +131,7 @@ export const extractCertData = (password: string) => (
  * Set ups TLS keys for use with node
  * @param nodeConfig Configuration of node needed to run keytool
  */
-export async function setupOwnTLS(nodeConfig: ProcessConfig): Promise<TLSData> {
+export async function setupOwnTLS(nodeConfig: MantisConfig): Promise<TLSData> {
   const password = generatePassword({length: 16})
   const issuer = `luna-${generatePassword({length: 16})}`
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'luna'))
@@ -205,10 +183,10 @@ export async function setupExternalTLS(tlsConfig: TLSConfig): Promise<TLSData> {
 export function registerCertificateValidationHandler(
   app: Electron.App,
   tlsData: TLSData,
-  expectedUrl: string,
+  expectedUrl: URL,
 ): void {
   app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-    const isCertValid = verifyCertificate(tlsData, expectedUrl)(url, certificate)
+    const isCertValid = verifyCertificate(tlsData, expectedUrl)(new URL(url), certificate)
     if (isCertValid) {
       mainLog.info('Self-signed cert verification passed. Accepting')
       event.preventDefault()

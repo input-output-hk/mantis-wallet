@@ -13,14 +13,10 @@ import {TKeyRenderer} from './common/i18n'
 import './SplashScreen.scss'
 
 const getStatusMessage = (lunaStatus: LunaStatus): TKeyRenderer => {
-  if (lunaStatus.fetchParams.status === 'notRunning') {
-    return ['common', 'initializationStatus', 'initLuna']
-  } else if (lunaStatus.fetchParams.status === 'running') {
-    return ['common', 'initializationStatus', 'paramsFetching']
-  } else if (lunaStatus.fetchParams.status === 'finished') {
+  if (lunaStatus.node.status === 'notRunning') {
     return ['common', 'initializationStatus', 'startingNode']
-  } else if (lunaStatus.node.status === 'running' && lunaStatus.wallet.status === 'running') {
-    return ['common', 'initializationStatus', 'connectingToWallet']
+  } else if (lunaStatus.node.status === 'running') {
+    return ['common', 'initializationStatus', 'connectingToNode']
   }
 
   // this is just a safe fallback, the code shouldn't get here

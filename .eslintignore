@@ -5,6 +5,5 @@ dist
 storybook-static
 docs
 
-bin/
 src/web3.worker.js
 src/web3-mock.worker.js

@@ -12,7 +12,7 @@ export const packageLuna = (
     arch: 'x64',
     electronZipDir: process.env['ELECTRON_ZIP_DIR'],
     extraResource:
-      process.env['LUNA_DIST_PACKAGES_DIR'] || path.resolve(appDir, '..', 'midnight-dist'),
+      process.env['LUNA_DIST_PACKAGES_DIR'] || path.resolve(appDir, '..', 'mantis-dist'),
     // The icon's extension is normalized inside electron-packager per platform
     // for windows it will use icon.ico, for mac it will use icon.icns,
     // but only if you leave out the file extension.

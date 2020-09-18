@@ -32,12 +32,6 @@ export const copyableLongText = (): JSX.Element => (
 export const statusModal = (): JSX.Element => (
   <StatusModal
     status={{
-      fetchParams: {
-        status: 'notRunning',
-      },
-      wallet: {
-        status: 'notRunning',
-      },
       node: {
         status: 'notRunning',
       },
@@ -56,7 +50,7 @@ export const statusModal = (): JSX.Element => (
     }}
     config={{
       dataDir: text('data dir', '~/.luna'),
-      rpcAddress: text('RPC address', 'https://127.0.0.1:8546'),
+      rpcAddress: new URL(text('RPC address', 'https://127.0.0.1:8546')),
     }}
     visible
   />

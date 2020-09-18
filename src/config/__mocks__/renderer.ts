@@ -1,18 +1,12 @@
 import {Config} from '../type'
 
 export const config: Config = {
-  rpcAddress: 'localhost:1234',
+  rpcAddress: new URL('localhost:1234'),
 } as Config
 
 export const loadConfig = (): Config => config
 
 export const loadLunaStatus = (): LunaStatus => ({
-  fetchParams: {
-    status: 'notRunning',
-  },
-  wallet: {
-    status: 'notRunning',
-  },
   node: {
     status: 'notRunning',
   },

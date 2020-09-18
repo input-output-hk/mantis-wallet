@@ -1,16 +1,9 @@
 /* eslint-disable fp/no-mutation */
 import os from 'os'
-import {ClientName} from '../config/type'
 import {LUNA_VERSION} from '../shared/version'
 import {PROGRESS_FOR_DAG, FAILURE_FOR_DAG, SUCCESS_FOR_DAG} from '../shared/dagStatus'
 
 export const status: LunaStatus = {
-  fetchParams: {
-    status: 'notRunning',
-  },
-  wallet: {
-    status: 'notRunning',
-  },
   node: {
     status: 'notRunning',
   },
@@ -29,15 +22,8 @@ export const status: LunaStatus = {
   },
 }
 
-export function setFetchParamsStatus(processStatus: ProcessStatus): void {
-  status.fetchParams.status = processStatus
-}
-
-export function setProcessStatus(
-  clientName: ClientName,
-  processInfo: {pid?: number; status: ProcessStatus},
-): void {
-  status[clientName] = processInfo
+export function setMantisStatus(processInfo: {pid?: number; status: ProcessStatus}): void {
+  status.node = processInfo
 }
 
 export function inspectLineForDAGStatus(line: string): void {

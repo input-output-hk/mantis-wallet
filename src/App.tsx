@@ -14,7 +14,7 @@ import {rendererLog} from './common/logger'
 import {config} from './config/renderer'
 import './App.scss'
 
-const web3 = new Web3(new Web3.providers.HttpProvider(config.rpcAddress))
+const web3 = new Web3(new Web3.providers.HttpProvider(config.rpcAddress.href))
 const store = createPersistentStore()
 
 const App: React.FC = () => {

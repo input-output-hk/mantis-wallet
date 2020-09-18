@@ -3,35 +3,23 @@
 import path from 'path'
 import url from 'url'
 import os from 'os'
-import {exec, spawn} from 'child_process'
-import {promisify} from 'util'
-import * as _ from 'lodash/fp'
+import {spawn} from 'child_process'
 import {option} from 'fp-ts'
-import * as array from 'fp-ts/lib/Array'
-import * as record from 'fp-ts/lib/Record'
 import * as rxop from 'rxjs/operators'
-import {mergeAll} from 'rxjs/operators'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {asapScheduler, scheduled} from 'rxjs'
 import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
-import {ClientName, SettingsPerClient} from '../config/type'
-import {
-  MidnightProcess,
-  processEnv,
-  processExecutablePath,
-  SpawnedMidnightProcess,
-} from './MidnightProcess'
+import {MantisProcess, SpawnedMantisProcess} from './MantisProcess'
 import {
   configToParams,
   registerCertificateValidationHandler,
   setupExternalTLS,
   setupOwnTLS,
 } from './tls'
-import {flatTap, prop} from '../shared/utils'
+import {prop} from '../shared/utils'
 import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
-import {inspectLineForDAGStatus, setFetchParamsStatus, setNetworkTag, status} from './status'
+import {inspectLineForDAGStatus, setNetworkTag, status} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 import {saveLogsArchive} from './log-exporter'
 import {mainLog} from './logger'
@@ -44,6 +32,7 @@ import {
 } from './i18n'
 import {store} from './store'
 import {checkPortUsage} from './port-usage-check'
+import {ClientSettings} from '../config/type'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
@@ -60,6 +49,11 @@ if (!app.requestSingleInstanceLock()) {
 
 const i18n = createAndInitI18nForMain(store.get('settings.language') || DEFAULT_LANGUAGE)
 const t = createTFunctionMain(i18n)
+
+mainLog.info({
+  versions: process.versions,
+  config,
+})
 
 function createWindow(t: TFunctionMain): void {
   mainLog.info({
@@ -119,7 +113,7 @@ const openLuna = (t: TFunctionMain): Promise<void> => app.whenReady().then(() =>
 //
 
 const shared = {
-  lunaConfig: () => config,
+  lunaConfig: () => pipe(config, (cfg) => ({...cfg, rpcAddress: cfg.rpcAddress.href})),
   lunaStatus: () => status,
 }
 
@@ -161,7 +155,7 @@ ipcListenToRenderer('save-debug-logs', async (event) => {
   }
 
   try {
-    saveLogsArchive(filePath)
+    await saveLogsArchive(config, filePath)
     event.reply('save-debug-logs-success', filePath)
   } catch (e) {
     mainLog.error(e)
@@ -181,7 +175,7 @@ ipcListenToRenderer('update-language', (_event, language: Language) => {
 })
 
 // Handle TLS from external config
-if (!config.runClients) {
+if (!config.runNode) {
   pipe(
     config.tls,
     option.map(setupExternalTLS),
@@ -202,11 +196,11 @@ if (!config.runClients) {
 //
 // Handle client child processes with TLS
 //
-if (config.runClients) {
+if (config.runNode) {
   const initializationPromise = checkDatadirCompatibility(t)
-    .then(checkPortUsage)
+    .then(() => checkPortUsage(config))
     .then(() => openLuna(t))
-    .then(() => setupOwnTLS(config.clientConfigs.node))
+    .then(() => setupOwnTLS(config.mantis))
     .then((tlsData) => ({
       tlsData,
       tlsParams: configToParams(tlsData),
@@ -222,117 +216,64 @@ if (config.runClients) {
       },
     )
 
-  let runningClients: SpawnedMidnightProcess[] | null = null
+  let runningMantis: SpawnedMantisProcess | null = null
 
-  async function fetchParams(): Promise<void> {
-    mainLog.info('Fetching parameters')
-    setFetchParamsStatus('running')
-    const nodeConfig = config.clientConfigs.node
-    const nodePath = processExecutablePath(nodeConfig)
-    const nodeDataDir = path.resolve(config.dataDir, nodeConfig.dataDir.directoryName)
-    const command = `${nodePath} fetch-params -D${nodeConfig.dataDir.settingName}=${nodeDataDir}`
-    return promisify(exec)(command, {
-      cwd: config.clientConfigs.node.packageDirectory,
-      env: processEnv(config.clientConfigs.node),
-    })
-      .then(({stdout, stderr}) => {
-        setFetchParamsStatus('finished')
-        if (stdout) console.info(stdout) // eslint-disable-line no-console
-        if (stderr) mainLog.error(stderr)
-      })
-      .catch((error) => {
-        setFetchParamsStatus('failed')
-        mainLog.error(error)
-        showErrorBox(
-          t,
-          t(['dialog', 'title', 'startupError']),
-          t(['dialog', 'error', 'paramsFetching']),
-        )
-        app.exit(1)
-        return Promise.reject(error)
-      })
+  function logMantis(spawnedMantis: SpawnedMantisProcess): void {
+    spawnedMantis.log$
+      .pipe(
+        rxop.tap(inspectLineForDAGStatus),
+        rxop.map((line) => `mantis | ${line}`),
+      )
+      .subscribe(console.info) // eslint-disable-line no-console
   }
 
-  function logClients(clients: SpawnedMidnightProcess[]): void {
-    const maxNameLength = pipe(
-      clients,
-      array.map((client) => client.name.length),
-      _.max,
-      (maybeValue) => maybeValue || 0,
-    )
-    const buildPrefix = (name: ClientName): string => `${name.padEnd(maxNameLength)} | `
+  function spawnMantis(additionalSettings: ClientSettings): void {
+    const mantisProcess = MantisProcess(spawn)(config.dataDir, config.networkName, config.mantis)
+    const spawnedMantis = mantisProcess.spawn(additionalSettings)
+    logMantis(spawnedMantis)
 
-    pipe(
-      clients,
-      array.map((client) => {
-        const prefix = buildPrefix(client.name)
-        return client.log$.pipe(
-          rxop.tap(inspectLineForDAGStatus),
-          rxop.map((line) => `${prefix}${line}`),
-        )
-      }),
-      (logs) => scheduled(logs, asapScheduler),
-      mergeAll(),
-    ).subscribe(console.info) // eslint-disable-line no-console
+    spawnedMantis.close$
+      .pipe(
+        rxop.take(1),
+        rxop.tap(() => mainLog.info('Mantis got closed. Restarting')),
+      )
+      .subscribe(restartMantis)
+
+    runningMantis = spawnedMantis
   }
 
-  function spawnClients(additionalSettings: SettingsPerClient): void {
-    const clients = pipe(
-      config.clientConfigs,
-      record.toArray,
-      array.map(([name, processConfig]) =>
-        MidnightProcess(spawn)(name, config.dataDir, processConfig),
-      ),
-      array.map((spawner) => spawner.spawn(additionalSettings[spawner.name])),
-    )
-
-    logClients(Object.values(clients))
-
-    pipe(
-      clients,
-      array.map((client) => client.close$),
-      (events) => scheduled(events, asapScheduler),
-      rxop.mergeAll(),
-      rxop.take(1),
-      rxop.tap(() => mainLog.info('One of clients got closed. Restarting clients')),
-    ).subscribe(restartClients)
-
-    runningClients = clients
-  }
-
-  const killClients = async (): Promise<void> => {
-    return runningClients
-      ? Promise.all(runningClients.map((client) => client.kill())).then(() => {
-          runningClients = null
+  const killMantis = async (): Promise<void> =>
+    runningMantis
+      ? runningMantis.kill().then(() => {
+          runningMantis = null
         })
       : Promise.resolve()
-  }
 
-  const startClients = (): Promise<void> =>
+  const startMantis = (): Promise<void> =>
     initializationPromise
       .then(prop('tlsParams'))
-      .then(spawnClients)
+      .then(spawnMantis)
       .catch((error) => {
         mainLog.error(error)
         return Promise.reject(error)
       })
 
-  async function restartClients(): Promise<void> {
+  async function restartMantis(): Promise<void> {
     if (!shuttingDown) {
-      mainLog.info('restarting clients')
-      return killClients().then(startClients)
+      mainLog.info('restarting Mantis')
+      return killMantis().then(startMantis)
     }
   }
 
   function killAndQuit(event: Event): void {
     shuttingDown = true
-    if (runningClients) {
+    if (runningMantis) {
       event.preventDefault()
-      killClients().then(() => app.quit())
+      killMantis().then(() => app.quit())
     }
   }
 
-  initializationPromise.then(flatTap(() => fetchParams())).then(startClients)
+  initializationPromise.then(startMantis)
   initializationPromise.then(({tlsData}) => {
     registerCertificateValidationHandler(app, tlsData, config.rpcAddress)
   })

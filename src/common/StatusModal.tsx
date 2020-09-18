@@ -172,12 +172,6 @@ export const StatusModal = ({
             </div>
           </div>
           <div className="info-item">
-            <div>{getLabel(['status', 'label', 'paramsFetching'])}</div>
-            <div className="info-value">
-              <VisibleStatus status={status.fetchParams.status} />
-            </div>
-          </div>
-          <div className="info-item">
             <div>{getLabel(['status', 'label', 'nodeStatus'])}</div>
             <div className="info-value">
               <VisibleStatus status={status.node.status} />
@@ -188,19 +182,9 @@ export const StatusModal = ({
             <div className="info-value">{status.node.pid || '-'}</div>
           </div>
           <div className="info-item">
-            <div>{getLabel(['status', 'label', 'walletStatus'])}</div>
-            <div className="info-value">
-              <VisibleStatus status={status.wallet.status} />
-            </div>
-          </div>
-          <div className="info-item">
-            <div>{getLabel(['status', 'label', 'walletProcessID'])}</div>
-            <div className="info-value">{status.wallet.pid || '-'}</div>
-          </div>
-          <div className="info-item">
             <div>{getLabel(['status', 'label', 'walletRpcAddress'])}</div>
             <div className="info-value">
-              <CopyableLongText content={config.rpcAddress} />
+              <CopyableLongText content={config.rpcAddress.toString()} />
             </div>
           </div>
           <div className="info-item">

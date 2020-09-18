@@ -10,11 +10,10 @@ import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import _ from 'lodash/fp'
-import {setProcessStatus} from './status'
+import {setMantisStatus} from './status'
 import {readableToObservable} from './streamUtils'
-import {ClientName, ClientSettings, ProcessConfig} from '../config/type'
+import {ClientSettings, MantisConfig, NetworkName} from '../config/type'
 import {mainLog} from './logger'
-import {config} from '../config/main'
 
 export const isWin = os.platform() === 'win32'
 
@@ -24,12 +23,12 @@ interface ChildProcess extends childProcess.ChildProcess {
   exitCode: number | null
 }
 
-export class SpawnedMidnightProcess {
-  constructor(public name: ClientName, private childProcess: ChildProcess) {
-    mainLog.info(`Spawned ${name}, PID: ${childProcess.pid}`)
-    setProcessStatus(name, {pid: childProcess.pid, status: 'running'})
-    childProcess.on('close', (code) => mainLog.info(this.name, 'stdio closed with', code))
-    childProcess.on('exit', (code) => mainLog.info(this.name, 'exited with', code))
+export class SpawnedMantisProcess {
+  constructor(private childProcess: ChildProcess) {
+    mainLog.info(`Spawned Mantis, PID: ${childProcess.pid}`)
+    setMantisStatus({pid: childProcess.pid, status: 'running'})
+    childProcess.on('close', (code) => mainLog.info('mantis', 'stdio closed with', code))
+    childProcess.on('exit', (code) => mainLog.info('mantis', 'exited with', code))
     childProcess.on('error', (err) => mainLog.error(err))
   }
 
@@ -46,13 +45,13 @@ export class SpawnedMidnightProcess {
   )
 
   kill = async (): Promise<void> => {
-    mainLog.info(`Killing ${this.name}, PID: ${this.childProcess.pid}`)
+    mainLog.info(`Killing Mantis, PID: ${this.childProcess.pid}`)
     if (isWin) {
       const javaPid = await promisify(psTree)(this.childProcess.pid).then(
         (children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID,
       )
       if (javaPid) {
-        mainLog.info(`...killing Java process for ${this.name} on Win with PID ${javaPid}`)
+        mainLog.info(`...killing Java process for Mantis on Win with PID ${javaPid}`)
         process.kill(parseInt(javaPid))
       }
     }
@@ -66,18 +65,18 @@ export class SpawnedMidnightProcess {
         rxop.mapTo(void 0),
       )
       .toPromise()
-      .then(() => setProcessStatus(this.name, {status: 'notRunning'}))
+      .then(() => setMantisStatus({status: 'notRunning'}))
   }
 }
 
-export const processExecutablePath = (processConfig: ProcessConfig): string => {
+export const processExecutablePath = (processConfig: MantisConfig): string => {
   const thePath = resolve(processConfig.packageDirectory, 'bin', processConfig.executableName)
 
   return isWin ? `"${thePath}.bat"` : thePath
 }
 
 export const processEnv = _.memoize(
-  (processConfig: ProcessConfig): NodeJS.ProcessEnv => {
+  (processConfig: MantisConfig): NodeJS.ProcessEnv => {
     const jrePath = resolve(processConfig.packageDirectory, '..', 'jre')
     const isJreBundled: boolean = (() => {
       try {
@@ -91,55 +90,32 @@ export const processEnv = _.memoize(
   },
 )
 
-const buildPortConfig = (name: ClientName): ClientSettings => {
-  switch (name) {
-    case 'wallet':
-      return {
-        'wallet.node-rpc-address': config.nodeRpcAddress,
-        'midnight.network.rpc.http.port': config.walletRpcPort,
-        'midnight.network.discovery.port': config.discoveryPort,
-        'midnight.network.server-address.port': config.p2pMessagingPort,
-        'wallet.sync.blocks-streaming-server-address': `127.0.0.1:${config.blocksStreamingPort}`,
-      }
-    case 'node':
-      return {
-        'midnight.network.rpc.http.port': config.nodeRpcPort,
-        'midnight.network.discovery.port': config.discoveryPort,
-        'midnight.network.server-address.port': config.p2pMessagingPort,
-        'midnight.blockchain.blocks-streaming.server-address': `0.0.0.0:${config.blocksStreamingPort}`,
-      }
-  }
-}
-
-export const MidnightProcess = (spawn: typeof childProcess.spawn) => (
-  name: ClientName,
+export const MantisProcess = (spawn: typeof childProcess.spawn) => (
   dataDir: string,
-  processConfig: ProcessConfig,
+  networkName: NetworkName,
+  processConfig: MantisConfig,
 ) => {
   const executablePath = processExecutablePath(processConfig)
-  const processDataDir = resolve(dataDir, processConfig.dataDir.directoryName)
-  const portConfig = buildPortConfig(name)
+  const mantisDataDir = resolve(dataDir, processConfig.dataDirName)
 
   return {
-    name,
     spawn: (additionalConfig: ClientSettings) => {
       const settingsAsArguments = pipe(
         {
-          ...portConfig,
           ...processConfig.additionalSettings,
           ...additionalConfig,
-          [processConfig.dataDir.settingName]: processDataDir,
+          'mantis.datadir': mantisDataDir,
+          'mantis.blockchains.network': networkName,
         },
         Object.entries,
         array.map(([key, value]) => `-D${key}=${value}`),
       )
       mainLog.info(
-        `spawning ${name} (from ${
+        `spawning Mantis (from ${
           processConfig.packageDirectory
         }): ${executablePath} ${settingsAsArguments.join(' ')}`,
       )
-      return new SpawnedMidnightProcess(
-        name,
+      return new SpawnedMantisProcess(
         spawn(executablePath, settingsAsArguments, {
           cwd: processConfig.packageDirectory,
           detached: false,

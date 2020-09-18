@@ -5,6 +5,7 @@ coverage
 dist
 storybook-static
 midnight
+mantis
 .*
 
 # general

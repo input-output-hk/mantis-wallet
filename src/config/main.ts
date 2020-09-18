@@ -2,16 +2,43 @@
 import path from 'path'
 import fs from 'fs'
 import {homedir} from 'os'
-import convict from 'convict'
+import convict, {Format} from 'convict'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
+import * as either from 'fp-ts/lib/Either'
 import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
-import {ClientName, Config, ProcessConfig} from './type'
+import {Type} from 'io-ts'
+import {Config, NetworkName, MantisConfig} from './type'
 import {tildeToHome} from '../main/pathUtils'
 import {mapProp, optionZip, through} from '../shared/utils'
 import {TLSConfig} from '../main/tls'
+
+const formatFromIoTS = <A, O = A>(theType: Type<A, O, unknown>): Format => {
+  const coerce = (val: unknown): A => {
+    return pipe(
+      val,
+      theType.decode,
+      either.fold(
+        (errors) => {
+          const errorsStringified = errors
+            .map((err) => err.message)
+            .filter(Boolean)
+            .join(', ')
+          throw Error(`Couldn't parse ${val} into ${theType.name} due to ${errorsStringified}`)
+        },
+        (result) => result,
+      ),
+    )
+  }
+  return {
+    coerce,
+    validate(val: unknown): void {
+      coerce(val)
+    },
+  }
+}
 
 convict.addFormats({
   'existing-directory': {
@@ -25,6 +52,7 @@ convict.addFormats({
       }
     },
   },
+  'network-name': formatFromIoTS(NetworkName),
   'settings-map': {
     validate(val: unknown): void {
       if (!(val instanceof Map) && !(val instanceof Object)) {
@@ -54,90 +82,70 @@ convict.addFormats({
       }
     },
   },
+  'own-url': (() => {
+    const coerce = (val: unknown): URL => {
+      if (typeof val === 'string') {
+        return new URL(val)
+      } else {
+        throw Error(`Expected string containg valid URL, got ${val} instead`)
+      }
+    }
+
+    return {
+      coerce,
+      validate(val: unknown): void {
+        coerce(val)
+      },
+    }
+  })(),
 })
 
 const defaultDataDir = path.resolve(homedir(), '.luna')
-const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'midnight-dist')
+const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'mantis-dist')
 
-const clientConfig = (
-  name: ClientName,
-  defaults: ProcessConfig,
-): convict.Schema<ProcessConfig> => ({
+const mantisConfig = (defaults: MantisConfig): convict.Schema<MantisConfig> => ({
   packageDirectory: {
     default: defaults.packageDirectory,
-    arg: `${name}-package-directory`,
-    env: `LUNA_${name.toUpperCase()}_PACKAGE_DIRECTORY`,
-    doc: `Directory (preferably under distPackagesDir), where ${name} build is stored`,
+    arg: `mantis-package-directory`,
+    env: `MANTIS_PACKAGE_DIRECTORY`,
+    doc: `Directory (preferably under distPackagesDir), where Mantis build is stored`,
     format: 'existing-directory',
   },
   executableName: {
     default: defaults.executableName,
-    arg: `${name}-executable-name`,
-    env: `LUNA_${name}_EXECUTABLE_NAME`,
-    doc: `Name of executable to run ${name}`,
+    arg: `mantis-executable-name`,
+    env: `MANTIS_EXECUTABLE_NAME`,
+    doc: `Name of executable to run mantis`,
   },
-  dataDir: {
-    settingName: {
-      default: defaults.dataDir.settingName,
-    },
-    directoryName: {
-      default: defaults.dataDir.directoryName,
-      arg: `${name}-data-dir`,
-      env: `${name}_DATA_DIR`,
-      doc: `Directory name under Luna datadir, where ${name} contents are stored`,
-    },
+  dataDirName: {
+    default: defaults.dataDirName,
+    arg: `mantis-data-dir`,
+    env: `MANTIS_DATA_DIR`,
+    doc: `Directory name under Luna datadir, where mantis contents are stored`,
   },
   additionalSettings: {
     default: defaults.additionalSettings,
-    arg: `${name}-additional-settings`,
-    env: `LUNA_${name.toUpperCase()}_ADDITIONAL_SETTINGS`,
-    doc: `Additional settings for running ${name}`,
+    arg: `mantis-additional-settings`,
+    env: `MANTIS_ADDITIONAL_SETTINGS`,
+    doc: `Additional settings for running mantis`,
     format: 'settings-map',
   },
 })
 
 const configGetter = convict({
+  networkName: {
+    default: 'etc',
+    format: 'network-name',
+    arg: 'network',
+    env: 'LUNA_NETWORK',
+    doc: 'Which network Luna should connect to',
+  },
   rpcAddress: {
-    default: 'https://127.0.0.1:8342/',
-    format: 'url',
+    default: 'https://127.0.0.1:8546/',
+    format: 'own-url',
     arg: 'rpc-address',
     env: 'LUNA_RPC_ADDRESS',
-    doc: "Address where is available Wallet Backend's RPC",
-  },
-  nodeRpcPort: {
-    default: 8546,
-    format: 'port',
-    arg: 'node-rpc-port',
-    env: 'LUNA_NODE_RPC_PORT',
-    doc: 'Port used for node rpc',
-  },
-  walletRpcPort: {
-    default: 8342,
-    format: 'port',
-    arg: 'wallet-rpc-port',
-    env: 'LUNA_WALLET_RPC_PORT',
-    doc: 'Port used for wallet rpc',
-  },
-  discoveryPort: {
-    default: 30303,
-    format: 'port',
-    arg: 'discovery-port',
-    env: 'LUNA_DISCOVERY_PORT',
-    doc: 'Port used for discovery',
-  },
-  p2pMessagingPort: {
-    default: 9076,
-    format: 'port',
-    arg: 'p2p-messaging-port',
-    env: 'LUNA_P2P_MESSAGING_PORT',
-    doc: 'Port used for p2p messaging',
-  },
-  blocksStreamingPort: {
-    default: 4242,
-    format: 'port',
-    arg: 'blocks-streaming-port',
-    env: 'LUNA_BLOCKS_STREAMING_PORT',
-    doc: 'Port used for blocks streaming',
+    doc: "Address where is available Mantis's RPC",
   },
   openDevTools: {
     default: false,
@@ -165,45 +173,20 @@ const configGetter = convict({
       doc: 'Path to password file, needed to decrypt keys in keystore',
     },
   },
-  runClients: {
+  runNode: {
     default: true,
-    arg: 'run-clients',
-    env: 'LUNA_RUN_CLIENTS',
-    doc: 'Whether to run wallet backend and node on its own or not',
+    arg: 'run-node',
+    env: 'LUNA_RUN_NODE',
+    doc: 'Whether to run node on its own or not',
   },
-  distPackagesDir: {
-    default: defaultDistPackagesDir,
-    arg: 'dist-packages-dir',
-    env: 'LUNA_DIST_PACKAGES_DIR',
-    doc: 'Directory, which contains distribution packages of node and wallet',
-    format: 'existing-directory',
-  },
-  clientConfigs: {
-    node: clientConfig('node', {
-      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-node'),
-      executableName: 'midnight-node',
-      dataDir: {
-        settingName: 'midnight.datadir',
-        directoryName: 'node',
-      },
-      additionalSettings: {
-        'akka.loglevel': 'INFO',
-      },
-    }),
-    wallet: clientConfig('wallet', {
-      packageDirectory: path.resolve(defaultDistPackagesDir, 'midnight-wallet'),
-      executableName: 'midnight-wallet',
-      dataDir: {
-        settingName: 'wallet.datadir',
-        directoryName: 'wallet',
-      },
-      additionalSettings: {
-        // FIXME: https://github.com/mozilla/node-convict/issues/250
-        'midnight.network.rpc.http.cors-allowed-origins': '*', // Make it possible for Luna to access Wallet's RPC
-        'akka.loglevel': 'INFO',
-      },
-    }),
-  },
+  mantis: mantisConfig({
+    packageDirectory: path.resolve(defaultDistPackagesDir, 'mantis'),
+    executableName: 'mantis',
+    dataDirName: 'mantis',
+    additionalSettings: {
+      'mantis.network.rpc.http.cors-allowed-origins': '*',
+    },
+  }),
 })
 
 interface ConfigSource {
@@ -244,14 +227,7 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
         option.map(([keyStorePath, passwordPath]): TLSConfig => ({keyStorePath, passwordPath})),
       )
     }),
-    (config) => ({
-      ...config,
-      rpcAddress: config.runClients
-        ? `https://127.0.0.1:${config.walletRpcPort}/`
-        : config.rpcAddress,
-      nodeRpcAddress: `https://127.0.0.1:${config.nodeRpcPort}/`,
-    }),
-    (config) => config as Config,
+    (config) => ({...config, rpcAddress: new URL(config.rpcAddress)} as Config),
     mapProp('dataDir', tildeToHome),
   )
 }

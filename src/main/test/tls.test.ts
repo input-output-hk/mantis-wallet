@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import {URL} from 'url'
 import {fold, Option} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as _ from 'lodash/fp'
@@ -55,7 +56,7 @@ describe('TLS', () => {
         issuer: params.issuer,
       },
     }
-    const expectedUrl = `https://${params.domain}:1234`
+    const expectedUrl = new URL(`https://${params.domain}:1234`)
     const verifier = tls.verifyCertificate(tlsConfig, expectedUrl)
     const validCertificate: Readonly<Electron.Certificate> = {
       data: pemRawData,
@@ -85,13 +86,13 @@ describe('TLS', () => {
     }
 
     //The value is a tuple of: [wrong value, url to pass, certificate to pass]
-    const invalidParams: Record<string, Array<[string, string, Electron.Certificate]>> = {
+    const invalidParams: Record<string, Array<[string, URL, Electron.Certificate]>> = {
       url: [
         `http://${params.domain}:1234`,
         `https://foo:1234`,
         `https://${params.domain}:12`,
-      ].map((url) => [url, url, validCertificate]),
-      issuer: ((): Array<[string, string, Electron.Certificate]> => {
+      ].map((url) => [url, new URL(url), validCertificate]),
+      issuer: ((): Array<[string, URL, Electron.Certificate]> => {
         const invalidIssuer = 'foo'
         return [[invalidIssuer, expectedUrl, _.set('subjectName', invalidIssuer, validCertificate)]]
       })(),
