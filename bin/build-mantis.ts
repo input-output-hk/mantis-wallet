@@ -42,12 +42,17 @@ const ensureSubmodules = async (mantisDir: string): Promise<void> => {
 
 const buildMantis = (mantisDir: string): Promise<void> => {
   console.log('Building Mantis')
-  return spawnAsync('sbt dist', [], {shell: true, windowsHide: true, cwd: mantisDir})
+  return spawnAsync('sbt update dist', [], {shell: true, windowsHide: true, cwd: mantisDir})
 }
 
 const clearMantisDist = async (distPath: string): Promise<void> => {
   console.log(`Clearing ${distPath}`)
   return promisify(rimraf)(distPath)
+}
+
+const clearUniversalDir = async (universalDir: string): Promise<void> => {
+  console.log(`Clearing ${universalDir}`)
+  return promisify(rimraf)(universalDir)
 }
 
 const extractMantis = async (distZipPath: string, distPath: string): Promise<decompress.File[]> => {
@@ -69,6 +74,7 @@ const mantisDistZip = (universalDir: string): Promise<Option<string>> =>
 const mantisDistDir = path.resolve(projectRoot, '..', 'mantis-dist', 'mantis')
 
 ensureSubmodules(mantisDir)
+  .then(() => clearUniversalDir(mantisUniversalDir))
   .then(() => buildMantis(mantisDir))
   .then(() => clearMantisDist(mantisDistDir))
   .then(() => mantisDistZip(mantisUniversalDir))
