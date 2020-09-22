@@ -15,6 +15,7 @@ import {Link} from '../common/Link'
 import {WalletState, TransactionStatus} from '../common/wallet-state'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
+import {Wei, asWei, etherValue} from '../common/units'
 import transparentIcon from '../assets/icons/transparent.svg'
 import confidentialIcon from '../assets/icons/confidential.svg'
 import checkIcon from '../assets/icons/check.svg'
@@ -22,7 +23,6 @@ import checkDoubleIcon from '../assets/icons/check-double.svg'
 import clockIcon from '../assets/icons/clock.svg'
 import crossIcon from '../assets/icons/cross.svg'
 import './TransactionRow.scss'
-import {fromWei} from '../common/util'
 
 interface ExtendedCallTxDetails extends CallTxDetails {
   callTxStatus: TransactionStatus
@@ -154,19 +154,19 @@ export const TxTypeCell = ({
 
 const processAmount = (
   txValue: Transaction['txValue'],
-): {value: BigNumber; fee: BigNumber; totalValue: BigNumber} => {
+): {value: Wei; fee: Wei; totalValue: Wei} => {
   const {value, fee} = _.mapValues(
     typeof txValue === 'string' ? {value: txValue, fee: '0'} : txValue,
-    (str) => new BigNumber(str),
+    (str) => asWei(str),
   )
-  const totalValue = value.plus(fee)
+  const totalValue = asWei(value.plus(fee))
   return {value, fee, totalValue}
 }
 
 const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Element => {
   const {abbreviateAmount} = useFormatters()
   const {value, fee, totalValue} = processAmount(txValue)
-  const abbreviateEther = (big: BigNumber): string => abbreviateAmount(fromWei(big)).relaxed
+  const abbreviate = (wei: Wei): string => abbreviateAmount(etherValue(wei)).relaxed
 
   return fee.isZero() ? (
     <></>
@@ -175,15 +175,15 @@ const DetailedAmount = ({transaction: {txValue}}: TransactionCellProps): JSX.Ele
       <div>
         <Trans k={['wallet', 'label', 'transactionValue']} />:
       </div>
-      <div className="monospace">{abbreviateEther(value)}</div>
+      <div className="monospace">{abbreviate(value)}</div>
       <div>
         <Trans k={['wallet', 'label', 'transactionFee']} />:
       </div>
-      <div className="monospace">{abbreviateEther(fee)}</div>
+      <div className="monospace">{abbreviate(fee)}</div>
       <div>
         <Trans k={['wallet', 'label', 'transactionTotal']} />:
       </div>
-      <div className="monospace">{abbreviateEther(totalValue)}</div>
+      <div className="monospace">{abbreviate(totalValue)}</div>
     </div>
   )
 }
@@ -284,19 +284,7 @@ const TxDetailsTypeSpecific = ({transaction}: TransactionCellProps): JSX.Element
       return <TxTypeLabel transaction={transaction} />
     }
     case 'transfer': {
-      return (
-        <div>
-          <TxTypeLabel transaction={transaction} />
-          {transaction.txDetails.memo && (
-            <div className="call-details two-col-table">
-              <div>
-                <Trans k={['wallet', 'label', 'encryptedMemo']} />:
-              </div>
-              <div className="monospace">{transaction.txDetails.memo[1]}</div>
-            </div>
-          )}
-        </div>
-      )
+      return <TxTypeLabel transaction={transaction} />
     }
     case 'call': {
       const {

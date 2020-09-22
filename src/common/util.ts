@@ -1,14 +1,12 @@
 import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
-import * as bech32 from 'bech32-buffer'
-import {Unit, toWei as web3ToWei, fromWei as web3FromWei} from 'web3-utils'
+import {isAddress} from 'web3-utils'
 import _ from 'lodash'
 import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
 import {PaginatedCallable} from '../web3'
-import {NETWORK_CONSTANTS} from './constants/network'
 import {Translatable, TFunctionRenderer, createTErrorRenderer} from './i18n'
 import {ETC_CHAIN} from './chains'
 
@@ -72,8 +70,9 @@ const messageForHasAtMostDecimalPlaces = (dp: number): Translatable =>
     ? {tKey: ['common', 'error', 'itMustBeAnInteger']}
     : {tKey: ['common', 'error', 'atMostDecimalPlacesArePermitted'], options: {count: dp}}
 
-export const hasAtMostDecimalPlaces = (dp = 18) => (b: BigNumber): ValidationResult =>
-  b.dp() > dp ? messageForHasAtMostDecimalPlaces(dp) : 'OK'
+export const hasAtMostDecimalPlaces = (dp = ETC_CHAIN.decimals) => (
+  b: BigNumber,
+): ValidationResult => (b.dp() > dp ? messageForHasAtMostDecimalPlaces(dp) : 'OK')
 
 export function validateAmount(
   v: string,
@@ -100,25 +99,6 @@ export function validateFee(fee: string): ValidationResult {
 
 export function bigSum(numbers: BigNumber[]): BigNumber {
   return numbers.reduce((acc, cur) => acc.plus(cur), new BigNumber(0))
-}
-
-export function bech32toHex(bech32Address: string): string {
-  const decoded = bech32.decode(bech32Address)
-
-  const hex = _.map(decoded.data, (w: number): string => w.toString(16).padStart(2, '0'))
-
-  return `0x${hex.join('')}`
-}
-
-export function hexToBech32(hexAddress: string, prefix = 'm-test-uns-ad'): string {
-  const getData = (n: BigNumber, retData: number[] = []): number[] =>
-    n.isZero() ? retData : getData(n.dividedToIntegerBy(256), [n.mod(256).toNumber(), ...retData])
-
-  const data = getData(new BigNumber(hexAddress))
-
-  const trailingZeros = _.fill(new Array(20 - data.length), 0)
-
-  return bech32.encode(prefix, new Uint8Array([...trailingZeros, ...data]))
 }
 
 export function returnDataToHumanReadable(hex: string): string {
@@ -195,46 +175,16 @@ export const createTxAmountValidator = (
     (amount?: string): ValidationResult => validateTxAmount(amount || '', availableAmount),
   )
 
-const validateBech32Address = (
-  prefix: string,
-  length: number,
-  message: Translatable,
-  value?: string,
-): ValidationResult => {
+export const validateAddress = (value?: string): ValidationResult => {
   if (!value) {
     return {tKey: ['wallet', 'error', 'addressMustBeSet']}
   }
-  try {
-    const decoded = bech32.decode(value)
-    if (prefix !== decoded.prefix || decoded.data.length !== length) {
-      return message
-    }
-  } catch (e) {
-    return message
-  }
 
-  return 'OK'
-}
-
-export const createTransparentAddressValidator = (networkTag: NetworkTag) => (
-  value?: string,
-): ValidationResult => {
-  const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-uns-ad`
-  return validateBech32Address(prefix, 20, {tKey: ['wallet', 'error', 'invalidAddress']}, value)
-}
-
-export const createConfidentialAddressValidator = (networkTag: NetworkTag) => (
-  value?: string,
-): ValidationResult => {
-  const prefix = `m-${NETWORK_CONSTANTS[networkTag].shortTag}-shl-ad`
-  return validateBech32Address(
-    prefix,
-    43,
-    {
-      tKey: ['wallet', 'error', 'invalidAddress'],
-    },
-    value,
-  )
+  return isAddress(value)
+    ? 'OK'
+    : {
+        tKey: ['wallet', 'error', 'invalidAddress'],
+      }
 }
 
 /**
@@ -288,23 +238,3 @@ export const validateUtf8Length = (lengthInBytes: number) => (value?: string): V
   value != null && utf8Length(value) > lengthInBytes
     ? {tKey: ['wallet', 'error', 'textIsLimitedToBytes'], options: {count: lengthInBytes}}
     : 'OK'
-
-interface UnitConverter {
-  (number: string): string
-  (number: BigNumber): BigNumber
-}
-
-function wrapWithBigNumberSupport(fn: typeof web3ToWei | typeof web3FromWei): UnitConverter {
-  function unitConverter(number: string, unit?: Unit): string
-  function unitConverter(number: BigNumber, unit?: Unit): BigNumber
-  function unitConverter(number: string | BigNumber, unit?: Unit): string | BigNumber {
-    const bn = new BigNumber(number)
-    const v = bn.isFinite() ? fn(bn.toString(10), unit) : bn.toString(10)
-    return _.isString(number) ? v : new BigNumber(v)
-  }
-
-  return unitConverter
-}
-
-export const toWei = wrapWithBigNumberSupport(web3ToWei)
-export const fromWei = wrapWithBigNumberSupport(web3FromWei)

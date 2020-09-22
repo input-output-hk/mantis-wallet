@@ -9,16 +9,15 @@ import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {
   validateFee,
   createTxAmountValidator,
-  createConfidentialAddressValidator,
+  validateAddress,
   translateValidationResult,
   toAntValidator,
-  toWei,
 } from '../../common/util'
+import {Wei, asWei, asEther} from '../../common/units'
 import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
 import {DialogFee} from '../../common/dialog/DialogFee'
-import {FeeEstimates} from '../../common/wallet-state'
+import {FeeEstimates, LoadedState} from '../../common/wallet-state'
 import {useAsyncUpdate} from '../../common/hook-utils'
-import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 import {useTranslation} from '../../settings-state'
 import {Trans} from '../../common/Trans'
 import './SendTransaction.scss'
@@ -26,9 +25,9 @@ import './SendTransaction.scss'
 const RECIPIENT_FIELD = 'recipient-address'
 
 interface SendTransactionProps {
-  availableAmount: BigNumber
-  onSend: (recipient: string, amount: number, fee: number) => Promise<void>
-  estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
+  availableAmount: Wei
+  onSend: LoadedState['sendTransaction']
+  estimateTransactionFee: () => Promise<FeeEstimates>
 }
 
 const AddressField = ({
@@ -62,8 +61,6 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
   estimateTransactionFee,
   onCancel,
 }: SendTransactionProps & ModalProps) => {
-  const {networkTag: optionalNetworkTag} = BackendState.useContainer()
-  const networkTag = getNetworkTagOrTestnet(optionalNetworkTag)
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
@@ -71,28 +68,19 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
   const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
 
-  const rawAddressValidator = createConfidentialAddressValidator(networkTag)
-  const _estimateTransactionFee = (): Promise<FeeEstimates> =>
-    estimateTransactionFee(toWei(new BigNumber(amount)))
-
   const feeValidationResult = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(t, availableAmount)
-  const addressValidator = toAntValidator(t, rawAddressValidator)
+  const addressValidator = toAntValidator(t, validateAddress)
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
-    _estimateTransactionFee,
-    [amount, recipient, networkTag],
-    async (): Promise<void> => {
-      if (amount !== '0') {
-        await txAmountValidator.validator({}, amount)
-      }
-    },
+    estimateTransactionFee,
+    [],
   )
 
-  const totalAmount = new BigNumber(toWei(amount)).plus(new BigNumber(toWei(fee)))
-  const remainingBalance = totalAmount.isFinite()
-    ? availableAmount.minus(totalAmount)
-    : availableAmount
+  const totalAmount = asEther(new BigNumber(amount).plus(fee))
+  const remainingBalance = asWei(
+    totalAmount.isFinite() ? availableAmount.minus(totalAmount) : availableAmount,
+  )
 
   const disableSend =
     feeValidationResult !== 'OK' || !feeEstimates || !remainingBalance.isPositive()
@@ -107,8 +95,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'sendTransaction']),
-          onClick: (): Promise<void> =>
-            onSend(recipient, Number(toWei(amount)), Number(toWei(fee))),
+          onClick: (): Promise<void> => onSend(recipient, asEther(amount), asEther(fee)),
           disabled: disableSend,
         }}
         onSetLoading={modalLocker.setLocked}

@@ -1,9 +1,9 @@
-import React, {useState, useRef, useEffect, FunctionComponent} from 'react'
+import React, {useState, useRef, useEffect, ReactNode, FunctionComponent} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {Input, Button, Popover} from 'antd'
-import {LoadingOutlined} from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
+import {LoadingOutlined} from '@ant-design/icons'
 import {InlineError, InlineErrorProps} from '../InlineError'
 import {DialogState} from '../Dialog'
 import {ETC_CHAIN} from '../chains'
@@ -16,7 +16,7 @@ import {FeeLevel, allFeeLevels} from '../../web3'
 import {DialogError} from './DialogError'
 import {TKeyRenderer} from '../i18n'
 import {Trans} from '../Trans'
-import {fromWei} from '../util'
+import {Wei, asEther, etherValue} from '../units'
 import './DialogFee.scss'
 
 interface DialogFeeProps {
@@ -31,19 +31,60 @@ interface DialogFeeProps {
   isPending?: boolean
 }
 
+interface DisplayEstimateProps {
+  customMode: boolean
+  level: FeeLevel
+  estimate: Wei
+}
+
 const feeLevelLabels: Record<FeeLevel, TKeyRenderer> = {
   low: ['wallet', 'feeEstimateLevels', 'low'],
   medium: ['wallet', 'feeEstimateLevels', 'medium'],
   high: ['wallet', 'feeEstimateLevels', 'high'],
 }
 
-const feeLevelIcons: Record<FeeLevel, React.ReactNode> = {
+const feeLevelIcons: Record<FeeLevel, ReactNode> = {
   low: <SVG src={speedLow} className="icon" title="Low" />,
   medium: <SVG src={speedMedium} className="icon" title="Medium" />,
   high: <SVG src={speedHigh} className="icon" title="High" />,
 }
 
-const fieldDisplayAmount = (amount: BigNumber): string => fromWei(amount).toString(10)
+const MAX_DECIMAL_PLACES_TO_SHOW = 9
+const MIN_AMOUNT_TO_DISPLAY = asEther(new BigNumber(1).shiftedBy(-MAX_DECIMAL_PLACES_TO_SHOW))
+
+const fieldDisplayAmount = (amount: Wei): string => etherValue(amount).toString(10)
+
+const DisplayEstimate = ({customMode, level, estimate}: DisplayEstimateProps): JSX.Element => {
+  const {abbreviateAmount} = useFormatters()
+
+  const isUnderLimit = estimate.isLessThan(MIN_AMOUNT_TO_DISPLAY)
+
+  const displayAmount = isUnderLimit
+    ? `< ${abbreviateAmount(etherValue(MIN_AMOUNT_TO_DISPLAY)).relaxed}`
+    : abbreviateAmount(etherValue(estimate).dp(9)).relaxed
+
+  return (
+    <Popover
+      content={
+        <span>
+          {abbreviateAmount(etherValue(estimate)).relaxed} {ETC_CHAIN.symbol}
+        </span>
+      }
+    >
+      {customMode ? (
+        <span>{feeLevelIcons[level]}</span>
+      ) : (
+        <span>
+          <Trans k={feeLevelLabels[level]} />
+          <br />
+          <span className="fee-amount">
+            {displayAmount} {ETC_CHAIN.symbol}
+          </span>
+        </span>
+      )}
+    </Popover>
+  )
+}
 
 export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = ({
   label,
@@ -61,13 +102,10 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
   const inputRef = useRef<Input>(null)
 
   const {setErrorMessage} = DialogState.useContainer()
-  const {abbreviateAmount} = useFormatters()
-
-  const displayAmount = (amount: BigNumber): string => abbreviateAmount(fromWei(amount)).relaxed
 
   useEffect(() => {
     if (feeLevel != null && feeEstimates) {
-      setValue(fieldDisplayAmount(feeEstimates[feeLevel]))
+      setValue(etherValue(feeEstimates[feeLevel]).toString(10))
     }
   }, [feeEstimates])
 
@@ -142,25 +180,7 @@ export const DialogFee: FunctionComponent<InlineErrorProps & DialogFeeProps> = (
               }}
               key={level}
             >
-              {isCustom ? (
-                <Popover
-                  content={
-                    <span>
-                      {displayAmount(feeEstimates[level])} {ETC_CHAIN.symbol}
-                    </span>
-                  }
-                >
-                  <span>{feeLevelIcons[level]}</span>
-                </Popover>
-              ) : (
-                <span>
-                  <Trans k={feeLevelLabels[level]} />
-                  <br />
-                  <span className="fee-amount">
-                    {displayAmount(feeEstimates[level])} {ETC_CHAIN.symbol}
-                  </span>
-                </span>
-              )}
+              <DisplayEstimate estimate={feeEstimates[level]} level={level} customMode={isCustom} />
             </Button>
           ))}
         </div>

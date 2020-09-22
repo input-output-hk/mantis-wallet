@@ -1,11 +1,10 @@
 import React, {useState} from 'react'
 import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
-import BigNumber from 'bignumber.js'
 import InfiniteScroll from 'react-infinite-scroller'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {FeeEstimates, PrivateAddress} from '../common/wallet-state'
+import {FeeEstimates, PrivateAddress, LoadedState} from '../common/wallet-state'
 import {
   TransactionList,
   updateSorting,
@@ -15,14 +14,15 @@ import {
 } from './TransactionList'
 import {Trans} from '../common/Trans'
 import {ExtendedTransaction} from './TransactionRow'
+import {Wei} from '../common/units'
 import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
   transactions: ExtendedTransaction[]
   addresses: PrivateAddress[]
-  availableBalance: BigNumber
-  sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<void>
-  estimateTransactionFee: (amount: BigNumber) => Promise<FeeEstimates>
+  availableBalance: Wei
+  sendTransaction: LoadedState['sendTransaction']
+  estimateTransactionFee: () => Promise<FeeEstimates>
   generateAddress: () => Promise<void>
 }
 
@@ -93,8 +93,8 @@ export const TransactionHistory = ({
             visible={showSendModal}
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
-            onSend={async (recipient: string, amount: number, fee: number): Promise<void> => {
-              await sendTransaction(recipient, amount, fee, '')
+            onSend={async (recipient: string, amount: Wei, fee: Wei): Promise<void> => {
+              await sendTransaction(recipient, amount, fee)
               setShowSendModal(false)
             }}
             estimateTransactionFee={estimateTransactionFee}

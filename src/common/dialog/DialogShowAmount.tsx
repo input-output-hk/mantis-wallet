@@ -1,16 +1,15 @@
 import React, {PropsWithChildren} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
-import BigNumber from 'bignumber.js'
 import {StopOutlined} from '@ant-design/icons'
 import {useFormatters} from '../../settings-state'
 import {ShortNumber} from '../ShortNumber'
 import {ETC_CHAIN} from '../chains'
-import {fromWei} from '../util'
+import {Wei, etherValue} from '../units'
 import './DialogShowAmount.scss'
 
 interface DialogShowAmountProps {
-  amount: BigNumber
+  amount: Wei
   displayExact?: boolean
 }
 
@@ -22,7 +21,7 @@ const ShowAmount = ({amount, displayExact}: DialogShowAmountProps): JSX.Element 
   }
 
   return displayExact ? (
-    <>{abbreviateAmount(fromWei(amount)).relaxed}</>
+    <>{abbreviateAmount(etherValue(amount)).relaxed}</>
   ) : (
     <ShortNumber big={amount} />
   )

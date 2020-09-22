@@ -4,15 +4,18 @@ import _ from 'lodash/fp'
 import * as t from 'io-ts'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome, isNone} from 'fp-ts/lib/Option'
+import {pipe} from 'fp-ts/lib/pipeable'
 import Web3 from 'web3'
 import {EncryptedKeystoreV3Json, Account as Web3Account} from 'web3-core'
-import {NumberFromHexString, BigNumberFromHexString} from './io-helpers'
-import {Transaction, FeeLevel} from '../web3'
+import {NumberFromHexString} from './io-helpers'
+import {Transaction} from '../web3'
 import {rendererLog} from './logger'
 import {Store, createInMemoryStore} from './store'
 import {usePersistedState} from './hook-utils'
 import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
+import {toHex} from './util'
+import {asWei, Wei, asEther} from './units'
 
 // API Types
 
@@ -29,13 +32,6 @@ const SynchronizationStatusOnline = t.type({
 })
 
 const SynchronizationStatus = t.union([SynchronizationStatusOffline, SynchronizationStatusOnline])
-
-const FeeEstimatesForIoType: Record<FeeLevel, typeof BigNumberFromHexString> = {
-  low: BigNumberFromHexString,
-  medium: BigNumberFromHexString,
-  high: BigNumberFromHexString,
-}
-const FeeEstimates = t.type(FeeEstimatesForIoType)
 
 // FIXME ETCM-113 we might need a different object for this
 export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
@@ -62,7 +58,14 @@ export interface CallParams {
   data?: string // smart contract deployment/calling code
 }
 
-export type FeeEstimates = t.TypeOf<typeof FeeEstimates>
+export type FeeEstimates = {
+  low: Wei
+  medium: Wei
+  high: Wei
+}
+
+const TRANSFER_GAS_LIMIT = 21000
+const MIN_GAS_PRICE = asWei(1)
 
 // TransactionStatus
 
@@ -106,10 +109,9 @@ export interface LoadedState {
   lock: (password: string) => Promise<boolean>
   generatePrivateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
-  sendTransaction: (recipient: string, amount: number, fee: number, memo: string) => Promise<string>
-  calculateGasPrice: (fee: number, callParams: CallParams) => Promise<number>
+  sendTransaction: (recipient: string, amount: Wei, fee: Wei) => Promise<void>
   estimateCallFee(callParams: CallParams): Promise<FeeEstimates>
-  estimateTransactionFee(amount: BigNumber): Promise<FeeEstimates>
+  estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
   addTokensToTrack: (tokenAddresses: string[]) => void
 }
@@ -144,9 +146,8 @@ export type WalletData =
   | ErrorState
 
 interface Overview {
-  transparentBalance: BigNumber
-  availableBalance: BigNumber
-  pendingBalance: BigNumber
+  availableBalance: Wei
+  pendingBalance: Wei
   transactions: Transaction[]
 }
 
@@ -174,8 +175,8 @@ interface WalletStateParams {
   store: Store<StoreWalletData>
   error: Option<Error>
   syncStatus: Option<SynchronizationStatus>
-  totalBalance: Option<BigNumber>
-  availableBalance: Option<BigNumber>
+  totalBalance: Option<Wei>
+  availableBalance: Option<Wei>
   privateAccounts: Option<PrivateAddress[]>
   transactions: Option<Transaction[]>
   callTxStatuses: CallTxStatuses
@@ -221,10 +222,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   )
 
   // balance
-  const [totalBalanceOption, setTotalBalance] = useState<Option<BigNumber>>(
-    _initialState.totalBalance,
-  )
-  const [availableBalanceOption, setAvailableBalance] = useState<Option<BigNumber>>(
+  const [totalBalanceOption, setTotalBalance] = useState<Option<Wei>>(_initialState.totalBalance)
+  const [availableBalanceOption, setAvailableBalance] = useState<Option<Wei>>(
     _initialState.availableBalance,
   )
 
@@ -246,13 +245,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
-    const transparentBalance = new BigNumber(0)
-    const totalBalance = getOrElse((): BigNumber => new BigNumber(0))(totalBalanceOption)
-    const availableBalance = getOrElse((): BigNumber => new BigNumber(0))(availableBalanceOption)
-    const pendingBalance = totalBalance.minus(availableBalance)
+    const totalBalance = getOrElse(() => asWei(0))(totalBalanceOption)
+    const availableBalance = getOrElse(() => asWei(0))(availableBalanceOption)
+    const pendingBalance = asWei(totalBalance.minus(availableBalance))
 
     return {
-      transparentBalance,
       availableBalance,
       pendingBalance,
       transactions,
@@ -300,6 +297,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return currentAccountOption.value
   }
 
+  const getUnlockedAccount = (address: string): Web3Account | undefined =>
+    // account should be accessible through address too
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    web3.eth.accounts.wallet[address]
+
   const loadPrivateAccounts = async (): Promise<void> => {
     const address = getCurrentAccount()
     setPrivateAccounts(
@@ -339,8 +342,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const loadBalance = async (): Promise<void> => {
     const address = getCurrentAccount()
     const balance = await web3.eth.getBalance(address, 'latest')
-    setTotalBalance(some(new BigNumber(balance)))
-    setAvailableBalance(some(new BigNumber(balance)))
+    setTotalBalance(some(asWei(balance)))
+    setAvailableBalance(some(asWei(balance)))
   }
 
   // const _getCallTransactionStatus = async (transactionHash: string): Promise<TransactionStatus> => {
@@ -413,7 +416,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const syncing = await web3.eth.isSyncing()
 
     if (syncing === true) {
-      throw new Error('Unexpected')
+      throw Error('Unexpected')
     }
 
     if (syncing === false) {
@@ -435,15 +438,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const refreshSyncStatus = async (): Promise<void> => {
-    if (!isMocked && isNone(currentAccountOption)) {
-      return setWalletStatus('NO_WALLET')
-    }
+    if (!isMocked) {
+      if (isNone(currentAccountOption)) {
+        return setWalletStatus('NO_WALLET')
+      }
 
-    // account should be accessible through address too
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    if (!isMocked && web3.eth.accounts.wallet[currentAccountOption.value] == null) {
-      return setWalletStatus('LOCKED')
+      if (getUnlockedAccount(currentAccountOption.value) == null) {
+        return setWalletStatus('LOCKED')
+      }
     }
 
     try {
@@ -472,18 +474,41 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const generatePrivateAccount = (): Promise<void> => Promise.resolve()
 
-  const sendTransaction = async (
-    recipient: string,
-    amount: number,
-    fee: number,
-    memo: string,
-  ): Promise<string> => {
-    rendererLog.log(recipient, amount, fee, ['text', memo], false)
-    return '' // FIXME ETCM-111 fix send tx
+  const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
+
+  const getCurrentPrivateKeyWithoutPassword = (): string => {
+    const currentAccount = getCurrentAccount()
+
+    const web3Account = getUnlockedAccount(currentAccount)
+
+    if (!web3Account) throw createTErrorRenderer(['wallet', 'error', 'accountWasNotUnlocked'])
+
+    return web3Account.privateKey
   }
 
-  const calculateGasPrice = (_fee: number, _callParams: CallParams): Promise<number> =>
-    Promise.resolve(1) // FIXME ETCM-111 fix calculate gas
+  const sendTransaction = async (recipient: string, amount: Wei, fee: Wei): Promise<void> => {
+    const privateKey = getCurrentPrivateKeyWithoutPassword()
+
+    const txConfig = {
+      to: recipient,
+      from: getCurrentAccount(),
+      value: toHex(amount),
+      gas: TRANSFER_GAS_LIMIT,
+      gasPrice: pipe(
+        fee,
+        (b) => b.dividedBy(TRANSFER_GAS_LIMIT),
+        (b) => b.integerValue(),
+        (b) => BigNumber.max(b, MIN_GAS_PRICE),
+        toHex,
+      ),
+      chainId: 42, // FIXME ETCM-110 this should be automatic
+    }
+
+    const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
+    if (tx.rawTransaction === undefined)
+      throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
+    await web3.eth.sendSignedTransaction(tx.rawTransaction)
+  }
 
   const addAccount = async (name: string, privateKey: string, password: string): Promise<void> => {
     web3.eth.accounts.wallet.add(privateKey)
@@ -549,25 +574,27 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return getCurrentPrivateKey(password) // FIXME ETCM-113 refactor this
   }
 
-  const estimateFees = (
-    _txType: 'redeem' | 'transfer',
-    _amount: BigNumber,
-  ): Promise<FeeEstimates> =>
-    Promise.resolve({
-      low: new BigNumber(0.01),
-      medium: new BigNumber(0.02),
-      high: new BigNumber(0.03),
-    }) // FIXME ETCM-111 fix estimate fees
-
-  const estimateTransactionFee = (amount: BigNumber): Promise<FeeEstimates> =>
-    estimateFees('transfer', amount)
+  const estimateTransactionFee = async (): Promise<FeeEstimates> => {
+    const gasPrice = await getGasPrice()
+    const useMinGasPrice = (gasPrice: BigNumber): BigNumber =>
+      BigNumber.max(gasPrice, MIN_GAS_PRICE)
+    return {
+      low: asWei(useMinGasPrice(gasPrice.times(0.75)).times(TRANSFER_GAS_LIMIT)),
+      medium: asWei(useMinGasPrice(gasPrice).times(TRANSFER_GAS_LIMIT)),
+      high: asWei(
+        useMinGasPrice(gasPrice)
+          .times(TRANSFER_GAS_LIMIT)
+          .times(1.25),
+      ),
+    }
+  }
 
   const estimateCallFee = (_callParams: CallParams): Promise<FeeEstimates> =>
     Promise.resolve({
-      low: new BigNumber(0.01),
-      medium: new BigNumber(0.02),
-      high: new BigNumber(0.03),
-    }) // FIXME ETCM-111 fix estimate fees
+      low: asEther(0.01),
+      medium: asEther(0.02),
+      high: asEther(0.03),
+    }) // FIXME ETCM-115 fix estimate fees
 
   const addTokenToTrack = (tokenAddress: string): void => {
     if (!trackedTokens.includes(tokenAddress)) {
@@ -593,7 +620,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     generatePrivateAccount,
     refreshSyncStatus,
     sendTransaction,
-    calculateGasPrice,
     estimateCallFee,
     estimateTransactionFee,
     unlock,

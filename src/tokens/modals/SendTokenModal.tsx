@@ -11,18 +11,18 @@ import {DialogInput} from '../../common/dialog/DialogInput'
 import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 import {
   toAntValidator,
-  createTransparentAddressValidator,
+  validateAddress,
   validateAmount,
   isGreater,
   hasAtMostDecimalPlaces,
   areFundsEnough,
   validateFee,
   translateValidationResult,
-  toWei,
 } from '../../common/util'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {getSendTokenParams, formatTokenAmount} from '../tokens-utils'
+import {asEther} from '../../common/units'
 
 interface SendTokenModalProps extends ModalOnCancel {
   estimateCallFee: LoadedState['estimateCallFee']
@@ -52,7 +52,7 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
 
   const availableBalance = account.tokens[token.address] ?? new BigNumber(0)
 
-  const addressValidator = toAntValidator(t, createTransparentAddressValidator(networkTag))
+  const addressValidator = toAntValidator(t, validateAddress)
   const txAmountValidator = toAntValidator(t, (decimals?: string) =>
     validateAmount(decimals || '', [
       isGreater(),
@@ -94,13 +94,7 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
       rightButtonProps={{
         children: <Trans k={['tokens', 'button', 'sendToken']} />,
         onClick: () =>
-          onSendToken(
-            token,
-            account.address,
-            recipient,
-            new BigNumber(amount),
-            toWei(new BigNumber(fee)),
-          ),
+          onSendToken(token, account.address, recipient, new BigNumber(amount), asEther(fee)),
         disabled: sendDisabled,
       }}
       onSetLoading={modalLocker.setLocked}

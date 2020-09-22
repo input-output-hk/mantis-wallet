@@ -1,5 +1,4 @@
 import React from 'react'
-import BigNumber from 'bignumber.js'
 import _ from 'lodash/fp'
 import {action} from '@storybook/addon-actions'
 import {object, text} from '@storybook/addon-knobs'
@@ -11,6 +10,7 @@ import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
 import {ExtendedTransaction} from './TransactionRow'
+import {asWei} from '../common/units'
 
 export default {
   title: 'Transaction History',
@@ -26,7 +26,7 @@ export const withNoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={[]}
     addresses={addresses}
-    availableBalance={new BigNumber(0)}
+    availableBalance={asWei(0)}
     sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
@@ -62,7 +62,6 @@ export const interactive = (): JSX.Element => {
           },
           txDetails: {
             txType: 'transfer',
-            memo: null,
           },
         }),
         object<ExtendedTransaction>('Transaction 2', {
@@ -76,7 +75,6 @@ export const interactive = (): JSX.Element => {
           },
           txDetails: {
             txType: 'transfer',
-            memo: null,
           },
         }),
         object<ExtendedTransaction>('Transaction 3', {
@@ -86,7 +84,6 @@ export const interactive = (): JSX.Element => {
           txStatus: 'pending',
           txDetails: {
             txType: 'transfer',
-            memo: null,
           },
         }),
       ]}

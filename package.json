@@ -80,7 +80,6 @@
     "archiver": "^4.0.1",
     "async-validator": "^3.3.0",
     "babel-plugin-import": "^1.13.0",
-    "bech32-buffer": "^0.1.2",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "classnames": "^2.2.6",

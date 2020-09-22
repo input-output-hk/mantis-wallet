@@ -44,7 +44,6 @@ export interface CallTxDetails {
 
 interface TransferTxDetails {
   txType: 'transfer'
-  memo: ['text', string] | ['binary', string] | null
 }
 
 interface CoinbaseTxDetails {

@@ -3,6 +3,7 @@ import {wait} from '../shared/utils'
 import {FeeEstimates, TransparentAccount} from '../common/wallet-state'
 import {ExtendedTransaction} from '../wallets/TransactionRow'
 import {Token} from '../tokens/tokens-state'
+import {asWei} from '../common/units'
 
 export const dummyTransactions: ExtendedTransaction[] = [
   {
@@ -41,7 +42,6 @@ export const dummyTransactions: ExtendedTransaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
-      memo: ['text', 'My memo'],
     },
     txDirection: 'outgoing',
     txValue: {
@@ -58,7 +58,6 @@ export const dummyTransactions: ExtendedTransaction[] = [
     },
     txDetails: {
       txType: 'transfer',
-      memo: null,
     },
     txDirection: 'incoming',
     txValue: '0x100441e',
@@ -68,7 +67,6 @@ export const dummyTransactions: ExtendedTransaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
-      memo: null,
     },
     txDirection: 'incoming',
     txValue: '0x54708b',
@@ -78,7 +76,6 @@ export const dummyTransactions: ExtendedTransaction[] = [
     txStatus: 'failed',
     txDetails: {
       txType: 'transfer',
-      memo: null,
     },
     txDirection: 'outgoing',
     txValue: {
@@ -104,7 +101,6 @@ export const dummyTransactions: ExtendedTransaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
-      memo: null,
     },
     txDirection: 'incoming',
     txValue: '0x4c45dce',
@@ -114,7 +110,6 @@ export const dummyTransactions: ExtendedTransaction[] = [
     txStatus: 'pending',
     txDetails: {
       txType: 'transfer',
-      memo: null,
     },
     txDirection: 'outgoing',
     txValue: {
@@ -171,14 +166,13 @@ export const dummyTransactions: ExtendedTransaction[] = [
 export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEstimates> =>
   wait(Math.floor(Math.random() * Math.floor(200))).then(() =>
     Promise.resolve({
-      low: new BigNumber(30000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
-      medium: new BigNumber(50000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
-      high: new BigNumber(70000000000).times(amount && !amount.isEqualTo(0) ? amount : 1),
+      low: asWei(new BigNumber(30000000000).times(amount && !amount.isEqualTo(0) ? amount : 1)),
+      medium: asWei(new BigNumber(50000000000).times(amount && !amount.isEqualTo(0) ? amount : 1)),
+      high: asWei(new BigNumber(70000000000).times(amount && !amount.isEqualTo(0) ? amount : 1)),
     }),
   )
 
-export const ADDRESS =
-  'm-test-shl-ad100hqhl0uks8tneln0z7rzfd962p84v3uk22grrzqh48laq53pugqjjymwyed9twecujgw7jdvy5'
+export const ADDRESS = '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a872'
 
 const FIRST_ERC20_TOKEN_ADDRESS = 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v6'
 

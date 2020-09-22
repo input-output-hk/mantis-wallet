@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom/extend-expect'
-import _ from 'lodash/fp'
 import React, {FunctionComponent, useState} from 'react'
 import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -9,13 +8,16 @@ import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {PrivateAddress, WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS} from '../common/test-helpers'
-import {toHex, toWei, fromWei} from '../common/util'
+import {toHex} from '../common/util'
 import {BackendState} from '../common/backend-state'
 import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
 import {ExtendedTransaction} from './TransactionRow'
+import {asWei, asEther, etherValue} from '../common/units'
 
 const web3 = new Web3()
+
+const weiString = (v: number): string => asEther(v).toString(10)
 
 const tx1: ExtendedTransaction = {
   hash: '1',
@@ -25,10 +27,9 @@ const tx1: ExtendedTransaction = {
     atBlock: '0x1',
     timestamp: 1584527520,
   },
-  txValue: toWei('123'),
+  txValue: weiString(123),
   txDetails: {
     txType: 'transfer',
-    memo: null,
   },
 }
 
@@ -37,8 +38,8 @@ const tx2: ExtendedTransaction = {
   txDirection: 'outgoing',
   txStatus: 'pending',
   txValue: {
-    value: toWei('123456789'),
-    fee: toWei('100'),
+    value: weiString(123456789),
+    fee: weiString(100),
   },
   txDetails: {
     txType: 'call',
@@ -92,15 +93,15 @@ const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNod
 
 const estimateFees = (): Promise<FeeEstimates> =>
   Promise.resolve({
-    low: new BigNumber(100),
-    medium: new BigNumber(200),
-    high: new BigNumber(300),
+    low: asWei(100),
+    medium: asWei(200),
+    high: asWei(300),
   })
 
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
   addresses: addresses,
-  availableBalance: toWei(new BigNumber(1234)),
+  availableBalance: asEther(1234),
   sendTransaction: jest.fn(),
   estimateTransactionFee: estimateFees,
   generateAddress: jest.fn(),
@@ -194,10 +195,10 @@ test('TransactionHistory shows `Transparent` tx icon', () => {
 
 // Modals
 test('Send modal shows up', async () => {
-  const availableEther = new BigNumber(123)
+  const availableAmount = asEther(123)
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
-    availableBalance: toWei(availableEther),
+    availableBalance: availableAmount,
   })
   const sendButton = getByTestId('send-button')
   await act(async () => userEvent.click(sendButton))
@@ -221,19 +222,15 @@ test('Send modal shows up', async () => {
 })
 
 test('Send transaction works', async () => {
-  const availableEther = new BigNumber(1230)
-  const usedEther = new BigNumber(951)
-  const usedWei = toWei(usedEther)
+  const availableBalance = asEther(1230)
+  const usedAmount = asEther(951)
 
-  const baseEstimates = {
-    low: new BigNumber(1230000000000),
-    medium: new BigNumber(4560000000000),
-    high: new BigNumber(7890000000000),
+  const feeEstimates = {
+    low: asWei(1230000000000),
+    medium: asWei(4560000000000),
+    high: asWei(7890000000000),
   }
-  const mockEstimateCalculator = (amount: BigNumber) => (base: BigNumber): BigNumber =>
-    base.plus(amount.dividedBy(1e7))
-  const estimateFees = (amount: BigNumber): Promise<FeeEstimates> =>
-    Promise.resolve(_.mapValues(mockEstimateCalculator(amount))(baseEstimates) as FeeEstimates)
+  const estimateFees = (): Promise<FeeEstimates> => Promise.resolve(feeEstimates)
 
   const send = jest.fn()
 
@@ -244,7 +241,7 @@ test('Send transaction works', async () => {
     queryByText,
     queryAllByText,
   } = renderTransactionHistory({
-    availableBalance: toWei(availableEther),
+    availableBalance,
     estimateTransactionFee: estimateFees,
     sendTransaction: send,
   })
@@ -280,7 +277,7 @@ test('Send transaction works', async () => {
   await waitFor(() => expect(queryByText('Must be a number greater than 0')).toBeInTheDocument())
 
   // Set amount to too high value, error changes
-  fireEvent.change(amount, {target: {value: `${usedEther.toString(10)}0`}})
+  fireEvent.change(amount, {target: {value: `${etherValue(usedAmount).toString(10)}0`}})
   await waitFor(() =>
     expect(queryByText('Must be a number greater than 0')).not.toBeInTheDocument(),
   )
@@ -289,16 +286,6 @@ test('Send transaction works', async () => {
   // Set amount to correct value by deleting last digit, error disappears
   await act(() => userEvent.type(amount, '{backspace}'))
   await waitFor(() => expect(queryByText('Insufficient funds')).not.toBeInTheDocument())
-
-  // Check correct fee estimates are shown for default used amount
-  await waitFor(() => {
-    Object.values(baseEstimates).forEach((estimate) => {
-      const {strict: estimateFormatted} = abbreviateAmountForEnUS(
-        fromWei(mockEstimateCalculator(usedWei)(estimate)),
-      )
-      expect(queryByText(estimateFormatted, {exact: false})).toBeInTheDocument()
-    })
-  })
 
   // Choose slow fee
   const slowFeeEstimate = getAllByText('Slow')[0]
@@ -310,9 +297,8 @@ test('Send transaction works', async () => {
   await waitFor(() =>
     expect(send).toBeCalledWith(
       ADDRESS, // the address used
-      usedWei.toNumber(), // the amount used
-      mockEstimateCalculator(usedWei)(baseEstimates.low).toNumber(), // the lowest fee used
-      '',
+      usedAmount, // the amount used
+      feeEstimates.low, // the lowest fee used
     ),
   )
 })

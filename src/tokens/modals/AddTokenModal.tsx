@@ -6,9 +6,8 @@ import {Dialog, DialogState} from '../../common/Dialog'
 import {useTranslation} from '../../settings-state'
 import {Token, TokensData} from '../tokens-state'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 import {
-  createTransparentAddressValidator,
+  validateAddress,
   toAntValidator,
   validateAmount,
   isGreaterOrEqual,
@@ -39,12 +38,11 @@ const ContractAddressInput = ({
   getTokenInfo,
 }: ContractAddressInputProps): JSX.Element => {
   const {t} = useTranslation()
-  const networkTag = getNetworkTagOrTestnet(BackendState.useContainer().networkTag)
   const {dialogForm} = DialogState.useContainer()
 
   const [address, _setAddress] = useState('')
 
-  const addressValidator = toAntValidator(t, createTransparentAddressValidator(networkTag))
+  const addressValidator = toAntValidator(t, validateAddress)
   const contractValidator = {
     validator: async (_rule: Rule, value?: string): Promise<void> =>
       value !== undefined && (await isValidContract(value))

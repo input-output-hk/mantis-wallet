@@ -112,7 +112,9 @@
       "textIsLimitedToBytes": "The text is limited to {{count}} byte",
       "textIsLimitedToBytes_plural": "The text is limited to {{count}} bytes",
       "noAccountWasSelected": "No account was selected to complete this action",
-      "accountNotFound": "The account {{currentAddress}} was not found. Available accounts: {{accounts}}"
+      "accountNotFound": "The account {{currentAddress}} was not found. Available accounts: {{accounts}}",
+      "accountWasNotUnlocked": "Unexpected error: It seems the account wasn't properly unlocked",
+      "couldNotSignTransaction": "Unexpected error: Something went wrong when signing the transaction"
     },
     "message": {
       "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",
