@@ -6779,7 +6779,7 @@ deep-eql@^3.0.1:
   dependencies:
     type-detect "^4.0.0"
 
-deep-equal@^1.0.1, deep-equal@^1.1.0:
+deep-equal@^1.0.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.1.1.tgz#b5c98c942ceffaf7cb051e24e1434a25a2e6076a"
   integrity sha512-yd9c5AdiqVcR+JjcwUQb9DkhJc8ngNr0MahEBGvDiJw8puWab2yZlh+nkasOnZP+EGTAP6rRp2JzJhJZzvNF8g==
@@ -10237,13 +10237,6 @@ invert-kv@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
-
-io-ts-promise@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/io-ts-promise/-/io-ts-promise-2.0.2.tgz#e034d10f269669c852887636f5bd1ce706bbc661"
-  integrity sha512-heFR4LRkdEgTCwTzH/YI7FL/18/oWVFipzdwBWOq7GZVM4oLK33HXITDkaTSFkmKTk9zcGGreHHhNxI8RY8jsg==
-  dependencies:
-    deep-equal "^1.1.0"
 
 io-ts@^2.1.1:
   version "2.1.1"
