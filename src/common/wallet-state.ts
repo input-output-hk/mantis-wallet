@@ -501,7 +501,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
         (b) => BigNumber.max(b, MIN_GAS_PRICE),
         toHex,
       ),
-      chainId: 42, // FIXME ETCM-110 this should be automatic
     }
 
     const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
