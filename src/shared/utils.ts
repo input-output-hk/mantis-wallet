@@ -6,26 +6,6 @@ import _ from 'lodash/fp'
 import log from 'electron-log'
 
 /**
- * Run a callback and return input. This function is really helpful for:
- *   - adding some logging to chain of functions
- *   - adding some side-effects in the middle of (otherwise pure) pipeline (e.g. some kind of progress notifications)
- *
- * Due to these it should rather be avoided in pure, synchronous code, but is really helpful in some cases
- * @param cb Side-effect to perform with input value
- */
-export const tap = <A>(cb: (a: A) => void) => (input: A): A => {
-  cb(input)
-  return input
-}
-
-/**
- * A `tap`, which is optimized for usage in `.then` chains on Promises
- * @param cb Side-effect to perform with value in promise
- */
-export const flatTap = <A>(cb: (a: A) => Promise<void>) => (input: A): Promise<A> =>
-  cb(input).then(() => input)
-
-/**
  * Curried property getter. It's almost the same as `_.get`, but this has much better type inference
  * @param key Key of object to get
  */

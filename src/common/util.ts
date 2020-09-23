@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import {isAddress} from 'web3-utils'
 import _ from 'lodash'
+import {isAddress} from 'web3-utils'
 import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
@@ -218,8 +218,3 @@ export const fillActionHandlers = (
 })
 
 export const utf8Length = (str: string): number => new Blob([str]).size
-
-export const validateUtf8Length = (lengthInBytes: number) => (value?: string): ValidationResult =>
-  value != null && utf8Length(value) > lengthInBytes
-    ? {tKey: ['wallet', 'error', 'textIsLimitedToBytes'], options: {count: lengthInBytes}}
-    : 'OK'
