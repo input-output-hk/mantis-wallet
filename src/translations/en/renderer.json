@@ -92,7 +92,6 @@
       "lastUsedAddresses": "Last used addresses"
     },
     "error": {
-      "jobAlreadyAdded": "Job {{jobHash}} already added",
       "couldNotLockWallet": "Couldn't lock the wallet.",
       "couldNotRemoveWallet": "Couldn't remove the wallet.",
       "couldNotUpdateFeeEstimates": "Couldn't update fee estimates, they might be outdated",
@@ -108,15 +107,12 @@
       "walletNameShouldNotBeEmpty": "Name shouldn't be empty",
       "recipientMustBe": "Recipient must be set",
       "couldNotRestoreWallet": "Couldn't restore wallet with the provided information",
-      "textIsLimitedToBytes": "The text is limited to {{count}} byte",
-      "textIsLimitedToBytes_plural": "The text is limited to {{count}} bytes",
       "noAccountWasSelected": "No account was selected to complete this action",
       "accountNotFound": "The account {{currentAddress}} was not found. Available accounts: {{accounts}}",
       "accountWasNotUnlocked": "Unexpected error: It seems the account wasn't properly unlocked",
       "couldNotSignTransaction": "Unexpected error: Something went wrong when signing the transaction"
     },
     "message": {
-      "progressMightBeOutdated": "Your wallet is connecting at the moment, the progress might be outdated.",
       "loadingFeeEstimates": "Loading estimates",
       "passwordCriteriaMessage": "Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number",
       "inputRecoveryPhraseInstructions": "Re-input recovery phrase by selecting words from selection",
@@ -153,11 +149,6 @@
       "currentBlock": "Current block: {{blockNumber}}",
       "highestBlock": "Highest block: {{blockNumber}}"
     },
-    "buildTxStatus": {
-      "buildingTransaction": "Building {{count}} transaction",
-      "buildingTransaction_plural": "Building {{count}} transactions",
-      "finishedTxBuilding": "Finished"
-    },
     "transactionStatus": {
       "pending": "Pending",
       "confirmed": "Confirmed",
@@ -187,11 +178,9 @@
       "lunaLocalDirectory": "Luna local directory",
       "backend": "Backend",
       "network": "Network",
-      "paramsFetching": "Params fetching",
       "nodeStatus": "Node status",
       "nodeProcessID": "Node process ID",
       "walletStatus": "Wallet status",
-      "walletProcessID": "Wallet process ID",
       "walletRpcAddress": "Wallet RPC address",
       "lastDagInformation": "Last DAG information",
       "synchronizationStatus": "Synchronization",
@@ -282,13 +271,6 @@
       "yes": "Yes",
       "no": "No"
     },
-    "progressIcon": {
-      "checkedState": "Checked",
-      "unknownState": "Unknown",
-      "failedState": "Failed",
-      "inProgressState": "In progress",
-      "stoppedState": "Stopped"
-    },
     "link": {
       "feedback": "Feedback",
       "support": "Support",
@@ -297,7 +279,6 @@
       "learnMore": "Learn more"
     },
     "initializationStatus": {
-      "initLuna": "Initializing Luna",
       "startingNode": "Starting node",
       "connectingToNode": "Connecting to node",
       "loading": "Loading"
