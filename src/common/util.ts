@@ -119,7 +119,8 @@ export function validateEthPrivateKey(privateKey?: string): ValidationResult {
     return {tKey: ['common', 'error', 'ethPrivateKeyMustBeSet']}
   }
   try {
-    const k = new BigNumber(privateKey)
+    const cleanPrivateKey = privateKey.startsWith('0x') ? privateKey : `0x${privateKey}`
+    const k = new BigNumber(cleanPrivateKey)
     if (!k.isFinite() || k.isZero() || k.isGreaterThan(MAX_KEY_VALUE)) {
       return {tKey: ['common', 'error', 'invalidEthPrivateKey']}
     }

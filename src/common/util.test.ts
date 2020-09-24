@@ -5,6 +5,7 @@ import {
   validateAmount,
   isGreaterOrEqual,
   validateEthAddress,
+  validateEthPrivateKey,
   toHex,
   bigSum,
   isLowerOrEqual,
@@ -95,6 +96,21 @@ it('validates ethereum address', () => {
   assert.deepEqual(validateEthAddress(''), {tKey: ['common', 'error', 'ethAddressMustBeSet']})
   assert.deepEqual(validateEthAddress('foobar'), {
     tKey: ['common', 'error', 'invalidEthAddress'],
+  })
+})
+
+it('validates ethereum private key', () => {
+  assert.equal(
+    validateEthPrivateKey('0x8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f'),
+    'OK',
+  )
+  assert.equal(
+    validateEthPrivateKey('8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f'),
+    'OK',
+  )
+  assert.deepEqual(validateEthPrivateKey(''), {tKey: ['common', 'error', 'ethPrivateKeyMustBeSet']})
+  assert.deepEqual(validateEthPrivateKey('foobar'), {
+    tKey: ['common', 'error', 'invalidEthPrivateKey'],
   })
 })
 
