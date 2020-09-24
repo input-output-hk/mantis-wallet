@@ -299,7 +299,6 @@
       "passwordsDoNotMatch": "Passwords don't match",
       "failedToSaveDebugLogs": "Failed to save debug logs: {{errorMsg}}",
       "numberMustBePositive": "Number must be positive",
-      "mustBeANumberLessThan": "Must be a number less than {{maxValue}}",
       "mustBeANumberGreaterThan": "Must be a number greater than {{minValue}}",
       "mustBeAtLeast": "Must be at least {{minValue}}",
       "mustBeAtMost": "Must be at most {{maxValue}}",

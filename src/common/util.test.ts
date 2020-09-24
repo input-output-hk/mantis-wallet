@@ -12,7 +12,6 @@ import {
   areFundsEnough,
   returnDataToHumanReadable,
   optionHasValue,
-  utf8Length,
 } from './util'
 import {asEther} from './units'
 
@@ -120,18 +119,4 @@ it('optionHasValue works correctly', () => {
   assert.equal(optionHasValue(some(2), 1), false)
   assert.equal(optionHasValue(some({foo: {bar: 'wrong'}}), {foo: {bar: 'baz'}}), false)
   assert.equal(optionHasValue(none, 1), false)
-})
-
-it('returns correct utf-8 length', () => {
-  assert.equal(utf8Length('hello world'), 11)
-  assert.equal(utf8Length('🦇'), 4)
-  assert.equal(utf8Length('szélütött űrújságírónő'), 31)
-  assert.equal(utf8Length('Päťtýždňové vĺčatá nervózne štekajú na môjho ďatľa v tŕní'), 74)
-  assert.equal(
-    utf8Length(
-      'กรุงเทพมหานคร อมรรัตนโกสินทร์ มหินทรายุธยา มหาดิลกภพ นพรัตนราชธานีบูรีรมย์ อุดมราชนิเวศน์มหาสถาน อมรพิมานอวตารสถิต สักกะทัตติยวิษณุกรรมประสิทธิ์',
-    ),
-    418,
-  )
-  assert.equal(utf8Length('日本'), 6)
 })

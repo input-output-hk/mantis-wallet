@@ -17,11 +17,6 @@ export const toHex = (n: number | BigNumber): string => {
   return `0x${asString}`
 }
 
-export const isLess = (maxValue = 0) => (b: BigNumber): ValidationResult =>
-  !b.isFinite() || !b.isLessThan(new BigNumber(maxValue))
-    ? {tKey: ['common', 'error', 'mustBeANumberLessThan'], options: {replace: {maxValue}}}
-    : 'OK'
-
 export const isGreater = (minValue = 0) => (b: BigNumber): ValidationResult =>
   !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
     ? {tKey: ['common', 'error', 'mustBeANumberGreaterThan'], options: {replace: {minValue}}}
@@ -217,5 +212,3 @@ export const fillActionHandlers = (
   role,
   tabIndex: 0,
 })
-
-export const utf8Length = (str: string): number => new Blob([str]).size
