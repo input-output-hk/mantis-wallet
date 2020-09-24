@@ -4,13 +4,7 @@ import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import Web3 from 'web3'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {
-  PrivateAddress,
-  WalletState,
-  WalletStatus,
-  FeeEstimates,
-  Transaction,
-} from '../common/wallet-state'
+import {Account, WalletState, WalletStatus, FeeEstimates, Transaction} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {BackendState} from '../common/backend-state'
@@ -50,18 +44,24 @@ const tx2: Transaction = {
   status: 'pending',
 }
 
-const addresses = [
+const accounts: Account[] = [
   {
     address: ADDRESS,
     index: 0,
+    balance: asEther(100),
+    tokens: {},
   },
   {
-    address: 'private-address-1',
+    address: 'address-1',
     index: 1,
+    balance: asEther(200),
+    tokens: {},
   },
   {
-    address: 'private-address-2',
+    address: 'address-2',
     index: 2,
+    balance: asEther(300),
+    tokens: {},
   },
 ]
 
@@ -89,7 +89,7 @@ const estimateFees = (): Promise<FeeEstimates> =>
 
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
-  addresses: addresses,
+  accounts: accounts,
   availableBalance: asEther(1234),
   sendTransaction: jest.fn(),
   estimateTransactionFee: estimateFees,
@@ -106,19 +106,19 @@ const renderTransactionHistory = (props: Partial<TransactionHistoryProps> = {}):
 }
 
 const TxHistoryWithAddressGenerator = ({
-  preparedAddresses,
+  preparedAccounts,
 }: {
-  preparedAddresses: PrivateAddress[]
+  preparedAccounts: Account[]
 }): JSX.Element => {
   const [counter, setCounter] = useState(1)
 
-  const addresses = preparedAddresses.slice(-counter)
+  const addresses = preparedAccounts.slice(-counter)
 
   return (
     <>
       <TransactionHistory
         {...defaultProps}
-        addresses={addresses}
+        accounts={addresses}
         generateAddress={(): Promise<void> => {
           setCounter(counter + 1)
           return Promise.resolve()
@@ -128,10 +128,8 @@ const TxHistoryWithAddressGenerator = ({
   )
 }
 
-const renderTxHistoryWithAddressGenerator = (
-  preparedAddresses: PrivateAddress[] = [],
-): RenderResult =>
-  render(<TxHistoryWithAddressGenerator preparedAddresses={preparedAddresses} />, {
+const renderTxHistoryWithAddressGenerator = (preparedAccounts: Account[] = []): RenderResult =>
+  render(<TxHistoryWithAddressGenerator preparedAccounts={preparedAccounts} />, {
     wrapper: WithProviders,
   })
 
@@ -284,7 +282,7 @@ test('Send transaction works', async () => {
 })
 
 test('Receive modal shows up with address', async () => {
-  const {getByTestId, getByText} = renderTransactionHistory({addresses: addresses})
+  const {getByTestId, getByText} = renderTransactionHistory({accounts: accounts})
   const receiveButton = getByTestId('receive-button')
   userEvent.click(receiveButton)
 
@@ -303,9 +301,9 @@ test('Receive modal shows up with address', async () => {
 })
 
 test('Receive modal works with multiple addresses', async () => {
-  const getAddress = (index: number): string => addresses[addresses.length - 1 - index].address
+  const getAddress = (index: number): string => accounts[accounts.length - 1 - index].address
 
-  const {getByTestId, getByText, queryByText} = renderTxHistoryWithAddressGenerator(addresses)
+  const {getByTestId, getByText, queryByText} = renderTxHistoryWithAddressGenerator(accounts)
   const receiveButton = getByTestId('receive-button')
   userEvent.click(receiveButton)
 

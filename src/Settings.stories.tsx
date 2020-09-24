@@ -13,7 +13,7 @@ export const settings = (): JSX.Element => <Settings />
 
 export const exportPrivateKeyModal = (): JSX.Element => (
   <ExportPrivateKeyModal
-    getSpendingKey={async () => 'example-spending-key'}
+    getPrivateKey={async () => 'example-private-key'}
     onCancel={action('onCancel')}
     visible
   />

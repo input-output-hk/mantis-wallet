@@ -9,7 +9,7 @@ import {asyncAction} from '../storybook-util/custom-knobs'
 import {
   estimateFeesWithRandomDelay,
   dummyERC20Tokens,
-  dummyTransparentAccounts,
+  dummyAccounts,
 } from '../storybook-util/dummies'
 import {HideTokenModal} from './modals/HideTokenModal'
 import {ReceiveTokenModal} from './modals/ReceiveTokenModal'
@@ -25,7 +25,7 @@ export const tokensOverview = (): JSX.Element => <Tokens />
 export const tokenList = (): JSX.Element => (
   <TokenList
     tokens={dummyERC20Tokens}
-    transparentAccounts={dummyTransparentAccounts}
+    accounts={dummyAccounts}
     onRemoveToken={action('on-remove-token')}
     sendToken={asyncAction('send-token')}
     estimateCallFee={() => estimateFeesWithRandomDelay()}
@@ -55,7 +55,7 @@ export const receiveTokenModal = (): JSX.Element => (
   <ReceiveTokenModal
     visible
     token={dummyERC20Tokens[0]}
-    accounts={dummyTransparentAccounts}
+    accounts={dummyAccounts}
     onCancel={action('on-cancel')}
   />
 )
@@ -64,8 +64,8 @@ export const sendTokenModal = (): JSX.Element => (
   <SendTokenModal
     visible
     token={dummyERC20Tokens[0]}
-    accounts={dummyTransparentAccounts}
-    defaultAccount={dummyTransparentAccounts[0]}
+    accounts={dummyAccounts}
+    defaultAccount={dummyAccounts[0]}
     onSendToken={asyncAction('on-send-token')}
     estimateCallFee={() => estimateFeesWithRandomDelay()}
     onCancel={action('on-cancel')}

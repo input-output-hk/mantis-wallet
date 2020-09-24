@@ -14,13 +14,13 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
       <WalletOverview availableBalance={availableBalance} />
       <TransactionHistory
         transactions={transactions}
-        addresses={walletState.privateAccounts}
+        accounts={walletState.accounts}
         availableBalance={availableBalance}
         sendTransaction={async (recipient: string, amount: Wei, fee: Wei) => {
           await walletState.sendTransaction(recipient, amount, fee)
         }}
         estimateTransactionFee={walletState.estimateTransactionFee}
-        generateAddress={walletState.generatePrivateAccount}
+        generateAddress={walletState.generateAccount}
       />
     </div>
   )

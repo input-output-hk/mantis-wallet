@@ -5,7 +5,7 @@ import {RightOutlined} from '@ant-design/icons'
 import BigNumber from 'bignumber.js'
 import {Trans} from '../common/Trans'
 import {ShortNumber} from '../common/ShortNumber'
-import {TransparentAccount, LoadedState} from '../common/wallet-state'
+import {Account, LoadedState} from '../common/wallet-state'
 import {bigSum, fillActionHandlers} from '../common/util'
 import {HideTokenModal} from './modals/HideTokenModal'
 import {CopyableLongText} from '../common/CopyableLongText'
@@ -17,7 +17,7 @@ import './TokenList.scss'
 
 interface TokenListProps {
   tokens: Token[]
-  transparentAccounts: TransparentAccount[]
+  accounts: Account[]
   onRemoveToken: (tokenAddress: string) => void
   sendToken: TokensData['sendToken']
   estimateCallFee: LoadedState['estimateCallFee']
@@ -26,7 +26,7 @@ interface TokenListProps {
 
 interface DisplayTokenProps {
   token: Token
-  transparentAccounts: TransparentAccount[]
+  accounts: Account[]
   onHideToken: (token: Token) => void
   sendToken: TokensData['sendToken']
   estimateCallFee: LoadedState['estimateCallFee']
@@ -35,15 +35,15 @@ interface DisplayTokenProps {
 
 interface AccountsProps {
   token: Token
-  transparentAccounts: TransparentAccount[]
+  accounts: Account[]
   hideAccounts: () => void
-  setAccountToSendFrom: (account: TransparentAccount) => void
+  setAccountToSendFrom: (account: Account) => void
   sendDisabled: boolean
 }
 
 const Accounts = ({
   token,
-  transparentAccounts,
+  accounts,
   hideAccounts,
   setAccountToSendFrom,
   sendDisabled,
@@ -59,7 +59,7 @@ const Accounts = ({
         </div>
         <div></div>
       </div>
-      {transparentAccounts.map((account) => (
+      {accounts.map((account) => (
         <div className="accounts-row" key={`${token.address} ${account.address}`}>
           <div>
             <CopyableLongText content={account.address} showQrCode />
@@ -93,17 +93,17 @@ const Accounts = ({
 
 const DisplayToken = ({
   token,
-  transparentAccounts,
+  accounts,
   onHideToken,
   sendToken,
   estimateCallFee,
   sendDisabled,
 }: DisplayTokenProps): JSX.Element => {
   const [detailsShown, setDetailsShown] = useState(false)
-  const [accountToSendFrom, setAccountToSendFrom] = useState<TransparentAccount>()
+  const [accountToSendFrom, setAccountToSendFrom] = useState<Account>()
   const [showReceiveToken, setShowReceiveToken] = useState(false)
 
-  const nonEmptyAccounts = transparentAccounts.filter(
+  const nonEmptyAccounts = accounts.filter(
     (ta) => ta.tokens[token.address] && !ta.tokens[token.address]?.isZero(),
   )
 
@@ -163,7 +163,7 @@ const DisplayToken = ({
           {nonEmptyAccounts.length > 0 && (
             <Accounts
               token={token}
-              transparentAccounts={nonEmptyAccounts}
+              accounts={nonEmptyAccounts}
               hideAccounts={() => setDetailsShown(false)}
               setAccountToSendFrom={setAccountToSendFrom}
               sendDisabled={sendDisabled}
@@ -195,7 +195,7 @@ const DisplayToken = ({
         visible={showReceiveToken}
         onCancel={() => setShowReceiveToken(false)}
         token={token}
-        accounts={transparentAccounts}
+        accounts={accounts}
       />
     </div>
   )
@@ -205,7 +205,7 @@ export const TokenList = ({
   tokens,
   sendToken,
   estimateCallFee,
-  transparentAccounts,
+  accounts,
   onRemoveToken,
   sendDisabled = false,
 }: TokenListProps): JSX.Element => {
@@ -224,7 +224,7 @@ export const TokenList = ({
             <DisplayToken
               key={token.address}
               token={token}
-              transparentAccounts={transparentAccounts}
+              accounts={accounts}
               onHideToken={setTokenToHide}
               estimateCallFee={estimateCallFee}
               sendToken={sendToken}

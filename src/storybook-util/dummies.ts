@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import {wait} from '../shared/utils'
-import {FeeEstimates, TransparentAccount, Transaction} from '../common/wallet-state'
+import {FeeEstimates, Account, Transaction} from '../common/wallet-state'
 import {Token} from '../tokens/tokens-state'
 import {asWei, asEther} from '../common/units'
 
@@ -76,50 +76,50 @@ export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEsti
 
 export const ADDRESS = '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a872'
 
-const FIRST_ERC20_TOKEN_ADDRESS = 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v6'
+const FIRST_ERC20_TOKEN_ADDRESS = '0x0001112223334445556667778889990123456789'
 
-export const dummyTransparentAccounts: TransparentAccount[] = [
+export const dummyAccounts: Account[] = [
   {
-    address: 'm-test-uns-ad1j7ty84rlktw82amh99ls8rjpxht7k592kpd25v',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a873',
     index: 6,
     tokens: {[FIRST_ERC20_TOKEN_ADDRESS]: new BigNumber(1e5)},
-    balance: new BigNumber(9e8),
+    balance: asEther(9),
   },
   {
-    address: 'm-test-uns-ad170ygzstqc4rcfl7m0ap9yfnkrw83s73q2tnq28',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a874',
     index: 5,
     tokens: {[FIRST_ERC20_TOKEN_ADDRESS]: new BigNumber(50)},
-    balance: new BigNumber(250e8),
+    balance: asEther(250),
   },
   {
-    address: 'm-test-uns-ad1slvftjj2zrl3mr9mlgcxlq5n9v4dhnmdwlkztg',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a875',
     index: 4,
     tokens: {[FIRST_ERC20_TOKEN_ADDRESS]: new BigNumber(600)},
-    balance: new BigNumber(500),
+    balance: asWei(5e11),
   },
   {
-    address: 'm-test-uns-ad16t52pjs3llcjeykuhu3hw9s44txp3z2map09gq',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a876',
     index: 3,
     tokens: {[FIRST_ERC20_TOKEN_ADDRESS]: new BigNumber(1234)},
-    balance: new BigNumber(5.5e8),
+    balance: asEther(5.5),
   },
   {
-    address: 'm-test-uns-ad1pz4h6hzmg8xtkdy5jg592umjer8hc8tyduzd2s',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a877',
     index: 2,
     tokens: {},
-    balance: new BigNumber(0),
+    balance: asWei(0),
   },
   {
-    address: 'm-test-uns-ad18r8gdnwae96ugqlzdw0py57qw70lpacr6mff8e',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a878',
     index: 1,
     tokens: {},
-    balance: new BigNumber(0),
+    balance: asWei(0),
   },
   {
-    address: 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v7',
+    address: '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a879',
     index: 0,
     tokens: {},
-    balance: new BigNumber(0),
+    balance: asWei(0),
   },
 ]
 
@@ -134,6 +134,6 @@ export const dummyERC20Tokens: Token[] = [
     symbol: 'SY2',
     name: 'Second awesome ERC20 token',
     decimals: 8,
-    address: 'm-test-uns-ad1rjfgdj6fewrhlv6j5qxeck38ms2t5szhrmg6v8',
+    address: '0x0000111122223333444455556666777788889999',
   },
 ]

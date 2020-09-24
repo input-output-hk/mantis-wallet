@@ -4,7 +4,7 @@ import {Button, Dropdown, Menu} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {FeeEstimates, PrivateAddress, LoadedState, Transaction} from '../common/wallet-state'
+import {FeeEstimates, LoadedState, Transaction, Account} from '../common/wallet-state'
 import {
   TransactionList,
   updateSorting,
@@ -18,7 +18,7 @@ import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
   transactions: Transaction[]
-  addresses: PrivateAddress[]
+  accounts: Account[]
   availableBalance: Wei
   sendTransaction: LoadedState['sendTransaction']
   estimateTransactionFee: () => Promise<FeeEstimates>
@@ -31,7 +31,7 @@ export const TransactionHistory = ({
   sendTransaction,
   estimateTransactionFee,
   generateAddress,
-  addresses,
+  accounts,
 }: TransactionHistoryProps): JSX.Element => {
   const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -102,7 +102,7 @@ export const TransactionHistory = ({
             visible={showReceiveModal}
             onCancel={(): void => setShowReceiveModal(false)}
             onGenerateNew={generateAddress}
-            addresses={addresses}
+            accounts={accounts}
           />
         </div>
       </div>

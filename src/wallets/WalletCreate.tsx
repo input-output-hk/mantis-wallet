@@ -79,7 +79,7 @@ export const WalletCreate = ({cancel, finish}: WalletCreateProps): JSX.Element =
         <WalletCreateSecurityStep
           cancel={cancelCreate}
           next={(): void => setStep('DISPLAY_RECOVERY')}
-          spendingKey={privateKey}
+          privateKey={privateKey}
         />
       )
     case 'DISPLAY_RECOVERY':

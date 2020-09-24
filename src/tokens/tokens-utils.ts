@@ -1,18 +1,18 @@
 import BigNumber from 'bignumber.js'
+import {TransactionConfig} from 'web3-core'
 import {Token} from './tokens-state'
 import {Formatters} from '../settings-state'
-import {CallParams} from '../common/wallet-state'
 
 export function getSendTokenParams(
   token: Token,
   senderAddress: string,
   recipientAddress: string,
   amount: BigNumber,
-): CallParams {
+): TransactionConfig {
   const data = `fake data ${recipientAddress} ${amount.toString(10)}` //FIXME ETCM-115
 
   return {
-    from: ['Wallet', senderAddress],
+    from: senderAddress,
     to: token.address,
     value: '0',
     data,
