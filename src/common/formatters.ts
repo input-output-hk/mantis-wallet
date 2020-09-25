@@ -37,7 +37,7 @@ export const abbreviateAmount = (
   amount: BigNumber,
   format: BigNumber.Format,
 ): {relaxed: string; strict: string} => {
-  const log10 = amount.isZero() ? 0 : Math.log10(amount.toNumber()) | 0
+  const log10 = amount.isZero() ? 0 : Math.log10(amount.abs().toNumber()) | 0
 
   const decimalPlaces = Math.max(Math.min(6 - log10, amount.dp()), 2)
 

@@ -1,110 +1,37 @@
-//
-// Transaction
-//
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+import _ from 'lodash'
+import Web3 from 'web3'
+import {formatters} from 'web3-core-helpers'
 
-// Tx statuses
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const outputTransactionsFormatter = (output: any): any => {
+  if (_.isArray(output?.transactions)) {
+    return output.transactions.map(formatters.outputTransactionFormatter)
+  }
 
-interface ConfirmedTxStatus {
-  status: 'confirmed'
-  atBlock: string
-  timestamp: number
-}
-interface PersistedTxStatus {
-  status: 'persisted'
-  atBlock: string
-  timestamp: number
+  return []
 }
 
-export type TxStatus = 'pending' | 'failed' | ConfirmedTxStatus | PersistedTxStatus
-export type TxStatusString = 'pending' | 'failed' | 'confirmed' | 'persisted'
-
-// Tx details
-
-interface RedeemTxDetails {
-  txType: 'redeem'
-  usedTransparentAccountIndex: number
+export function createWeb3(url: URL): Web3 {
+  const web3 = new Web3(new Web3.providers.HttpProvider(url.href))
+  web3.eth.extend({
+    methods: [
+      {
+        name: 'getAccountTransactions',
+        call: 'daedalus_getAccountTransactions', // FIXME ETCM-135
+        params: 3,
+        inputFormatter: [
+          // @ts-ignore
+          formatters.inputAddressFormatter,
+          // @ts-ignore
+          formatters.inputDefaultBlockNumberFormatter,
+          // @ts-ignore
+          formatters.inputDefaultBlockNumberFormatter,
+        ],
+        // @ts-ignore
+        outputFormatter: outputTransactionsFormatter,
+      },
+    ],
+  })
+  return web3
 }
-
-interface TransparentTransaction {
-  nonce: string // hex string
-  gasPrice: number
-  gasLimit: string // hex string
-  receivingAddress: string | null // bech32 string
-  sendingAddress: string // bech32 string
-  value: string // hex string
-  payload: string // hex string
-}
-
-export interface CallTxDetails {
-  txType: 'call'
-  usedTransparentAccountIndexes: number[]
-  transparentTransactionHash: string
-  transparentTransaction: TransparentTransaction
-}
-
-interface TransferTxDetails {
-  txType: 'transfer'
-}
-
-interface CoinbaseTxDetails {
-  txType: 'coinbase'
-}
-
-// These can be either 'incoming', 'outgoing' or 'internal'
-// Coinbase type is only 'incoming'
-// Redeem type is only 'internal'
-export type TxDetailsIncAndOut = CallTxDetails | TransferTxDetails
-
-interface BaseTransaction {
-  hash: string
-  txStatus: TxStatus
-}
-
-// Main tx types
-
-interface IncomingTransaction extends BaseTransaction {
-  txDirection: 'incoming'
-  txValue: string
-  txDetails: CoinbaseTxDetails | TxDetailsIncAndOut
-}
-
-interface OutgoingTransaction extends BaseTransaction {
-  txDirection: 'outgoing'
-  txValue: {value: string; fee: string}
-  txDetails: TxDetailsIncAndOut
-}
-
-interface InternalTransaction extends BaseTransaction {
-  txDirection: 'internal'
-  txValue: {value: string; fee: string}
-  txDetails: TxDetailsIncAndOut | RedeemTxDetails
-}
-
-export type Transaction = IncomingTransaction | OutgoingTransaction | InternalTransaction
-
-//
-// Synchronization status
-//
-
-export interface SynchronizationStatusOffline {
-  mode: 'offline'
-  currentBlock: string
-}
-
-export interface SynchronizationStatusOnline {
-  mode: 'online'
-  currentBlock: string
-  highestKnownBlock: string
-  percentage: number
-}
-
-export type RawSynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
-
-//
-// Helper types
-//
-
-export type PaginatedCallable<T> = (count: number, drop: number) => T[]
-
-export const allFeeLevels = ['low', 'medium', 'high'] as const
-export type FeeLevel = typeof allFeeLevels[number]

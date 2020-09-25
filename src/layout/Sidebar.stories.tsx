@@ -8,10 +8,11 @@ import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
 import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {asyncAction} from '../storybook-util/custom-knobs'
 import {toFullScreen} from '../storybook-util/full-screen-decorator'
+import {withTokensState} from '../storybook-util/tokens-state-decorator'
 
 export default {
   title: 'Sidebar',
-  decorators: [...ESSENTIAL_DECORATORS, toFullScreen],
+  decorators: [...ESSENTIAL_DECORATORS, withTokensState, toFullScreen],
 }
 
 export const sidebar = (): JSX.Element => (

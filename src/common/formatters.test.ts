@@ -25,6 +25,8 @@ it('abbreviates numbers correctly', () => {
   assert.deepEqual(abbreviateBig('12345678.9'), ['12,345,678.90', '12,345,678.90'])
   assert.deepEqual(abbreviateBig('123456789'), ['123,456,789.00', '123,456,789.00'])
   assert.deepEqual(abbreviateBig('1234567890'), ['1,234,567,890.00', '1,234,567,890.00'])
+  assert.deepEqual(abbreviateBig('123456789.000021'), ['123,456,789.00', '123,456,789.000021'])
+  assert.deepEqual(abbreviateBig('-123456789.000021'), ['-123,456,789.00', '-123,456,789.000021'])
 })
 
 it('formats amount correctly', () => {

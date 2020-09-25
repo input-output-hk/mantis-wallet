@@ -82,15 +82,14 @@
       "receivingAddress": "Receiving Address",
       "recipient": "Recipient",
       "transactionGasLimit": "Gas Limit",
+      "transactionGasUsed": "Gas Used",
       "transactionGasPrice": "Gas Price",
       "transactionConfirmations": "Confirmations",
       "transactionId": "Transaction ID",
       "accountTotalBalance": "Total Balance",
       "walletName": "Wallet Name",
       "revealPrivateKey": "Reveal Private Key",
-      "lastUsedAddresses": "Last used addresses",
-      "encryptedMemo": "Encrypted Memo",
-      "contractCallMessage": "Contract Message"
+      "lastUsedAddresses": "Last used addresses"
     },
     "error": {
       "jobAlreadyAdded": "Job {{jobHash}} already added",
@@ -164,28 +163,15 @@
       "confirmed": "Confirmed",
       "persisted": "Persisted",
       "failed": "Failed",
-      "failedToExecute": "Failed to execute",
       "pendingDescription": "Transaction waiting to be added to a block in the chain",
       "confirmedDescription": "Transaction has been added to a block in the chain",
       "persistedDescription": "Transaction cannot be rolled back",
       "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed",
-      "failedToExecuteDescription": "Transaction was added to blockchain but smart contract call resulted with error",
       "notPersistedDescription": "This transaction is not yet persisted"
     },
     "transactionType": {
       "received": "Received",
-      "sent": "Sent",
-      "internal": "Internal",
-      "transparent": "Transparent",
-      "confidential": "Confidential",
-      "redeem": "Redeem Transaction",
-      "call": "Call Transaction",
-      "transfer": "Transfer Transaction",
-      "coinbase": "Coinbase Transaction",
-      "redeemDescription": "A transfer transaction from a transparent address to a confidential address",
-      "callDescription": "A smart contract call transaction",
-      "transferDescription": "A transfer of funds",
-      "coinbaseDescription": "A transfer of mining rewards"
+      "sent": "Sent"
     }
   },
   "status": {

@@ -83,7 +83,6 @@
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "classnames": "^2.2.6",
-    "comlink": "4.2.0",
     "convict": "^5.2.0",
     "customize-cra": "^0.9.1",
     "date-fns": "^2.10.0",

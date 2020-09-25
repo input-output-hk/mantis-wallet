@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import Web3 from 'web3'
 import {createPersistentStore} from './common/store'
 import {WalletState} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
@@ -12,9 +11,10 @@ import {SplashScreen} from './SplashScreen'
 import {LUNA_VERSION} from './shared/version'
 import {rendererLog} from './common/logger'
 import {config} from './config/renderer'
+import {createWeb3} from './web3'
 import './App.scss'
 
-const web3 = new Web3(new Web3.providers.HttpProvider(config.rpcAddress.href))
+const web3 = createWeb3(config.rpcAddress)
 const store = createPersistentStore()
 
 const App: React.FC = () => {

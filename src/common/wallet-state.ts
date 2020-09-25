@@ -6,9 +6,14 @@ import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome, isNone} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import Web3 from 'web3'
-import {EncryptedKeystoreV3Json, Account as Web3Account} from 'web3-core'
+import {fromUnixTime} from 'date-fns'
+import {
+  EncryptedKeystoreV3Json,
+  TransactionConfig,
+  Account as Web3Account,
+  Transaction as Web3Transaction,
+} from 'web3-core'
 import {NumberFromHexString} from './io-helpers'
-import {Transaction} from '../web3'
 import {rendererLog} from './logger'
 import {Store, createInMemoryStore} from './store'
 import {usePersistedState} from './hook-utils'
@@ -58,33 +63,28 @@ export interface CallParams {
   data?: string // smart contract deployment/calling code
 }
 
-export type FeeEstimates = {
-  low: Wei
-  medium: Wei
-  high: Wei
-}
+export const allFeeLevels = ['low', 'medium', 'high'] as const
+export type FeeLevel = typeof allFeeLevels[number]
+export type FeeEstimates = Record<FeeLevel, Wei>
 
+const DEPTH_FOR_PERSISTENCE = 12
 const TRANSFER_GAS_LIMIT = 21000
 const MIN_GAS_PRICE = asWei(1)
 
-// TransactionStatus
-
-interface TransactionPending {
-  readonly status: 'TransactionPending'
+export interface Transaction {
+  from: string
+  to: string | null
+  hash: string
+  blockNumber: number | null
+  timestamp: Date | null
+  value: Wei
+  gasPrice: Wei
+  gasUsed: number | null
+  fee: Wei
+  gas: number
+  direction: 'outgoing' | 'incoming'
+  status: 'pending' | 'confirmed' | 'persisted' | 'failed'
 }
-
-interface TransactionFailed {
-  readonly status: 'TransactionFailed'
-  readonly message: string
-}
-
-interface TransactionOk {
-  readonly status: 'TransactionOk'
-  readonly message: string
-}
-
-export type TransactionStatus = TransactionPending | TransactionFailed | TransactionOk
-export type CallTxStatuses = Record<string, TransactionStatus> // by txHash
 
 // States
 
@@ -102,7 +102,6 @@ export interface LoadedState {
   syncStatus: SynchronizationStatus
   privateAccounts: PrivateAddress[]
   getOverviewProps: () => Overview
-  callTxStatuses: CallTxStatuses
   reset: () => void
   remove: (password: string) => Promise<boolean>
   getSpendingKey: (password: string) => Promise<string>
@@ -179,7 +178,6 @@ interface WalletStateParams {
   availableBalance: Option<Wei>
   privateAccounts: Option<PrivateAddress[]>
   transactions: Option<Transaction[]>
-  callTxStatuses: CallTxStatuses
   isMocked: boolean
 }
 
@@ -193,7 +191,6 @@ const DEFAULT_STATE: WalletStateParams = {
   availableBalance: none,
   privateAccounts: none,
   transactions: none,
-  callTxStatuses: {},
   isMocked: false, // FIXME ETCM-116 it would be nicer if could go without this flag
 }
 
@@ -203,6 +200,15 @@ export const canRemoveWallet = (
   walletState.walletStatus === 'LOADED' ||
   walletState.walletStatus === 'LOCKED' ||
   walletState.walletStatus === 'ERROR'
+
+const getStatus = (
+  currentBlock: number,
+  txBlock: number | null,
+  isPending: boolean,
+): Transaction['status'] => {
+  if (isPending || txBlock === null) return 'pending'
+  return currentBlock - txBlock >= DEPTH_FOR_PERSISTENCE ? 'persisted' : 'confirmed'
+}
 
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
@@ -231,7 +237,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [transactionsOption, setTransactions] = useState<Option<Transaction[]>>(
     _initialState.transactions,
   )
-  const [callTxStatuses] = useState<CallTxStatuses>(_initialState.callTxStatuses)
 
   // addresses / accounts
   const [privateAccountsOption, setPrivateAccounts] = useState<Option<PrivateAddress[]>>(
@@ -346,52 +351,58 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setAvailableBalance(some(asWei(balance)))
   }
 
-  // const _getCallTransactionStatus = async (transactionHash: string): Promise<TransactionStatus> => {
-  //   // (private) Get status of contract call transaction
+  const getTimestamp = async (blockNumber: number | null): Promise<Date | null> => {
+    if (blockNumber === null) return null
+    const {timestamp} = await web3.eth.getBlock(blockNumber, true)
+    return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
+  }
 
-  //   const rawTx = await web3.eth.getTransaction(transactionHash)
-  //   if (rawTx === null) {
-  //     // null if not found or failed
-  //     return {
-  //       status: 'TransactionFailed',
-  //       message: 'Transaction failed before reaching the contract. Try again with a higher fee.',
-  //     }
-  //   }
+  const loadTransactionHistory = async (): Promise<void> => {
+    const currentAccount = getCurrentAccount()
+    const currentBlock = await web3.eth.getBlockNumber()
 
-  //   const receipt = await web3.eth.getTransactionReceipt(transactionHash)
-  //   if (receipt === null) {
-  //     return {status: 'TransactionPending'}
-  //   }
+    const web3transactions: Web3Transaction[] = await web3.eth.getAccountTransactions(
+      currentAccount,
+      0,
+      currentBlock,
+    )
 
-  //   const status = 'TransactionOk'
-  //   const message = ''
+    const transactions = await Promise.all(
+      web3transactions.map(
+        async ({
+          from,
+          to,
+          hash,
+          blockNumber,
+          value,
+          gas,
+          gasPrice,
+          pending,
+          isOutgoing,
+        }: Web3Transaction): Promise<Transaction> => {
+          const receipt = await web3.eth.getTransactionReceipt(hash)
+          return {
+            from,
+            to,
+            hash,
+            blockNumber,
+            timestamp: await getTimestamp(blockNumber),
+            value: asWei(value),
+            gas,
+            gasPrice: asWei(gasPrice),
+            gasUsed: pending ? null : receipt.gasUsed,
+            fee: isOutgoing
+              ? asWei(new BigNumber(gasPrice).times(pending ? gas : receipt.gasUsed))
+              : asWei(0),
+            direction: isOutgoing ? 'outgoing' : 'incoming',
+            status: getStatus(currentBlock, blockNumber, pending || false),
+          }
+        },
+      ),
+    )
 
-  //   // FIXME ETCM-114 investigate tx receipt in web3
-  //   // const status = parseInt(receipt.statusCode, 16) === 1 ? 'TransactionOk' : 'TransactionFailed'
-  //   // const message =
-  //   //   status === 'TransactionFailed' && receipt.returnData
-  //   //     ? returnDataToHumanReadable(receipt.returnData)
-  //   //     : receipt.returnData
-
-  //   return {status, message}
-  // }
-
-  // const _updateCallTxStatuses = async (transactions: Transaction[]): Promise<void> => {
-  //   const hashesToCheck = transactions
-  //     .filter((tx) => tx.txDetails.txType === 'call')
-  //     .map((tx) => tx.hash)
-
-  //   const newStatuses = await Promise.all(
-  //     hashesToCheck.map(async (txHash) => {
-  //       const newStatus = await _getCallTransactionStatus(txHash)
-  //       return [txHash, newStatus]
-  //     }),
-  //   )
-
-  //   setCallTxStatuses(_.fromPairs(newStatuses))
-  // }
-
-  const loadTransactionHistory = async (): Promise<void> => setTransactions(some([])) // FIXME ETCM-114 load true transactions
+    setTransactions(some(transactions))
+  }
 
   const load = (
     loadFns: Array<() => Promise<void>> = [
@@ -488,8 +499,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const sendTransaction = async (recipient: string, amount: Wei, fee: Wei): Promise<void> => {
     const privateKey = getCurrentPrivateKeyWithoutPassword()
-
-    const txConfig = {
+    const txConfig: TransactionConfig = {
       to: recipient,
       from: getCurrentAccount(),
       value: toHex(amount),
@@ -506,7 +516,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
     if (tx.rawTransaction === undefined)
       throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
-    await web3.eth.sendSignedTransaction(tx.rawTransaction)
+    web3.eth.sendSignedTransaction(tx.rawTransaction) // ETCM-134
   }
 
   const addAccount = async (name: string, privateKey: string, password: string): Promise<void> => {
@@ -626,7 +636,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     remove,
     getSpendingKey,
     privateAccounts,
-    callTxStatuses,
     addTokenToTrack,
     addTokensToTrack,
     addAccount,

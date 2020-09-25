@@ -1,5 +1,7 @@
 const mockedGlobal = {
-  lunaConfig: {},
+  lunaConfig: {
+    rpcAddress: 'localhost:1234',
+  },
   lunaStatus: {
     fetchParams: {
       status: 'not-running',

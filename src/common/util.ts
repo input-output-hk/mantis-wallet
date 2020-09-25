@@ -1,4 +1,3 @@
-import * as Comlink from 'comlink'
 import BigNumber from 'bignumber.js'
 import {isAddress} from 'web3-utils'
 import _ from 'lodash'
@@ -6,7 +5,6 @@ import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
-import {PaginatedCallable} from '../web3'
 import {Translatable, TFunctionRenderer, createTErrorRenderer} from './i18n'
 import {ETC_CHAIN} from './chains'
 
@@ -17,19 +15,6 @@ export const toHex = (n: number | BigNumber): string => {
   if (asString.startsWith('-'))
     throw createTErrorRenderer(['common', 'error', 'numberMustBePositive'])
   return `0x${asString}`
-}
-
-export const loadAll = async <T>(
-  fn: Comlink.Remote<PaginatedCallable<T>>,
-  drop = 0,
-): Promise<T[]> => {
-  const result = await fn(100, drop)
-  if (result.length !== 100) {
-    return result
-  } else {
-    const nextResult = await loadAll(fn, drop + 100)
-    return [...result, ...nextResult]
-  }
 }
 
 export const isLess = (maxValue = 0) => (b: BigNumber): ValidationResult =>

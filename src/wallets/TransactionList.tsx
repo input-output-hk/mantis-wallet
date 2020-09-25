@@ -3,12 +3,10 @@ import _ from 'lodash/fp'
 import classnames from 'classnames'
 import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {sort, map} from 'fp-ts/lib/Array'
-import {Ord, ordString, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
-import {TxStatusString} from '../web3'
+import {map, sort} from 'fp-ts/lib/Array'
+import {Ord, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
 import {fillActionHandlers} from '../common/util'
 import {
-  ExtendedTransaction,
   TransactionCellProps,
   TxAmountCell,
   TxAssetCell,
@@ -19,10 +17,11 @@ import {
 } from './TransactionRow'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
+import {Transaction} from '../common/wallet-state'
 import './TransactionList.scss'
 
-type SortableProperty = 'type' | 'amount' | 'time' | 'status'
-type NonSortableProperty = 'asset'
+type SortableProperty = 'amount' | 'time' | 'status'
+type NonSortableProperty = 'type' | 'asset'
 type Direction = 'asc' | 'desc'
 
 export interface SortBy {
@@ -31,7 +30,7 @@ export interface SortBy {
 }
 
 interface TransactionListProps {
-  transactions: ExtendedTransaction[]
+  transactions: Transaction[]
   shownTxNumber?: number
   onSortChange?: (sortBy: SortBy) => void
   initialSortBy?: SortBy
@@ -52,7 +51,7 @@ export const updateSorting = (currentSortBy: SortBy, nextProperty: SortablePrope
 
 interface CommonColumnConfig {
   label: TKeyRenderer
-  CellComponent: ({transaction}: TransactionCellProps) => JSX.Element
+  CellComponent: (props: TransactionCellProps) => JSX.Element
 }
 
 export interface SortableColumnConfig extends CommonColumnConfig {
@@ -71,7 +70,7 @@ export const columns: ColumnConfig[] = [
   {
     property: 'type',
     label: ['wallet', 'label', 'transactionType'],
-    sortable: true,
+    sortable: false,
     CellComponent: TxTypeCell,
   },
   {
@@ -100,36 +99,27 @@ export const columns: ColumnConfig[] = [
   },
 ]
 
-const TX_STATUS_ORDER: Record<TxStatusString, number> = {
+const TX_STATUS_ORDER: Record<Transaction['status'], number> = {
   failed: 0,
   pending: 1,
   confirmed: 2,
   persisted: 3,
 } as const
 
-const orderConfigs: Record<SortableProperty, Ord<ExtendedTransaction>> = {
-  type: ord.contramap(ordString, ({txDetails}: ExtendedTransaction) => txDetails.txType),
-  amount: ord.contramap(ordNumber, ({txDirection, txValue}: ExtendedTransaction) => {
-    const sign = txDirection === 'outgoing' ? -1 : 1
-    return sign * parseInt(typeof txValue === 'string' ? txValue : txValue.value)
+const orderConfigs: Record<SortableProperty, Ord<Transaction>> = {
+  amount: ord.contramap(ordNumber, ({value, fee, direction}: Transaction) => {
+    return direction === 'outgoing' ? -1 * value.plus(fee).toNumber() : value.toNumber()
   }),
-  time: ord.contramap(ordNumber, ({txStatus}: ExtendedTransaction) => {
-    if (txStatus === 'pending') {
+  time: ord.contramap(ordNumber, ({status, blockNumber}: Transaction) => {
+    if (status === 'pending') {
       return Infinity
-    } else if (txStatus === 'failed' || !txStatus.atBlock) {
+    } else if (status === 'failed' || blockNumber === null) {
       return 0
     } else {
-      return txStatus.timestamp
+      return blockNumber
     }
   }),
-  status: ord.contramap(
-    ordNumber,
-    ({txDetails, txStatus}: ExtendedTransaction) =>
-      TX_STATUS_ORDER[typeof txStatus === 'string' ? txStatus : txStatus.status] -
-      (txDetails.txType === 'call' && txDetails.callTxStatus.status === 'TransactionFailed'
-        ? 0.5
-        : 0),
-  ),
+  status: ord.contramap(ordNumber, ({status}: Transaction) => TX_STATUS_ORDER[status]),
 }
 
 const _TransactionRow = ({transaction}: TransactionCellProps): JSX.Element => {
@@ -154,7 +144,7 @@ const _TransactionRow = ({transaction}: TransactionCellProps): JSX.Element => {
 }
 const TransactionRow = React.memo(_TransactionRow, _.isEqual)
 
-const getOrd = ({direction, property}: SortBy): Ord<ExtendedTransaction> => {
+const getOrd = ({direction, property}: SortBy): Ord<Transaction> => {
   return direction === 'asc' ? orderConfigs[property] : getDualOrd(orderConfigs[property])
 }
 
@@ -215,7 +205,7 @@ export const TransactionList = ({
           transactions,
           sort(getOrd(_sortBy)),
           _.take(shownTxNumber || transactions.length),
-          map((tx: ExtendedTransaction) => <TransactionRow transaction={tx} key={tx.hash} />),
+          map((tx) => <TransactionRow transaction={tx} key={tx.hash} />),
         )}
       </div>
     </div>

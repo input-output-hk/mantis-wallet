@@ -4,7 +4,7 @@ import {Button, Dropdown, Menu} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {FeeEstimates, PrivateAddress, LoadedState} from '../common/wallet-state'
+import {FeeEstimates, PrivateAddress, LoadedState, Transaction} from '../common/wallet-state'
 import {
   TransactionList,
   updateSorting,
@@ -13,12 +13,11 @@ import {
   SortableColumnConfig,
 } from './TransactionList'
 import {Trans} from '../common/Trans'
-import {ExtendedTransaction} from './TransactionRow'
 import {Wei} from '../common/units'
 import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
-  transactions: ExtendedTransaction[]
+  transactions: Transaction[]
   addresses: PrivateAddress[]
   availableBalance: Wei
   sendTransaction: LoadedState['sendTransaction']

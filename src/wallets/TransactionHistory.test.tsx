@@ -2,63 +2,52 @@ import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent, useState} from 'react'
 import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {PrivateAddress, WalletState, WalletStatus, FeeEstimates} from '../common/wallet-state'
+import {
+  PrivateAddress,
+  WalletState,
+  WalletStatus,
+  FeeEstimates,
+  Transaction,
+} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
 import {abbreviateAmountForEnUS} from '../common/test-helpers'
-import {toHex} from '../common/util'
 import {BackendState} from '../common/backend-state'
 import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
-import {ExtendedTransaction} from './TransactionRow'
 import {asWei, asEther, etherValue} from '../common/units'
 
 const web3 = new Web3()
 
-const weiString = (v: number): string => asEther(v).toString(10)
-
-const tx1: ExtendedTransaction = {
+const tx1: Transaction = {
   hash: '1',
-  txDirection: 'incoming',
-  txStatus: {
-    status: 'confirmed',
-    atBlock: '0x1',
-    timestamp: 1584527520,
-  },
-  txValue: weiString(123),
-  txDetails: {
-    txType: 'transfer',
-  },
+  from: '0x00112233445566778899aabbccddeeff00112233',
+  to: '0xffeeddccbbaa0011223344556677889988776655',
+  blockNumber: 1,
+  timestamp: new Date(1584527520),
+  value: asEther(123),
+  gasPrice: asWei(1e9),
+  gas: 21000,
+  gasUsed: 21000,
+  fee: asWei(0),
+  direction: 'incoming',
+  status: 'confirmed',
 }
 
-const tx2: ExtendedTransaction = {
+const tx2: Transaction = {
   hash: '2',
-  txDirection: 'outgoing',
-  txStatus: 'pending',
-  txValue: {
-    value: weiString(123456789),
-    fee: weiString(100),
-  },
-  txDetails: {
-    txType: 'call',
-    usedTransparentAccountIndexes: [0],
-    transparentTransactionHash: 'transparentTransactionHash',
-    transparentTransaction: {
-      nonce: toHex(12345),
-      gasPrice: 12345,
-      gasLimit: toHex(12345),
-      receivingAddress: 'receivingAddress',
-      sendingAddress: 'sendingAddress',
-      value: toHex(12345),
-      payload: toHex(12345),
-    },
-    callTxStatus: {
-      status: 'TransactionOk',
-      message: '',
-    },
-  },
+  from: '0xffeeddccbbaa0011223344556677889988776655',
+  to: '0x00112233445566778899aabbccddeeff00112233',
+  blockNumber: null,
+  timestamp: null,
+  value: asEther(123456789),
+  gasPrice: asWei(1e9),
+  gas: 21000,
+  gasUsed: null,
+  fee: asWei(21000 * 1e9),
+  direction: 'outgoing',
+  status: 'pending',
 }
 
 const addresses = [
@@ -154,9 +143,11 @@ test('TransactionHistory shows proper message with empty tx list', () => {
 // txAmount
 test('TransactionHistory shows proper tx amounts', () => {
   const {getByText} = renderTransactionHistory({transactions: [tx1, tx2]})
-  const {strict: formattedNumber1} = abbreviateAmountForEnUS(new BigNumber(123))
+  const {strict: formattedNumber1} = abbreviateAmountForEnUS(etherValue(tx1.value))
   expect(getByText(`+${formattedNumber1}`)).toBeInTheDocument()
-  const {strict: formattedNumber2} = abbreviateAmountForEnUS(new BigNumber(123456889))
+  const {strict: formattedNumber2} = abbreviateAmountForEnUS(
+    etherValue(asWei(tx2.value.plus(tx2.fee))),
+  )
   expect(getByText(`-${formattedNumber2}`)).toBeInTheDocument()
 })
 
@@ -174,23 +165,12 @@ test('TransactionHistory shows `Pending` status', () => {
 // txDirection
 test('TransactionHistory shows `Incoming` tx text', () => {
   const {getByText} = renderTransactionHistory({transactions: [tx1]})
-  expect(getByText('Received Confidential')).toBeInTheDocument()
+  expect(getByText('Received')).toBeInTheDocument()
 })
 
 test('TransactionHistory shows `Outgoing` tx text', () => {
   const {getByText} = renderTransactionHistory({transactions: [tx2]})
-  expect(getByText('Sent Transparent')).toBeInTheDocument()
-})
-
-// Transparent/Confidential
-test('TransactionHistory shows `Confidential` tx icon', () => {
-  const {getByTitle} = renderTransactionHistory({transactions: [tx1]})
-  expect(getByTitle('Confidential')).toBeInTheDocument()
-})
-
-test('TransactionHistory shows `Transparent` tx icon', () => {
-  const {getByTitle} = renderTransactionHistory({transactions: [tx2]})
-  expect(getByTitle('Transparent')).toBeInTheDocument()
+  expect(getByText('Sent')).toBeInTheDocument()
 })
 
 // Modals
