@@ -7,32 +7,33 @@ import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {useLocalizedUtilities} from '../../settings-state'
 import {CopyableLongText} from '../../common/CopyableLongText'
 import {Trans} from '../../common/Trans'
-import {PrivateAddress} from '../../common/wallet-state'
+import {Account} from '../../common/wallet-state'
 import './ReceiveTransaction.scss'
 
 type OnGenerateNewCallback = () => Promise<void>
 
 interface ReceiveTransactionProps {
   onGenerateNew: OnGenerateNewCallback
-  addresses: PrivateAddress[]
+  accounts: Account[]
 }
 
 export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & ModalProps> = ({
-  addresses,
+  accounts,
   onGenerateNew,
   ...props
 }: ReceiveTransactionProps & ModalProps) => {
-  const newestAddress = _.head(addresses) as PrivateAddress
+  const newestAccount = _.head(accounts)
+  if (newestAccount === undefined) throw Error('There must be at least an account')
   const {copyToClipboard} = useLocalizedUtilities()
 
   // Address List Component
-  const usedAddresses = addresses && addresses.length > 1 && (
+  const usedAddresses = accounts && accounts.length > 1 && (
     <ScrollableModalFooter>
       <div className="footer">
         <div className="title">
           <Trans k={['wallet', 'label', 'lastUsedAddresses']} />
         </div>
-        {addresses.slice(1).map(({address}) => (
+        {accounts.slice(1).map(({address}) => (
           <div key={address} className="address">
             <CopyableLongText content={address} showQrCode />
           </div>
@@ -51,11 +52,7 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
         leftButtonProps={{
           children: <Trans k={['wallet', 'button', 'copyAddress']} />,
           autoFocus: true,
-          onClick: async (): Promise<void> => {
-            if (newestAddress) {
-              await copyToClipboard(newestAddress.address)
-            }
-          },
+          onClick: (): Promise<void> => copyToClipboard(newestAccount.address),
         }}
         rightButtonProps={{
           type: 'default',
@@ -68,7 +65,7 @@ export const ReceiveTransaction: FunctionComponent<ReceiveTransactionProps & Mod
         <div className="title">
           <Trans k={['wallet', 'title', 'yourAddress']} />
         </div>
-        <DialogQRCode content={newestAddress.address} />
+        <DialogQRCode content={newestAccount.address} />
       </Dialog>
     )
   }

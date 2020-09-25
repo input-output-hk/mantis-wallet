@@ -9,16 +9,16 @@ import {Trans} from '../../common/Trans'
 interface WalletCreateSecurityStepProps {
   cancel: () => void
   next: () => void
-  spendingKey: string
+  privateKey: string
 }
 
 export const WalletCreateSecurityStep: FunctionComponent<WalletCreateSecurityStepProps> = ({
   cancel,
   next,
-  spendingKey,
+  privateKey,
 }: WalletCreateSecurityStepProps) => {
   const {t} = useTranslation()
-  const [useSpendingKey, setUseSpendingKey] = useState(false)
+  const [usePrivateKey, setUsePrivateKey] = useState(false)
 
   return (
     <Dialog
@@ -34,13 +34,13 @@ export const WalletCreateSecurityStep: FunctionComponent<WalletCreateSecuritySte
         key="private-key-switch"
         label={t(['wallet', 'label', 'privateKey'])}
         description={t(['wallet', 'message', 'showPrivateKeyDescription'])}
-        checked={useSpendingKey}
-        onChange={setUseSpendingKey}
+        checked={usePrivateKey}
+        onChange={setUsePrivateKey}
       />
       <DialogQRCode
-        content={spendingKey}
-        downloadFileName="Luna-wallet-spending-key"
-        blurred={!useSpendingKey}
+        content={privateKey}
+        downloadFileName="Luna-wallet-private-key"
+        blurred={!usePrivateKey}
       />
     </Dialog>
   )

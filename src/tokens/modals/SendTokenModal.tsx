@@ -4,7 +4,7 @@ import {wrapWithModal, ModalOnCancel, ModalLocker} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {Token, TokensData} from '../tokens-state'
 import {Trans} from '../../common/Trans'
-import {LoadedState, TransparentAccount, FeeEstimates} from '../../common/wallet-state'
+import {LoadedState, Account, FeeEstimates} from '../../common/wallet-state'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {useTranslation, useFormatters} from '../../settings-state'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -27,8 +27,8 @@ import {asEther} from '../../common/units'
 interface SendTokenModalProps extends ModalOnCancel {
   estimateCallFee: LoadedState['estimateCallFee']
   onSendToken: TokensData['sendToken']
-  accounts: TransparentAccount[]
-  defaultAccount: TransparentAccount
+  accounts: Account[]
+  defaultAccount: Account
   token: Token
 }
 

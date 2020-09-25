@@ -20,17 +20,17 @@ const _WalletRestore = ({
 }: PropsWithWalletState<WalletRestoreProps, NoWalletState>): JSX.Element => {
   const {t} = useTranslation()
   const [walletName, setWalletName] = useState('')
-  const [spendingKey, setSpendingKey] = useState('')
+  const [privateKey, setPrivateKey] = useState('')
   const [seedPhraseString, setSeedPhrase] = useState('')
   const [password, setPassword] = useState('')
-  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('spendingKey')
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('privateKey')
 
   const restore = async (): Promise<void> => {
-    const privateKey =
+    const privateKeyToUse =
       recoveryMethod === 'seedPhrase'
         ? await generatePrivateKeyFromSeedPhrase(seedPhraseString)
-        : spendingKey
-    walletState.addAccount(walletName, privateKey, password)
+        : privateKey
+    walletState.addAccount(walletName, privateKeyToUse, password)
   }
 
   return (
@@ -56,7 +56,7 @@ const _WalletRestore = ({
       />
       <DialogSecrets
         onMethodChange={setRecoveryMethod}
-        onSpendingKeyChange={setSpendingKey}
+        onPrivateKeyChange={setPrivateKey}
         onSeedPhraseChange={setSeedPhrase}
       />
       <DialogPassword onChange={setPassword} />

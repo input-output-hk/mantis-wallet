@@ -66,19 +66,19 @@ test('WalletCreate `Define` step', async () => {
 })
 
 test('WalletCreate `Security` step', async () => {
-  const spendingKey = 'm-test-shl-sk122732c6py9h89unt0069ce4epl8e707sv04jr3aqzts94styr9wq4lkg85'
+  const privateKey = '0x8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f'
   const cancel = jest.fn()
   const next = jest.fn()
 
   const {getByText, getByRole} = render(
-    <WalletCreateSecurityStep cancel={cancel} next={next} spendingKey={spendingKey} />,
+    <WalletCreateSecurityStep cancel={cancel} next={next} privateKey={privateKey} />,
     {wrapper: WithSettingsProvider},
   )
 
-  // Show spending key
-  const spendingKeySwitch = getByRole('switch')
-  userEvent.click(spendingKeySwitch)
-  expect(getByText(spendingKey)).toBeInTheDocument()
+  // Show private key
+  const privateKeySwitch = getByRole('switch')
+  userEvent.click(privateKeySwitch)
+  expect(getByText(privateKey)).toBeInTheDocument()
   expect(getByText('Download txt')).toBeInTheDocument()
 
   // Click Cancel

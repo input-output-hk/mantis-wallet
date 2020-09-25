@@ -8,7 +8,7 @@ import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {useLocalizedUtilities, useFormatters} from '../../settings-state'
 import {CopyableLongText} from '../../common/CopyableLongText'
 import {Trans} from '../../common/Trans'
-import {TransparentAccount} from '../../common/wallet-state'
+import {Account} from '../../common/wallet-state'
 import {Token} from '../tokens-state'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {formatTokenAmount} from '../tokens-utils'
@@ -16,12 +16,12 @@ import './ReceiveTokenModal.scss'
 
 interface ReceiveTokenDialogProps {
   token: Token
-  newestAccount?: TransparentAccount
+  newestAccount?: Account
 }
 
 interface ReceiveTokenModalProps {
   token: Token
-  accounts: TransparentAccount[]
+  accounts: Account[]
 }
 
 const ReceiveTokenDialog: FunctionComponent<ReceiveTokenDialogProps> = ({

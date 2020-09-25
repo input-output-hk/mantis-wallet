@@ -11,35 +11,35 @@ import {TKeyRenderer} from '../i18n'
 import {Trans} from '../Trans'
 import './DialogSecrets.scss'
 
-const recoveryMethods = ['spendingKey', 'seedPhrase'] as const
+const recoveryMethods = ['privateKey', 'seedPhrase'] as const
 export type RecoveryMethod = typeof recoveryMethods[number]
 
 const recoveryMethodLabel: Record<RecoveryMethod, TKeyRenderer> = {
-  spendingKey: ['wallet', 'label', 'privateKey'],
+  privateKey: ['wallet', 'label', 'privateKey'],
   seedPhrase: ['wallet', 'label', 'recoveryPhrase'],
 }
 
 interface DialogSecrets {
   onMethodChange: (method: RecoveryMethod) => void
-  onSpendingKeyChange: (spendingKey: string) => void
+  onPrivateKeyChange: (privateKey: string) => void
   onSeedPhraseChange: (seedPhrase: string) => void
 }
 
 export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
   onMethodChange,
-  onSpendingKeyChange,
+  onPrivateKeyChange,
   onSeedPhraseChange,
 }: DialogSecrets) => {
   const {t} = useTranslation()
-  const [spendingKey, setSpendingKey] = useState('')
+  const [privateKey, setPrivateKey] = useState('')
   const [seedPhrase, setSeedPhrase] = useState('')
-  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('spendingKey')
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('privateKey')
 
   const privateKeyValidator = toAntValidator(t, validateEthPrivateKey)
 
   const isInitialMount = useRef(true)
   const inputRefs = {
-    spendingKey: useRef<Input>(null),
+    privateKey: useRef<Input>(null),
     seedPhrase: useRef<Select<SelectValue>>(null),
   }
 
@@ -72,9 +72,9 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
         ))}
       </div>
       <div
-        className={classnames({hidden: 'spendingKey' !== recoveryMethod})}
+        className={classnames({hidden: 'privateKey' !== recoveryMethod})}
         onKeyDown={(e) => {
-          if (e.key === 'Tab' && !e.shiftKey && spendingKey.length === 0) {
+          if (e.key === 'Tab' && !e.shiftKey && privateKey.length === 0) {
             e.preventDefault()
             handleMethodChange('seedPhrase')()
           }
@@ -83,11 +83,11 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
         <DialogInput
           data-testid="private-key"
           onChange={(e) => {
-            const spendingKey = e.target.value
-            setSpendingKey(spendingKey)
-            onSpendingKeyChange(spendingKey)
+            const privateKey = e.target.value
+            setPrivateKey(privateKey)
+            onPrivateKeyChange(privateKey)
           }}
-          ref={inputRefs.spendingKey}
+          ref={inputRefs.privateKey}
           formItem={{
             name: 'private-key',
             rules: [privateKeyValidator],
@@ -99,7 +99,7 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
         onKeyDown={(e) => {
           if (e.key === 'Tab' && e.shiftKey && seedPhrase.length === 0) {
             e.preventDefault()
-            handleMethodChange('spendingKey')()
+            handleMethodChange('privateKey')()
           }
         }}
       >

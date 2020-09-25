@@ -1,10 +1,14 @@
 import React from 'react'
-import _ from 'lodash/fp'
 import {action} from '@storybook/addon-actions'
 import {text, object} from '@storybook/addon-knobs'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {ether, asyncAction} from '../storybook-util/custom-knobs'
-import {estimateFeesWithRandomDelay, ADDRESS, dummyTransactions} from '../storybook-util/dummies'
+import {
+  estimateFeesWithRandomDelay,
+  ADDRESS,
+  dummyTransactions,
+  dummyAccounts,
+} from '../storybook-util/dummies'
 import {SendTransaction} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
@@ -16,15 +20,10 @@ export default {
   decorators: ESSENTIAL_DECORATORS,
 }
 
-const addresses = _.range(0, 20).map((index) => ({
-  index,
-  address: `address-${index}`,
-}))
-
 export const withNoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={[]}
-    addresses={addresses}
+    accounts={dummyAccounts}
     availableBalance={asWei(0)}
     sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
@@ -35,7 +34,7 @@ export const withNoTransactions = (): JSX.Element => (
 export const withDemoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={dummyTransactions}
-    addresses={addresses}
+    accounts={dummyAccounts}
     availableBalance={ether('Available Balance', 1000)}
     sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
@@ -90,7 +89,7 @@ export const interactive = (): JSX.Element => {
           status: 'pending',
         }),
       ]}
-      addresses={addresses}
+      accounts={dummyAccounts}
       availableBalance={ether('Available Balance', 1000)}
       sendTransaction={asyncAction('on-send-transaction')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
@@ -111,7 +110,15 @@ export const sendTransaction = (): JSX.Element => (
 
 export const receiveTransaction = (): JSX.Element => (
   <ReceiveTransaction
-    addresses={[{address: text('Address', ADDRESS), index: 1}, ...addresses]}
+    accounts={[
+      {
+        address: text('Address', ADDRESS),
+        index: dummyAccounts.length + 1,
+        balance: asWei(0),
+        tokens: {},
+      },
+      ...dummyAccounts,
+    ]}
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNew={asyncAction('generate-new')}
     visible
@@ -120,7 +127,7 @@ export const receiveTransaction = (): JSX.Element => (
 
 export const receiveTransactionEmptyModal = (): JSX.Element => (
   <ReceiveTransaction
-    addresses={[{address: text('Address', ADDRESS), index: 0}]}
+    accounts={[{address: text('Address', ADDRESS), index: 0, balance: asWei(0), tokens: {}}]}
     onCancel={action('receive-transaction-cancelled')}
     onGenerateNew={asyncAction('generate-new')}
     visible

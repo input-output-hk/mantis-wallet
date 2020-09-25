@@ -207,7 +207,7 @@ export const InteractiveSecrets: FunctionComponent<{}> = () => {
     <Dialog title="Dialog Secrets">
       <DialogSecrets
         onMethodChange={action('on-method-change')}
-        onSpendingKeyChange={action('on-spending-key-change')}
+        onPrivateKeyChange={action('on-private-key-change')}
         onSeedPhraseChange={action('on-seed-phrase-change')}
       />
     </Dialog>

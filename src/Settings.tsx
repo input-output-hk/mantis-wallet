@@ -110,7 +110,7 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
       {/* Modals */}
       <ExportPrivateKeyModal
         visible={activeModal === 'ExportPrivateKey'}
-        getSpendingKey={walletState.getSpendingKey}
+        getPrivateKey={walletState.getPrivateKey}
         onCancel={() => setActiveModal('none')}
       />
     </SettingsWrapper>

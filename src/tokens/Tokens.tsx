@@ -50,7 +50,7 @@ export const _Tokens = ({
         </div>
         <TokenList
           tokens={orderedTokens}
-          transparentAccounts={[]} // FIXME ETCM-115 get accounts
+          accounts={walletState.accounts}
           onRemoveToken={removeToken}
           sendToken={sendToken}
           estimateCallFee={estimateCallFee}

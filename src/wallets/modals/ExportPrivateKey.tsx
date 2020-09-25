@@ -42,7 +42,7 @@ const RevealStep = ({privateKey}: {privateKey: string}): JSX.Element => {
       <div>
         <DialogQRCode
           content={privateKey}
-          downloadFileName="Luna-wallet-spending-key"
+          downloadFileName="Luna-wallet-private-key"
           blurred={!isRevealed}
         />
       </div>
@@ -51,11 +51,11 @@ const RevealStep = ({privateKey}: {privateKey: string}): JSX.Element => {
 }
 
 interface ExportPrivateKeyModalProps extends ModalOnCancel {
-  getSpendingKey: LoadedState['getSpendingKey']
+  getPrivateKey: LoadedState['getPrivateKey']
 }
 
 const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
-  getSpendingKey,
+  getPrivateKey,
   onCancel,
 }: ExportPrivateKeyModalProps) => {
   const {t} = useTranslation()
@@ -75,7 +75,7 @@ const ExportPrivateKeyDialog: FunctionComponent<ExportPrivateKeyModalProps> = ({
       }}
       rightButtonProps={{
         onClick: async (): Promise<void> => {
-          const privateKey = await getSpendingKey(password)
+          const privateKey = await getPrivateKey(password)
           setPrivateKey(some(privateKey))
         },
         children: t(['wallet', 'button', 'unlockPrivateKey']),

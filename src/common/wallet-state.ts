@@ -1,7 +1,6 @@
 import {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash/fp'
-import * as t from 'io-ts'
 import {createContainer} from 'unstated-next'
 import {Option, some, none, getOrElse, isSome, isNone} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
@@ -13,7 +12,6 @@ import {
   Account as Web3Account,
   Transaction as Web3Transaction,
 } from 'web3-core'
-import {NumberFromHexString} from './io-helpers'
 import {rendererLog} from './logger'
 import {Store, createInMemoryStore} from './store'
 import {usePersistedState} from './hook-utils'
@@ -22,54 +20,30 @@ import {createTErrorRenderer} from './i18n'
 import {toHex} from './util'
 import {asWei, Wei, asEther} from './units'
 
-// API Types
+interface SynchronizationStatusOffline {
+  mode: 'offline'
+  currentBlock: number
+}
 
-const SynchronizationStatusOffline = t.type({
-  mode: t.literal('offline'),
-  currentBlock: NumberFromHexString,
-})
+interface SynchronizationStatusOnline {
+  mode: 'online'
+  currentBlock: number
+  highestKnownBlock: number
+  percentage: number
+}
 
-const SynchronizationStatusOnline = t.type({
-  mode: t.literal('online'),
-  currentBlock: NumberFromHexString,
-  highestKnownBlock: NumberFromHexString,
-  percentage: t.number,
-})
+export type SynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
 
-const SynchronizationStatus = t.union([SynchronizationStatusOffline, SynchronizationStatusOnline])
-
-// FIXME ETCM-113 we might need a different object for this
-export type SynchronizationStatus = t.TypeOf<typeof SynchronizationStatus>
-
-export type TransparentAccount = {
+export interface Account {
   address: string
   index: number
-  balance: BigNumber
+  balance: Wei
   tokens: Record<string, BigNumber>
-}
-
-export type PrivateAddress = {
-  address: string
-  index: number
-}
-
-export interface CallParams {
-  from: ['Wallet', string] | 'Wallet' // WalletName, optional: transparentAddress (if missing, new one will be generated)
-  to?: string // transparent contract address in bech32 format
-  value?: string // value of transaction
-  gasLimit?: string // decimal as string, if not specified, default is equal to 90000
-  gasPrice?: string // decimal as string, if not specified, default is equal to 20000000000
-  nonce?: string // If not specified, default is equal to current transparent sender nonce
-  data?: string // smart contract deployment/calling code
 }
 
 export const allFeeLevels = ['low', 'medium', 'high'] as const
 export type FeeLevel = typeof allFeeLevels[number]
 export type FeeEstimates = Record<FeeLevel, Wei>
-
-const DEPTH_FOR_PERSISTENCE = 12
-const TRANSFER_GAS_LIMIT = 21000
-const MIN_GAS_PRICE = asWei(1)
 
 export interface Transaction {
   from: string
@@ -86,6 +60,10 @@ export interface Transaction {
   status: 'pending' | 'confirmed' | 'persisted' | 'failed'
 }
 
+const DEPTH_FOR_PERSISTENCE = 12
+const TRANSFER_GAS_LIMIT = 21000
+const MIN_GAS_PRICE = asWei(1)
+
 // States
 
 export interface InitialState {
@@ -100,16 +78,16 @@ export interface LoadingState {
 export interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
-  privateAccounts: PrivateAddress[]
+  accounts: Account[]
   getOverviewProps: () => Overview
   reset: () => void
   remove: (password: string) => Promise<boolean>
-  getSpendingKey: (password: string) => Promise<string>
+  getPrivateKey: (password: string) => Promise<string>
   lock: (password: string) => Promise<boolean>
-  generatePrivateAccount: () => Promise<void>
+  generateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: Wei, fee: Wei) => Promise<void>
-  estimateCallFee(callParams: CallParams): Promise<FeeEstimates>
+  estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
   addTokensToTrack: (tokenAddresses: string[]) => void
@@ -150,7 +128,7 @@ interface Overview {
   transactions: Transaction[]
 }
 
-interface Account {
+interface StoredAccount {
   name: string
   address: string
   keystore: EncryptedKeystoreV3Json
@@ -158,7 +136,7 @@ interface Account {
 
 export interface StoreWalletData {
   wallet: {
-    accounts: Account[]
+    accounts: StoredAccount[]
   }
 }
 
@@ -176,7 +154,7 @@ interface WalletStateParams {
   syncStatus: Option<SynchronizationStatus>
   totalBalance: Option<Wei>
   availableBalance: Option<Wei>
-  privateAccounts: Option<PrivateAddress[]>
+  accounts: Option<Account[]>
   transactions: Option<Transaction[]>
   isMocked: boolean
 }
@@ -189,7 +167,7 @@ const DEFAULT_STATE: WalletStateParams = {
   syncStatus: none,
   totalBalance: none,
   availableBalance: none,
-  privateAccounts: none,
+  accounts: none,
   transactions: none,
   isMocked: false, // FIXME ETCM-116 it would be nicer if could go without this flag
 }
@@ -215,9 +193,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const {web3, isMocked} = _initialState
 
   // wallet
-  const [accounts, setAccounts] = usePersistedState(_initialState.store, ['wallet', 'accounts'])
-  const [currentAccountOption, setCurrentAccountOption] = useState<Option<string>>(
-    accounts.length > 0 ? some(accounts[0].address) : none,
+  const [storedAccounts, setStoredAccounts] = usePersistedState(_initialState.store, [
+    'wallet',
+    'accounts',
+  ])
+  const [currentAddressOption, setCurrentAddressOption] = useState<Option<string>>(
+    storedAccounts.length > 0 ? some(storedAccounts[0].address) : none,
   )
 
   // wallet status
@@ -239,14 +220,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   )
 
   // addresses / accounts
-  const [privateAccountsOption, setPrivateAccounts] = useState<Option<PrivateAddress[]>>(
-    _initialState.privateAccounts,
-  )
+  const [accountsOption, setAccounts] = useState<Option<Account[]>>(_initialState.accounts)
 
   // tokens
   const [trackedTokens, setTrackedTokens] = useState<string[]>([])
 
-  const privateAccounts = getOrElse((): PrivateAddress[] => [])(privateAccountsOption)
+  const accounts = getOrElse((): Account[] => [])(accountsOption)
 
   const getOverviewProps = (): Overview => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
@@ -265,7 +244,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     isSome(totalBalanceOption) &&
     isSome(availableBalanceOption) &&
     isSome(transactionsOption) &&
-    isSome(privateAccountsOption) &&
+    isSome(accountsOption) &&
     isSome(syncStatusOption)
 
   const walletStatus =
@@ -295,11 +274,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const error = getOrElse((): Error => Error('Unknown error'))(errorOption)
 
-  const getCurrentAccount = (): string => {
-    if (isNone(currentAccountOption)) {
+  const getCurrentAddress = (): string => {
+    if (isNone(currentAddressOption)) {
       throw createTErrorRenderer(['wallet', 'error', 'noAccountWasSelected'])
     }
-    return currentAccountOption.value
+    return currentAddressOption.value
   }
 
   const getUnlockedAccount = (address: string): Web3Account | undefined =>
@@ -308,18 +287,22 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     // @ts-ignore
     web3.eth.accounts.wallet[address]
 
-  const loadPrivateAccounts = async (): Promise<void> => {
-    const address = getCurrentAccount()
-    setPrivateAccounts(
+  const loadAccounts = async (): Promise<void> => {
+    const address = getCurrentAddress()
+    const balance = await web3.eth.getBalance(address, 'latest')
+    setAccounts(
       some([
         {
           address,
           index: 0,
+          balance: asWei(balance),
+          tokens: {},
         },
       ]),
     )
   }
 
+  // FIXME ETCM-115
   // const getTokens = async (
   //   address: string, tokens = trackedTokens,
   // ): Promise<Record<string, BigNumber>> => {
@@ -345,7 +328,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   // }
 
   const loadBalance = async (): Promise<void> => {
-    const address = getCurrentAccount()
+    const address = getCurrentAddress()
     const balance = await web3.eth.getBalance(address, 'latest')
     setTotalBalance(some(asWei(balance)))
     setAvailableBalance(some(asWei(balance)))
@@ -358,11 +341,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const loadTransactionHistory = async (): Promise<void> => {
-    const currentAccount = getCurrentAccount()
+    const currentAddress = getCurrentAddress()
     const currentBlock = await web3.eth.getBlockNumber()
 
     const web3transactions: Web3Transaction[] = await web3.eth.getAccountTransactions(
-      currentAccount,
+      currentAddress,
       0,
       currentBlock,
     )
@@ -405,11 +388,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const load = (
-    loadFns: Array<() => Promise<void>> = [
-      loadTransactionHistory,
-      loadBalance,
-      loadPrivateAccounts,
-    ],
+    loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadBalance, loadAccounts],
   ): void => {
     setWalletStatus('LOADING')
 
@@ -450,11 +429,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const refreshSyncStatus = async (): Promise<void> => {
     if (!isMocked) {
-      if (isNone(currentAccountOption)) {
+      if (isNone(currentAddressOption)) {
         return setWalletStatus('NO_WALLET')
       }
 
-      if (getUnlockedAccount(currentAccountOption.value) == null) {
+      if (getUnlockedAccount(currentAddressOption.value) == null) {
         return setWalletStatus('LOCKED')
       }
     }
@@ -483,14 +462,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
   }
 
-  const generatePrivateAccount = (): Promise<void> => Promise.resolve()
+  const generateAccount = (): Promise<void> => Promise.resolve()
 
   const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
 
   const getCurrentPrivateKeyWithoutPassword = (): string => {
-    const currentAccount = getCurrentAccount()
+    const currentAddress = getCurrentAddress()
 
-    const web3Account = getUnlockedAccount(currentAccount)
+    const web3Account = getUnlockedAccount(currentAddress)
 
     if (!web3Account) throw createTErrorRenderer(['wallet', 'error', 'accountWasNotUnlocked'])
 
@@ -501,7 +480,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const privateKey = getCurrentPrivateKeyWithoutPassword()
     const txConfig: TransactionConfig = {
       to: recipient,
-      from: getCurrentAccount(),
+      from: getCurrentAddress(),
       value: toHex(amount),
       gas: TRANSFER_GAS_LIMIT,
       gasPrice: pipe(
@@ -524,19 +503,19 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const keystore = web3.eth.accounts.encrypt(privateKey, password)
     const address = `0x${keystore.address}`
-    setAccounts([...accounts, {name, address, keystore}])
-    setCurrentAccountOption(some(address))
+    setStoredAccounts([...storedAccounts, {name, address, keystore}])
+    setCurrentAddressOption(some(address))
     reset()
   }
 
   const decryptCurrentAccount = (password: string): Web3Account => {
-    const currentAddress = getCurrentAccount()
+    const currentAddress = getCurrentAddress()
 
-    const storedAccount = accounts.find(({address}) => address === currentAddress)
+    const storedAccount = storedAccounts.find(({address}) => address === currentAddress)
 
     if (!storedAccount) {
       throw createTErrorRenderer(['wallet', 'error', 'accountNotFound'], {
-        replace: {currentAddress, accounts: accounts.map(prop('address')).join(', ')},
+        replace: {currentAddress, accounts: storedAccounts.map(prop('address')).join(', ')},
       })
     }
 
@@ -559,7 +538,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const lock = async (password: string): Promise<boolean> => {
-    const currentAddress = getCurrentAccount()
+    const currentAddress = getCurrentAddress()
     decryptCurrentAccount(password)
 
     const locked = web3.eth.accounts.wallet.remove(currentAddress)
@@ -568,20 +547,19 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const remove = async (password: string): Promise<boolean> => {
-    const currentAddress = getCurrentAccount()
+    const currentAddress = getCurrentAddress()
     decryptCurrentAccount(password)
 
     web3.eth.accounts.wallet.remove(currentAddress)
     reset()
-    setAccounts(accounts.filter(({address}) => address !== currentAddress))
-    setCurrentAccountOption(none)
+    setStoredAccounts(storedAccounts.filter(({address}) => address !== currentAddress))
+    setCurrentAddressOption(none)
     setWalletStatus('NO_WALLET')
     return true
   }
 
-  const getSpendingKey = async (password: string): Promise<string> => {
-    return getCurrentPrivateKey(password) // FIXME ETCM-113 refactor this
-  }
+  const getPrivateKey = (password: string): Promise<string> =>
+    Promise.resolve(getCurrentPrivateKey(password))
 
   const estimateTransactionFee = async (): Promise<FeeEstimates> => {
     const gasPrice = await getGasPrice()
@@ -598,7 +576,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
   }
 
-  const estimateCallFee = (_callParams: CallParams): Promise<FeeEstimates> =>
+  const estimateCallFee = (_txConfig: TransactionConfig): Promise<FeeEstimates> =>
     Promise.resolve({
       low: asEther(0.01),
       medium: asEther(0.02),
@@ -626,7 +604,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     syncStatus,
     getOverviewProps,
     reset,
-    generatePrivateAccount,
+    generateAccount,
     refreshSyncStatus,
     sendTransaction,
     estimateCallFee,
@@ -634,8 +612,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     unlock,
     lock,
     remove,
-    getSpendingKey,
-    privateAccounts,
+    getPrivateKey,
+    accounts,
     addTokenToTrack,
     addTokensToTrack,
     addAccount,

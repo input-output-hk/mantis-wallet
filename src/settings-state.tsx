@@ -67,9 +67,6 @@ export interface SettingsState {
   // Theme settings
   theme: Theme
   switchTheme(newTheme: Theme): void
-  // Wallet settings
-  areEmptyTransparentAccountsHidden: boolean
-  hideEmptyTransparentAccounts(hide: boolean): void
   // Locale settings
   dateFormat: DateFormat
   setDateFormat(dateFormat: DateFormat): void
@@ -88,7 +85,6 @@ export interface SettingsState {
 export type StoreSettingsData = {
   settings: {
     theme: Theme
-    areEmptyTransparentAccountsHidden: boolean
     dateFormat: DateFormat
     timeFormat: TimeFormat
     language: Language
@@ -98,7 +94,6 @@ export type StoreSettingsData = {
 export const defaultSettingsData: StoreSettingsData = {
   settings: {
     theme: 'dark',
-    areEmptyTransparentAccountsHidden: false,
     dateFormat: 'MM/DD/YYYY',
     timeFormat: '12-hour',
     language: DEFAULT_LANGUAGE,
@@ -121,12 +116,6 @@ function useSettingsState({
 }: SettingsStateParams = DEFAULT_STATE): SettingsState {
   // Theme settings
   const [theme, switchTheme] = usePersistedState(store, ['settings', 'theme'])
-
-  // Wallet settings
-  const [areEmptyTransparentAccountsHidden, hideEmptyTransparentAccounts] = usePersistedState(
-    store,
-    ['settings', 'areEmptyTransparentAccountsHidden'],
-  )
 
   // Locale settings
   const [dateFormat, setDateFormat] = usePersistedState(store, ['settings', 'dateFormat'])
@@ -205,8 +194,6 @@ function useSettingsState({
   return {
     theme,
     switchTheme,
-    areEmptyTransparentAccountsHidden,
-    hideEmptyTransparentAccounts,
     dateFormat,
     setDateFormat,
     timeFormat,
