@@ -12,9 +12,6 @@
     "checkboxLabel": {
       "deleteCurrentDataDir": "Delete my current data directory instead"
     },
-    "error": {
-      "paramsFetching": "Failed to fetch parameters"
-    },
     "fileFilter": {
       "zipArchives": "Zip Archives"
     },

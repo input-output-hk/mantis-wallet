@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import {isAddress} from 'web3-utils'
 import _ from 'lodash'
+import {isAddress} from 'web3-utils'
 import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
@@ -16,11 +16,6 @@ export const toHex = (n: number | BigNumber): string => {
     throw createTErrorRenderer(['common', 'error', 'numberMustBePositive'])
   return `0x${asString}`
 }
-
-export const isLess = (maxValue = 0) => (b: BigNumber): ValidationResult =>
-  !b.isFinite() || !b.isLessThan(new BigNumber(maxValue))
-    ? {tKey: ['common', 'error', 'mustBeANumberLessThan'], options: {replace: {maxValue}}}
-    : 'OK'
 
 export const isGreater = (minValue = 0) => (b: BigNumber): ValidationResult =>
   !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
@@ -119,7 +114,8 @@ export function validateEthPrivateKey(privateKey?: string): ValidationResult {
     return {tKey: ['common', 'error', 'ethPrivateKeyMustBeSet']}
   }
   try {
-    const k = new BigNumber(privateKey)
+    const cleanPrivateKey = privateKey.startsWith('0x') ? privateKey : `0x${privateKey}`
+    const k = new BigNumber(cleanPrivateKey)
     if (!k.isFinite() || k.isZero() || k.isGreaterThan(MAX_KEY_VALUE)) {
       return {tKey: ['common', 'error', 'invalidEthPrivateKey']}
     }
@@ -216,10 +212,3 @@ export const fillActionHandlers = (
   role,
   tabIndex: 0,
 })
-
-export const utf8Length = (str: string): number => new Blob([str]).size
-
-export const validateUtf8Length = (lengthInBytes: number) => (value?: string): ValidationResult =>
-  value != null && utf8Length(value) > lengthInBytes
-    ? {tKey: ['wallet', 'error', 'textIsLimitedToBytes'], options: {count: lengthInBytes}}
-    : 'OK'

@@ -5,7 +5,8 @@ import {Input, Select} from 'antd'
 import {SelectValue} from 'antd/lib/select'
 import {DialogInput} from './DialogInput'
 import {DialogSeedPhrase} from './DialogSeedPhrase'
-import {fillActionHandlers} from '../util'
+import {fillActionHandlers, toAntValidator, validateEthPrivateKey} from '../util'
+import {useTranslation} from '../../settings-state'
 import {TKeyRenderer} from '../i18n'
 import {Trans} from '../Trans'
 import './DialogSecrets.scss'
@@ -29,9 +30,13 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
   onSpendingKeyChange,
   onSeedPhraseChange,
 }: DialogSecrets) => {
+  const {t} = useTranslation()
   const [spendingKey, setSpendingKey] = useState('')
   const [seedPhrase, setSeedPhrase] = useState('')
   const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>('spendingKey')
+
+  const privateKeyValidator = toAntValidator(t, validateEthPrivateKey)
+
   const isInitialMount = useRef(true)
   const inputRefs = {
     spendingKey: useRef<Input>(null),
@@ -83,6 +88,10 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
             onSpendingKeyChange(spendingKey)
           }}
           ref={inputRefs.spendingKey}
+          formItem={{
+            name: 'private-key',
+            rules: [privateKeyValidator],
+          }}
         />
       </div>
       <div

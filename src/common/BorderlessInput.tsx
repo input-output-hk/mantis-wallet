@@ -1,7 +1,6 @@
 import React, {Ref, forwardRef, RefForwardingComponent} from 'react'
 import {Input} from 'antd'
 import Password from 'antd/lib/input/Password'
-import TextArea, {TextAreaProps} from 'antd/lib/input/TextArea'
 import {InputProps, PasswordProps} from 'antd/lib/input'
 import {InlineError, InlineErrorProps} from './InlineError'
 import './BorderlessInput.scss'
@@ -12,7 +11,6 @@ type GenericBorderlessInputProps<T> = InlineErrorProps &
 
 export type BorderlessInputProps = GenericBorderlessInputProps<InputProps>
 export type BorderlessInputPasswordProps = GenericBorderlessInputProps<PasswordProps>
-export type BorderlessInputTextAreaProps = GenericBorderlessInputProps<TextAreaProps>
 
 const _BorderlessInput: RefForwardingComponent<Input, BorderlessInputProps> = (
   {errorMessage, forceInvalid, ...props}: BorderlessInputProps,
@@ -32,15 +30,5 @@ const _BorderlessInputPassword: RefForwardingComponent<Password, BorderlessInput
   </InlineError>
 )
 
-const _BorderlessInputTextArea: RefForwardingComponent<TextArea, BorderlessInputTextAreaProps> = (
-  {errorMessage, forceInvalid, ...props}: BorderlessInputTextAreaProps,
-  ref: Ref<TextArea>,
-) => (
-  <InlineError className="BorderlessInput" errorMessage={errorMessage} forceInvalid={forceInvalid}>
-    <TextArea {...props} ref={ref} />
-  </InlineError>
-)
-
 export const BorderlessInput = forwardRef(_BorderlessInput)
 export const BorderlessInputPassword = forwardRef(_BorderlessInputPassword)
-export const BorderlessInputTextArea = forwardRef(_BorderlessInputTextArea)
