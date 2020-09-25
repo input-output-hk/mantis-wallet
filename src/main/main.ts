@@ -50,17 +50,7 @@ if (!app.requestSingleInstanceLock()) {
 const i18n = createAndInitI18nForMain(store.get('settings.language') || DEFAULT_LANGUAGE)
 const t = createTFunctionMain(i18n)
 
-mainLog.info({
-  versions: process.versions,
-  config,
-})
-
 function createWindow(t: TFunctionMain): void {
-  mainLog.info({
-    versions: process.versions,
-    config,
-  })
-
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
@@ -198,6 +188,12 @@ if (!config.runNode) {
 //
 if (config.runNode) {
   const initializationPromise = checkDatadirCompatibility(t)
+    .then(() =>
+      mainLog.info({
+        versions: process.versions,
+        config,
+      }),
+    )
     .then(() => checkPortUsage(config))
     .then(() => openLuna(t))
     .then(() => setupOwnTLS(config.mantis))
