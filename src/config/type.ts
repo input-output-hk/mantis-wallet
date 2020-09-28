@@ -12,8 +12,9 @@ export interface MantisConfig {
   additionalSettings: ClientSettings
 }
 
+// Known predefined networks + anything else if user configures it on its own
 export const NetworkName = T.union(
-  [T.literal('etc'), T.literal('mordor'), T.literal('private'), T.literal('test')],
+  [T.literal('etc'), T.literal('mordor'), T.literal('testnet-internal'), T.string],
   'networkName',
 )
 export type NetworkName = T.TypeOf<typeof NetworkName>

@@ -1,6 +1,7 @@
 import {resolve} from 'path'
 import * as childProcess from 'child_process'
 import * as os from 'os'
+import * as path from 'path'
 import {promisify} from 'util'
 import * as fs from 'fs'
 import psTree from 'ps-tree'
@@ -97,15 +98,20 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
 ) => {
   const executablePath = processExecutablePath(processConfig)
   const mantisDataDir = resolve(dataDir, processConfig.dataDirName)
+  const networkConfigFile = path.resolve(
+    processConfig.packageDirectory,
+    'conf',
+    `${networkName}.conf`,
+  )
 
   return {
     spawn: (additionalConfig: ClientSettings) => {
       const settingsAsArguments = pipe(
         {
+          'config.file': networkConfigFile,
           ...processConfig.additionalSettings,
           ...additionalConfig,
           'mantis.datadir': mantisDataDir,
-          'mantis.blockchains.network': networkName,
         },
         Object.entries,
         array.map(([key, value]) => `-D${key}=${value}`),
