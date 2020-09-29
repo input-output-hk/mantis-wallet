@@ -4,7 +4,6 @@ import {WalletOverview} from './WalletOverview'
 import {TransactionHistory} from './TransactionHistory'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import {LoadedState} from '../common/wallet-state'
-import {Wei} from '../common/units'
 
 const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   const {transactions, availableBalance} = walletState.getOverviewProps()

@@ -5,7 +5,6 @@ import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {RouterState} from '../router-state'
 import {Sidebar} from './Sidebar'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
-import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {asyncAction} from '../storybook-util/custom-knobs'
 import {toFullScreen} from '../storybook-util/full-screen-decorator'
 import {withTokensState} from '../storybook-util/tokens-state-decorator'
@@ -26,14 +25,5 @@ export const removeWalletModal = (): JSX.Element => (
     visible
     onCancel={action('on-cancel')}
     onRemoveWallet={asyncAction('on-log-out')}
-  />
-)
-
-export const lockWalletModal = (): JSX.Element => (
-  <LockWalletModal
-    visible
-    onCancel={action('on-cancel')}
-    lock={asyncAction('on-lock')}
-    toRemoveWallet={action('to-remove-wallet')}
   />
 )

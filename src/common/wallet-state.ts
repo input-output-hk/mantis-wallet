@@ -83,7 +83,6 @@ export interface LoadedState {
   reset: () => void
   remove: (password: string) => Promise<boolean>
   getPrivateKey: (password: string) => Promise<string>
-  lock: (password: string) => Promise<boolean>
   generateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
   sendTransaction: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
@@ -91,13 +90,6 @@ export interface LoadedState {
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
   addTokensToTrack: (tokenAddresses: string[]) => void
-}
-
-export interface LockedState {
-  walletStatus: 'LOCKED'
-  reset: () => void
-  remove: (password: string) => Promise<boolean>
-  unlock: (password: string) => Promise<boolean>
 }
 
 export interface NoWalletState {
@@ -113,14 +105,8 @@ export interface ErrorState {
   remove: (password: string) => Promise<boolean>
 }
 
-export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'LOCKED' | 'NO_WALLET' | 'ERROR'
-export type WalletData =
-  | InitialState
-  | LoadingState
-  | LoadedState
-  | LockedState
-  | NoWalletState
-  | ErrorState
+export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'NO_WALLET' | 'ERROR'
+export type WalletData = InitialState | LoadingState | LoadedState | NoWalletState | ErrorState
 
 interface Overview {
   availableBalance: Wei
@@ -172,12 +158,8 @@ const DEFAULT_STATE: WalletStateParams = {
   isMocked: false, // FIXME ETCM-116 it would be nicer if could go without this flag
 }
 
-export const canRemoveWallet = (
-  walletState: WalletData,
-): walletState is LoadedState | LockedState | ErrorState =>
-  walletState.walletStatus === 'LOADED' ||
-  walletState.walletStatus === 'LOCKED' ||
-  walletState.walletStatus === 'ERROR'
+export const canRemoveWallet = (walletState: WalletData): walletState is LoadedState | ErrorState =>
+  walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'ERROR'
 
 const getStatus = (
   currentBlock: number,
@@ -302,12 +284,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getCurrentPrivateKey = (password: string): string =>
     decryptCurrentAccount(password).privateKey
-
-  const getUnlockedAccount = (address: string): Web3Account | undefined =>
-    // account should be accessible through address too
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    web3.eth.accounts.wallet[address]
 
   const loadAccounts = async (): Promise<void> => {
     const address = getCurrentAddress()
@@ -454,10 +430,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       if (isNone(currentAddressOption)) {
         return setWalletStatus('NO_WALLET')
       }
-
-      if (getUnlockedAccount(currentAddressOption.value) == null) {
-        return setWalletStatus('LOCKED')
-      }
     }
 
     try {
@@ -516,8 +488,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const addAccount = async (name: string, privateKey: string, password: string): Promise<void> => {
-    web3.eth.accounts.wallet.add(privateKey)
-
     const keystore = web3.eth.accounts.encrypt(privateKey, password)
     const address = `0x${keystore.address}`
     setStoredAccounts([...storedAccounts, {name, address, keystore}])
@@ -525,27 +495,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     reset()
   }
 
-  const unlock = async (password: string): Promise<boolean> => {
-    const privateKey = getCurrentPrivateKey(password)
-    web3.eth.accounts.wallet.add(privateKey)
-    reset()
-    return true
-  }
-
-  const lock = async (password: string): Promise<boolean> => {
-    const currentAddress = getCurrentAddress()
-    decryptCurrentAccount(password)
-
-    const locked = web3.eth.accounts.wallet.remove(currentAddress)
-    if (locked) reset()
-    return locked
-  }
-
   const remove = async (password: string): Promise<boolean> => {
     const currentAddress = getCurrentAddress()
     decryptCurrentAccount(password)
 
-    web3.eth.accounts.wallet.remove(currentAddress)
     reset()
     setStoredAccounts(storedAccounts.filter(({address}) => address !== currentAddress))
     setCurrentAddressOption(none)
@@ -604,8 +557,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     sendTransaction,
     estimateCallFee,
     estimateTransactionFee,
-    unlock,
-    lock,
     remove,
     getPrivateKey,
     accounts,

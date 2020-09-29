@@ -202,7 +202,7 @@ test('Send modal shows up', async () => {
 test('Send transaction works', async () => {
   const availableBalance = asEther(1230)
   const usedAmount = asEther(951)
-  const password = "Foobar1234"
+  const password = 'Foobar1234'
 
   const feeEstimates = {
     low: asWei(1230000000000),
