@@ -4,7 +4,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {Rule} from 'antd/lib/form'
 import {ModalLocker, wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
-import {DialogInput} from '../../common/dialog/DialogInput'
+import {DialogInput, DialogInputPassword} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {
   validateFee,
@@ -67,6 +67,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
   const [amount, setAmount] = useState('0')
   const [fee, setFee] = useState('0')
   const [recipient, setRecipient] = useState('')
+  const [password, setPassword] = useState('')
 
   const feeValidationResult = validateFee(fee)
   const txAmountValidator = createTxAmountValidator(t, availableAmount)
@@ -95,7 +96,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'sendTransaction']),
-          onClick: (): Promise<void> => onSend(recipient, asEther(amount), asEther(fee)),
+          onClick: (): Promise<void> => onSend(recipient, asEther(amount), asEther(fee), password),
           disabled: disableSend,
         }}
         onSetLoading={modalLocker.setLocked}
@@ -119,6 +120,16 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
           onChange={setFee}
           errorMessage={translateValidationResult(t, feeValidationResult)}
           isPending={isFeeEstimationPending}
+        />
+        <DialogInputPassword
+          label={t(['wallet', 'label', 'password'])}
+          id="tx-password"
+          onChange={(e): void => setPassword(e.target.value)}
+          formItem={{
+            name: 'tx-password',
+            initialValue: password,
+            rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
+          }}
         />
         <DialogColumns>
           <DialogShowAmount amount={totalAmount} displayExact>

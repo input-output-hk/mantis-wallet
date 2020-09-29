@@ -86,7 +86,7 @@ export interface LoadedState {
   lock: (password: string) => Promise<boolean>
   generateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
-  sendTransaction: (recipient: string, amount: Wei, fee: Wei) => Promise<void>
+  sendTransaction: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
   estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
@@ -281,6 +281,28 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return currentAddressOption.value
   }
 
+  const decryptCurrentAccount = (password: string): Web3Account => {
+    const currentAddress = getCurrentAddress()
+
+    const storedAccount = storedAccounts.find(({address}) => address === currentAddress)
+
+    if (!storedAccount) {
+      throw createTErrorRenderer(['wallet', 'error', 'accountNotFound'], {
+        replace: {currentAddress, accounts: storedAccounts.map(prop('address')).join(', ')},
+      })
+    }
+
+    try {
+      return web3.eth.accounts.decrypt(storedAccount.keystore, password)
+    } catch (e) {
+      rendererLog.error(e)
+      throw createTErrorRenderer(['common', 'error', 'wrongPassword'])
+    }
+  }
+
+  const getCurrentPrivateKey = (password: string): string =>
+    decryptCurrentAccount(password).privateKey
+
   const getUnlockedAccount = (address: string): Web3Account | undefined =>
     // account should be accessible through address too
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -466,18 +488,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
 
-  const getCurrentPrivateKeyWithoutPassword = (): string => {
-    const currentAddress = getCurrentAddress()
-
-    const web3Account = getUnlockedAccount(currentAddress)
-
-    if (!web3Account) throw createTErrorRenderer(['wallet', 'error', 'accountWasNotUnlocked'])
-
-    return web3Account.privateKey
-  }
-
-  const sendTransaction = async (recipient: string, amount: Wei, fee: Wei): Promise<void> => {
-    const privateKey = getCurrentPrivateKeyWithoutPassword()
+  const sendTransaction = async (
+    recipient: string,
+    amount: Wei,
+    fee: Wei,
+    password: string,
+  ): Promise<void> => {
+    const privateKey = getCurrentPrivateKey(password)
     const txConfig: TransactionConfig = {
       to: recipient,
       from: getCurrentAddress(),
@@ -507,28 +524,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setCurrentAddressOption(some(address))
     reset()
   }
-
-  const decryptCurrentAccount = (password: string): Web3Account => {
-    const currentAddress = getCurrentAddress()
-
-    const storedAccount = storedAccounts.find(({address}) => address === currentAddress)
-
-    if (!storedAccount) {
-      throw createTErrorRenderer(['wallet', 'error', 'accountNotFound'], {
-        replace: {currentAddress, accounts: storedAccounts.map(prop('address')).join(', ')},
-      })
-    }
-
-    try {
-      return web3.eth.accounts.decrypt(storedAccount.keystore, password)
-    } catch (e) {
-      rendererLog.error(e)
-      throw createTErrorRenderer(['common', 'error', 'wrongPassword'])
-    }
-  }
-
-  const getCurrentPrivateKey = (password: string): string =>
-    decryptCurrentAccount(password).privateKey
 
   const unlock = async (password: string): Promise<boolean> => {
     const privateKey = getCurrentPrivateKey(password)

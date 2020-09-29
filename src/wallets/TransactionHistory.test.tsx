@@ -202,6 +202,7 @@ test('Send modal shows up', async () => {
 test('Send transaction works', async () => {
   const availableBalance = asEther(1230)
   const usedAmount = asEther(951)
+  const password = "Foobar1234"
 
   const feeEstimates = {
     low: asWei(1230000000000),
@@ -269,6 +270,9 @@ test('Send transaction works', async () => {
   const slowFeeEstimate = getAllByText('Slow')[0]
   await act(async () => userEvent.click(slowFeeEstimate))
 
+  const passwordInput = getByLabelText('Password')
+  fireEvent.change(passwordInput, {target: {value: password}})
+
   // Click correct send button and check if it was called with correct params
   const sendButton = getAllByText(/Send.*/)[2]
   await act(async () => userEvent.click(sendButton))
@@ -277,6 +281,7 @@ test('Send transaction works', async () => {
       ADDRESS, // the address used
       usedAmount, // the amount used
       feeEstimates.low, // the lowest fee used
+      password,
     ),
   )
 })

@@ -65,6 +65,7 @@
     },
     "label": {
       "enterPassword": "Enter Password",
+      "password": "Password",
       "privateKey": "Private Key",
       "recoveryPhrase": "Recovery Phrase",
       "transactionType": "Type",
@@ -110,7 +111,8 @@
       "noAccountWasSelected": "No account was selected to complete this action",
       "accountNotFound": "The account {{currentAddress}} was not found. Available accounts: {{accounts}}",
       "accountWasNotUnlocked": "Unexpected error: It seems the account wasn't properly unlocked",
-      "couldNotSignTransaction": "Unexpected error: Something went wrong when signing the transaction"
+      "couldNotSignTransaction": "Unexpected error: Something went wrong when signing the transaction",
+      "passwordMustBeProvided": "Password must be provided"
     },
     "message": {
       "loadingFeeEstimates": "Loading estimates",

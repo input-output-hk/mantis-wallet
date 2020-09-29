@@ -16,9 +16,7 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
         transactions={transactions}
         accounts={walletState.accounts}
         availableBalance={availableBalance}
-        sendTransaction={async (recipient: string, amount: Wei, fee: Wei) => {
-          await walletState.sendTransaction(recipient, amount, fee)
-        }}
+        sendTransaction={walletState.sendTransaction}
         estimateTransactionFee={walletState.estimateTransactionFee}
         generateAddress={walletState.generateAccount}
       />
