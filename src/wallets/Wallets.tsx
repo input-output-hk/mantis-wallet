@@ -24,9 +24,6 @@ export const Wallets = (): JSX.Element => {
     case 'LOADED': {
       return <Wallet />
     }
-    case 'LOCKED': {
-      return <Navigate to="WALLET_UNLOCK" />
-    }
     case 'NO_WALLET': {
       return <Navigate to="WALLET_SETUP" />
     }

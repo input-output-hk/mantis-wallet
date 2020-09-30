@@ -92,8 +92,13 @@ export const TransactionHistory = ({
             visible={showSendModal}
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
-            onSend={async (recipient: string, amount: Wei, fee: Wei): Promise<void> => {
-              await sendTransaction(recipient, amount, fee)
+            onSend={async (
+              recipient: string,
+              amount: Wei,
+              fee: Wei,
+              password: string,
+            ): Promise<void> => {
+              await sendTransaction(recipient, amount, fee, password)
               setShowSendModal(false)
             }}
             estimateTransactionFee={estimateTransactionFee}

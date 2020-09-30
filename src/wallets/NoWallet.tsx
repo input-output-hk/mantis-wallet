@@ -11,7 +11,7 @@ export const NoWallet: FunctionComponent<{}> = () => {
   return (
     <div className="NoWallet">
       <Dialog
-        title={t(['wallet', 'message', 'unlockedWalletNeeded'])}
+        title={t(['wallet', 'message', 'walletNeeded'])}
         buttonDisplayMode="natural"
         leftButtonProps={{doNotRender: true}}
         rightButtonProps={{

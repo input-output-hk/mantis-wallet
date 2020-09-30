@@ -13,7 +13,6 @@ import {StatusModal} from '../common/StatusModal'
 import {SupportModal} from '../common/SupportModal'
 import {fillActionHandlers} from '../common/util'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
-import {LockWalletModal} from '../wallets/modals/LockWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
 import {TokensState} from '../tokens/tokens-state'
@@ -24,7 +23,7 @@ import lightLogo from '../assets/light/logo.png'
 import darkLogo from '../assets/dark/logo.png'
 import './Sidebar.scss'
 
-type ModalId = 'none' | 'LockWallet' | 'RemoveWallet' | 'Support' | 'Status'
+type ModalId = 'none' | 'RemoveWallet' | 'Support' | 'Status'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -73,7 +72,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
       return (
         <span
           className={classnames(...classNames)}
-          {...fillActionHandlers(() => setActiveModal('LockWallet'), 'link')}
+          {...fillActionHandlers(() => setActiveModal('RemoveWallet'), 'link')}
         >
           <Trans k={['wallet', 'button', 'logOutOfWallet']} />
         </span>
@@ -162,20 +161,6 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           )}
         </div>
       </div>
-      {walletState.walletStatus === 'LOADED' && !routerState.isLocked && (
-        <LockWalletModal
-          visible={activeModal === 'LockWallet'}
-          toRemoveWallet={() => setActiveModal('RemoveWallet')}
-          lock={async (password: string): Promise<void> => {
-            const isLocked = await walletState.lock(password)
-            if (!isLocked) {
-              throw createTErrorRenderer(['wallet', 'error', 'couldNotLockWallet'])
-            }
-            setActiveModal('none')
-          }}
-          onCancel={() => setActiveModal('none')}
-        />
-      )}
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <RemoveWalletModal
           visible={activeModal === 'RemoveWallet'}
