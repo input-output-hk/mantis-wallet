@@ -9,31 +9,27 @@ let
           build.branch == "develop" ||
           build.branch == "luna-mantis"
       '';
-
 in
 
 {
   steps.commands = {
-    midnight-dist = {
+    mantis-dist = {
       label = ":clock12::darwin::linux::windows:";
       "if" = shouldBuild "all";
       command = ''
-        (cd midnight; nix-shell --run 'sbt -v -mem 2048 -J-Xmx4g dist')
+        (cd mantis; nix-shell --run 'sbt -v -mem 2048 -J-Xmx4g dist')
 
-        mkdir midnight-dist
-        cp midnight/node/target/universal/midnight-*.zip midnight-dist/node.zip
-        cp midnight/wallet-backend/target/universal/midnight-*.zip midnight-dist/wallet.zip
+        mkdir mantis-dist
+        cp mantis/target/universal/mantis-*.zip mantis-dist/mantis.zip
         (
-          cd midnight-dist
-          unzip node.zip
-          unzip wallet.zip
-          rm node.zip wallet.zip
-          mv midnight-node-* midnight-node
-          mv midnight-wallet-* midnight-wallet
+          cd mantis-dist
+          unzip mantis.zip
+          mv mantis-* mantis
+          rm mantis.zip
         )
-        tar czf midnight-dist.tgz midnight-dist
+        tar czf mantis-dist.tgz mantis-dist
       '';
-      artifactPaths = [ "midnight-dist.tgz" ];
+      artifactPaths = [ "mantis-dist.tgz" ];
       agents.queue = "project42";
     };
 
@@ -98,24 +94,24 @@ in
     };
 
     electron-darwin = {
-      dependsOn = [ build midnight-dist ];
+      dependsOn = [ build mantis-dist ];
       "if" = shouldBuild "darwin";
       label = ":electron::darwin:";
       command = ''
         buildkite-agent artifact download build.tgz .
-        buildkite-agent artifact download midnight-dist.tgz .
+        buildkite-agent artifact download mantis-dist.tgz .
 
         tar xzf build.tgz
-        tar xzf midnight-dist.tgz
-        rm build.tgz midnight-dist.tgz
+        tar xzf mantis-dist.tgz
+        rm build.tgz mantis-dist.tgz
 
         export NIX_PATH="/nix/var/nix/profiles/per-user/root/channels"
-        export LUNA_DIST_PACKAGES_DIR=$PWD/midnight-dist
+        export LUNA_DIST_PACKAGES_DIR=$PWD/mantis-dist
 
         nix-shell -p wget --run "wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09.1/OpenJDK8U-jre_x64_mac_hotspot_8u252b09.tar.gz"
         tar xzf OpenJDK8*.tar.gz
         rm OpenJDK8*.tar.gz
-        mv *-jre/Contents/Home midnight-dist/jre
+        mv *-jre/Contents/Home mantis-dist/jre
 
         nix-shell --pure --keep SSH_AUTH_SOCK --run yarn
         nix-shell --keep LUNA_DIST_PACKAGES_DIR --pure --run "yarn package-darwin"
@@ -127,24 +123,24 @@ in
     };
 
     electron-linux = {
-      dependsOn = [ build midnight-dist node_modules ];
+      dependsOn = [ build mantis-dist node_modules ];
       label = ":electron::linux:";
       "if" = shouldBuild "linux";
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
-        buildkite-agent artifact download midnight-dist.tgz .
+        buildkite-agent artifact download mantis-dist.tgz .
 
         tar xzf build.tgz
-        tar xzf midnight-dist.tgz
+        tar xzf mantis-dist.tgz
         tar xzf node_modules.tgz
-        rm build.tgz midnight-dist.tgz node_modules.tgz
-        export LUNA_DIST_PACKAGES_DIR=$PWD/midnight-dist
+        rm build.tgz mantis-dist.tgz node_modules.tgz
+        export LUNA_DIST_PACKAGES_DIR=$PWD/mantis-dist
 
         nix-shell -p wget --run "wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz"
         tar xzf OpenJDK8*.tar.gz
         rm OpenJDK8*.tar.gz
-        mv *-jre midnight-dist/jre
+        mv *-jre mantis-dist/jre
 
         nix-shell --keep LUNA_DIST_PACKAGES_DIR --pure --run "yarn package-linux"
         nix-shell --pure --run "npx electron-builder --publish never --prepackaged dist/Luna-linux-x64 --linux AppImage"
@@ -156,25 +152,25 @@ in
     };
 
     electron-win = {
-      dependsOn = [ node_modules build midnight-dist ];
+      dependsOn = [ node_modules build mantis-dist ];
       label = ":electron::windows:";
       "if" = shouldBuild "win";
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
-        buildkite-agent artifact download midnight-dist.tgz .
+        buildkite-agent artifact download mantis-dist.tgz .
 
         tar xzf node_modules.tgz
         tar xzf build.tgz
-        tar xzf midnight-dist.tgz
+        tar xzf mantis-dist.tgz
 
-        rm node_modules.tgz build.tgz midnight-dist.tgz
-        export LUNA_DIST_PACKAGES_DIR=$PWD/midnight-dist
+        rm node_modules.tgz build.tgz mantis-dist.tgz
+        export LUNA_DIST_PACKAGES_DIR=$PWD/mantis-dist
 
         nix-shell -p wget --run "wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09.1/OpenJDK8U-jre_x64_windows_hotspot_8u252b09.zip"
         unzip OpenJDK8*.zip
         rm OpenJDK8*.zip
-        mv *-jre midnight-dist/jre
+        mv *-jre mantis-dist/jre
 
         nix-shell --keep LUNA_DIST_PACKAGES_DIR --pure --run "yarn package-win"
         nix-shell --pure --run "npx electron-builder --publish never --prepackaged dist/Luna-win32-x64 --win --x64"
