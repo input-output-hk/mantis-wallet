@@ -8,7 +8,6 @@ import {SynchronizationStatus} from './wallet-state'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
 import {BackendState} from './backend-state'
-import {NETWORK_CONSTANTS} from './constants/network'
 import {useTranslation, useFormatters} from '../settings-state'
 import {TKeyRenderer} from './i18n'
 import {Trans} from './Trans'
@@ -107,7 +106,7 @@ export const StatusModal = ({
   syncStatus,
   ...props
 }: StatusModalProps): JSX.Element => {
-  const {networkTag} = BackendState.useContainer()
+  const {networkType} = BackendState.useContainer()
   const {t} = useTranslation()
   const {formatFileSize} = useFormatters()
 
@@ -166,9 +165,9 @@ export const StatusModal = ({
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'network'])}</div>
             <div className="info-value">
-              {isNone(networkTag)
+              {isNone(networkType)
                 ? t(['status', 'componentStatus', 'loading'])
-                : t(NETWORK_CONSTANTS[networkTag.value].name)}
+                : networkType.value}
             </div>
           </div>
           <div className="info-item">

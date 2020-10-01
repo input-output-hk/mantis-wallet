@@ -2,7 +2,6 @@
   "title": {
     "luna": "Luna",
     "lunaWallet": "Luna Wallet",
-    "testnetEdition": "Testnet Edition",
     "wallets": "Wallet",
     "settings": "Settings",
     "tokens": "Tokens"
@@ -308,10 +307,6 @@
       "invalidEthPrivateKey": "Invalid private key",
       "invalidSeedPhrase": "Invalid seed phrase",
       "wrongPassword": "Key derivation failed - possibly wrong password"
-    },
-    "networkTag": {
-      "testnet": "Testnet",
-      "mainnet": "Mainnet"
     }
   }
 }

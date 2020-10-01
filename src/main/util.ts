@@ -11,9 +11,9 @@ export function ipcListenToRenderer(
   ipcMain.on(channel, listener)
 }
 
-export function getTitle(t: TFunctionMain, networkTag?: NetworkTag): string {
-  const edition = networkTag === 'testnet' ? ` — ${t(['title', 'testnetEdition'])}` : ''
-  return `${t(['title', 'lunaWallet'])} — ${LUNA_VERSION}${edition}`
+export function getTitle(t: TFunctionMain, networkType?: string): string {
+  const displayedNetworkType = networkType !== 'main' ? ` — ${networkType}` : ''
+  return `${t(['title', 'lunaWallet'])} — ${LUNA_VERSION}${displayedNetworkType}`
 }
 
 export function showErrorBox(t: TFunctionMain, title: string, content: string): void {

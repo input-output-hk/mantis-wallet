@@ -32,15 +32,15 @@ const WithSettings = (storyFn: StoryGetter, context: StoryContext): JSX.Element 
 
   const [isPseudoLanguageUsed, _usePseudoLanguage] = useState(storybookStore.isPseudoLanguageUsed)
 
-  const updateNetworkTag = (isPseudo: boolean): void => {
+  const updatePseudoLanguage = (isPseudo: boolean): void => {
     _usePseudoLanguage(isPseudo)
     // eslint-disable-next-line fp/no-mutation
     storybookStore.isPseudoLanguageUsed = isPseudo
   }
 
   useEffect(() => {
-    channel.on(LANGUAGE_CHANGER_PSEUDO_SWITCH, updateNetworkTag)
-    return () => channel.removeListener(LANGUAGE_CHANGER_PSEUDO_SWITCH, updateNetworkTag)
+    channel.on(LANGUAGE_CHANGER_PSEUDO_SWITCH, updatePseudoLanguage)
+    return () => channel.removeListener(LANGUAGE_CHANGER_PSEUDO_SWITCH, updatePseudoLanguage)
   }, [])
 
   const currentURL = url.parse(window.location.href, true)

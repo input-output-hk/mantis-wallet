@@ -8,7 +8,6 @@ import {LoadedState, Account, FeeEstimates} from '../../common/wallet-state'
 import {DialogDropdown} from '../../common/dialog/DialogDropdown'
 import {useTranslation, useFormatters} from '../../settings-state'
 import {DialogInput} from '../../common/dialog/DialogInput'
-import {BackendState, getNetworkTagOrTestnet} from '../../common/backend-state'
 import {
   toAntValidator,
   validateAddress,
@@ -43,7 +42,6 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
   const {t} = useTranslation()
   const {abbreviateAmount} = useFormatters()
   const modalLocker = ModalLocker.useContainer()
-  const networkTag = getNetworkTagOrTestnet(BackendState.useContainer().networkTag)
 
   const [account, setAccount] = useState(defaultAccount)
   const [recipient, setRecipient] = useState('')
@@ -72,7 +70,7 @@ const SendTokenDialog: FunctionComponent<SendTokenModalProps> = ({
           new BigNumber(amount),
         ),
       ),
-    [amount, recipient, networkTag],
+    [amount, recipient],
     async (): Promise<void> => {
       if (amount !== '0') {
         await txAmountValidator.validator({}, amount)

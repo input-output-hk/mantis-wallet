@@ -12,7 +12,7 @@ interface WalletOverviewProps {
 }
 
 export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Element => {
-  const {networkTag} = BackendState.useContainer()
+  const {networkType} = BackendState.useContainer()
 
   return (
     <div className="WalletOverview">
@@ -20,11 +20,7 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
         <HeaderWithSyncStatus>
           <Trans k={['wallet', 'title', 'lunaMantis']} />
         </HeaderWithSyncStatus>
-        {isTestnet(networkTag) && (
-          <div>
-            <Trans k={['title', 'testnetEdition']} />
-          </div>
-        )}
+        {isTestnet(networkType) && <div>{networkType.value}</div>}
       </div>
       <div className="balances">
         Balance: <ShortNumber big={availableBalance} />

@@ -22,8 +22,8 @@ export const ipcSend = (channel: IPCFromRendererChannelName, ...args: any[]): vo
 
 // Specific actions
 
-export const updateNetworkTag = (networkTag: NetworkTag): void => {
-  ipcSend('update-network-tag', networkTag)
+export const updateNetworkType = (networkType: string): void => {
+  ipcSend('update-network-type', networkType)
 }
 
 export const updateLanguage = (language: Language): void => {

@@ -19,7 +19,7 @@ import {prop} from '../shared/utils'
 import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
-import {inspectLineForDAGStatus, setNetworkTag, status} from './status'
+import {inspectLineForDAGStatus, status, setNetworkType} from './status'
 import {checkDatadirCompatibility} from './compatibility-check'
 import {saveLogsArchive} from './log-exporter'
 import {mainLog} from './logger'
@@ -126,9 +126,9 @@ app.on('second-instance', () => {
   }
 })
 
-ipcListenToRenderer('update-network-tag', (_event, networkTag: NetworkTag) => {
-  setNetworkTag(networkTag)
-  mainWindowHandle?.setTitle(getTitle(t, networkTag))
+ipcListenToRenderer('update-network-type', (_event, networkType: string) => {
+  setNetworkType(networkType)
+  mainWindowHandle?.setTitle(getTitle(t, networkType))
 })
 
 ipcListenToRenderer('save-debug-logs', async (event) => {
@@ -159,7 +159,7 @@ ipcListenToRenderer('update-language', (_event, language: Language) => {
     i18n.changeLanguage(language).then(() => {
       const t = createTFunctionMain(i18n)
       Menu.setApplicationMenu(buildMenu(t))
-      mainWindowHandle?.setTitle(getTitle(t, status.info.networkTag))
+      mainWindowHandle?.setTitle(getTitle(t, status.info.networkType))
     })
   }
 })

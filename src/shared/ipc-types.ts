@@ -8,6 +8,6 @@ export type IPCToRendererChannelName =
   | 'save-debug-logs-cancel'
 
 export type IPCFromRendererChannelName =
-  | 'update-network-tag'
+  | 'update-network-type'
   | 'save-debug-logs'
   | 'update-language'

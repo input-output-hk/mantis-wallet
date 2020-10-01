@@ -61,7 +61,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
   const walletState = WalletState.useContainer()
   const routerState = RouterState.useContainer()
   const tokensState = TokensState.useContainer()
-  const {networkTag} = BackendState.useContainer()
+  const {networkType} = BackendState.useContainer()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
 
@@ -90,7 +90,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
 
   return (
     <header className="Sidebar">
-      {isTestnet(networkTag) && (
+      {isTestnet(networkType) && (
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
       )}
@@ -153,12 +153,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         </div>
         <div className="version">
           {version}
-          {isTestnet(networkTag) && (
-            <span className="edition">
-              {' '}
-              — <Trans k={['title', 'testnetEdition']} />
-            </span>
-          )}
+          {isTestnet(networkType) && <span className="edition"> — {networkType.value}</span>}
         </div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (

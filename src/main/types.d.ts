@@ -1,7 +1,5 @@
 type ProcessStatus = 'notRunning' | 'running' | 'finished' | 'failed'
 
-type NetworkTag = 'mainnet' | 'testnet'
-
 interface LunaStatus {
   node: {
     pid?: number
@@ -20,6 +18,6 @@ interface LunaStatus {
     lunaVersion: string
     mainPid: number
     mantisVersion?: string
-    networkTag?: NetworkTag
+    networkType?: string
   }
 }

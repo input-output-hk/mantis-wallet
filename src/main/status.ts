@@ -49,6 +49,6 @@ export function inspectLineForDAGStatus(line: string): void {
     })
 }
 
-export function setNetworkTag(networkTag: NetworkTag): void {
-  status.info.networkTag = networkTag
+export function setNetworkType(networkType: string): void {
+  status.info.networkType = networkType
 }

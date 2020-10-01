@@ -6,9 +6,9 @@ import {BackendState} from '../common/backend-state'
 import {NETWORK_SWITCHER_CHANGE} from './shared-constants'
 
 const store: {
-  networkTag: NetworkTag
+  networkType: string
 } = {
-  networkTag: 'testnet',
+  networkType: 'private',
 }
 
 const WithBackendState: StoryWrapper = (
@@ -18,22 +18,22 @@ const WithBackendState: StoryWrapper = (
   const content = storyFn(context)
   const channel = addons.getChannel()
 
-  const [networkTag, setNetworkTag] = useState<NetworkTag>(store.networkTag)
-  const initialState = {web3: new Web3(), networkTag: some(networkTag)}
+  const [networkType, setNetworkType] = useState<string>(store.networkType)
+  const initialState = {web3: new Web3(), networkType: some(networkType)}
 
-  const updateNetworkTag = (networkTag: NetworkTag): void => {
-    setNetworkTag(networkTag)
+  const updateNetworkType = (networkType: string): void => {
+    setNetworkType(networkType)
     // eslint-disable-next-line fp/no-mutation
-    store.networkTag = networkTag
+    store.networkType = networkType
   }
 
   useEffect(() => {
-    channel.on(NETWORK_SWITCHER_CHANGE, updateNetworkTag)
-    return () => channel.removeListener(NETWORK_SWITCHER_CHANGE, updateNetworkTag)
+    channel.on(NETWORK_SWITCHER_CHANGE, updateNetworkType)
+    return () => channel.removeListener(NETWORK_SWITCHER_CHANGE, updateNetworkType)
   }, [])
 
   return (
-    <BackendState.Provider key={networkTag} initialState={initialState}>
+    <BackendState.Provider key={networkType} initialState={initialState}>
       {content}
     </BackendState.Provider>
   )
