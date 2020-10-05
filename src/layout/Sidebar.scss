@@ -234,6 +234,20 @@
             display: block;
           }
         }
+
+        &.active {
+          &:focus {
+            .link-title {
+              display: none;
+            }
+          }
+
+          &:hover {
+            .link-title {
+              display: block;
+            }
+          }
+        }
       }
     }
 
