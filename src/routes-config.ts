@@ -3,15 +3,17 @@ import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {Settings} from './Settings'
 // import {Tokens} from './tokens/Tokens'
+import {AddressBook} from './common/AddressBook'
 import {TKeyRenderer} from './common/i18n'
 // Assets
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'
 import menuSettingsIcon from './assets/icons/menu-settings.svg'
+import menuAddressBookIcon from './assets/icons/menu-address-book.svg'
 // import menuTokensIcon from './assets/icons/menu-tokens.svg'
 
 // Menu
 
-export type MenuId = 'WALLETS' | 'SETTINGS' // | 'TOKENS'
+export type MenuId = 'WALLETS' | 'SETTINGS' | 'ADDRESS_BOOK' // | 'TOKENS'
 
 export interface MenuItem {
   title: TKeyRenderer
@@ -34,6 +36,11 @@ export const MENU: Menu = {
   //   route: 'TOKENS',
   //   icon: menuTokensIcon,
   // },
+  ADDRESS_BOOK: {
+    title: ['title', 'addressBook'],
+    route: 'ADDRESS_BOOK',
+    icon: menuAddressBookIcon,
+  },
   SETTINGS: {
     title: ['title', 'settings'],
     route: 'SETTINGS',
@@ -43,7 +50,7 @@ export const MENU: Menu = {
 
 // Routes
 
-export type RouteId = 'WALLETS' | 'WALLET_SETUP' | 'SETTINGS' | 'API_TEST' // | 'TOKENS'
+export type RouteId = 'WALLETS' | 'WALLET_SETUP' | 'SETTINGS' | 'API_TEST' | 'ADDRESS_BOOK' // | 'TOKENS'
 
 export interface Route {
   component: React.ComponentType
@@ -66,6 +73,10 @@ export const ROUTES: Routes = {
   SETTINGS: {
     component: Settings,
     menu: 'SETTINGS',
+  },
+  ADDRESS_BOOK: {
+    component: AddressBook,
+    menu: 'ADDRESS_BOOK',
   },
   API_TEST: {
     component: ApiTest,

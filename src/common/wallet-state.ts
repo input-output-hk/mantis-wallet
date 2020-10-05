@@ -90,6 +90,9 @@ export interface LoadedState {
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
   addTokensToTrack: (tokenAddresses: string[]) => void
+  addressLabels: Record<string, string>
+  setAddressLabel(address: string, label: string): void
+  deleteAddressLabel(address: string): void
 }
 
 export interface NoWalletState {
@@ -123,12 +126,14 @@ interface StoredAccount {
 export interface StoreWalletData {
   wallet: {
     accounts: StoredAccount[]
+    addressLabels: Record<string, string>
   }
 }
 
 export const defaultWalletData: StoreWalletData = {
   wallet: {
     accounts: [],
+    addressLabels: {},
   },
 }
 
@@ -203,6 +208,18 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   // addresses / accounts
   const [accountsOption, setAccounts] = useState<Option<Account[]>>(_initialState.accounts)
+
+  // address book
+  const [addressLabels, setAddressLabels] = usePersistedState(_initialState.store, [
+    'wallet',
+    'addressLabels',
+  ])
+
+  const setAddressLabel = (address: string, label: string): void =>
+    setAddressLabels((prevLabels) => ({...prevLabels, [address.toLowerCase()]: label}))
+
+  const deleteAddressLabel = (address: string): void =>
+    setAddressLabels((prevLabels) => _.unset(address)(prevLabels))
 
   // tokens
   const [trackedTokens, setTrackedTokens] = useState<string[]>([])
@@ -563,6 +580,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     addTokenToTrack,
     addTokensToTrack,
     addAccount,
+    addressLabels,
+    setAddressLabel,
+    deleteAddressLabel,
   }
 }
 

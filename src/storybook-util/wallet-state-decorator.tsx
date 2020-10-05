@@ -7,6 +7,10 @@ import {createInMemoryStore} from '../common/store'
 const web3 = new Web3()
 const store = createInMemoryStore<StoreWalletData>({
   wallet: {
+    addressLabels: {
+      '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a872': 'My Address',
+      '0xffffffffffffffffffffffffffffffffffffffff': 'Frank Foo',
+    },
     accounts: [
       {
         name: 'ww',

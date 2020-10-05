@@ -1,0 +1,21 @@
+@import '../vars';
+
+.AddressEditor {
+  max-width: 180px;
+  margin-bottom: 1px;
+
+  &.ant-input-affix-wrapper {
+    padding: 0 5px;
+    font-size: $font-size-s;
+  }
+
+  .ant-input {
+    font-size: $font-size-s;
+  }
+}
+
+.Address {
+  display: inline-block;
+  height: 20px;
+  margin-bottom: 1px;
+}

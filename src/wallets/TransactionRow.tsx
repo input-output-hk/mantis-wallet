@@ -11,6 +11,7 @@ import {Link} from '../common/Link'
 import {WalletState, Transaction} from '../common/wallet-state'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
+import {Address} from '../common/Address'
 import {Wei, asWei, etherValue} from '../common/units'
 import checkIcon from '../assets/icons/check.svg'
 import checkDoubleIcon from '../assets/icons/check-double.svg'
@@ -170,11 +171,15 @@ export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element 
         <div>
           <Trans k={['wallet', 'label', 'sendingAddress']} />:
         </div>
-        <div className="monospace">{from}</div>
+        <div className="monospace">
+          <Address address={from} />
+        </div>
         <div>
           <Trans k={['wallet', 'label', 'receivingAddress']} />:
         </div>
-        <div className="monospace">{to}</div>
+        <div className="monospace">
+          <Address address={to ?? ''} />
+        </div>
         <div>
           <Trans k={['wallet', 'label', 'transactionGasLimit']} />:
         </div>
