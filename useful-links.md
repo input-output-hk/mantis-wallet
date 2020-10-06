@@ -16,3 +16,4 @@
 - [Insomnia](https://insomnia.rest/)
   Install Insomnia and load `insomnia_workspace.json` to play with the backend.
 - [ERC20 Tokens explained](https://cointelegraph.com/explained/erc-20-tokens-explained)
+- [web3.js docs](https://web3js.readthedocs.io/en/v1.3.0/)
