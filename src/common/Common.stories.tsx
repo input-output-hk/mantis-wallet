@@ -7,7 +7,6 @@ import {Loading} from './Loading'
 import {CopyableLongText} from './CopyableLongText'
 import {StatusModal} from './StatusModal'
 import {SupportModal} from './SupportModal'
-import {AddressBook} from './AddressBook'
 import {ETC_CHAIN} from './chains'
 
 export default {
@@ -59,5 +58,3 @@ export const statusModal = (): JSX.Element => (
 )
 
 export const supportModal = (): JSX.Element => <SupportModal visible />
-
-export const addressBook = (): JSX.Element => <AddressBook />
