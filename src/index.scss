@@ -307,6 +307,10 @@ input::placeholder {
       font-size: $font-size-xs;
       letter-spacing: initial;
     }
+
+    .ant-btn-loading-icon {
+      transform: translateX(-10px);
+    }
   }
 
   // antd Wave animation override (e.g. Button click)

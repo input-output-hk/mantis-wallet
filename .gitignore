@@ -43,3 +43,6 @@ result-*
 
 # electron-builder
 /.log
+
+# FIXME
+LOGSFILENAME_IS_UNDEFINED.log
