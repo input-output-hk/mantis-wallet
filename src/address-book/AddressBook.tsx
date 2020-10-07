@@ -2,15 +2,15 @@ import {Button, message, Popover} from 'antd'
 import React, {useState} from 'react'
 import {EmptyProps} from 'antd/lib/empty'
 import {CopyOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons'
-import {Trans} from './Trans'
+import {Trans} from '../common/Trans'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
-import {Dialog} from './Dialog'
-import {DialogInput} from './dialog/DialogInput'
-import {DialogMessage} from './dialog/DialogMessage'
-import {ModalLocker, wrapWithModal} from './LunaModal'
-import {fillActionHandlers, toAntValidator, validateAddress} from './util'
-import {LoadedState} from './wallet-state'
-import {PropsWithWalletState, withStatusGuard} from './wallet-status-guard'
+import {Dialog} from '../common/Dialog'
+import {DialogInput} from '../common/dialog/DialogInput'
+import {DialogMessage} from '../common/dialog/DialogMessage'
+import {ModalLocker, wrapWithModal} from '../common/LunaModal'
+import {fillActionHandlers, toAntValidator, validateAddress} from '../common/util'
+import {LoadedState} from '../common/wallet-state'
+import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import './AddressBook.scss'
 
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>
@@ -125,7 +125,7 @@ const EditContactModal = wrapWithModal(_EditContactModal)
 type ModalId = 'Edit' | 'Delete' | 'none'
 
 const _AddressBook = ({
-  walletState: {addressLabels, setAddressLabel, deleteAddressLabel},
+  walletState: {addressBook, editContact, deleteContact},
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   const {t} = useTranslation()
   const {copyToClipboard} = useLocalizedUtilities()
@@ -135,7 +135,7 @@ const _AddressBook = ({
   const [selectedAddress, setAddress] = useState('')
   const [selectedLabel, setLabel] = useState('')
   // eslint-disable-next-line fp/no-mutating-methods
-  const sortedLabels = [...Object.keys(addressLabels)].sort()
+  const sortedLabels = [...Object.keys(addressBook)].sort()
 
   const onStartEdit = (address: string, label: string) => () => {
     setAddress(address)
@@ -151,14 +151,13 @@ const _AddressBook = ({
     setToEdit(false)
   }
 
-  const onStartDelete = (address: string, label: string) => () => {
+  const onStartDelete = (address: string) => () => {
     setAddress(address)
-    setLabel(label)
     setShownModal('Delete')
   }
 
   const onDelete = (): void => {
-    deleteAddressLabel(selectedAddress)
+    deleteContact(selectedAddress)
     message.success(t(['addressBook', 'message', 'contactDeleted']))
   }
 
@@ -188,37 +187,35 @@ const _AddressBook = ({
         {sortedLabels.length === 0 ? (
           <Trans k={['addressBook', 'book', 'noData']} />
         ) : (
-          sortedLabels.map((address) => (
-            <div key={address} className="row">
-              <span className="label">{addressLabels[address]}</span>
-              <span className="address">
-                {address}{' '}
-                <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-                  <CopyOutlined className="clickable" onClick={() => copyToClipboard(address)} />
-                </Popover>
-              </span>
-              <span className="actions">
-                <span
-                  className="delete"
-                  {...fillActionHandlers(onStartDelete(address, addressLabels[address]))}
-                >
-                  <DeleteOutlined />
+          sortedLabels.map((address) => {
+            const label = addressBook[address]
+
+            return (
+              <div key={address} className="row">
+                <span className="label">{label}</span>
+                <span className="address">
+                  {address}{' '}
+                  <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
+                    <CopyOutlined className="clickable" onClick={() => copyToClipboard(address)} />
+                  </Popover>
                 </span>
-                <span
-                  className="edit"
-                  {...fillActionHandlers(onStartEdit(address, addressLabels[address]))}
-                >
-                  <EditOutlined />
+                <span className="actions">
+                  <span className="delete" {...fillActionHandlers(onStartDelete(address))}>
+                    <DeleteOutlined />
+                  </span>
+                  <span className="edit" {...fillActionHandlers(onStartEdit(address, label))}>
+                    <EditOutlined />
+                  </span>
                 </span>
-              </span>
-            </div>
-          ))
+              </div>
+            )
+          })
         )}
       </div>
 
       <EditContactModal
         visible={shownModal === 'Edit'}
-        onSave={setAddressLabel}
+        onSave={editContact}
         onCancel={onCancel}
         setAddress={setAddress}
         setLabel={setLabel}

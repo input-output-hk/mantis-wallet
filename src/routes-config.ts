@@ -3,7 +3,7 @@ import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {Settings} from './Settings'
 // import {Tokens} from './tokens/Tokens'
-import {AddressBook} from './common/AddressBook'
+import {AddressBook} from './address-book/AddressBook'
 import {TKeyRenderer} from './common/i18n'
 // Assets
 import menuWalletsIcon from './assets/icons/menu-wallets.svg'

@@ -2,13 +2,13 @@ import React, {useState} from 'react'
 import _ from 'lodash/fp'
 import {Rule} from 'antd/lib/form'
 import {Select} from 'antd'
-import {Trans} from '../Trans'
-import {LoadedState} from '../wallet-state'
-import {useTranslation} from '../../settings-state'
-import {withStatusGuard, PropsWithWalletState} from '../wallet-status-guard'
-import {DialogState} from '../Dialog'
-import {DialogColumns} from './DialogColumns'
-import {DialogInput} from './DialogInput'
+import {Trans} from '../common/Trans'
+import {LoadedState} from '../common/wallet-state'
+import {useTranslation} from '../settings-state'
+import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
+import {DialogState} from '../common/Dialog'
+import {DialogColumns} from '../common/dialog/DialogColumns'
+import {DialogInput} from '../common/dialog/DialogInput'
 import './DialogAddressSelect.scss'
 
 const {Option} = Select
@@ -26,7 +26,7 @@ const _DialogAddressSelect = ({
   addressValidator,
   setRecipient,
   recipient,
-  walletState: {addressLabels},
+  walletState: {addressBook},
 }: PropsWithWalletState<DialogAddressSelectProps, LoadedState>): JSX.Element => {
   const {dialogForm} = DialogState.useContainer()
   const {t} = useTranslation()
@@ -69,7 +69,7 @@ const _DialogAddressSelect = ({
             notFoundContent={<Trans k={['addressBook', 'book', 'noData']} />}
             bordered={false}
           >
-            {_.toPairs(addressLabels).map(([address, label]) => (
+            {_.toPairs(addressBook).map(([address, label]) => (
               <Option value={address} key={address}>
                 {label}
               </Option>

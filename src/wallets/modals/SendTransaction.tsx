@@ -14,7 +14,7 @@ import {
 } from '../../common/util'
 import {Wei, asWei, asEther} from '../../common/units'
 import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
-import {DialogAddressSelect} from '../../common/dialog/DialogAddressSelect'
+import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates, LoadedState} from '../../common/wallet-state'
 import {useAsyncUpdate} from '../../common/hook-utils'

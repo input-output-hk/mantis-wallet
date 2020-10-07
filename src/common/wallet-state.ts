@@ -90,9 +90,10 @@ export interface LoadedState {
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
   addTokensToTrack: (tokenAddresses: string[]) => void
-  addressLabels: Record<string, string>
-  setAddressLabel(address: string, label: string): void
-  deleteAddressLabel(address: string): void
+  // address book methods:
+  addressBook: Record<string, string>
+  editContact(address: string, label: string): void
+  deleteContact(address: string): void
 }
 
 export interface NoWalletState {
@@ -126,14 +127,14 @@ interface StoredAccount {
 export interface StoreWalletData {
   wallet: {
     accounts: StoredAccount[]
-    addressLabels: Record<string, string>
+    addressBook: Record<string, string>
   }
 }
 
 export const defaultWalletData: StoreWalletData = {
   wallet: {
     accounts: [],
-    addressLabels: {},
+    addressBook: {},
   },
 }
 
@@ -210,16 +211,16 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [accountsOption, setAccounts] = useState<Option<Account[]>>(_initialState.accounts)
 
   // address book
-  const [addressLabels, setAddressLabels] = usePersistedState(_initialState.store, [
+  const [addressBook, updateAddressBook] = usePersistedState(_initialState.store, [
     'wallet',
-    'addressLabels',
+    'addressBook',
   ])
 
-  const setAddressLabel = (address: string, label: string): void =>
-    setAddressLabels((prevLabels) => ({...prevLabels, [address.toLowerCase()]: label}))
+  const editContact = (address: string, label: string): void =>
+    updateAddressBook((prevContacts) => ({...prevContacts, [address.toLowerCase()]: label}))
 
-  const deleteAddressLabel = (address: string): void =>
-    setAddressLabels((prevLabels) => _.unset(address)(prevLabels))
+  const deleteContact = (address: string): void =>
+    updateAddressBook((prevContacts) => _.unset(address)(prevContacts))
 
   // tokens
   const [trackedTokens, setTrackedTokens] = useState<string[]>([])
@@ -580,9 +581,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     addTokenToTrack,
     addTokensToTrack,
     addAccount,
-    addressLabels,
-    setAddressLabel,
-    deleteAddressLabel,
+    addressBook,
+    editContact,
+    deleteContact,
   }
 }
 

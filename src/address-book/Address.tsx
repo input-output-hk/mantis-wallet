@@ -2,8 +2,8 @@ import {CopyOutlined, EditOutlined} from '@ant-design/icons'
 import {Input, Popover} from 'antd'
 import React, {useEffect, useState} from 'react'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
-import {LoadedState} from './wallet-state'
-import {withStatusGuard, PropsWithWalletState} from './wallet-status-guard'
+import {LoadedState} from '../common/wallet-state'
+import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import './Address.scss'
 
 interface AddressProps {
@@ -12,7 +12,7 @@ interface AddressProps {
 
 const _Address = ({
   address,
-  walletState: {addressLabels, setAddressLabel},
+  walletState: {addressBook, editContact},
 }: PropsWithWalletState<AddressProps, LoadedState>): JSX.Element => {
   const {t} = useTranslation()
   const {copyToClipboard} = useLocalizedUtilities()
@@ -26,7 +26,7 @@ const _Address = ({
   if (isEditing) {
     const finishEditing = (): void => {
       if (inputContent) {
-        setAddressLabel(lowerAddress, inputContent)
+        editContact(lowerAddress, inputContent)
       }
       setEditing(false)
     }
@@ -56,11 +56,11 @@ const _Address = ({
     </Popover>
   )
 
-  if (lowerAddress in addressLabels) {
+  if (lowerAddress in addressBook) {
     return (
       <span className="Address">
         <Popover content={lowerAddress}>
-          <span>{addressLabels[lowerAddress]}</span>
+          <span>{addressBook[lowerAddress]}</span>
         </Popover>{' '}
         <EditOutlined onClick={() => setEditing(true)} /> {copyButton}
       </span>
