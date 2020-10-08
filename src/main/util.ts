@@ -12,7 +12,7 @@ export function ipcListenToRenderer(
 }
 
 export function getTitle(t: TFunctionMain, networkType?: string): string {
-  const displayedNetworkType = networkType !== 'main' ? ` — ${networkType}` : ''
+  const displayedNetworkType = !!networkType && networkType !== 'main' ? ` — ${networkType}` : ''
   return `${t(['title', 'lunaWallet'])} — ${LUNA_VERSION}${displayedNetworkType}`
 }
 
