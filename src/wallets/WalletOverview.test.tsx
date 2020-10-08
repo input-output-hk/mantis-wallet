@@ -5,9 +5,8 @@ import Web3 from 'web3'
 import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
-import {abbreviateAmountForEnUS} from '../common/test-helpers'
 import {BackendState} from '../common/backend-state'
-import {asEther, etherValue} from '../common/units'
+import {asEther} from '../common/units'
 
 const web3 = new Web3()
 
@@ -25,6 +24,5 @@ test('WalletOverview shows properly formatted balance', () => {
     </SettingsState.Provider>,
   )
 
-  const formattedNumber = abbreviateAmountForEnUS(etherValue(availableBalance)).strict
-  expect(getByText(formattedNumber)).toBeInTheDocument()
+  expect(getByText('12345.000 ETC')).toBeInTheDocument()
 })
