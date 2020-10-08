@@ -1,13 +1,21 @@
-@import '../themify', '../vars';
+@import '../themify', '../vars', '../partial';
 
 .WalletOverview {
   margin: 0 0 100px;
 
   .header {
-    height: 110px;
+    height: 90px;
   }
 
   .balances {
-    font-size: $font-size-l;
+    .label {
+      @extend %dialog-label;
+      height: unset;
+    }
+
+    .available-balance {
+      @extend %monospace;
+      font-size: 32px;
+    }
   }
 }

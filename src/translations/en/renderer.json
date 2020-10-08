@@ -86,7 +86,9 @@
       "accountTotalBalance": "Total Balance",
       "walletName": "Wallet Name",
       "revealPrivateKey": "Reveal Private Key",
-      "lastUsedAddresses": "Last used addresses"
+      "lastUsedAddresses": "Last used addresses",
+      "network": "network",
+      "availableBalance": "Available balance"
     },
     "error": {
       "couldNotRemoveWallet": "Couldn't remove the wallet.",
