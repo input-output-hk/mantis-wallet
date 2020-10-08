@@ -346,11 +346,19 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   //   return _.fromPairs(tokenBalances)
   // }
 
-  const loadBalance = async (): Promise<void> => {
+  const _getPendingBalance = (transactions: Transaction[]): BigNumber =>
+    transactions
+      .filter((tx) => tx.status === 'pending')
+      .map((tx) => tx.value.plus(tx.fee))
+      .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
+
+  const loadBalance = async (transactions: Transaction[]): Promise<void> => {
     const address = getCurrentAddress()
-    const balance = await web3.eth.getBalance(address, 'latest')
-    setTotalBalance(some(asWei(balance)))
-    setAvailableBalance(some(asWei(balance)))
+    const balance = asWei(await web3.eth.getBalance(address, 'latest'))
+    const pendingBalance = _getPendingBalance(transactions)
+
+    setAvailableBalance(some(asWei(balance.minus(pendingBalance))))
+    setTotalBalance(some(balance))
   }
 
   const getTimestamp = async (blockNumber: number | null): Promise<Date | null> => {
@@ -404,10 +412,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     )
 
     setTransactions(some(transactions))
+    await loadBalance(transactions)
   }
 
   const load = (
-    loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadBalance, loadAccounts],
+    loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadAccounts],
   ): void => {
     setWalletStatus('LOADING')
     loadFns.forEach((fn) => fn().catch(handleError))
@@ -506,8 +515,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const privateKey = getCurrentPrivateKey(password)
     const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
-    if (tx.rawTransaction === undefined)
+    if (tx.rawTransaction === undefined) {
       throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
+    }
+
     web3.eth.sendSignedTransaction(tx.rawTransaction) // ETCM-134
   }
 
