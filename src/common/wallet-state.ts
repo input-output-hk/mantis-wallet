@@ -466,7 +466,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: Wei,
     password: string,
   ): Promise<void> => {
-    const nonce = getOrElse((): Transaction[] => [])(transactionsOption).length
+    const nonce = getOrElse((): Transaction[] => [])(transactionsOption).filter(
+      (tx) => tx.direction == 'outgoing',
+    ).length
     const txConfig: TransactionConfig = {
       nonce,
       to: recipient,
