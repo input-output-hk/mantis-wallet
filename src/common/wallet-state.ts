@@ -239,8 +239,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }),
   )(syncStatusOption)
 
-  const reset = (): void => {
-    setWalletStatus('INITIAL')
+  const reset = (status: WalletStatus = 'INITIAL'): void => {
+    setWalletStatus(status)
     setTotalBalance(none)
     setAvailableBalance(none)
     setTransactions(none)
@@ -389,7 +389,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadBalance, loadAccounts],
   ): void => {
     setWalletStatus('LOADING')
-
     loadFns.forEach((fn) => fn().catch(handleError))
   }
 
@@ -499,10 +498,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const currentAddress = getCurrentAddress()
     decryptCurrentAccount(password)
 
-    reset()
+    reset('NO_WALLET')
     setStoredAccounts(storedAccounts.filter(({address}) => address !== currentAddress))
     setCurrentAddressOption(none)
-    setWalletStatus('NO_WALLET')
     return true
   }
 
