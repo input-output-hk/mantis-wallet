@@ -1,6 +1,12 @@
+{ src ? builtins.fetchGit { url = ./.; submodules = true; }
+, supportedSystems ? [ builtins.currentSystem ]
+}:
+let
+  sources = import nix/sources.nix;
+  lib = import (sources.nixpkgs + "/lib");
+in
 {
-  luna = {
-    x86_64-darwin = import ./. { system = "x86_64-darwin"; };
-    x86_64-linux = import ./. { system = "x86_64-linux"; };
-  };
+  luna = lib.genAttrs supportedSystems (system: import src {
+    inherit src system;
+  });
 }

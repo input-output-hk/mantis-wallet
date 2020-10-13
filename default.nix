@@ -1,14 +1,27 @@
 { src ? ./., system ? builtins.currentSystem }:
 
 with import ./nix { inherit system; };
-
 let
   inherit (pkgs.lib.importJSON ./package.json) name version;
 
-  yarnLock = pkgs.runCommand "yarn.lock" {
-    srcs = [ ./package.json ./yarn.lock ];
-    buildInputs = with pkgs; [ jq ];
-  } ''
+  mantis-dist =
+    pkgs.runCommand "mantis-dist"
+      {
+        src = import ./mantis {
+          inherit system;
+        };
+      } ''
+      mkdir -p $out/mantis-dist
+      cd $_
+      ln -s $src mantis
+    '';
+
+  yarnLock =
+    pkgs.runCommand "yarn.lock"
+      {
+        srcs = [ ./package.json ./yarn.lock ];
+        buildInputs = with pkgs; [ jq ];
+      } ''
 
     for src in $srcs; do
       cp $src $(stripHash $src)
@@ -34,8 +47,11 @@ let
       pkgs.python
       pkgs.unzip
       yarn2nix.fixup_yarn_lock
-    ] ++ (pkgs.lib.optional pkgs.stdenv.isDarwin
-      pkgs.darwin.apple_sdk.frameworks.CoreServices);
+    ] ++ (
+      pkgs.lib.optional
+        pkgs.stdenv.isDarwin
+        pkgs.darwin.apple_sdk.frameworks.CoreServices
+    );
 
     LIBSASS_EXT = "auto";
     ELECTRON_SKIP_BINARY_DOWNLOAD = true;
@@ -110,18 +126,17 @@ let
     dontFixup = pkgs.stdenv.isDarwin;
   };
 
-in pkgs.stdenv.mkDerivation {
+in
+pkgs.stdenv.mkDerivation {
   inherit version;
 
   pname = name;
-  src = cleanGit {
-    name = "${name}-source";
-    inherit src;
-  };
+  src = mkSrc src;
 
+  nativeBuildInputs = [ pkgs.makeWrapper ];
   buildInputs = [ yarn pkgs.unzip pkgs.zip ];
 
-  LUNA_DIST_PACKAGES_DIR = midnight-dist + "/midnight-dist";
+  LUNA_DIST_PACKAGES_DIR = mantis-dist + "/mantis-dist";
 
   configurePhase = ''
     export HOME=$NIX_BUILD_TOP/yarn_home
@@ -148,12 +163,13 @@ in pkgs.stdenv.mkDerivation {
       mkdir -p $out/{bin,share/luna-wallet}
       mv build/main/package.json .
       mv build package.json $out/share/luna-wallet/
-      ln -s $LUNA_DIST_PACKAGES_DIR $out/share/midnight-dist
+      ln -s $LUNA_DIST_PACKAGES_DIR $out/share/mantis-dist
       chmod 0755 $out/share/ -R
       echo "#!${pkgs.runtimeShell}" > $out/bin/luna-wallet
       echo "cd $out/share/luna-wallet" >> $out/bin/luna-wallet
       echo "${pkgs.electron_8}/bin/electron $out/share/luna-wallet/build/main/main.js" >> $out/bin/luna-wallet
       chmod 0755 $out/bin/luna-wallet
+      wrapProgram $out/bin/luna-wallet --set MANTIS_PACKAGE_DIRECTORY "../mantis-dist/mantis"
     '';
   }.${system};
 }

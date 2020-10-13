@@ -1,6 +1,4 @@
-[submodule "midnight"]
-	path = midnight
-	url = git@github.com:input-output-hk/midnight
 [submodule "mantis"]
 	path = mantis
 	url = git@github.com:input-output-hk/mantis.git
+	branch = develop

@@ -1,5 +1,4 @@
 { system ? builtins.currentSystem }:
-
 let
   sources = import ./sources.nix;
   inherit (sources) nixpkgs gitignore yarn2nix;
@@ -19,31 +18,26 @@ let
   nodejs = pkgs.nodejs-12_x;
   yarn = pkgs.yarn.override { inherit nodejs; };
 
-  midnight = import sources.midnight {
-    inherit system;
-    src = sources.midnight;
-  };
-in {
-  inherit pkgs nodejs yarn midnight;
+in
+{
+  inherit pkgs nodejs yarn;
 
-  electron-zip = let
+  mkSrc = import sources.nix-mksrc { inherit (pkgs) lib; };
 
-    electron = {
-      x86_64-linux = sources.electron-linux;
-      x86_64-darwin = sources.electron-darwin;
-    };
+  electron-zip =
+    let
 
-  in pkgs.runCommand "electron-zip" { } ''
-    mkdir $out
-    cp ${electron.${system}} $out/$(stripHash ${electron.${system}})
-  '';
+      electron = {
+        x86_64-linux = sources.electron-linux;
+        x86_64-darwin = sources.electron-darwin;
+      };
 
-  midnight-dist = pkgs.runCommand "midnight-dist" { } ''
-    mkdir -p $out/midnight-dist
-    cd $_
-    ln -s ${midnight} midnight-node
-    ln -s ${midnight} midnight-wallet
-  '';
+    in
+    pkgs.runCommand "electron-zip"
+      { } ''
+      mkdir $out
+      cp ${electron.${system}} $out/$(stripHash ${electron.${system}})
+    '';
 
   nodeHeaders = pkgs.fetchurl {
     url =
@@ -53,5 +47,5 @@ in {
 
   yarn2nix = import yarn2nix rec { inherit pkgs nodejs yarn; };
 
-  inherit (haskellNix.pkgs.haskell-nix.haskellLib) cleanGit;
+  inherit (haskellNix.pkgs.haskell-nix.haskellLib) cleanGit cleanSourceWith;
 }
