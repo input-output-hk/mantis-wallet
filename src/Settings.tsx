@@ -117,8 +117,4 @@ const _Settings = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>)
   )
 }
 
-export const Settings = withStatusGuard(_Settings, 'LOADED', () => (
-  <SettingsWrapper>
-    <NoWallet />
-  </SettingsWrapper>
-))
+export const Settings = withStatusGuard(_Settings, 'LOADED', () => <NoWallet />)

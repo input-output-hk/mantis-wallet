@@ -11,6 +11,7 @@ import {ModalLocker, wrapWithModal} from '../common/LunaModal'
 import {fillActionHandlers, toAntValidator, validateAddress} from '../common/util'
 import {LoadedState} from '../common/wallet-state'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
+import {NoWallet} from '../wallets/NoWallet'
 import './AddressBook.scss'
 
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>
@@ -234,4 +235,4 @@ const _AddressBook = ({
   )
 }
 
-export const AddressBook = withStatusGuard(_AddressBook, 'LOADED')
+export const AddressBook = withStatusGuard(_AddressBook, 'LOADED', () => <NoWallet />)
