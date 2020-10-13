@@ -352,9 +352,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       .map((tx) => tx.value.plus(tx.fee))
       .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
 
-  const loadBalance = async (transactions: Transaction[]): Promise<void> => {
+  const loadBalance = async (transactions: Transaction[], currentBlock: number): Promise<void> => {
     const address = getCurrentAddress()
-    const balance = asWei(await web3.eth.getBalance(address, 'latest'))
+    const balance = asWei(await web3.eth.getBalance(address, currentBlock))
     const pendingBalance = _getPendingBalance(transactions)
 
     setAvailableBalance(some(asWei(balance.minus(pendingBalance))))
@@ -412,7 +412,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     )
 
     setTransactions(some(transactions))
-    await loadBalance(transactions)
+    await loadBalance(transactions, currentBlock)
   }
 
   const load = (
