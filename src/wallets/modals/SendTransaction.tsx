@@ -1,7 +1,6 @@
 import React, {useState, FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import {ModalProps} from 'antd/lib/modal'
-import {Rule} from 'antd/lib/form'
 import {ModalLocker, wrapWithModal} from '../../common/LunaModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput, DialogInputPassword} from '../../common/dialog/DialogInput'
@@ -15,6 +14,7 @@ import {
 } from '../../common/util'
 import {Wei, asWei, asEther} from '../../common/units'
 import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
+import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
 import {DialogFee} from '../../common/dialog/DialogFee'
 import {FeeEstimates, LoadedState} from '../../common/wallet-state'
 import {useAsyncUpdate} from '../../common/hook-utils'
@@ -22,37 +22,10 @@ import {useTranslation} from '../../settings-state'
 import {Trans} from '../../common/Trans'
 import './SendTransaction.scss'
 
-const RECIPIENT_FIELD = 'recipient-address'
-
 interface SendTransactionProps {
   availableAmount: Wei
   onSend: LoadedState['sendTransaction']
   estimateTransactionFee: () => Promise<FeeEstimates>
-}
-
-const AddressField = ({
-  addressValidator,
-  setRecipient,
-}: {
-  addressValidator: Rule
-  setRecipient: (recipient: string) => void
-}): JSX.Element => {
-  const {t} = useTranslation()
-
-  return (
-    <DialogInput
-      label={t(['wallet', 'label', 'recipient'])}
-      id={RECIPIENT_FIELD}
-      onChange={(e): void => setRecipient(e.target.value)}
-      formItem={{
-        name: RECIPIENT_FIELD,
-        rules: [
-          {required: true, message: t(['wallet', 'error', 'recipientMustBe'])},
-          addressValidator,
-        ],
-      }}
-    />
-  )
 }
 
 export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
@@ -102,7 +75,11 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
         onSetLoading={modalLocker.setLocked}
         type="dark"
       >
-        <AddressField addressValidator={addressValidator} setRecipient={setRecipient} />
+        <DialogAddressSelect
+          addressValidator={addressValidator}
+          setRecipient={setRecipient}
+          recipient={recipient}
+        />
         <DialogInput
           label={t(['wallet', 'label', 'amount'])}
           id="tx-amount"

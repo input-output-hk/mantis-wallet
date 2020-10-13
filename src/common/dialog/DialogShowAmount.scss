@@ -38,8 +38,11 @@
     }
 
     .amount {
+      overflow: hidden;
       line-height: $height;
+      text-overflow: ellipsis;
       word-break: break-word;
+      white-space: nowrap;
     }
 
     @include themify($themes) {

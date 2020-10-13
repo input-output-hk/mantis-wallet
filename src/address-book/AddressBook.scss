@@ -1,0 +1,54 @@
+@import '../partial', '../vars';
+
+.AddressBook {
+  .toolbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    margin-bottom: $dialog-component-spacing;
+    line-height: 30px;
+
+    .line {
+      @extend %line;
+    }
+
+    .action {
+      display: inline-block;
+      min-width: 126px;
+      height: 30px;
+      margin-left: 1rem;
+      font-size: $font-size-s;
+      font-weight: bold;
+      letter-spacing: $letter-spacing-large;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+  }
+
+  .address-list {
+    @extend %base-grid;
+
+    grid-template-columns: repeat(3, auto);
+
+    .row {
+      display: contents;
+
+      .address {
+        @extend %monospace;
+      }
+
+      .actions {
+        text-align: right;
+
+        > span {
+          padding: 0.25em;
+          cursor: pointer;
+        }
+
+        .delete {
+          margin-right: 0.25em;
+        }
+      }
+    }
+  }
+}

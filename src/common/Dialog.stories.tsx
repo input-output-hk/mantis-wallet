@@ -16,13 +16,11 @@ import {DialogColumns} from './dialog/DialogColumns'
 import {DialogError} from './dialog/DialogError'
 import {DialogDisplayWords} from './dialog/DialogDisplayWords'
 import {DialogSeedPhrase} from './dialog/DialogSeedPhrase'
-import {DialogAddress} from './dialog/DialogAddress'
 import {DialogSecrets} from './dialog/DialogSecrets'
 import {ether} from '../storybook-util/custom-knobs'
 import {DialogShowAmount} from './dialog/DialogShowAmount'
 import {DialogTextSwitch} from './dialog/DialogTextSwitch'
 import {DialogFee} from './dialog/DialogFee'
-import {ETC_CHAIN} from './chains'
 
 export default {
   title: 'Dialog',
@@ -48,12 +46,6 @@ export const InteractiveDialog: FunctionComponent<{}> = () => (
     footer={text('Footer', 'footer text')}
   >
     {text('Dialog content', 'Dialog content')}
-  </Dialog>
-)
-
-export const InteractiveAddress: FunctionComponent<{}> = () => (
-  <Dialog title="Dialog Address">
-    <DialogAddress svgLogo={ETC_CHAIN.logo} address={text('Address to show', 'test-address')} />
   </Dialog>
 )
 

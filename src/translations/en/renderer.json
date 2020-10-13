@@ -3,8 +3,9 @@
     "luna": "Luna",
     "lunaWallet": "Luna Wallet",
     "wallets": "Wallet",
-    "settings": "Settings",
-    "tokens": "Tokens"
+    "addressBook": "Address Book",
+    "tokens": "Tokens",
+    "settings": "Settings"
   },
   "settings": {
     "button": {
@@ -201,6 +202,36 @@
       "invalidDagFilePrefix": "Invalid DAG file prefix",
       "cannotReadDagFromFile": "Cannot read DAG from file",
       "cannotGenerateDagFile": "Cannot generate DAG file"
+    }
+  },
+  "addressBook": {
+    "address": {
+      "enterLabel": "Enter label for address",
+      "clickToCopy": "Click to copy address to clipboard"
+    },
+    "error": {
+      "addressMustBeSet": "Address must be set",
+      "labelMustBeSet": "Label must be set"
+    },
+    "message": {
+      "contactDeleted": "Contact deleted"
+    },
+    "label": {
+      "address": "Address",
+      "label": "Label"
+    },
+    "book": {
+      "title": "Address Book",
+      "addNew": "Add new",
+      "noData": "No saved contacts",
+      "editContact": "Edit Contact",
+      "saveContact": "Save Contact",
+      "deleteContact": "Delete Contact",
+      "deleteContactBtn": "Delete",
+      "deleteContactWarning": "<p>Are you sure you want to delete this contact?</p><p>{{label}} ({{address}})</p>"
+    },
+    "addressSelect": {
+      "selectContact": "Select a Contact"
     }
   },
   "tokens": {

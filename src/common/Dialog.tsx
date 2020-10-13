@@ -36,6 +36,7 @@ interface DialogProps {
   footer?: ReactNode
   helpURL?: string | null
   className?: string
+  initialValues?: object
 }
 
 export interface DialogState {
@@ -75,6 +76,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
   footer,
   helpURL = null,
   className = '',
+  initialValues,
 }: PropsWithChildren<DialogProps>) => {
   const {errorMessage, setErrorMessage, dialogForm} = DialogState.useContainer()
   const {t, translateError} = useTranslation()
@@ -141,6 +143,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
           onValuesChange={() => {
             if (errorMessage !== '') setErrorMessage('')
           }}
+          initialValues={initialValues}
         >
           <div className="dialog-children">{children}</div>
         </Form>
