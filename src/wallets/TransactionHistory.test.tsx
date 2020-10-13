@@ -305,7 +305,8 @@ test('Receive modal shows up with address', async () => {
   expect(mockedCopyToClipboard).toHaveBeenCalledTimes(1)
 })
 
-test('Receive modal works with multiple addresses', async () => {
+// FIXME: ETCM-58
+test.skip('Receive modal works with multiple addresses', async () => {
   const getAddress = (index: number): string => accounts[accounts.length - 1 - index].address
 
   const {getByTestId, getByText, queryByText} = renderTxHistoryWithAddressGenerator(accounts)
