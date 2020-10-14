@@ -161,6 +161,9 @@ const DEFAULT_STATE: WalletStateParams = {
 export const canRemoveWallet = (walletState: WalletData): walletState is LoadedState | ErrorState =>
   walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'ERROR'
 
+export const getNextNonce = (transactions: Transaction[]): number =>
+  transactions.filter((tx) => tx.direction === 'outgoing').length
+
 const getStatus = (
   currentBlock: number,
   txBlock: number | null,
@@ -466,9 +469,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: Wei,
     password: string,
   ): Promise<void> => {
-    const nonce = getOrElse((): Transaction[] => [])(transactionsOption).filter(
-      (tx) => tx.direction == 'outgoing',
-    ).length
+    const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
+    const nonce = getNextNonce(transactions)
+
     const txConfig: TransactionConfig = {
       nonce,
       to: recipient,
