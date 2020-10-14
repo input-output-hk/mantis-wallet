@@ -170,6 +170,12 @@ export const canRemoveWallet = (walletState: WalletData): walletState is LoadedS
 export const getNextNonce = (transactions: Transaction[]): number =>
   transactions.filter((tx) => tx.direction === 'outgoing').length
 
+export const getPendingBalance = (transactions: Transaction[]): BigNumber =>
+  transactions
+    .filter((tx) => tx.status === 'pending' && tx.direction === 'outgoing')
+    .map((tx) => tx.value.plus(tx.fee))
+    .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
+
 const getStatus = (
   currentBlock: number,
   txBlock: number | null,
@@ -346,16 +352,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   //   return _.fromPairs(tokenBalances)
   // }
 
-  const _getPendingBalance = (transactions: Transaction[]): BigNumber =>
-    transactions
-      .filter((tx) => tx.status === 'pending')
-      .map((tx) => tx.value.plus(tx.fee))
-      .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
-
   const loadBalance = async (transactions: Transaction[], currentBlock: number): Promise<void> => {
     const address = getCurrentAddress()
     const balance = asWei(await web3.eth.getBalance(address, currentBlock))
-    const pendingBalance = _getPendingBalance(transactions)
+    const pendingBalance = getPendingBalance(transactions)
 
     setAvailableBalance(some(asWei(balance.minus(pendingBalance))))
     setTotalBalance(some(balance))
