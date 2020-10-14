@@ -167,6 +167,9 @@ const DEFAULT_STATE: WalletStateParams = {
 export const canRemoveWallet = (walletState: WalletData): walletState is LoadedState | ErrorState =>
   walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'ERROR'
 
+export const getNextNonce = (transactions: Transaction[]): number =>
+  transactions.filter((tx) => tx.direction === 'outgoing').length
+
 const getStatus = (
   currentBlock: number,
   txBlock: number | null,
@@ -483,8 +486,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     fee: Wei,
     password: string,
   ): Promise<void> => {
-    const privateKey = getCurrentPrivateKey(password)
+    const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
+    const nonce = getNextNonce(transactions)
+
     const txConfig: TransactionConfig = {
+      nonce,
       to: recipient,
       from: getCurrentAddress(),
       value: toHex(amount),
@@ -498,6 +504,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       ),
     }
 
+    const privateKey = getCurrentPrivateKey(password)
     const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
     if (tx.rawTransaction === undefined)
       throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
