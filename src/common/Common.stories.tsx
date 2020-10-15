@@ -50,7 +50,7 @@ export const statusModal = (): JSX.Element => (
       },
     }}
     config={{
-      dataDir: text('data dir', '~/.luna'),
+      dataDir: text('data dir', '~/.mantis-wallet'),
       rpcAddress: new URL(text('RPC address', 'https://127.0.0.1:8546')),
     }}
     visible

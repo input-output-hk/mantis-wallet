@@ -100,7 +100,7 @@ convict.addFormats({
   })(),
 })
 
-const defaultDataDir = path.resolve(homedir(), '.luna')
+const defaultDataDir = path.resolve(homedir(), '.mantis-wallet')
 const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'mantis-dist')
 
 const mantisConfig = (defaults: MantisConfig): convict.Schema<MantisConfig> => ({
