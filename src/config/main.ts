@@ -134,7 +134,7 @@ const mantisConfig = (defaults: MantisConfig): convict.Schema<MantisConfig> => (
 
 const configGetter = convict({
   networkName: {
-    default: 'testnet-internal',
+    default: 'mordor',
     format: 'network-name',
     arg: 'network',
     env: 'LUNA_NETWORK',
