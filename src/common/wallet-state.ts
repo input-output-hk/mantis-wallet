@@ -373,7 +373,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const web3transactions: Web3Transaction[] = await web3.eth.getAccountTransactions(
       currentAddress,
-      0,
+      currentBlock - 10000, // TODO: fix it to fetch whole history
       currentBlock,
     )
 
