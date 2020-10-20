@@ -3,6 +3,9 @@ import {Branded} from 'io-ts'
 import {ETC_CHAIN} from './chains'
 
 export type Wei = Branded<BigNumber, 'wei'>
+export const Wei = {
+  zero: asWei(0),
+}
 
 export function asEther(v: BigNumber.Value): Wei {
   return new BigNumber(v).shiftedBy(ETC_CHAIN.decimals) as Wei

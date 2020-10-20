@@ -2,23 +2,25 @@ import {useState} from 'react'
 import BigNumber from 'bignumber.js'
 import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
-import {Option, some, none, getOrElse, isSome, isNone} from 'fp-ts/lib/Option'
+import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import Web3 from 'web3'
 import {fromUnixTime} from 'date-fns'
 import {
-  EncryptedKeystoreV3Json,
-  TransactionConfig,
   Account as Web3Account,
+  EncryptedKeystoreV3Json,
   Transaction as Web3Transaction,
+  TransactionConfig,
 } from 'web3-core'
+import {option} from 'fp-ts'
 import {rendererLog} from './logger'
-import {Store, createInMemoryStore} from './store'
+import {createInMemoryStore, Store} from './store'
 import {usePersistedState} from './hook-utils'
 import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
 import {toHex} from './util'
-import {asWei, Wei, asEther} from './units'
+import {asEther, asWei, Wei} from './units'
+import {CustomErrors} from '../web3'
 
 interface SynchronizationStatusOffline {
   mode: 'offline'
@@ -340,15 +342,34 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const getCurrentPrivateKey = (password: string): string =>
     decryptCurrentAccount(password).privateKey
 
+  const fetchBalance = async (address: string): Promise<Option<Wei>> =>
+    web3.eth
+      .getBalance(address, 'latest')
+      .then(asWei)
+      .then(
+        (balance) => option.some(balance),
+        (err) =>
+          pipe(
+            err.data as unknown,
+            CustomErrors.decode,
+            option.fromEither,
+            option.filter((customErrors) => customErrors.some((error) => error.code === 100)),
+            option.fold(
+              () => Promise.reject(err),
+              (_) => Promise.resolve(option.none),
+            ),
+          ),
+      )
+
   const loadAccounts = async (): Promise<void> => {
     const address = getCurrentAddress()
-    const balance = await web3.eth.getBalance(address, 'latest')
+    const balance = await fetchBalance(address)
     setAccounts(
       some([
         {
           address,
           index: 0,
-          balance: asWei(balance),
+          balance: option.getOrElse(() => Wei.zero)(balance),
           tokens: {},
         },
       ]),
@@ -380,13 +401,18 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   //   return _.fromPairs(tokenBalances)
   // }
 
-  const loadBalance = async (transactions: Transaction[], currentBlock: number): Promise<void> => {
+  const loadBalance = async (transactions: Transaction[], _currentBlock: number): Promise<void> => {
     const address = getCurrentAddress()
-    const balance = asWei(await web3.eth.getBalance(address, currentBlock))
+    const balance = await fetchBalance(address)
     const pendingBalance = getPendingBalance(transactions)
 
-    setAvailableBalance(some(asWei(balance.minus(pendingBalance))))
-    setTotalBalance(some(balance))
+    setAvailableBalance(
+      pipe(
+        balance,
+        option.map((b) => asWei(b.minus(pendingBalance))),
+      ),
+    )
+    setTotalBalance(balance)
   }
 
   const loadTransactionHistory = async (): Promise<void> => {
@@ -395,7 +421,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const web3transactions: Web3Transaction[] = await web3.eth.getAccountTransactions(
       currentAddress,
-      0,
+      currentBlock - 10000,
       currentBlock,
     )
 
