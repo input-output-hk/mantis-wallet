@@ -9,7 +9,7 @@ import {
   dummyTransactions,
   dummyAccounts,
 } from '../storybook-util/dummies'
-import {SendTransaction} from './modals/SendTransaction'
+import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
 import {asWei, asEther} from '../common/units'
@@ -99,7 +99,7 @@ export const interactive = (): JSX.Element => {
 }
 
 export const sendTransaction = (): JSX.Element => (
-  <SendTransaction
+  <SendTransactionFlow
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     onSend={asyncAction('on-send')}

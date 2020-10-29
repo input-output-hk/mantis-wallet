@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
-import {SendTransaction} from './modals/SendTransaction'
+import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {FeeEstimates, LoadedState, Transaction, Account} from '../common/wallet-state'
 import {
@@ -88,7 +88,7 @@ export const TransactionHistory = ({
           >
             <Trans k={['wallet', 'button', 'receiveTransaction']} />
           </Button>
-          <SendTransaction
+          <SendTransactionFlow
             visible={showSendModal}
             availableAmount={availableBalance}
             onCancel={(): void => setShowSendModal(false)}
@@ -97,8 +97,9 @@ export const TransactionHistory = ({
               amount: Wei,
               fee: Wei,
               password: string,
+              data: string,
             ): Promise<void> => {
-              await sendTransaction(recipient, amount, fee, password)
+              await sendTransaction(recipient, amount, fee, password, data)
               setShowSendModal(false)
             }}
             estimateTransactionFee={estimateTransactionFee}

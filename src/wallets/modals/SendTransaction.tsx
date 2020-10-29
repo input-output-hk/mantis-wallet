@@ -23,28 +23,38 @@ import {Trans} from '../../common/Trans'
 import './SendTransaction.scss'
 
 interface SendTransactionProps {
+  onSend: () => void
   availableAmount: Wei
-  onSend: LoadedState['sendTransaction']
+  fee: string
+  setFee: React.Dispatch<React.SetStateAction<string>>
+  amount: string
+  setAmount: React.Dispatch<React.SetStateAction<string>>
+  recipient: string
+  setRecipient: React.Dispatch<React.SetStateAction<string>>
+  setData: React.Dispatch<React.SetStateAction<string>>
   estimateTransactionFee: () => Promise<FeeEstimates>
 }
 
-export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
-  availableAmount,
-  onSend,
+const SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
   estimateTransactionFee,
+  availableAmount,
   onCancel,
+  onSend,
+  amount,
+  setAmount,
+  fee,
+  setFee,
+  recipient,
+  setRecipient,
+  setData,
 }: SendTransactionProps & ModalProps) => {
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
-  const [amount, setAmount] = useState('0')
-  const [fee, setFee] = useState('0')
-  const [recipient, setRecipient] = useState('')
-  const [password, setPassword] = useState('')
+  const addressValidator = toAntValidator(t, validateAddress)
+  const txAmountValidator = createTxAmountValidator(t, availableAmount)
 
   const feeValidationResult = validateFee(fee)
-  const txAmountValidator = createTxAmountValidator(t, availableAmount)
-  const addressValidator = toAntValidator(t, validateAddress)
 
   const [feeEstimates, feeEstimateError, isFeeEstimationPending] = useAsyncUpdate(
     estimateTransactionFee,
@@ -52,6 +62,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
   )
 
   const totalAmount = asEther(new BigNumber(amount).plus(fee))
+
   const remainingBalance = asWei(
     totalAmount.isFinite() ? availableAmount.minus(totalAmount) : availableAmount,
   )
@@ -69,7 +80,7 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'sendTransaction']),
-          onClick: (): Promise<void> => onSend(recipient, asEther(amount), asEther(fee), password),
+          onClick: onSend,
           disabled: disableSend,
         }}
         onSetLoading={modalLocker.setLocked}
@@ -98,14 +109,13 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
           errorMessage={translateValidationResult(t, feeValidationResult)}
           isPending={isFeeEstimationPending}
         />
-        <DialogInputPassword
-          label={t(['wallet', 'label', 'password'])}
-          id="tx-password"
-          onChange={(e): void => setPassword(e.target.value)}
+        <DialogInput
+          label="Data"
+          id="tx-data"
+          onChange={(e): void => setData(e.target.value)}
           formItem={{
-            name: 'tx-password',
-            initialValue: password,
-            rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
+            name: 'tx-data',
+            initialValue: '',
           }}
         />
         <DialogColumns>
@@ -121,4 +131,113 @@ export const _SendTransaction: FunctionComponent<SendTransactionProps & ModalPro
   )
 }
 
-export const SendTransaction = wrapWithModal(_SendTransaction, 'SendTransactionModal')
+interface ConfirmTransactionProps {
+  onSend: LoadedState['sendTransaction']
+  amount: string
+  fee: string
+  recipient: string
+  data: string
+}
+
+const ConfirmTransaction: FunctionComponent<ConfirmTransactionProps & ModalProps> = ({
+  amount,
+  fee,
+  recipient,
+  data,
+  onSend,
+  onCancel,
+}: ConfirmTransactionProps & ModalProps) => {
+  const {t} = useTranslation()
+  const modalLocker = ModalLocker.useContainer()
+
+  const [password, setPassword] = useState('')
+
+  return (
+    <>
+      <Dialog
+        title="Confirm transaction"
+        leftButtonProps={{
+          children: 'Back',
+          onClick: onCancel,
+          disabled: modalLocker.isLocked,
+        }}
+        rightButtonProps={{
+          children: 'Confirm',
+          onClick: (): Promise<void> =>
+            onSend(recipient, asEther(amount), asEther(fee), password, data),
+        }}
+        onSetLoading={modalLocker.setLocked}
+        type="dark"
+      >
+        <DialogInput value={recipient} label="Recipient" disabled={true} />
+        <DialogShowAmount amount={asEther(amount)} displayExact>
+          Amount
+        </DialogShowAmount>
+        <DialogShowAmount amount={asEther(fee)} displayExact>
+          Fee
+        </DialogShowAmount>
+        <DialogInput value={data} label="Data" disabled={true} />
+        <DialogInputPassword
+          label={t(['wallet', 'label', 'password'])}
+          id="tx-password"
+          onChange={(e): void => setPassword(e.target.value)}
+          formItem={{
+            name: 'tx-password',
+            initialValue: password,
+            rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
+          }}
+        />
+      </Dialog>
+    </>
+  )
+}
+
+interface SendTransactionFlowProps {
+  availableAmount: Wei
+  onSend: LoadedState['sendTransaction']
+  estimateTransactionFee: () => Promise<FeeEstimates>
+}
+
+export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & ModalProps> = ({
+  availableAmount,
+  onSend,
+  estimateTransactionFee,
+  onCancel,
+}: SendTransactionFlowProps & ModalProps) => {
+  const [amount, setAmount] = useState('0')
+  const [fee, setFee] = useState('0')
+  const [recipient, setRecipient] = useState('')
+  const [data, setData] = useState('')
+  const [step, setStep] = useState<'send' | 'confirm'>('send')
+
+  if (step === 'confirm') {
+    return (
+      <ConfirmTransaction
+        amount={amount}
+        fee={fee}
+        recipient={recipient}
+        data={data}
+        onSend={onSend}
+        onCancel={() => setStep('send')}
+      />
+    )
+  } else {
+    return (
+      <SendTransaction
+        amount={amount}
+        setAmount={setAmount}
+        fee={fee}
+        setFee={setFee}
+        recipient={recipient}
+        setRecipient={setRecipient}
+        setData={setData}
+        onSend={() => setStep('confirm')}
+        availableAmount={availableAmount}
+        estimateTransactionFee={estimateTransactionFee}
+        onCancel={onCancel}
+      />
+    )
+  }
+}
+
+export const SendTransactionFlow = wrapWithModal(_SendTransactionFlow, 'SendTransactionModal')
