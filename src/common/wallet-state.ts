@@ -85,7 +85,13 @@ export interface LoadedState {
   getPrivateKey: (password: string) => Promise<string>
   generateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
-  sendTransaction: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
+  sendTransaction: (
+    recipient: string,
+    amount: Wei,
+    fee: Wei,
+    password: string,
+    data: string,
+  ) => Promise<void>
   estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
@@ -501,6 +507,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     amount: Wei,
     fee: Wei,
     password: string,
+    data: string,
   ): Promise<void> => {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
     const nonce = getNextNonce(transactions)
@@ -518,6 +525,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
         (b) => BigNumber.max(b, MIN_GAS_PRICE),
         toHex,
       ),
+      data,
     }
 
     const privateKey = getCurrentPrivateKey(password)
