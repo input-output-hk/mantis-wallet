@@ -15,7 +15,6 @@ const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): 
         transactions={transactions}
         accounts={walletState.accounts}
         availableBalance={availableBalance}
-        sendTransaction={walletState.sendTransaction}
         estimateTransactionFee={walletState.estimateTransactionFee}
         generateAddress={walletState.generateAccount}
       />

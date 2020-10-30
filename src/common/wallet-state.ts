@@ -58,6 +58,7 @@ export interface Transaction {
   gas: number
   direction: 'outgoing' | 'incoming'
   status: 'pending' | 'confirmed' | 'persisted' | 'failed'
+  contractAddress: string | null
 }
 
 const DEPTH_FOR_PERSISTENCE = 12
@@ -75,6 +76,16 @@ export interface LoadingState {
   walletStatus: 'LOADING'
 }
 
+interface SendTransactionParams {
+  recipient: string
+  amount: Wei
+  gasPrice: Wei
+  gasLimit: number
+  password: string
+  data?: string
+  nonce: number
+}
+
 export interface LoadedState {
   walletStatus: 'LOADED'
   syncStatus: SynchronizationStatus
@@ -85,13 +96,8 @@ export interface LoadedState {
   getPrivateKey: (password: string) => Promise<string>
   generateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
-  sendTransaction: (
-    recipient: string,
-    amount: Wei,
-    fee: Wei,
-    password: string,
-    data: string,
-  ) => Promise<void>
+  doTransfer: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
+  sendTransaction: (params: SendTransactionParams) => Promise<void>
   estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
@@ -419,6 +425,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
               : asWei(0),
             direction: isOutgoing ? 'outgoing' : 'incoming',
             status: getStatus(currentBlock, blockNumber, pending || false),
+            contractAddress: receipt?.contractAddress || null,
           }
         },
       ),
@@ -502,29 +509,22 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
 
-  const sendTransaction = async (
-    recipient: string,
-    amount: Wei,
-    fee: Wei,
-    password: string,
-    data: string,
-  ): Promise<void> => {
-    const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
-    const nonce = getNextNonce(transactions)
-
+  const sendTransaction = async ({
+    recipient,
+    amount,
+    gasPrice,
+    gasLimit,
+    password,
+    data,
+    nonce,
+  }: SendTransactionParams): Promise<void> => {
     const txConfig: TransactionConfig = {
       nonce,
       to: recipient,
       from: getCurrentAddress(),
       value: toHex(amount),
-      gas: TRANSFER_GAS_LIMIT,
-      gasPrice: pipe(
-        fee,
-        (b) => b.dividedBy(TRANSFER_GAS_LIMIT),
-        (b) => b.integerValue(),
-        (b) => BigNumber.max(b, MIN_GAS_PRICE),
-        toHex,
-      ),
+      gas: gasLimit,
+      gasPrice: toHex(gasPrice),
       data,
     }
 
@@ -535,6 +535,31 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
 
     web3.eth.sendSignedTransaction(tx.rawTransaction) // ETCM-134
+  }
+
+  const doTransfer = async (
+    recipient: string,
+    amount: Wei,
+    fee: Wei,
+    password: string,
+  ): Promise<void> => {
+    const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
+    const nonce = getNextNonce(transactions)
+
+    sendTransaction({
+      recipient,
+      amount,
+      gasPrice: pipe(
+        fee,
+        (b) => b.dividedBy(TRANSFER_GAS_LIMIT),
+        (b) => b.integerValue(),
+        (b) => BigNumber.max(b, MIN_GAS_PRICE),
+        asWei,
+      ),
+      gasLimit: TRANSFER_GAS_LIMIT,
+      nonce,
+      password,
+    })
   }
 
   const addAccount = async (name: string, privateKey: string, password: string): Promise<void> => {
@@ -604,6 +629,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     generateAccount,
     refreshSyncStatus,
     sendTransaction,
+    doTransfer,
     estimateCallFee,
     estimateTransactionFee,
     remove,

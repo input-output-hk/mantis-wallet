@@ -20,6 +20,7 @@ export const dummyTransactions: Transaction[] = [
     fee: asWei(0),
     direction: 'incoming',
     status: 'persisted',
+    contractAddress: null,
   },
   {
     hash: '2',
@@ -34,6 +35,7 @@ export const dummyTransactions: Transaction[] = [
     fee: asWei(0),
     direction: 'incoming',
     status: 'confirmed',
+    contractAddress: null,
   },
   {
     hash: '3',
@@ -48,6 +50,7 @@ export const dummyTransactions: Transaction[] = [
     fee: asWei(21000 * 1e9),
     direction: 'outgoing',
     status: 'pending',
+    contractAddress: null,
   },
   {
     hash: '4',
@@ -62,6 +65,7 @@ export const dummyTransactions: Transaction[] = [
     fee: asWei(21000 * 1e9),
     direction: 'outgoing',
     status: 'failed',
+    contractAddress: null,
   },
 ]
 

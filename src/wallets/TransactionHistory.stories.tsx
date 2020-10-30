@@ -25,7 +25,6 @@ export const withNoTransactions = (): JSX.Element => (
     transactions={[]}
     accounts={dummyAccounts}
     availableBalance={asWei(0)}
-    sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -36,7 +35,6 @@ export const withDemoTransactions = (): JSX.Element => (
     transactions={dummyTransactions}
     accounts={dummyAccounts}
     availableBalance={ether('Available Balance', 1000)}
-    sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -59,6 +57,7 @@ export const interactive = (): JSX.Element => {
           fee: asWei(0),
           direction: 'incoming',
           status: 'persisted',
+          contractAddress: null,
         }),
         object<Transaction>('Transaction 2', {
           hash: '2',
@@ -73,6 +72,7 @@ export const interactive = (): JSX.Element => {
           fee: asWei(0),
           direction: 'incoming',
           status: 'confirmed',
+          contractAddress: null,
         }),
         object<Transaction>('Transaction 3', {
           hash: '3',
@@ -87,11 +87,11 @@ export const interactive = (): JSX.Element => {
           fee: asWei(21000 * 1e9),
           direction: 'outgoing',
           status: 'pending',
+          contractAddress: null,
         }),
       ]}
       accounts={dummyAccounts}
       availableBalance={ether('Available Balance', 1000)}
-      sendTransaction={asyncAction('on-send-transaction')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
     />
@@ -102,7 +102,6 @@ export const sendTransaction = (): JSX.Element => (
   <SendTransactionFlow
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
-    onSend={asyncAction('on-send')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     visible
   />

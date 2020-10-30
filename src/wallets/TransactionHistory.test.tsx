@@ -27,6 +27,7 @@ const tx1: Transaction = {
   fee: asWei(0),
   direction: 'incoming',
   status: 'confirmed',
+  contractAddress: null,
 }
 
 const tx2: Transaction = {
@@ -42,6 +43,7 @@ const tx2: Transaction = {
   fee: asWei(21000 * 1e9),
   direction: 'outgoing',
   status: 'pending',
+  contractAddress: null,
 }
 
 const accounts: Account[] = [
@@ -91,7 +93,6 @@ const defaultProps: TransactionHistoryProps = {
   transactions: [],
   accounts: accounts,
   availableBalance: asEther(1234),
-  sendTransaction: jest.fn(),
   estimateTransactionFee: estimateFees,
   generateAddress: jest.fn(),
 }
@@ -222,7 +223,6 @@ test('Send transaction works', async () => {
   } = renderTransactionHistory({
     availableBalance,
     estimateTransactionFee: estimateFees,
-    sendTransaction: send,
   })
   const openSendModalButton = getByTestId('send-button')
   await act(async () => userEvent.click(openSendModalButton))
