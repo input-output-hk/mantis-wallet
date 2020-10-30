@@ -21,6 +21,7 @@ const createTestTx = (
   gasPrice: asWei(1),
   gas: 1,
   gasUsed: 1,
+  contractAddress: null,
 })
 
 it('calculates next nonce from transactions', () => {

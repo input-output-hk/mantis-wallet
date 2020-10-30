@@ -16,40 +16,75 @@ import {Wei, asWei, asEther} from '../../common/units'
 import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
 import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
 import {DialogFee} from '../../common/dialog/DialogFee'
+import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
 import {FeeEstimates, LoadedState} from '../../common/wallet-state'
 import {useAsyncUpdate} from '../../common/hook-utils'
 import {useTranslation} from '../../settings-state'
 import {Trans} from '../../common/Trans'
 import './SendTransaction.scss'
+import {withStatusGuard, PropsWithWalletState} from '../../common/wallet-status-guard'
+
+enum TransactionType {
+  basic = 'BASIC',
+  advanced = 'ADVANCED',
+}
+
+interface BasicTransactionParams {
+  amount: string
+  fee: string
+  recipient: string
+}
+
+interface AdvancedTransactionParams {
+  amount: string
+  gasLimit: string
+  gasPrice: string
+  recipient: string
+  data: string
+  nonce: string
+}
+
+interface TransactionParams {
+  [TransactionType.basic]: BasicTransactionParams
+  [TransactionType.advanced]: AdvancedTransactionParams
+}
+
+const defaultState: TransactionParams = {
+  [TransactionType.basic]: {
+    amount: '0',
+    fee: '0',
+    recipient: '',
+  },
+  [TransactionType.advanced]: {
+    amount: '0',
+    gasLimit: '21000',
+    gasPrice: '',
+    recipient: '',
+    data: '',
+    nonce: '',
+  },
+}
 
 interface SendTransactionProps {
   onSend: () => void
   availableAmount: Wei
-  fee: string
-  setFee: React.Dispatch<React.SetStateAction<string>>
-  amount: string
-  setAmount: React.Dispatch<React.SetStateAction<string>>
-  recipient: string
-  setRecipient: React.Dispatch<React.SetStateAction<string>>
-  setData: React.Dispatch<React.SetStateAction<string>>
   estimateTransactionFee: () => Promise<FeeEstimates>
+  transactionParams: BasicTransactionParams
+  setTransactionParams: (basicParams: Partial<BasicTransactionParams>) => void
+  onCancel: () => void
 }
 
-const SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
+const SendTransaction = ({
   estimateTransactionFee,
   availableAmount,
   onCancel,
   onSend,
-  amount,
-  setAmount,
-  fee,
-  setFee,
-  recipient,
-  setRecipient,
-  setData,
-}: SendTransactionProps & ModalProps) => {
+  transactionParams,
+  setTransactionParams,
+}: SendTransactionProps & ModalProps): JSX.Element => {
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
+  const {fee, amount, recipient} = transactionParams
 
   const addressValidator = toAntValidator(t, validateAddress)
   const txAmountValidator = createTxAmountValidator(t, availableAmount)
@@ -88,13 +123,13 @@ const SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
       >
         <DialogAddressSelect
           addressValidator={addressValidator}
-          setRecipient={setRecipient}
+          setRecipient={(recipient) => setTransactionParams({recipient})}
           recipient={recipient}
         />
         <DialogInput
           label={t(['wallet', 'label', 'amount'])}
           id="tx-amount"
-          onChange={(e): void => setAmount(e.target.value)}
+          onChange={(e): void => setTransactionParams({amount: e.target.value})}
           formItem={{
             name: 'tx-amount',
             initialValue: amount,
@@ -105,18 +140,9 @@ const SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
           label={t(['wallet', 'label', 'transactionFee'])}
           feeEstimates={feeEstimates}
           feeEstimateError={feeEstimateError}
-          onChange={setFee}
+          onChange={(fee) => setTransactionParams({fee})}
           errorMessage={translateValidationResult(t, feeValidationResult)}
           isPending={isFeeEstimationPending}
-        />
-        <DialogInput
-          label="Data"
-          id="tx-data"
-          onChange={(e): void => setData(e.target.value)}
-          formItem={{
-            name: 'tx-data',
-            initialValue: '',
-          }}
         />
         <DialogColumns>
           <DialogShowAmount amount={totalAmount} displayExact>
@@ -131,25 +157,113 @@ const SendTransaction: FunctionComponent<SendTransactionProps & ModalProps> = ({
   )
 }
 
-interface ConfirmTransactionProps {
-  onSend: LoadedState['sendTransaction']
-  amount: string
-  fee: string
-  recipient: string
-  data: string
+interface SendAdvancedTransactionProps {
+  onSend: () => void
+  availableAmount: Wei
+  transactionParams: AdvancedTransactionParams
+  setTransactionParams: (advancedParams: Partial<AdvancedTransactionParams>) => void
+  estimateTransactionFee: () => Promise<FeeEstimates>
+  onCancel: () => void
 }
 
-const ConfirmTransaction: FunctionComponent<ConfirmTransactionProps & ModalProps> = ({
-  amount,
-  fee,
-  recipient,
-  data,
-  onSend,
+const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionProps & ModalProps> = ({
+  transactionParams,
+  setTransactionParams,
   onCancel,
-}: ConfirmTransactionProps & ModalProps) => {
+  onSend,
+}: SendAdvancedTransactionProps & ModalProps) => {
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
+  const {amount, recipient} = transactionParams
+
+  return (
+    <>
+      <Dialog
+        title={t(['wallet', 'title', 'send'])}
+        leftButtonProps={{
+          onClick: onCancel,
+          disabled: modalLocker.isLocked,
+        }}
+        rightButtonProps={{
+          children: t(['wallet', 'button', 'sendTransaction']),
+          onClick: onSend,
+        }}
+        onSetLoading={modalLocker.setLocked}
+        type="dark"
+      >
+        <DialogAddressSelect
+          setRecipient={(recipient) => setTransactionParams({recipient})}
+          recipient={recipient}
+        />
+        <DialogInput
+          label={t(['wallet', 'label', 'amount'])}
+          id="tx-amount"
+          onChange={(e): void => setTransactionParams({amount: e.target.value})}
+          formItem={{
+            name: 'tx-amount',
+            initialValue: amount,
+          }}
+        />
+        <DialogColumns>
+          <DialogInput
+            label="Maximum Gas amount"
+            id="tx-gas-amount"
+            onChange={(e): void => setTransactionParams({gasLimit: e.target.value})}
+            formItem={{
+              name: 'tx-gas-amount',
+              initialValue: '',
+            }}
+          />
+          <DialogInput
+            label="Gas Price"
+            id="tx-gas-price"
+            onChange={(e): void => setTransactionParams({gasPrice: e.target.value})}
+            formItem={{
+              name: 'tx-gas-price',
+              initialValue: '',
+            }}
+          />
+        </DialogColumns>
+        <DialogInput
+          label="Data"
+          id="tx-data"
+          onChange={(e): void => setTransactionParams({data: e.target.value})}
+          formItem={{
+            name: 'tx-data',
+            initialValue: '',
+          }}
+        />
+        <DialogInput
+          label="Nonce"
+          id="tx-nonce"
+          onChange={(e): void => setTransactionParams({nonce: e.target.value})}
+          formItem={{
+            name: 'tx-nonce',
+            initialValue: '',
+          }}
+        />
+      </Dialog>
+    </>
+  )
+}
+
+interface ConfirmTransactionProps {
+  onClose: () => void
+  transactionParams: BasicTransactionParams
+  onCancel: () => void
+}
+
+const _ConfirmTransaction = ({
+  transactionParams,
+  onCancel,
+  walletState,
+}: PropsWithWalletState<ConfirmTransactionProps & ModalProps, LoadedState>): JSX.Element => {
+  const {doTransfer} = walletState
+  const {t} = useTranslation()
+  const modalLocker = ModalLocker.useContainer()
+
+  const {recipient, amount, fee} = transactionParams
   const [password, setPassword] = useState('')
 
   return (
@@ -163,8 +277,10 @@ const ConfirmTransaction: FunctionComponent<ConfirmTransactionProps & ModalProps
         }}
         rightButtonProps={{
           children: 'Confirm',
-          onClick: (): Promise<void> =>
-            onSend(recipient, asEther(amount), asEther(fee), password, data),
+          onClick: (): void => {
+            doTransfer(recipient, asEther(amount), asEther(fee), password)
+            onCancel()
+          },
         }}
         onSetLoading={modalLocker.setLocked}
         type="dark"
@@ -173,10 +289,11 @@ const ConfirmTransaction: FunctionComponent<ConfirmTransactionProps & ModalProps
         <DialogShowAmount amount={asEther(amount)} displayExact>
           Amount
         </DialogShowAmount>
+
         <DialogShowAmount amount={asEther(fee)} displayExact>
           Fee
         </DialogShowAmount>
-        <DialogInput value={data} label="Data" disabled={true} />
+
         <DialogInputPassword
           label={t(['wallet', 'label', 'password'])}
           id="tx-password"
@@ -192,50 +309,165 @@ const ConfirmTransaction: FunctionComponent<ConfirmTransactionProps & ModalProps
   )
 }
 
+const ConfirmTransaction = withStatusGuard(_ConfirmTransaction, 'LOADED')
+
+interface ConfirmAdvancedTransactionProps {
+  onClose: () => void
+  transactionParams: AdvancedTransactionParams
+  onCancel: () => void
+}
+
+const _ConfirmAdvancedTransaction = ({
+  transactionParams,
+  onCancel,
+  onClose,
+  walletState,
+}: PropsWithWalletState<
+  ConfirmAdvancedTransactionProps & ModalProps,
+  LoadedState
+>): JSX.Element => {
+  const {sendTransaction} = walletState
+  const {t} = useTranslation()
+  const modalLocker = ModalLocker.useContainer()
+
+  const {recipient, amount, gasLimit, gasPrice, data, nonce} = transactionParams
+  const [password, setPassword] = useState('')
+
+  return (
+    <>
+      <Dialog
+        title="Confirm transaction"
+        leftButtonProps={{
+          children: 'Back',
+          onClick: onCancel,
+          disabled: modalLocker.isLocked,
+        }}
+        rightButtonProps={{
+          children: 'Confirm',
+          onClick: (): void => {
+            sendTransaction({
+              recipient,
+              gasLimit: parseInt(gasLimit),
+              gasPrice: asEther(gasPrice),
+              data,
+              nonce: parseInt(nonce),
+              password,
+              amount: asEther(amount),
+            })
+            onClose()
+          },
+        }}
+        onSetLoading={modalLocker.setLocked}
+        type="dark"
+      >
+        <DialogInput value={recipient} label="Recipient" disabled={true} />
+        <DialogShowAmount amount={asEther(amount)} displayExact>
+          Amount
+        </DialogShowAmount>
+        <DialogInput value={gasLimit} label="Gas Limit" disabled={true} />
+        <DialogInput value={gasPrice} label="Gas Price" disabled={true} />
+        <DialogInput value={nonce} label="Nonce" disabled={true} />
+        <DialogInput value={data} label="Data" disabled={true} />
+        <DialogInput value={nonce} label="Nonce" disabled={true} />
+        <DialogInputPassword
+          label={t(['wallet', 'label', 'password'])}
+          id="tx-password"
+          onChange={(e): void => setPassword(e.target.value)}
+          formItem={{
+            name: 'tx-password',
+            initialValue: password,
+            rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
+          }}
+        />
+      </Dialog>
+    </>
+  )
+}
+
+const ConfirmAdvancedTransaction = withStatusGuard(_ConfirmAdvancedTransaction, 'LOADED')
+
 interface SendTransactionFlowProps {
   availableAmount: Wei
-  onSend: LoadedState['sendTransaction']
   estimateTransactionFee: () => Promise<FeeEstimates>
+  onCancel: () => void
 }
 
 export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & ModalProps> = ({
   availableAmount,
-  onSend,
-  estimateTransactionFee,
   onCancel,
+  estimateTransactionFee,
 }: SendTransactionFlowProps & ModalProps) => {
-  const [amount, setAmount] = useState('0')
-  const [fee, setFee] = useState('0')
-  const [recipient, setRecipient] = useState('')
-  const [data, setData] = useState('')
+  const [transactionParams, setTransactionParams] = useState(defaultState)
   const [step, setStep] = useState<'send' | 'confirm'>('send')
+  const [transactionType, _setTransactionType] = useState<TransactionType>(TransactionType.basic)
+
+  const resetState = (): void => {
+    setTransactionParams(defaultState)
+  }
+
+  const setTransactionType = (type: TransactionType): void => {
+    _setTransactionType(type)
+    resetState()
+  }
+
+  const setBasicTransactionParams = (basicParams: Partial<BasicTransactionParams>): void => {
+    setTransactionParams((oldParams) => ({
+      [TransactionType.basic]: {...oldParams[TransactionType.basic], ...basicParams},
+      [TransactionType.advanced]: oldParams[TransactionType.advanced],
+    }))
+  }
+
+  const setAdvancedTransactionParams = (
+    advancedParams: Partial<AdvancedTransactionParams>,
+  ): void => {
+    setTransactionParams((oldParams) => ({
+      [TransactionType.basic]: oldParams[TransactionType.basic],
+      [TransactionType.advanced]: {...oldParams[TransactionType.advanced], ...advancedParams},
+    }))
+  }
 
   if (step === 'confirm') {
-    return (
+    return transactionType === 'BASIC' ? (
       <ConfirmTransaction
-        amount={amount}
-        fee={fee}
-        recipient={recipient}
-        data={data}
-        onSend={onSend}
+        transactionParams={transactionParams[transactionType]}
+        onClose={onCancel}
+        onCancel={() => setStep('send')}
+      />
+    ) : (
+      <ConfirmAdvancedTransaction
+        transactionParams={transactionParams[transactionType]}
+        onClose={onCancel}
         onCancel={() => setStep('send')}
       />
     )
   } else {
     return (
-      <SendTransaction
-        amount={amount}
-        setAmount={setAmount}
-        fee={fee}
-        setFee={setFee}
-        recipient={recipient}
-        setRecipient={setRecipient}
-        setData={setData}
-        onSend={() => setStep('confirm')}
-        availableAmount={availableAmount}
-        estimateTransactionFee={estimateTransactionFee}
-        onCancel={onCancel}
-      />
+      <>
+        <DialogTextSwitch
+          left={{label: 'Basic', type: TransactionType.basic}}
+          right={{label: 'Advanced', type: TransactionType.advanced}}
+          onChange={setTransactionType}
+        />
+        {transactionType === 'BASIC' ? (
+          <SendTransaction
+            transactionParams={transactionParams[TransactionType.basic]}
+            setTransactionParams={setBasicTransactionParams}
+            onSend={() => setStep('confirm')}
+            availableAmount={availableAmount}
+            estimateTransactionFee={estimateTransactionFee}
+            onCancel={onCancel}
+          />
+        ) : (
+          <SendAdvancedTransaction
+            transactionParams={transactionParams[TransactionType.advanced]}
+            setTransactionParams={setAdvancedTransactionParams}
+            onSend={() => setStep('confirm')}
+            availableAmount={availableAmount}
+            estimateTransactionFee={estimateTransactionFee}
+            onCancel={onCancel}
+          />
+        )}
+      </>
     )
   }
 }

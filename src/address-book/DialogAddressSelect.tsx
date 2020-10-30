@@ -17,7 +17,7 @@ const RECIPIENT_FIELD = 'recipient-address'
 const CONTACT_SELECT_FIELD = 'contact-select'
 
 interface DialogAddressSelectProps {
-  addressValidator: Rule
+  addressValidator?: Rule
   recipient: string
   setRecipient: (recipient: string) => void
 }
@@ -46,10 +46,7 @@ const _DialogAddressSelect = ({
           value={recipient}
           formItem={{
             name: RECIPIENT_FIELD,
-            rules: [
-              {required: true, message: t(['wallet', 'error', 'recipientMustBe'])},
-              addressValidator,
-            ],
+            rules: addressValidator ? [addressValidator] : undefined,
           }}
         />
         <div className="SelectContact">
