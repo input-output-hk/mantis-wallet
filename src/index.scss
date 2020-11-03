@@ -1,0 +1,362 @@
+/* Global theme */
+@import './themify', './vars', './partial';
+
+//
+// fonts
+//
+
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+//
+// elements
+//
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: $font-family;
+  font-size: $font-size-root;
+  text-rendering: optimizeLegibility; // could cause performance problems on mobile
+}
+
+a {
+  transition: color $transition-duration;
+
+  @include themify($themes) {
+    color: themed('link-color');
+  }
+
+  &:hover {
+    transition: color $transition-duration;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+}
+
+code,
+pre {
+  @extend %monospace;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @include themify($themes) {
+    color: themed('text-color');
+  }
+}
+
+div#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar-thumb {
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+  }
+}
+
+::-webkit-scrollbar-track {
+  @include themify($themes) {
+    background-color: themed('border-color-base');
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::selection {
+  background-color: $primary-color;
+}
+
+:focus {
+  @extend %focus-outline;
+}
+
+//
+// utility classes
+//
+
+.main-title {
+  @extend %title;
+  margin: 0;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+//
+// theme-specific antd overrides
+//
+
+// antd generic Button overrides
+.ant-btn,
+.ant-btn.active {
+  @include themify($themes) {
+    background-color: themed('btn-default-bg');
+    color: themed('secondary-background');
+  }
+
+  &:focus {
+    @include themify($themes) {
+      background-color: themed('btn-focus-bg');
+      color: themed('secondary-background');
+    }
+  }
+
+  &:hover {
+    @include themify($themes) {
+      background-color: themed('btn-hover-bg');
+      color: themed('secondary-background');
+    }
+  }
+}
+
+// antd "primary" Button overrides
+.ant-btn-primary {
+  @include themify($themes) {
+    background-color: themed('primary-color');
+    color: #000;
+  }
+
+  &.secondary {
+    @include themify($themes) {
+      background-color: themed('secondary-background');
+      color: themed('text-color');
+    }
+
+    &:hover,
+    &:focus {
+      @include themify($themes) {
+        background-color: themed('normal-color');
+        color: themed('text-color');
+      }
+    }
+  }
+}
+
+// <Button danger> Remove </Button>
+.ant-btn-dangerous {
+  @include themify($themes) {
+    background-color: themed('error-color');
+    color: #fff;
+  }
+}
+
+// antd disabled Button theme overrides
+.ant-btn-disabled,
+.ant-btn.disabled,
+.ant-btn[disabled],
+.ant-btn-disabled:hover,
+.ant-btn.disabled:hover,
+.ant-btn[disabled]:hover,
+.ant-btn-disabled:focus,
+.ant-btn.disabled:focus,
+.ant-btn[disabled]:focus,
+.ant-btn-disabled:active,
+.ant-btn.disabled:active,
+.ant-btn[disabled]:active,
+.ant-btn-disabled.active,
+.ant-btn.disabled.active,
+.ant-btn[disabled].active {
+  @include themify($themes) {
+    background-color: themed('btn-disabled-bg');
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+// antd checkbox
+.ant-checkbox-checked .ant-checkbox-inner {
+  @include themify($themes) {
+    $dark-primary-color: darken(themed('primary-color'), 10%);
+    border-color: $dark-primary-color;
+    background-color: $dark-primary-color;
+  }
+
+  &:focus {
+    @include themify($themes) {
+      border-color: themed('primary-color');
+      background-color: themed('primary-color');
+    }
+  }
+}
+
+// antd Popover theme overrides
+.ant-popover-inner-content {
+  font-size: $font-size-s;
+
+  @include themify($themes) {
+    background-color: themed('text-color');
+    color: themed('secondary-background');
+  }
+}
+
+.ant-popover > .ant-popover-content > .ant-popover-arrow {
+  @include themify($themes) {
+    border-color: themed('text-color');
+    background: themed('text-color');
+  }
+}
+
+// antd Message theme overrides
+.ant-message-notice-content {
+  @include themify($themes) {
+    border-radius: $dialog-component-border-radius;
+    background-color: themed('secondary-background');
+    color: themed('text-color');
+  }
+}
+
+.ant-switch {
+  @extend %add-focus-outline;
+
+  @include themify($themes) {
+    background-color: themed('normal-color');
+  }
+
+  &.ant-switch-checked {
+    @include themify($themes) {
+      background-color: themed('primary-color');
+    }
+  }
+}
+
+// antd modal close X generic style
+.ant-modal-close {
+  @extend %disable-focus-outline;
+
+  transition: color $transition-duration;
+
+  @include themify($themes) {
+    color: themed('secondary-text-color');
+  }
+
+  &:hover,
+  &:focus {
+    transition: color $transition-duration;
+  }
+
+  &:hover {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+
+  &:focus {
+    @include themify($themes) {
+      color: themed('primary-color');
+    }
+  }
+
+  .ant-modal-close-x {
+    margin: 0;
+    padding: 16px;
+    color: inherit;
+    font-size: 24px;
+    line-height: 24px;
+  }
+}
+
+// modal
+.ant-modal-mask {
+  @include themify($themes) {
+    background-color: rgba(themed('component-background'), 0.75);
+  }
+}
+
+input::placeholder {
+  opacity: 1;
+
+  @include themify($themes) {
+    color: themed('secondary-text-color');
+  }
+}
+
+//
+// non-theme-specific antd overrides
+//
+
+.Mantis {
+  .ant-btn {
+    height: $dialog-component-height;
+    padding: 0 15px;
+    border-radius: $dialog-component-border-radius;
+    font-size: $font-size-button;
+    font-weight: bold;
+    letter-spacing: $letter-spacing-medium;
+    text-align: center;
+    text-shadow: none;
+    text-transform: uppercase;
+
+    &.small-button {
+      height: 30px;
+      margin: 0.5rem 0;
+      font-size: $font-size-xs;
+      letter-spacing: initial;
+    }
+
+    .ant-btn-loading-icon {
+      transform: translateX(-10px);
+    }
+  }
+
+  // antd Wave animation override (e.g. Button click)
+  [ant-click-animating-without-extra-node='true']::after,
+  .ant-click-animating-node {
+    opacity: $secondary-opacity;
+  }
+
+  .ant-message {
+    padding-left: $sidebar-width;
+
+    @media screen and #{$sidebar-collapse-query} {
+      padding-left: $sidebar-collapsed-width;
+    }
+  }
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+
+  .ant-checkbox-wrapper {
+    line-height: 20px;
+
+    .ant-checkbox {
+      top: 0;
+    }
+  }
+
+  .ant-select-dropdown {
+    border-radius: $dialog-component-border-radius;
+  }
+
+  .ant-dropdown-menu {
+    padding: ($dialog-component-border-radius / 2) 0;
+    border-radius: ($dialog-component-border-radius / 2);
+  }
+
+  .ant-input {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}

@@ -1,0 +1,87 @@
+@import '../../themify', '../../vars', '../../partial';
+
+.DialogTextSwitch {
+  margin: 0 auto $dialog-component-spacing;
+
+  .label {
+    @extend %dialog-label;
+  }
+
+  .switch-container {
+    @extend %two-col-grid-template;
+    grid-column-gap: 0;
+
+    .button {
+      @extend %disable-focus-outline;
+
+      height: 30px !important;
+      transition: color $transition-duration, background-color $transition-duration,
+        opacity $transition-duration;
+      font-size: $font-size-s;
+      text-align: center;
+
+      &.inactive {
+        opacity: $unselected-opacity;
+
+        @include themify($themes) {
+          background-color: themed('input-bg');
+          color: themed('text-color');
+        }
+
+        &:not(:disabled) {
+          &:hover,
+          &:focus {
+            opacity: 1;
+
+            @include themify($themes) {
+              background-color: themed('input-bg');
+            }
+          }
+        }
+      }
+
+      &.left {
+        justify-self: right;
+        border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+      }
+
+      &.right {
+        justify-self: left;
+        border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
+
+        &.active {
+          @include themify($themes) {
+            background-color: themed('primary-color');
+            color: #000;
+          }
+
+          &:disabled {
+            @include themify($themes) {
+              background-color: rgba(themed('primary-color'), 0.5);
+            }
+          }
+
+          &:not(:disabled) {
+            &:hover {
+              @include themify($themes) {
+                background-color: lighten(themed('primary-color'), 15%);
+              }
+            }
+
+            &:focus {
+              @include themify($themes) {
+                background-color: lighten(themed('primary-color'), 10%);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &.with-label {
+      .button {
+        width: 100%;
+      }
+    }
+  }
+}

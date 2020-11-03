@@ -1,0 +1,56 @@
+@import '../../themify', '../../partial', '../../vars';
+
+.DialogInput {
+  position: relative;
+  margin-bottom: $dialog-component-spacing;
+
+  .label {
+    @extend %dialog-label;
+    display: block;
+
+    .optional {
+      @include themify($themes) {
+        color: themed('secondary-text-color');
+      }
+    }
+  }
+
+  .input {
+    height: $dialog-component-height;
+    min-height: $dialog-component-height;
+    border-radius: $dialog-component-border-radius;
+  }
+
+  textarea.input {
+    padding: 12px;
+  }
+
+  .dark & {
+    .ant-input {
+      @include themify($themes) {
+        border: 1px solid themed('dialog-dark-input-bg');
+        background-color: themed('dialog-dark-input-bg');
+        color: themed('secondary-text-color');
+      }
+    }
+
+    .input {
+      @include themify($themes) {
+        color: themed('secondary-text-color');
+      }
+
+      svg {
+        @include themify($themes) {
+          stroke: themed('text-color');
+          fill: themed('text-color');
+        }
+      }
+    }
+
+    .fill-button {
+      @include themify($themes) {
+        background-color: themed('tertiary-background');
+      }
+    }
+  }
+}

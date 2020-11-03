@@ -1,0 +1,12 @@
+@import './themify', './vars';
+
+.App {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  overflow: hidden;
+
+  @include themify($themes) {
+    background-color: themed('component-background');
+    color: themed('text-color');
+  }
+}

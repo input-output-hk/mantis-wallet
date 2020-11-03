@@ -1,0 +1,17 @@
+@import './partial', './vars';
+
+.ApiTest {
+  .input {
+    margin-bottom: $dialog-component-spacing;
+
+    label,
+    div.label {
+      @extend %dialog-label;
+      display: block;
+    }
+
+    input {
+      height: $dialog-component-height;
+    }
+  }
+}

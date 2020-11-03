@@ -1,0 +1,21 @@
+@import '../themify', '../vars', '../partial';
+
+.WalletOverview {
+  margin: 0 0 100px;
+
+  .header {
+    height: 90px;
+  }
+
+  .balances {
+    .label {
+      @extend %dialog-label;
+      height: unset;
+    }
+
+    .available-balance {
+      @extend %monospace;
+      font-size: 32px;
+    }
+  }
+}

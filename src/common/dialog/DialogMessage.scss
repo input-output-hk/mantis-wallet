@@ -1,0 +1,29 @@
+@import '../../themify', '../../partial', '../../vars';
+
+.DialogMessage {
+  margin-bottom: $dialog-component-spacing;
+
+  .label {
+    @extend %dialog-label;
+  }
+
+  .description {
+    font-size: $font-size-s;
+  }
+
+  &.highlight .description {
+    padding: 1rem;
+    border-radius: $dialog-component-border-radius;
+
+    @include themify($themes) {
+      background-color: themed('normal-color');
+      color: themed('text-color');
+    }
+  }
+
+  .dark &.highlight .description {
+    @include themify($themes) {
+      background-color: themed('dialog-dark-input-bg');
+    }
+  }
+}

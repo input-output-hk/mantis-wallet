@@ -1,0 +1,11 @@
+/* 
+  variables to use via typescript import
+  e.g.: import * as styles from '../vars-for-ts.scss'; styles.successColor
+*/
+@import 'vars';
+
+:export {
+  successColor: $success-color;
+  errorColor: $error-color;
+  warningColor: $warning-color;
+}

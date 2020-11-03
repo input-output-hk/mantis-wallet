@@ -1,0 +1,40 @@
+@import '../partial', '../vars';
+
+.TransactionList {
+  @extend %base-grid;
+
+  .header {
+    display: contents;
+    position: sticky;
+    top: 0;
+    padding-left: 1em;
+    font-size: $font-size-s;
+    font-weight: bold;
+    letter-spacing: $letter-spacing-large;
+    line-height: 40px;
+    text-align: left;
+    text-transform: uppercase;
+
+    .sortable {
+      @extend %disable-focus-outline;
+
+      cursor: pointer;
+      user-select: none;
+
+      .label {
+        margin-right: 0.5em;
+      }
+
+      &:hover,
+      &:focus {
+        .label {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .body {
+    display: contents;
+  }
+}

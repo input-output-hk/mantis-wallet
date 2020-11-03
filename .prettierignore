@@ -1,0 +1,16 @@
+# project specific
+docs
+build
+coverage
+dist
+storybook-static
+mantis
+.*
+
+# general
+*.json
+
+# whitelist
+!/.eslintrc.js
+!/.prettierrc.js
+!.storybook

@@ -1,0 +1,57 @@
+@import './partial', './themify', './vars';
+
+.Settings {
+  .main-title {
+    margin-bottom: 3rem;
+  }
+
+  .content {
+    .settings-item {
+      margin-bottom: 2rem;
+
+      .settings-label {
+        margin-bottom: 0.5rem;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+      }
+
+      .settings-note {
+        margin-bottom: 0.6rem;
+        font-size: $font-size-xs;
+
+        @include themify($themes) {
+          color: themed('inactive-text-color');
+        }
+      }
+
+      .settings-input {
+        max-width: 550px;
+
+        .ant-btn {
+          margin: 1px;
+          float: right;
+        }
+
+        .BorderlessInput {
+          padding-right: 0.5rem;
+          overflow: hidden;
+
+          input {
+            font-size: $font-size-input;
+          }
+        }
+      }
+    }
+  }
+
+  .DialogDropdown {
+    .active-option {
+      padding: 0.5rem 0 0;
+    }
+  }
+
+  .export-private-key {
+    @extend %link;
+    font-size: $font-size-s;
+  }
+}

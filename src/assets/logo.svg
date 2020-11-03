@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 514.4 500.95">
+   <defs>
+      <linearGradient id="logo-gradient" x1="50%" y1="0%" x2="50%" y2="100%">
+         <stop offset="0%" stop-color="#7050FF">
+            <animate attributeName="stop-color" values="#7050FF; #33FF99; #33FF99; #7050FF" dur="5s"
+               repeatCount="indefinite">
+            </animate>
+         </stop>
+         <stop offset="100%" stop-color="#33FF99">
+            <animate attributeName="stop-color" values="#33FF99; #7050FF; #33FF99; #33FF99" dur="5s"
+               repeatCount="indefinite">
+            </animate>
+         </stop>
+      </linearGradient>
+   </defs>
+   <g id="mantis-logo">
+      <polygon points="145.36 0 201.28 139.18 55.92 500.95 0 361.77 145.36 0" fill="#fff" opacity="0" />
+      <polygon points="369.04 0 313.12 139.18 458.48 500.95 514.4 361.77 369.04 0" fill="url(#logo-gradient)"
+         class="mantis-logo-right" />
+      <polygon
+         points="201.28 139.18 145.36 0 89.44 139.18 55.92 222.59 111.84 361.77 145.36 278.35 234.8 500.95 290.72 361.77 201.28 139.18"
+         class="mantis-logo-left" />
+   </g>
+</svg>

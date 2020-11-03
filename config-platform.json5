@@ -1,0 +1,5 @@
+{
+  // Development configuration overrides
+  "openDevTools": true,
+  "dataDir": "~/.mantis-wallet-dev",
+}

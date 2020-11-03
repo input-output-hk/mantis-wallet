@@ -1,0 +1,86 @@
+@import './themify', './partial', './vars';
+
+.SplashScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+
+  @include themify($themes) {
+    background-color: themed('secondary-background');
+  }
+
+  .logo {
+    display: block;
+    width: 30vh;
+    margin: 0 0 4vh;
+
+    .mantis-logo-left {
+      @include themify($themes) {
+        fill: themed('text-color');
+      }
+    }
+  }
+
+  .title svg {
+    width: 30vh;
+    padding-bottom: 6vh;
+
+    .wordmark {
+      @include themify($themes) {
+        fill: themed('text-color');
+      }
+    }
+  }
+
+  .spinner {
+    font-size: 2vmin;
+    text-align: center;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+
+  .loading {
+    font-size: 2vmin;
+    font-weight: bold;
+    text-align: center;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+
+    &:after {
+      content: '\2026'; /* unicode code for the ellipsis character */
+      display: inline-block;
+      width: 0;
+      margin-right: 0;
+      overflow: hidden;
+      animation: ellipsis steps(4, end) 900ms infinite;
+      text-align: left;
+      vertical-align: bottom;
+    }
+
+    @keyframes ellipsis {
+      to {
+        width: 25px;
+        margin-right: -25px;
+      }
+    }
+  }
+
+  .details {
+    @extend %link;
+
+    font-size: $font-size-s;
+    font-weight: bold;
+    text-align: center;
+
+    @include themify($themes) {
+      color: rgba(themed('text-color'), 0.9);
+    }
+  }
+}

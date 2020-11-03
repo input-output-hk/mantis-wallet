@@ -1,0 +1,8 @@
+.WalletSetup {
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  .content {
+    margin: 180px 0 0;
+  }
+}

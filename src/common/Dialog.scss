@@ -1,0 +1,56 @@
+@import '../themify', '../vars', '../partial';
+
+$dialog-width: 508px;
+
+.Dialog {
+  width: $dialog-width;
+  margin: auto;
+
+  form {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+
+  .title {
+    @extend %title;
+  }
+
+  .dialog-children {
+    margin-bottom: $dialog-spacing-before-buttons;
+  }
+
+  .actions {
+    &.grid {
+      @extend %two-col-grid-template;
+    }
+
+    &.natural > * {
+      margin-right: 8px;
+    }
+
+    &.wide {
+      display: grid;
+      grid-row-gap: 8px;
+      grid-template-rows: 1fr;
+
+      .ant-btn {
+        text-align: center;
+      }
+    }
+  }
+
+  .footer:not(:empty) {
+    margin-top: $dialog-component-spacing;
+
+    > *:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .ant-form-item-explain {
+    @extend %dialog-input-inline-error;
+
+    width: $dialog-width;
+  }
+}

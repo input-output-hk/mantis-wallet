@@ -1,0 +1,73 @@
+@import '../../themify', '../../vars', '../../partial';
+
+.DialogRecoveryPhrase {
+  margin-bottom: $dialog-component-spacing;
+
+  .instructions {
+    margin-bottom: 1em;
+    font-size: $font-size-s;
+  }
+
+  .input {
+    height: 80px;
+    padding: 20px 13px;
+    border-radius: $dialog-component-border-radius;
+    font-size: $font-size-s;
+    font-weight: bold;
+
+    @include themify($themes) {
+      background-color: themed('normal-color');
+    }
+
+    &.invalid {
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+      }
+    }
+  }
+
+  .clear-container {
+    margin-bottom: 1rem;
+    text-align: right;
+
+    .clear {
+      @extend %link;
+      font-size: $font-size-s;
+      font-weight: bold;
+    }
+  }
+
+  .words {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+    .word {
+      height: 30px;
+      border-radius: $dialog-component-border-radius;
+      font-size: $font-size-s;
+      font-weight: bold;
+      line-height: 30px;
+      text-align: center;
+      cursor: pointer;
+
+      @include themify($themes) {
+        background-color: themed('secondary-background');
+      }
+    }
+
+    .used-word {
+      height: 30px;
+      font-size: $font-size-s;
+      font-weight: bold;
+      line-height: 30px;
+      text-align: center;
+    }
+
+    .check {
+      @include themify($themes) {
+        fill: themed('success-color');
+      }
+    }
+  }
+}

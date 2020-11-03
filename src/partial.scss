@@ -1,0 +1,225 @@
+@import './themify', './vars';
+
+%status-steps {
+  display: grid;
+  height: 30px;
+  padding: 0 14px;
+  font-size: $font-size-xs;
+  font-weight: bold;
+
+  @include themify($themes) {
+    color: themed('secondary-text-color');
+  }
+
+  .progress {
+    display: inline-block;
+    position: relative;
+    padding-left: 25px;
+
+    .icon {
+      position: absolute;
+      left: 2px;
+      width: 20px;
+      height: 15px;
+      padding-right: 5px;
+      font-size: 15px;
+
+      &.unknown {
+        padding: 0;
+      }
+    }
+
+    .checked {
+      @include themify($themes) {
+        fill: themed('success-color');
+        color: themed('text-color');
+      }
+    }
+
+    .inProgress {
+      left: 3px;
+
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
+        color: themed('text-color');
+      }
+    }
+
+    .stopped {
+      @include themify($themes) {
+        stroke: themed('warning-color');
+        fill: themed('warning-color');
+        color: themed('text-color');
+      }
+    }
+
+    .fail {
+      @include themify($themes) {
+        color: themed('error-text');
+      }
+    }
+  }
+
+  .ProgressBar {
+    position: relative;
+    top: -3px;
+    padding: 0 5px;
+  }
+
+  .line {
+    @extend %line;
+
+    position: relative;
+    top: -8px;
+
+    @include themify($themes) {
+      background-color: themed('secondary-text-color');
+    }
+
+    .percentage {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      @include themify($themes) {
+        color: themed('text-color');
+      }
+    }
+  }
+}
+
+%line {
+  content: '';
+  display: inline-block;
+  height: 1px;
+  margin: 15px 15px 0;
+  opacity: $secondary-opacity;
+  line-height: 1px;
+  vertical-align: middle;
+
+  @include themify($themes) {
+    background-color: themed('border-color-base');
+  }
+}
+
+%ellipsize {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+%dialog-label {
+  height: $dialog-label-height;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-small;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+%dialog-input-inline-error {
+  position: absolute;
+  top: -1 * $dialog-label-height;
+  right: 0;
+  height: $dialog-label-height;
+  font-size: $font-size-xs;
+  text-align: right;
+
+  @include themify($themes) {
+    color: themed('error-color');
+  }
+}
+
+%focus-outline {
+  outline: none;
+  box-shadow: 0px 2px 25px 0px rgba(#000, 0.4), 0px 2px 20px 0px rgba($primary-color, 0.2);
+}
+
+%add-focus-outline {
+  &:focus {
+    @extend %focus-outline;
+  }
+}
+
+%disable-focus-outline {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+%link {
+  @extend %disable-focus-outline;
+
+  transition: opacity $transition-duration;
+  opacity: $secondary-opacity;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    transition: opacity $transition-duration;
+    opacity: 1;
+  }
+}
+
+%title {
+  margin-bottom: $dialog-component-spacing;
+  overflow: hidden;
+  font-size: $font-size-title;
+  font-weight: bold;
+  letter-spacing: $letter-spacing-small;
+}
+
+%dialog-info-link {
+  @extend %link;
+
+  display: block;
+  margin-bottom: 15px;
+  padding: 5px 0;
+  font-size: $font-size-s;
+  font-weight: bold;
+  text-align: right;
+}
+
+%monospace {
+  font-family: $font-family-monospace;
+  font-weight: 400;
+  word-break: break-all;
+}
+
+%base-grid {
+  display: grid;
+  width: 100%;
+  column-gap: 1rem;
+  row-gap: 10px;
+}
+
+%error {
+  padding: 1em;
+  border-radius: $dialog-component-border-radius;
+  font-size: $font-size-s;
+  text-align: center;
+
+  @include themify($themes) {
+    background-color: themed('error-background-color');
+    color: themed('error-dialog-color');
+  }
+}
+
+%empty-list-message {
+  margin-top: 3rem;
+  opacity: $secondary-opacity;
+  font-size: $font-size-s;
+  font-weight: bold;
+  letter-spacing: $letter-spacing-medium;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+%two-col-grid-template {
+  display: grid;
+  grid-column-gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}

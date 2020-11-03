@@ -1,0 +1,12 @@
+@import '../partial', '../vars';
+
+.DismissableMessage {
+  .dismiss-wrapper {
+    text-align: right;
+
+    .dismiss-link {
+      @extend %link;
+      font-size: $font-size-s;
+    }
+  }
+}

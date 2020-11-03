@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "stylelint-config-recommended",
+    "stylelint-config-recommended-scss",
+    "stylelint-config-property-sort-order-smacss",
+    "stylelint-config-css-modules",
+  ],
+  "rules": {
+    "declaration-block-no-duplicate-properties": true,
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true,
+  }
+}

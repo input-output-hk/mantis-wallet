@@ -1,0 +1,81 @@
+@import '../themify', '../vars';
+
+$mantis-wallet-status-modal-padding-hor: 4em;
+$mantis-wallet-status-modal-padding-ver: 3em;
+
+.StatusModal {
+  padding: 0;
+
+  .ant-modal-body {
+    padding: $mantis-wallet-status-modal-padding-ver $mantis-wallet-status-modal-padding-hor;
+  }
+
+  .ant-modal-content {
+    margin: 0;
+    padding: 0;
+
+    @include themify($themes) {
+      background-color: rgba(themed('component-background'), 0.85);
+    }
+  }
+
+  .ant-modal-footer {
+    padding: 0;
+    border-top-width: 0;
+  }
+}
+
+.StatusModalWrap {
+  .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    width: calc(100vw - 4 * #{$mantis-wallet-status-modal-padding-hor});
+    height: calc(100vh - 4 * #{$mantis-wallet-status-modal-padding-ver});
+    font-size: $font-size-m;
+
+    @include themify($themes) {
+      color: rgba(themed('text-color'), 0.7);
+    }
+
+    .title {
+      margin: 1em 1em;
+      padding: 0.5em 0;
+      font-weight: bold;
+      text-transform: uppercase;
+
+      @include themify($themes) {
+        border-bottom: 1px solid rgba(themed('text-color'), 0.7);
+      }
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5em 1em;
+
+      .info-value {
+        @include themify($themes) {
+          color: themed('text-color');
+        }
+
+        .status {
+          font-weight: bold;
+          text-transform: uppercase;
+
+          &.success {
+            @include themify($themes) {
+              color: themed('success-text');
+            }
+          }
+
+          &.error {
+            @include themify($themes) {
+              color: themed('error-color');
+            }
+          }
+        }
+      }
+    }
+  }
+}

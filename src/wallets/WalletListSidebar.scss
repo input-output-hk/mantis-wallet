@@ -1,0 +1,40 @@
+@import '../vars';
+
+.WalletListSidebar {
+  width: 234px;
+  height: 100vh;
+  overflow: auto;
+
+  .wallet-links {
+    margin: 0 0 16px 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .wallet-link {
+    display: block;
+    outline: 0;
+    opacity: $secondary-opacity;
+    font-size: $font-size-s;
+    font-weight: bold;
+    letter-spacing: $letter-spacing-small;
+    line-height: 124px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+
+    &-active {
+      opacity: 1;
+      cursor: default;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      width: 66%;
+      margin: 0 auto;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+    }
+  }
+}

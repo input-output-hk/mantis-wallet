@@ -1,0 +1,66 @@
+@import '../themify', '../partial', '../vars';
+
+.TransactionHistory {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  margin: 0 0 100px;
+
+  .svg {
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    line-height: 30px;
+
+    .line {
+      @extend %line;
+    }
+
+    .sort-by {
+      display: inline-block;
+      font-size: $font-size-s;
+      font-weight: bold;
+      letter-spacing: $letter-spacing-small;
+      text-align: left;
+      text-transform: uppercase;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+
+    .action {
+      display: inline-block;
+      min-width: 126px;
+      height: 30px;
+      margin-left: 1rem;
+      font-size: $font-size-s;
+      font-weight: bold;
+      letter-spacing: $letter-spacing-large;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+  }
+
+  .no-transactions {
+    @extend %empty-list-message;
+  }
+
+  .transactions-container {
+    margin-top: 30px;
+  }
+}
+
+.SortByDropdown {
+  .ant-dropdown-menu-item {
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('primary-color');
+      }
+    }
+  }
+}

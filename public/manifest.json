@@ -1,0 +1,20 @@
+{
+  "short_name": "Mantis Wallet",
+  "name": "Mantis Wallet",
+  "icons": [
+    {
+      "src": "icon.ico",
+      "type": "image/x-icon",
+      "sizes": "256x256"
+    },
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

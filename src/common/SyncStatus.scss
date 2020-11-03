@@ -1,0 +1,43 @@
+@import '../themify', '../vars';
+
+.SyncStatus {
+  font-size: $font-size-s;
+  font-weight: bold;
+
+  @include themify($themes) {
+    color: themed('inactive-text-color');
+  }
+
+  svg {
+    height: 12px;
+    margin: 0 0 2px 2px;
+    vertical-align: middle;
+  }
+
+  &.syncing svg {
+    @include themify($themes) {
+      animation: spin 4s linear infinite;
+      stroke: themed('primary-color');
+    }
+  }
+
+  &.offline svg {
+    animation: spin 4s linear infinite;
+
+    @include themify($themes) {
+      stroke: themed('text-color');
+    }
+  }
+
+  &.synced svg {
+    @include themify($themes) {
+      stroke: themed('text-color');
+    }
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(-360deg);
+  }
+}

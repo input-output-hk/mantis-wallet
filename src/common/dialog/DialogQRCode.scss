@@ -1,0 +1,35 @@
+@import '../../partial', '../../vars';
+
+.DialogQRCode {
+  margin-bottom: $dialog-component-spacing;
+  transition: filter $transition-duration;
+
+  &.blurred {
+    transition: filter $transition-duration;
+    pointer-events: none;
+    filter: blur(4px);
+  }
+
+  .display {
+    display: grid;
+    grid-column-gap: 1.5rem;
+    grid-template-columns: auto 1fr;
+    margin-bottom: 1rem;
+  }
+
+  .qr-content {
+    @extend %monospace;
+    font-size: $font-size-m;
+  }
+
+  .download {
+    padding: 0 30px;
+    letter-spacing: $letter-spacing-large;
+    text-transform: uppercase;
+  }
+
+  .qr-code {
+    padding: 5px 5px 0 5px;
+    background-color: #fff;
+  }
+}

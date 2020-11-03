@@ -1,0 +1,6 @@
+{
+  "restartable": false,
+  "watch": ["build/main/main.js"],
+  "signal": "SIGINT",
+  "delay": 3000
+}

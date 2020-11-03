@@ -1,0 +1,48 @@
+# IDE config
+.vscode
+.idea
+
+# local
+config.json5
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yalc
+yalc.lock
+
+# testing
+/coverage
+
+# production
+/build
+/storybook-static
+/dist
+
+# snapshot-diffs
+image-snapshots/__diff_output__
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.envrc
+.python-version
+
+# nix
+result
+result-*
+
+# electron-builder
+/.log
+
+# FIXME
+LOGSFILENAME_IS_UNDEFINED.log

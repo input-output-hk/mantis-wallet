@@ -1,0 +1,9 @@
+@import '../partial';
+
+.InlineError {
+  position: relative;
+
+  .error-message {
+    @extend %dialog-input-inline-error;
+  }
+}

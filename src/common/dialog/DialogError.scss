@@ -1,0 +1,19 @@
+@import '../../themify', '../../vars';
+
+.DialogError {
+  margin-bottom: $dialog-component-spacing;
+  padding: 15px;
+  border-radius: $dialog-component-border-radius;
+  font-size: $font-size-xs;
+  text-align: center;
+
+  @include themify($themes) {
+    background-color: themed('error-background-color');
+    color: themed('error-dialog-color');
+  }
+
+  .help {
+    padding-left: 3px;
+    font-weight: bold;
+  }
+}

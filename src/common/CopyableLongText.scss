@@ -1,0 +1,27 @@
+@import '../partial', '../vars';
+
+.CopyableLongText {
+  @extend %ellipsize;
+  @extend %monospace;
+
+  .clickable {
+    margin-right: 0.5em;
+    opacity: $secondary-opacity;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.Mantis .qr-code-popover.ant-popover > .ant-popover-content {
+  .ant-popover-inner-content {
+    background-color: #fff;
+  }
+
+  .ant-popover-arrow {
+    border-color: #fff;
+    background-color: #fff;
+  }
+}

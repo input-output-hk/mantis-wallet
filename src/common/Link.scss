@@ -1,0 +1,15 @@
+@import '../partial';
+
+.Link {
+  @extend %disable-focus-outline;
+
+  cursor: pointer;
+
+  &:focus {
+    text-decoration: underline;
+  }
+
+  &.styled {
+    @extend %link;
+  }
+}

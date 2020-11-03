@@ -1,0 +1,360 @@
+{
+  "title": {
+    "mantis": "Mantis",
+    "mantisWallet": "Mantis Wallet",
+    "wallets": "Wallet",
+    "addressBook": "Address Book",
+    "tokens": "Tokens",
+    "settings": "Settings"
+  },
+  "settings": {
+    "button": {
+      "enable": "Enable",
+      "exportPrivateKey": "Export Private Key"
+    },
+    "label": {
+      "enableDarkMode": "Enable Dark Mode",
+      "language": "Language",
+      "dateFormat": "Date Format",
+      "timeFormat": "Time Format",
+      "exportPrivateKey": "Export"
+    },
+    "timeFormat": {
+      "12hour": "12-hour",
+      "24hour": "24-hour"
+    }
+  },
+  "wallet": {
+    "title": {
+      "mantisWallet": "Mantis Wallet",
+      "transactionHistory": "Transaction History",
+      "createNewWallet": "Create New Wallet",
+      "restoreWallet": "Restore Wallet",
+      "walletSetup": "Wallet Setup",
+      "walletCreationFirstStep": "Create Wallet",
+      "walletCreationRecoveryPhraseStep": "Recovery Phrase",
+      "walletCreationSecurityStep": "Security",
+      "exportPrivateKey": "Export Private Key",
+      "removeWallet": "Remove Wallet",
+      "yourAddress": "Your Address",
+      "receiveAccount": "Receive Account {{index}}",
+      "send": "Send Transaction"
+    },
+    "button": {
+      "clearRecoveryPhraseInput": "Clear",
+      "goToWallets": "Go to Wallets",
+      "sortByDropdown": "Sort by",
+      "sendTransaction": "Send",
+      "receiveTransaction": "Receive",
+      "generateNewAddress": "Generate New Address",
+      "generateNewAddressShort": "Generate New",
+      "showErrorStacktrace": "Show Stacktrace",
+      "reloadWalletNow": "Reload Now",
+      "createWallet": "Create",
+      "restoreWallet": "Restore",
+      "unlockPrivateKey": "Unlock",
+      "logOutOfWallet": "Log Out",
+      "removeWallet": "Remove Wallet",
+      "copyAddress": "Copy Address"
+    },
+    "link": {
+      "viewInExplorer": "View in Explorer"
+    },
+    "label": {
+      "enterPassword": "Enter Password",
+      "password": "Password",
+      "privateKey": "Private Key",
+      "recoveryPhrase": "Recovery Phrase",
+      "transactionType": "Type",
+      "transactionTypeLong": "Transaction Type",
+      "asset": "Asset",
+      "amount": "Amount",
+      "totalTransactionAmount": "Total Transaction Amount",
+      "remainingBalance": "Remaining Balance",
+      "transactionTime": "Time",
+      "transactionStatus": "Status",
+      "transactionValue": "Value",
+      "transactionFee": "Fee",
+      "transactionTotal": "Total",
+      "sendingAddress": "Source Address",
+      "receivingAddress": "Receiving Address",
+      "recipient": "Recipient",
+      "transactionGasLimit": "Gas Limit",
+      "transactionGasUsed": "Gas Used",
+      "transactionGasPrice": "Gas Price",
+      "transactionConfirmations": "Confirmations",
+      "transactionId": "Transaction ID",
+      "accountTotalBalance": "Total Balance",
+      "walletName": "Wallet Name",
+      "revealPrivateKey": "Reveal Private Key",
+      "lastUsedAddresses": "Last used addresses",
+      "network": "network",
+      "availableBalance": "Available balance"
+    },
+    "error": {
+      "couldNotRemoveWallet": "Couldn't remove the wallet.",
+      "couldNotUpdateFeeEstimates": "Couldn't update fee estimates, they might be outdated",
+      "couldNotLoadFeeEstimates": "Couldn't load fee estimates, cannot continue",
+      "insufficientFunds": "Insufficient funds",
+      "recoveryPhraseIsIncorrect": "The phrase is incorrect",
+      "addressMustBeSet": "Address must be set",
+      "invalidAddress": "Invalid address",
+      "missingCharacterTypeForPassword": "Password needs to have at least 1 uppercase, 1 lowercase and 1 number character",
+      "passwordMustBeAtLeast8Characters": "Password needs to be at least 8 characters",
+      "walletAlreadyExists": "Wallet already exists",
+      "errorWhileLoadingTheWallet": "An error occurred while loading the wallet",
+      "walletNameShouldNotBeEmpty": "Name shouldn't be empty",
+      "recipientMustBe": "Recipient must be set",
+      "couldNotRestoreWallet": "Couldn't restore wallet with the provided information",
+      "noAccountWasSelected": "No account was selected to complete this action",
+      "accountNotFound": "The account {{currentAddress}} was not found. Available accounts: {{accounts}}",
+      "couldNotSignTransaction": "Unexpected error: Something went wrong when signing the transaction",
+      "passwordMustBeProvided": "Password must be provided"
+    },
+    "message": {
+      "loadingFeeEstimates": "Loading estimates",
+      "passwordCriteriaMessage": "Note: Password needs to be at least 8\u00a0characters long and have at least 1\u00a0uppercase, 1\u00a0lowercase and 1\u00a0number",
+      "inputRecoveryPhraseInstructions": "Re-input recovery phrase by selecting words from selection",
+      "walletNeeded": "You need a wallet to continue",
+      "noTransactions": "You haven't made a transaction",
+      "reloadingWalletInCount": "Reloading wallet in <strong>{{countdown}}</strong>…",
+      "createNewWalletDescription": "Create a New Wallet",
+      "restoreWalletDescription": "Restore wallet using Backup\u00a0Recovery\u00a0Phrase or Private\u00a0Key",
+      "recoveryPhraseDescription1": "This is your wallet backup phrase. It can be entered into any version of Mantis Wallet in order to restore your wallet",
+      "recoveryPhraseDescription2": "The phrase is case sensitive. Please, make sure you write down and save your recovery phrase. You will need this phrase to use and restore your wallet",
+      "recoveryPhraseApproval": "Yes, I have written it down.",
+      "securityRecoveryPhraseDescription": "On the following Screen you will see a 12 Word Phrase. This is your wallet backup phrase. It can be entered in any version of Mantis Wallet in order to restore your wallet.",
+      "showPrivateKeyDescription": "Please, make sure your screen is not visible to anyone but you to ensure security",
+      "checkboxFinishingWalletCreationDescription1": "I understand that my wallet and tokens are held securely on this device only and not on any servers",
+      "checkboxFinishingWalletCreationDescription2": "I understand that if this application is moved to another device or is deleted, my wallet can only be recovered with the backup phrase I have written down and stored securely",
+      "exportPrivateKey": "Enter your password to export your private key.",
+      "removeWalletInstruction": "Enter your password to remove your wallet.",
+      "removeWalletApproval1": "I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase.",
+      "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
+      "noKnownAddresses": "No known addresses",
+      "walletIsNotSyncing": "Wallet is not syncing."
+    },
+    "feeEstimateLevels": {
+      "custom": "Custom",
+      "low": "Slow",
+      "medium": "Average",
+      "high": "Fast"
+    },
+    "syncStatus": {
+      "syncConnecting": "Connecting",
+      "fullySynced": "Fully Synced",
+      "syncing": "Syncing Blocks {{percentage}}%",
+      "currentBlock": "Current block: {{blockNumber}}",
+      "highestBlock": "Highest block: {{blockNumber}}"
+    },
+    "transactionStatus": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "persisted": "Persisted",
+      "failed": "Failed",
+      "pendingDescription": "Transaction waiting to be added to a block in the chain",
+      "confirmedDescription": "Transaction has been added to a block in the chain",
+      "persistedDescription": "Transaction cannot be rolled back",
+      "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed",
+      "notPersistedDescription": "This transaction is not yet persisted"
+    },
+    "transactionType": {
+      "received": "Received",
+      "sent": "Sent"
+    }
+  },
+  "status": {
+    "label": {
+      "computer": "Machine",
+      "operatingSystem": "Platform",
+      "operatingSystemVersion": "Platform version",
+      "cpu": "CPU",
+      "computerMemory": "Memory",
+      "mantisWalletVersion": "Mantis Wallet version",
+      "mantisWalletMainProcessID": "Mantis Wallet main process ID",
+      "mantisWalletRendererProcessID": "Mantis Wallet renderer process ID",
+      "mantisWalletLocalDirectory": "Mantis Wallet local directory",
+      "backend": "Backend",
+      "network": "Network",
+      "nodeStatus": "Node status",
+      "nodeProcessID": "Node process ID",
+      "walletStatus": "Wallet status",
+      "walletRpcAddress": "Wallet RPC address",
+      "lastDagInformation": "Last DAG information",
+      "synchronizationStatus": "Synchronization",
+      "currentBlock": "Current block",
+      "highestKnownBlock": "Highest known block"
+    },
+    "message": {
+      "generatingDag": "Generating DAG {{percentage}}%",
+      "loadingDagFromFile": "Loading DAG from file {{percentage}}%"
+    },
+    "componentStatus": {
+      "loading": "Loading",
+      "running": "Running",
+      "notRunning": "Not Running",
+      "finished": "Finished",
+      "failed": "Failed",
+      "loaded": "Loaded"
+    },
+    "error": {
+      "dagFileEndedUnexpectedly": "DAG file ended unexpectedly",
+      "invalidDagFilePrefix": "Invalid DAG file prefix",
+      "cannotReadDagFromFile": "Cannot read DAG from file",
+      "cannotGenerateDagFile": "Cannot generate DAG file"
+    }
+  },
+  "addressBook": {
+    "address": {
+      "enterLabel": "Enter label for address",
+      "clickToCopy": "Click to copy address to clipboard"
+    },
+    "error": {
+      "addressMustBeSet": "Address must be set",
+      "labelMustBeSet": "Label must be set"
+    },
+    "message": {
+      "contactDeleted": "Contact deleted"
+    },
+    "label": {
+      "address": "Address",
+      "label": "Label"
+    },
+    "book": {
+      "title": "Address Book",
+      "addNew": "Add new",
+      "noData": "No saved contacts",
+      "editContact": "Edit Contact",
+      "saveContact": "Save Contact",
+      "deleteContact": "Delete Contact",
+      "deleteContactBtn": "Delete",
+      "deleteContactWarning": "<p>Are you sure you want to delete this contact?</p><p>{{label}} ({{address}})</p>"
+    },
+    "addressSelect": {
+      "selectContact": "Select a Contact"
+    }
+  },
+  "tokens": {
+    "title": {
+      "addNewToken": "Add New Token",
+      "hideToken": "Hide {{tokenSymbol}} Token",
+      "sendToken": "Send {{tokenSymbol}} Token"
+    },
+    "button": {
+      "addToken": "Add Token",
+      "sendToken": "Send",
+      "receiveToken": "Receive",
+      "hideToken": "Hide",
+      "proceedHidingToken": "Proceed",
+      "collapseAccounts": "Collapse Accounts"
+    },
+    "label": {
+      "smartContractAddress": "Contract Address",
+      "decimals": "Decimals",
+      "tokenSymbol": "Token Symbol",
+      "tokenName": "Token Name",
+      "address": "Address",
+      "recipient": "Recipient",
+      "transactionAmount": "Amount ({{tokenSymbol}})",
+      "transactionFee": "Fee (DST)",
+      "balance": "Balance",
+      "availableAmount": "Available Amount"
+    },
+    "message": {
+      "contractDetailsApproval": "I've checked the contract details to make sure the above information is correct",
+      "noTokensToShow": "No tokens to show, click on \"$t(tokens.button.addToken)\" to add one",
+      "hideTokenMessage": "You can add this token back in the future by clicking on \"$t(tokens.button.addToken)\".",
+      "contractAddressInfo": "The ERC20 token contract is deployed at this address, it could be used as a safe identifier of the token"
+    },
+    "error": {
+      "tokenAddressAlreadyTracked": "The provided address is already in your list for the following token: {{tokenName}}",
+      "tokenSymbolMustBeSet": "Token symbol must be set",
+      "tokenNameMustBeSet": "Token name must be set",
+      "invalidERC20Contract": "There is no valid ERC20 contract deployed at the address",
+      "invalidERC20ContractShort": "Invalid ERC20 contract address"
+    }
+  },
+  "network": {
+    "names": {
+      "etc": "Main net",
+      "testnet-internal": "Internal testnet",
+      "mordor": "Mordor",
+      "custom": "Custom"
+    },
+    "changeNetworkModal": {
+      "title": "Change network",
+      "message": "Are you sure you want to change network to {{newNetwork}}?",
+      "confirm": "Confirm change",
+      "writeNetwork": "Write network name:",
+      "typeMainnet": "Type \"MAINNET\" to connect to main ETC network:"
+    }
+  },
+  "common": {
+    "title": {
+      "support": "Support"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "next": "Next",
+      "exportDebugLogs": "Export Logs",
+      "openSupportChannel": "Open Slack",
+      "downloadTxt": "Download txt",
+      "oneStepBack": "Back",
+      "finish": "Finish",
+      "closeModal": "Close",
+      "goBackOneStep": "Go Back",
+      "iUnderstand": "I understand",
+      "proceedToNextStep": "Proceed",
+      "dismissNotificationMessage": "Dismiss"
+    },
+    "label": {
+      "optionalField": "optional"
+    },
+    "answer": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "link": {
+      "feedback": "Feedback",
+      "support": "Support",
+      "status": "Status",
+      "showDetails": "Show details",
+      "learnMore": "Learn more"
+    },
+    "initializationStatus": {
+      "startingNode": "Starting node",
+      "connectingToNode": "Connecting to node",
+      "loading": "Loading"
+    },
+    "message": {
+      "copiedToClipboard": "Successfully copied to clipboard.",
+      "clickToCopy": "Click to copy to clipboard",
+      "waitUntilActionFinish": "You will have to wait for your action to finish.",
+      "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
+      "saveDebugLogsCancelled": "Operation cancelled.",
+      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
+      "chooseFromDropdownList": "Choose from list…",
+      "iUnderstandApproval": "I understand"
+    },
+    "error": {
+      "dialogValidationFailed": "Some fields require additional action before you can continue.",
+      "unexpectedError": "Unexpected error",
+      "passwordsDoNotMatch": "Passwords don't match",
+      "failedToSaveDebugLogs": "Failed to save debug logs: {{errorMsg}}",
+      "numberMustBePositive": "Number must be positive",
+      "mustBeANumberGreaterThan": "Must be a number greater than {{minValue}}",
+      "mustBeAtLeast": "Must be at least {{minValue}}",
+      "mustBeAtMost": "Must be at most {{maxValue}}",
+      "itMustBeAnInteger": "It must be an integer value",
+      "atMostDecimalPlacesArePermitted": "At most {{count}} decimal place is permitted",
+      "atMostDecimalPlacesArePermitted_plural": "At most {{count}} decimal places are permitted",
+      "noAvailableOptionForDropdown": "No available option",
+      "ethAddressMustBeSet": "Address must be set",
+      "invalidEthAddress": "Invalid address",
+      "ethPrivateKeyMustBeSet": "Private key must be set",
+      "invalidEthPrivateKey": "Invalid private key",
+      "invalidSeedPhrase": "Invalid seed phrase",
+      "wrongPassword": "Key derivation failed - possibly wrong password"
+    }
+  }
+}

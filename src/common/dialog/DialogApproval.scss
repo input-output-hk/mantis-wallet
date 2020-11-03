@@ -1,0 +1,55 @@
+@import '../../themify', '../../vars';
+
+$padding-v: 21px;
+$padding-h: 17px;
+
+.DialogApproval {
+  margin-bottom: $dialog-component-spacing;
+
+  .checkbox-wrapper {
+    border-radius: $dialog-component-border-radius;
+
+    @include themify($themes) {
+      border: 1px solid themed('normal-color');
+      background-color: themed('normal-color');
+      color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
+    }
+
+    .dark & {
+      @include themify($themes) {
+        border: 1px solid themed('dialog-dark-input-bg');
+        background-color: themed('dialog-dark-input-bg');
+      }
+    }
+  }
+
+  .checkbox {
+    display: grid;
+    grid-column-gap: 5px;
+    grid-template-columns: auto 1fr;
+    padding: $padding-v $padding-h;
+    font-size: $font-size-s;
+
+    @include themify($themes) {
+      color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
+    }
+
+    .ant-checkbox {
+      align-self: center;
+    }
+  }
+
+  .extra {
+    padding: $padding-v $padding-h 0;
+  }
+
+  .ant-form-item-has-error .checkbox-wrapper {
+    @include themify($themes) {
+      border: 1px solid themed('error-color');
+    }
+  }
+
+  .approval-form-item .ant-form-item-explain {
+    display: none;
+  }
+}

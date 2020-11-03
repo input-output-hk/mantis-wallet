@@ -1,0 +1,48 @@
+@import '../themify', '../vars';
+
+.MantisModal.ant-modal {
+  margin-left: $sidebar-width;
+
+  @media screen and #{$sidebar-collapse-query} {
+    margin-left: $sidebar-collapsed-width;
+  }
+
+  @include themify($themes) {
+    color: themed('text-color');
+  }
+
+  .ant-modal-content {
+    border-radius: $dialog-component-border-radius * 2;
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.4), 0 6px 16px 0 rgba(0, 0, 0, 0.01),
+      0 9px 28px 8px rgba(0, 0, 0, 0.2);
+
+    @include themify($themes) {
+      background-color: themed('modal-background');
+    }
+  }
+
+  .ant-modal-close {
+    margin: 29px 46px 0 0;
+  }
+
+  .ant-modal-footer {
+    padding: 0;
+    border-top-width: 0;
+  }
+}
+
+.ScrollableModalFooter {
+  max-height: 225px;
+  padding: 1.25rem 64px;
+  overflow: auto;
+  border-radius: 0 0 $dialog-component-border-radius * 2 $dialog-component-border-radius * 2;
+  text-align: left;
+
+  @include themify($themes) {
+    background-color: themed('dialog-dark-input-bg');
+  }
+
+  &::-webkit-scrollbar-track {
+    margin-bottom: 28px;
+  }
+}

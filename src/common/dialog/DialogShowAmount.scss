@@ -1,0 +1,60 @@
+@import '../../themify', '../../vars', '../../partial';
+
+.DialogShowAmount {
+  $height: 50px;
+  margin-bottom: 12px;
+
+  .svg {
+    @include themify($themes) {
+      stroke: themed('text-color');
+      fill: themed('text-color');
+    }
+  }
+
+  .label {
+    @extend %dialog-label;
+
+    .note {
+      opacity: $secondary-opacity;
+      text-transform: none;
+    }
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    padding: 0 0.75rem;
+    border-radius: $dialog-component-border-radius;
+    cursor: not-allowed;
+
+    .logo {
+      width: 27px;
+
+      .asset-icon {
+        position: relative;
+        top: 11px;
+        height: 2em;
+      }
+    }
+
+    .amount {
+      overflow: hidden;
+      line-height: $height;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      white-space: nowrap;
+    }
+
+    @include themify($themes) {
+      border: 1px solid themed('dialog-dark-input-bg');
+      background-color: themed('dialog-dark-input-bg');
+      color: themed('secondary-text-color');
+    }
+
+    &.invalid {
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+      }
+    }
+  }
+}
