@@ -1,17 +1,17 @@
 {
     "electron-darwin": {
-        "sha256": "1jl2963qbdw9wk35vl3lcj5i42sf2p64drfqbzra5zifm8hcvgn7",
+        "sha256": "0k517amqib570rddyj38kygbv1db5p5hy3k6sghd3dyg50d9b787",
         "type": "file",
-        "url": "https://github.com/electron/electron/releases/download/v8.0.1/electron-v8.0.1-darwin-x64.zip",
+        "url": "https://github.com/electron/electron/releases/download/v8.5.2/electron-v8.5.2-darwin-x64.zip",
         "url_template": "https://github.com/electron/electron/releases/download/v<version>/electron-v<version>-darwin-x64.zip",
-        "version": "8.0.1"
+        "version": "8.5.2"
     },
     "electron-linux": {
-        "sha256": "1bs15ls6sjf0l643aqijw3k6p9dqd52dqprxmhdb3w82057xiz4i",
+        "sha256": "0laack7hqqgqnhyl6fc34q3wjdhkndcrfphn0rmhcdh485dwkf65",
         "type": "file",
-        "url": "https://github.com/electron/electron/releases/download/v8.0.1/electron-v8.0.1-linux-x64.zip",
+        "url": "https://github.com/electron/electron/releases/download/v8.5.2/electron-v8.5.2-linux-x64.zip",
         "url_template": "https://github.com/electron/electron/releases/download/v<version>/electron-v<version>-linux-x64.zip",
-        "version": "8.0.1"
+        "version": "8.5.2"
     },
     "gitignore": {
         "branch": "master",
