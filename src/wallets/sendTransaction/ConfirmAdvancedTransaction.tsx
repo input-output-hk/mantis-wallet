@@ -35,14 +35,14 @@ const _ConfirmAdvancedTransaction = ({
   return (
     <>
       <Dialog
-        title="Confirm transaction"
+        title={t(['wallet', 'title', 'send'])}
         leftButtonProps={{
-          children: 'Back',
+          children: t(['wallet', 'button', 'back']),
           onClick: onCancel,
           disabled: modalLocker.isLocked,
         }}
         rightButtonProps={{
-          children: 'Confirm',
+          children: t(['wallet', 'button', 'confirm']),
           onClick: (): void => {
             sendTransaction({
               recipient,
@@ -59,15 +59,18 @@ const _ConfirmAdvancedTransaction = ({
         onSetLoading={modalLocker.setLocked}
         type="dark"
       >
-        <DialogInput value={recipient} label="Recipient" disabled={true} />
+        <DialogInput
+          value={recipient}
+          label={t(['wallet', 'label', 'recipient'])}
+          disabled={true}
+        />
         <DialogShowAmount amount={asEther(amount)} displayExact>
-          Amount
+          {t(['wallet', 'label', 'amount'])}
         </DialogShowAmount>
-        <DialogInput value={gasLimit} label="Gas Limit" disabled={true} />
-        <DialogInput value={gasPrice} label="Gas Price" disabled={true} />
-        <DialogInput value={nonce} label="Nonce" disabled={true} />
-        <DialogInput value={data} label="Data" disabled={true} />
-        <DialogInput value={nonce} label="Nonce" disabled={true} />
+        <DialogInput value={gasLimit} label={t(['wallet', 'label', 'gasLimit'])} disabled={true} />
+        <DialogInput value={gasPrice} label={t(['wallet', 'label', 'gasPrice'])} disabled={true} />
+        <DialogInput value={nonce} label={t(['wallet', 'label', 'nonce'])} disabled={true} />
+        <DialogInput value={data} label={t(['wallet', 'label', 'data'])} disabled={true} />
         <DialogInputPassword
           label={t(['wallet', 'label', 'password'])}
           id="tx-password"
