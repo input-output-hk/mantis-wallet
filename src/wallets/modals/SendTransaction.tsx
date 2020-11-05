@@ -3,7 +3,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {wrapWithModal} from '../../common/MantisModal'
 import {Wei} from '../../common/units'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
-import {FeeEstimates} from '../../common/wallet-state'
+import {FeeEstimates, Transaction, getNextNonce} from '../../common/wallet-state'
 import './SendTransaction.scss'
 import {
   SendBasicTransaction,
@@ -37,25 +37,10 @@ interface TransactionParams {
   [TransactionType.advanced]: AdvancedTransactionParams
 }
 
-const defaultState: TransactionParams = {
-  [TransactionType.basic]: {
-    amount: '0',
-    fee: '0',
-    recipient: '',
-  },
-  [TransactionType.advanced]: {
-    amount: '0',
-    gasLimit: '21000',
-    gasPrice: '',
-    recipient: '',
-    data: '',
-    nonce: '',
-  },
-}
-
 interface SendTransactionFlowProps {
   availableAmount: Wei
   estimateTransactionFee: () => Promise<FeeEstimates>
+  transactions: Transaction[]
   onCancel: () => void
 }
 
@@ -63,8 +48,26 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
   availableAmount,
   onCancel,
   estimateTransactionFee,
+  transactions,
 }: SendTransactionFlowProps & ModalProps) => {
-  const [transactionParams, setTransactionParams] = useState(defaultState)
+  const defaultState: TransactionParams = {
+    [TransactionType.basic]: {
+      amount: '0',
+      fee: '',
+      recipient: '',
+    },
+    [TransactionType.advanced]: {
+      amount: '',
+      gasLimit: '21000',
+      gasPrice: '',
+      recipient: '',
+      data: '',
+      nonce: getNextNonce(transactions).toString(),
+    },
+  }
+
+  const [transactionParams, setTransactionParams] = useState<TransactionParams>(defaultState)
+
   const [step, setStep] = useState<'send' | 'confirm'>('send')
   const [transactionType, _setTransactionType] = useState<TransactionType>(TransactionType.basic)
 

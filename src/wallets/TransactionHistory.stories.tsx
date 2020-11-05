@@ -103,6 +103,7 @@ export const sendTransaction = (): JSX.Element => (
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
+    transactions={dummyTransactions}
     visible
   />
 )

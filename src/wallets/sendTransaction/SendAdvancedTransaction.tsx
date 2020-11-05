@@ -29,7 +29,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
-  const {amount, recipient} = transactionParams
+  const {amount, recipient, gasLimit, gasPrice, data, nonce} = transactionParams
 
   return (
     <>
@@ -66,7 +66,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             onChange={(e): void => setTransactionParams({gasLimit: e.target.value})}
             formItem={{
               name: 'tx-gas-amount',
-              initialValue: '',
+              initialValue: gasLimit,
             }}
           />
           <DialogInput
@@ -75,7 +75,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             onChange={(e): void => setTransactionParams({gasPrice: e.target.value})}
             formItem={{
               name: 'tx-gas-price',
-              initialValue: '',
+              initialValue: gasPrice,
             }}
           />
         </DialogColumns>
@@ -85,7 +85,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           onChange={(e): void => setTransactionParams({data: e.target.value})}
           formItem={{
             name: 'tx-data',
-            initialValue: '',
+            initialValue: data,
           }}
         />
         <DialogInput
@@ -94,7 +94,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           onChange={(e): void => setTransactionParams({nonce: e.target.value})}
           formItem={{
             name: 'tx-nonce',
-            initialValue: '',
+            initialValue: nonce,
           }}
         />
       </Dialog>

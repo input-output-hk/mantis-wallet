@@ -90,6 +90,7 @@ export const TransactionHistory = ({
           <SendTransactionFlow
             visible={showSendModal}
             availableAmount={availableBalance}
+            transactions={transactions}
             onCancel={(): void => setShowSendModal(false)}
             estimateTransactionFee={estimateTransactionFee}
           />
