@@ -38,7 +38,8 @@
       "removeWallet": "Remove Wallet",
       "yourAddress": "Your Address",
       "receiveAccount": "Receive Account {{index}}",
-      "send": "Send Transaction"
+      "send": "Send Transaction",
+      "confirm": "Confirm Transaction"
     },
     "button": {
       "clearRecoveryPhraseInput": "Clear",
@@ -55,7 +56,9 @@
       "unlockPrivateKey": "Unlock",
       "logOutOfWallet": "Log Out",
       "removeWallet": "Remove Wallet",
-      "copyAddress": "Copy Address"
+      "copyAddress": "Copy Address",
+      "back": "Back",
+      "confirm": "Confirm"
     },
     "link": {
       "viewInExplorer": "View in Explorer"
@@ -89,7 +92,11 @@
       "revealPrivateKey": "Reveal Private Key",
       "lastUsedAddresses": "Last used addresses",
       "network": "network",
-      "availableBalance": "Available balance"
+      "availableBalance": "Available balance",
+      "gasLimit": "Gas limit",
+      "gasPrice": "Gas price",
+      "data": "Data",
+      "nonce": "Nonce"
     },
     "error": {
       "couldNotRemoveWallet": "Couldn't remove the wallet.",

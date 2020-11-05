@@ -61,16 +61,16 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
         />
         <DialogColumns>
           <DialogInput
-            label="Maximum Gas amount"
-            id="tx-gas-amount"
+            label={t(['wallet', 'label', 'gasLimit'])}
+            id="tx-gas-limit"
             onChange={(e): void => setTransactionParams({gasLimit: e.target.value})}
             formItem={{
-              name: 'tx-gas-amount',
+              name: 'tx-gas-limit',
               initialValue: gasLimit,
             }}
           />
           <DialogInput
-            label="Gas Price"
+            label={t(['wallet', 'label', 'gasPrice'])}
             id="tx-gas-price"
             onChange={(e): void => setTransactionParams({gasPrice: e.target.value})}
             formItem={{
@@ -80,7 +80,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           />
         </DialogColumns>
         <DialogTextArea
-          label="Data"
+          label={t(['wallet', 'label', 'data'])}
           id="tx-data"
           onChange={(e): void => setTransactionParams({data: e.target.value})}
           formItem={{
@@ -89,7 +89,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           }}
         />
         <DialogInput
-          label="Nonce"
+          label={t(['wallet', 'label', 'nonce'])}
           id="tx-nonce"
           onChange={(e): void => setTransactionParams({nonce: e.target.value})}
           formItem={{

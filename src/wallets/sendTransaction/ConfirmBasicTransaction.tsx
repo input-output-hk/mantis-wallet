@@ -31,14 +31,14 @@ const _ConfirmBasicTransaction = ({
   return (
     <>
       <Dialog
-        title="Confirm transaction"
+        title={t(['wallet', 'title', 'send'])}
         leftButtonProps={{
-          children: 'Back',
+          children: t(['wallet', 'button', 'back']),
           onClick: onCancel,
           disabled: modalLocker.isLocked,
         }}
         rightButtonProps={{
-          children: 'Confirm',
+          children: t(['wallet', 'button', 'confirm']),
           onClick: (): void => {
             doTransfer(recipient, asEther(amount), asEther(fee), password)
             onCancel()
@@ -49,11 +49,11 @@ const _ConfirmBasicTransaction = ({
       >
         <DialogInput value={recipient} label="Recipient" disabled={true} />
         <DialogShowAmount amount={asEther(amount)} displayExact>
-          Amount
+          {t(['wallet', 'label', 'amount'])}
         </DialogShowAmount>
 
         <DialogShowAmount amount={asEther(fee)} displayExact>
-          Fee
+          {t(['wallet', 'label', 'transactionFee'])}
         </DialogShowAmount>
 
         <DialogInputPassword
