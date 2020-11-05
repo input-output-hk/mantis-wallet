@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {ModalProps} from 'antd/lib/modal'
 import {ModalLocker} from '../../common/MantisModal'
 import {Dialog} from '../../common/Dialog'
-import {DialogInput} from '../../common/dialog/DialogInput'
+import {DialogInput, DialogTextArea} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {Wei} from '../../common/units'
 import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
@@ -79,7 +79,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             }}
           />
         </DialogColumns>
-        <DialogInput
+        <DialogTextArea
           label="Data"
           id="tx-data"
           onChange={(e): void => setTransactionParams({data: e.target.value})}

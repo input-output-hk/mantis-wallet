@@ -9,12 +9,15 @@ import React, {
 import classnames from 'classnames'
 import {Input, Form} from 'antd'
 import Password from 'antd/lib/input/Password'
+import TextArea from 'antd/lib/input/TextArea'
 import {FormItemProps} from 'antd/lib/form'
 import {
   BorderlessInput,
   BorderlessInputPassword,
   BorderlessInputPasswordProps,
   BorderlessInputProps,
+  BorderlessTextArea,
+  BorderlessTextAreaProps,
 } from '../BorderlessInput'
 import {DialogState} from '../Dialog'
 import {Trans} from '../Trans'
@@ -99,5 +102,32 @@ const _DialogInput: RefForwardingComponent<Input, BorderlessInputProps & DialogI
   )
 }
 
+const _DialogTextArea: RefForwardingComponent<
+  TextArea,
+  BorderlessTextAreaProps & DialogInputProps
+> = (
+  {label, onChange, formItem, optional, ...props}: BorderlessTextAreaProps & DialogInputProps,
+  ref: Ref<TextArea>,
+) => {
+  const {setErrorMessage} = DialogState.useContainer()
+
+  const onChangeWithDialogReset = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
+    setErrorMessage('')
+    onChange?.(e)
+  }
+
+  return (
+    <AbstractDialogInput label={label} id={props.id} formItem={formItem} optional={optional}>
+      <BorderlessTextArea
+        className="input"
+        onChange={onChangeWithDialogReset}
+        {...props}
+        ref={ref}
+      />
+    </AbstractDialogInput>
+  )
+}
+
 export const DialogInputPassword = forwardRef(_DialogInputPassword)
 export const DialogInput = forwardRef(_DialogInput)
+export const DialogTextArea = forwardRef(_DialogTextArea)
