@@ -10,7 +10,7 @@ import {asEther} from '../common/units'
 
 const web3 = new Web3()
 
-test('WalletOverview shows properly formatted balance', () => {
+it('shows properly formatted balance in WalletOverview', () => {
   const availableBalance = asEther(12345)
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}

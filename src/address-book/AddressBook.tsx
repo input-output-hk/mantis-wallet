@@ -66,19 +66,20 @@ const _EditContactModal = ({
         label={t(['addressBook', 'label', 'address'])}
         onChange={(e): void => setAddress(e.target.value)}
         formItem={{
-          name: 'address',
+          name: 'contact-address',
           rules: [
             {required: true, message: t(['addressBook', 'error', 'addressMustBeSet'])},
             addressValidator,
           ],
         }}
         disabled={toEdit}
+        id="contact-address"
       />
       <DialogInput
         label={t(['addressBook', 'label', 'label'])}
         onChange={(e): void => setLabel(e.target.value)}
         formItem={{
-          name: 'label',
+          name: 'contact-label',
           rules: [
             {required: true, message: t(['addressBook', 'error', 'labelMustBeSet'])},
             {
@@ -89,6 +90,7 @@ const _EditContactModal = ({
             },
           ],
         }}
+        id="contact-label"
       />
     </Dialog>
   )
