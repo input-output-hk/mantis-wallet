@@ -6,7 +6,8 @@ let
   shouldBuild = platform: ''
         build.message =~ /ci pkg${if platform == "all" then "" else " ${platform}"}/ ||
           build.branch =~ /^release\// ||
-          build.branch == "develop"
+          build.branch == "develop" ||
+          build.branch == "master"
       '';
 in
 
