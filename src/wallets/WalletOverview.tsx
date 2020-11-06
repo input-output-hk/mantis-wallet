@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import BigNumber from 'bignumber.js'
 import CountUp from 'react-countup'
+import {EDITION} from '../shared/version'
 import {ETC_CHAIN} from '../common/chains'
 import {Trans} from '../common/Trans'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
@@ -32,14 +33,12 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
         </HeaderWithSyncStatus>
         {isDefinedNetworkName(networkName) ? (
           <div>
-            {/* FIXME: ETCM-242 Remove ignore after upgrading TS */}
-            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}
-            <Trans k={['network', 'names', networkName]} />
+            {EDITION} — <Trans k={['network', 'names', networkName]} />
           </div>
         ) : (
           <div>
-            {networkName} <Trans k={['wallet', 'label', 'network']} />
+            {EDITION} — {networkName} <Trans k={['wallet', 'label', 'network']} />
           </div>
         )}
       </div>
