@@ -51,6 +51,8 @@ const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
       <DialogMessage>
         <Trans
           k={['network', 'changeNetworkModal', 'message']}
+          // FIXME: ETCM-342 remove after upgrading to TS4
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           values={{newNetwork: t(['network', 'names', newNetwork])}}
         />

@@ -39,7 +39,7 @@
   .ant-form-item-has-error & {
     .ant-input {
       @include themify($themes) {
-        border: 1px solid themed('error-color') !important; // FIXME: PM-2413
+        border: 1px solid themed('error-color') !important;
       }
     }
   }
