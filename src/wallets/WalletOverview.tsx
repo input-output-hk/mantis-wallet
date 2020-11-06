@@ -33,6 +33,8 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
         </HeaderWithSyncStatus>
         {isDefinedNetworkName(networkName) ? (
           <div>
+            {/* FIXME: ETCM-342 remove after upgrading to TS4 */}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}
             {EDITION} — <Trans k={['network', 'names', networkName]} />
           </div>

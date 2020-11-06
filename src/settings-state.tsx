@@ -28,7 +28,6 @@ import {
 
 export type Theme = 'dark' | 'light'
 
-// FIXME PM-2390 => localized date/time format settings
 export const DATE_FORMATS = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY'] as const
 export const TIME_FORMATS = ['24-hour', '12-hour'] as const
 

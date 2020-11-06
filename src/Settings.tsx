@@ -67,6 +67,8 @@ export const Settings = (): JSX.Element => {
 
   const networkOptions = [...DEFINED_NETWORK_NAMES, 'custom'].map((network) => ({
     key: network,
+    // FIXME: ETCM-342 remove after upgrading to TS4
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     label: t(['network', 'names', network]),
   }))

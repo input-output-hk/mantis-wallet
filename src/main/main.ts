@@ -64,7 +64,6 @@ function createWindow(t: TFunctionMain): void {
     webPreferences: {
       nodeIntegration: true,
     },
-    // titleBarStyle: 'hidden', FIXME: PM-2413
   })
 
   Menu.setApplicationMenu(buildMenu(t))
