@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {promisify} from 'util'
 import path from 'path'
 import {promises as fs, constants as fsConstants} from 'fs'
@@ -6,8 +7,14 @@ import rimraf from 'rimraf'
 import {app, dialog} from 'electron'
 import {DATADIR_VERSION, COMPATIBLE_VERSIONS} from '../shared/version'
 import {config} from '../config/main'
-import {mainLog} from './logger'
-import {TFunctionMain} from './i18n'
+import {createAndInitI18nForMain, createTFunctionMain} from './i18n'
+import {DEFAULT_LANGUAGE} from '../shared/i18n'
+
+export type DatadirChecked = 'DATADIR_CHECKED'
+const DATADIR_CHECKED: DatadirChecked = 'DATADIR_CHECKED' as const
+export const isChecked = (val: unknown): val is DatadirChecked => {
+  return val == DATADIR_CHECKED
+}
 
 const versionFilePath = path.resolve(config.dataDir, 'version.txt')
 
@@ -32,8 +39,8 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   try {
     const datadirVersion = (await fs.readFile(versionFilePath, 'utf8')).trim()
     const coercedVersion = coerce(datadirVersion)
-    mainLog.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
-    mainLog.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
+    console.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
+    console.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
     const isCompatible = satisfies(coercedVersion || datadirVersion, COMPATIBLE_VERSIONS)
 
     return {
@@ -42,7 +49,7 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
     }
   } catch (e) {
     if (e.code !== 'ENOENT') {
-      mainLog.error(e)
+      console.error(e)
       // Abort in case the problem is not that it doesn't exist
       throw e
     }
@@ -77,9 +84,12 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   }
 }
 
-export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void> {
+export async function checkDatadirCompatibility(): Promise<DatadirChecked | void> {
   const {isCompatible, datadirVersion} = await checkDatadirVersion()
-  if (isCompatible) return
+  if (isCompatible) return DATADIR_CHECKED
+
+  const i18n = createAndInitI18nForMain(DEFAULT_LANGUAGE)
+  const t = createTFunctionMain(i18n)
 
   const oldDirName = path.basename(config.dataDir)
   const newDirName = `${oldDirName}-${datadirVersion}`
@@ -130,4 +140,5 @@ export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void>
     message: t(['dialog', 'message', 'operationComplete']),
     buttons: [t(['dialog', 'button', 'ok'])],
   })
+  return DATADIR_CHECKED
 }
