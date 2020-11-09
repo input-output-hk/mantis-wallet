@@ -11,10 +11,10 @@ import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import _ from 'lodash/fp'
+import ElectronLog from 'electron-log'
 import {setMantisStatus} from './status'
 import {readableToObservable} from './streamUtils'
 import {ClientSettings, MantisConfig, NetworkName} from '../config/type'
-import {mainLog} from './logger'
 
 export const isWin = os.platform() === 'win32'
 
@@ -25,8 +25,10 @@ interface ChildProcess extends childProcess.ChildProcess {
 }
 
 export class SpawnedMantisProcess {
-  constructor(private childProcess: ChildProcess) {
-    mainLog.info(`Spawned Mantis, PID: ${childProcess.pid}`)
+  constructor(private childProcess: ChildProcess, private mainLog: ElectronLog.ElectronLog) {
+    // eslint-disable-next-line fp/no-mutation
+    this.mainLog = mainLog
+    this.mainLog.info(`Spawned Mantis, PID: ${childProcess.pid}`)
     setMantisStatus({pid: childProcess.pid, status: 'running'})
     childProcess.on('close', (code) => mainLog.info('mantis', 'stdio closed with', code))
     childProcess.on('exit', (code) => mainLog.info('mantis', 'exited with', code))
@@ -46,18 +48,18 @@ export class SpawnedMantisProcess {
   )
 
   kill = async (): Promise<void> => {
-    mainLog.info(`Killing Mantis, PID: ${this.childProcess.pid}`)
+    this.mainLog.info(`Killing Mantis, PID: ${this.childProcess.pid}`)
     if (isWin) {
       const javaPid = await promisify(psTree)(this.childProcess.pid).then(
         (children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID,
       )
       if (javaPid) {
-        mainLog.info(`...killing Java process for Mantis on Win with PID ${javaPid}`)
+        this.mainLog.info(`...killing Java process for Mantis on Win with PID ${javaPid}`)
         process.kill(parseInt(javaPid), 'SIGTERM')
       }
     }
     if (this.childProcess.exitCode !== null) {
-      mainLog.info(`...already exited with exit code ${this.childProcess.exitCode}`)
+      this.mainLog.info(`...already exited with exit code ${this.childProcess.exitCode}`)
     }
     return interval(100)
       .pipe(
@@ -95,6 +97,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
   dataDir: string,
   networkName: NetworkName,
   processConfig: MantisConfig,
+  mainLog: ElectronLog.ElectronLog,
 ): {spawn: (additionalConfig: ClientSettings) => SpawnedMantisProcess} => {
   const executablePath = processExecutablePath(processConfig)
   const mantisDataDir = resolve(dataDir, processConfig.dataDirName, networkName)
@@ -128,6 +131,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
           shell: isWin,
           env: processEnv(processConfig),
         }) as ChildProcess,
+        mainLog,
       )
     },
   }

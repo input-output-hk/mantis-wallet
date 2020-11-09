@@ -12,7 +12,7 @@ const mockedLogger = (): log.ElectronLog => {
 
 jest.mock('./common/clipboard', () => ({copyToClipboard: jest.fn()}))
 jest.mock('./common/logger', () => ({rendererLog: mockedLogger()}))
-jest.mock('./main/logger', () => ({mainLog: mockedLogger()}))
+jest.mock('./main/logger', () => ({createMainLog: () => mockedLogger()}))
 jest.mock('./config/renderer.ts')
 
 // Workaround suggested by the official manual
