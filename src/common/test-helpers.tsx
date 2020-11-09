@@ -37,8 +37,8 @@ export const DIALOG_VALIDATION_ERROR =
   'Some fields require additional action before you can continue.'
 
 export const expectNoValidationErrorOnSubmit = async (
-  submitButton: HTMLElement,
   queryByText: (text: string) => HTMLElement | null,
+  submitButton: HTMLElement,
 ): Promise<void> => {
   userEvent.click(submitButton)
   await waitFor(() => expect(queryByText(DIALOG_VALIDATION_ERROR)).not.toBeInTheDocument())
