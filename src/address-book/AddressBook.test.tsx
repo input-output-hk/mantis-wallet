@@ -50,8 +50,8 @@ it('adds a new contact', async () => {
 
   // label validation works
   const labelInput = getByLabelText('Label')
-  const INVALID_LABEL_MSG = 'Label length must not exceed 80 characters'
   const LIMIT = 80
+  const INVALID_LABEL_MSG = `Label length must not exceed ${LIMIT} characters`
 
   fireEvent.change(labelInput, {target: {value: 'X'.repeat(LIMIT + 1)}})
   await waitFor(() => expect(queryByText(INVALID_LABEL_MSG)).toBeInTheDocument())
@@ -61,7 +61,7 @@ it('adds a new contact', async () => {
   await waitFor(() => expect(queryByText(INVALID_LABEL_MSG)).not.toBeInTheDocument())
 
   // saving the contact
-  await expectNoValidationErrorOnSubmit(saveButton, queryByText)
+  await expectNoValidationErrorOnSubmit(queryByText, saveButton)
 
   // dialog closed
   await waitFor(() => expect(queryByText('Edit Contact')).not.toBeInTheDocument())
