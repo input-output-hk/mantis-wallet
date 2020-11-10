@@ -369,7 +369,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const getTimestamp = async (blockNumber: number | null): Promise<Date | null> => {
-    if (blockNumber === null) return null
+    if (!blockNumber) return null
     const {timestamp} = await web3.eth.getBlock(blockNumber, true)
     return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
   }
