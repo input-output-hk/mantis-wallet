@@ -127,7 +127,7 @@ export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'NO_WALLET' | 'ERR
 export type WalletData = InitialState | LoadingState | LoadedState | NoWalletState | ErrorState
 
 interface Overview {
-  availableBalance: Wei
+  availableBalance: Option<Wei>
   pendingBalance: Wei
   transactions: Transaction[]
 }
@@ -273,7 +273,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const pendingBalance = asWei(totalBalance.minus(availableBalance))
 
     return {
-      availableBalance,
+      availableBalance: availableBalanceOption,
       pendingBalance,
       transactions,
     }
@@ -421,7 +421,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const web3transactions: Web3Transaction[] = await web3.eth.getAccountTransactions(
       currentAddress,
-      currentBlock - 10000,
+      Math.max(0, currentBlock - 1000),
       currentBlock,
     )
 

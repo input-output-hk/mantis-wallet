@@ -2,6 +2,8 @@ import '@testing-library/jest-dom/extend-expect'
 import React, {useState} from 'react'
 import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import Web3 from 'web3'
+import {some} from 'fp-ts/lib/Option'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {Account, FeeEstimates, Transaction} from '../common/wallet-state'
 import {abbreviateAmountForEnUS, createWithProviders} from '../common/test-helpers'
@@ -13,7 +15,6 @@ const tx1: Transaction = {
   hash: '1',
   from: '0x00112233445566778899aabbccddeeff00112233',
   to: '0xffeeddccbbaa0011223344556677889988776655',
-  blockNumber: 1,
   timestamp: new Date(1584527520),
   value: asEther(123),
   gasPrice: asWei(1e9),
@@ -72,7 +73,8 @@ const estimateFees = (): Promise<FeeEstimates> =>
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
   accounts: accounts,
-  availableBalance: asEther(1234),
+  availableBalance: some(asEther(1234)),
+  sendTransaction: jest.fn(),
   estimateTransactionFee: estimateFees,
   generateAddress: jest.fn(),
 }
@@ -154,7 +156,7 @@ test('TransactionHistory shows `Outgoing` tx text', () => {
 
 // Modals
 test('Send modal shows up', async () => {
-  const availableAmount = asEther(123)
+  const availableAmount = some(asEther(123))
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
     availableBalance: availableAmount,
@@ -182,7 +184,7 @@ test('Send modal shows up', async () => {
 
 // TODO (ETCM-372) Add advanced transaction flow test cases and test confirmation screens
 test('Send transaction works', async () => {
-  const availableBalance = asEther(1230)
+  const availableBalance = some(asEther(1230))
   const usedAmount = asEther(951)
   const password = 'Foobar1234'
 

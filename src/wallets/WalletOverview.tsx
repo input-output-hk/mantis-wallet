@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import BigNumber from 'bignumber.js'
 import CountUp from 'react-countup'
+import {Option, fold} from 'fp-ts/lib/Option'
+import {pipe} from 'fp-ts/lib/function'
 import {EDITION} from '../shared/version'
 import {ETC_CHAIN} from '../common/chains'
 import {Trans} from '../common/Trans'
@@ -10,12 +12,19 @@ import './WalletOverview.scss'
 import {isDefinedNetworkName} from '../config/type'
 
 interface WalletOverviewProps {
-  availableBalance: BigNumber
+  availableBalance: Option<BigNumber>
 }
 
 export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Element => {
   const {networkName} = BackendState.useContainer()
-  const etcAvailableBalance = availableBalance.shiftedBy(-ETC_CHAIN.decimals).toNumber()
+
+  const etcAvailableBalance = pipe(
+    availableBalance,
+    fold(
+      () => 0,
+      (value) => value.shiftedBy(-ETC_CHAIN.decimals).toNumber(),
+    ),
+  )
 
   const [availableBalanceHistory, setAvailableBalanceHistory] = useState<[number, number]>([
     0,
