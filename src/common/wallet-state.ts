@@ -368,11 +368,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTotalBalance(some(balance))
   }
 
-  const getTimestamp = async (blockNumber: number | null): Promise<Date | null> => {
-    if (!blockNumber) return null
-    const {timestamp} = await web3.eth.getBlock(blockNumber, true)
-    return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
-  }
+  const getTimestamp = _.memoize(
+    async (blockNumber: number | null): Promise<Date | null> => {
+      if (!blockNumber) return null
+      const {timestamp} = await web3.eth.getBlock(blockNumber, true)
+      return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
+    },
+  )
 
   const loadTransactionHistory = async (): Promise<void> => {
     const currentAddress = getCurrentAddress()
