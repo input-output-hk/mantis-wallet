@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
+import {EDITION} from '../shared/version'
 import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
@@ -147,7 +148,10 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         </div>
         <div className="version">
           {version}
-          <span className="edition"> — {networkName}</span>
+          <span className="edition">
+            {' '}
+            — {EDITION} — {networkName}
+          </span>
         </div>
       </div>
       {canRemoveWallet(walletState) && !routerState.isLocked && (

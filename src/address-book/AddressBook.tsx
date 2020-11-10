@@ -14,6 +14,8 @@ import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-gua
 import {NoWallet} from '../wallets/NoWallet'
 import './AddressBook.scss'
 
+const LABEL_MAX_LENGTH = 80
+
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>
 
 interface EditContactModalProps {
@@ -64,21 +66,31 @@ const _EditContactModal = ({
         label={t(['addressBook', 'label', 'address'])}
         onChange={(e): void => setAddress(e.target.value)}
         formItem={{
-          name: 'address',
+          name: 'contact-address',
           rules: [
             {required: true, message: t(['addressBook', 'error', 'addressMustBeSet'])},
             addressValidator,
           ],
         }}
         disabled={toEdit}
+        id="contact-address"
       />
       <DialogInput
         label={t(['addressBook', 'label', 'label'])}
         onChange={(e): void => setLabel(e.target.value)}
         formItem={{
-          name: 'label',
-          rules: [{required: true, message: t(['addressBook', 'error', 'labelMustBeSet'])}],
+          name: 'contact-label',
+          rules: [
+            {required: true, message: t(['addressBook', 'error', 'labelMustBeSet'])},
+            {
+              max: LABEL_MAX_LENGTH,
+              message: t(['addressBook', 'error', 'labelMaxLength'], {
+                replace: {max: LABEL_MAX_LENGTH},
+              }),
+            },
+          ],
         }}
+        id="contact-label"
       />
     </Dialog>
   )

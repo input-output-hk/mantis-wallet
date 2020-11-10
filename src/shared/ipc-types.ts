@@ -1,5 +1,3 @@
-// FIXME: https://jira.iohk.io/browse/PM-2289 - Use discriminated union style msgs
-
 export type IPCToRendererChannelName =
   | 'update-config-success'
   | 'update-config-failure'

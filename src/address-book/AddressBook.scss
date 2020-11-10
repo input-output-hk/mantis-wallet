@@ -37,6 +37,11 @@
         @extend %monospace;
       }
 
+      .label {
+        @extend %ellipsize;
+        max-width: 40vw;
+      }
+
       .actions {
         text-align: right;
 
