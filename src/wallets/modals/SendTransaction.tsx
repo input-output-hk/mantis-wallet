@@ -1,9 +1,15 @@
 import React, {useState, FunctionComponent} from 'react'
 import {ModalProps} from 'antd/lib/modal'
 import {wrapWithModal} from '../../common/MantisModal'
-import {Wei} from '../../common/units'
+import {Wei, etherValue} from '../../common/units'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
-import {FeeEstimates, Transaction, getNextNonce} from '../../common/wallet-state'
+import {
+  FeeEstimates,
+  Transaction,
+  getNextNonce,
+  TRANSFER_GAS_LIMIT,
+  MIN_GAS_PRICE,
+} from '../../common/wallet-state'
 import './SendTransaction.scss'
 import {
   SendBasicTransaction,
@@ -58,8 +64,8 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
     },
     [TransactionType.advanced]: {
       amount: '',
-      gasLimit: '21000',
-      gasPrice: '',
+      gasLimit: String(TRANSFER_GAS_LIMIT),
+      gasPrice: etherValue(MIN_GAS_PRICE).toFixed(),
       recipient: '',
       data: '',
       nonce: getNextNonce(transactions).toString(),

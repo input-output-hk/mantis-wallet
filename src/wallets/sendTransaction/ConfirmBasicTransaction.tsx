@@ -19,6 +19,7 @@ interface ConfirmBasicTransactionProps {
 const _ConfirmBasicTransaction = ({
   transactionParams,
   onCancel,
+  onClose,
   walletState,
 }: PropsWithWalletState<ConfirmBasicTransactionProps & ModalProps, LoadedState>): JSX.Element => {
   const {doTransfer} = walletState
@@ -41,7 +42,7 @@ const _ConfirmBasicTransaction = ({
           children: t(['wallet', 'button', 'confirm']),
           onClick: (): void => {
             doTransfer(recipient, asEther(amount), asEther(fee), password)
-            onCancel()
+            onClose()
           },
         }}
         onSetLoading={modalLocker.setLocked}
