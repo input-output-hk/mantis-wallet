@@ -2,7 +2,6 @@ import '@testing-library/jest-dom/extend-expect'
 import React, {useState} from 'react'
 import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Web3 from 'web3'
 import {some} from 'fp-ts/lib/Option'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {Account, FeeEstimates, Transaction} from '../common/wallet-state'
@@ -15,6 +14,7 @@ const tx1: Transaction = {
   hash: '1',
   from: '0x00112233445566778899aabbccddeeff00112233',
   to: '0xffeeddccbbaa0011223344556677889988776655',
+  blockNumber: null,
   timestamp: new Date(1584527520),
   value: asEther(123),
   gasPrice: asWei(1e9),
@@ -74,7 +74,6 @@ const defaultProps: TransactionHistoryProps = {
   transactions: [],
   accounts: accounts,
   availableBalance: some(asEther(1234)),
-  sendTransaction: jest.fn(),
   estimateTransactionFee: estimateFees,
   generateAddress: jest.fn(),
 }

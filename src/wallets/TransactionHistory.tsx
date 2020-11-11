@@ -59,6 +59,14 @@ export const TransactionHistory = ({
     </Menu>
   )
 
+  const isSendDisabled = pipe(
+    availableBalance,
+    fold(
+      () => true,
+      (balance) => balance.isZero(),
+    ),
+  )
+
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
@@ -76,13 +84,7 @@ export const TransactionHistory = ({
             data-testid="send-button"
             type="primary"
             className="action"
-            disabled={pipe(
-              availableBalance,
-              fold(
-                () => true,
-                (balance) => balance.isZero(),
-              ),
-            )}
+            disabled={isSendDisabled}
             onClick={(): void => setShowSendModal(true)}
           >
             <Trans k={['wallet', 'button', 'sendTransaction']} />

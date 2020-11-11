@@ -401,7 +401,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   //   return _.fromPairs(tokenBalances)
   // }
 
-  const loadBalance = async (transactions: Transaction[], _currentBlock: number): Promise<void> => {
+  const loadBalance = async (transactions: Transaction[]): Promise<void> => {
     const address = getCurrentAddress()
     const balance = await fetchBalance(address)
     const pendingBalance = getPendingBalance(transactions)
@@ -461,7 +461,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     )
 
     setTransactions(some(transactions))
-    await loadBalance(transactions, currentBlock)
+    await loadBalance(transactions)
   }
 
   const load = (

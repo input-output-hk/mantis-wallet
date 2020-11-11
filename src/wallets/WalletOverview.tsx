@@ -53,20 +53,22 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
           </div>
         )}
       </div>
-      <div className="balances">
-        <div className="label">
-          <Trans k={['wallet', 'label', 'availableBalance']} />
+      {availableBalance && (
+        <div className="balances">
+          <div className="label">
+            <Trans k={['wallet', 'label', 'availableBalance']} />
+          </div>
+          <CountUp
+            start={availableBalanceHistory[0]}
+            end={availableBalanceHistory[1]}
+            duration={2}
+            decimals={3}
+            suffix={` ${ETC_CHAIN.symbol}`}
+            className="available-balance"
+          />
+          {/* Balance: <ShortNumber big={availableBalance} /> */}
         </div>
-        <CountUp
-          start={availableBalanceHistory[0]}
-          end={availableBalanceHistory[1]}
-          duration={2}
-          decimals={3}
-          suffix={` ${ETC_CHAIN.symbol}`}
-          className="available-balance"
-        />
-        {/* Balance: <ShortNumber big={availableBalance} /> */}
-      </div>
+      )}
     </div>
   )
 }

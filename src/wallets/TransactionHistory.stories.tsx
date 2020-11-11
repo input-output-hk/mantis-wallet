@@ -33,7 +33,6 @@ export const withNoTransactions = (): JSX.Element => (
     transactions={[]}
     accounts={dummyAccounts}
     availableBalance={some(asWei(0))}
-    sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -44,7 +43,6 @@ export const withDemoTransactions = (): JSX.Element => (
     transactions={dummyTransactions}
     accounts={dummyAccounts}
     availableBalance={some(ether('Available Balance', 1000))}
-    sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -102,7 +100,6 @@ export const interactive = (): JSX.Element => {
       ]}
       accounts={dummyAccounts}
       availableBalance={some(ether('Available Balance', 1000))}
-      sendTransaction={asyncAction('on-send-transaction')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
     />
