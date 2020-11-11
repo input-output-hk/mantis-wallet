@@ -62,8 +62,8 @@ export interface Transaction {
 }
 
 const DEPTH_FOR_PERSISTENCE = 12
-const TRANSFER_GAS_LIMIT = 21000
-const MIN_GAS_PRICE = asWei(1)
+export const TRANSFER_GAS_LIMIT = 21000
+export const MIN_GAS_PRICE = asWei(1)
 
 // States
 
