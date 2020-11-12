@@ -17,6 +17,7 @@ $dialog-width: 530px;
   }
 
   .dialog-children {
+    display: grid;
     margin-bottom: $dialog-spacing-before-buttons;
   }
 

@@ -14,6 +14,13 @@ import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
 import {asWei, asEther} from '../common/units'
 import {Transaction} from '../common/wallet-state'
+import {
+  SendBasicTransaction,
+  SendAdvancedTransaction,
+  ConfirmAdvancedTransaction,
+  ConfirmBasicTransaction,
+} from './sendTransaction'
+import {wrapWithModal} from '../common/MantisModal'
 
 export default {
   title: 'Transaction History',
@@ -107,6 +114,77 @@ export const sendTransaction = (): JSX.Element => (
     visible
   />
 )
+
+const _SendBasicTransaction = wrapWithModal(
+  () => (
+    <SendBasicTransaction
+      availableAmount={ether('Available Amount', 123.456)}
+      onCancel={action('send-transaction-cancelled')}
+      estimateTransactionFee={estimateFeesWithRandomDelay}
+      transactionParams={{
+        amount: '123',
+        fee: '0.00000000001',
+        recipient: '0xffeeddccbbaa0011223344556677889988776655',
+      }}
+      onSend={action('send-transaction')}
+      setTransactionParams={action('set-transaction-params')}
+      visible
+    />
+  ),
+  'BasicTransaction',
+)
+
+export const sendBasicTransaction = (): JSX.Element => <_SendBasicTransaction visible />
+
+const _SendAdvancedTransaction = wrapWithModal(() => (
+  <SendAdvancedTransaction
+    onCancel={action('send-transaction-cancelled')}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
+    transactionParams={{
+      amount: '123',
+      gasLimit: '21000',
+      gasPrice: '0.00000000001',
+      recipient: '0xffeeddccbbaa0011223344556677889988776655',
+      data: '0xaaaaaaaa',
+      nonce: '111',
+    }}
+    onSend={action('send-transaction')}
+    setTransactionParams={action('set-transaction-params')}
+  />
+))
+
+export const sendAdvancedTransaction = (): JSX.Element => <_SendAdvancedTransaction visible />
+
+const _ConfirmBasicTransaction = wrapWithModal(() => (
+  <ConfirmBasicTransaction
+    onCancel={action('confirm-transaction-cancelled')}
+    transactionParams={{
+      amount: '123',
+      fee: '0.00000000001',
+      recipient: '0xffeeddccbbaa0011223344556677889988776655',
+    }}
+    onClose={action('confirm-transaction-closed')}
+  />
+))
+
+export const confirmBasicTransaction = (): JSX.Element => <_ConfirmBasicTransaction visible />
+
+const _ConfirmAdvancedTransaction = wrapWithModal(() => (
+  <ConfirmAdvancedTransaction
+    onCancel={action('confirm-transaction-cancelled')}
+    transactionParams={{
+      amount: '123',
+      gasLimit: '21000',
+      gasPrice: '0.00000000001',
+      recipient: '0xffeeddccbbaa0011223344556677889988776655',
+      data: '0xaaaaaaaa',
+      nonce: '111',
+    }}
+    onClose={action('confirm-transaction-closed')}
+  />
+))
+
+export const confirmAdvancedTransaction = (): JSX.Element => <_ConfirmAdvancedTransaction visible />
 
 export const receiveTransaction = (): JSX.Element => (
   <ReceiveTransaction
