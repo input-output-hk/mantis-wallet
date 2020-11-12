@@ -4,7 +4,6 @@ import {ModalLocker} from '../../common/MantisModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput, DialogTextArea} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
-import {Wei} from '../../common/units'
 import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
 import {FeeEstimates} from '../../common/wallet-state'
 import {useTranslation} from '../../settings-state'
@@ -18,7 +17,6 @@ import {
 
 interface SendAdvancedTransactionProps {
   onSend: () => void
-  availableAmount: Wei
   transactionParams: AdvancedTransactionParams
   setTransactionParams: (advancedParams: Partial<AdvancedTransactionParams>) => void
   estimateTransactionFee: () => Promise<FeeEstimates>
