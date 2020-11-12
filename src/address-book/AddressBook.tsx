@@ -15,6 +15,8 @@ import {NoWallet} from '../wallets/NoWallet'
 import './AddressBook.scss'
 
 const LABEL_MAX_LENGTH = 80
+const LABEL_FIELD_NAME = 'contact-label'
+const ADDRESS_FIELD_NAME = 'contact-address'
 
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>
 
@@ -58,28 +60,28 @@ const _EditContactModal = ({
       }}
       onSetLoading={modalLocker.setLocked}
       initialValues={{
-        address: address,
-        label: label,
+        [ADDRESS_FIELD_NAME]: address,
+        [LABEL_FIELD_NAME]: label,
       }}
     >
       <DialogInput
         label={t(['addressBook', 'label', 'address'])}
         onChange={(e): void => setAddress(e.target.value)}
         formItem={{
-          name: 'contact-address',
+          name: ADDRESS_FIELD_NAME,
           rules: [
             {required: true, message: t(['addressBook', 'error', 'addressMustBeSet'])},
             addressValidator,
           ],
         }}
         disabled={toEdit}
-        id="contact-address"
+        id={ADDRESS_FIELD_NAME}
       />
       <DialogInput
         label={t(['addressBook', 'label', 'label'])}
         onChange={(e): void => setLabel(e.target.value)}
         formItem={{
-          name: 'contact-label',
+          name: LABEL_FIELD_NAME,
           rules: [
             {required: true, message: t(['addressBook', 'error', 'labelMustBeSet'])},
             {
@@ -90,7 +92,7 @@ const _EditContactModal = ({
             },
           ],
         }}
-        id="contact-label"
+        id={LABEL_FIELD_NAME}
       />
     </Dialog>
   )
@@ -213,10 +215,18 @@ const _AddressBook = ({
                   </Popover>
                 </span>
                 <span className="actions">
-                  <span className="delete" {...fillActionHandlers(onStartDelete(address))}>
+                  <span
+                    className="delete"
+                    title={t(['addressBook', 'book', 'deleteContact'])}
+                    {...fillActionHandlers(onStartDelete(address))}
+                  >
                     <DeleteOutlined />
                   </span>
-                  <span className="edit" {...fillActionHandlers(onStartEdit(address, label))}>
+                  <span
+                    className="edit"
+                    title={t(['addressBook', 'book', 'editContact'])}
+                    {...fillActionHandlers(onStartEdit(address, label))}
+                  >
                     <EditOutlined />
                   </span>
                 </span>
