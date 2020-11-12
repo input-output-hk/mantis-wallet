@@ -1,17 +1,43 @@
+/* eslint-disable react/display-name */
 import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent} from 'react'
+import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
 import {waitFor, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {SettingsState} from '../settings-state'
+import {defaultWalletData, WalletState, WalletStatus, StoreWalletData} from './wallet-state'
+import {BackendState} from './backend-state'
 import {abbreviateAmount} from './formatters'
 import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
+import {createInMemoryStore} from './store'
+
+const web3 = new Web3()
 
 export const WithSettingsProvider: FunctionComponent = ({
   children,
 }: {
   children?: React.ReactNode
 }) => <SettingsState.Provider>{children}</SettingsState.Provider>
+
+export const createWithProviders = (
+  walletData: StoreWalletData | null = null,
+): FunctionComponent => ({children}: {children?: React.ReactNode}) => {
+  const initialState = {
+    walletStatus: 'LOADED' as WalletStatus,
+    store: createInMemoryStore(walletData ?? defaultWalletData),
+    isMocked: true,
+    web3,
+  }
+
+  return (
+    <SettingsState.Provider>
+      <BackendState.Provider initialState={{web3}}>
+        <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
+      </BackendState.Provider>
+    </SettingsState.Provider>
+  )
+}
 
 export const expectCalledOnClick = async (
   getter: () => HTMLElement,
