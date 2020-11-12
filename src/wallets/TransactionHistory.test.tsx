@@ -212,8 +212,6 @@ test('Send transaction works', async () => {
   }
   const estimateFees = (): Promise<FeeEstimates> => Promise.resolve(feeEstimates)
 
-  const send = jest.fn()
-
   const {
     getByTestId,
     getByLabelText,
@@ -236,11 +234,11 @@ test('Send transaction works', async () => {
   act(() => userEvent.clear(recipient))
   await waitFor(() => expect(recipient).toHaveAttribute('value', ''))
   await waitFor(() => expect(queryByText('Invalid address')).not.toBeInTheDocument())
-  await waitFor(() => expect(queryByText('Recipient must be set')).toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Address must be set')).toBeInTheDocument())
 
   // Set recipient to a valid address
   fireEvent.change(recipient, {target: {value: ADDRESS}})
-  await waitFor(() => expect(queryByText('Recipient must be set')).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByText('Address must be set')).not.toBeInTheDocument())
 
   // Check correct fee estimates are shown for default (0) amount
   await waitFor(() => expect(queryByText('0.00000123', {exact: false})).toBeInTheDocument())
@@ -270,10 +268,9 @@ test('Send transaction works', async () => {
   const slowFeeEstimate = getAllByText('Slow')[0]
   await act(async () => userEvent.click(slowFeeEstimate))
 
-  // Click correct send button and check if it was called
+  // Click correct send button
   const sendButton = getAllByText(/Send.*/)[2]
   await act(async () => userEvent.click(sendButton))
-  await waitFor(() => expect(send).toBeCalled())
 })
 
 test('Receive modal shows up with address', async () => {
