@@ -106,6 +106,7 @@
       "recoveryPhraseIsIncorrect": "The phrase is incorrect",
       "addressMustBeSet": "Address must be set",
       "invalidAddress": "Invalid address",
+      "invalidHex": "Must be a hex string or empty",
       "missingCharacterTypeForPassword": "Password needs to have at least 1 uppercase, 1 lowercase and 1 number character",
       "passwordMustBeAtLeast8Characters": "Password needs to be at least 8 characters",
       "walletAlreadyExists": "Wallet already exists",

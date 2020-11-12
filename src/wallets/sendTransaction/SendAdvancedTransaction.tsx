@@ -9,6 +9,12 @@ import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
 import {FeeEstimates} from '../../common/wallet-state'
 import {useTranslation} from '../../settings-state'
 import {AdvancedTransactionParams} from './common'
+import {
+  createAdvancedTxAmountValidator,
+  createGasAmountValidator,
+  createFeeValidator,
+  createHexValidator,
+} from '../../common/util'
 
 interface SendAdvancedTransactionProps {
   onSend: () => void
@@ -30,6 +36,11 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
   const modalLocker = ModalLocker.useContainer()
 
   const {amount, recipient, gasLimit, gasPrice, data, nonce} = transactionParams
+
+  const txAmountValidator = createAdvancedTxAmountValidator(t)
+  const gasAmountValidator = createGasAmountValidator(t)
+  const feeValidator = createFeeValidator(t)
+  const hexValidator = createHexValidator(t)
 
   return (
     <>
@@ -57,6 +68,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           formItem={{
             name: 'tx-amount',
             initialValue: amount,
+            rules: [txAmountValidator],
           }}
         />
         <DialogColumns>
@@ -67,6 +79,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             formItem={{
               name: 'tx-gas-limit',
               initialValue: gasLimit,
+              rules: [gasAmountValidator],
             }}
           />
           <DialogInput
@@ -76,6 +89,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             formItem={{
               name: 'tx-gas-price',
               initialValue: gasPrice,
+              rules: [feeValidator],
             }}
           />
         </DialogColumns>
@@ -86,6 +100,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           formItem={{
             name: 'tx-data',
             initialValue: data,
+            rules: [hexValidator],
           }}
         />
         <DialogInput
@@ -95,6 +110,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
           formItem={{
             name: 'tx-nonce',
             initialValue: nonce,
+            rules: [gasAmountValidator],
           }}
         />
       </Dialog>
