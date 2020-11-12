@@ -31,7 +31,9 @@ const _DialogAddressSelect = ({
   const {dialogForm} = DialogState.useContainer()
   const {t} = useTranslation()
 
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined)
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
+    addressBook.hasOwnProperty(recipient) ? recipient : undefined,
+  )
 
   return (
     <div className="DialogAddressSelect">
@@ -39,14 +41,15 @@ const _DialogAddressSelect = ({
         <DialogInput
           label={t(['wallet', 'label', 'recipient'])}
           id={RECIPIENT_FIELD}
-          onChange={(e): void => {
-            setRecipient(e.target.value)
-            setSelectedAddress(undefined)
+          onChange={({target: {value}}): void => {
+            setRecipient(value)
+            setSelectedAddress(addressBook.hasOwnProperty(value) ? value : undefined)
           }}
           value={recipient}
           formItem={{
             name: RECIPIENT_FIELD,
             rules: addressValidator ? [addressValidator] : undefined,
+            initialValue: recipient,
           }}
         />
         <div className="SelectContact">
