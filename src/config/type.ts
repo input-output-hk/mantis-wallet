@@ -21,9 +21,9 @@ export type NetworkName = T.TypeOf<typeof NetworkName>
 
 export const DEFINED_NETWORK_NAMES = ['testnet-internal', 'etc', 'mordor'] as const
 
-export const isDefinedNetworkName = (
-  networkName: NetworkName,
-): networkName is typeof DEFINED_NETWORK_NAMES[number] =>
+export type DefinedNetworkName = typeof DEFINED_NETWORK_NAMES[number]
+
+export const isDefinedNetworkName = (networkName: NetworkName): networkName is DefinedNetworkName =>
   (DEFINED_NETWORK_NAMES as readonly string[]).includes(networkName)
 
 export interface Config {
