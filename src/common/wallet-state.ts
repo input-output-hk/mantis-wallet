@@ -192,6 +192,15 @@ const getStatus = (
   return currentBlock - txBlock >= DEPTH_FOR_PERSISTENCE ? 'persisted' : 'confirmed'
 }
 
+const getTimestamp = _.memoize(
+  // uses only the first parameter as cache key
+  async (blockNumber: number | null, web3: Web3): Promise<Date | null> => {
+    if (_.isNil(blockNumber)) return null
+    const {timestamp} = await web3.eth.getBlock(blockNumber, false)
+    return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
+  },
+)
+
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const {web3, isMocked} = _initialState
@@ -368,14 +377,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTotalBalance(some(balance))
   }
 
-  const getTimestamp = _.memoize(
-    async (blockNumber: number | null): Promise<Date | null> => {
-      if (!blockNumber) return null
-      const {timestamp} = await web3.eth.getBlock(blockNumber, true)
-      return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
-    },
-  )
-
   const loadTransactionHistory = async (): Promise<void> => {
     const currentAddress = getCurrentAddress()
     const currentBlock = await web3.eth.getBlockNumber()
@@ -405,7 +406,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
             to,
             hash,
             blockNumber,
-            timestamp: await getTimestamp(blockNumber),
+            timestamp: await getTimestamp(blockNumber, web3),
             value: asWei(value),
             gas,
             gasPrice: asWei(gasPrice),
