@@ -536,7 +536,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     if (tx.rawTransaction === undefined) {
       throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
     }
-
     web3.eth.sendSignedTransaction(tx.rawTransaction) // ETCM-134
   }
 

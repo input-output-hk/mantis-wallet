@@ -9,6 +9,7 @@ import {LoadedState} from '../../common/wallet-state'
 import {useTranslation} from '../../settings-state'
 import {withStatusGuard, PropsWithWalletState} from '../../common/wallet-status-guard'
 import {AdvancedTransactionParams} from './common'
+import {InlineError} from '../../common/InlineError'
 
 interface ConfirmAdvancedTransactionProps {
   onClose: () => void
@@ -31,6 +32,25 @@ const _ConfirmAdvancedTransaction = ({
 
   const {recipient, amount, gasLimit, gasPrice, data, nonce} = transactionParams
   const [password, setPassword] = useState('')
+  const [error, setError] = useState<undefined | string>(undefined)
+
+  const trySendTransaction = async (): Promise<void> => {
+    try {
+      await sendTransaction({
+        recipient,
+        gasLimit: parseInt(gasLimit),
+        gasPrice: asEther(gasPrice),
+        data,
+        nonce: parseInt(nonce),
+        password,
+        amount: asEther(amount),
+      })
+      setError(undefined)
+      onClose()
+    } catch (e) {
+      setError(String(e))
+    }
+  }
 
   return (
     <>
@@ -43,18 +63,7 @@ const _ConfirmAdvancedTransaction = ({
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'confirm']),
-          onClick: (): void => {
-            sendTransaction({
-              recipient,
-              gasLimit: parseInt(gasLimit),
-              gasPrice: asEther(gasPrice),
-              data,
-              nonce: parseInt(nonce),
-              password,
-              amount: asEther(amount),
-            })
-            onClose()
-          },
+          onClick: trySendTransaction,
         }}
         onSetLoading={modalLocker.setLocked}
         type="dark"
@@ -81,6 +90,7 @@ const _ConfirmAdvancedTransaction = ({
             rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
           }}
         />
+        {error !== undefined && <InlineError errorMessage={error} />}
       </Dialog>
     </>
   )
