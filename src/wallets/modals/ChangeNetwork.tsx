@@ -8,6 +8,7 @@ import {WalletState, canResetWallet} from '../../common/wallet-state'
 import {Trans} from '../../common/Trans'
 import {useTranslation} from '../../settings-state'
 import {DialogInput} from '../../common/dialog/DialogInput'
+import {EDITION} from '../../shared/version'
 
 interface ChangeNetworkModalProps extends ModalOnCancel {
   newNetwork: NetworkName
@@ -20,12 +21,13 @@ const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
   const modalLocker = ModalLocker.useContainer()
   const {setNetworkName} = BackendState.useContainer()
   const walletState = WalletState.useContainer()
-  const [customNetworkName, setCustomNetworkName] = useState('')
-  const [mainnetValidation, setMainnetValidation] = useState('')
   const {t} = useTranslation()
 
+  const [customNetworkName, setCustomNetworkName] = useState('')
+  const [mainnetValidation, setMainnetValidation] = useState('')
+
   if (!canResetWallet(walletState)) {
-    throw new Error()
+    throw Error()
   }
 
   return (
@@ -49,7 +51,7 @@ const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
       <DialogMessage>
         <Trans
           k={['network', 'changeNetworkModal', 'message']}
-          //FIXME: ETCM-242 Remove ignore after upgrading TS
+          // FIXME: ETCM-342 remove after upgrading to TS4
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           values={{newNetwork: t(['network', 'names', newNetwork])}}
@@ -71,6 +73,11 @@ const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
       )}
       {newNetwork === 'etc' && (
         <>
+          {EDITION === 'BETA' && (
+            <DialogMessage>
+              <Trans k={['network', 'changeNetworkModal', 'mainnetDisclaimer']} />
+            </DialogMessage>
+          )}
           <DialogMessage>
             <Trans k={['network', 'changeNetworkModal', 'typeMainnet']} />
           </DialogMessage>

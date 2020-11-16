@@ -6,9 +6,11 @@ import {Popover} from 'antd'
 import {useFormatters} from '../settings-state'
 import {ETC_CHAIN} from '../common/chains'
 import {ShortNumber} from '../common/ShortNumber'
-import {LINKS} from '../external-link-config'
+import {EXPLORER_LINKS_FOR_TX} from '../external-link-config'
+import {isDefinedNetworkName} from '../config/type'
 import {Link} from '../common/Link'
 import {WalletState, Transaction} from '../common/wallet-state'
+import {BackendState} from '../common/backend-state'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
 import {Address} from '../address-book/Address'
@@ -165,6 +167,7 @@ const Confirmations = ({transaction: {blockNumber}}: TransactionCellProps): JSX.
 
 export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element => {
   const {hash, from, to, gas, gasPrice, gasUsed} = transaction
+  const {networkName} = BackendState.useContainer()
   return (
     <>
       <div className="call-details two-col-table">
@@ -202,10 +205,14 @@ export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element 
       <div>
         <Trans k={['wallet', 'label', 'transactionId']} />:{' '}
         <span className="monospace">{hash}</span>
-        <br />
-        <Link href={`${LINKS.explorer}/transaction/${hash}`} styled>
-          <Trans k={['wallet', 'link', 'viewInExplorer']} />
-        </Link>
+        {isDefinedNetworkName(networkName) && (
+          <>
+            <br />
+            <Link href={EXPLORER_LINKS_FOR_TX[networkName](hash)} styled>
+              <Trans k={['wallet', 'link', 'viewInExplorer']} />
+            </Link>
+          </>
+        )}
       </div>
     </>
   )

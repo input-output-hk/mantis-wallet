@@ -211,7 +211,8 @@
     },
     "error": {
       "addressMustBeSet": "Address must be set",
-      "labelMustBeSet": "Label must be set"
+      "labelMustBeSet": "Label must be set",
+      "labelMaxLength": "Label length must not exceed {{max}} characters"
     },
     "message": {
       "contactDeleted": "Contact deleted"
@@ -276,7 +277,7 @@
   },
   "network": {
     "names": {
-      "etc": "Main net",
+      "etc": "Mainnet",
       "testnet-internal": "Internal testnet",
       "mordor": "Mordor",
       "custom": "Custom"
@@ -284,6 +285,7 @@
     "changeNetworkModal": {
       "title": "Change network",
       "message": "Are you sure you want to change network to {{newNetwork}}?",
+      "mainnetDisclaimer": "You are connecting using a BETA version of the wallet. It is strongly recommended not to transact using significant amounts of ETC.",
       "confirm": "Confirm change",
       "writeNetwork": "Write network name:",
       "typeMainnet": "Type \"MAINNET\" to connect to main ETC network:"

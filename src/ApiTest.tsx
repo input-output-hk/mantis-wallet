@@ -3,7 +3,6 @@ import {Switch} from 'antd'
 import {SettingsState} from './settings-state'
 import './ApiTest.scss'
 
-// FIXME: remove this component after every needed method is wired up with the real interface
 export const ApiTest = (): JSX.Element => {
   const settingState = SettingsState.useContainer()
 
