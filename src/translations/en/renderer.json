@@ -38,7 +38,8 @@
       "removeWallet": "Remove Wallet",
       "yourAddress": "Your Address",
       "receiveAccount": "Receive Account {{index}}",
-      "send": "Send Transaction"
+      "send": "Send Transaction",
+      "confirm": "Confirm Transaction"
     },
     "button": {
       "clearRecoveryPhraseInput": "Clear",
@@ -55,7 +56,9 @@
       "unlockPrivateKey": "Unlock",
       "logOutOfWallet": "Log Out",
       "removeWallet": "Remove Wallet",
-      "copyAddress": "Copy Address"
+      "copyAddress": "Copy Address",
+      "back": "Back",
+      "confirm": "Confirm"
     },
     "link": {
       "viewInExplorer": "View in Explorer"
@@ -89,7 +92,11 @@
       "revealPrivateKey": "Reveal Private Key",
       "lastUsedAddresses": "Last used addresses",
       "network": "network",
-      "availableBalance": "Available balance"
+      "availableBalance": "Available balance",
+      "gasLimit": "Gas limit",
+      "gasPrice": "Gas price",
+      "data": "Data",
+      "nonce": "Nonce"
     },
     "error": {
       "couldNotRemoveWallet": "Couldn't remove the wallet.",
@@ -99,6 +106,7 @@
       "recoveryPhraseIsIncorrect": "The phrase is incorrect",
       "addressMustBeSet": "Address must be set",
       "invalidAddress": "Invalid address",
+      "invalidHex": "Must be a hex string or empty",
       "missingCharacterTypeForPassword": "Password needs to have at least 1 uppercase, 1 lowercase and 1 number character",
       "passwordMustBeAtLeast8Characters": "Password needs to be at least 8 characters",
       "walletAlreadyExists": "Wallet already exists",

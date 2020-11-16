@@ -2,7 +2,7 @@
 
 .DialogShowAmount {
   $height: 50px;
-  margin-bottom: 12px;
+  margin-bottom: $dialog-component-spacing;
 
   .svg {
     @include themify($themes) {

@@ -1,6 +1,6 @@
 @import '../themify', '../vars', '../partial';
 
-$dialog-width: 508px;
+$dialog-width: 530px;
 
 .Dialog {
   width: $dialog-width;
@@ -17,6 +17,7 @@ $dialog-width: 508px;
   }
 
   .dialog-children {
+    display: grid;
     margin-bottom: $dialog-spacing-before-buttons;
   }
 

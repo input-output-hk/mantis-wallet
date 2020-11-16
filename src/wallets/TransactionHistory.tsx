@@ -2,9 +2,8 @@ import React, {useState} from 'react'
 import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
-import {SendTransaction} from './modals/SendTransaction'
+import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {FeeEstimates, LoadedState, Transaction, Account} from '../common/wallet-state'
 import {
   TransactionList,
   updateSorting,
@@ -14,13 +13,14 @@ import {
 } from './TransactionList'
 import {Trans} from '../common/Trans'
 import {Wei} from '../common/units'
+import {Transaction, FeeEstimates, Account} from '../common/wallet-state'
+
 import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
   transactions: Transaction[]
   accounts: Account[]
   availableBalance: Wei
-  sendTransaction: LoadedState['sendTransaction']
   estimateTransactionFee: () => Promise<FeeEstimates>
   generateAddress: () => Promise<void>
 }
@@ -28,7 +28,6 @@ export interface TransactionHistoryProps {
 export const TransactionHistory = ({
   transactions,
   availableBalance,
-  sendTransaction,
   estimateTransactionFee,
   generateAddress,
   accounts,
@@ -88,19 +87,11 @@ export const TransactionHistory = ({
           >
             <Trans k={['wallet', 'button', 'receiveTransaction']} />
           </Button>
-          <SendTransaction
+          <SendTransactionFlow
             visible={showSendModal}
             availableAmount={availableBalance}
+            transactions={transactions}
             onCancel={(): void => setShowSendModal(false)}
-            onSend={async (
-              recipient: string,
-              amount: Wei,
-              fee: Wei,
-              password: string,
-            ): Promise<void> => {
-              await sendTransaction(recipient, amount, fee, password)
-              setShowSendModal(false)
-            }}
             estimateTransactionFee={estimateTransactionFee}
           />
           <ReceiveTransaction

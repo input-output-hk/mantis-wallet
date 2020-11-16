@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import _ from 'lodash'
-import {isAddress} from 'web3-utils'
+import {isAddress, isHexStrict} from 'web3-utils'
 import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
@@ -65,6 +65,14 @@ export function validateAmount(
   )
 }
 
+function validateAmountOrEmpty(
+  v: string,
+  validators: Array<(b: BigNumber) => ValidationResult>,
+): ValidationResult {
+  if (v === '') return 'OK'
+  return validateAmount(v, validators)
+}
+
 export function validateTxAmount(amount: string, availableAmount: BigNumber): ValidationResult {
   return validateAmount(amount, [
     isGreater(),
@@ -73,8 +81,20 @@ export function validateTxAmount(amount: string, availableAmount: BigNumber): Va
   ])
 }
 
+export function validateAdvancedTxAmount(amount: string): ValidationResult {
+  return validateAmountOrEmpty(amount, [isGreaterOrEqual(), hasAtMostDecimalPlaces()])
+}
+
 export function validateFee(fee: string): ValidationResult {
   return validateAmount(fee, [isGreaterOrEqual(), hasAtMostDecimalPlaces()])
+}
+
+export function validateGasAmount(gasAmount: string): ValidationResult {
+  return validateAmount(gasAmount, [isGreater(), hasAtMostDecimalPlaces(0)])
+}
+
+export function validateNonce(nonce: string): ValidationResult {
+  return validateAmountOrEmpty(nonce, [isGreaterOrEqual(), hasAtMostDecimalPlaces(0)])
 }
 
 export function bigSum(numbers: BigNumber[]): BigNumber {
@@ -156,6 +176,18 @@ export const createTxAmountValidator = (
     (amount?: string): ValidationResult => validateTxAmount(amount || '', availableAmount),
   )
 
+export const createAdvancedTxAmountValidator = (t: TFunctionRenderer): AntValidator =>
+  toAntValidator(t, (amount?: string): ValidationResult => validateAdvancedTxAmount(amount || ''))
+
+export const createGasAmountValidator = (t: TFunctionRenderer): AntValidator =>
+  toAntValidator(t, (amount?: string): ValidationResult => validateGasAmount(amount || ''))
+
+export const createFeeValidator = (t: TFunctionRenderer): AntValidator =>
+  toAntValidator(t, (fee?: string): ValidationResult => validateFee(fee || ''))
+
+export const createNonceValidator = (t: TFunctionRenderer): AntValidator =>
+  toAntValidator(t, (nonce?: string): ValidationResult => validateNonce(nonce || ''))
+
 export const validateAddress = (value?: string): ValidationResult => {
   if (!value) {
     return {tKey: ['wallet', 'error', 'addressMustBeSet']}
@@ -167,6 +199,28 @@ export const validateAddress = (value?: string): ValidationResult => {
         tKey: ['wallet', 'error', 'invalidAddress'],
       }
 }
+
+export const validateAddressOrEmpty = (value?: string): ValidationResult => {
+  if (!value) return 'OK'
+
+  return isAddress(value)
+    ? 'OK'
+    : {
+        tKey: ['wallet', 'error', 'invalidAddress'],
+      }
+}
+
+export const validateHex = (value?: string): ValidationResult => {
+  if (!value) return 'OK'
+  return isHexStrict(value)
+    ? 'OK'
+    : {
+        tKey: ['wallet', 'error', 'invalidHex'],
+      }
+}
+
+export const createHexValidator = (t: TFunctionRenderer): AntValidator =>
+  toAntValidator(t, (input?: string): ValidationResult => validateHex(input || ''))
 
 /**
  * Return true if Option<T> contains value of type T

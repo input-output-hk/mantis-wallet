@@ -9,11 +9,18 @@ import {
   dummyTransactions,
   dummyAccounts,
 } from '../storybook-util/dummies'
-import {SendTransaction} from './modals/SendTransaction'
+import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
 import {asWei, asEther} from '../common/units'
 import {Transaction} from '../common/wallet-state'
+import {
+  SendBasicTransaction,
+  SendAdvancedTransaction,
+  ConfirmAdvancedTransaction,
+  ConfirmBasicTransaction,
+} from './sendTransaction'
+import {wrapWithModal} from '../common/MantisModal'
 
 export default {
   title: 'Transaction History',
@@ -25,7 +32,6 @@ export const withNoTransactions = (): JSX.Element => (
     transactions={[]}
     accounts={dummyAccounts}
     availableBalance={asWei(0)}
-    sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -36,7 +42,6 @@ export const withDemoTransactions = (): JSX.Element => (
     transactions={dummyTransactions}
     accounts={dummyAccounts}
     availableBalance={ether('Available Balance', 1000)}
-    sendTransaction={asyncAction('on-send-transaction')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -59,6 +64,7 @@ export const interactive = (): JSX.Element => {
           fee: asWei(0),
           direction: 'incoming',
           status: 'persisted',
+          contractAddress: null,
         }),
         object<Transaction>('Transaction 2', {
           hash: '2',
@@ -73,6 +79,7 @@ export const interactive = (): JSX.Element => {
           fee: asWei(0),
           direction: 'incoming',
           status: 'confirmed',
+          contractAddress: null,
         }),
         object<Transaction>('Transaction 3', {
           hash: '3',
@@ -87,11 +94,11 @@ export const interactive = (): JSX.Element => {
           fee: asWei(21000 * 1e9),
           direction: 'outgoing',
           status: 'pending',
+          contractAddress: null,
         }),
       ]}
       accounts={dummyAccounts}
       availableBalance={ether('Available Balance', 1000)}
-      sendTransaction={asyncAction('on-send-transaction')}
       estimateTransactionFee={estimateFeesWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
     />
@@ -99,14 +106,85 @@ export const interactive = (): JSX.Element => {
 }
 
 export const sendTransaction = (): JSX.Element => (
-  <SendTransaction
+  <SendTransactionFlow
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
-    onSend={asyncAction('on-send')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
+    transactions={dummyTransactions}
     visible
   />
 )
+
+const _SendBasicTransaction = wrapWithModal(
+  () => (
+    <SendBasicTransaction
+      availableAmount={ether('Available Amount', 123.456)}
+      onCancel={action('send-transaction-cancelled')}
+      estimateTransactionFee={estimateFeesWithRandomDelay}
+      transactionParams={{
+        amount: '123',
+        fee: '0.00000000001',
+        recipient: '0xffeeddccbbaa0011223344556677889988776655',
+      }}
+      onSend={action('send-transaction')}
+      setTransactionParams={action('set-transaction-params')}
+      visible
+    />
+  ),
+  'BasicTransaction',
+)
+
+export const sendBasicTransaction = (): JSX.Element => <_SendBasicTransaction visible />
+
+const _SendAdvancedTransaction = wrapWithModal(() => (
+  <SendAdvancedTransaction
+    onCancel={action('send-transaction-cancelled')}
+    estimateTransactionFee={estimateFeesWithRandomDelay}
+    transactionParams={{
+      amount: '123',
+      gasLimit: '21000',
+      gasPrice: '0.00000000001',
+      recipient: '0xffeeddccbbaa0011223344556677889988776655',
+      data: '0xaaaaaaaa',
+      nonce: '111',
+    }}
+    onSend={action('send-transaction')}
+    setTransactionParams={action('set-transaction-params')}
+  />
+))
+
+export const sendAdvancedTransaction = (): JSX.Element => <_SendAdvancedTransaction visible />
+
+const _ConfirmBasicTransaction = wrapWithModal(() => (
+  <ConfirmBasicTransaction
+    onCancel={action('confirm-transaction-cancelled')}
+    transactionParams={{
+      amount: '123',
+      fee: '0.00000000001',
+      recipient: '0xffeeddccbbaa0011223344556677889988776655',
+    }}
+    onClose={action('confirm-transaction-closed')}
+  />
+))
+
+export const confirmBasicTransaction = (): JSX.Element => <_ConfirmBasicTransaction visible />
+
+const _ConfirmAdvancedTransaction = wrapWithModal(() => (
+  <ConfirmAdvancedTransaction
+    onCancel={action('confirm-transaction-cancelled')}
+    transactionParams={{
+      amount: '123',
+      gasLimit: '21000',
+      gasPrice: '0.00000000001',
+      recipient: '0xffeeddccbbaa0011223344556677889988776655',
+      data: '0xaaaaaaaa',
+      nonce: '111',
+    }}
+    onClose={action('confirm-transaction-closed')}
+  />
+))
+
+export const confirmAdvancedTransaction = (): JSX.Element => <_ConfirmAdvancedTransaction visible />
 
 export const receiveTransaction = (): JSX.Element => (
   <ReceiveTransaction
