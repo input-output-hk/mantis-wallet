@@ -5,7 +5,7 @@ import {promisify} from 'util'
 import * as os from 'os'
 import {URL} from 'url'
 import {generate as generatePassword} from 'generate-password'
-import ElectronLog from 'electron-log'
+import {ElectronLog} from 'electron-log'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as forge from 'node-forge'
 import {array, option} from 'fp-ts'
@@ -184,7 +184,7 @@ export function registerCertificateValidationHandler(
   app: Electron.App,
   tlsData: TLSData,
   expectedUrl: URL,
-  mainLog: ElectronLog.ElectronLog,
+  mainLog: ElectronLog,
 ): void {
   app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isCertValid = verifyCertificate(tlsData, expectedUrl)(new URL(url), certificate)
