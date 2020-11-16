@@ -11,7 +11,7 @@ import * as option from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as array from 'fp-ts/lib/Array'
 import _ from 'lodash/fp'
-import ElectronLog from 'electron-log'
+import {ElectronLog} from 'electron-log'
 import {setMantisStatus} from './status'
 import {readableToObservable} from './streamUtils'
 import {ClientSettings, MantisConfig, NetworkName} from '../config/type'
@@ -25,9 +25,7 @@ interface ChildProcess extends childProcess.ChildProcess {
 }
 
 export class SpawnedMantisProcess {
-  constructor(private childProcess: ChildProcess, private mainLog: ElectronLog.ElectronLog) {
-    // eslint-disable-next-line fp/no-mutation
-    this.mainLog = mainLog
+  constructor(private childProcess: ChildProcess, private mainLog: ElectronLog) {
     this.mainLog.info(`Spawned Mantis, PID: ${childProcess.pid}`)
     setMantisStatus({pid: childProcess.pid, status: 'running'})
     childProcess.on('close', (code) => mainLog.info('mantis', 'stdio closed with', code))
@@ -97,7 +95,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
   dataDir: string,
   networkName: NetworkName,
   processConfig: MantisConfig,
-  mainLog: ElectronLog.ElectronLog,
+  mainLog: ElectronLog,
 ): {spawn: (additionalConfig: ClientSettings) => SpawnedMantisProcess} => {
   const executablePath = processExecutablePath(processConfig)
   const mantisDataDir = resolve(dataDir, processConfig.dataDirName, networkName)

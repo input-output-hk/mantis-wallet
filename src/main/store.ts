@@ -1,8 +1,8 @@
 import ElectronStore from 'electron-store'
-import {config} from '../config/main'
+import {config} from '../config/main' // FIXME
 import {NetworkName} from '../config/type'
 import {Language, DEFAULT_LANGUAGE} from '../shared/i18n'
-import {DatadirChecked} from './compatibility-check'
+import {CheckedDatadir} from './data-dir'
 
 type StoreData = {
   'settings.language': Language
@@ -16,9 +16,9 @@ const DEFAULT_DATA: StoreData = {
 
 export type MainStore = ElectronStore<StoreData>
 
-export const createStore = (_datadirChecked: DatadirChecked): MainStore =>
+export const createStore = (checkedDatadir: CheckedDatadir): MainStore =>
   new ElectronStore<StoreData>({
-    cwd: config.dataDir,
+    cwd: checkedDatadir.datadirPath,
     defaults: DEFAULT_DATA,
     watch: true,
   })

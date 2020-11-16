@@ -1,17 +1,13 @@
 import path from 'path'
 import _ from 'lodash/fp'
-import ElectronLog from 'electron-log'
-import {config} from '../config/main'
+import {ElectronLog} from 'electron-log'
 import {createLogger} from '../shared/utils'
+import {CheckedDatadir} from './data-dir'
 import {MainStore} from './store'
-import {DatadirChecked} from './compatibility-check'
 
-export const createMainLog = (
-  _datadirChecked: DatadirChecked,
-  store: MainStore,
-): ElectronLog.ElectronLog => {
+export const createMainLog = (checkedDatadir: CheckedDatadir, store: MainStore): ElectronLog => {
   const mainLog = createLogger('main', () =>
-    path.join(config.dataDir, 'logs', store.get('networkName'), 'main.log'),
+    path.join(checkedDatadir.datadirPath, 'logs', store.get('networkName'), 'main.log'),
   )
 
   // eslint-disable-next-line fp/no-mutating-methods

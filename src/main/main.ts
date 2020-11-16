@@ -9,7 +9,7 @@ import {option} from 'fp-ts'
 import * as rxop from 'rxjs/operators'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
-import ElectronLog from 'electron-log'
+import {ElectronLog} from 'electron-log'
 import {i18n} from 'i18next'
 import {MantisProcess, SpawnedMantisProcess} from './MantisProcess'
 import {
@@ -23,7 +23,7 @@ import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {inspectLineForDAGStatus, status} from './status'
-import {checkDatadirCompatibility, DatadirChecked, isChecked} from './compatibility-check'
+import {checkDatadirCompatibility, CheckedDatadir} from './data-dir'
 import {saveLogsArchive} from './log-exporter'
 import {createMainLog} from './logger'
 import {
@@ -127,20 +127,16 @@ app.on('second-instance', () => {
 })
 
 interface DatadirFunctions {
-  mainLog: ElectronLog.ElectronLog
+  mainLog: ElectronLog
   store: MainStore
   i18n: i18n
 }
 
 const datadirInit = (): Promise<DatadirFunctions> =>
-  checkDatadirCompatibility().then(
-    (datadirStatus: DatadirChecked | void): DatadirFunctions => {
-      if (!isChecked(datadirStatus)) {
-        throw Error('Datadir not initialized')
-      }
-
-      const store = createStore(datadirStatus)
-      const mainLog = createMainLog(datadirStatus, store)
+  checkDatadirCompatibility(config.dataDir).then(
+    (checkedDatadir: CheckedDatadir): DatadirFunctions => {
+      const store = createStore(checkedDatadir)
+      const mainLog = createMainLog(checkedDatadir, store)
       mainLog.info({
         versions: process.versions,
         config,
