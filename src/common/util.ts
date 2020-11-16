@@ -200,6 +200,16 @@ export const validateAddress = (value?: string): ValidationResult => {
       }
 }
 
+export const validateAddressOrEmpty = (value?: string): ValidationResult => {
+  if (!value) return 'OK'
+
+  return isAddress(value)
+    ? 'OK'
+    : {
+        tKey: ['wallet', 'error', 'invalidAddress'],
+      }
+}
+
 export const validateHex = (value?: string): ValidationResult => {
   if (!value) return 'OK'
   return isHexStrict(value)

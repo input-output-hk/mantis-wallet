@@ -13,8 +13,8 @@ import {
   createGasAmountValidator,
   createFeeValidator,
   createHexValidator,
-  validateAddress,
   toAntValidator,
+  validateAddressOrEmpty,
 } from '../../common/util'
 
 interface SendAdvancedTransactionProps {
@@ -37,7 +37,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
 
   const {amount, recipient, gasLimit, gasPrice, data, nonce} = transactionParams
 
-  const addressValidator = toAntValidator(t, validateAddress)
+  const addressValidator = toAntValidator(t, validateAddressOrEmpty)
   const txAmountValidator = createAdvancedTxAmountValidator(t)
   const gasAmountValidator = createGasAmountValidator(t)
   const feeValidator = createFeeValidator(t)
