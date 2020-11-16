@@ -200,16 +200,18 @@ test('Send modal shows up', async () => {
   expect(getAllByText(/Send.*/)).toHaveLength(3)
 })
 
-// TODO Add advanced transaction flow test cases and test confirmation screens
+// TODO (ETCM-372) Add advanced transaction flow test cases and test confirmation screens
 test('Send transaction works', async () => {
   const availableBalance = asEther(1230)
   const usedAmount = asEther(951)
+  const password = 'Foobar1234'
 
   const feeEstimates = {
     low: asWei(1230000000000),
     medium: asWei(4560000000000),
     high: asWei(7890000000000),
   }
+
   const estimateFees = (): Promise<FeeEstimates> => Promise.resolve(feeEstimates)
 
   const {
@@ -271,6 +273,15 @@ test('Send transaction works', async () => {
   // Click correct send button
   const sendButton = getAllByText(/Send.*/)[2]
   await act(async () => userEvent.click(sendButton))
+
+  // Enter password on the confirmation screen
+  await waitFor(() => expect(queryByText('Password')).toBeInTheDocument())
+  const passwordInput = getByLabelText('Password')
+  fireEvent.change(passwordInput, {target: {value: password}})
+
+  // Confirm transaction
+  const confirmButton = getAllByText(/Confirm.*/)[0]
+  await act(async () => userEvent.click(confirmButton))
 })
 
 test('Receive modal shows up with address', async () => {
