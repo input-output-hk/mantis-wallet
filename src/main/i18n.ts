@@ -1,4 +1,5 @@
 import i18next, {ResourceLanguage} from 'i18next'
+import {ElectronLog} from 'electron-log'
 import {
   DEFAULT_LANGUAGE,
   Language,
@@ -7,7 +8,6 @@ import {
   Namespace,
   DEFAULT_NAMESPACE,
 } from '../shared/i18n'
-import {mainLog} from './logger'
 import mainTranslationsEn from '../translations/en/main.json'
 import {Path} from '../shared/typeUtils'
 
@@ -50,7 +50,7 @@ export const createTFunctionMain = (i18n: typeof i18next): TFunctionMain => (key
 
 export class TErrorMain extends GenericTError<MainTranslations> {}
 
-export const translateErrorMain = (t: TFunctionMain, e: Error): string => {
+export const translateErrorMain = (mainLog: ElectronLog, t: TFunctionMain, e: Error): string => {
   if (e instanceof TErrorMain) {
     return t(e.tKey, e.options)
   }

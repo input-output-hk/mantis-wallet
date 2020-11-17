@@ -1,20 +1,27 @@
 import ElectronStore from 'electron-store'
-import {config} from '../config/main'
 import {NetworkName} from '../config/type'
 import {Language, DEFAULT_LANGUAGE} from '../shared/i18n'
+import {CheckedDatadir} from './data-dir'
 
 type StoreData = {
   'settings.language': Language
   'networkName': NetworkName
 }
 
-const DEFAULT_DATA: StoreData = {
-  'settings.language': DEFAULT_LANGUAGE,
-  'networkName': config.networkName,
-}
+export type MainStore = ElectronStore<StoreData>
 
-export const store = new ElectronStore<StoreData>({
-  cwd: config.dataDir,
-  defaults: DEFAULT_DATA,
-  watch: true,
-})
+export const createStore = (
+  checkedDatadir: CheckedDatadir,
+  networkName: NetworkName,
+): MainStore => {
+  const DEFAULT_DATA: StoreData = {
+    'settings.language': DEFAULT_LANGUAGE,
+    'networkName': networkName,
+  }
+
+  return new ElectronStore<StoreData>({
+    cwd: checkedDatadir.datadirPath,
+    defaults: DEFAULT_DATA,
+    watch: true,
+  })
+}

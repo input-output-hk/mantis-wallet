@@ -1,26 +1,37 @@
 import fs from 'fs'
 import path from 'path'
 import archiver from 'archiver'
-import {status} from './status'
 import {Config} from '../config/type'
-import {store} from './store'
+import {status} from './status'
+import {MainStore} from './store'
+import {CheckedDatadir} from './data-dir'
 
-const getBackendLogPath = (config: Config): string =>
-  path.join(config.dataDir, config.mantis.dataDirName, store.get('networkName'), 'logs')
-
-export const saveLogsArchive = async (config: Config, filePath: string): Promise<void> => {
-  const mantisWalletStatus = JSON.stringify({config, status}, null, 2)
-
+export const createLogExporter = (checkedDatadir: CheckedDatadir) => async (
+  config: Config,
+  store: MainStore,
+  outputFilePath: string,
+): Promise<void> => {
   // Create and save archive
+
   const archive = archiver('zip', {
     zlib: {level: 9},
   })
 
-  archive.directory(getBackendLogPath(config), false)
-  archive.directory(path.join(config.dataDir, 'logs'), false)
-  archive.append(mantisWalletStatus, {name: 'mantis-wallet-status.log'})
+  const backendLogPath = path.join(
+    checkedDatadir.datadirPath,
+    config.mantis.dataDirName,
+    store.get('networkName'),
+    'logs',
+  )
+  const walletLogPath = path.join(checkedDatadir.datadirPath, 'logs')
+  const mantisWalletStatus = JSON.stringify({config, status}, null, 2)
 
-  const output = fs.createWriteStream(filePath)
+  archive
+    .directory(backendLogPath, false)
+    .directory(walletLogPath, false)
+    .append(mantisWalletStatus, {name: 'mantis-wallet-status.log'})
+
+  const output = fs.createWriteStream(outputFilePath)
   archive.pipe(output)
   await archive.finalize()
 }

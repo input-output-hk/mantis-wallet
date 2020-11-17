@@ -9,6 +9,8 @@ import {option} from 'fp-ts'
 import * as rxop from 'rxjs/operators'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {app, BrowserWindow, dialog, Menu, screen} from 'electron'
+import {ElectronLog} from 'electron-log'
+import {i18n} from 'i18next'
 import {MantisProcess, SpawnedMantisProcess} from './MantisProcess'
 import {
   configToParams,
@@ -21,16 +23,16 @@ import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {inspectLineForDAGStatus, status} from './status'
-import {checkDatadirCompatibility} from './compatibility-check'
-import {saveLogsArchive} from './log-exporter'
-import {mainLog} from './logger'
+import {checkDatadirCompatibility, CheckedDatadir} from './data-dir'
+import {createLogExporter} from './log-exporter'
+import {createMainLog} from './logger'
 import {
   createAndInitI18nForMain,
   createTFunctionMain,
   TFunctionMain,
   translateErrorMain,
 } from './i18n'
-import {store} from './store'
+import {createStore, MainStore} from './store'
 import {checkPortUsage} from './port-usage-check'
 import {ClientSettings} from '../config/type'
 import {Language} from '../shared/i18n'
@@ -47,9 +49,6 @@ let shuttingDown = false
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 }
-
-const i18n = createAndInitI18nForMain(store.get('settings.language'))
-const t = createTFunctionMain(i18n)
 
 function createWindow(t: TFunctionMain): void {
   // Create the browser window.
@@ -127,173 +126,210 @@ app.on('second-instance', () => {
   }
 })
 
-ipcListenToRenderer('save-debug-logs', async (event) => {
-  const options = {
-    title: t(['dialog', 'title', 'saveDebugLogs']),
-    buttonLabel: t(['dialog', 'button', 'saveDebugLogs']),
-    defaultPath: `mantis-wallet-debug-logs-${Date.now()}.zip`,
-    filters: [{name: t(['dialog', 'fileFilter', 'zipArchives']), extensions: ['zip']}],
-  }
-
-  const {canceled, filePath} = await dialog.showSaveDialog(options)
-  if (canceled || !filePath) {
-    return event.reply('save-debug-logs-cancel')
-  }
-
-  try {
-    await saveLogsArchive(config, filePath)
-    event.reply('save-debug-logs-success', filePath)
-  } catch (e) {
-    mainLog.error(e)
-    event.reply('save-debug-logs-failure', e.message)
-  }
-})
-
-// Setup language handling
-ipcListenToRenderer('update-language', (_event, language: Language) => {
-  if (mainWindowHandle) {
-    i18n.changeLanguage(language).then(() => {
-      const t = createTFunctionMain(i18n)
-      Menu.setApplicationMenu(buildMenu(t))
-      mainWindowHandle?.setTitle(getTitle(t, store.get('networkName')))
-    })
-  }
-})
-
-// Handle TLS from external config
-if (!config.runNode) {
-  pipe(
-    config.tls,
-    option.map(setupExternalTLS),
-    option.fold(
-      () => void 0,
-      (tlsDataPromise) =>
-        tlsDataPromise
-          .then((tlsData) => registerCertificateValidationHandler(app, tlsData, config.rpcAddress))
-          .catch((error) => {
-            mainLog.error(error)
-            showErrorBox(t, t(['dialog', 'title', 'startupError']), error.message)
-            app.exit(1)
-          }),
-    ),
-  )
+interface DatadirDependants {
+  mainLog: ElectronLog
+  store: MainStore
+  i18n: i18n
+  exportLogs: ReturnType<typeof createLogExporter>
 }
 
-//
-// Handle client child processes with TLS
-//
-if (config.runNode) {
-  const initializationPromise = checkDatadirCompatibility(t)
-    .then(() =>
+const datadirInit = (): Promise<DatadirDependants> =>
+  checkDatadirCompatibility(config.dataDir).then(
+    (checkedDatadir: CheckedDatadir): DatadirDependants => {
+      const store = createStore(checkedDatadir, config.networkName)
+      const mainLog = createMainLog(checkedDatadir, store)
       mainLog.info({
         versions: process.versions,
         config,
-      }),
-    )
-    .then(() => checkPortUsage(config))
-    .then(() => openMantisWallet(t))
-    .then(() => setupOwnTLS(config.mantis))
-    .then((tlsData) => ({
-      tlsData,
-      tlsParams: configToParams(tlsData),
-    }))
-    .catch(
-      async (e): Promise<never> => {
-        mainLog.error(e)
-        showErrorBox(t, t(['dialog', 'title', 'startupError']), translateErrorMain(t, e))
-        app.exit(1)
-        // Little trick to make typechecker see that this promise cannot contain undefined
-        // Because always an error is thrown
-        throw Error('exiting')
-      },
-    )
+      })
+      const i18n = createAndInitI18nForMain(store.get('settings.language'))
+      const exportLogs = createLogExporter(checkedDatadir)
+      return {mainLog, store, i18n, exportLogs}
+    },
+  )
 
-  let runningMantis: SpawnedMantisProcess | null = null
+datadirInit()
+  .then(({mainLog, store, i18n, exportLogs}) => {
+    const t = createTFunctionMain(i18n)
 
-  function logMantis(spawnedMantis: SpawnedMantisProcess): void {
-    spawnedMantis.log$
-      .pipe(
-        rxop.tap(inspectLineForDAGStatus),
-        rxop.map((line) => `mantis | ${line}`),
+    if (!config.runNode) {
+      // Handle TLS from external config
+      pipe(
+        config.tls,
+        option.map(setupExternalTLS),
+        option.fold(
+          () => void 0,
+          (tlsDataPromise) =>
+            tlsDataPromise
+              .then((tlsData) =>
+                registerCertificateValidationHandler(app, tlsData, config.rpcAddress, mainLog),
+              )
+              .catch((error) => {
+                mainLog.error(error)
+                showErrorBox(t, t(['dialog', 'title', 'startupError']), error.message)
+                app.exit(1)
+              }),
+        ),
+        () => openMantisWallet(t),
       )
-      .subscribe(console.info) // eslint-disable-line no-console
-  }
-
-  async function spawnMantis(additionalSettings: ClientSettings): Promise<void> {
-    const networkName = store.get('networkName')
-    const networkConfigFile = path.resolve(
-      config.mantis.packageDirectory,
-      'conf',
-      `${networkName}.conf`,
-    )
-    try {
-      await fs.access(networkConfigFile)
-    } catch {
-      mainLog.warn('Network config file does not exist! Setting default network name!')
-      store.set('networkName', config.networkName)
     }
-    const newNetworkName = store.get('networkName')
-    mainWindowHandle?.setTitle(getTitle(t, newNetworkName))
-    const mantisProcess = MantisProcess(spawn)(config.dataDir, newNetworkName, config.mantis)
-    const spawnedMantis = mantisProcess.spawn(additionalSettings)
-    logMantis(spawnedMantis)
 
-    spawnedMantis.close$
-      .pipe(
-        rxop.take(1),
-        rxop.tap(() => mainLog.info('Mantis got closed. Restarting')),
-      )
-      .subscribe(restartMantis)
+    //
+    // Handle client child processes with TLS
+    //
+    if (config.runNode) {
+      const initializationPromise = checkPortUsage(config)
+        .then(() => openMantisWallet(t))
+        .then(() => setupOwnTLS(config.mantis))
+        .then((tlsData) => ({
+          tlsData,
+          tlsParams: configToParams(tlsData),
+        }))
+        .catch(
+          async (e): Promise<never> => {
+            mainLog.error(e)
+            showErrorBox(
+              t,
+              t(['dialog', 'title', 'startupError']),
+              translateErrorMain(mainLog, t, e),
+            )
+            app.exit(1)
+            // Little trick to make typechecker see that this promise cannot contain undefined
+            // Because always an error is thrown
+            throw Error('exiting')
+          },
+        )
 
-    runningMantis = spawnedMantis
-  }
+      let runningMantis: SpawnedMantisProcess | null = null
 
-  const killMantis = async (): Promise<void> =>
-    runningMantis
-      ? runningMantis.kill().then(() => {
-          runningMantis = null
-        })
-      : Promise.resolve()
+      function logMantis(spawnedMantis: SpawnedMantisProcess): void {
+        spawnedMantis.log$
+          .pipe(
+            rxop.tap(inspectLineForDAGStatus),
+            rxop.map((line) => `mantis | ${line}`),
+          )
+          .subscribe(console.info) // eslint-disable-line no-console
+      }
 
-  const startMantis = (): Promise<void> =>
-    initializationPromise
-      .then(prop('tlsParams'))
-      .then(spawnMantis)
-      .catch((error) => {
-        mainLog.error(error)
-        return Promise.reject(error)
+      async function spawnMantis(additionalSettings: ClientSettings): Promise<void> {
+        const networkName = store.get('networkName')
+        const networkConfigFile = path.resolve(
+          config.mantis.packageDirectory,
+          'conf',
+          `${networkName}.conf`,
+        )
+        try {
+          await fs.access(networkConfigFile)
+        } catch {
+          mainLog.warn('Network config file does not exist! Setting default network name!')
+          store.set('networkName', config.networkName)
+        }
+        const newNetworkName = store.get('networkName')
+        mainWindowHandle?.setTitle(getTitle(t, newNetworkName))
+        const mantisProcess = MantisProcess(spawn)(
+          config.dataDir,
+          newNetworkName,
+          config.mantis,
+          mainLog,
+        )
+        const spawnedMantis = mantisProcess.spawn(additionalSettings)
+        logMantis(spawnedMantis)
+
+        spawnedMantis.close$
+          .pipe(
+            rxop.take(1),
+            rxop.tap(() => mainLog.info('Mantis got closed')),
+          )
+          .subscribe(restartMantis)
+
+        runningMantis = spawnedMantis
+      }
+
+      const killMantis = async (): Promise<void> =>
+        runningMantis
+          ? runningMantis.kill().then(() => {
+              runningMantis = null
+            })
+          : Promise.resolve()
+
+      const startMantis = (): Promise<void> =>
+        initializationPromise
+          .then(prop('tlsParams'))
+          .then(spawnMantis)
+          .catch((error) => {
+            mainLog.error(error)
+            return Promise.reject(error)
+          })
+
+      async function restartMantis(): Promise<void> {
+        // Mantis proccess is automatically restarted (using this function) after being closed
+        // To restart Mantis manually, it is sufficient to kill it. Otherwise, it will start twice.
+        if (!shuttingDown) {
+          mainLog.info('Restarting Mantis')
+          return killMantis().then(startMantis)
+        }
+      }
+
+      function killAndQuit(event: Event): void {
+        shuttingDown = true
+        if (runningMantis) {
+          event.preventDefault()
+          killMantis().then(() => app.quit())
+        }
+      }
+
+      initializationPromise.then(startMantis)
+      initializationPromise.then(({tlsData}) => {
+        registerCertificateValidationHandler(app, tlsData, config.rpcAddress, mainLog)
       })
 
-  async function restartMantis(): Promise<void> {
-    // Mantis proccess is automatically restarted (using this function) after being closed
-    // To restart Mantis manually, it is sufficient to kill it. Otherwise, it will start twice.
-    if (!shuttingDown) {
-      mainLog.info('restarting Mantis')
-      return killMantis().then(startMantis)
-    }
-  }
+      app.on('before-quit', killAndQuit)
+      app.on('will-quit', killAndQuit)
+      app.on('window-all-closed', killAndQuit)
 
-  function killAndQuit(event: Event): void {
-    shuttingDown = true
-    if (runningMantis) {
-      event.preventDefault()
-      killMantis().then(() => app.quit())
+      ipcListenToRenderer('update-network-name', (_event, networkName: string) => {
+        killMantis()
+        mainWindowHandle?.setTitle(getTitle(t, networkName))
+      })
     }
-  }
 
-  initializationPromise.then(startMantis)
-  initializationPromise.then(({tlsData}) => {
-    registerCertificateValidationHandler(app, tlsData, config.rpcAddress)
+    ipcListenToRenderer('save-debug-logs', async (event) => {
+      const t = createTFunctionMain(i18n)
+      const options = {
+        title: t(['dialog', 'title', 'saveDebugLogs']),
+        buttonLabel: t(['dialog', 'button', 'saveDebugLogs']),
+        defaultPath: `mantis-wallet-debug-logs-${Date.now()}.zip`,
+        filters: [{name: t(['dialog', 'fileFilter', 'zipArchives']), extensions: ['zip']}],
+      }
+
+      const {canceled, filePath: outputFilePath} = await dialog.showSaveDialog(options)
+      if (canceled || !outputFilePath) {
+        return event.reply('save-debug-logs-cancel')
+      }
+
+      try {
+        await exportLogs(config, store, outputFilePath)
+        event.reply('save-debug-logs-success', outputFilePath)
+      } catch (e) {
+        mainLog.error(e)
+        event.reply('save-debug-logs-failure', e.message)
+      }
+    })
+
+    // Setup language handling
+    ipcListenToRenderer('update-language', (_event, language: Language) => {
+      if (mainWindowHandle) {
+        i18n.changeLanguage(language).then(() => {
+          const t = createTFunctionMain(i18n)
+          Menu.setApplicationMenu(buildMenu(t))
+          mainWindowHandle?.setTitle(getTitle(t, store.get('networkName')))
+        })
+      }
+    })
   })
 
-  app.on('before-quit', killAndQuit)
-  app.on('will-quit', killAndQuit)
-  app.on('window-all-closed', killAndQuit)
-
-  ipcListenToRenderer('update-network-name', (_event, networkName: string) => {
-    killMantis()
-    mainWindowHandle?.setTitle(getTitle(t, networkName))
+  .catch((e) => {
+    // eslint-disable-next-line no-console
+    console.error(e)
+    app.exit()
   })
-} else {
-  openMantisWallet(t)
-}

@@ -5,6 +5,7 @@ import {promisify} from 'util'
 import * as os from 'os'
 import {URL} from 'url'
 import {generate as generatePassword} from 'generate-password'
+import {ElectronLog} from 'electron-log'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as forge from 'node-forge'
 import {array, option} from 'fp-ts'
@@ -13,7 +14,6 @@ import {Option} from 'fp-ts/lib/Option'
 import {processEnv, processExecutablePath} from './MantisProcess'
 import {optionZip, prop, through} from '../shared/utils'
 import {ClientSettings, MantisConfig} from '../config/type'
-import {mainLog} from './logger'
 import {createTErrorMain} from './i18n'
 
 const keyStoreFilename = 'mantisCA.p12'
@@ -184,6 +184,7 @@ export function registerCertificateValidationHandler(
   app: Electron.App,
   tlsData: TLSData,
   expectedUrl: URL,
+  mainLog: ElectronLog,
 ): void {
   app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isCertValid = verifyCertificate(tlsData, expectedUrl)(new URL(url), certificate)

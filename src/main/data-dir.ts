@@ -1,39 +1,46 @@
+/* eslint-disable no-console */
 import {promisify} from 'util'
 import path from 'path'
 import {promises as fs, constants as fsConstants} from 'fs'
 import {satisfies, coerce} from 'semver'
 import rimraf from 'rimraf'
-import {app, dialog} from 'electron'
+import {dialog} from 'electron'
 import {DATADIR_VERSION, COMPATIBLE_VERSIONS} from '../shared/version'
-import {config} from '../config/main'
-import {mainLog} from './logger'
-import {TFunctionMain} from './i18n'
+import {createAndInitI18nForMain, createTFunctionMain} from './i18n'
+import {DEFAULT_LANGUAGE} from '../shared/i18n'
 
-const versionFilePath = path.resolve(config.dataDir, 'version.txt')
+// Do not export
+const Checked: unique symbol = Symbol()
+
+export class CheckedDatadir {
+  constructor(public datadirPath: string, private _checked: typeof Checked) {}
+}
+
+const getVersionFilePath = (datadirPath: string): string => path.resolve(datadirPath, 'version.txt')
 
 interface DatadirCompatibility {
   isCompatible: boolean
   datadirVersion: string
 }
 
-const createVersionFile = (): Promise<void> =>
-  fs.writeFile(versionFilePath, DATADIR_VERSION, 'utf8')
+const createVersionFile = (datadirPath: string): Promise<void> =>
+  fs.writeFile(getVersionFilePath(datadirPath), DATADIR_VERSION, 'utf8')
 
-const initDataDir = async (): Promise<void> => {
-  await fs.mkdir(config.dataDir)
-  await createVersionFile()
+const initDataDir = async (datadirPath: string): Promise<void> => {
+  await fs.mkdir(datadirPath)
+  await createVersionFile(datadirPath)
 }
 
 const isDirEmpty = (dir: string): Promise<boolean> =>
   fs.readdir(dir).then((files) => files.length === 0)
 
-const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
+const checkDatadirVersion = async (datadirPath: string): Promise<DatadirCompatibility> => {
   // Load dataDir version and check if it's compatible
   try {
-    const datadirVersion = (await fs.readFile(versionFilePath, 'utf8')).trim()
+    const datadirVersion = (await fs.readFile(getVersionFilePath(datadirPath), 'utf8')).trim()
     const coercedVersion = coerce(datadirVersion)
-    mainLog.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
-    mainLog.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
+    console.info(`Data dir version: ${datadirVersion} (${coercedVersion})`)
+    console.info(`Compatible versions: ${COMPATIBLE_VERSIONS}`)
     const isCompatible = satisfies(coercedVersion || datadirVersion, COMPATIBLE_VERSIONS)
 
     return {
@@ -42,7 +49,7 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
     }
   } catch (e) {
     if (e.code !== 'ENOENT') {
-      mainLog.error(e)
+      console.error(e)
       // Abort in case the problem is not that it doesn't exist
       throw e
     }
@@ -50,12 +57,12 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
 
   // Check if data directory exists and is not empty
   try {
-    await fs.access(config.dataDir, fsConstants.W_OK | fsConstants.R_OK)
-    const isDataDirEmpty = await isDirEmpty(config.dataDir)
+    await fs.access(datadirPath, fsConstants.W_OK | fsConstants.R_OK)
+    const isDataDirEmpty = await isDirEmpty(datadirPath)
 
     // If dataDir already exists and it is empty we can use it
     if (isDataDirEmpty) {
-      await createVersionFile()
+      await createVersionFile(datadirPath)
       return {
         isCompatible: true,
         datadirVersion: DATADIR_VERSION,
@@ -69,7 +76,7 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
     }
   } catch (e) {
     // If dataDir doesn't exist, initialize new one with version.txt
-    await initDataDir()
+    await initDataDir(datadirPath)
     return {
       isCompatible: true,
       datadirVersion: DATADIR_VERSION,
@@ -77,11 +84,16 @@ const checkDatadirVersion = async (): Promise<DatadirCompatibility> => {
   }
 }
 
-export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void> {
-  const {isCompatible, datadirVersion} = await checkDatadirVersion()
-  if (isCompatible) return
+const CANCELLED_BY_USER = Error('Cancelled by user')
 
-  const oldDirName = path.basename(config.dataDir)
+export async function checkDatadirCompatibility(datadirPath: string): Promise<CheckedDatadir> {
+  const {isCompatible, datadirVersion} = await checkDatadirVersion(datadirPath)
+  if (isCompatible) return new CheckedDatadir(datadirPath, Checked)
+
+  const i18n = createAndInitI18nForMain(DEFAULT_LANGUAGE)
+  const t = createTFunctionMain(i18n)
+
+  const oldDirName = path.basename(datadirPath)
   const newDirName = `${oldDirName}-${datadirVersion}`
 
   const userResponse = await dialog.showMessageBox({
@@ -99,35 +111,36 @@ export async function checkDatadirCompatibility(t: TFunctionMain): Promise<void>
 
   if (response === 1) {
     // Cancel
-    return app.exit(1)
+    throw CANCELLED_BY_USER
   } else if (checkboxChecked) {
     // Delete option
     const {response} = await dialog.showMessageBox({
       type: 'warning',
       buttons: [t(['dialog', 'button', 'ok']), t(['dialog', 'button', 'cancel'])],
       message: t(['dialog', 'message', 'deleteDirectoryQuestion'], {
-        replace: {directory: config.dataDir},
+        replace: {directory: datadirPath},
       }),
     })
     if (response === 1) {
       // Cancel delete
-      return app.exit(1)
+      throw CANCELLED_BY_USER
     } else {
       // Actually delete datadir
-      await promisify(rimraf)(config.dataDir)
+      await promisify(rimraf)(datadirPath)
     }
   } else {
     // Rename option
-    const parent = path.dirname(config.dataDir)
+    const parent = path.dirname(datadirPath)
     const newDatadirPath = path.join(parent, newDirName)
-    await fs.rename(config.dataDir, newDatadirPath)
+    await fs.rename(datadirPath, newDatadirPath)
   }
 
   // Initialize new dataDir with version.txt
-  await initDataDir()
+  await initDataDir(datadirPath)
 
   await dialog.showMessageBox({
     message: t(['dialog', 'message', 'operationComplete']),
     buttons: [t(['dialog', 'button', 'ok'])],
   })
+  return new CheckedDatadir(datadirPath, Checked)
 }
