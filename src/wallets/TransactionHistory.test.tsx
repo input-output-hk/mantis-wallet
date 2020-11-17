@@ -1,18 +1,13 @@
 import '@testing-library/jest-dom/extend-expect'
-import React, {FunctionComponent, useState} from 'react'
+import React, {useState} from 'react'
 import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Web3 from 'web3'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {Account, WalletState, WalletStatus, FeeEstimates, Transaction} from '../common/wallet-state'
-import {SettingsState} from '../settings-state'
-import {abbreviateAmountForEnUS} from '../common/test-helpers'
-import {BackendState} from '../common/backend-state'
+import {Account, FeeEstimates, Transaction} from '../common/wallet-state'
+import {abbreviateAmountForEnUS, createWithProviders} from '../common/test-helpers'
 import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'
 import {asWei, asEther, etherValue} from '../common/units'
-
-const web3 = new Web3()
 
 const tx1: Transaction = {
   hash: '1',
@@ -67,21 +62,6 @@ const accounts: Account[] = [
   },
 ]
 
-const WithProviders: FunctionComponent = ({children}: {children?: React.ReactNode}) => {
-  const initialState = {
-    walletStatus: 'LOADED' as WalletStatus,
-    web3,
-  }
-
-  return (
-    <SettingsState.Provider>
-      <BackendState.Provider initialState={{web3}}>
-        <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
-      </BackendState.Provider>
-    </SettingsState.Provider>
-  )
-}
-
 const estimateFees = (): Promise<FeeEstimates> =>
   Promise.resolve({
     low: asWei(100),
@@ -103,7 +83,7 @@ const renderTransactionHistory = (props: Partial<TransactionHistoryProps> = {}):
     ...props,
   }
 
-  return render(<TransactionHistory {...usedProps} />, {wrapper: WithProviders})
+  return render(<TransactionHistory {...usedProps} />, {wrapper: createWithProviders()})
 }
 
 const TxHistoryWithAddressGenerator = ({
@@ -131,7 +111,7 @@ const TxHistoryWithAddressGenerator = ({
 
 const renderTxHistoryWithAddressGenerator = (preparedAccounts: Account[] = []): RenderResult =>
   render(<TxHistoryWithAddressGenerator preparedAccounts={preparedAccounts} />, {
-    wrapper: WithProviders,
+    wrapper: createWithProviders(),
   })
 
 test('TransactionHistory shows proper message with empty tx list', () => {
