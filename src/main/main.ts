@@ -24,7 +24,7 @@ import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {inspectLineForDAGStatus, status} from './status'
 import {checkDatadirCompatibility, CheckedDatadir} from './data-dir'
-import {saveLogsArchive} from './log-exporter'
+import {createLogExporter} from './log-exporter'
 import {createMainLog} from './logger'
 import {
   createAndInitI18nForMain,
@@ -126,15 +126,16 @@ app.on('second-instance', () => {
   }
 })
 
-interface DatadirFunctions {
+interface DatadirDependants {
   mainLog: ElectronLog
   store: MainStore
   i18n: i18n
+  exportLogs: ReturnType<typeof createLogExporter>
 }
 
-const datadirInit = (): Promise<DatadirFunctions> =>
+const datadirInit = (): Promise<DatadirDependants> =>
   checkDatadirCompatibility(config.dataDir).then(
-    (checkedDatadir: CheckedDatadir): DatadirFunctions => {
+    (checkedDatadir: CheckedDatadir): DatadirDependants => {
       const store = createStore(checkedDatadir)
       const mainLog = createMainLog(checkedDatadir, store)
       mainLog.info({
@@ -142,16 +143,17 @@ const datadirInit = (): Promise<DatadirFunctions> =>
         config,
       })
       const i18n = createAndInitI18nForMain(store.get('settings.language'))
-      return {mainLog, store, i18n}
+      const exportLogs = createLogExporter(checkedDatadir)
+      return {mainLog, store, i18n, exportLogs}
     },
   )
 
-// Handle TLS from external config
 datadirInit()
-  .then(({mainLog, store, i18n}) => {
+  .then(({mainLog, store, i18n, exportLogs}) => {
     const t = createTFunctionMain(i18n)
 
     if (!config.runNode) {
+      // Handle TLS from external config
       pipe(
         config.tls,
         option.map(setupExternalTLS),
@@ -300,14 +302,14 @@ datadirInit()
         filters: [{name: t(['dialog', 'fileFilter', 'zipArchives']), extensions: ['zip']}],
       }
 
-      const {canceled, filePath} = await dialog.showSaveDialog(options)
-      if (canceled || !filePath) {
+      const {canceled, filePath: outputFilePath} = await dialog.showSaveDialog(options)
+      if (canceled || !outputFilePath) {
         return event.reply('save-debug-logs-cancel')
       }
 
       try {
-        await saveLogsArchive(config, store, filePath)
-        event.reply('save-debug-logs-success', filePath)
+        await exportLogs(config, store, outputFilePath)
+        event.reply('save-debug-logs-success', outputFilePath)
       } catch (e) {
         mainLog.error(e)
         event.reply('save-debug-logs-failure', e.message)
