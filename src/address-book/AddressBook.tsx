@@ -20,6 +20,9 @@ const ADDRESS_FIELD_NAME = 'contact-address'
 
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>
 
+type ModalId = 'Edit' | 'Delete' | 'none'
+type EditMode = 'Add' | 'Edit'
+
 interface EditContactModalProps {
   onSave(address: string, label: string): void
   onCancel(): void
@@ -27,7 +30,7 @@ interface EditContactModalProps {
   label: string
   setAddress: Setter<string>
   setLabel: Setter<string>
-  toEdit: boolean
+  editMode: EditMode
 }
 
 const _EditContactModal = ({
@@ -37,7 +40,7 @@ const _EditContactModal = ({
   label,
   setAddress,
   setLabel,
-  toEdit,
+  editMode,
 }: EditContactModalProps): JSX.Element => {
   const {t} = useTranslation()
   const addressValidator = toAntValidator(t, validateAddress)
@@ -45,7 +48,11 @@ const _EditContactModal = ({
 
   return (
     <Dialog
-      title={t(['addressBook', 'book', 'editContact'])}
+      title={
+        editMode === 'Edit'
+          ? t(['addressBook', 'book', 'editContact'])
+          : t(['addressBook', 'book', 'newContact'])
+      }
       leftButtonProps={{
         onClick: onCancel,
         disabled: modalLocker.isLocked,
@@ -74,7 +81,7 @@ const _EditContactModal = ({
             addressValidator,
           ],
         }}
-        disabled={toEdit}
+        disabled={editMode === 'Edit'}
         id={ADDRESS_FIELD_NAME}
       />
       <DialogInput
@@ -137,8 +144,6 @@ const _DeleteContactModal = ({
 const DeleteContactModal = wrapWithModal(_DeleteContactModal)
 const EditContactModal = wrapWithModal(_EditContactModal)
 
-type ModalId = 'Edit' | 'Delete' | 'none'
-
 const _AddressBook = ({
   walletState: {addressBook, editContact, deleteContact},
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
@@ -146,28 +151,31 @@ const _AddressBook = ({
   const {copyToClipboard} = useLocalizedUtilities()
 
   const [shownModal, setShownModal] = useState<ModalId>('none')
-  const [toEdit, setToEdit] = useState(false)
+  const [editMode, setEditMode] = useState<EditMode>('Edit')
   const [selectedAddress, setAddress] = useState('')
   const [selectedLabel, setLabel] = useState('')
   // eslint-disable-next-line fp/no-mutating-methods
   const sortedLabels = [...Object.keys(addressBook)].sort()
 
-  const onStartEdit = (address: string, label: string) => () => {
+  const selectContact = (address: string, label: string): void => {
     setAddress(address)
     setLabel(label)
+  }
+
+  const onStartEdit = (address: string) => () => {
+    selectContact(address, addressBook[address])
+    setEditMode('Edit')
     setShownModal('Edit')
-    setToEdit(true)
   }
 
   const onStartAddNew = (): void => {
-    setAddress('')
-    setLabel('')
+    selectContact('', '')
+    setEditMode('Add')
     setShownModal('Edit')
-    setToEdit(false)
   }
 
   const onStartDelete = (address: string) => () => {
-    setAddress(address)
+    selectContact(address, addressBook[address])
     setShownModal('Delete')
   }
 
@@ -225,7 +233,7 @@ const _AddressBook = ({
                   <span
                     className="edit"
                     title={t(['addressBook', 'book', 'editContact'])}
-                    {...fillActionHandlers(onStartEdit(address, label))}
+                    {...fillActionHandlers(onStartEdit(address))}
                   >
                     <EditOutlined />
                   </span>
@@ -244,7 +252,7 @@ const _AddressBook = ({
         setLabel={setLabel}
         address={selectedAddress}
         label={selectedLabel}
-        toEdit={toEdit}
+        editMode={editMode}
       />
       <DeleteContactModal
         visible={shownModal === 'Delete'}
