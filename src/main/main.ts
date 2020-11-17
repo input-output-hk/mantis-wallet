@@ -136,7 +136,7 @@ interface DatadirDependants {
 const datadirInit = (): Promise<DatadirDependants> =>
   checkDatadirCompatibility(config.dataDir).then(
     (checkedDatadir: CheckedDatadir): DatadirDependants => {
-      const store = createStore(checkedDatadir)
+      const store = createStore(checkedDatadir, config.networkName)
       const mainLog = createMainLog(checkedDatadir, store)
       mainLog.info({
         versions: process.versions,
