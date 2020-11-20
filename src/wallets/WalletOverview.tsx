@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import BigNumber from 'bignumber.js'
 import CountUp from 'react-countup'
-import {Option, fold} from 'fp-ts/lib/Option'
+import {Option, fold, isSome} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/function'
 import {EDITION} from '../shared/version'
 import {ETC_CHAIN} from '../common/chains'
@@ -53,7 +53,7 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
           </div>
         )}
       </div>
-      {availableBalance && (
+      {isSome(availableBalance) && (
         <div className="balances">
           <div className="label">
             <Trans k={['wallet', 'label', 'availableBalance']} />

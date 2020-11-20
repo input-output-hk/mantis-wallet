@@ -280,11 +280,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const isLoaded = (): boolean =>
-    isSome(totalBalanceOption) &&
-    isSome(availableBalanceOption) &&
-    isSome(transactionsOption) &&
-    isSome(accountsOption) &&
-    isSome(syncStatusOption)
+    isSome(transactionsOption) && isSome(accountsOption) && isSome(syncStatusOption)
 
   const walletStatus =
     walletStatus_ === 'LOADING' && (isMocked || isLoaded()) ? 'LOADED' : walletStatus_
