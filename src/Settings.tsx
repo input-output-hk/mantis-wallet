@@ -5,7 +5,7 @@ import {EmptyProps} from 'antd/lib/empty'
 import {SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './settings-state'
 import {WalletState, canResetWallet} from './common/wallet-state'
 import {fillActionHandlers} from './common/util'
-import {HeaderWithSyncStatus} from './common/HeaderWithSyncStatus'
+import {Header} from './common/Header'
 import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
 import {Trans} from './common/Trans'
@@ -36,9 +36,9 @@ const LANGUAGES_DISPLAYED: Record<Language, string> = {
 const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element => {
   return (
     <div className="Settings">
-      <HeaderWithSyncStatus>
+      <Header>
         <Trans k={['title', 'settings']} />
-      </HeaderWithSyncStatus>
+      </Header>
       <div className="content">{children}</div>
     </div>
   )

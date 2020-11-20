@@ -1,49 +1,57 @@
 @import '../themify', '../vars', '../partial';
 
 .Sidebar {
-  $link-font-weight: 300;
   $link-letter-spacing: 0.96px;
-  $normal-left-padding: 45px;
 
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  width: $sidebar-width;
-  height: 100vh;
-  user-select: none;
+  width: 38vw;
+  min-width: $sidebar-width;
+  padding: $app-padding-vertical $app-padding-horizontal;
 
-  @include themify($themes) {
-    background-color: themed('secondary-background');
+  .logo-wrapper {
+    margin-bottom: 14rem;
+
+    .logo {
+      display: inline-block;
+      height: $app-padding-horizontal;
+
+      .mantis-logo-left {
+        @include themify($themes) {
+          fill: themed('text-color');
+        }
+      }
+
+      .mantis-logo-right {
+        @include themify($themes) {
+          fill: themed('primary-color');
+        }
+      }
+    }
+
+    .title {
+      display: inline-block;
+      height: $app-padding-horizontal;
+
+      vertical-align: bottom;
+
+      svg {
+        width: 90px;
+        margin-left: 1rem;
+        vertical-align: middle;
+
+        .wordmark {
+          @include themify($themes) {
+            fill: themed('text-color');
+          }
+        }
+      }
+    }
   }
 
-  .logo {
-    display: block;
-    width: 60px;
-    margin: 1rem auto 0.25rem;
-
-    .mantis-logo-left {
-      @include themify($themes) {
-        fill: themed('text-color');
-      }
-    }
-
-    .mantis-logo-right {
-      @include themify($themes) {
-        fill: themed('primary-color');
-      }
-    }
-  }
-
-  .title svg {
-    display: block;
-    width: 120px;
-    margin: 0 auto 6rem;
-    padding: 0.5rem 0.5rem 1rem;
-
-    .wordmark {
-      @include themify($themes) {
-        fill: themed('text-color');
-      }
-    }
+  .sync-status-wrapper {
+    position: absolute;
+    top: $app-padding-vertical;
+    margin-top: 9px;
+    margin-left: 10rem;
   }
 
   .navigation {
@@ -55,61 +63,34 @@
 
       display: block;
       z-index: $zindex-sidebar;
-      outline: 0;
-      font-size: $font-size-xl;
-      font-weight: $link-font-weight;
+      transform: scale(0.5);
+      transform-origin: center left;
+      transition: transform 0.3s ease-out;
+      opacity: 0.6;
+      font-size: 30px;
+      font-weight: 600;
       letter-spacing: $link-letter-spacing;
-      line-height: 43px;
+      line-height: 70px;
       text-decoration: none;
       cursor: pointer;
-
-      .prefix {
-        display: inline-block;
-        width: $normal-left-padding;
-      }
+      user-select: none;
 
       &.active {
-        .link-title {
-          font-weight: bold;
-          letter-spacing: 0.2px;
+        @include themify($themes) {
+          color: themed('sidebar-link-color');
         }
 
-        .prefix {
-          @include themify($themes) {
-            border-left: 3px solid themed('border-color-base');
-          }
-        }
+        transform: scale(1);
+        opacity: 1;
       }
 
       &:focus,
       &:hover {
-        .link-title {
-          font-weight: bold;
-          letter-spacing: 0.2px;
+        @include themify($themes) {
+          color: themed('sidebar-link-color');
         }
-      }
 
-      .icon {
-        display: inline-block;
-        position: relative;
-        width: 39px;
-
-        .svg {
-          position: absolute;
-          top: 50%;
-          bottom: 50%;
-          transform: translate(-50%, -50%);
-
-          @include themify($themes) {
-            stroke-width: 0.2;
-            stroke: themed('text-color');
-            fill: themed('text-color');
-
-            &.settings {
-              stroke-width: 0.4;
-            }
-          }
-        }
+        opacity: 1;
       }
     }
 
@@ -118,39 +99,20 @@
     }
   }
 
+  .balance-wrapper {
+    margin-top: 10rem;
+  }
+
   .footer {
-    margin: 0 0 2em;
-    font-size: $font-size-xs;
-    font-weight: bold;
-    letter-spacing: $letter-spacing-large;
-    text-align: left;
-    text-transform: uppercase;
-
-    > .footer-link-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      width: 160px;
-      margin: 0.5em auto;
-    }
-
-    .support,
-    .status {
-      padding-right: 6px;
-      text-align: right;
-
-      @include themify($themes) {
-        border-right: 1px solid themed('text-color');
-      }
-    }
-
-    .feedback,
-    .logout {
-      padding-left: 8px;
-    }
+    position: absolute;
+    bottom: 0;
+    margin-bottom: $app-padding-vertical;
 
     .footer-link {
       @extend %disable-focus-outline;
 
+      margin-right: 1.5rem;
+      font-size: $font-size-m;
       cursor: pointer;
 
       &:hover {
@@ -172,128 +134,6 @@
             color: themed('text-color');
           }
         }
-      }
-    }
-
-    .version {
-      margin-top: 1em;
-      font-weight: normal;
-      letter-spacing: normal;
-      text-align: center;
-      text-transform: none;
-      user-select: text;
-    }
-  }
-
-  //
-  // Mini Sidebar
-  //
-
-  @media screen and #{$sidebar-collapse-query} {
-    $mini-left-padding: 33px;
-
-    width: $sidebar-collapsed-width;
-
-    .logo {
-      width: 50px;
-      margin-top: 0.5rem;
-      margin-bottom: 0.1em;
-    }
-
-    .title svg {
-      width: 70px;
-      padding: 0.5rem 0.5rem 1rem;
-    }
-
-    .navigation {
-      .link {
-        position: relative;
-        z-index: $zindex-sidebar;
-
-        .prefix {
-          width: $mini-left-padding;
-        }
-
-        .link-title {
-          display: none;
-          position: absolute;
-          top: 0;
-          left: 0;
-          margin-left: $sidebar-collapsed-width;
-          padding: 0 1em;
-          border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
-          font-size: $font-size-xl;
-          white-space: nowrap;
-
-          @include themify($themes) {
-            background-color: themed('secondary-background');
-          }
-        }
-
-        &.active,
-        &:hover,
-        &:focus {
-          .link-title {
-            font-weight: $link-font-weight;
-            letter-spacing: $link-letter-spacing;
-          }
-        }
-
-        &:hover,
-        &:focus {
-          .link-title {
-            display: block;
-          }
-        }
-
-        &.active {
-          &:focus {
-            .link-title {
-              display: none;
-            }
-          }
-
-          &:hover {
-            .link-title {
-              display: block;
-            }
-          }
-        }
-      }
-    }
-
-    .footer {
-      font-size: $font-size-xs;
-
-      > .footer-link-wrapper {
-        display: block;
-        width: 100%;
-        margin: 0;
-        text-align: center;
-      }
-
-      .footer-link {
-        display: inline-block;
-        margin-bottom: 0.5em;
-        letter-spacing: 1px;
-      }
-
-      .support,
-      .status {
-        padding-right: 0;
-
-        @include themify($themes) {
-          border-right: 0px solid themed('text-color');
-        }
-      }
-
-      .feedback,
-      .logout {
-        padding-left: 0;
-      }
-
-      .edition {
-        display: none;
       }
     }
   }

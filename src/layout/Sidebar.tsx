@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
-import {EDITION} from '../shared/version'
 import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
@@ -9,9 +8,11 @@ import {loadMantisWalletStatus, loadConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
 import {Link} from '../common/Link'
+import {SyncStatus} from '../common/SyncStatus'
 import {StatusModal} from '../common/StatusModal'
 import {SupportModal} from '../common/SupportModal'
 import {fillActionHandlers} from '../common/util'
+import {BalanceDisplay} from '../wallets/BalanceDisplay'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
 import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
@@ -21,7 +22,6 @@ import {createTErrorRenderer} from '../common/i18n'
 import logo from '../assets/logo.svg'
 import wordmark from '../assets/wordmark.svg'
 import './Sidebar.scss'
-import {displayNameOfNetwork} from '../config/type'
 
 type ModalId = 'none' | 'RemoveWallet' | 'Support' | 'Status'
 
@@ -47,11 +47,7 @@ const UpdatingStatusModal = ({
   )
 }
 
-interface SidebarProps {
-  version: string
-}
-
-export const Sidebar = ({version}: SidebarProps): JSX.Element => {
+export const Sidebar = (): JSX.Element => {
   const {
     translation: {t},
   } = SettingsState.useContainer()
@@ -92,33 +88,33 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         <div className="ApiTestToggle" onClick={() => routerState.navigate('API_TEST')}></div>
       )}
-      <div className="logo">
-        <SVG src={logo} className="logo" />
+
+      <div className="logo-wrapper">
+        <div className="logo">
+          <SVG src={logo} className="logo" />
+        </div>
+        <div className="title">
+          <SVG src={wordmark} />
+        </div>
       </div>
-      <div className="title">
-        <SVG src={wordmark} />
+
+      <div className="sync-status-wrapper">
+        <SyncStatus />
       </div>
+
       <div>
         <nav>
           <ul className={classnames('navigation', {locked: routerState.isLocked})}>
             {Object.entries(MENU).map(([menuId, menuItem]: [string, MenuItem]) => {
               const isActive = routerState.currentRoute.menu === menuId
-              const classes = classnames('link', {active: isActive})
+              const classes = classnames('link', menuId.toLowerCase(), {active: isActive})
               return (
                 <li key={menuId}>
                   <div
                     className={classes}
                     {...fillActionHandlers(() => handleMenuClick(menuId as MenuId), 'link')}
                   >
-                    <span className="prefix">&nbsp;</span>
-                    <span className="icon">
-                      &nbsp;
-                      <SVG
-                        className={classnames('svg', menuId.toLowerCase())}
-                        src={menuItem.icon}
-                      />
-                    </span>
-                    <span className="link-title">{t(menuItem.title)}</span>
+                    {t(menuItem.title)}
                   </div>
                 </li>
               )
@@ -126,35 +122,33 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           </ul>
         </nav>
       </div>
-      <div className="footer">
-        <div className="footer-link-wrapper">
-          <span
-            className="footer-link support"
-            {...fillActionHandlers(() => setActiveModal('Support'), 'link')}
-          >
-            <Trans k={['common', 'link', 'support']} />
-          </span>
-          <Link href={LINKS.feedback} popoverPlacement="right" className="footer-link feedback">
-            <Trans k={['common', 'link', 'feedback']} />
-          </Link>
-        </div>
-        <div className="footer-link-wrapper">
-          <span
-            className="footer-link status"
-            {...fillActionHandlers(() => setActiveModal('Status'), 'link')}
-          >
-            <Trans k={['common', 'link', 'status']} />
-          </span>
-          <LogOutButton />
-        </div>
-        <div className="version">
-          {version}
-          <span className="edition">
-            {' '}
-            — {EDITION} — {displayNameOfNetwork(networkName)}
-          </span>
-        </div>
+
+      <div className="balance-wrapper">
+        {walletState.walletStatus === 'LOADED' && (
+          <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
+        )}
       </div>
+
+      <div className="footer">
+        <span
+          className="footer-link support"
+          {...fillActionHandlers(() => setActiveModal('Support'), 'link')}
+        >
+          <Trans k={['common', 'link', 'support']} />
+        </span>
+        <Link href={LINKS.feedback} popoverPlacement="top" className="footer-link feedback">
+          <Trans k={['common', 'link', 'feedback']} />
+        </Link>
+        <span
+          className="footer-link status"
+          {...fillActionHandlers(() => setActiveModal('Status'), 'link')}
+        >
+          <Trans k={['common', 'link', 'status']} />
+        </span>
+        <LogOutButton />
+      </div>
+
+      {/* Modals: */}
       {canRemoveWallet(walletState) && !routerState.isLocked && (
         <RemoveWalletModal
           visible={activeModal === 'RemoveWallet'}

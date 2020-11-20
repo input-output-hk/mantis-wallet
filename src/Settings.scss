@@ -1,6 +1,8 @@
 @import './partial', './themify', './vars';
 
 .Settings {
+  margin-top: $router-top-margin;
+
   .main-title {
     margin-bottom: 3rem;
   }

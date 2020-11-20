@@ -1,5 +1,4 @@
 import React from 'react'
-import {text} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {RouterState} from '../router-state'
@@ -16,7 +15,7 @@ export default {
 
 export const sidebar = (): JSX.Element => (
   <RouterState.Provider>
-    <Sidebar version={text('Version', 'v0.11.1')} />
+    <Sidebar />
   </RouterState.Provider>
 )
 

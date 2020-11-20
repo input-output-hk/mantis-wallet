@@ -5,7 +5,7 @@
 // fonts
 //
 
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=Montserrat:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap');
 
 //
 // elements
@@ -19,6 +19,7 @@
 
 body {
   margin: 0;
+  overflow: hidden;
   font-family: $font-family;
   font-size: $font-size-root;
   text-rendering: optimizeLegibility; // could cause performance problems on mobile
@@ -57,7 +58,14 @@ h6 {
 }
 
 div#root {
+  @include themify($themes) {
+    background-image: themed('bg-base');
+  }
+
   min-height: 100vh;
+  margin: 0;
+  background-position: left top;
+  background-size: cover;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -317,14 +325,6 @@ input::placeholder {
   [ant-click-animating-without-extra-node='true']::after,
   .ant-click-animating-node {
     opacity: $secondary-opacity;
-  }
-
-  .ant-message {
-    padding-left: $sidebar-width;
-
-    @media screen and #{$sidebar-collapse-query} {
-      padding-left: $sidebar-collapsed-width;
-    }
   }
 
   .ant-form-item {

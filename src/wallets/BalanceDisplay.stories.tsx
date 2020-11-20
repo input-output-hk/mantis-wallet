@@ -5,20 +5,20 @@ import {some} from 'fp-ts/lib/Option'
 import {ether} from '../storybook-util/custom-knobs'
 import {SyncStatusContent} from '../common/SyncStatus'
 import {SynchronizationStatus} from '../common/wallet-state'
-import {WalletOverview} from './WalletOverview'
+import {BalanceDisplay} from './BalanceDisplay'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 
 export default {
-  title: 'Wallet Overview',
+  title: 'Balance Display',
   decorators: ESSENTIAL_DECORATORS,
 }
 
 export const withZeroBalance = (): JSX.Element => (
-  <WalletOverview availableBalance={some(new BigNumber(0))} />
+  <BalanceDisplay availableBalance={some(new BigNumber(0))} />
 )
 
 export const interactive = (): JSX.Element => {
-  return <WalletOverview availableBalance={some(ether('Available Balance', 15262.4578))} />
+  return <BalanceDisplay availableBalance={some(ether('Available Balance', 15262.4578))} />
 }
 
 export const syncStatus = (): JSX.Element => {

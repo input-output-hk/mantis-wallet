@@ -4,7 +4,7 @@ import {EmptyProps} from 'antd/lib/empty'
 import _ from 'lodash/fp'
 import {pipe} from 'fp-ts/lib/function'
 import {fold} from 'fp-ts/lib/Option'
-import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
+import {Header} from '../common/Header'
 import {Trans} from '../common/Trans'
 import {TokenList} from './TokenList'
 import {TokensState, Token} from './tokens-state'
@@ -43,9 +43,9 @@ export const _Tokens = ({
 
   return (
     <div className="Tokens">
-      <HeaderWithSyncStatus>
+      <Header>
         <Trans k={['title', 'tokens']} />
-      </HeaderWithSyncStatus>
+      </Header>
       <div className="content">
         <div className="toolbar">
           <Button type="primary" className="action" onClick={() => setShowAddToken(true)}>
@@ -81,9 +81,9 @@ export const _Tokens = ({
 export const Tokens = withStatusGuard(_Tokens, 'LOADED', () => {
   return (
     <div className="Tokens">
-      <HeaderWithSyncStatus>
+      <Header>
         <Trans k={['title', 'tokens']} />
-      </HeaderWithSyncStatus>
+      </Header>
       <div className="content">
         <NoWallet />
       </div>
