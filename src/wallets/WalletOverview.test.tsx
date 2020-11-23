@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import {render} from '@testing-library/react'
 import Web3 from 'web3'
+import {some} from 'fp-ts/lib/Option'
 import {WalletOverview} from './WalletOverview'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {SettingsState} from '../settings-state'
@@ -11,7 +12,7 @@ import {asEther} from '../common/units'
 const web3 = new Web3()
 
 it('shows properly formatted balance in WalletOverview', () => {
-  const availableBalance = asEther(12345)
+  const availableBalance = some(asEther(12345))
 
   const initialState = {walletStatus: 'LOADED' as WalletStatus, web3}
   const {getByText} = render(

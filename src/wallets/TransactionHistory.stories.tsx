@@ -1,6 +1,7 @@
 import React from 'react'
 import {action} from '@storybook/addon-actions'
 import {text, object} from '@storybook/addon-knobs'
+import {some} from 'fp-ts/lib/Option'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 import {ether, asyncAction} from '../storybook-util/custom-knobs'
 import {
@@ -31,7 +32,7 @@ export const withNoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={[]}
     accounts={dummyAccounts}
-    availableBalance={asWei(0)}
+    availableBalance={some(asWei(0))}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -41,7 +42,7 @@ export const withDemoTransactions = (): JSX.Element => (
   <TransactionHistory
     transactions={dummyTransactions}
     accounts={dummyAccounts}
-    availableBalance={ether('Available Balance', 1000)}
+    availableBalance={some(ether('Available Balance', 1000))}
     estimateTransactionFee={estimateFeesWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
@@ -98,7 +99,7 @@ export const interactive = (): JSX.Element => {
         }),
       ]}
       accounts={dummyAccounts}
-      availableBalance={ether('Available Balance', 1000)}
+      availableBalance={some(ether('Available Balance', 1000))}
       estimateTransactionFee={estimateFeesWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
     />

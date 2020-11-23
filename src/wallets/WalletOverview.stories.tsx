@@ -1,6 +1,7 @@
 import React from 'react'
 import {select} from '@storybook/addon-knobs'
 import BigNumber from 'bignumber.js'
+import {some} from 'fp-ts/lib/Option'
 import {ether} from '../storybook-util/custom-knobs'
 import {SyncStatusContent} from '../common/SyncStatus'
 import {SynchronizationStatus} from '../common/wallet-state'
@@ -13,11 +14,11 @@ export default {
 }
 
 export const withZeroBalance = (): JSX.Element => (
-  <WalletOverview availableBalance={new BigNumber(0)} />
+  <WalletOverview availableBalance={some(new BigNumber(0))} />
 )
 
 export const interactive = (): JSX.Element => {
-  return <WalletOverview availableBalance={ether('Available Balance', 15262.4578)} />
+  return <WalletOverview availableBalance={some(ether('Available Balance', 15262.4578))} />
 }
 
 export const syncStatus = (): JSX.Element => {

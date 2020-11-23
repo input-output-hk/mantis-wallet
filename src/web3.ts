@@ -2,6 +2,14 @@
 import _ from 'lodash'
 import Web3 from 'web3'
 import {formatters} from 'web3-core-helpers'
+import * as T from 'io-ts'
+
+//https://eth.wiki/json-rpc/json-rpc-error-codes-improvement-proposal
+export const CustomError = T.type({
+  code: T.number,
+  message: T.string,
+})
+export const CustomErrors = T.readonlyArray(CustomError)
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const outputTransactionsFormatter = (output: any): any => {
