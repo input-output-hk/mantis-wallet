@@ -12,7 +12,12 @@ import {Trans} from './common/Trans'
 import {TKeyRenderer} from './common/i18n'
 import {LANGUAGES, Language} from './shared/i18n'
 import {ChangeNetworkModal} from './wallets/modals/ChangeNetwork'
-import {NetworkName, DEFINED_NETWORK_NAMES, isDefinedNetworkName} from './config/type'
+import {
+  NetworkName,
+  DEFINED_NETWORK_NAMES,
+  isDefinedNetworkName,
+  displayNameOfNetwork,
+} from './config/type'
 import {BackendState} from './common/backend-state'
 
 import './Settings.scss'
@@ -70,7 +75,7 @@ export const Settings = (): JSX.Element => {
     // FIXME: ETCM-342 remove after upgrading to TS4
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    label: t(['network', 'names', network]),
+    label: t(['network', 'names', displayNameOfNetwork(network)]),
   }))
 
   return (

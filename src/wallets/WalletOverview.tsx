@@ -9,7 +9,7 @@ import {Trans} from '../common/Trans'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {BackendState} from '../common/backend-state'
 import './WalletOverview.scss'
-import {isDefinedNetworkName} from '../config/type'
+import {displayNameOfNetwork, isDefinedNetworkName} from '../config/type'
 
 interface WalletOverviewProps {
   availableBalance: Option<BigNumber>
@@ -45,11 +45,12 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
             {/* FIXME: ETCM-342 remove after upgrading to TS4 */}
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}
-            {EDITION} — <Trans k={['network', 'names', networkName]} />
+            {EDITION} — <Trans k={['network', 'names', displayNameOfNetwork(networkName)]} />
           </div>
         ) : (
           <div>
-            {EDITION} — {networkName} <Trans k={['wallet', 'label', 'network']} />
+            {EDITION} — {displayNameOfNetwork(networkName)}{' '}
+            <Trans k={['wallet', 'label', 'network']} />
           </div>
         )}
       </div>
