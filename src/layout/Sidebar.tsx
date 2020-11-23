@@ -21,6 +21,7 @@ import {createTErrorRenderer} from '../common/i18n'
 import logo from '../assets/logo.svg'
 import wordmark from '../assets/wordmark.svg'
 import './Sidebar.scss'
+import {displayNameOfNetwork} from '../config/type'
 
 type ModalId = 'none' | 'RemoveWallet' | 'Support' | 'Status'
 
@@ -150,7 +151,7 @@ export const Sidebar = ({version}: SidebarProps): JSX.Element => {
           {version}
           <span className="edition">
             {' '}
-            — {EDITION} — {networkName}
+            — {EDITION} — {displayNameOfNetwork(networkName)}
           </span>
         </div>
       </div>
