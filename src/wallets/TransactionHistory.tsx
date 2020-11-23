@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
+import {Option, fold, getOrElse} from 'fp-ts/lib/Option'
+import {pipe} from 'fp-ts/lib/function'
 import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {
@@ -12,7 +14,7 @@ import {
   SortableColumnConfig,
 } from './TransactionList'
 import {Trans} from '../common/Trans'
-import {Wei} from '../common/units'
+import {Wei, asWei} from '../common/units'
 import {Transaction, FeeEstimates, Account} from '../common/wallet-state'
 
 import './TransactionHistory.scss'
@@ -20,7 +22,7 @@ import './TransactionHistory.scss'
 export interface TransactionHistoryProps {
   transactions: Transaction[]
   accounts: Account[]
-  availableBalance: Wei
+  availableBalance: Option<Wei>
   estimateTransactionFee: () => Promise<FeeEstimates>
   generateAddress: () => Promise<void>
 }
@@ -57,6 +59,14 @@ export const TransactionHistory = ({
     </Menu>
   )
 
+  const isSendDisabled = pipe(
+    availableBalance,
+    fold(
+      () => true,
+      (balance) => balance.isZero(),
+    ),
+  )
+
   return (
     <div className="TransactionHistory">
       <div className="toolbar">
@@ -74,7 +84,7 @@ export const TransactionHistory = ({
             data-testid="send-button"
             type="primary"
             className="action"
-            disabled={availableBalance.isZero()}
+            disabled={isSendDisabled}
             onClick={(): void => setShowSendModal(true)}
           >
             <Trans k={['wallet', 'button', 'sendTransaction']} />
@@ -89,8 +99,11 @@ export const TransactionHistory = ({
           </Button>
           <SendTransactionFlow
             visible={showSendModal}
-            availableAmount={availableBalance}
             transactions={transactions}
+            availableAmount={pipe(
+              availableBalance,
+              getOrElse(() => asWei(0)),
+            )}
             onCancel={(): void => setShowSendModal(false)}
             estimateTransactionFee={estimateTransactionFee}
           />

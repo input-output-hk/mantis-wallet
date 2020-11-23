@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import BigNumber from 'bignumber.js'
 import CountUp from 'react-countup'
+import {Option, fold, isSome} from 'fp-ts/lib/Option'
+import {pipe} from 'fp-ts/lib/function'
 import {EDITION} from '../shared/version'
 import {ETC_CHAIN} from '../common/chains'
 import {Trans} from '../common/Trans'
@@ -10,12 +12,19 @@ import './WalletOverview.scss'
 import {isDefinedNetworkName} from '../config/type'
 
 interface WalletOverviewProps {
-  availableBalance: BigNumber
+  availableBalance: Option<BigNumber>
 }
 
 export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Element => {
   const {networkName} = BackendState.useContainer()
-  const etcAvailableBalance = availableBalance.shiftedBy(-ETC_CHAIN.decimals).toNumber()
+
+  const etcAvailableBalance = pipe(
+    availableBalance,
+    fold(
+      () => 0,
+      (value) => value.shiftedBy(-ETC_CHAIN.decimals).toNumber(),
+    ),
+  )
 
   const [availableBalanceHistory, setAvailableBalanceHistory] = useState<[number, number]>([
     0,
@@ -44,20 +53,22 @@ export const WalletOverview = ({availableBalance}: WalletOverviewProps): JSX.Ele
           </div>
         )}
       </div>
-      <div className="balances">
-        <div className="label">
-          <Trans k={['wallet', 'label', 'availableBalance']} />
+      {isSome(availableBalance) && (
+        <div className="balances">
+          <div className="label">
+            <Trans k={['wallet', 'label', 'availableBalance']} />
+          </div>
+          <CountUp
+            start={availableBalanceHistory[0]}
+            end={availableBalanceHistory[1]}
+            duration={2}
+            decimals={3}
+            suffix={` ${ETC_CHAIN.symbol}`}
+            className="available-balance"
+          />
+          {/* Balance: <ShortNumber big={availableBalance} /> */}
         </div>
-        <CountUp
-          start={availableBalanceHistory[0]}
-          end={availableBalanceHistory[1]}
-          duration={2}
-          decimals={3}
-          suffix={` ${ETC_CHAIN.symbol}`}
-          className="available-balance"
-        />
-        {/* Balance: <ShortNumber big={availableBalance} /> */}
-      </div>
+      )}
     </div>
   )
 }

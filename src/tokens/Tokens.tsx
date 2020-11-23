@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import {Button} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import _ from 'lodash/fp'
+import {pipe} from 'fp-ts/lib/function'
+import {fold} from 'fp-ts/lib/Option'
 import {HeaderWithSyncStatus} from '../common/HeaderWithSyncStatus'
 import {Trans} from '../common/Trans'
 import {TokenList} from './TokenList'
@@ -24,6 +26,8 @@ export const _Tokens = ({
     getTokenInfo,
   } = TokensState.useContainer()
   const {addTokensToTrack, addTokenToTrack, estimateCallFee, getOverviewProps} = walletState
+
+  const {availableBalance} = getOverviewProps()
 
   const [showAddToken, setShowAddToken] = useState(false)
 
@@ -54,7 +58,13 @@ export const _Tokens = ({
           onRemoveToken={removeToken}
           sendToken={sendToken}
           estimateCallFee={estimateCallFee}
-          sendDisabled={getOverviewProps().availableBalance.isZero()}
+          sendDisabled={pipe(
+            availableBalance,
+            fold(
+              () => true,
+              (value) => value.isZero(),
+            ),
+          )}
         />
       </div>
       <AddTokenModal
