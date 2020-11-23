@@ -1,10 +1,10 @@
 import React from 'react'
 import {makeDecorator, StoryContext, StoryGetter, StoryWrapper} from '@storybook/addons'
-import Web3 from 'web3'
-import {WalletState, WalletStatus, StoreWalletData} from '../common/wallet-state'
+import {StoreWalletData, WalletState, WalletStatus} from '../common/wallet-state'
 import {createInMemoryStore} from '../common/store'
+import {defaultWeb3} from '../web3'
 
-const web3 = new Web3()
+const web3 = defaultWeb3()
 const store = createInMemoryStore<StoreWalletData>({
   wallet: {
     addressBook: {

@@ -1,6 +1,5 @@
 import {Dispatch, SetStateAction, useEffect, useState} from 'react'
 import {createContainer} from 'unstated-next'
-import Web3 from 'web3'
 import _ from 'lodash/fp'
 import {updateNetworkName} from './ipc-util'
 import {rendererLog} from './logger'
@@ -8,6 +7,7 @@ import {createInMemoryStore, Store} from './store'
 import {NetworkName} from '../config/type'
 import {usePersistedState} from './hook-utils'
 import {config} from '../config/renderer'
+import {defaultWeb3, MantisWeb3} from '../web3'
 
 export interface BackendState {
   isBackendRunning: boolean
@@ -21,7 +21,7 @@ export interface StoreBackendData {
 }
 
 interface BackendStateParams {
-  web3: Web3
+  web3: MantisWeb3
   store: Store<StoreBackendData>
 }
 
@@ -31,7 +31,7 @@ export const defaultBackendData: StoreBackendData = {
 
 const DEFAULT_PARAMS: BackendStateParams = {
   store: createInMemoryStore(defaultBackendData),
-  web3: new Web3(),
+  web3: defaultWeb3(),
 }
 
 function useBackendState(params?: Partial<BackendStateParams>): BackendState {

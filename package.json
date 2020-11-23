@@ -116,7 +116,7 @@
     "semver": "^7.3.2",
     "typescript": "^3.9.6",
     "unstated-next": "^1.1.0",
-    "web3": "^1.2.11"
+    "web3": "^1.3.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.8.3",

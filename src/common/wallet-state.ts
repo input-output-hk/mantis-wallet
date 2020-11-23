@@ -4,14 +4,7 @@ import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
 import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
-import Web3 from 'web3'
-import {fromUnixTime} from 'date-fns'
-import {
-  Account as Web3Account,
-  EncryptedKeystoreV3Json,
-  Transaction as Web3Transaction,
-  TransactionConfig,
-} from 'web3-core'
+import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from 'web3-core'
 import {option} from 'fp-ts'
 import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
@@ -20,7 +13,7 @@ import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
 import {toHex} from './util'
 import {asEther, asWei, Wei} from './units'
-import {CustomErrors} from '../web3'
+import {AccountTransaction, CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
 
 interface SynchronizationStatusOffline {
   mode: 'offline'
@@ -156,7 +149,7 @@ export const defaultWalletData: StoreWalletData = {
 
 interface WalletStateParams {
   walletStatus: WalletStatus
-  web3: Web3
+  web3: MantisWeb3
   store: Store<StoreWalletData>
   error: Option<Error>
   syncStatus: Option<SynchronizationStatus>
@@ -169,7 +162,7 @@ interface WalletStateParams {
 
 const DEFAULT_STATE: WalletStateParams = {
   walletStatus: 'INITIAL',
-  web3: new Web3(),
+  web3: defaultWeb3(),
   store: createInMemoryStore(defaultWalletData),
   error: none,
   syncStatus: none,
@@ -207,15 +200,6 @@ const getStatus = (
   if (isPending || txBlock === null) return 'pending'
   return currentBlock - txBlock >= DEPTH_FOR_PERSISTENCE ? 'persisted' : 'confirmed'
 }
-
-const getTimestamp = _.memoize(
-  // uses only the first parameter as cache key
-  async (blockNumber: number | null, web3: Web3): Promise<Date | null> => {
-    if (_.isNil(blockNumber)) return null
-    const {timestamp} = await web3.eth.getBlock(blockNumber, false)
-    return _.isString(timestamp) ? fromUnixTime(parseInt(timestamp, 16)) : fromUnixTime(timestamp)
-  },
-)
 
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
@@ -417,7 +401,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const currentAddress = getCurrentAddress()
     const currentBlock = await web3.eth.getBlockNumber()
 
-    const web3transactions: Web3Transaction[] = await web3.eth.getAccountTransactions(
+    const web3transactions: readonly AccountTransaction[] = await web3.mantis.getAccountTransactions(
       currentAddress,
       Math.max(0, currentBlock - 1000),
       currentBlock,
@@ -425,34 +409,22 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const transactions = await Promise.all(
       web3transactions.map(
-        async ({
-          from,
-          to,
-          hash,
-          blockNumber,
-          value,
-          gas,
-          gasPrice,
-          pending,
-          isOutgoing,
-        }: Web3Transaction): Promise<Transaction> => {
-          const receipt = await web3.eth.getTransactionReceipt(hash)
+        async (tx): Promise<Transaction> => {
           return {
-            from,
-            to,
-            hash,
-            blockNumber,
-            timestamp: await getTimestamp(blockNumber, web3),
-            value: asWei(value),
-            gas,
-            gasPrice: asWei(gasPrice),
-            gasUsed: pending ? null : receipt.gasUsed,
-            fee: isOutgoing
-              ? asWei(new BigNumber(gasPrice).times(pending ? gas : receipt.gasUsed))
+            ...tx,
+            timestamp: tx.timestamp || null,
+            gasUsed: tx.gasUsed || null,
+            value: asWei(tx.value),
+            gasPrice: asWei(tx.gasPrice),
+            fee: tx.isOutgoing
+              ? asWei(new BigNumber(tx.gasPrice).times(tx.gasUsed || tx.gas))
               : asWei(0),
-            direction: isOutgoing ? 'outgoing' : 'incoming',
-            status: getStatus(currentBlock, blockNumber, pending || false),
-            contractAddress: receipt?.contractAddress || null,
+            direction: tx.isOutgoing ? 'outgoing' : 'incoming',
+            status: getStatus(currentBlock, tx.blockNumber, tx.isPending || false),
+            contractAddress:
+              tx.to == null
+                ? (await web3.eth.getTransactionReceipt(tx.hash))?.contractAddress || null
+                : null,
           }
         },
       ),
@@ -580,7 +552,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
     const nonce = getNextNonce(transactions)
 
-    sendTransaction({
+    return sendTransaction({
       recipient,
       amount,
       gasPrice: pipe(
