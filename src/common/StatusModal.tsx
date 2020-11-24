@@ -163,7 +163,7 @@ export const StatusModal = ({
           <div className="title">{t(['status', 'label', 'backend'])}</div>
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'network'])}</div>
-            <div className="info-value">{displayNameOfNetwork(networkName)}</div>
+            <div className="info-value">{displayNameOfNetwork(networkName, t)}</div>
           </div>
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'nodeStatus'])}</div>

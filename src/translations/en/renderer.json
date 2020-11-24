@@ -288,7 +288,7 @@
   "network": {
     "names": {
       "etc": "Mainnet",
-      "testnet-internal": "Internal testnet",
+      "testnet-internal-nomad": "Sagano Testnet",
       "mordor": "Mordor",
       "custom": "Custom"
     },

@@ -3,7 +3,7 @@ import {app, ipcMain, dialog} from 'electron'
 import {IPCFromRendererChannelName} from '../shared/ipc-types'
 import {MANTIS_WALLET_VERSION} from '../shared/version'
 import {TFunctionMain} from './i18n'
-import {displayNameOfNetwork} from '../config/type'
+import {displayNameOfNetworkMain} from '../config/type'
 
 export function ipcListenToRenderer(
   channel: IPCFromRendererChannelName,
@@ -13,9 +13,8 @@ export function ipcListenToRenderer(
 }
 
 export function getTitle(t: TFunctionMain, networkType?: string): string {
-  const displayedNetworkType =
-    !!networkType && networkType !== 'main' ? ` — ${displayNameOfNetwork(networkType)}` : ''
-  return `${t(['title', 'mantisWallet'])} — ${MANTIS_WALLET_VERSION}${displayedNetworkType}`
+  const networkName = displayNameOfNetworkMain(networkType || '', t)
+  return `${t(['title', 'mantisWallet'])} — ${MANTIS_WALLET_VERSION} — ${networkName}`
 }
 
 export function showErrorBox(t: TFunctionMain, title: string, content: string): void {
