@@ -2,20 +2,33 @@ const path = require('path')
 const webpack = require('webpack')
 const AntdScssThemePlugin = require('antd-scss-theme-plugin')
 const WorkerPlugin = require('worker-plugin')
+const _ = require('lodash/fp')
 
-const disableEslint = (e) => {
+const disableEslint = (config) => {
   return (
-    e.module.rules
+    config.module.rules
       .filter((e) => e.use && e.use.some((e) => e.options && void 0 !== e.options.useEslintrc))
       .forEach((s) => {
-        e.module.rules = e.module.rules.filter((e) => e !== s)
+        config.module.rules = config.module.rules.filter((e) => e !== s)
       }),
-    e
+    config
   )
 }
 
+const setScssRoot = (config, path) =>
+  config.module.rules
+    .filter((rule) => rule.use)
+    .map((rule) => rule.use)
+    .forEach((use) => {
+      use
+        .filter((item) => _.isObject(item) && item.loader.includes('resolve-url-loader'))
+        .forEach((item) => (item.options.root = path))
+    })
+
 module.exports = ({config}) => {
   config = disableEslint(config)
+
+  setScssRoot(config, path.join(__dirname, '../src'))
 
   config.plugins.push(new AntdScssThemePlugin('./src/vars.scss'))
   config.plugins.push(new WorkerPlugin())

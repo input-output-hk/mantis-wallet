@@ -22,11 +22,9 @@
       width: 100%;
       height: $dialog-component-height;
       min-height: $dialog-component-height;
-      border-radius: $dialog-component-border-radius;
+      border: none;
 
       @include themify($themes) {
-        border: 1px solid themed('dialog-dark-input-bg');
-        background-color: themed('dialog-dark-input-bg');
         color: themed('secondary-text-color');
       }
     }
@@ -34,7 +32,6 @@
     .ant-select-selector {
       width: 100%;
       height: $dialog-component-height;
-      margin-top: 1px;
 
       .ant-select-selection-search-input {
         line-height: 3;
@@ -46,7 +43,8 @@
 
       .ant-select-selection-item {
         max-width: 120px;
-        padding-top: 6px;
+        padding-top: 8px;
+        font-weight: 500;
       }
     }
   }

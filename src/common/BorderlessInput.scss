@@ -11,8 +11,8 @@
     resize: none;
 
     @include themify($themes) {
-      border: 1px solid themed('normal-color');
-      background-color: themed('normal-color');
+      border: 1px solid themed('text-color');
+      background-color: themed('dialog-dark-input-bg');
       color: themed('text-color');
     }
 
@@ -23,7 +23,7 @@
     &:hover,
     &:focus {
       @include themify($themes) {
-        background-color: themed('normal-color');
+        background-color: themed('dialog-dark-input-bg');
         color: themed('text-color');
       }
     }

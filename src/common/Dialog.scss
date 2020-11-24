@@ -1,7 +1,5 @@
 @import '../themify', '../vars', '../partial';
 
-$dialog-width: 530px;
-
 .Dialog {
   width: $dialog-width;
   margin: auto;
@@ -24,6 +22,38 @@ $dialog-width: 530px;
   .actions {
     &.grid {
       @extend %two-col-grid-template;
+
+      %diagonal-template {
+        @extend %diagonal-before-after-common;
+        z-index: unset;
+        top: 0px;
+        height: 48px;
+        opacity: 1;
+      }
+
+      .ant-btn {
+        &.left {
+          margin-left: $diagonal-part-width;
+          padding: 0 $diagonal-part-width/2 0 0;
+
+          &::before {
+            @extend %diagonal-template;
+            left: -15px;
+            transform: skew(20deg);
+          }
+        }
+
+        &.right {
+          margin-right: $diagonal-part-width;
+          padding: 0 0 0 $diagonal-part-width/2;
+
+          &::after {
+            @extend %diagonal-template;
+            right: -15px;
+            transform: skew(-20deg);
+          }
+        }
+      }
     }
 
     &.natural > * {

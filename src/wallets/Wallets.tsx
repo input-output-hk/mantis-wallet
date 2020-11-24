@@ -4,6 +4,7 @@ import {Navigate} from '../layout/Router'
 import {Loading} from '../common/Loading'
 import {WalletError} from './WalletErrorScreen'
 import {Wallet} from './Wallet'
+import {rendererLog} from '../common/logger'
 
 export const Wallets = (): JSX.Element => {
   const walletState = WalletState.useContainer()
@@ -12,6 +13,8 @@ export const Wallets = (): JSX.Element => {
     if (walletState.walletStatus === 'INITIAL') {
       walletState.refreshSyncStatus()
     }
+
+    rendererLog.debug(`walletStatus: ${walletState.walletStatus}`)
   }, [walletState.walletStatus])
 
   switch (walletState.walletStatus) {

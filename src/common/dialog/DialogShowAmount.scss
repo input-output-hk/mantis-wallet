@@ -27,6 +27,12 @@
     border-radius: $dialog-component-border-radius;
     cursor: not-allowed;
 
+    @include themify($themes) {
+      border: 1px solid themed('text-color');
+      background-color: themed('dialog-dark-input-bg');
+      color: themed('text-color');
+    }
+
     .logo {
       width: 27px;
 
@@ -43,12 +49,6 @@
       text-overflow: ellipsis;
       word-break: break-word;
       white-space: nowrap;
-    }
-
-    @include themify($themes) {
-      border: 1px solid themed('dialog-dark-input-bg');
-      background-color: themed('dialog-dark-input-bg');
-      color: themed('secondary-text-color');
     }
 
     &.invalid {

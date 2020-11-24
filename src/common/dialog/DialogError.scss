@@ -4,7 +4,7 @@
   margin-bottom: $dialog-component-spacing;
   padding: 15px;
   border-radius: $dialog-component-border-radius;
-  font-size: $font-size-xs;
+  font-size: $font-size-s;
   text-align: center;
 
   @include themify($themes) {

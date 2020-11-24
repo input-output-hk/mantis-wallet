@@ -14,8 +14,6 @@
 
   .options .button.inactive,
   .options .button.custom {
-    opacity: $unselected-opacity;
-
     @include themify($themes) {
       background-color: themed('input-bg');
       color: themed('text-color');
@@ -55,15 +53,15 @@
     display: grid;
     grid-template-columns: 0 1fr 1fr 1fr 1fr;
     height: $dialog-component-height;
-    border-radius: $dialog-component-border-radius + 0.1rem;
+    border-radius: $dialog-component-border-radius;
 
     @include themify($themes) {
-      border: 1px solid themed('input-bg');
+      border: 1px solid themed('text-color');
     }
 
     .dark & {
       @include themify($themes) {
-        border: 1px solid themed('dialog-dark-input-bg');
+        border: 1px solid themed('text-color');
       }
     }
 
@@ -74,7 +72,13 @@
       padding: 0;
       border-radius: 0;
       font-size: $font-size-s;
+      letter-spacing: -0.01em;
       text-align: center;
+      text-transform: uppercase;
+
+      @include themify($themes) {
+        background-color: themed('primary-color');
+      }
 
       &.custom {
         border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
@@ -96,7 +100,7 @@
       }
 
       .fee-amount {
-        font-size: $font-size-xs;
+        font-size: 8px;
       }
     }
 

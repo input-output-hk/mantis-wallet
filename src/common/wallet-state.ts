@@ -295,6 +295,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   )(syncStatusOption)
 
   const reset = (status: WalletStatus = 'INITIAL'): void => {
+    rendererLog.debug(`new walletStatus ${status}`)
     setWalletStatus(status)
     setTotalBalance(none)
     setAvailableBalance(none)
