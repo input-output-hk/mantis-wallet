@@ -137,7 +137,7 @@ const mantisConfig = (defaults: MantisConfig): convict.Schema<MantisConfig> => (
 
 const configGetter = convict({
   networkName: {
-    default: 'testnet-internal',
+    default: 'testnet-internal-nomad',
     format: 'network-name',
     arg: 'network',
     env: 'MANTIS_WALLET_NETWORK',

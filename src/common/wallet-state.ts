@@ -489,13 +489,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       }
     }
 
-    const allBlocks = syncing.HighestBlock - syncing.StartingBlock
+    const allBlocks = syncing.highestBlock - syncing.startingBlock
 
     return {
       mode: 'online',
-      currentBlock: syncing.CurrentBlock,
-      highestKnownBlock: syncing.HighestBlock,
-      percentage: allBlocks ? (syncing.CurrentBlock - syncing.StartingBlock) / allBlocks : 0,
+      currentBlock: syncing.currentBlock,
+      highestKnownBlock: syncing.highestBlock,
+      percentage: allBlocks ? (syncing.currentBlock - syncing.startingBlock) / allBlocks : 0,
     }
   }
 
