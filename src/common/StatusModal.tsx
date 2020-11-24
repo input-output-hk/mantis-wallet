@@ -2,7 +2,7 @@ import React from 'react'
 import {Modal} from 'antd'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
-import {Config} from '../config/type'
+import {Config, displayNameOfNetwork} from '../config/type'
 import {SynchronizationStatus} from './wallet-state'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
@@ -163,7 +163,7 @@ export const StatusModal = ({
           <div className="title">{t(['status', 'label', 'backend'])}</div>
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'network'])}</div>
-            <div className="info-value">{networkName}</div>
+            <div className="info-value">{displayNameOfNetwork(networkName)}</div>
           </div>
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'nodeStatus'])}</div>

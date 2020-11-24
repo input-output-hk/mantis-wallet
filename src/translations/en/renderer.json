@@ -151,7 +151,8 @@
     "syncStatus": {
       "syncConnecting": "Connecting",
       "fullySynced": "Fully Synced",
-      "syncing": "Syncing Blocks {{percentage}}%",
+      "syncingBlocks": "Syncing Blocks {{percentage}}%",
+      "syncingState": "Syncing State {{percentage}}%",
       "currentBlock": "Current block: {{blockNumber}}",
       "highestBlock": "Highest block: {{blockNumber}}"
     },
