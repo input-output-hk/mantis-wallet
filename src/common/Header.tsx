@@ -1,23 +1,16 @@
 import React, {PropsWithChildren} from 'react'
-import {SyncStatus} from './SyncStatus'
 import {Link} from './Link'
-import './HeaderWithSyncStatus.scss'
+import './Header.scss'
 
-interface HeaderWithSyncStatusProps {
+interface HeaderProps {
   externalLink?: {
     text: string
     url: string
   }
 }
 
-export const HeaderWithSyncStatus = ({
-  externalLink,
-  children,
-}: PropsWithChildren<HeaderWithSyncStatusProps>): JSX.Element => (
-  <div className="HeaderWithSyncStatus">
-    <div className="right">
-      <SyncStatus />
-    </div>
+export const Header = ({externalLink, children}: PropsWithChildren<HeaderProps>): JSX.Element => (
+  <div className="Header">
     <div className="main-title">
       {children}
       {externalLink && (

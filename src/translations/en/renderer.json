@@ -54,7 +54,7 @@
       "createWallet": "Create",
       "restoreWallet": "Restore",
       "unlockPrivateKey": "Unlock",
-      "logOutOfWallet": "Log Out",
+      "logOutOfWallet": "Log out",
       "removeWallet": "Remove Wallet",
       "copyAddress": "Copy Address",
       "back": "Back",
@@ -326,7 +326,6 @@
       "no": "No"
     },
     "link": {
-      "feedback": "Feedback",
       "support": "Support",
       "status": "Status",
       "showDetails": "Show details",

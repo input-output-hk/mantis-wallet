@@ -1,12 +1,6 @@
 @import '../themify', '../vars';
 
 .MantisModal.ant-modal {
-  margin-left: $sidebar-width;
-
-  @media screen and #{$sidebar-collapse-query} {
-    margin-left: $sidebar-collapsed-width;
-  }
-
   @include themify($themes) {
     color: themed('text-color');
   }
