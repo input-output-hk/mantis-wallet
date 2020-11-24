@@ -1,8 +1,7 @@
 import {DefinedNetworkName} from './config/type'
 
 export const LINKS = {
-  support: 'https://ethereumclassic.org/',
-  feedback: 'https://ethereumclassic.org/',
+  support: 'https://iohk.zendesk.com/hc/en-us/requests/new',
 }
 
 type ExplorerLinks = Record<DefinedNetworkName, (hash: string) => string>

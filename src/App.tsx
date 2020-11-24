@@ -27,7 +27,7 @@ const AppContent: React.FC = () => {
       <WalletState.Provider initialState={{web3, store}}>
         <TokensState.Provider initialState={{web3, store}}>
           <Sidebar />
-          {/* FIXME: version={MANTIS_WALLET_VERSION} /> */}
+          {/* FIXME: ETCM-404 version={MANTIS_WALLET_VERSION} /> */}
           <Router />
         </TokensState.Provider>
       </WalletState.Provider>

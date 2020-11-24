@@ -7,14 +7,12 @@ import {MENU, MenuId, MenuItem} from '../routes-config'
 import {loadMantisWalletStatus, loadConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
 import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
-import {Link} from '../common/Link'
 import {SyncStatus} from '../common/SyncStatus'
 import {StatusModal} from '../common/StatusModal'
 import {SupportModal} from '../common/SupportModal'
 import {fillActionHandlers} from '../common/util'
 import {BalanceDisplay} from '../wallets/BalanceDisplay'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
-import {LINKS} from '../external-link-config'
 import {BackendState} from '../common/backend-state'
 import {TokensState} from '../tokens/tokens-state'
 import {Trans} from '../common/Trans'
@@ -136,9 +134,6 @@ export const Sidebar = (): JSX.Element => {
         >
           <Trans k={['common', 'link', 'support']} />
         </span>
-        <Link href={LINKS.feedback} popoverPlacement="top" className="footer-link feedback">
-          <Trans k={['common', 'link', 'feedback']} />
-        </Link>
         <span
           className="footer-link status"
           {...fillActionHandlers(() => setActiveModal('Status'), 'link')}
