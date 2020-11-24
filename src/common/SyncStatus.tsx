@@ -26,7 +26,14 @@ export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
   if (syncStatus.mode === 'offline') return <Trans k={['wallet', 'syncStatus', 'syncConnecting']} />
   if (syncStatus.percentage === 100) return <Trans k={['wallet', 'syncStatus', 'fullySynced']} />
   return (
-    <Trans k={['wallet', 'syncStatus', 'syncing']} values={{percentage: syncStatus.percentage}} />
+    <Trans
+      k={
+        syncStatus.currentBlock === syncStatus.highestKnownBlock
+          ? ['wallet', 'syncStatus', 'syncingState']
+          : ['wallet', 'syncStatus', 'syncingBlocks']
+      }
+      values={{percentage: syncStatus.percentage.toFixed(2)}}
+    />
   )
 }
 

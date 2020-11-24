@@ -70,13 +70,18 @@ export const Settings = (): JSX.Element => {
     setActiveModal('ChangeNetwork')
   }
 
-  const networkOptions = [...DEFINED_NETWORK_NAMES, 'custom'].map((network) => ({
+  const definedNetworkOptions = DEFINED_NETWORK_NAMES.map((network) => ({
     key: network,
     // FIXME: ETCM-342 remove after upgrading to TS4
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    label: t(['network', 'names', displayNameOfNetwork(network)]),
+    label: displayNameOfNetwork(network, t),
   }))
+
+  const networkOptions = [
+    ...definedNetworkOptions,
+    {key: 'custom', label: t(['network', 'names', 'custom'])},
+  ]
 
   return (
     <SettingsWrapper>

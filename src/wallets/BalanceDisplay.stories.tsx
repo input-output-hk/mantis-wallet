@@ -31,12 +31,16 @@ export const syncStatus = (): JSX.Element => {
       mode: 'online',
       currentBlock: 0,
       highestKnownBlock: 0,
+      pulledStates: 0,
+      knownStates: 0,
       percentage: 50,
     },
     synced: {
       mode: 'online',
       currentBlock: 0,
       highestKnownBlock: 0,
+      pulledStates: 0,
+      knownStates: 0,
       percentage: 100,
     },
   }

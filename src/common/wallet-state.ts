@@ -31,6 +31,8 @@ interface SynchronizationStatusOnline {
   mode: 'online'
   currentBlock: number
   highestKnownBlock: number
+  pulledStates: number
+  knownStates: number
   percentage: number
 }
 
@@ -489,13 +491,21 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       }
     }
 
-    const allBlocks = syncing.HighestBlock - syncing.StartingBlock
+    const allBlocks = syncing.highestBlock - syncing.startingBlock
+    const syncedBlocks = syncing.currentBlock - syncing.startingBlock
+
+    const syncedRatio =
+      allBlocks + syncing.knownStates === 0
+        ? 0
+        : (syncedBlocks + syncing.pulledStates) / (allBlocks + syncing.knownStates)
 
     return {
       mode: 'online',
-      currentBlock: syncing.CurrentBlock,
-      highestKnownBlock: syncing.HighestBlock,
-      percentage: allBlocks ? (syncing.CurrentBlock - syncing.StartingBlock) / allBlocks : 0,
+      currentBlock: syncing.currentBlock,
+      highestKnownBlock: syncing.highestBlock,
+      pulledStates: syncing.pulledStates,
+      knownStates: syncing.knownStates,
+      percentage: syncedRatio * 100,
     }
   }
 
