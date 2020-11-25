@@ -1,5 +1,4 @@
 import 'web3-eth'
-import {Transaction, BlockNumber} from 'web3-core'
 
 declare module 'web3-eth' {
   export interface SyncingFixed {
@@ -10,12 +9,6 @@ declare module 'web3-eth' {
     pulledStates: number
   }
   interface Eth {
-    getAccountTransactions: (
-      address: string,
-      from: BlockNumber,
-      to: BlockNumber,
-    ) => Promise<Transaction[]>
-
     isSyncing(
       callback?: (error: Error, syncing: SyncingFixed) => void,
     ): Promise<SyncingFixed | boolean>

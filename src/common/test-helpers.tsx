@@ -1,18 +1,18 @@
 /* eslint-disable react/display-name */
 import '@testing-library/jest-dom/extend-expect'
 import React, {FunctionComponent} from 'react'
-import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
-import {waitFor, act} from '@testing-library/react'
+import {act, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {SettingsState} from '../settings-state'
-import {defaultWalletData, WalletState, WalletStatus, StoreWalletData} from './wallet-state'
+import {defaultWalletData, StoreWalletData, WalletState, WalletStatus} from './wallet-state'
 import {BackendState} from './backend-state'
 import {abbreviateAmount} from './formatters'
 import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
 import {createInMemoryStore} from './store'
+import {defaultWeb3} from '../web3'
 
-const web3 = new Web3()
+const web3 = defaultWeb3()
 
 export const WithSettingsProvider: FunctionComponent = ({
   children,
