@@ -5,7 +5,7 @@ import {createContainer} from 'unstated-next'
 import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from 'web3-core'
-import {option} from 'fp-ts'
+import {option, readonlyArray} from 'fp-ts'
 import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
 import {usePersistedState} from './hook-utils'
@@ -401,11 +401,26 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     const currentAddress = getCurrentAddress()
     const currentBlock = await web3.eth.getBlockNumber()
 
-    const web3transactions: readonly AccountTransaction[] = await web3.mantis.getAccountTransactions(
-      currentAddress,
-      Math.max(0, currentBlock - 1000),
-      currentBlock,
-    )
+    const web3transactions: readonly AccountTransaction[] = await web3.mantis
+      .getAccountTransactions(currentAddress, Math.max(0, currentBlock - 999), currentBlock)
+      .then((txns) => {
+        //TEMPORARY: Deduplicate pending transactions if they are also present in chain
+        //Once ETCM-363 is there this code will be in better place
+        const confirmedHashes = pipe(
+          txns,
+          readonlyArray.filterMap((tx) =>
+            tx.blockNumber != null ? option.some(tx.hash) : option.none,
+          ),
+          (hashes) => new Set(hashes),
+        )
+
+        return pipe(
+          txns,
+          readonlyArray.filterMap((tx) =>
+            tx.isPending && confirmedHashes.has(tx.hash) ? option.none : option.some(tx),
+          ),
+        )
+      })
 
     const transactions = await Promise.all(
       web3transactions.map(
