@@ -4,6 +4,8 @@ const AntdScssThemePlugin = require('antd-scss-theme-plugin')
 const WorkerPlugin = require('worker-plugin')
 const _ = require('lodash/fp')
 
+// FIXME: ETCM-428 - extract common webpack config for storybook and app
+
 const disableEslint = (config) => {
   return (
     config.module.rules

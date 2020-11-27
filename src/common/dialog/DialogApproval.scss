@@ -10,14 +10,13 @@ $padding-h: 17px;
     border-radius: $dialog-component-border-radius;
 
     @include themify($themes) {
-      border: 1px solid themed('normal-color');
-      background-color: themed('normal-color');
-      color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
+      border: 1px solid themed('text-color');
+      background-color: themed('input-bg');
+      color: themed('text-color')
     }
 
     .dark & {
       @include themify($themes) {
-        border: 1px solid themed('dialog-dark-input-bg');
         background-color: themed('dialog-dark-input-bg');
       }
     }

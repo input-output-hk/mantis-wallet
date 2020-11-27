@@ -115,7 +115,7 @@ div#root {
 .ant-btn.active {
   @include themify($themes) {
     background-color: themed('btn-default-bg');
-    color: themed('secondary-background');
+    color: themed('btn-default-text-color');
 
     &::after,
     &::before {
@@ -191,6 +191,11 @@ div#root {
   @include themify($themes) {
     background-color: themed('error-color');
     color: #fff;
+
+    &::after,
+    &::before {
+      background-color: themed('error-color');
+    }
   }
 }
 
@@ -465,18 +470,36 @@ input::placeholder {
   .left-diagonal {
     padding: 0 0 0 15px;
 
+    @include themify($themes) {
+      background-color: themed('btn-main-primary-bg');
+      color: themed('btn-main-primary-text-color');
+    }
+
     &::after {
       @extend %diagonal-before-after-common;
       right: -15px;
+
+      @include themify($themes) {
+        background-color: themed('btn-main-primary-bg');
+      }
     }
   }
 
   .right-diagonal {
     padding: 0 15px 0 0;
 
+    @include themify($themes) {
+      background-color: themed('btn-main-secondary-bg');
+      color: themed('btn-main-secondary-text-color');
+    }
+
     &::before {
       @extend %diagonal-before-after-common;
       left: -15px;
+
+      @include themify($themes) {
+        background-color: themed('btn-main-secondary-bg');
+      }
     }
   }
 }
