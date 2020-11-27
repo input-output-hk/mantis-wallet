@@ -1,23 +1,25 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import _ from 'lodash/fp'
 import classnames from 'classnames'
-import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
+import {CaretDownFilled, CaretUpFilled} from '@ant-design/icons'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {map, sort} from 'fp-ts/lib/Array'
-import {Ord, ordNumber, ord, getDualOrd} from 'fp-ts/lib/Ord'
+import {map} from 'fp-ts/lib/Array'
+import {sort} from 'fp-ts/lib/ReadonlyArray'
+import {getDualOrd, ord, Ord, ordNumber} from 'fp-ts/lib/Ord'
 import {fillActionHandlers} from '../common/util'
 import {
   TransactionCellProps,
   TxAmountCell,
   TxAssetCell,
-  TxTimeCell,
-  TxStatusCell,
-  TxTypeCell,
   TxDetailsCell,
+  TxStatusCell,
+  TxTimeCell,
+  TxTypeCell,
 } from './TransactionRow'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
-import {Transaction} from '../common/wallet-state'
+import {Transaction} from './history'
+
 import './TransactionList.scss'
 
 type SortableProperty = 'amount' | 'time' | 'status'
@@ -30,7 +32,7 @@ export interface SortBy {
 }
 
 interface TransactionListProps {
-  transactions: Transaction[]
+  transactions: readonly Transaction[]
   shownTxNumber?: number
   onSortChange?: (sortBy: SortBy) => void
   initialSortBy?: SortBy

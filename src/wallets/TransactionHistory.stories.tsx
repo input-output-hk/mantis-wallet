@@ -15,7 +15,6 @@ import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
 import {asWei, asEther} from '../common/units'
-import {Transaction} from '../common/wallet-state'
 import {
   SendBasicTransaction,
   SendAdvancedTransaction,
@@ -23,6 +22,7 @@ import {
   ConfirmBasicTransaction,
 } from './sendTransaction'
 import {wrapWithModal} from '../common/MantisModal'
+import {Transaction} from './history'
 
 export default {
   title: 'Transaction History',

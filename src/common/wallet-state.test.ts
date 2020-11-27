@@ -1,7 +1,8 @@
 import {assert} from 'chai'
 import web3 from 'web3'
 import {asEther, asWei} from './units'
-import {getPendingBalance, mergeTransactions, Transaction} from './wallet-state'
+import {getPendingBalance} from './wallet-state'
+import {Transaction} from '../wallets/history'
 
 const createTestTx = (
   direction: Transaction['direction'],
@@ -61,45 +62,5 @@ describe('pending balance calculation', () => {
       getPendingBalance([...pendingTestBaseTransactions, pending1, pending2, incomingPending]),
       asEther(320),
     )
-  })
-})
-
-describe('transaction history merging', () => {
-  it('marks disappearing pending transactions as failed', () => {
-    const previous = [...pendingTestBaseTransactions, pending1]
-    const current = pendingTestBaseTransactions
-
-    const result = mergeTransactions(current)(previous)
-
-    assert.deepEqual(result, [{...pending1, status: 'failed'}, ...pendingTestBaseTransactions])
-  })
-
-  it('keeps failed transactions', () => {
-    const failed: Transaction = {...pending1, status: 'failed'}
-    const previous = [...pendingTestBaseTransactions, failed]
-    const current = pendingTestBaseTransactions
-
-    const result = mergeTransactions(current)(previous)
-
-    assert.deepEqual(result, [failed, ...pendingTestBaseTransactions])
-  })
-
-  it('keeps confirmed and persisted transactions which disappeared', () => {
-    const previous = pendingTestBaseTransactions
-    const current: Transaction[] = []
-
-    const result = mergeTransactions(current)(previous)
-
-    assert.deepEqual(result, previous)
-  })
-
-  it('prefers new transactions if status changes', () => {
-    const confirmed: Transaction = {...pending1, status: 'confirmed'}
-    const previous = [...pendingTestBaseTransactions, pending1]
-    const current = [confirmed, ...pendingTestBaseTransactions]
-
-    const result = mergeTransactions(current)(previous)
-
-    assert.deepEqual(result, current)
   })
 })

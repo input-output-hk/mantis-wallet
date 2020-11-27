@@ -12,7 +12,7 @@ export const fromHistory = (txHistory: TransactionHistory): StoredHistory => {
       ...new Set(
         txHistory.transactions
           .map((tx) => tx.blockNumber)
-          .filter((nr): nr is number => nr !== null),
+          .filter((nr): nr is number => Number.isInteger(nr)),
       ),
     ],
   }

@@ -1,26 +1,27 @@
 import React, {useState} from 'react'
-import {CaretUpFilled, CaretDownFilled} from '@ant-design/icons'
+import {CaretDownFilled, CaretUpFilled} from '@ant-design/icons'
 import {Button, Dropdown, Menu} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
-import {Option, fold, getOrElse} from 'fp-ts/lib/Option'
+import {fold, getOrElse, Option} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/function'
 import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {
-  TransactionList,
-  updateSorting,
-  SortBy,
   columns,
   SortableColumnConfig,
+  SortBy,
+  TransactionList,
+  updateSorting,
 } from './TransactionList'
 import {Trans} from '../common/Trans'
-import {Wei, asWei} from '../common/units'
-import {Transaction, FeeEstimates, Account} from '../common/wallet-state'
+import {asWei, Wei} from '../common/units'
+import {Account, FeeEstimates} from '../common/wallet-state'
+import {Transaction} from './history'
 
 import './TransactionHistory.scss'
 
 export interface TransactionHistoryProps {
-  transactions: Transaction[]
+  transactions: readonly Transaction[]
   accounts: Account[]
   availableBalance: Option<Wei>
   estimateTransactionFee: () => Promise<FeeEstimates>

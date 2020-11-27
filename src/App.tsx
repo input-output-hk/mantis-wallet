@@ -12,6 +12,8 @@ import {SplashScreen} from './SplashScreen'
 import {config} from './config/renderer'
 import {createWeb3} from './web3'
 import './App.scss'
+import {TransactionHistoryService} from './wallets/history'
+import {rendererLog} from './common/logger'
 
 const web3 = createWeb3(config.rpcAddress)
 const store = createPersistentStore()
@@ -24,7 +26,13 @@ const AppContent: React.FC = () => {
 
   return isBackendRunning ? (
     <div className={classnames('loaded', menu.toLowerCase())}>
-      <WalletState.Provider initialState={{web3, store}}>
+      <WalletState.Provider
+        initialState={{
+          web3,
+          store,
+          txHistory: TransactionHistoryService.create(web3, store, rendererLog),
+        }}
+      >
         <TokensState.Provider initialState={{web3, store}}>
           <Sidebar />
           {/* FIXME: ETCM-404 version={MANTIS_WALLET_VERSION} /> */}

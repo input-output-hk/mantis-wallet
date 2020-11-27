@@ -5,6 +5,8 @@ import {elem, Option} from 'fp-ts/lib/Option'
 import {fromEquals} from 'fp-ts/lib/Eq'
 import {Rule} from 'antd/lib/form'
 import {StoreValue} from 'antd/lib/form/interface'
+import {Observable} from 'rxjs'
+import {useEffect, useState} from 'react'
 import {Translatable, TFunctionRenderer, createTErrorRenderer} from './i18n'
 import {ETC_CHAIN} from './chains'
 
@@ -269,3 +271,19 @@ export const fillActionHandlers = (
   role,
   tabIndex: 0,
 })
+
+export const useObservable = <T>(initialValue: T, observable: Observable<T>): T => {
+  const [value, setValue] = useState(initialValue)
+
+  useEffect(() => {
+    console.log('subscribing')
+    const subscription = observable.subscribe(setValue)
+
+    return () => {
+      console.log('unsubscribing')
+      subscription.unsubscribe()
+    }
+  }, [observable])
+
+  return value
+}

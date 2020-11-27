@@ -2,11 +2,11 @@ import _ from 'lodash/fp'
 import {set as mutatingSet} from 'lodash'
 import ElectronStore from 'electron-store'
 import {gt} from 'semver'
-import {StoreWalletData, defaultWalletData} from './wallet-state'
-import {StoreSettingsData, defaultSettingsData} from '../settings-state'
+import {defaultWalletData, StoreWalletData} from './wallet-state'
+import {defaultSettingsData, StoreSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
-import {StoreTokensData, defaultTokensData} from '../tokens/tokens-state'
-import {defaultBackendData, StoreBackendData, migrationsForBackendData} from './backend-state'
+import {defaultTokensData, StoreTokensData} from '../tokens/tokens-state'
+import {defaultBackendData, migrationsForBackendData, StoreBackendData} from './backend-state'
 import {DATADIR_VERSION} from '../shared/version'
 
 export type StoreData = StoreWalletData & StoreSettingsData & StoreTokensData & StoreBackendData
@@ -71,7 +71,7 @@ export function createInMemoryStore<TObject extends object>(initial: TObject): S
 
 const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 
-const projectVersion = getMaxVersion('0.1.2-mantis-wallet', DATADIR_VERSION)
+const projectVersion = getMaxVersion('0.1.3-mantis-wallet', DATADIR_VERSION)
 
 export function createPersistentStore(): Store<StoreData> {
   const store = new ElectronStore({
