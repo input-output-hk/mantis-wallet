@@ -12,7 +12,7 @@ $padding-h: 17px;
     @include themify($themes) {
       border: 1px solid themed('text-color');
       background-color: themed('input-bg');
-      color: themed('text-color')
+      color: themed('text-color');
     }
 
     .dark & {

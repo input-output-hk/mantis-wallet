@@ -14,7 +14,7 @@
 
   .toolbar {
     @include header-margin-top;
-    
+
     display: grid;
     grid-template-columns: 1fr auto;
     line-height: 30px;
