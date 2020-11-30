@@ -15,9 +15,12 @@ import {toHex} from './util'
 import {asEther, asWei, Wei} from './units'
 import {AccountTransaction, CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
 
+const EXPECTED_LAST_BLOCK_CHANGE_SECONDS = 60
+
 interface SynchronizationStatusOffline {
   mode: 'offline'
   currentBlock: number
+  lastNewBlockTimestamp: number
 }
 
 interface SynchronizationStatusOnline {
@@ -27,9 +30,19 @@ interface SynchronizationStatusOnline {
   pulledStates: number
   knownStates: number
   percentage: number
+  lastNewBlockTimestamp: number
 }
 
-export type SynchronizationStatus = SynchronizationStatusOffline | SynchronizationStatusOnline
+interface SynchronizationStatusSynced {
+  mode: 'synced'
+  currentBlock: number
+  lastNewBlockTimestamp: number
+}
+
+export type SynchronizationStatus =
+  | SynchronizationStatusOffline
+  | SynchronizationStatusOnline
+  | SynchronizationStatusSynced
 
 export interface Account {
   address: string
@@ -275,6 +288,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     (): SynchronizationStatus => ({
       mode: 'offline',
       currentBlock: -1,
+      lastNewBlockTimestamp: 0,
     }),
   )(syncStatusOption)
 
@@ -457,24 +471,47 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const getSyncStatus = async (): Promise<SynchronizationStatus> => {
+    const currentTimestamp = new Date().valueOf()
     if (isMocked) {
       return {
         mode: 'offline',
         currentBlock: 0,
+        lastNewBlockTimestamp: currentTimestamp,
       }
     }
 
+    const previousSyncStatus = syncStatus
     const syncing = await web3.eth.isSyncing()
 
     if (syncing === true) {
       throw Error('Unexpected')
     }
 
+    const currentBlock = await web3.eth.getBlockNumber()
+
+    const lastNewBlockTimestamp =
+      currentBlock === previousSyncStatus.currentBlock
+        ? previousSyncStatus.lastNewBlockTimestamp
+        : currentTimestamp
+
     if (syncing === false) {
-      const currentBlock = await web3.eth.getBlockNumber()
-      return {
-        mode: 'offline',
-        currentBlock: currentBlock,
+      if (
+        currentBlock === 0 ||
+        (currentBlock === previousSyncStatus.currentBlock &&
+          currentTimestamp >
+            previousSyncStatus.lastNewBlockTimestamp + EXPECTED_LAST_BLOCK_CHANGE_SECONDS * 1000)
+      ) {
+        return {
+          mode: 'offline',
+          currentBlock,
+          lastNewBlockTimestamp,
+        }
+      } else {
+        return {
+          mode: 'synced',
+          currentBlock,
+          lastNewBlockTimestamp,
+        }
       }
     }
 
@@ -493,6 +530,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       pulledStates: syncing.pulledStates,
       knownStates: syncing.knownStates,
       percentage: syncedRatio * 100,
+      lastNewBlockTimestamp,
     }
   }
 

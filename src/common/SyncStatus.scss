@@ -14,7 +14,7 @@
     vertical-align: middle;
   }
 
-  &.syncing svg {
+  &.online svg {
     @include themify($themes) {
       animation: spin 4s linear infinite;
       stroke: themed('primary-color');

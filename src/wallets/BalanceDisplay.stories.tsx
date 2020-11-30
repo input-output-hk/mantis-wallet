@@ -26,6 +26,7 @@ export const syncStatus = (): JSX.Element => {
     offline: {
       mode: 'offline',
       currentBlock: 0,
+      lastNewBlockTimestamp: 0,
     },
     syncing: {
       mode: 'online',
@@ -34,6 +35,7 @@ export const syncStatus = (): JSX.Element => {
       pulledStates: 0,
       knownStates: 0,
       percentage: 50,
+      lastNewBlockTimestamp: 0,
     },
     synced: {
       mode: 'online',
@@ -42,6 +44,7 @@ export const syncStatus = (): JSX.Element => {
       pulledStates: 0,
       knownStates: 0,
       percentage: 100,
+      lastNewBlockTimestamp: 0,
     },
   }
 
