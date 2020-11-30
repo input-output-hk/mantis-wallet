@@ -1,7 +1,7 @@
-@import './partial', './themify', './vars';
+@import './partial', './themify', './vars', './functions';
 
 .Settings {
-  margin-top: $router-top-margin;
+  @include header-margin-top;
 
   .main-title {
     margin-bottom: 3rem;

@@ -1,4 +1,4 @@
-@import '../themify', '../partial', '../vars';
+@import '../themify', '../partial', '../vars', '../functions';
 
 .TransactionHistory {
   display: grid;
@@ -13,9 +13,10 @@
   }
 
   .toolbar {
+    @include header-margin-top;
+    
     display: grid;
     grid-template-columns: 1fr auto;
-    margin-top: $router-top-margin;
     line-height: 30px;
 
     .sort-by {

@@ -1,11 +1,11 @@
-@import '../partial', '../vars';
+@import '../partial', '../vars', '../functions';
 
 .AddressBook {
   .toolbar {
+    @include address-book-padding-top;
     display: grid;
     grid-template-columns: auto 1fr auto;
     margin-bottom: 3rem;
-    padding-top: $router-top-margin;
     line-height: 30px;
   }
 

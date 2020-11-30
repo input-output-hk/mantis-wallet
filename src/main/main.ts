@@ -61,8 +61,9 @@ function createWindow(t: TFunctionMain): void {
     icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
-    minWidth: 1440,
-    minHeight: 950,
+    // Minimum supported resolution: 1366x768
+    minWidth: 1120,
+    minHeight: 680,
     webPreferences: {
       nodeIntegration: true,
     },
