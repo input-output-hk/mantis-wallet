@@ -116,9 +116,7 @@
   }
 
   .asset-icon {
-    position: relative;
-    top: 10px; // Extract?
-    height: 30px;
+    @extend %asset-icon;
     margin-right: 6px;
   }
 

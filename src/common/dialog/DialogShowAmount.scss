@@ -37,9 +37,7 @@
       width: 27px;
 
       .asset-icon {
-        position: relative;
-        top: 10px;
-        height: 30px;
+        @extend %asset-icon;
       }
     }
 
