@@ -22,7 +22,7 @@ import {prop} from '../shared/utils'
 import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
-import {inspectLineForDAGStatus, status} from './status'
+import {status} from './status'
 import {checkDatadirCompatibility, CheckedDatadir} from './data-dir'
 import {createLogExporter} from './log-exporter'
 import {createMainLog} from './logger'
@@ -203,12 +203,7 @@ datadirInit()
       let runningMantis: SpawnedMantisProcess | null = null
 
       function logMantis(spawnedMantis: SpawnedMantisProcess): void {
-        spawnedMantis.log$
-          .pipe(
-            rxop.tap(inspectLineForDAGStatus),
-            rxop.map((line) => `mantis | ${line}`),
-          )
-          .subscribe(console.info) // eslint-disable-line no-console
+        spawnedMantis.log$.pipe(rxop.map((line) => `mantis | ${line}`)).subscribe(console.info) // eslint-disable-line no-console
       }
 
       async function spawnMantis(additionalSettings: ClientSettings): Promise<void> {
