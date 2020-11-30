@@ -2,6 +2,8 @@ import {URL} from 'url'
 import {Option} from 'fp-ts/lib/Option'
 import * as T from 'io-ts'
 import {TLSConfig} from '../main/tls'
+import {TFunctionRenderer} from '../common/i18n'
+import {TFunctionMain} from '../main/i18n'
 
 export type ClientSettings = Record<string, string | boolean | number | null>
 
@@ -24,16 +26,25 @@ export type DefinedNetworkName = typeof DEFINED_NETWORK_NAMES[number]
 export const isDefinedNetworkName = (networkName: NetworkName): networkName is DefinedNetworkName =>
   (DEFINED_NETWORK_NAMES as readonly string[]).includes(networkName)
 
-export const displayNameOfNetwork = (networkName: NetworkName): string => {
-  // An exception due to configuration issues and a secondary GAC-based deployment just in case, didn't want to open
-  // can of worms related to keeping both config name and display name due to that single value that probably is
-  // going to be removed/adjusted anyway
-  if (networkName == 'testnet-internal-nomad') {
-    return 'testnet-internal'
-  } else if (isDefinedNetworkName(networkName)) {
-    return networkName
+export const displayNameOfNetwork = (networkName: NetworkName, t: TFunctionRenderer): string => {
+  if (isDefinedNetworkName(networkName)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return t(['network', 'names', networkName])
   } else {
-    return 'custom'
+    return networkName
+  }
+}
+
+// We need separate function for main proccess, otherwise we get following error:
+// Type instantiation is excessively deep and possibly infinite
+export const displayNameOfNetworkMain = (networkName: NetworkName, t: TFunctionMain): string => {
+  if (isDefinedNetworkName(networkName)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return t(['network', 'names', networkName])
+  } else {
+    return networkName
   }
 }
 

@@ -2,7 +2,31 @@
 import _ from 'lodash'
 import Web3 from 'web3'
 import {formatters} from 'web3-core-helpers'
+import BigNumber from 'bignumber.js'
+import {Transaction} from 'web3-core'
+import {fromUnixTime} from 'date-fns'
 import * as T from 'io-ts'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const accountTransactionFormatter = (input: any): any => {
+  const intermediate = formatters.outputTransactionFormatter(input)
+  return {
+    ...intermediate,
+    timestamp: _.isString(intermediate.timestamp)
+      ? fromUnixTime(parseInt(intermediate.timestamp, 16))
+      : fromUnixTime(intermediate.timestamp),
+    gasUsed: formatters.outputBigNumberFormatter(intermediate.gasUsed),
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const accountTransactionsFormatter = (output: any): any => {
+  if (_.isArray(output?.transactions)) {
+    return output.transactions.map(accountTransactionFormatter)
+  }
+
+  return []
+}
 
 //https://eth.wiki/json-rpc/json-rpc-error-codes-improvement-proposal
 export const CustomError = T.type({
@@ -11,22 +35,29 @@ export const CustomError = T.type({
 })
 export const CustomErrors = T.readonlyArray(CustomError)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const outputTransactionsFormatter = (output: any): any => {
-  if (_.isArray(output?.transactions)) {
-    return output.transactions.map(formatters.outputTransactionFormatter)
+export interface AccountTransaction extends Transaction {
+  isOutgoing: boolean
+  isPending: boolean
+  timestamp: Date | null
+  gasUsed: number | null
+}
+export type MantisWeb3 = Web3 & {
+  mantis: {
+    getAccountTransactions: (
+      address: string,
+      fromBlock: BigNumber | number,
+      toBlock: BigNumber | number,
+    ) => Promise<readonly AccountTransaction[]>
   }
-
-  return []
 }
 
-export function createWeb3(url: URL): Web3 {
-  const web3 = new Web3(new Web3.providers.HttpProvider(url.href))
-  web3.eth.extend({
+function extendWeb3(web3: Web3): MantisWeb3 {
+  web3.extend({
+    property: 'mantis',
     methods: [
       {
         name: 'getAccountTransactions',
-        call: 'daedalus_getAccountTransactions', // FIXME ETCM-135
+        call: 'mantis_getAccountTransactions',
         params: 3,
         inputFormatter: [
           // @ts-ignore
@@ -37,9 +68,16 @@ export function createWeb3(url: URL): Web3 {
           formatters.inputDefaultBlockNumberFormatter,
         ],
         // @ts-ignore
-        outputFormatter: outputTransactionsFormatter,
+        outputFormatter: accountTransactionsFormatter,
       },
     ],
   })
-  return web3
+  return web3 as MantisWeb3
 }
+
+export function createWeb3(url: URL): MantisWeb3 {
+  const web3 = new Web3(new Web3.providers.HttpProvider(url.href))
+  return extendWeb3(web3)
+}
+
+export const defaultWeb3 = (): MantisWeb3 => extendWeb3(new Web3())

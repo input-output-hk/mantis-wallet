@@ -56,5 +56,13 @@
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
     "toggleFullScreen": "Toggle Full Screen"
+  },
+  "network": {
+    "names": {
+      "etc": "Mainnet",
+      "testnet-internal-nomad": "Sagano Testnet",
+      "mordor": "Mordor",
+      "custom": "Custom"
+    }
   }
 }

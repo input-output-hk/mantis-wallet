@@ -3,7 +3,7 @@
 .TransactionHistory {
   display: grid;
   grid-template-rows: auto 1fr;
-  margin: 0 0 100px;
+  margin: 0;
 
   .svg {
     @include themify($themes) {

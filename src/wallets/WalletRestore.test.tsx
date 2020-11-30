@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
-import Web3 from 'web3'
-import {render, fireEvent, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
+import {fireEvent, render, waitFor, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   expectCalledOnClick,
@@ -10,8 +9,9 @@ import {
 } from '../common/test-helpers'
 import {WalletState, WalletStatus} from '../common/wallet-state'
 import {WalletRestore} from './WalletRestore'
+import {defaultWeb3} from '../web3'
 
-const web3 = new Web3()
+const web3 = defaultWeb3()
 
 const seedPhrase = [
   'vengeful',

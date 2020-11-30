@@ -1,12 +1,12 @@
 import {createContainer} from 'unstated-next'
 import _ from 'lodash/fp'
 import BigNumber from 'bignumber.js'
-import Web3 from 'web3'
-import {Store, createInMemoryStore} from '../common/store'
+import {createInMemoryStore, Store} from '../common/store'
 import {usePersistedState} from '../common/hook-utils'
 import {createTErrorRenderer} from '../common/i18n'
 import {returnDataToHumanReadable} from '../common/util'
 import {rendererLog} from '../common/logger'
+import {defaultWeb3, MantisWeb3} from '../web3'
 
 export interface Token {
   name: string
@@ -39,7 +39,7 @@ export interface StoreTokensData {
 
 interface TokensInitialState {
   store: Store<StoreTokensData>
-  web3: Web3
+  web3: MantisWeb3
 }
 
 export const defaultTokensData = {
@@ -51,7 +51,7 @@ export const defaultTokensData = {
 function useTokenState(
   {store, web3}: TokensInitialState = {
     store: createInMemoryStore(defaultTokensData),
-    web3: new Web3(),
+    web3: defaultWeb3(),
   },
 ): TokensData {
   const [tokens, setTokens] = usePersistedState(store, ['tokens', 'watched'])

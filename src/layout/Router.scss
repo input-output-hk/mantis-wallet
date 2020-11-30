@@ -1,6 +1,8 @@
+@import '../vars';
+
 .Router {
   position: relative;
   height: 100vh;
-  padding: 36px;
+  padding: $app-padding-vertical $app-padding-horizontal;
   overflow: auto;
 }
