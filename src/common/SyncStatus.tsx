@@ -14,17 +14,9 @@ interface SyncStatusProps {
   syncStatus: SynchronizationStatus
 }
 
-type SyncStatus = 'offline' | 'synced' | 'syncing'
-
-const getSyncStatus = (syncStatus: SynchronizationStatus): SyncStatus => {
-  if (syncStatus.mode === 'offline') return 'offline'
-  if (syncStatus.percentage === 100) return 'synced'
-  return 'syncing'
-}
-
 export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
   if (syncStatus.mode === 'offline') return <Trans k={['wallet', 'syncStatus', 'syncConnecting']} />
-  if (syncStatus.percentage === 100) return <Trans k={['wallet', 'syncStatus', 'fullySynced']} />
+  if (syncStatus.mode === 'synced') return <Trans k={['wallet', 'syncStatus', 'fullySynced']} />
   return (
     <Trans
       k={
@@ -38,7 +30,7 @@ export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
 }
 
 export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
-  const classes = classnames('SyncStatus', getSyncStatus(syncStatus))
+  const classes = classnames('SyncStatus', syncStatus.mode)
   const popoverContent = (
     <span>
       <div>
