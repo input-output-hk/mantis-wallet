@@ -10,7 +10,6 @@ import {BackendState} from './backend-state'
 import {useTranslation, useFormatters} from '../settings-state'
 import {TKeyRenderer} from './i18n'
 import {Trans} from './Trans'
-import {FAILURE_FOR_DAG, PROGRESS_FOR_DAG} from '../shared/dagStatus'
 import './StatusModal.scss'
 
 const statusToTranslation: Record<ProcessStatus, TKeyRenderer> = {
@@ -35,63 +34,6 @@ const DisplaySyncStatus = ({syncStatus}: {syncStatus: SynchronizationStatus}): J
     <SyncMessage syncStatus={syncStatus} />
   </span>
 )
-
-const dagErrorToTranslation: Record<typeof FAILURE_FOR_DAG[number], TKeyRenderer> = {
-  'DAG file ended unexpectedly': ['status', 'error', 'dagFileEndedUnexpectedly'],
-  'Invalid DAG file prefix': ['status', 'error', 'invalidDagFilePrefix'],
-  'Cannot read DAG from file': ['status', 'error', 'cannotReadDagFromFile'],
-  'Cannot generate DAG file': ['status', 'error', 'cannotGenerateDagFile'],
-}
-
-const localizeDagLoadingStatus = (
-  message = '',
-): {tKey: TKeyRenderer; percentage: string} | null => {
-  const matches = PROGRESS_FOR_DAG.map((progressRegex) => message.match(progressRegex)).filter(
-    (res): res is RegExpMatchArray => res != null,
-  )
-  if (matches.length === 0) return null
-  const [[fullRegexMatch, percentage]] = matches
-  return {
-    tKey: fullRegexMatch.startsWith('Generating DAG')
-      ? ['status', 'message', 'generatingDag']
-      : ['status', 'message', 'loadingDagFromFile'],
-    percentage: percentage,
-  }
-}
-
-const DisplayDagStatus = ({
-  dag: {status, message},
-}: {
-  dag: {status: ProcessStatus; message?: string}
-}): JSX.Element => {
-  if (status === 'finished')
-    return (
-      <span className="status success">
-        <Trans k={['status', 'componentStatus', 'loaded']} />
-      </span>
-    )
-
-  if (status === 'failed') {
-    const dagError = (message &&
-      (dagErrorToTranslation as Record<string, TKeyRenderer>)[message]) || [
-      'common',
-      'error',
-      'unexpectedError',
-    ]
-    return (
-      <span className="status error">
-        <Trans k={dagError} />
-      </span>
-    )
-  }
-
-  const loadingStatus = localizeDagLoadingStatus(message)
-  return loadingStatus == null ? (
-    <>-</>
-  ) : (
-    <Trans k={loadingStatus.tKey} values={{percentage: loadingStatus.percentage}} />
-  )
-}
 
 interface StatusModalProps extends Pick<ModalProps, 'visible' | 'onCancel'> {
   status: MantisWalletStatus
@@ -179,12 +121,6 @@ export const StatusModal = ({
             <div>{getLabel(['status', 'label', 'walletRpcAddress'])}</div>
             <div className="info-value">
               <CopyableLongText content={config.rpcAddress.toString()} />
-            </div>
-          </div>
-          <div className="info-item">
-            <div>{getLabel(['status', 'label', 'lastDagInformation'])}</div>
-            <div className="info-value">
-              <DisplayDagStatus dag={status.dag} />
             </div>
           </div>
           <div className="info-item">

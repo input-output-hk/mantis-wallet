@@ -4,10 +4,11 @@
   display: grid;
   grid-template-columns: auto 1fr;
   overflow: hidden;
-  transition: background-position 0.3s;
+  transition: background-position $bg-transition-duration;
   background-repeat: no-repeat;
   background-position: 100% top;
   background-size: contain;
+  font-weight: 500;
 
   &.wallets {
     background-position: 125% top;

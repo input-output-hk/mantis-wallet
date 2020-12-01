@@ -43,9 +43,9 @@ export const httpRpcOverTLS = {
 export const configToParams = (config: TLSConfig): ClientSettings => {
   const keystoreParams = pipe(
     {
-      'certificate-keystore-path': config.keyStorePath,
-      'certificate-password-file': config.passwordPath,
-      'certificate-keystore-type': 'PKCS12',
+      'certificate.keystore-path': config.keyStorePath,
+      'certificate.password-file': config.passwordPath,
+      'certificate.keystore-type': 'PKCS12',
     },
     Object.entries,
     array.map(([key, value]) => [`mantis.network.rpc.http.${key}`, value]),

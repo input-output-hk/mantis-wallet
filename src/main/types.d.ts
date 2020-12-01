@@ -5,10 +5,6 @@ interface MantisWalletStatus {
     pid?: number
     status: ProcessStatus
   }
-  dag: {
-    status: ProcessStatus
-    message?: string
-  }
   info: {
     platform: string
     platformVersion: string

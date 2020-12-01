@@ -6,16 +6,21 @@ import BigNumber from 'bignumber.js'
 import {Transaction} from 'web3-core'
 import {fromUnixTime} from 'date-fns'
 import * as T from 'io-ts'
+import {option} from 'fp-ts'
+import {pipe} from 'fp-ts/lib/pipeable'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const accountTransactionFormatter = (input: any): any => {
   const intermediate = formatters.outputTransactionFormatter(input)
   return {
     ...intermediate,
-    timestamp: _.isString(intermediate.timestamp)
-      ? fromUnixTime(parseInt(intermediate.timestamp, 16))
-      : fromUnixTime(intermediate.timestamp),
-    gasUsed: formatters.outputBigNumberFormatter(intermediate.gasUsed),
+    timestamp: pipe(
+      intermediate.timestamp,
+      option.fromNullable,
+      option.map((ts) => (_.isString(ts) ? fromUnixTime(parseInt(ts, 16)) : fromUnixTime(ts))),
+      option.getOrElseW(() => null),
+    ),
+    gasUsed: intermediate.gasUsed && formatters.outputBigNumberFormatter(intermediate.gasUsed),
   }
 }
 

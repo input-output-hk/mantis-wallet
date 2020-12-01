@@ -9,6 +9,10 @@
   height: 100%;
 
   > .Dialog {
-    width: 500px;
+    width: 800px;
+
+    .title {
+      margin-left: 0;
+    }
   }
 }

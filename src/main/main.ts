@@ -22,7 +22,7 @@ import {prop} from '../shared/utils'
 import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
-import {inspectLineForDAGStatus, status} from './status'
+import {status} from './status'
 import {checkDatadirCompatibility, CheckedDatadir} from './data-dir'
 import {createLogExporter} from './log-exporter'
 import {createMainLog} from './logger'
@@ -39,6 +39,9 @@ import {Language} from '../shared/i18n'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
+
+// Force sRGB
+app.commandLine.appendSwitch('force-color-profile', 'srgb')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -58,8 +61,9 @@ function createWindow(t: TFunctionMain): void {
     icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
-    minWidth: 1440,
-    minHeight: 950,
+    // Minimum supported resolution: 1366x768
+    minWidth: 1120,
+    minHeight: 680,
     webPreferences: {
       nodeIntegration: true,
     },
@@ -203,12 +207,7 @@ datadirInit()
       let runningMantis: SpawnedMantisProcess | null = null
 
       function logMantis(spawnedMantis: SpawnedMantisProcess): void {
-        spawnedMantis.log$
-          .pipe(
-            rxop.tap(inspectLineForDAGStatus),
-            rxop.map((line) => `mantis | ${line}`),
-          )
-          .subscribe(console.info) // eslint-disable-line no-console
+        spawnedMantis.log$.pipe(rxop.map((line) => `mantis | ${line}`)).subscribe(console.info) // eslint-disable-line no-console
       }
 
       async function spawnMantis(additionalSettings: ClientSettings): Promise<void> {

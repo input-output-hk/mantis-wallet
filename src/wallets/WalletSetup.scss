@@ -1,8 +1,11 @@
+@import '../functions';
+
 .WalletSetup {
   display: grid;
   grid-template-rows: auto 1fr;
 
   .content {
-    margin: 180px 0 0;
+    margin: 0;
+    @include header-margin-top;
   }
 }

@@ -189,28 +189,15 @@
       "nodeProcessID": "Node process ID",
       "walletStatus": "Wallet status",
       "walletRpcAddress": "Wallet RPC address",
-      "lastDagInformation": "Last DAG information",
       "synchronizationStatus": "Synchronization",
       "currentBlock": "Current block",
       "highestKnownBlock": "Highest known block"
     },
-    "message": {
-      "generatingDag": "Generating DAG {{percentage}}%",
-      "loadingDagFromFile": "Loading DAG from file {{percentage}}%"
-    },
     "componentStatus": {
-      "loading": "Loading",
-      "running": "Running",
       "notRunning": "Not Running",
-      "finished": "Finished",
+      "running": "Running",
       "failed": "Failed",
-      "loaded": "Loaded"
-    },
-    "error": {
-      "dagFileEndedUnexpectedly": "DAG file ended unexpectedly",
-      "invalidDagFilePrefix": "Invalid DAG file prefix",
-      "cannotReadDagFromFile": "Cannot read DAG from file",
-      "cannotGenerateDagFile": "Cannot generate DAG file"
+      "finished": "Finished"
     }
   },
   "addressBook": {
@@ -295,7 +282,7 @@
     "changeNetworkModal": {
       "title": "Change network",
       "message": "Are you sure you want to change network to {{newNetwork}}?",
-      "mainnetDisclaimer": "You are connecting using a BETA version of the wallet. It is strongly recommended not to transact using significant amounts of ETC.",
+      "mainnetDisclaimer": "You are connecting using a BETA version of the wallet. It is strongly recommended not to transact using significant amounts of ETC. It is also strongly recommended to use a different account when using main network.",
       "confirm": "Confirm change",
       "writeNetwork": "Write network name:",
       "typeMainnet": "Type \"MAINNET\" to connect to main ETC network:"
@@ -309,7 +296,7 @@
       "cancel": "Cancel",
       "next": "Next",
       "exportDebugLogs": "Export Logs",
-      "openSupportChannel": "Open Slack",
+      "openSupportChannel": "Open Ticket",
       "downloadTxt": "Download txt",
       "oneStepBack": "Back",
       "finish": "Finish",
@@ -343,7 +330,7 @@
       "waitUntilActionFinish": "You will have to wait for your action to finish.",
       "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
       "saveDebugLogsCancelled": "Operation cancelled.",
-      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team on Slack.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
+      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team in IOHK.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
       "chooseFromDropdownList": "Choose from list…",
       "iUnderstandApproval": "I understand"
     },

@@ -47,26 +47,39 @@ export class SpawnedMantisProcess {
 
   kill = async (): Promise<void> => {
     this.mainLog.info(`Killing Mantis, PID: ${this.childProcess.pid}`)
-    if (isWin) {
-      const javaPid = await promisify(psTree)(this.childProcess.pid).then(
-        (children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID,
-      )
-      if (javaPid) {
-        this.mainLog.info(`...killing Java process for Mantis on Win with PID ${javaPid}`)
-        process.kill(parseInt(javaPid), 'SIGTERM')
-      }
-    }
+
     if (this.childProcess.exitCode !== null) {
       this.mainLog.info(`...already exited with exit code ${this.childProcess.exitCode}`)
+      setMantisStatus({status: 'notRunning'})
+      return
     }
+
+    const doKill = async (): Promise<void> => {
+      if (isWin) {
+        const javaPid = await promisify(psTree)(this.childProcess.pid).then(
+          (children) => children.find(({COMMAND}) => COMMAND === 'java.exe')?.PID,
+        )
+        if (javaPid) {
+          this.mainLog.info(`...killing Java process for Mantis on Win with PID ${javaPid}`)
+          process.kill(parseInt(javaPid), 'SIGTERM')
+        }
+      } else {
+        this.childProcess.kill('SIGTERM')
+      }
+    }
+
     return interval(100)
       .pipe(
-        rxop.tap(() => this.childProcess.kill('SIGTERM')),
+        rxop.concatMap(() => doKill()),
         rxop.takeUntil(this.close$),
         rxop.mapTo(void 0),
       )
       .toPromise()
       .then(() => setMantisStatus({status: 'notRunning'}))
+      .catch((err) => {
+        this.mainLog.error('Got error when killing Mantis, trying again...', err)
+        return this.kill()
+      })
   }
 }
 

@@ -12,9 +12,6 @@ const mockedGlobal = {
     node: {
       status: 'notRunning',
     },
-    dag: {
-      status: 'notRunning',
-    },
     info: {
       platform: 'Linux',
       platformVersion: '10.0.0',

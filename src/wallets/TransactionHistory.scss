@@ -1,4 +1,4 @@
-@import '../themify', '../partial', '../vars';
+@import '../themify', '../partial', '../vars', '../functions';
 
 .TransactionHistory {
   display: grid;
@@ -13,13 +13,11 @@
   }
 
   .toolbar {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    line-height: 30px;
+    @include header-margin-top;
 
-    .line {
-      @extend %line;
-    }
+    display: grid;
+    grid-template-columns: 1fr auto;
+    line-height: 30px;
 
     .sort-by {
       display: inline-block;
@@ -30,19 +28,6 @@
       text-transform: uppercase;
       vertical-align: middle;
       cursor: pointer;
-    }
-
-    .action {
-      display: inline-block;
-      min-width: 126px;
-      height: 30px;
-      margin-left: 1rem;
-      font-size: $font-size-s;
-      font-weight: bold;
-      letter-spacing: $letter-spacing-large;
-      text-align: center;
-      text-transform: uppercase;
-      vertical-align: middle;
     }
   }
 

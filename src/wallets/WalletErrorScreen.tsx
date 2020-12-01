@@ -55,7 +55,7 @@ const _WalletError = ({
           <Trans k={['wallet', 'message', 'reloadingWalletInCount']} values={{countdown}} />
         </div>
         <div className="retry-manual">
-          <Button type="primary" onClick={reset}>
+          <Button type="primary" onClick={() => reset()}>
             <Trans k={['wallet', 'button', 'reloadWalletNow']} />
           </Button>
         </div>

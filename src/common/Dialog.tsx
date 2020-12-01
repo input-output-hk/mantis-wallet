@@ -120,6 +120,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
     loading: leftInProgress,
     children: t(['common', 'button', 'cancel']),
     ...leftButtonProps,
+    className: rightButtonProps?.className || 'left',
     onClick: createHandleClick(leftButtonProps, setLeftInProgress, skipValidationLeft),
   }
 
@@ -130,6 +131,7 @@ const _Dialog: FunctionComponent<DialogProps> = ({
     children: t(['common', 'button', 'next']),
     loading: rightInProgress,
     ...rightButtonProps,
+    className: rightButtonProps?.className || 'right',
     onClick: createHandleClick(rightButtonProps, setRightInProgress, skipValidationRight),
   }
 
