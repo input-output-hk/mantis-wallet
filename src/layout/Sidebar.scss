@@ -1,4 +1,4 @@
-@import '../themify', '../vars', '../partial';
+@import '../themify', '../vars', '../partial', '../functions';
 
 .Sidebar {
   $link-letter-spacing: 0.96px;
@@ -8,7 +8,7 @@
   padding: $app-padding-vertical $app-padding-horizontal;
 
   .logo-wrapper {
-    margin-bottom: 14rem;
+    @include sidebar-margin-bottom;
 
     .logo {
       display: inline-block;
@@ -63,11 +63,11 @@
 
       display: block;
       z-index: $zindex-sidebar;
-      transform: scale(0.5);
+      transform: scale(0.3);
       transform-origin: center left;
       transition: transform 0.3s ease-out;
       opacity: 0.6;
-      font-size: 30px;
+      font-size: 40px;
       font-weight: 600;
       letter-spacing: $link-letter-spacing;
       line-height: 70px;
@@ -100,7 +100,7 @@
   }
 
   .balance-wrapper {
-    margin-top: 10rem;
+    margin-top: 15vh;
   }
 
   .footer {

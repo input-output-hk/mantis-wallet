@@ -69,34 +69,35 @@ export const TransactionHistory = ({
 
   return (
     <div className="TransactionHistory">
+      <div className="main-buttons">
+        <Button
+          data-testid="send-button"
+          type="primary"
+          className="action left-diagonal"
+          disabled={isSendDisabled}
+          onClick={(): void => setShowSendModal(true)}
+        >
+          <Trans k={['wallet', 'button', 'sendTransaction']} />
+        </Button>
+        <Button
+          data-testid="receive-button"
+          type="default"
+          className="action right-diagonal"
+          onClick={(): void => setShowReceiveModal(true)}
+        >
+          <Trans k={['wallet', 'button', 'receiveTransaction']} />
+        </Button>
+      </div>
       <div className="toolbar">
         <div className="main-title">
           <Trans k={['wallet', 'title', 'transactionHistory']} />
         </div>
-        <div className="line"></div>
         <div>
           <Dropdown overlay={sortByMenu} overlayClassName="SortByDropdown">
             <span className="sort-by">
               <Trans k={['wallet', 'button', 'sortByDropdown']} /> ▼{' '}
             </span>
           </Dropdown>
-          <Button
-            data-testid="send-button"
-            type="primary"
-            className="action"
-            disabled={isSendDisabled}
-            onClick={(): void => setShowSendModal(true)}
-          >
-            <Trans k={['wallet', 'button', 'sendTransaction']} />
-          </Button>
-          <Button
-            data-testid="receive-button"
-            type="primary"
-            className="action"
-            onClick={(): void => setShowReceiveModal(true)}
-          >
-            <Trans k={['wallet', 'button', 'receiveTransaction']} />
-          </Button>
           <SendTransactionFlow
             visible={showSendModal}
             transactions={transactions}

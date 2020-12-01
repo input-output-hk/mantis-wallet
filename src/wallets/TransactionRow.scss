@@ -116,9 +116,7 @@
   }
 
   .asset-icon {
-    position: relative;
-    top: 6px;
-    height: 2em;
+    @extend %asset-icon;
     margin-right: 6px;
   }
 

@@ -1,3 +1,4 @@
+const path = require('path')
 const {
   override,
   fixBabelImports,
@@ -7,6 +8,9 @@ const {
 } = require('customize-cra')
 const AntdScssThemePlugin = require('antd-scss-theme-plugin')
 const WorkerPlugin = require('worker-plugin')
+const _ = require('lodash/fp')
+
+// FIXME: ETCM-428 - extract common webpack config for storybook and app
 
 //
 // This method returns the loaders from create-react-app's webpack config
@@ -55,6 +59,20 @@ const addRawImages = () => (config) => {
   return config
 }
 
+const setScssRoot = (path) => (config) => {
+  getLoaders(config)
+    .filter((rule) => rule.use)
+    .map((rule) => rule.use)
+    .forEach((use) => {
+      use
+        .filter((item) => _.isObject(item) && item.loader.includes('resolve-url-loader'))
+        .forEach((loader) => {
+          loader.options.root = path
+        })
+    })
+  return config
+}
+
 module.exports = override(
   addWebpackPlugin(new AntdScssThemePlugin('./src/vars.scss')),
   addWebpackPlugin(new WorkerPlugin()),
@@ -63,6 +81,7 @@ module.exports = override(
     libraryDirectory: 'es',
     style: true,
   }),
+  setScssRoot(path.join(__dirname, 'src')),
   addLessLoader(),
   addRawImages(),
   disableEsLint(),

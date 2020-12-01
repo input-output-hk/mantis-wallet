@@ -1,129 +1,30 @@
 @import './themify', './vars';
 
-%status-steps {
-  display: grid;
-  height: 30px;
-  padding: 0 14px;
-  font-size: $font-size-xs;
-  font-weight: bold;
-
-  @include themify($themes) {
-    color: themed('secondary-text-color');
-  }
-
-  .progress {
-    display: inline-block;
-    position: relative;
-    padding-left: 25px;
-
-    .icon {
-      position: absolute;
-      left: 2px;
-      width: 20px;
-      height: 15px;
-      padding-right: 5px;
-      font-size: 15px;
-
-      &.unknown {
-        padding: 0;
-      }
-    }
-
-    .checked {
-      @include themify($themes) {
-        fill: themed('success-color');
-        color: themed('text-color');
-      }
-    }
-
-    .inProgress {
-      left: 3px;
-
-      @include themify($themes) {
-        stroke: themed('text-color');
-        fill: themed('text-color');
-        color: themed('text-color');
-      }
-    }
-
-    .stopped {
-      @include themify($themes) {
-        stroke: themed('warning-color');
-        fill: themed('warning-color');
-        color: themed('text-color');
-      }
-    }
-
-    .fail {
-      @include themify($themes) {
-        color: themed('error-text');
-      }
-    }
-  }
-
-  .ProgressBar {
-    position: relative;
-    top: -3px;
-    padding: 0 5px;
-  }
-
-  .line {
-    @extend %line;
-
-    position: relative;
-    top: -8px;
-
-    @include themify($themes) {
-      background-color: themed('secondary-text-color');
-    }
-
-    .percentage {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translate(-50%, -50%);
-
-      @include themify($themes) {
-        color: themed('text-color');
-      }
-    }
-  }
-}
-
-%line {
-  content: '';
-  display: inline-block;
-  height: 1px;
-  margin: 15px 15px 0;
-  opacity: $secondary-opacity;
-  line-height: 1px;
-  vertical-align: middle;
-
-  @include themify($themes) {
-    background-color: themed('border-color-base');
-  }
-}
-
 %ellipsize {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-%dialog-label {
+%_dialog-label-base {
   height: $dialog-label-height;
-  font-size: $font-size-xs;
+  font-weight: 500;
+}
+
+%dialog-label {
+  @extend %_dialog-label-base;
+  font-size: $font-size-s;
   letter-spacing: $letter-spacing-small;
-  text-transform: uppercase;
   cursor: pointer;
+  user-select: none;
 }
 
 %dialog-input-inline-error {
+  @extend %_dialog-label-base;
   position: absolute;
   top: -1 * $dialog-label-height;
   right: 0;
-  height: $dialog-label-height;
-  font-size: $font-size-xs;
+  font-size: $font-size-s - 1px;
   text-align: right;
 
   @include themify($themes) {
@@ -165,10 +66,11 @@
 }
 
 %title {
-  margin-bottom: $dialog-component-spacing;
+  margin-bottom: 2rem;
+  margin-left: -3rem;
   overflow: hidden;
-  font-size: $font-size-title;
-  font-weight: bold;
+  font-size: 26px;
+  font-weight: 500;
   letter-spacing: $letter-spacing-small;
 }
 
@@ -220,6 +122,26 @@
 
 %two-col-grid-template {
   display: grid;
-  grid-column-gap: 1rem;
+  grid-column-gap: 2.5rem;
   grid-template-columns: 1fr 1fr;
+}
+
+%input-font-base {
+  font-weight: 500;
+}
+
+%diagonal-before-after-common {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  z-index: -1;
+  width: $diagonal-part-width;
+  height: $button-height;
+  transform: skew(20deg);
+}
+
+%asset-icon {
+  position: relative;
+  top: 10px;
+  height: 30px;
 }

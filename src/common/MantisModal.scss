@@ -5,18 +5,24 @@
     color: themed('text-color');
   }
 
+  .ant-modal-body {
+    padding: $modal-body-padding;
+  }
+
   .ant-modal-content {
     border-radius: $dialog-component-border-radius * 2;
     box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.4), 0 6px 16px 0 rgba(0, 0, 0, 0.01),
       0 9px 28px 8px rgba(0, 0, 0, 0.2);
 
     @include themify($themes) {
-      background-color: themed('modal-background');
+      background: themed('bg-moving'), themed('modal-background');
+      background-position: right top;
+      background-size: cover;
     }
   }
 
   .ant-modal-close {
-    margin: 29px 46px 0 0;
+    margin: 29px 22px 0 0;
   }
 
   .ant-modal-footer {

@@ -40,6 +40,9 @@ import {Language} from '../shared/i18n'
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
 
+// Force sRGB
+app.commandLine.appendSwitch('force-color-profile', 'srgb')
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindowHandle: BrowserWindow | null = null
@@ -58,8 +61,9 @@ function createWindow(t: TFunctionMain): void {
     icon: IS_LINUX ? LINUX_ICON : undefined,
     width,
     height,
-    minWidth: 1440,
-    minHeight: 950,
+    // Minimum supported resolution: 1366x768
+    minWidth: 1120,
+    minHeight: 680,
     webPreferences: {
       nodeIntegration: true,
     },

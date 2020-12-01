@@ -11,3 +11,32 @@
 
   @return $result;
 }
+
+$height-breakpoint: 900px;
+
+@mixin header-margin-top() {
+  @media only screen and (max-height: $height-breakpoint) {
+    margin-top: 4rem;
+  }
+  @media only screen and (min-height: $height-breakpoint) {
+    margin-top: 10rem;
+  }
+}
+
+@mixin address-book-padding-top() {
+  @media only screen and (max-height: $height-breakpoint) {
+    padding-top: 4rem;
+  }
+  @media only screen and (min-height: $height-breakpoint) {
+    padding-top: 10rem;
+  }
+}
+
+@mixin sidebar-margin-bottom() {
+  @media only screen and (max-height: $height-breakpoint) {
+    margin-bottom: 4rem;
+  }
+  @media only screen and (min-height: $height-breakpoint) {
+    margin-bottom: 14rem;
+  }
+}

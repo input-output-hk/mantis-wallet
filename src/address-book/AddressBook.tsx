@@ -190,20 +190,19 @@ const _AddressBook = ({
 
   return (
     <div className="AddressBook">
+      <div className="main-buttons">
+        <Button
+          data-testid="add-contact-button"
+          type="primary"
+          className="action right-diagonal"
+          onClick={onStartAddNew}
+        >
+          <Trans k={['addressBook', 'book', 'addNew']} />
+        </Button>
+      </div>
       <div className="toolbar">
         <div className="main-title">
           <Trans k={['addressBook', 'book', 'title']} />
-        </div>
-        <div className="line"></div>
-        <div>
-          <Button
-            data-testid="add-contact-button"
-            type="primary"
-            className="action"
-            onClick={onStartAddNew}
-          >
-            <Trans k={['addressBook', 'book', 'addNew']} />
-          </Button>
         </div>
       </div>
       <div className="address-list">

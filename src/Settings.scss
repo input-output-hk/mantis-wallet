@@ -1,7 +1,7 @@
-@import './partial', './themify', './vars';
+@import './partial', './themify', './vars', './functions';
 
 .Settings {
-  margin-top: $router-top-margin;
+  @include header-margin-top;
 
   .main-title {
     margin-bottom: 3rem;
@@ -13,13 +13,13 @@
 
       .settings-label {
         margin-bottom: 0.5rem;
-        font-size: $font-size-xs;
+        font-size: $font-size-s;
         text-transform: uppercase;
       }
 
       .settings-note {
         margin-bottom: 0.6rem;
-        font-size: $font-size-xs;
+        font-size: $font-size-s;
 
         @include themify($themes) {
           color: themed('inactive-text-color');

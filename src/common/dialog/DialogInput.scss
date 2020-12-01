@@ -28,7 +28,7 @@
   .dark & {
     .ant-input {
       @include themify($themes) {
-        border: 1px solid themed('dialog-dark-input-bg');
+        border: 1px solid themed('text-color');
         background-color: themed('dialog-dark-input-bg');
         color: themed('secondary-text-color');
       }
