@@ -282,7 +282,7 @@
     "changeNetworkModal": {
       "title": "Change network",
       "message": "Are you sure you want to change network to {{newNetwork}}?",
-      "mainnetDisclaimer": "You are connecting using a BETA version of the wallet. It is strongly recommended not to transact using significant amounts of ETC.",
+      "mainnetDisclaimer": "You are connecting using a BETA version of the wallet. It is strongly recommended not to transact using significant amounts of ETC. It is also strongly recommended to use a different account when using main network.",
       "confirm": "Confirm change",
       "writeNetwork": "Write network name:",
       "typeMainnet": "Type \"MAINNET\" to connect to main ETC network:"
