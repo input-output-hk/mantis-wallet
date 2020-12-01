@@ -110,124 +110,6 @@ div#root {
 // theme-specific antd overrides
 //
 
-// antd generic Button overrides
-.ant-btn,
-.ant-btn.active {
-  @include themify($themes) {
-    background-color: themed('btn-default-bg');
-    color: themed('btn-default-text-color');
-
-    &::after,
-    &::before {
-      background-color: themed('btn-default-bg');
-    }
-  }
-
-  &:focus {
-    @include themify($themes) {
-      background-color: themed('btn-focus-bg');
-      color: themed('secondary-background');
-
-      &::after,
-      &::before {
-        background-color: themed('btn-focus-bg');
-      }
-    }
-  }
-
-  &:hover {
-    @include themify($themes) {
-      background-color: themed('btn-hover-bg');
-      color: themed('secondary-background');
-
-      &::after,
-      &::before {
-        background-color: themed('btn-hover-bg');
-      }
-    }
-  }
-}
-
-// antd "primary" Button overrides
-.ant-btn-primary {
-  @include themify($themes) {
-    background-color: themed('primary-color');
-    color: #000;
-
-    &::after,
-    &::before {
-      background-color: themed('primary-color');
-    }
-  }
-
-  &.secondary {
-    @include themify($themes) {
-      background-color: themed('secondary-background');
-      color: themed('text-color');
-
-      &::after,
-      &::before {
-        background-color: themed('secondary-background');
-      }
-    }
-
-    &:hover,
-    &:focus {
-      @include themify($themes) {
-        background-color: themed('normal-color');
-        color: themed('text-color');
-
-        &::after,
-        &::before {
-          background-color: themed('normal-color');
-        }
-      }
-    }
-  }
-}
-
-// <Button danger> Remove </Button>
-.ant-btn-dangerous {
-  @include themify($themes) {
-    background-color: themed('error-color');
-    color: #fff;
-
-    &::after,
-    &::before {
-      background-color: themed('error-color');
-    }
-  }
-}
-
-// antd disabled Button theme overrides
-.ant-btn-disabled,
-.ant-btn.disabled,
-.ant-btn[disabled],
-.ant-btn-disabled:hover,
-.ant-btn.disabled:hover,
-.ant-btn[disabled]:hover,
-.ant-btn-disabled:focus,
-.ant-btn.disabled:focus,
-.ant-btn[disabled]:focus,
-.ant-btn-disabled:active,
-.ant-btn.disabled:active,
-.ant-btn[disabled]:active,
-.ant-btn-disabled.active,
-.ant-btn.disabled.active,
-.ant-btn[disabled].active {
-  @include themify($themes) {
-    background-color: themed('btn-disabled-bg');
-    color: rgba(0, 0, 0, 0.4);
-  }
-
-  &::after,
-  &::before {
-    @include themify($themes) {
-      background-color: themed('btn-disabled-bg');
-    }
-  }
-}
-
 // antd checkbox
 .ant-checkbox-checked .ant-checkbox-inner {
   @include themify($themes) {
@@ -241,14 +123,6 @@ div#root {
       border-color: themed('primary-color');
       background-color: themed('primary-color');
     }
-  }
-}
-
-// antd select
-
-.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-  @include themify($themes) {
-    border: 1px solid themed('text-color') !important;
   }
 }
 
@@ -275,20 +149,6 @@ div#root {
     border-radius: $dialog-component-border-radius;
     background-color: themed('secondary-background');
     color: themed('text-color');
-  }
-}
-
-.ant-switch {
-  @extend %add-focus-outline;
-
-  @include themify($themes) {
-    background-color: themed('normal-color');
-  }
-
-  &.ant-switch-checked {
-    @include themify($themes) {
-      background-color: themed('primary-color');
-    }
   }
 }
 
@@ -348,58 +208,6 @@ input::placeholder {
 //
 
 .Mantis {
-  .ant-btn {
-    $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
-
-    height: $dialog-component-height;
-    padding: 0 15px;
-    transition: $transition;
-    border-radius: $dialog-component-border-radius;
-    font-size: $font-size-button;
-    font-weight: bold;
-    letter-spacing: $letter-spacing-medium;
-    text-align: center;
-    text-shadow: none;
-
-    &.right-diagonal::before,
-    &.left-diagonal::after {
-      transition: $transition;
-      opacity: 1;
-    }
-
-    &.right-diagonal::before {
-      // Default antd values conflicted with
-      top: unset;
-      bottom: unset;
-    }
-
-    &.small-button {
-      height: 30px;
-      margin: 0.5rem 0;
-      font-size: $font-size-s;
-      letter-spacing: initial;
-    }
-
-    .ant-btn-loading-icon {
-      transform: translateX(-10px);
-    }
-
-    &::before,
-    &::after {
-      transition: $transition;
-    }
-  }
-
-  // antd Wave animation override (e.g. Button click)
-  [ant-click-animating-without-extra-node]:after {
-    left: unset;
-    -webkit-animation: none !important;
-    -moz-animation: none !important;
-    -o-animation: none !important;
-    -ms-animation: none !important;
-    animation: none !important;
-  }
-
   .ant-form-item {
     margin-bottom: 0;
   }
@@ -410,15 +218,6 @@ input::placeholder {
     .ant-checkbox {
       top: 0;
     }
-  }
-
-  .ant-select-dropdown {
-    border-radius: $dialog-component-border-radius;
-  }
-
-  .ant-dropdown-menu {
-    padding: ($dialog-component-border-radius / 2) 0;
-    border-radius: ($dialog-component-border-radius / 2);
   }
 
   .ant-input {
@@ -435,71 +234,13 @@ input::placeholder {
     -moz-appearance: textfield;
   }
 
+  // antd Wave animation override (e.g. Button click)
   [ant-click-animating-without-extra-node]::after {
+    left: unset;
     -webkit-animation: none !important;
     -moz-animation: none !important;
     -o-animation: none !important;
     -ms-animation: none !important;
     animation: none !important;
-  }
-}
-
-// Header buttons
-
-.main-buttons {
-  $button-width: 125px;
-  $space-between: 10px;
-
-  position: absolute;
-  right: 0;
-
-  .action {
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-    width: $button-width;
-    height: $button-height;
-    margin-right: $diagonal-part-width + $space-between;
-    font-size: $font-size-s;
-    font-weight: bold;
-    line-height: $button-height;
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  .left-diagonal {
-    padding: 0 0 0 15px;
-
-    @include themify($themes) {
-      background-color: themed('btn-main-primary-bg');
-      color: themed('btn-main-primary-text-color');
-    }
-
-    &::after {
-      @extend %diagonal-before-after-common;
-      right: -15px;
-
-      @include themify($themes) {
-        background-color: themed('btn-main-primary-bg');
-      }
-    }
-  }
-
-  .right-diagonal {
-    padding: 0 15px 0 0;
-
-    @include themify($themes) {
-      background-color: themed('btn-main-secondary-bg');
-      color: themed('btn-main-secondary-text-color');
-    }
-
-    &::before {
-      @extend %diagonal-before-after-common;
-      left: -15px;
-
-      @include themify($themes) {
-        background-color: themed('btn-main-secondary-bg');
-      }
-    }
   }
 }

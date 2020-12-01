@@ -30,7 +30,7 @@ $theme-map: null;
 @function themed($key) {
   // throw error if $key is not defined in the theme
   @if not map-has-key($theme-map, $key) {
-    @error "Unknown theme key " + $key;
+    @error "Unknown themed variable " + $key;
   }
 
   @return map-get($theme-map, $key);

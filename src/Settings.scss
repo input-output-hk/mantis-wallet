@@ -1,5 +1,7 @@
 @import './partial', './themify', './vars', './functions';
 
+$content-width: 350px;
+
 .Settings {
   @include header-margin-top;
 
@@ -8,13 +10,14 @@
   }
 
   .content {
+    width: $content-width;
+
     .settings-item {
       margin-bottom: 2rem;
 
       .settings-label {
         margin-bottom: 0.5rem;
         font-size: $font-size-s;
-        text-transform: uppercase;
       }
 
       .settings-note {
@@ -27,7 +30,7 @@
       }
 
       .settings-input {
-        max-width: 550px;
+        max-width: $content-width;
 
         .ant-btn {
           margin: 1px;
@@ -46,14 +49,32 @@
     }
   }
 
+  .settings-switch-wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+
+    @include themify($themes) {
+      border-bottom: 1px solid themed('inactive-text-color');
+    }
+  }
+
   .DialogDropdown {
     .active-option {
       padding: 0.5rem 0 0;
     }
   }
 
-  .export-private-key {
-    @extend %link;
-    font-size: $font-size-s;
+  .main-buttons {
+    position: unset;
+    right: unset;
+    float: right;
+
+    .export-private-key {
+      width: 220px;
+      margin-right: 0px;
+      font-size: $font-size-m;
+    }
   }
 }
