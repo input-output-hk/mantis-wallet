@@ -227,6 +227,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     storedAccounts.length > 0 ? some(storedAccounts[0].address) : none,
   )
 
+  const [initialBlockNumber, setInitialBlockNumber] = useState<number | undefined>(undefined)
+
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(_initialState.walletStatus)
   const [errorOption, setError] = useState<Option<Error>>(_initialState.error)
@@ -488,6 +490,9 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
 
     const currentBlock = await web3.eth.getBlockNumber()
+    if (initialBlockNumber === undefined) {
+      setInitialBlockNumber(currentBlock)
+    }
 
     const lastNewBlockTimestamp =
       currentBlock === previousSyncStatus.currentBlock
@@ -496,7 +501,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     if (syncing === false) {
       if (
-        currentBlock === 0 ||
+        currentBlock === initialBlockNumber ||
         (currentBlock === previousSyncStatus.currentBlock &&
           currentTimestamp >
             previousSyncStatus.lastNewBlockTimestamp + EXPECTED_LAST_BLOCK_CHANGE_SECONDS * 1000)
