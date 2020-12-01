@@ -267,11 +267,13 @@ test('Send transaction works', async () => {
 
 test('Receive modal shows up with address', async () => {
   const {getByTestId, getByText} = renderTransactionHistory({accounts: accounts})
+
+  // Open receive modal
   const receiveButton = getByTestId('receive-button')
-  userEvent.click(receiveButton)
+  await act(async () => userEvent.click(receiveButton))
 
   // Title is visible
-  expect(getByText('Your Address')).toBeInTheDocument()
+  await waitFor(() => expect(getByText('Your Address')).toBeInTheDocument())
 
   // Address and QR code is visible
   expect(getByText(ADDRESS)).toBeInTheDocument()
@@ -279,9 +281,12 @@ test('Receive modal shows up with address', async () => {
 
   // Address can be copied
   const copyAddressButton = getByText('Copy Address')
-  act(() => userEvent.click(copyAddressButton))
-  await waitFor(() => expect(mockedCopyToClipboard).toBeCalledWith(ADDRESS, expect.any(String)))
-  expect(mockedCopyToClipboard).toHaveBeenCalledTimes(1)
+  await act(async () => userEvent.click(copyAddressButton))
+
+  await waitFor(() => {
+    expect(mockedCopyToClipboard).toHaveBeenCalledTimes(1)
+    expect(mockedCopyToClipboard).toHaveBeenCalledWith(ADDRESS, expect.any(String))
+  })
 })
 
 // FIXME: ETCM-58

@@ -10,9 +10,6 @@ export const loadMantisWalletStatus = (): MantisWalletStatus => ({
   node: {
     status: 'notRunning',
   },
-  dag: {
-    status: 'notRunning',
-  },
   info: {
     platform: 'Linux',
     platformVersion: 'Linux X',

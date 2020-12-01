@@ -189,28 +189,15 @@
       "nodeProcessID": "Node process ID",
       "walletStatus": "Wallet status",
       "walletRpcAddress": "Wallet RPC address",
-      "lastDagInformation": "Last DAG information",
       "synchronizationStatus": "Synchronization",
       "currentBlock": "Current block",
       "highestKnownBlock": "Highest known block"
     },
-    "message": {
-      "generatingDag": "Generating DAG {{percentage}}%",
-      "loadingDagFromFile": "Loading DAG from file {{percentage}}%"
-    },
     "componentStatus": {
-      "loading": "Loading",
-      "running": "Running",
       "notRunning": "Not Running",
-      "finished": "Finished",
+      "running": "Running",
       "failed": "Failed",
-      "loaded": "Loaded"
-    },
-    "error": {
-      "dagFileEndedUnexpectedly": "DAG file ended unexpectedly",
-      "invalidDagFilePrefix": "Invalid DAG file prefix",
-      "cannotReadDagFromFile": "Cannot read DAG from file",
-      "cannotGenerateDagFile": "Cannot generate DAG file"
+      "finished": "Finished"
     }
   },
   "addressBook": {

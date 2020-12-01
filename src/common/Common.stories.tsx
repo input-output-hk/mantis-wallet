@@ -36,9 +36,6 @@ export const statusModal = (): JSX.Element => (
       node: {
         status: 'notRunning',
       },
-      dag: {
-        status: 'notRunning',
-      },
       info: {
         platform: text('Platform', 'Linux'),
         platformVersion: text('Platform version', 'Linux X'),

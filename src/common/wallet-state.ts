@@ -313,6 +313,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getCurrentAddress = (): string => {
     if (isNone(currentAddressOption)) {
+      if (isMocked) return '0x0'
       throw createTErrorRenderer(['wallet', 'error', 'noAccountWasSelected'])
     }
     return currentAddressOption.value
