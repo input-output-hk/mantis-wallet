@@ -71,46 +71,47 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
           </div>
         ))}
       </div>
-      <div
-        className={classnames({hidden: 'privateKey' !== recoveryMethod})}
-        onKeyDown={(e) => {
-          if (e.key === 'Tab' && !e.shiftKey && privateKey.length === 0) {
-            e.preventDefault()
-            handleMethodChange('seedPhrase')()
-          }
-        }}
-      >
-        <DialogInput
-          data-testid="private-key"
-          onChange={(e) => {
-            const privateKey = e.target.value
-            setPrivateKey(privateKey)
-            onPrivateKeyChange(privateKey)
+      {recoveryMethod === 'privateKey' ? (
+        <div
+          onKeyDown={(e) => {
+            if (e.key === 'Tab' && !e.shiftKey && privateKey.length === 0) {
+              e.preventDefault()
+              handleMethodChange('seedPhrase')()
+            }
           }}
-          ref={inputRefs.privateKey}
-          formItem={{
-            name: 'private-key',
-            rules: [privateKeyValidator],
+        >
+          <DialogInput
+            data-testid="private-key"
+            onChange={(e) => {
+              const privateKey = e.target.value
+              setPrivateKey(privateKey)
+              onPrivateKeyChange(privateKey)
+            }}
+            ref={inputRefs.privateKey}
+            formItem={{
+              name: 'private-key',
+              rules: [privateKeyValidator],
+            }}
+          />
+        </div>
+      ) : (
+        <div
+          onKeyDown={(e) => {
+            if (e.key === 'Tab' && e.shiftKey && seedPhrase.length === 0) {
+              e.preventDefault()
+              handleMethodChange('privateKey')()
+            }
           }}
-        />
-      </div>
-      <div
-        className={classnames({hidden: 'seedPhrase' !== recoveryMethod})}
-        onKeyDown={(e) => {
-          if (e.key === 'Tab' && e.shiftKey && seedPhrase.length === 0) {
-            e.preventDefault()
-            handleMethodChange('privateKey')()
-          }
-        }}
-      >
-        <DialogSeedPhrase
-          onChange={(seedPhrase) => {
-            setSeedPhrase(seedPhrase)
-            onSeedPhraseChange(seedPhrase)
-          }}
-          ref={inputRefs.seedPhrase}
-        />
-      </div>
+        >
+          <DialogSeedPhrase
+            onChange={(seedPhrase) => {
+              setSeedPhrase(seedPhrase)
+              onSeedPhraseChange(seedPhrase)
+            }}
+            ref={inputRefs.seedPhrase}
+          />
+        </div>
+      )}
     </div>
   )
 }
