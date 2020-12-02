@@ -4,7 +4,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {NetworkName} from '../../config/type'
 import {BackendState} from '../../common/backend-state'
-import {WalletState, canResetWallet} from '../../common/wallet-state'
+import {canResetWallet, WalletData} from '../../common/wallet-state'
 import {Trans} from '../../common/Trans'
 import {useTranslation} from '../../settings-state'
 import {DialogInput} from '../../common/dialog/DialogInput'
@@ -12,21 +12,22 @@ import {EDITION} from '../../shared/version'
 
 interface ChangeNetworkModalProps extends ModalOnCancel {
   newNetwork: NetworkName
+  walletState?: WalletData
 }
 
 const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
   newNetwork,
   onCancel,
+  walletState,
 }: ChangeNetworkModalProps) => {
   const modalLocker = ModalLocker.useContainer()
   const {setNetworkName} = BackendState.useContainer()
-  const walletState = WalletState.useContainer()
   const {t} = useTranslation()
 
   const [customNetworkName, setCustomNetworkName] = useState('')
   const [mainnetValidation, setMainnetValidation] = useState('')
 
-  if (!canResetWallet(walletState)) {
+  if (walletState && !canResetWallet(walletState)) {
     throw Error()
   }
 
@@ -38,9 +39,10 @@ const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
         disabled: modalLocker.isLocked,
       }}
       rightButtonProps={{
-        onClick: () => {
+        onClick: (e) => {
           setNetworkName(newNetwork === 'custom' ? customNetworkName : newNetwork)
-          walletState.reset()
+          walletState && walletState.reset()
+          onCancel(e)
         },
         children: <Trans k={['network', 'changeNetworkModal', 'confirm']} />,
         danger: true,
