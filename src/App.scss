@@ -1,4 +1,7 @@
 @import './themify', './vars';
+@import './antd-overrides/switch';
+@import './antd-overrides/select';
+@import './antd-overrides/button';
 
 .App {
   display: grid;

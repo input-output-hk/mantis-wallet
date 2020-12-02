@@ -17,7 +17,8 @@
       "language": "Language",
       "dateFormat": "Date Format",
       "timeFormat": "Time Format",
-      "exportPrivateKey": "Export"
+      "exportPrivateKey": "Export",
+      "network": "Network"
     },
     "timeFormat": {
       "12hour": "12-hour",

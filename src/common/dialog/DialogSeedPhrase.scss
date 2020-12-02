@@ -11,31 +11,3 @@
     height: $dialog-component-height;
   }
 }
-
-.ant-select-item-option:hover:not(.ant-select-item-option-disabled) {
-  @include themify($themes) {
-    background-color: themed('secondary-background');
-    color: themed('text-color');
-  }
-}
-
-.ant-select-item-option-active {
-  @include themify($themes) {
-    background-color: themed('secondary-background');
-    color: themed('text-color');
-  }
-
-  &:not(.ant-select-item-option-disabled) {
-    @include themify($themes) {
-      background-color: themed('secondary-background');
-      color: themed('text-color');
-    }
-
-    &:hover {
-      @include themify($themes) {
-        background-color: themed('secondary-background');
-        color: themed('text-color');
-      }
-    }
-  }
-}
