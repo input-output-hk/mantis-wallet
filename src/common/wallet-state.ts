@@ -67,7 +67,7 @@ export interface Transaction {
   fee: Wei
   gas: number
   direction: 'outgoing' | 'incoming'
-  status: 'pending' | 'confirmed' | 'persisted' | 'failed'
+  status: 'pending' | 'confirmed' | 'persisted_depth' | 'persisted_checkpoint' | 'failed'
   contractAddress: string | null
 }
 
@@ -205,13 +205,11 @@ export const canResetWallet = (
   walletState.walletStatus === 'ERROR' ||
   walletState.walletStatus === 'NO_WALLET'
 
-const getStatus = (
-  currentBlock: number,
-  txBlock: number | null,
-  isPending: boolean,
-): Transaction['status'] => {
-  if (isPending || txBlock === null) return 'pending'
-  return currentBlock - txBlock >= DEPTH_FOR_PERSISTENCE ? 'persisted' : 'confirmed'
+const getStatus = (tx: AccountTransaction, currentBlock: number): Transaction['status'] => {
+  if (tx.isPending || tx.blockNumber === null) return 'pending'
+  else if (tx.isCheckpointed) return 'persisted_checkpoint'
+  else if (currentBlock - tx.blockNumber >= DEPTH_FOR_PERSISTENCE) return 'persisted_depth'
+  else return 'confirmed'
 }
 
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
@@ -453,7 +451,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
               ? asWei(new BigNumber(tx.gasPrice).times(tx.gasUsed || tx.gas))
               : asWei(0),
             direction: tx.isOutgoing ? 'outgoing' : 'incoming',
-            status: getStatus(currentBlock, tx.blockNumber, tx.isPending || false),
+            status: getStatus(tx, currentBlock),
             contractAddress:
               tx.to == null
                 ? (await web3.eth.getTransactionReceipt(tx.hash))?.contractAddress || null

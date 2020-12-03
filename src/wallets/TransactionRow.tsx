@@ -28,21 +28,24 @@ export interface TransactionCellProps {
 const ICON_PER_TX_STATUS: Record<Transaction['status'], string> = {
   pending: clockIcon,
   confirmed: checkIcon,
-  persisted: checkDoubleIcon,
+  persisted_depth: checkDoubleIcon,
+  persisted_checkpoint: checkDoubleIcon,
   failed: crossIcon,
 }
 
 const DESCRIPTION_PER_TX_STATUS: Record<Transaction['status'], TKeyRenderer> = {
   pending: ['wallet', 'transactionStatus', 'pendingDescription'],
   confirmed: ['wallet', 'transactionStatus', 'confirmedDescription'],
-  persisted: ['wallet', 'transactionStatus', 'persistedDescription'],
+  persisted_depth: ['wallet', 'transactionStatus', 'persistedDepthDescription'],
+  persisted_checkpoint: ['wallet', 'transactionStatus', 'persistedCheckpointDescription'],
   failed: ['wallet', 'transactionStatus', 'failedDescription'],
 }
 
 const TX_STATUS_TRANSLATION: Record<Transaction['status'], TKeyRenderer> = {
   pending: ['wallet', 'transactionStatus', 'pending'],
   confirmed: ['wallet', 'transactionStatus', 'confirmed'],
-  persisted: ['wallet', 'transactionStatus', 'persisted'],
+  persisted_depth: ['wallet', 'transactionStatus', 'persisted_depth'],
+  persisted_checkpoint: ['wallet', 'transactionStatus', 'persisted_checkpoint'],
   failed: ['wallet', 'transactionStatus', 'failed'],
 }
 

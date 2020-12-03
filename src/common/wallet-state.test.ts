@@ -26,10 +26,10 @@ const createTestTx = (
 
 it('calculates next nonce from transactions', () => {
   const transactions: Transaction[] = [
-    createTestTx('outgoing', 'persisted', 100, 1),
+    createTestTx('outgoing', 'persisted_checkpoint', 100, 1),
     createTestTx('outgoing', 'confirmed', 100, 1),
     createTestTx('outgoing', 'pending', 100, 1),
-    createTestTx('incoming', 'persisted', 100, 1),
+    createTestTx('incoming', 'persisted_depth', 100, 1),
     createTestTx('incoming', 'confirmed', 100, 1),
     createTestTx('incoming', 'pending', 100, 1),
   ]
@@ -44,9 +44,9 @@ it('calculates next nonce from transactions', () => {
 
 const pendingTestBaseTransactions: Transaction[] = [
   createTestTx('incoming', 'confirmed', 100, 1),
-  createTestTx('incoming', 'persisted', 100, 1),
+  createTestTx('incoming', 'persisted_depth', 100, 1),
   createTestTx('outgoing', 'confirmed', 100, 1),
-  createTestTx('outgoing', 'persisted', 100, 1),
+  createTestTx('outgoing', 'persisted_checkpoint', 100, 1),
 ]
 const pending1 = createTestTx('outgoing', 'pending', 100, 10)
 const pending2 = createTestTx('outgoing', 'pending', 200, 10)
