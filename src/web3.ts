@@ -42,6 +42,7 @@ export const CustomErrors = T.readonlyArray(CustomError)
 
 export interface AccountTransaction extends Transaction {
   isOutgoing: boolean
+  isCheckpointed: boolean | null
   isPending: boolean
   timestamp: Date | null
   gasUsed: number | null

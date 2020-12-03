@@ -30,7 +30,8 @@
         }
       }
 
-      &.persisted {
+      &.persisted_depth,
+      &.persisted_checkpoint {
         @include themify($themes) {
           fill: themed('success-color');
         }

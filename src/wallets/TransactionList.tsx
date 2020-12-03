@@ -103,7 +103,8 @@ const TX_STATUS_ORDER: Record<Transaction['status'], number> = {
   failed: 0,
   pending: 1,
   confirmed: 2,
-  persisted: 3,
+  persisted_depth: 3,
+  persisted_checkpoint: 4,
 } as const
 
 const orderConfigs: Record<SortableProperty, Ord<Transaction>> = {

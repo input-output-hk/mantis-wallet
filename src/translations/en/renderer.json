@@ -160,11 +160,13 @@
     "transactionStatus": {
       "pending": "Pending",
       "confirmed": "Confirmed",
-      "persisted": "Persisted",
+      "persisted_depth": "Persisted (Depth)",
+      "persisted_checkpoint": "Persisted (Checkpoint)",
       "failed": "Failed",
       "pendingDescription": "Transaction waiting to be added to a block in the chain",
       "confirmedDescription": "Transaction has been added to a block in the chain",
-      "persistedDescription": "Transaction cannot be rolled back",
+      "persistedDepthDescription": "Transaction cannot be rolled back - sufficient number of confirmations",
+      "persistedCheckpointDescription": "Transaction cannot be rolled back - block containing it has been checkpointed",
       "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed",
       "notPersistedDescription": "This transaction is not yet persisted"
     },
