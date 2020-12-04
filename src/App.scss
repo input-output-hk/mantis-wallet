@@ -18,15 +18,15 @@
     &.wallets {
       background-position: 125% bottom;
     }
-  
+
     &.address_book {
       background-position: 135% bottom;
     }
-  
+
     &.settings {
       background-position: 145% bottom;
     }
-  
+
     @include themify($themes) {
       background-image: themed('bg-moving');
       color: themed('text-color');

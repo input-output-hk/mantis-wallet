@@ -88,13 +88,7 @@ export const SplashScreen: FunctionComponent<{}> = () => {
         <Trans k={['common', 'link', 'showDetails']} />
       </div>
       <div className="switcher">
-        <Select
-          placeholder="Change network"
-          onChange={changeNetwork}
-          bordered={false}
-          value={networkName}
-          maxTagTextLength={50}
-        >
+        <Select onChange={changeNetwork} bordered={false} value={networkName}>
           {definedNetworkOptions.map(({key, label}) => (
             <Option key={key} value={key}>
               {label}
