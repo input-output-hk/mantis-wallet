@@ -81,6 +81,7 @@ const _ConfirmAdvancedTransaction = ({
         <DialogInput value={nonce} label={t(['wallet', 'label', 'nonce'])} disabled={true} />
         <DialogInput value={data} label={t(['wallet', 'label', 'data'])} disabled={true} />
         <DialogInputPassword
+          autoFocus
           label={t(['wallet', 'label', 'password'])}
           id="tx-password"
           onChange={(e): void => setPassword(e.target.value)}

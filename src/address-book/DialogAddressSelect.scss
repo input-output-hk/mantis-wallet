@@ -9,6 +9,14 @@
     .label {
       @extend %dialog-label;
       display: block;
+
+      @include themify($themes) {
+        color: themed('dialog-label-color');
+      }
+    }
+
+    .ant-select-selector .ant-select-selection-item {
+      max-width: 120px;
     }
   }
 }

@@ -1,16 +1,22 @@
-@import '../../partial', '../../vars';
+@import '../../sass-includes';
 
-.DialogSwitch {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogSwitch {
+    margin-bottom: $dialog-component-spacing;
 
-  .label {
-    @extend %dialog-label;
-  }
+    .label {
+      @extend %dialog-label;
 
-  .switch {
-    display: grid;
-    grid-column-gap: 10px;
-    grid-template-columns: 1fr auto;
-    font-size: $font-size-s;
+      @include themify($themes) {
+        color: themed('dialog-label-color');
+      }
+    }
+
+    .switch {
+      display: grid;
+      grid-column-gap: 10px;
+      grid-template-columns: 1fr auto;
+      font-size: $font-size-s;
+    }
   }
 }

@@ -1,5 +1,7 @@
-@import '../../partial';
+@import '../../sass-includes';
 
-.DialogColumns {
-  @extend %two-col-grid-template;
+@include dialog-scoped {
+  .DialogColumns {
+    @extend %two-col-grid-template;
+  }
 }

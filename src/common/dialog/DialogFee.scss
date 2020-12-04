@@ -1,176 +1,188 @@
-@import '../../themify', '../../partial', '../../vars';
+@import '../../sass-includes';
 
-.DialogFee {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogFee {
+    margin-bottom: $dialog-component-spacing;
 
-  .ant-input {
-    border-radius: 0;
-
-    @include themify($themes) {
-      background-color: themed('input-bg');
-      color: themed('text-color');
-    }
-  }
-
-  .options .button.inactive,
-  .options .button.custom {
-    @include themify($themes) {
-      background-color: themed('input-bg');
-      color: themed('text-color');
-    }
-  }
-
-  .dark & {
     .ant-input {
+      border-radius: 0;
+
       @include themify($themes) {
-        background-color: themed('dialog-dark-input-bg');
-        color: themed('secondary-text-color');
+        background-color: themed('input-bg');
+        color: themed('text-color');
       }
     }
 
-    .options .button.inactive {
+    .options .button.inactive,
+    .options .button.custom {
       @include themify($themes) {
-        background-color: themed('dialog-dark-input-bg');
+        background-color: themed('input-bg');
+        color: themed('text-color');
       }
-    }
-
-    .custom.input {
-      @include themify($themes) {
-        background-color: themed('quaternary-background');
-        color: themed('secondary-text-color');
-      }
-
-      svg {
-        @include themify($themes) {
-          stroke: themed('text-color');
-          fill: themed('text-color');
-        }
-      }
-    }
-  }
-
-  .options {
-    display: grid;
-    grid-template-columns: 0 1fr 1fr 1fr 1fr;
-    height: $dialog-component-height;
-    border-radius: $dialog-component-border-radius;
-
-    @include themify($themes) {
-      border: 1px solid themed('text-color');
     }
 
     .dark & {
+      .ant-input {
+        @include themify($themes) {
+          background-color: themed('dialog-dark-input-bg');
+          color: themed('secondary-text-color');
+        }
+      }
+
+      .options .button.inactive {
+        @include themify($themes) {
+          background-color: themed('dialog-dark-input-bg');
+        }
+      }
+
+      .custom.input {
+        @include themify($themes) {
+          background-color: themed('quaternary-background');
+          color: themed('secondary-text-color');
+        }
+
+        svg {
+          @include themify($themes) {
+            stroke: themed('text-color');
+            fill: themed('text-color');
+          }
+        }
+      }
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 0 1fr 1fr 1fr 1fr;
+      height: $dialog-component-height;
+      border-radius: $dialog-component-border-radius;
+
       @include themify($themes) {
         border: 1px solid themed('text-color');
       }
-    }
 
-    .button {
-      @extend %disable-focus-outline;
-
-      height: 100%;
-      padding: 0;
-      border-radius: 0;
-      font-size: $font-size-s;
-      letter-spacing: -0.01em;
-      text-align: center;
-      text-transform: uppercase;
-
-      @include themify($themes) {
-        background-color: themed('primary-color');
-        color: #000;
-      }
-
-      &.custom {
-        border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
-      }
-
-      &.high {
-        border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
-      }
-
-      &.inactive:not(:disabled) {
-        &:hover,
-        &:focus {
-          opacity: 1;
-        }
-
+      .dark & {
         @include themify($themes) {
-          background-color: themed('input-bg');
+          border: 1px solid themed('text-color');
         }
-      }
-
-      .fee-amount {
-        font-size: 8px;
-      }
-    }
-
-    .input {
-      display: hidden;
-      height: 100%;
-      padding: 0;
-      border: 0;
-
-      &:focus {
-        box-shadow: none;
-      }
-    }
-
-    &.custom-mode {
-      display: grid;
-      grid-template-columns: 9fr 0 auto auto auto;
-
-      .input {
-        display: block;
-        margin-right: 5px;
-        padding: 0 0.75rem;
-        border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
       }
 
       .button {
-        transition: none;
-      }
+        @extend %disable-focus-outline;
 
-      .button.custom {
-        visibility: hidden;
+        height: 100%;
         padding: 0;
+        border-radius: 0;
+        font-size: $font-size-s;
+        letter-spacing: -0.01em;
+        text-align: center;
+        text-transform: uppercase;
+
+        @include themify($themes) {
+          border: 1px solid transparent;
+          background-color: themed('primary-color');
+          color: #000;
+        }
+
+        &.custom {
+          border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+        }
+
+        &.high {
+          border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
+        }
+
+        &.inactive:not(:disabled) {
+          &:hover,
+          &:focus {
+            opacity: 1;
+          }
+
+          &:focus {
+            @include themify($themes) {
+              background-color: themed('normal-color');
+            }
+          }
+
+          @include themify($themes) {
+            background-color: themed('input-bg');
+          }
+        }
+
+        .fee-amount {
+          font-size: 8px;
+        }
+      }
+
+      .input {
+        height: 100%;
+        padding: 0;
+        border: 0;
+
+        &:focus {
+          box-shadow: none;
+        }
+      }
+
+      &.custom-mode {
+        display: grid;
+        grid-template-columns: 9fr 0 auto auto auto;
+
+        .input {
+          display: block;
+          margin-right: 5px;
+          padding: 0 0.75rem;
+          border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+        }
+
+        .button {
+          transition: none;
+        }
+
+        .button.custom {
+          visibility: hidden;
+          padding: 0;
+        }
       }
     }
-  }
 
-  .icon {
-    width: 30px;
-    height: 30px;
-    padding: 3px;
+    .icon {
+      width: 30px;
+      height: 30px;
+      padding: 3px;
 
-    @include themify($themes) {
-      stroke: themed('text-color');
-      fill: themed('text-color');
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
+      }
     }
-  }
 
-  .label {
-    @extend %dialog-label;
-    display: block;
-  }
+    .label {
+      @extend %dialog-label;
+      display: block;
 
-  .loading {
-    height: $dialog-component-height;
-    text-align: center;
-  }
-
-  .invalid .options {
-    @include themify($themes) {
-      border: 1px solid themed('error-color');
+      @include themify($themes) {
+        color: themed('dialog-label-color');
+      }
     }
-  }
 
-  .warning {
-    font-size: 12px;
-    text-align: right;
+    .loading {
+      height: $dialog-component-height;
+      text-align: center;
+    }
 
-    @include themify($themes) {
-      color: themed('warning-color');
+    .invalid .options {
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+      }
+    }
+
+    .warning {
+      font-size: 12px;
+      text-align: right;
+
+      @include themify($themes) {
+        color: themed('warning-color');
+      }
     }
   }
 }

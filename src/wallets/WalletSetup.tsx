@@ -37,7 +37,7 @@ const getContent = (
     case 'RESTORE':
       return <WalletRestore cancel={cancel} finish={finish} />
     case 'FINISHED':
-      return <Navigate to="WALLETS" />
+      return <Navigate to="TXNS" />
   }
 }
 

@@ -58,6 +58,7 @@ const _ConfirmBasicTransaction = ({
         </DialogShowAmount>
 
         <DialogInputPassword
+          autoFocus
           label={t(['wallet', 'label', 'password'])}
           id="tx-password"
           onChange={(e): void => setPassword(e.target.value)}

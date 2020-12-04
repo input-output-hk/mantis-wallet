@@ -1,5 +1,7 @@
-@import '../../vars';
+@import '../../sass-includes';
 
-.ExportPrivateKey {
-  font-size: $font-size-s;
+@include dialog-scoped {
+  .ExportPrivateKey {
+    font-size: $font-size-s;
+  }
 }

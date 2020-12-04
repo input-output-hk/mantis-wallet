@@ -9,7 +9,7 @@
 main {
   position: relative;
   height: 100vh;
-  padding: 36px;
+  padding: 50px;
 }
 
 .storybook-app {
@@ -36,4 +36,25 @@ main {
   .retry-countdown {
     display: none;
   }
+}
+
+#App {
+  display: block;
+  background-image: none !important;
+}
+
+div#root {
+  background-image: none !important;
+}
+
+.theme-dark div#root {
+  background-color: #131313;
+}
+
+.theme-light div#root {
+  background-color: #15ffd7;
+}
+
+.flex-content {
+  height: 80vh !important;
 }

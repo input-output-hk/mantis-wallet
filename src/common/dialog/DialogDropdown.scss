@@ -1,53 +1,55 @@
-@import '../../themify', '../../vars', '../../partial';
+@import '../../sass-includes';
 
-.DialogDropdown {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogDropdown {
+    margin-bottom: $dialog-component-spacing;
 
-  .active-option {
-    width: 508px;
-    padding: 6px 0 0;
-    overflow: hidden;
-    font-size: $font-size-m;
-    font-weight: bold;
-    white-space: nowrap;
+    .active-option {
+      width: 508px;
+      padding: 6px 0 0;
+      overflow: hidden;
+      font-size: $font-size-m;
+      font-weight: bold;
+      white-space: nowrap;
 
-    &.no-option {
-      opacity: $secondary-opacity;
+      &.no-option {
+        opacity: $secondary-opacity;
+      }
+    }
+
+    .label {
+      @extend %dialog-label;
+      font-weight: normal;
+      cursor: pointer;
     }
   }
 
-  .label {
-    @extend %dialog-label;
-    font-weight: normal;
-    cursor: pointer;
-  }
-}
+  .DialogDropdownOverlay {
+    .ant-dropdown-menu {
+      @extend %disable-focus-outline;
 
-.DialogDropdownOverlay {
-  .ant-dropdown-menu {
-    @extend %disable-focus-outline;
-
-    @include themify($themes) {
-      background-color: themed('normal-color');
-      color: themed('text-color');
-    }
-  }
-
-  .ant-dropdown-menu-item {
-    @extend %disable-focus-outline;
-
-    width: 508px;
-    overflow: hidden;
-
-    @include themify($themes) {
-      background-color: themed('normal-color');
-      color: themed('text-color');
-    }
-
-    &:hover {
       @include themify($themes) {
-        background-color: themed('primary-color');
-        color: #000;
+        background-color: themed('normal-color');
+        color: themed('text-color');
+      }
+    }
+
+    .ant-dropdown-menu-item {
+      @extend %disable-focus-outline;
+
+      width: 508px;
+      overflow: hidden;
+
+      @include themify($themes) {
+        background-color: themed('normal-color');
+        color: themed('text-color');
+      }
+
+      &:hover {
+        @include themify($themes) {
+          background-color: themed('primary-color');
+          color: #000;
+        }
       }
     }
   }

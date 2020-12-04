@@ -1,25 +1,27 @@
-@import '../../partial', '../../vars';
+@import '../../sass-includes';
 
-.ReceiveModal {
-  .footer {
-    .title {
-      padding: 0 0 0.5rem;
-      opacity: $secondary-opacity;
-      font-size: $font-size-s;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
+@include dialog-scoped {
+  .ReceiveModal {
+    .footer {
+      .title {
+        padding: 0 0 0.5rem;
+        opacity: $secondary-opacity;
+        font-size: $font-size-s;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
 
-    .address {
-      width: 508px;
-      padding: 0.5rem 0;
-      overflow: hidden;
-      opacity: $secondary-opacity;
-      font-size: $font-size-s;
-      white-space: nowrap;
+      .address {
+        width: 508px;
+        padding: 0.5rem 0;
+        overflow: hidden;
+        opacity: $secondary-opacity;
+        font-size: $font-size-s;
+        white-space: nowrap;
 
-      &:hover {
-        opacity: 1;
+        &:hover {
+          opacity: 1;
+        }
       }
     }
   }

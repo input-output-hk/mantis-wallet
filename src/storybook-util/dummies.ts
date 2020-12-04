@@ -4,8 +4,8 @@ import {FeeEstimates, Account, Transaction} from '../common/wallet-state'
 import {Token} from '../tokens/tokens-state'
 import {asWei, asEther} from '../common/units'
 
-const address1 = '0x00112233445566778899aabbccddeeff00112233'
-const address2 = '0xffeeddccbbaa0011223344556677889988776655'
+export const address1 = '0x00112233445566778899aabbccddeeff00112233'
+export const address2 = '0xffeeddccbbaa0011223344556677889988776655'
 export const dummyTransactions: Transaction[] = [
   {
     hash: '1',

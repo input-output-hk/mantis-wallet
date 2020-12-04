@@ -92,7 +92,7 @@ export const TransactionHistory = ({
       </div>
       <div className="toolbar">
         <div className="main-title">
-          <Trans k={['wallet', 'title', 'transactionHistory']} />
+          <Trans k={['wallet', 'title', 'myTransactions']} />
         </div>
         <div>
           <Dropdown overlay={sortByMenu} overlayClassName="SortByDropdown">
