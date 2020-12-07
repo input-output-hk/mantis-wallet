@@ -11,7 +11,7 @@ import {createInMemoryStore, Store} from './store'
 import {usePersistedState} from './hook-utils'
 import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
-import {toHex, ensure0x} from './util'
+import {ensure0x, toHex} from './util'
 import {asEther, asWei, Wei} from './units'
 import {AccountTransaction, CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
 
@@ -208,6 +208,30 @@ const getStatus = (tx: AccountTransaction, currentBlock: number): Transaction['s
   else if (tx.isCheckpointed) return 'persisted_checkpoint'
   else if (currentBlock - tx.blockNumber >= DEPTH_FOR_PERSISTENCE) return 'persisted_depth'
   else return 'confirmed'
+}
+
+export const mergeTransactions = (current: Transaction[]) => (
+  previous: Transaction[],
+): Transaction[] => {
+  const currentByHashes = new Map(current.map((tx) => [tx.hash, tx]))
+
+  const oldAndFailed = previous
+    .filter((tx) => !currentByHashes.has(tx.hash))
+    .map(
+      (tx): Transaction => {
+        switch (tx.status) {
+          case 'failed':
+          case 'confirmed':
+          case 'persisted_checkpoint':
+          case 'persisted_depth':
+            return tx
+          case 'pending':
+            return {...tx, status: 'failed'}
+        }
+      },
+    )
+
+  return oldAndFailed.concat(current)
 }
 
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
@@ -436,7 +460,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
         )
       })
 
-    const transactions = await Promise.all(
+    const newTransactions = await Promise.all(
       web3transactions.map(
         async (tx): Promise<Transaction> => {
           return {
@@ -457,10 +481,16 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
           }
         },
       ),
+    ).then((txns) =>
+      pipe(
+        transactionsOption,
+        option.getOrElseW(() => []),
+        mergeTransactions(txns),
+      ),
     )
 
-    setTransactions(some(transactions))
-    await loadBalance(transactions)
+    setTransactions(some(newTransactions))
+    await loadBalance(newTransactions)
   }
 
   const load = (
