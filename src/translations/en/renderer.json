@@ -60,7 +60,8 @@
       "removeWallet": "Remove Wallet",
       "copyAddress": "Copy Address",
       "back": "Back",
-      "confirm": "Confirm"
+      "confirm": "Confirm",
+      "getTestETC": "Get Sagano Test ETC"
     },
     "link": {
       "viewInExplorer": "View in Explorer"
