@@ -9,6 +9,7 @@ import {
 } from 'react'
 import {Store} from './store'
 import {rendererLog} from './logger'
+import {wait} from '../shared/utils'
 
 export const useIsMounted = (): RefObject<boolean> => {
   const isMounted = useRef(false)
@@ -48,6 +49,35 @@ export function useInterval(callback: Callback, delay: number): void {
       }
       const id = setInterval(tick, delay)
       return (): void => clearInterval(id)
+    }
+  }, [delay])
+}
+
+type AsyncCallback = () => Promise<void>
+export function useRecurringTimeout(callback: AsyncCallback, delay: number): void {
+  const savedCallback = useRef<AsyncCallback>()
+  const canProceed = useRef<boolean>(true)
+
+  // Remember the latest callback
+  useEffect(() => {
+    // eslint-disable-next-line fp/no-mutation
+    savedCallback.current = callback
+  }, [callback])
+
+  function tick(): void {
+    if (canProceed.current && savedCallback.current) {
+      savedCallback
+        .current()
+        .then(() => wait(delay))
+        .then(tick)
+    }
+  }
+
+  useEffect(() => {
+    tick()
+    return () => {
+      // eslint-disable-next-line fp/no-mutation
+      canProceed.current = false
     }
   }, [delay])
 }

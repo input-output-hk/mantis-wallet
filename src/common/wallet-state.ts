@@ -5,7 +5,7 @@ import {createContainer} from 'unstated-next'
 import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from 'web3-core'
-import {option, readonlyArray} from 'fp-ts'
+import {option, readonlyArray, array} from 'fp-ts'
 import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
 import {usePersistedState} from './hook-utils'
@@ -324,7 +324,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setSyncStatus(none)
   }
 
-  const handleError = (e: Error): void => {
+  const handleRefreshError = (e: Error): void => {
     rendererLog.error(e)
     setError(some(e))
     if (!isMocked) setWalletStatus('ERROR')
@@ -495,9 +495,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const load = (
     loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadAccounts],
-  ): void => {
+  ): Promise<void> => {
     setWalletStatus('LOADING')
-    loadFns.forEach((fn) => fn().catch(handleError))
+    return pipe(
+      loadFns,
+      array.map((fn) => fn()),
+      (p) => Promise.all(p),
+      (p) => p.then(() => void 0),
+    )
   }
 
   const getSyncStatus = async (): Promise<SynchronizationStatus> => {
@@ -548,8 +553,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       }
     }
 
-    const allBlocks = syncing.highestBlock - syncing.startingBlock
-    const syncedBlocks = syncing.currentBlock - syncing.startingBlock
+    const allBlocks = syncing.highestBlock
+    const syncedBlocks = syncing.currentBlock
 
     const syncedRatio =
       allBlocks + syncing.knownStates === 0
@@ -575,8 +580,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
 
     try {
+      await load()
+    } catch (e) {
+      handleRefreshError(e)
+    }
+
+    try {
       const newSyncStatus = await getSyncStatus()
-      load()
       if (!_.isEqual(newSyncStatus)(syncStatus)) {
         if (
           newSyncStatus.mode === 'online' &&
@@ -594,7 +604,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
         }
       }
     } catch (e) {
-      handleError(e)
+      handleRefreshError(e)
     }
   }
 

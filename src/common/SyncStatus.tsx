@@ -3,11 +3,11 @@ import classnames from 'classnames'
 import SVG from 'react-inlinesvg'
 import {Popover} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {SynchronizationStatus, LoadedState} from './wallet-state'
+import {LoadedState, SynchronizationStatus} from './wallet-state'
 import {BackendState} from './backend-state'
 import {SettingsState} from '../settings-state'
-import {useInterval} from './hook-utils'
-import {withStatusGuard, PropsWithWalletState} from './wallet-status-guard'
+import {useRecurringTimeout} from './hook-utils'
+import {PropsWithWalletState, withStatusGuard} from './wallet-status-guard'
 import {Trans} from './Trans'
 import {displayNameOfNetwork} from '../config/type'
 import refreshIcon from '../assets/icons/refresh.svg'
@@ -70,9 +70,7 @@ export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element =>
 }
 
 const _SyncStatus = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
-  useInterval(() => {
-    walletState.refreshSyncStatus()
-  }, 3000)
+  useRecurringTimeout(() => walletState.refreshSyncStatus(), 3000)
 
   return <SyncStatusContent syncStatus={walletState.syncStatus} />
 }
