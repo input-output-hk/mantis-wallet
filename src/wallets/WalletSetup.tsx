@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {WalletState} from '../common/wallet-state'
 import {Navigate} from '../layout/Router'
+import {TermsAndConditionsStep} from './TermsAndConditionsStep'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletCreate} from './WalletCreate'
 import {WalletRestore} from './WalletRestore'
@@ -14,6 +15,7 @@ const getContent = (
   setStep: React.Dispatch<React.SetStateAction<StepType>>,
 ): JSX.Element => {
   const walletState = WalletState.useContainer()
+  const [termsAccepted, acceptTerms] = useState<boolean>(false)
 
   const finish = (): void => {
     if (walletState.walletStatus !== 'INITIAL' && walletState.walletStatus !== 'LOADING') {
@@ -23,6 +25,17 @@ const getContent = (
   }
 
   const cancel = (): void => setStep('PATH_CHOOSER')
+
+  if (!termsAccepted) {
+    return (
+      <TermsAndConditionsStep
+        next={() => {
+          acceptTerms(true)
+          setStep('PATH_CHOOSER')
+        }}
+      />
+    )
+  }
 
   switch (step) {
     case 'PATH_CHOOSER':

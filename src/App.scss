@@ -6,6 +6,10 @@
 #App {
   font-weight: 500;
 
+  @include themify($themes) {
+    color: themed('text-color');
+  }
+
   .loaded {
     display: grid;
     grid-template-columns: auto 1fr;

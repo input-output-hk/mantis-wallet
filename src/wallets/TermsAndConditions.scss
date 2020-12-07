@@ -1,0 +1,10 @@
+@import '../sass-includes';
+
+.TermsAndConditions {
+  .scrollable {
+    max-height: 30vh;
+    margin-bottom: $dialog-component-spacing;
+    padding-right: 1rem;
+    overflow: auto;
+  }
+}

@@ -35,7 +35,7 @@ interface DialogProps {
   onSetLoading?: (loading: boolean) => void
   footer?: ReactNode
   helpURL?: string | null
-  className?: string
+  className?: string | string[]
   initialValues?: object
 }
 
