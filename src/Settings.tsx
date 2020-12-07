@@ -174,6 +174,7 @@ export const Settings = (): JSX.Element => {
               setSelectedNetwork(networkName)
             }}
             newNetwork={selectedNetwork}
+            walletState={walletState}
           />
         </>
       )}

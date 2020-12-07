@@ -4,29 +4,32 @@
 @import './antd-overrides/button';
 
 #App {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  overflow: hidden;
-  transition: background-position $bg-transition-duration;
-  background-repeat: no-repeat;
-  background-position: 100% bottom;
-  background-size: contain;
   font-weight: 500;
 
-  &.wallets {
-    background-position: 125% bottom;
-  }
+  .loaded {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    overflow: hidden;
+    transition: background-position $bg-transition-duration;
+    background-repeat: no-repeat;
+    background-position: 100% bottom;
+    background-size: contain;
 
-  &.address_book {
-    background-position: 135% bottom;
-  }
+    &.txns {
+      background-position: 125% bottom;
+    }
 
-  &.settings {
-    background-position: 145% bottom;
-  }
+    &.address_book {
+      background-position: 135% bottom;
+    }
 
-  @include themify($themes) {
-    background-image: themed('bg-moving');
-    color: themed('text-color');
+    &.settings {
+      background-position: 145% bottom;
+    }
+
+    @include themify($themes) {
+      background-image: themed('bg-moving');
+      color: themed('text-color');
+    }
   }
 }
