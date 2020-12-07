@@ -163,8 +163,8 @@
     "transactionStatus": {
       "pending": "Pending",
       "confirmed": "Confirmed",
-      "persisted_depth": "Persisted (Depth)",
-      "persisted_checkpoint": "Persisted (Checkpoint)",
+      "persisted_depth": "Persisted",
+      "persisted_checkpoint": "Checkpointed",
       "failed": "Failed",
       "pendingDescription": "Transaction waiting to be added to a block in the chain",
       "confirmedDescription": "Transaction has been added to a block in the chain",
