@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
+import {Button} from 'antd'
+import {shell} from 'electron'
 import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
@@ -22,6 +24,8 @@ import logoLight from '../assets/logo-lockup-light.svg'
 import './Sidebar.scss'
 
 type ModalId = 'none' | 'RemoveWallet' | 'Support' | 'Status'
+
+const FAUCET_URL = 'https://mantis-testnet-mantis-faucet-web.mantis.ws/'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -121,11 +125,24 @@ export const Sidebar = (): JSX.Element => {
             </ul>
           </nav>
         </div>
-
         <div className="balance-wrapper flex-item">
           {walletState.walletStatus === 'LOADED' && (
             <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
           )}
+          <div className="faucet-button">
+            {networkName === 'testnet-internal-nomad' && (
+              <Button
+                data-testid="faucet-button"
+                type="default"
+                className="action"
+                {...fillActionHandlers((): void => {
+                  shell.openExternal(FAUCET_URL)
+                })}
+              >
+                {t(['wallet', 'button', 'getTestETC'])}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
