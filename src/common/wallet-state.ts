@@ -79,11 +79,14 @@ export const MIN_GAS_PRICE = asWei(1)
 
 export interface InitialState {
   walletStatus: 'INITIAL'
+  error: Option<Error>
   refreshSyncStatus: () => Promise<void>
 }
 
 export interface LoadingState {
   walletStatus: 'LOADING'
+  refreshSyncStatus: () => Promise<void>
+  error: Option<Error>
 }
 
 interface SendTransactionParams {
@@ -98,6 +101,7 @@ interface SendTransactionParams {
 
 export interface LoadedState {
   walletStatus: 'LOADED'
+  error: Option<Error>
   syncStatus: SynchronizationStatus
   accounts: Account[]
   getOverviewProps: () => Overview
@@ -121,6 +125,7 @@ export interface LoadedState {
 
 export interface NoWalletState {
   walletStatus: 'NO_WALLET'
+  error: Option<Error>
   reset: () => void
   addAccount: (name: string, privateKey: string, password: string) => Promise<void>
 }
@@ -243,6 +248,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(
     _initialState.syncStatus,
   )
+  const [error, setError] = useState<Option<Error>>(none)
 
   // balance
   const [totalBalanceOption, setTotalBalance] = useState<Option<Wei>>(_initialState.totalBalance)
@@ -315,6 +321,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     rendererLog.error(e)
     // eslint-disable-next-line no-console
     console.error(e)
+    setError(option.some(e))
   }
 
   const getCurrentAddress = (): string => {
@@ -482,6 +489,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadAccounts],
   ): Promise<void> => {
     setWalletStatus('LOADING')
+    setError(option.none)
     return pipe(
       loadFns,
       array.map((fn) => fn()),
@@ -722,6 +730,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   return {
     walletStatus,
+    error,
     syncStatus,
     getOverviewProps,
     reset,
