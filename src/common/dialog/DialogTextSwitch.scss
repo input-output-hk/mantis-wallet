@@ -1,86 +1,97 @@
-@import '../../themify', '../../vars', '../../partial';
+@import '../../sass-includes';
 
-.DialogTextSwitch {
-  margin: 0 auto $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogTextSwitch {
+    margin: 0 auto $dialog-component-spacing;
 
-  .label {
-    @extend %dialog-label;
-  }
+    .label {
+      @extend %dialog-label;
+    }
 
-  .switch-container {
-    @extend %two-col-grid-template;
-    grid-column-gap: 0;
+    .switch-container {
+      @extend %two-col-grid-template;
+      grid-column-gap: 0;
 
-    .button {
-      @extend %disable-focus-outline;
+      .button {
+        @extend %disable-focus-outline;
 
-      height: 30px !important;
-      transition: color $transition-duration, background-color $transition-duration,
-        opacity $transition-duration;
-      font-size: $font-size-s;
-      text-align: center;
+        height: 30px !important;
+        transition: color $transition-duration, background-color $transition-duration,
+          border-color $transition-duration, opacity $transition-duration;
+        box-shadow: none;
+        font-size: $font-size-s;
+        text-align: center;
 
-      &.inactive {
-        opacity: $unselected-opacity;
-
-        @include themify($themes) {
-          background-color: themed('input-bg');
-          color: themed('text-color');
+        &::after {
+          content: none;
         }
 
-        &:not(:disabled) {
-          &:hover,
-          &:focus {
-            opacity: 1;
+        &.left {
+          border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
+          justify-self: right;
+        }
 
+        &.right {
+          border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
+          justify-self: left;
+        }
+
+        &.left,
+        &.right {
+          &.active {
             @include themify($themes) {
-              background-color: themed('input-bg');
+              border-color: themed('primary-color');
+              background-color: themed('primary-color');
+              color: #000;
             }
           }
-        }
-      }
 
-      &.left {
-        justify-self: right;
-        border-radius: $dialog-component-border-radius 0 0 $dialog-component-border-radius;
-      }
+          &.inactive {
+            opacity: $unselected-opacity;
 
-      &.right {
-        justify-self: left;
-        border-radius: 0 $dialog-component-border-radius $dialog-component-border-radius 0;
-
-        &.active {
-          @include themify($themes) {
-            background-color: themed('primary-color');
-            color: #000;
+            @include themify($themes) {
+              border-color: transparent;
+              background-color: transparent;
+              color: themed('text-color');
+            }
           }
 
           &:disabled {
             @include themify($themes) {
+              border-color: transparent;
               background-color: rgba(themed('primary-color'), 0.5);
             }
           }
 
           &:not(:disabled) {
+            &:hover,
+            &:focus {
+              opacity: 1;
+            }
+
             &:hover {
               @include themify($themes) {
-                background-color: lighten(themed('primary-color'), 15%);
+                border-color: transparent;
+                background-color: transparent;
+                color: themed('text-color');
               }
             }
 
             &:focus {
               @include themify($themes) {
-                background-color: lighten(themed('primary-color'), 10%);
+                border-color: themed('primary-color');
+                background-color: themed('primary-color');
+                color: #000;
               }
             }
           }
         }
       }
-    }
 
-    &.with-label {
-      .button {
-        width: 100%;
+      &.with-label {
+        .button {
+          width: 100%;
+        }
       }
     }
   }

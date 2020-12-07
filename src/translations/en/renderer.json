@@ -2,8 +2,8 @@
   "title": {
     "mantis": "Mantis",
     "mantisWallet": "Mantis Wallet",
-    "wallets": "Wallet",
-    "addressBook": "Address Book",
+    "transactions": "Transactions",
+    "addressBook": "Address book",
     "tokens": "Tokens",
     "settings": "Settings"
   },
@@ -28,7 +28,8 @@
   "wallet": {
     "title": {
       "mantisWallet": "Mantis Wallet",
-      "transactionHistory": "Transaction History",
+      "myTransactions": "My transactions",
+      "mySettings": "My settings",
       "createNewWallet": "Create New Wallet",
       "restoreWallet": "Restore Wallet",
       "walletSetup": "Wallet Setup",
@@ -154,8 +155,9 @@
       "fullySynced": "Fully Synced",
       "syncingBlocks": "Syncing Blocks {{percentage}}%",
       "syncingState": "Syncing State {{percentage}}%",
-      "currentBlock": "Current block: {{blockNumber}}",
-      "highestBlock": "Highest block: {{blockNumber}}"
+      "currentBlock": "Current block: <strong>{{blockNumber}}</strong>",
+      "highestBlock": "Highest block: <strong>{{blockNumber}}</strong>",
+      "networkName": "Network: <strong>{{networkName}}</strong>"
     },
     "transactionStatus": {
       "pending": "Pending",
@@ -221,7 +223,7 @@
       "label": "Label"
     },
     "book": {
-      "title": "Address Book",
+      "title": "My contacts",
       "addNew": "Add new",
       "noData": "No saved contacts",
       "newContact": "New Contact",

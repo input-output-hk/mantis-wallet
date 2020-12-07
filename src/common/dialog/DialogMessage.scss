@@ -1,29 +1,35 @@
-@import '../../themify', '../../partial', '../../vars';
+@import '../../sass-includes';
 
-.DialogMessage {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogMessage {
+    margin-bottom: $dialog-component-spacing;
 
-  .label {
-    @extend %dialog-label;
-  }
+    .label {
+      @extend %dialog-label;
 
-  .description {
-    font-size: $font-size-m;
-  }
-
-  &.highlight .description {
-    padding: 1rem;
-    border-radius: $dialog-component-border-radius;
-
-    @include themify($themes) {
-      background-color: themed('normal-color');
-      color: themed('text-color');
+      @include themify($themes) {
+        color: themed('dialog-label-color');
+      }
     }
-  }
 
-  .dark &.highlight .description {
-    @include themify($themes) {
-      background-color: themed('dialog-dark-input-bg');
+    .description {
+      font-size: $font-size-m;
+    }
+
+    &.highlight .description {
+      padding: 1rem;
+      border-radius: $dialog-component-border-radius;
+
+      @include themify($themes) {
+        background-color: themed('normal-color');
+        color: themed('text-color');
+      }
+    }
+
+    .dark &.highlight .description {
+      @include themify($themes) {
+        background-color: themed('dialog-dark-input-bg');
+      }
     }
   }
 }

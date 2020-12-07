@@ -1,19 +1,56 @@
-@import './themify', './vars', '../partial';
+@import '../sass-includes';
 
 // Button overrides
 
 $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
 
-.App,
-.ant-modal-root {
+// Header button normal colors
+
+@include app-scoped {
+  .main-buttons {
+    .ant-btn-default {
+      @include themify($themes) {
+        border: 1px solid themed('btn-main-secondary-text-color');
+        background-color: themed('btn-main-secondary-bg');
+        color: themed('btn-main-secondary-text-color');
+      }
+
+      &::before,
+      &::after {
+        @include themify($themes) {
+          border: 1px solid themed('btn-main-secondary-text-color');
+          background-color: themed('btn-main-secondary-bg');
+        }
+      }
+    }
+
+    .ant-btn-primary {
+      @include themify($themes) {
+        border: 1px solid themed('btn-main-primary-bg');
+        background-color: themed('btn-main-primary-bg');
+        color: themed('btn-main-primary-text-color');
+      }
+
+      &::before,
+      &::after {
+        @include themify($themes) {
+          border: 1px solid themed('btn-main-primary-bg');
+          background-color: themed('btn-main-primary-bg');
+        }
+      }
+    }
+  }
+}
+
+@include app-scoped {
   .ant-btn {
     height: $dialog-component-height;
     padding: 0 15px;
     transition: $transition;
     border-radius: $dialog-component-border-radius;
     font-size: $font-size-button;
-    font-weight: bold;
-    letter-spacing: $letter-spacing-medium;
+    font-weight: $btn-font-weight;
+    letter-spacing: 0;
     text-align: center;
     text-shadow: none;
 
@@ -24,7 +61,7 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
     &.right-diagonal::before {
-      // Default antd values conflicted with
+      // conflicted with default antd values
       top: unset;
       bottom: unset;
     }
@@ -42,6 +79,7 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
 
     &::before,
     &::after {
+      content: none;
       transition: $transition;
     }
   }
@@ -49,35 +87,26 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
   .ant-btn,
   .ant-btn.active {
     @include themify($themes) {
-      background-color: themed('btn-default-bg');
-      color: themed('btn-default-text-color');
+      border: 1px solid themed('btn-main-secondary-text-color');
+      background-color: themed('btn-main-secondary-bg');
+      color: themed('btn-main-secondary-text-color');
 
       &::after,
       &::before {
-        background-color: themed('btn-default-bg');
+        border: 1px solid themed('btn-main-secondary-text-color');
+        background-color: themed('btn-main-secondary-bg');
       }
     }
 
+    &:hover,
     &:focus {
       @include themify($themes) {
-        background-color: themed('btn-focus-bg');
-        color: themed('secondary-background');
+        background-color: themed('btn-default-hover-bg');
+        color: themed('btn-default-hover-text');
 
         &::after,
         &::before {
-          background-color: themed('btn-focus-bg');
-        }
-      }
-    }
-
-    &:hover {
-      @include themify($themes) {
-        background-color: themed('btn-hover-bg');
-        color: themed('secondary-background');
-
-        &::after,
-        &::before {
-          background-color: themed('btn-hover-bg');
+          background-color: themed('btn-default-hover-bg');
         }
       }
     }
@@ -86,12 +115,14 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
   // antd "primary" Button overrides
   .ant-btn-primary {
     @include themify($themes) {
-      background-color: themed('primary-color');
-      color: #000;
+      border: 1px solid themed('btn-main-primary-bg');
+      background-color: themed('btn-main-primary-bg');
+      color: themed('btn-main-primary-text-color');
 
       &::after,
       &::before {
-        background-color: themed('primary-color');
+        border: 1px solid themed('btn-main-primary-bg');
+        background-color: themed('btn-main-primary-bg');
       }
     }
 
@@ -109,26 +140,28 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
       &:hover,
       &:focus {
         @include themify($themes) {
-          background-color: themed('normal-color');
-          color: themed('text-color');
+          background-color: themed('btn-primary-hover-bg');
+          color: themed('btn-primary-hover-text');
 
           &::after,
           &::before {
-            background-color: themed('normal-color');
+            background-color: themed('btn-primary-hover-bg');
           }
         }
       }
     }
   }
 
-  // <Button danger> Remove </Button>
+  // e.g. <Button danger>Remove</Button>
   .ant-btn-dangerous {
     @include themify($themes) {
+      border: 1px solid themed('error-color');
       background-color: themed('error-color');
       color: #fff;
 
       &::after,
       &::before {
+        border: 1px solid themed('error-color');
         background-color: themed('error-color');
       }
     }
@@ -151,6 +184,7 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
   .ant-btn.disabled.active,
   .ant-btn[disabled].active {
     @include themify($themes) {
+      border-color: transparent;
       background-color: themed('btn-disabled-bg');
       color: rgba(0, 0, 0, 0.4);
     }
@@ -158,66 +192,50 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
     &::after,
     &::before {
       @include themify($themes) {
+        border-color: transparent;
         background-color: themed('btn-disabled-bg');
       }
     }
   }
-}
 
-// Header buttons
-.main-buttons {
-  $button-width: 125px;
-  $space-between: 10px;
+  .main-buttons {
+    $button-width: 125px;
+    $space-between: 10px;
 
-  position: absolute;
-  right: 0;
+    position: absolute;
+    right: 0;
 
-  .action {
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-    width: $button-width;
-    height: $button-height;
-    margin-right: $diagonal-part-width + $space-between;
-    font-size: $font-size-s;
-    font-weight: bold;
-    line-height: $button-height;
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  .left-diagonal {
-    padding: 0 0 0 15px;
-
-    @include themify($themes) {
-      background-color: themed('btn-main-primary-bg');
-      color: themed('btn-main-primary-text-color');
+    .action {
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+      width: $button-width;
+      height: $button-height;
+      margin-right: $diagonal-part-width + $space-between;
+      font-size: $font-size-s;
+      font-weight: $btn-font-weight;
+      line-height: $button-height;
+      text-align: center;
+      vertical-align: middle;
     }
 
-    &::after {
-      @extend %diagonal-before-after-common;
-      right: -15px;
+    .left-diagonal {
+      padding: 0 0 0 15px;
 
-      @include themify($themes) {
-        background-color: themed('btn-main-primary-bg');
+      &::after {
+        @extend %diagonal-before-after-common;
+        right: -15px;
+        border-left: none !important;
       }
     }
-  }
 
-  .right-diagonal {
-    padding: 0 15px 0 0;
+    .right-diagonal {
+      padding: 0 15px 0 0;
 
-    @include themify($themes) {
-      background-color: themed('btn-main-secondary-bg');
-      color: themed('btn-main-secondary-text-color');
-    }
-
-    &::before {
-      @extend %diagonal-before-after-common;
-      left: -15px;
-
-      @include themify($themes) {
-        background-color: themed('btn-main-secondary-bg');
+      &::before {
+        @extend %diagonal-before-after-common;
+        left: -15px;
+        border-right: none !important;
       }
     }
   }

@@ -2,7 +2,7 @@
 
 $content-width: 350px;
 
-.Settings {
+#App .Settings {
   @include header-margin-top;
 
   .main-title {
@@ -11,6 +11,7 @@ $content-width: 350px;
 
   .content {
     width: $content-width;
+    margin: 0 auto;
 
     .settings-item {
       margin-bottom: 2rem;
@@ -74,7 +75,6 @@ $content-width: 350px;
     .export-private-key {
       width: 220px;
       margin-right: 0px;
-      font-size: $font-size-m;
     }
   }
 }

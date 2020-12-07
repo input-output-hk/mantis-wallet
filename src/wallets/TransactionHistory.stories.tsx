@@ -100,7 +100,7 @@ export const interactive = (): JSX.Element => {
           status: 'pending',
           contractAddress: null,
         }),
-        object<Transaction>('Transaction 1', {
+        object<Transaction>('Transaction 4', {
           hash: '4',
           from: '0x00112233445566778899aabbccddeeff00112233',
           to: '0xffeeddccbbaa0011223344556677889988776655',

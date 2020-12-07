@@ -1,69 +1,71 @@
-@import '../themify', '../vars', '../partial';
+@import '../sass-includes';
 
-.WalletActionBox {
-  @extend %disable-focus-outline;
+@include app-scoped {
+  .WalletActionBox {
+    @extend %disable-focus-outline;
 
-  display: inline-grid;
-  align-content: end;
-  width: 340px;
-  height: 370px;
-  margin: 1rem;
-  border-radius: $dialog-component-border-radius;
-  cursor: pointer;
-
-  @include themify($themes) {
-    background-color: themed('secondary-background');
-  }
-
-  .svg {
-    margin: auto;
+    display: inline-grid;
+    align-content: end;
+    width: 340px;
+    height: 370px;
+    margin: 1rem;
+    border-radius: $dialog-component-border-radius;
+    cursor: pointer;
 
     @include themify($themes) {
-      fill: themed('text-color');
+      background-color: themed('secondary-background');
     }
-  }
 
-  .title {
-    padding: 3rem 0 1rem;
-    font-size: $font-size-s;
-    font-weight: bold;
-    letter-spacing: $letter-spacing-small;
-    text-align: center;
-    text-transform: uppercase;
-  }
+    .svg {
+      margin: auto;
 
-  .note {
-    height: 92px;
-    padding: 0 1em;
-    font-size: $font-size-s;
-    font-weight: 300;
-    letter-spacing: $letter-spacing-small;
-    text-align: center;
-  }
-
-  .footer {
-    padding: 0 46px;
-    transition: background-color $transition-duration;
-    border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
-    font-size: $font-size-xl;
-    font-weight: bold;
-    letter-spacing: $letter-spacing-large;
-    line-height: 64px;
-    text-align: center;
-    text-transform: uppercase;
-
-    @include themify($themes) {
-      background-color: themed('primary-color');
-      color: #000;
-    }
-  }
-
-  &:hover,
-  &:focus {
-    .footer {
       @include themify($themes) {
-        background-color: themed('btn-focus-bg');
-        color: themed('secondary-background');
+        fill: themed('text-color');
+      }
+    }
+
+    .title {
+      padding: 3rem 0 1rem;
+      font-size: $font-size-s;
+      font-weight: bold;
+      letter-spacing: $letter-spacing-small;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .note {
+      height: 92px;
+      padding: 0 1em;
+      font-size: $font-size-s;
+      font-weight: 300;
+      letter-spacing: $letter-spacing-small;
+      text-align: center;
+    }
+
+    .footer {
+      padding: 0 46px;
+      transition: background-color $transition-duration;
+      border-radius: 0 0 $dialog-component-border-radius $dialog-component-border-radius;
+      font-size: $font-size-xl;
+      font-weight: bold;
+      letter-spacing: $letter-spacing-large;
+      line-height: 64px;
+      text-align: center;
+      text-transform: uppercase;
+
+      @include themify($themes) {
+        background-color: themed('btn-main-primary-bg');
+        color: themed('btn-main-primary-text-color');
+      }
+    }
+
+    &:hover,
+    &:focus {
+      .footer {
+        @include themify($themes) {
+          background-color: themed('btn-focus-bg');
+          color: themed('secondary-background');
+        }
       }
     }
   }

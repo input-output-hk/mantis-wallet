@@ -36,7 +36,7 @@ const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element
   return (
     <div className="Settings">
       <Header>
-        <Trans k={['title', 'settings']} />
+        <Trans k={['wallet', 'title', 'mySettings']} />
       </Header>
       <div className="content">{children}</div>
     </div>

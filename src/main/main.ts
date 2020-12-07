@@ -39,6 +39,9 @@ import {Language} from '../shared/i18n'
 
 const IS_LINUX = os.type() == 'Linux'
 const LINUX_ICON = path.join(__dirname, '/../icon.png')
+const ASPECT_RATIO = 16.0 / 9.0
+const MIN_HEIGHT = 640
+const MIN_WIDTH = Math.floor(MIN_HEIGHT * ASPECT_RATIO)
 
 // Force sRGB
 app.commandLine.appendSwitch('force-color-profile', 'srgb')
@@ -53,6 +56,14 @@ if (!app.requestSingleInstanceLock()) {
   app.quit()
 }
 
+function lockAspectRatioOnMacOS(window: BrowserWindow): void {
+  // Lock the aspect ratio to 16:9 so the user can scale,
+  // but not change the height and width independently.
+  // When fullscreen, it's ignored. Works only on macOS.
+  // Win support: https://github.com/electron/electron/pull/18306
+  window.setAspectRatio(ASPECT_RATIO)
+}
+
 function createWindow(t: TFunctionMain): void {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
@@ -62,14 +73,16 @@ function createWindow(t: TFunctionMain): void {
     width,
     height,
     // Minimum supported resolution: 1366x768
-    minWidth: 1120,
-    minHeight: 680,
+    minWidth: MIN_WIDTH,
+    minHeight: MIN_HEIGHT,
     webPreferences: {
       nodeIntegration: true,
     },
   })
 
   Menu.setApplicationMenu(buildMenu(t))
+
+  lockAspectRatioOnMacOS(mainWindow)
 
   const startUrl =
     process.env.ELECTRON_START_URL ||

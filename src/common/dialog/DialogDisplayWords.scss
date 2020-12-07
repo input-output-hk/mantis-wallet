@@ -1,28 +1,30 @@
-@import '../../themify', '../../vars';
+@import '../../sass-includes';
 
-.DialogDisplayWords {
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogDisplayWords {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-bottom: $dialog-component-spacing;
 
-  .word {
-    height: 30px;
-    border-radius: $dialog-component-border-radius;
-    font-size: $font-size-s;
-    font-weight: bold;
-    line-height: 30px;
-    user-select: none;
-    overflow-wrap: break-word;
+    .word {
+      height: 30px;
+      border-radius: $dialog-component-border-radius;
+      font-size: $font-size-s;
+      font-weight: bold;
+      line-height: 30px;
+      user-select: none;
+      overflow-wrap: break-word;
 
-    @include themify($themes) {
-      background-color: themed('secondary-background');
-    }
+      @include themify($themes) {
+        background-color: themed('secondary-background');
+      }
 
-    .index {
-      width: 38px;
-      padding-left: 1em;
-      float: left;
+      .index {
+        width: 38px;
+        padding-left: 1em;
+        float: left;
+      }
     }
   }
 }

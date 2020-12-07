@@ -1,73 +1,75 @@
-@import '../../themify', '../../vars', '../../partial';
+@import '../../sass-includes';
 
-.DialogRecoveryPhrase {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogRecoveryPhrase {
+    margin-bottom: $dialog-component-spacing;
 
-  .instructions {
-    margin-bottom: 1em;
-    font-size: $font-size-s;
-  }
-
-  .input {
-    height: 80px;
-    padding: 20px 13px;
-    border-radius: $dialog-component-border-radius;
-    font-size: $font-size-s;
-    font-weight: bold;
-
-    @include themify($themes) {
-      border: 1px solid themed('text-color');
-      background-color: themed('input-bg');
-    }
-
-    &.invalid {
-      @include themify($themes) {
-        border: 1px solid themed('error-color');
-      }
-    }
-  }
-
-  .clear-container {
-    margin-bottom: 1rem;
-    text-align: right;
-
-    .clear {
-      @extend %link;
+    .instructions {
+      margin-bottom: 1em;
       font-size: $font-size-s;
-      font-weight: bold;
     }
-  }
 
-  .words {
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-
-    .word {
-      height: 30px;
+    .input {
+      height: 80px;
+      padding: 20px 13px;
       border-radius: $dialog-component-border-radius;
       font-size: $font-size-s;
       font-weight: bold;
-      line-height: 30px;
-      text-align: center;
-      cursor: pointer;
 
       @include themify($themes) {
-        background-color: themed('secondary-background');
+        border: 1px solid themed('text-color');
+        background-color: themed('input-bg');
+      }
+
+      &.invalid {
+        @include themify($themes) {
+          border: 1px solid themed('error-color');
+        }
       }
     }
 
-    .used-word {
-      height: 30px;
-      font-size: $font-size-s;
-      font-weight: bold;
-      line-height: 30px;
-      text-align: center;
+    .clear-container {
+      margin-bottom: 1rem;
+      text-align: right;
+
+      .clear {
+        @extend %link;
+        font-size: $font-size-s;
+        font-weight: bold;
+      }
     }
 
-    .check {
-      @include themify($themes) {
-        fill: themed('success-color');
+    .words {
+      display: grid;
+      grid-gap: 10px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+
+      .word {
+        height: 30px;
+        border-radius: $dialog-component-border-radius;
+        font-size: $font-size-s;
+        font-weight: bold;
+        line-height: 30px;
+        text-align: center;
+        cursor: pointer;
+
+        @include themify($themes) {
+          background-color: themed('secondary-background');
+        }
+      }
+
+      .used-word {
+        height: 30px;
+        font-size: $font-size-s;
+        font-weight: bold;
+        line-height: 30px;
+        text-align: center;
+      }
+
+      .check {
+        @include themify($themes) {
+          fill: themed('success-color');
+        }
       }
     }
   }

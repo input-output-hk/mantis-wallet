@@ -5,19 +5,19 @@
 
   .balances {
     .label {
-      font-size: $font-size-m;
+      font-size: 0.8vw;
       font-weight: 600;
     }
 
     .available-balance {
       @extend %monospace;
       margin-left: -4px;
-      font-size: 80px;
-      line-height: 70px;
+      font-size: 5vw;
+      line-height: 4vw;
     }
 
     .suffix {
-      font-size: $font-size-m;
+      font-size: 0.8vw;
       font-weight: 600;
     }
   }
