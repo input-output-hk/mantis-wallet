@@ -93,6 +93,9 @@ export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEsti
     }),
   )
 
+export const getNextNonceWithRandomDelay = (): Promise<number> =>
+  wait(Math.floor(Math.random() * Math.floor(200))).then(() => Math.floor(Math.random() * 10))
+
 export const ADDRESS = '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a872'
 
 const FIRST_ERC20_TOKEN_ADDRESS = '0x0001112223334445556667778889990123456789'

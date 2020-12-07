@@ -24,6 +24,7 @@ export interface TransactionHistoryProps {
   accounts: Account[]
   availableBalance: Option<Wei>
   estimateTransactionFee: () => Promise<FeeEstimates>
+  getNextNonce: () => Promise<number>
   generateAddress: () => Promise<void>
 }
 
@@ -31,6 +32,7 @@ export const TransactionHistory = ({
   transactions,
   availableBalance,
   estimateTransactionFee,
+  getNextNonce,
   generateAddress,
   accounts,
 }: TransactionHistoryProps): JSX.Element => {
@@ -100,13 +102,13 @@ export const TransactionHistory = ({
           </Dropdown>
           <SendTransactionFlow
             visible={showSendModal}
-            transactions={transactions}
             availableAmount={pipe(
               availableBalance,
               getOrElse(() => asWei(0)),
             )}
             onCancel={(): void => setShowSendModal(false)}
             estimateTransactionFee={estimateTransactionFee}
+            getNextNonce={getNextNonce}
           />
           <ReceiveTransaction
             visible={showReceiveModal}

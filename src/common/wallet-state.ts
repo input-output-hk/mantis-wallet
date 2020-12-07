@@ -11,7 +11,7 @@ import {createInMemoryStore, Store} from './store'
 import {usePersistedState} from './hook-utils'
 import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
-import {toHex} from './util'
+import {toHex, ensure0x} from './util'
 import {asEther, asWei, Wei} from './units'
 import {AccountTransaction, CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
 
@@ -106,6 +106,7 @@ export interface LoadedState {
   getPrivateKey: (password: string) => Promise<string>
   generateAccount: () => Promise<void>
   refreshSyncStatus: () => Promise<void>
+  getNextNonce: () => Promise<number>
   doTransfer: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
   sendTransaction: (params: SendTransactionParams) => Promise<void>
   estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
@@ -188,9 +189,6 @@ const DEFAULT_STATE: WalletStateParams = {
 
 export const canRemoveWallet = (walletState: WalletData): walletState is LoadedState | ErrorState =>
   walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'ERROR'
-
-export const getNextNonce = (transactions: Transaction[]): number =>
-  transactions.filter((tx) => tx.direction === 'outgoing').length
 
 export const getPendingBalance = (transactions: Transaction[]): BigNumber =>
   transactions
@@ -585,12 +583,17 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }: SendTransactionParams): Promise<void> => {
     const txConfig: TransactionConfig = {
       nonce,
-      to: recipient,
+      to: ensure0x(recipient),
       from: getCurrentAddress(),
       value: toHex(amount),
       gas: gasLimit,
       gasPrice: toHex(gasPrice),
-      data,
+      data: pipe(
+        data,
+        option.fromNullable,
+        option.filter((str) => str.length > 0),
+        option.toUndefined,
+      ),
     }
 
     const privateKey = getCurrentPrivateKey(password)
@@ -601,14 +604,22 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     web3.eth.sendSignedTransaction(tx.rawTransaction) // ETCM-134
   }
 
+  const getNextNonce = async (): Promise<number> =>
+    pipe(
+      currentAddressOption,
+      option.getOrElseW(() => {
+        throw createTErrorRenderer(['wallet', 'message', 'walletNeeded'])
+      }),
+      async (address) => await web3.eth.getTransactionCount(address, 'latest'),
+    )
+
   const doTransfer = async (
     recipient: string,
     amount: Wei,
     fee: Wei,
     password: string,
   ): Promise<void> => {
-    const transactions = getOrElse((): Transaction[] => [])(transactionsOption)
-    const nonce = getNextNonce(transactions)
+    const nonce = await getNextNonce()
 
     return sendTransaction({
       recipient,
@@ -692,6 +703,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     reset,
     generateAccount,
     refreshSyncStatus,
+    getNextNonce,
     sendTransaction,
     doTransfer,
     estimateCallFee,

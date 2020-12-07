@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {asEther, asWei} from './units'
-import {getPendingBalance, getNextNonce, Transaction} from './wallet-state'
+import {getPendingBalance, Transaction} from './wallet-state'
 
 const createTestTx = (
   direction: Transaction['direction'],
@@ -22,20 +22,6 @@ const createTestTx = (
   gas: 1,
   gasUsed: 1,
   contractAddress: null,
-})
-
-it('calculates next nonce from transactions', () => {
-  const transactions: Transaction[] = [
-    createTestTx('outgoing', 'persisted_checkpoint', 100, 1),
-    createTestTx('outgoing', 'confirmed', 100, 1),
-    createTestTx('outgoing', 'pending', 100, 1),
-    createTestTx('incoming', 'persisted_depth', 100, 1),
-    createTestTx('incoming', 'confirmed', 100, 1),
-    createTestTx('incoming', 'pending', 100, 1),
-  ]
-
-  // Next nonce is equal to the number of outgoing transactions (including pending ones)
-  assert.equal(getNextNonce(transactions), 3)
 })
 
 //

@@ -17,6 +17,9 @@ export const toHex = (n: number | BigNumber): string => {
   return `0x${asString}`
 }
 
+export const ensure0x = (hexStr: string): string =>
+  hexStr.startsWith('0x') ? hexStr : `0x${hexStr}`
+
 export const isGreater = (minValue = 0) => (b: BigNumber): ValidationResult =>
   !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
     ? {tKey: ['common', 'error', 'mustBeANumberGreaterThan'], options: {replace: {minValue}}}

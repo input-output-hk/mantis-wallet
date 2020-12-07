@@ -188,8 +188,8 @@ const configGetter = convict({
     dataDirName: 'mantis',
     additionalSettings: {
       'mantis.network.rpc.http.cors-allowed-origins': '*',
-      'akka.http.server.request-timeout': '45.seconds',
-      'mantis.async.ask-timeout': '30.seconds',
+      'akka.http.server.request-timeout': '60.seconds',
+      'mantis.async.ask-timeout': '59.seconds',
     },
   }),
 })

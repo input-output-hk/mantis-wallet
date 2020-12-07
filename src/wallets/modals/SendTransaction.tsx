@@ -1,21 +1,15 @@
-import React, {useState, FunctionComponent} from 'react'
+import React, {FunctionComponent, useEffect, useState} from 'react'
 import {ModalProps} from 'antd/lib/modal'
 import {wrapWithModal} from '../../common/MantisModal'
-import {Wei, etherValue} from '../../common/units'
+import {etherValue, Wei} from '../../common/units'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
-import {
-  FeeEstimates,
-  Transaction,
-  getNextNonce,
-  TRANSFER_GAS_LIMIT,
-  MIN_GAS_PRICE,
-} from '../../common/wallet-state'
+import {FeeEstimates, MIN_GAS_PRICE, TRANSFER_GAS_LIMIT} from '../../common/wallet-state'
 import './SendTransaction.scss'
 import {
-  SendBasicTransaction,
-  SendAdvancedTransaction,
-  ConfirmBasicTransaction,
   ConfirmAdvancedTransaction,
+  ConfirmBasicTransaction,
+  SendAdvancedTransaction,
+  SendBasicTransaction,
 } from '../sendTransaction'
 
 enum TransactionType {
@@ -46,7 +40,7 @@ interface TransactionParams {
 interface SendTransactionFlowProps {
   availableAmount: Wei
   estimateTransactionFee: () => Promise<FeeEstimates>
-  transactions: Transaction[]
+  getNextNonce: () => Promise<number>
   onCancel: () => void
 }
 
@@ -54,7 +48,7 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
   availableAmount,
   onCancel,
   estimateTransactionFee,
-  transactions,
+  getNextNonce,
 }: SendTransactionFlowProps & ModalProps) => {
   const defaultState: TransactionParams = {
     [TransactionType.basic]: {
@@ -68,23 +62,19 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
       gasPrice: etherValue(MIN_GAS_PRICE).toFixed(),
       recipient: '',
       data: '',
-      nonce: getNextNonce(transactions).toString(),
+      nonce: '0',
     },
   }
+
+  const [nonce, setNonce] = useState(0)
+  useEffect(() => {
+    getNextNonce().then(setNonce)
+  })
 
   const [transactionParams, setTransactionParams] = useState<TransactionParams>(defaultState)
 
   const [step, setStep] = useState<'send' | 'confirm'>('send')
   const [transactionType, _setTransactionType] = useState<TransactionType>(TransactionType.basic)
-
-  const resetState = (): void => {
-    setTransactionParams(defaultState)
-  }
-
-  const setTransactionType = (type: TransactionType): void => {
-    _setTransactionType(type)
-    resetState()
-  }
 
   const setBasicTransactionParams = (basicParams: Partial<BasicTransactionParams>): void => {
     setTransactionParams((oldParams) => ({
@@ -100,6 +90,16 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
       [TransactionType.basic]: oldParams[TransactionType.basic],
       [TransactionType.advanced]: {...oldParams[TransactionType.advanced], ...advancedParams},
     }))
+  }
+
+  const resetState = (): void => {
+    setTransactionParams(defaultState)
+    setAdvancedTransactionParams({nonce: nonce.toString()})
+  }
+
+  const setTransactionType = (type: TransactionType): void => {
+    resetState()
+    _setTransactionType(type)
   }
 
   if (step === 'confirm') {
