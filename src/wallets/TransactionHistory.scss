@@ -1,6 +1,6 @@
 @import '../themify', '../partial', '../vars', '../functions';
 
-.TransactionHistory {
+#App .TransactionHistory {
   display: grid;
   grid-template-rows: auto 1fr;
   margin: 0;

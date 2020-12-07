@@ -5,7 +5,7 @@ $theme-map: null;
 @mixin themify($themes: $themes) {
   // iterate over every defined theme
   @each $theme, $map in $themes {
-    .theme-#{$theme} & {
+    #Mantis.theme-#{$theme} & {
       // create global $theme-map to use in the scope of themed()
       $theme-map: () !global;
       @each $key, $submap in $map {

@@ -18,7 +18,7 @@ interface InitialState {
 }
 
 function useRouterState(
-  initialState: InitialState = {routeId: 'WALLETS', isLocked: false},
+  initialState: InitialState = {routeId: 'TXNS', isLocked: false},
 ): RouterState {
   const [currentRouteId, setCurrentRouteId] = useState<RouteId>(initialState.routeId)
   const [isLocked, setLocked] = useState<boolean>(initialState.isLocked)

@@ -1,4 +1,4 @@
-@import '../themify', '../vars';
+@import '../themify', '../vars', '../partial';
 
 .SyncStatus {
   font-size: $font-size-s;
@@ -34,6 +34,15 @@
       stroke: themed('text-color');
     }
   }
+
+  .network {
+    font-weight: 500;
+  }
+}
+
+.ant-popover .syncStatusLine > strong {
+  @extend %monospace;
+  font-weight: 700;
 }
 
 @keyframes spin {

@@ -1,13 +1,15 @@
-@import '../../themify', '../../vars';
+@import '../../sass-includes';
 
-.DialogSeedPhrase {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogSeedPhrase {
+    margin-bottom: $dialog-component-spacing;
 
-  .select {
-    width: 100%;
-  }
+    .select {
+      width: 100%;
+    }
 
-  .select .ant-input {
-    height: $dialog-component-height;
+    .select .ant-input {
+      height: $dialog-component-height;
+    }
   }
 }

@@ -33,7 +33,7 @@
       &.persisted_depth,
       &.persisted_checkpoint {
         @include themify($themes) {
-          fill: themed('success-color');
+          fill: themed('tx-success-color');
         }
       }
 
@@ -127,16 +127,14 @@
     display: inline-block;
     padding: 10px;
     border-radius: $dialog-component-border-radius;
+    background-color: $dark-normal-color;
+    color: $dark-text-color;
     font-weight: bold;
     line-height: 14px;
 
-    @include themify($themes) {
-      background-color: themed('secondary-background');
-    }
-
     &.incoming {
       @include themify($themes) {
-        color: themed('success-text');
+        color: themed('success-color');
       }
     }
 
@@ -148,7 +146,7 @@
   .call-details {
     .success {
       @include themify($themes) {
-        color: themed('success-text');
+        color: themed('success-color');
       }
     }
 

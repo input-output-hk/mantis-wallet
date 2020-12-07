@@ -4,7 +4,7 @@ $dark-text-color: #fff;
 $dark-normal-color: #303030;
 $dark-secondary-background: #000;
 $dark-btn-bg: #e9e9e9;
-$dark-component-background: #1f1f1f;
+$dark-component-background: #161616;
 
 $light-text-color: #000000;
 $light-normal-color: #f0f0f0;
@@ -12,8 +12,8 @@ $light-secondary-background: #f7f7f7;
 $light-btn-bg: #595959;
 $light-component-background: #fff;
 
-$error-background-color: #fddddd;
-$error-dialog-color: #990000;
+$error-background-color: #990000;
+$error-dialog-color: #fff;
 
 // secondary and tertiary backgrounds are used on components
 // put over the primary background
@@ -28,6 +28,7 @@ $themes: (
     primary-color: $primary-color,
     secondary-color: $secondary-color,
     success-color: $primary-color,
+    tx-success-color: $primary-color,
     success-text: $primary-color,
     error-color: $error-color,
     error-text: $error-color,
@@ -37,22 +38,31 @@ $themes: (
     component-background: $dark-component-background,
     modal-background: #1a1a1a,
     link-color: $dark-text-color,
+    link-hover-color: $primary-color,
     tertiary-background: #707070,
+    dialog-label-color: #aaaaaa,
     dialog-dark-input-bg: transparent,
     input-bg: transparent,
     quaternary-background: $dark-component-background,
     secondary-text-color: #b5b5b5,
     border-color-base: $dark-text-color,
-    btn-default-bg: $dark-btn-bg,
-    btn-default-text-color: $light-text-color,
+    btn-default-bg: $dark-component-background,
+    btn-default-text-color: $primary-color,
     btn-disabled-bg: darken($dark-btn-bg, 20%),
     btn-focus-bg: lighten($dark-btn-bg, 10%),
-    btn-hover-bg: lighten($dark-btn-bg, 20%),
+    btn-primary-hover-bg: #37e88f,
+    btn-primary-hover-text: $light-text-color,
+    btn-default-hover-bg: #000000,
+    btn-default-hover-text: $dark-text-color,
     btn-main-primary-text-color: $light-text-color,
     btn-main-primary-bg: $primary-color,
-    btn-main-secondary-text-color: $light-text-color,
-    btn-main-secondary-bg: $light-normal-color,
+    btn-main-secondary-text-color: $primary-color,
+    btn-main-secondary-bg: $dark-component-background,
+    switch-bg: $primary-color,
+    switch-square: $light-text-color,
     sidebar-link-color: $primary-color,
+    dropdown-selected-bg: $primary-color,
+    dropdown-selected-text: $light-text-color,
     bg-base: url('/assets/bg-base-dark.png'),
     bg-moving: url('/assets/bg-moving-dark.png'),
     modal-mask: #000,
@@ -64,32 +74,42 @@ $themes: (
     secondary-background: $light-secondary-background,
     primary-color: $primary-color,
     secondary-color: $secondary-color,
-    success-color: $success-color,
-    success-text: darken($success-color, 20%),
-    error-color: $error-color,
-    error-text: darken($error-color, 10%),
+    success-color: $primary-color,
+    tx-success-color: #000,
+    success-text: darken($primary-color, 20%),
+    error-color: $error-background-color,
+    error-text: $error-background-color,
     error-dialog-color: $error-dialog-color,
     error-background-color: $error-background-color,
     warning-color: $warning-color,
     component-background: $light-component-background,
     modal-background: #ffffff,
-    link-color: $light-text-color,
+    link-color: #6b6b6b,
+    link-hover-color: $light-text-color,
     tertiary-background: #6b6b6b,
+    dialog-label-color: #333333,
     dialog-dark-input-bg: transparent,
     input-bg: transparent,
     quaternary-background: #fafafa,
-    secondary-text-color: #545454,
+    secondary-text-color: #444444,
     border-color-base: $light-text-color,
     btn-default-bg: $light-btn-bg,
     btn-default-text-color: $dark-text-color,
     btn-disabled-bg: lighten($light-btn-bg, 50%),
     btn-focus-bg: darken($light-btn-bg, 10%),
-    btn-hover-bg: darken($light-btn-bg, 20%),
+    btn-primary-hover-bg: #333333,
+    btn-primary-hover-text: $dark-text-color,
+    btn-default-hover-bg: #000000,
+    btn-default-hover-text: $dark-text-color,
     btn-main-primary-text-color: $light-normal-color,
-    btn-main-primary-bg: $light-text-color,
+    btn-main-primary-bg: $dark-component-background,
     btn-main-secondary-text-color: $light-text-color,
-    btn-main-secondary-bg: $light-normal-color,
+    btn-main-secondary-bg: #fff,
+    switch-bg: $light-text-color,
+    switch-square: $primary-color,
     sidebar-link-color: $light-text-color,
+    dropdown-selected-bg: $light-text-color,
+    dropdown-selected-text: $dark-text-color,
     bg-base: url('/assets/bg-base-light.png'),
     bg-moving: url('/assets/bg-moving-light.png'),
     modal-mask: #fff,

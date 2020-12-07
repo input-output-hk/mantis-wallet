@@ -69,9 +69,10 @@
   margin-bottom: 2rem;
   margin-left: -3rem;
   overflow: hidden;
-  font-size: 26px;
+  font-size: Max(12px, Min(26px, #{$title-font-size})); // "Min", because min() is a sass builtin
   font-weight: 500;
   letter-spacing: $letter-spacing-small;
+  line-height: 1.1;
 }
 
 %dialog-info-link {
@@ -131,19 +132,20 @@
 }
 
 %diagonal-before-after-common {
-  content: '';
+  content: '' !important;
   display: inline-block;
   position: absolute;
   z-index: -1;
   width: $diagonal-part-width;
   height: $button-height;
+  margin-top: -1px;
   transform: skew($button-skew);
 }
 
 %asset-icon {
   position: relative;
-  top: 10px;
-  height: 30px;
+  top: 5px;
+  height: 20px;
 }
 
 %modal-diagonal-button {
@@ -164,6 +166,7 @@
         @extend %diagonal-template;
         left: -15px;
         transform: skew($button-skew);
+        border-right: none !important;
       }
     }
 
@@ -175,6 +178,7 @@
         @extend %diagonal-template;
         right: -15px;
         transform: skew($button-skew * -1);
+        border-left: none !important;
       }
     }
   }

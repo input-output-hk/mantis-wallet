@@ -1,19 +1,21 @@
-@import '../../themify', '../../vars';
+@import '../../sass-includes';
 
-.DialogError {
-  margin-bottom: $dialog-component-spacing;
-  padding: 15px;
-  border-radius: $dialog-component-border-radius;
-  font-size: $font-size-s;
-  text-align: center;
+@include dialog-scoped {
+  .DialogError {
+    margin-bottom: $dialog-component-spacing;
+    padding: 15px;
+    border-radius: $dialog-component-border-radius;
+    font-size: $font-size-s;
+    text-align: center;
 
-  @include themify($themes) {
-    background-color: themed('error-background-color');
-    color: themed('error-dialog-color');
-  }
+    @include themify($themes) {
+      background-color: themed('error-background-color');
+      color: themed('error-dialog-color');
+    }
 
-  .help {
-    padding-left: 3px;
-    font-weight: bold;
+    .help {
+      padding-left: 3px;
+      font-weight: bold;
+    }
   }
 }

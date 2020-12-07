@@ -23,7 +23,7 @@ const AppContent: React.FC = () => {
   } = RouterState.useContainer()
 
   return isBackendRunning ? (
-    <div className={classnames('App', menu.toLowerCase())}>
+    <div id="App" className={classnames(menu.toLowerCase())}>
       <WalletState.Provider initialState={{web3, store}}>
         <TokensState.Provider initialState={{web3, store}}>
           <Sidebar />

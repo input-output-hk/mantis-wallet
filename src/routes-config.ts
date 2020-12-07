@@ -2,23 +2,16 @@ import {WalletSetup} from './wallets/WalletSetup'
 import {ApiTest} from './ApiTest'
 import {Wallets} from './wallets/Wallets'
 import {Settings} from './Settings'
-// import {Tokens} from './tokens/Tokens'
 import {AddressBook} from './address-book/AddressBook'
 import {TKeyRenderer} from './common/i18n'
-// Assets
-import menuWalletsIcon from './assets/icons/menu-wallets.svg'
-import menuSettingsIcon from './assets/icons/menu-settings.svg'
-import menuAddressBookIcon from './assets/icons/menu-address-book.svg'
-// import menuTokensIcon from './assets/icons/menu-tokens.svg'
 
 // Menu
 
-export type MenuId = 'WALLETS' | 'SETTINGS' | 'ADDRESS_BOOK' // | 'TOKENS'
+export type MenuId = 'TXNS' | 'SETTINGS' | 'ADDRESS_BOOK'
 
 export interface MenuItem {
-  title: TKeyRenderer
-  route: RouteId
-  icon: string
+  title: TKeyRenderer // Title of menu item
+  route: RouteId // Navigation target for menu item
 }
 
 export type Menu = {
@@ -26,35 +19,27 @@ export type Menu = {
 }
 
 export const MENU: Menu = {
-  WALLETS: {
-    title: ['title', 'wallets'],
-    route: 'WALLETS',
-    icon: menuWalletsIcon,
+  TXNS: {
+    title: ['title', 'transactions'],
+    route: 'TXNS',
   },
-  // TOKENS: {
-  //   title: ['title', 'tokens'],
-  //   route: 'TOKENS',
-  //   icon: menuTokensIcon,
-  // },
   ADDRESS_BOOK: {
     title: ['title', 'addressBook'],
     route: 'ADDRESS_BOOK',
-    icon: menuAddressBookIcon,
   },
   SETTINGS: {
     title: ['title', 'settings'],
     route: 'SETTINGS',
-    icon: menuSettingsIcon,
   },
 }
 
 // Routes
 
-export type RouteId = 'WALLETS' | 'WALLET_SETUP' | 'SETTINGS' | 'API_TEST' | 'ADDRESS_BOOK' // | 'TOKENS'
+export type RouteId = 'TXNS' | 'WALLET_SETUP' | 'SETTINGS' | 'API_TEST' | 'ADDRESS_BOOK'
 
 export interface Route {
-  component: React.ComponentType
-  menu: MenuId
+  component: React.ComponentType // Which component should render?
+  menu: MenuId // Which menu item should be active for a specific route?
 }
 
 export type Routes = {
@@ -62,13 +47,13 @@ export type Routes = {
 }
 
 export const ROUTES: Routes = {
-  WALLETS: {
+  TXNS: {
     component: Wallets,
-    menu: 'WALLETS',
+    menu: 'TXNS',
   },
   WALLET_SETUP: {
     component: WalletSetup,
-    menu: 'WALLETS',
+    menu: 'TXNS',
   },
   SETTINGS: {
     component: Settings,
@@ -82,8 +67,4 @@ export const ROUTES: Routes = {
     component: ApiTest,
     menu: 'SETTINGS',
   },
-  // TOKENS: {
-  //   component: Tokens,
-  //   menu: 'TOKENS',
-  // },
 }

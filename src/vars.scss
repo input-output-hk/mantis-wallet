@@ -4,6 +4,8 @@ $font-family-monospace: 'Inconsolata', monospace;
 $app-padding-vertical: 50px;
 $app-padding-horizontal: 40px;
 
+$scrollbar-size: 5px;
+
 // Font sizes
 $font-size-xs: 10px; // Only use xs if really necessary
 $font-size-s: 12px;
@@ -12,19 +14,23 @@ $font-size-l: 16px;
 $font-size-xl: 18px;
 $font-size-xxl: 20px;
 
+$title-font-size: 2.2vw;
+
 $font-size-root: $font-size-l;
 $font-size-input: $font-size-s;
 $font-size-title: $font-size-xxl;
-$font-size-button: $font-size-l;
+$font-size-button: $font-size-m;
 $font-size-button-action: $font-size-s;
 
-$secondary-opacity: 0.57;
-$unselected-opacity: 0.75;
+$secondary-opacity: 0.6;
+$unselected-opacity: 0.7;
 
 $button-skew: 20deg;
 
 $border-radius-base: 0;
 $btn-border-width: 0;
+$btn-font-weight: 600; // semi-bold
+
 $switch-height: 22px;
 $checkbox-size: 20px;
 $main-content-padding: 64px;
@@ -33,7 +39,7 @@ $transition-duration: 0.3s;
 $bg-transition-duration: 0.5s;
 $wave-animation-width: 6px;
 
-$sidebar-width: 500px;
+$sidebar-width: 300px;
 
 // Dialog / Modal
 $dialog-width: 625px;
@@ -61,8 +67,8 @@ $zindex-sidebar: 900;
 // antd overwrites
 $primary-color: #33ff99;
 $secondary-color: #19804d;
-$success-color: #5add92;
-$error-color: #ff2121;
+$success-color: $primary-color;
+$error-color: #ff0000;
 $warning-color: #ff9021;
 
 // ant v3 line-height

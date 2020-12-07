@@ -1,5 +1,9 @@
-.SendTransactionModal {
-  .MantisModal {
-    height: 833px;
+@import '../../sass-includes';
+
+@include dialog-scoped {
+  .SendTransactionModal {
+    .MantisModal {
+      height: 833px;
+    }
   }
 }

@@ -2,15 +2,17 @@ import url from 'url'
 import React, {useEffect} from 'react'
 import {configure, addDecorator} from '@storybook/react'
 import requireContext from 'require-context.macro'
-import 'antd/dist/antd.less'
-import '../src/App.scss'
 import '../src/index.scss'
+import '../src/App.scss'
+// At the end intentionally, so we can test if antd overrides work properly:
+import 'antd/dist/antd.less'
+// Custom story overrides, e.g. disable antimations
 import './storybook.scss'
 
 const AppDecorator = (storyFn) => {
   useEffect(() => {
     // set Mantis body class for antd overwrites
-    document.body.classList.add('Mantis')
+    document.body.id = 'Mantis'
 
     const currentURL = url.parse(window.location.href, true)
     if (currentURL.query['disable-animations'] === 'true') {
@@ -19,7 +21,7 @@ const AppDecorator = (storyFn) => {
   }, [])
 
   return (
-    <div className="App storybook-app">
+    <div id="App" className="storybook-app storybook-modal-root">
       <main id="main">{storyFn()}</main>
     </div>
   )

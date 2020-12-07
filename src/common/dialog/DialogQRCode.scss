@@ -1,35 +1,37 @@
-@import '../../partial', '../../vars';
+@import '../../sass-includes';
 
-.DialogQRCode {
-  margin-bottom: $dialog-component-spacing;
-  transition: filter $transition-duration;
-
-  &.blurred {
+@include dialog-scoped {
+  .DialogQRCode {
+    margin-bottom: $dialog-component-spacing;
     transition: filter $transition-duration;
-    pointer-events: none;
-    filter: blur(4px);
-  }
 
-  .display {
-    display: grid;
-    grid-column-gap: 1.5rem;
-    grid-template-columns: auto 1fr;
-    margin-bottom: 1rem;
-  }
+    &.blurred {
+      transition: filter $transition-duration;
+      pointer-events: none;
+      filter: blur(4px);
+    }
 
-  .qr-content {
-    @extend %monospace;
-    font-size: $font-size-m;
-  }
+    .display {
+      display: grid;
+      grid-column-gap: 1.5rem;
+      grid-template-columns: auto 1fr;
+      margin-bottom: 1rem;
+    }
 
-  .download {
-    padding: 0 30px;
-    letter-spacing: $letter-spacing-large;
-    text-transform: uppercase;
-  }
+    .qr-content {
+      @extend %monospace;
+      font-size: $font-size-m;
+    }
 
-  .qr-code {
-    padding: 5px 5px 0 5px;
-    background-color: #fff;
+    .download {
+      padding: 0 30px;
+      letter-spacing: $letter-spacing-large;
+      text-transform: uppercase;
+    }
+
+    .qr-code {
+      padding: 5px 5px 0 5px;
+      background-color: #fff;
+    }
   }
 }

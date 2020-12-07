@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
 import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
+import {Button} from 'antd'
+import {shell} from 'electron'
 import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
@@ -17,11 +19,13 @@ import {BackendState} from '../common/backend-state'
 import {TokensState} from '../tokens/tokens-state'
 import {Trans} from '../common/Trans'
 import {createTErrorRenderer} from '../common/i18n'
-import logo from '../assets/logo.svg'
-import wordmark from '../assets/wordmark.svg'
+import logoDark from '../assets/logo-lockup-dark.svg'
+import logoLight from '../assets/logo-lockup-light.svg'
 import './Sidebar.scss'
 
 type ModalId = 'none' | 'RemoveWallet' | 'Support' | 'Status'
+
+const FAUCET_URL = 'https://mantis-testnet-mantis-faucet-web.mantis.ws/'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -48,6 +52,7 @@ const UpdatingStatusModal = ({
 export const Sidebar = (): JSX.Element => {
   const {
     translation: {t},
+    theme,
   } = SettingsState.useContainer()
 
   const walletState = WalletState.useContainer()
@@ -56,6 +61,8 @@ export const Sidebar = (): JSX.Element => {
   const {networkName} = BackendState.useContainer()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
+
+  const logo = theme === 'dark' ? logoDark : logoLight
 
   const LogOutButton = (): JSX.Element => {
     const classNames = ['footer-link', 'logout']
@@ -91,40 +98,52 @@ export const Sidebar = (): JSX.Element => {
         <div className="logo">
           <SVG src={logo} className="logo" />
         </div>
-        <div className="title">
-          <SVG src={wordmark} />
-        </div>
       </div>
 
       <div className="sync-status-wrapper">
         <SyncStatus />
       </div>
 
-      <div>
-        <nav>
-          <ul className={classnames('navigation', {locked: routerState.isLocked})}>
-            {Object.entries(MENU).map(([menuId, menuItem]: [string, MenuItem]) => {
-              const isActive = routerState.currentRoute.menu === menuId
-              const classes = classnames('link', menuId.toLowerCase(), {active: isActive})
-              return (
-                <li key={menuId}>
-                  <div
-                    className={classes}
-                    {...fillActionHandlers(() => handleMenuClick(menuId as MenuId), 'link')}
-                  >
-                    {t(menuItem.title)}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
-      </div>
-
-      <div className="balance-wrapper">
-        {walletState.walletStatus === 'LOADED' && (
-          <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
-        )}
+      <div className="flex-content">
+        <div className="flex-item">
+          <nav>
+            <ul className={classnames('navigation', {locked: routerState.isLocked})}>
+              {Object.entries(MENU).map(([menuId, menuItem]: [string, MenuItem]) => {
+                const isActive = routerState.currentRoute.menu === menuId
+                const classes = classnames('link', menuId.toLowerCase(), {active: isActive})
+                return (
+                  <li key={menuId}>
+                    <div
+                      className={classes}
+                      {...fillActionHandlers(() => handleMenuClick(menuId as MenuId), 'link')}
+                    >
+                      {t(menuItem.title)}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
+        </div>
+        <div className="balance-wrapper flex-item">
+          {walletState.walletStatus === 'LOADED' && (
+            <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
+          )}
+          <div className="faucet-button">
+            {networkName === 'testnet-internal-nomad' && (
+              <Button
+                data-testid="faucet-button"
+                type="default"
+                className="action"
+                {...fillActionHandlers((): void => {
+                  shell.openExternal(FAUCET_URL)
+                })}
+              >
+                {t(['wallet', 'button', 'getTestETC'])}
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="footer">
@@ -165,6 +184,9 @@ export const Sidebar = (): JSX.Element => {
         />
       )}
       <SupportModal visible={activeModal === 'Support'} onCancel={() => setActiveModal('none')} />
+
+      {/* Beta banner */}
+      <div className="beta-banner">BETA</div>
     </header>
   )
 }
