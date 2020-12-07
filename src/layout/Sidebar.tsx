@@ -135,9 +135,9 @@ export const Sidebar = (): JSX.Element => {
                 data-testid="faucet-button"
                 type="default"
                 className="action"
-                onClick={(): void => {
+                {...fillActionHandlers((): void => {
                   shell.openExternal(FAUCET_URL)
-                }}
+                })}
               >
                 {t(['wallet', 'button', 'getTestETC'])}
               </Button>
