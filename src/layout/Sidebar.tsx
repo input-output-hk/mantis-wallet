@@ -25,7 +25,7 @@ import './Sidebar.scss'
 
 type ModalId = 'none' | 'RemoveWallet' | 'Support' | 'Status'
 
-const FAUCET_URL = 'https://mantis-testnet-mantis-faucet-web.mantis.ws/'
+const FAUCET_URL = 'https://mantis-testnet-faucet-web.mantis.ws'
 
 const UpdatingStatusModal = ({
   syncStatus,
@@ -127,22 +127,24 @@ export const Sidebar = (): JSX.Element => {
         </div>
         <div className="balance-wrapper flex-item">
           {walletState.walletStatus === 'LOADED' && (
-            <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
+            <>
+              <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
+              <div className="faucet-button">
+                {networkName === 'testnet-internal-nomad' && (
+                  <Button
+                    data-testid="faucet-button"
+                    type="default"
+                    className="action"
+                    {...fillActionHandlers((): void => {
+                      shell.openExternal(FAUCET_URL)
+                    })}
+                  >
+                    {t(['wallet', 'button', 'getTestETC'])}
+                  </Button>
+                )}
+              </div>
+            </>
           )}
-          <div className="faucet-button">
-            {networkName === 'testnet-internal-nomad' && (
-              <Button
-                data-testid="faucet-button"
-                type="default"
-                className="action"
-                {...fillActionHandlers((): void => {
-                  shell.openExternal(FAUCET_URL)
-                })}
-              >
-                {t(['wallet', 'button', 'getTestETC'])}
-              </Button>
-            )}
-          </div>
         </div>
       </div>
 
