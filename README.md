@@ -7,12 +7,27 @@ Wallet for ETC Mantis.
 * [Node.js](https://nodejs.org/en/) - v12 is currently used for Mantis Wallet, tested with v12.16.2-v12.19.0.
   * (optional) [nvm](https://github.com/nvm-sh/nvm) - you can use nvm to automatically pick-up the Node version you need
 * [yarn](https://classic.yarnpkg.com/en/) - tested with 1.21.1-1.22.5
+* [sbt](https://www.scala-sbt.org/) - for building Mantis client
 
 ## Initialize the project
 
 Running the `yarn` command in the project directory will download the dependencies. After this action, all the script below can be run. 
 
 ## Scripts for development
+
+### `yarn build-mantis`
+
+Builds Mantis from submodule located at `mantis` directory and copies it into `../mantis-dist` directory
+
+### `yarn dev`
+
+This runs [`yarn build-main`](#yarn-build-main) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
+
+`yarn dev:hot` runs with `yarn build-main --watch` for automatic reload and `yarn electron-dev:hot` for automatic restart on change.
+
+### `yarn storybook`
+
+Starts storybook in debug mode.
 
 ### `yarn build-main`
 
@@ -33,16 +48,6 @@ Runs the renderer in development mode, it can be accessed at [http://localhost:3
 :warning: You will have to run [`yarn build-main`](#yarn-build-main) before this action. For *hot* mode run it as `yarn build-main --watch`, so it rebuilds automatically on change. Use `yarn start-main` to run `build-main`, followed by `electron-dev`.
 
 :warning: The renderer needs to be running - see [`yarn start`](#yarn-start).
-
-### `yarn dev`
-
-This runs [`yarn build-main`](#yarn-build-main) followed by [`yarn electron-dev`](#yarn-electron-dev) and [`yarn start`](#yarn-start) in parallel.
-
-`yarn dev:hot` runs with `yarn build-main --watch` for automatic reload and `yarn electron-dev:hot` for automatic restart on change.
-
-### `yarn storybook`
-
-Starts storybook in debug mode.
 
 ## Testing and code health related scripts
 
@@ -99,3 +104,9 @@ Remember to clone the repo with `autocrlf` disabled in git.
 If you're making a new release, don't forget to:
 - Bump `version` in `package.json`
 - Update `compatibleDataDirVersions` in `package.json` to the range of acceptable backend versions (regarding data directory / database compatibility)
+- create release branch with name `release/<version>` (1. to have a separate branch, 2. to trigger build)
+- prepare a new release on Github:
+  - tag name: `v<version>`
+  - upload builds obtained from buildkite
+  - add sha256 hashes for published assets
+- merge changes made on release branch into `master` and `develop` branches
