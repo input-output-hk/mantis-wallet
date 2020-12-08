@@ -33,6 +33,7 @@
       "createNewWallet": "Create New Wallet",
       "restoreWallet": "Restore Wallet",
       "walletSetup": "Wallet Setup",
+      "termsAndConditions": "IOHK Terms of Service Agreement",
       "walletCreationFirstStep": "Create Wallet",
       "walletCreationRecoveryPhraseStep": "Recovery Phrase",
       "walletCreationSecurityStep": "Security",
@@ -143,7 +144,8 @@
       "removeWalletApproval1": "I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase.",
       "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
       "noKnownAddresses": "No known addresses",
-      "walletIsNotSyncing": "Wallet is not syncing."
+      "walletIsNotSyncing": "Wallet is not syncing.",
+      "termsAndConditionsApproval": "I accept the terms and conditions."
     },
     "feeEstimateLevels": {
       "custom": "Custom",
