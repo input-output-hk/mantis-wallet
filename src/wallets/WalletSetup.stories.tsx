@@ -9,12 +9,17 @@ import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
+import {TermsAndConditionsStep} from './TermsAndConditionsStep'
 
 export default {
   title: 'Wallet Setup',
   decorators: ESSENTIAL_DECORATORS,
   parameters: {withWalletState: {walletStatus: 'NO_WALLET'}},
 }
+
+export const termsAndConditions = (): JSX.Element => (
+  <TermsAndConditionsStep next={action('next')} />
+)
 
 export const showPathChooser = (): JSX.Element => (
   <WalletPathChooser
