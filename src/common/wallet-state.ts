@@ -79,11 +79,14 @@ export const MIN_GAS_PRICE = asWei(1)
 
 export interface InitialState {
   walletStatus: 'INITIAL'
+  error: Option<Error>
   refreshSyncStatus: () => Promise<void>
 }
 
 export interface LoadingState {
   walletStatus: 'LOADING'
+  refreshSyncStatus: () => Promise<void>
+  error: Option<Error>
 }
 
 interface SendTransactionParams {
@@ -98,6 +101,7 @@ interface SendTransactionParams {
 
 export interface LoadedState {
   walletStatus: 'LOADED'
+  error: Option<Error>
   syncStatus: SynchronizationStatus
   accounts: Account[]
   getOverviewProps: () => Overview
@@ -121,19 +125,13 @@ export interface LoadedState {
 
 export interface NoWalletState {
   walletStatus: 'NO_WALLET'
+  error: Option<Error>
   reset: () => void
   addAccount: (name: string, privateKey: string, password: string) => Promise<void>
 }
 
-export interface ErrorState {
-  walletStatus: 'ERROR'
-  error: Error
-  reset: () => void
-  remove: (password: string) => Promise<boolean>
-}
-
-export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'NO_WALLET' | 'ERROR'
-export type WalletData = InitialState | LoadingState | LoadedState | NoWalletState | ErrorState
+export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'NO_WALLET'
+export type WalletData = InitialState | LoadingState | LoadedState | NoWalletState
 
 interface Overview {
   availableBalance: Option<Wei>
@@ -165,7 +163,6 @@ interface WalletStateParams {
   walletStatus: WalletStatus
   web3: MantisWeb3
   store: Store<StoreWalletData>
-  error: Option<Error>
   syncStatus: Option<SynchronizationStatus>
   totalBalance: Option<Wei>
   availableBalance: Option<Wei>
@@ -178,7 +175,6 @@ const DEFAULT_STATE: WalletStateParams = {
   walletStatus: 'INITIAL',
   web3: defaultWeb3(),
   store: createInMemoryStore(defaultWalletData),
-  error: none,
   syncStatus: none,
   totalBalance: none,
   availableBalance: none,
@@ -187,8 +183,8 @@ const DEFAULT_STATE: WalletStateParams = {
   isMocked: false, // FIXME ETCM-116 it would be nicer if could go without this flag
 }
 
-export const canRemoveWallet = (walletState: WalletData): walletState is LoadedState | ErrorState =>
-  walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'ERROR'
+export const canRemoveWallet = (walletState: WalletData): walletState is LoadedState =>
+  walletState.walletStatus === 'LOADED'
 
 export const getPendingBalance = (transactions: Transaction[]): BigNumber =>
   transactions
@@ -198,10 +194,8 @@ export const getPendingBalance = (transactions: Transaction[]): BigNumber =>
 
 export const canResetWallet = (
   walletState: WalletData,
-): walletState is LoadedState | ErrorState | NoWalletState =>
-  walletState.walletStatus === 'LOADED' ||
-  walletState.walletStatus === 'ERROR' ||
-  walletState.walletStatus === 'NO_WALLET'
+): walletState is LoadedState | NoWalletState =>
+  walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'NO_WALLET'
 
 const getStatus = (tx: AccountTransaction, currentBlock: number): Transaction['status'] => {
   if (tx.isPending || tx.blockNumber === null) return 'pending'
@@ -251,10 +245,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   // wallet status
   const [walletStatus_, setWalletStatus] = useState<WalletStatus>(_initialState.walletStatus)
-  const [errorOption, setError] = useState<Option<Error>>(_initialState.error)
   const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(
     _initialState.syncStatus,
   )
+  const [error, setError] = useState<Option<Error>>(none)
 
   // balance
   const [totalBalanceOption, setTotalBalance] = useState<Option<Wei>>(_initialState.totalBalance)
@@ -320,17 +314,15 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTotalBalance(none)
     setAvailableBalance(none)
     setTransactions(none)
-    setError(none)
     setSyncStatus(none)
   }
 
   const handleRefreshError = (e: Error): void => {
     rendererLog.error(e)
-    setError(some(e))
-    if (!isMocked) setWalletStatus('ERROR')
+    // eslint-disable-next-line no-console
+    console.error(e)
+    setError(option.some(e))
   }
-
-  const error = getOrElse((): Error => Error('Unknown error'))(errorOption)
 
   const getCurrentAddress = (): string => {
     if (isNone(currentAddressOption)) {
@@ -497,6 +489,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     loadFns: Array<() => Promise<void>> = [loadTransactionHistory, loadAccounts],
   ): Promise<void> => {
     setWalletStatus('LOADING')
+    setError(option.none)
     return pipe(
       loadFns,
       array.map((fn) => fn()),
