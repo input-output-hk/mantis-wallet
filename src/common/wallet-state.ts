@@ -616,7 +616,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }: SendTransactionParams): Promise<void> => {
     const txConfig: TransactionConfig = {
       nonce,
-      to: ensure0x(recipient),
+      to: pipe(recipient, (addr) => (addr.length == 0 ? '0x0' : addr), ensure0x),
       from: getCurrentAddress(),
       value: toHex(amount),
       gas: gasLimit,
