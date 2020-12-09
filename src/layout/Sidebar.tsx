@@ -181,7 +181,7 @@ export const Sidebar = (): JSX.Element => {
       )}
       {activeModal === 'Status' && (
         <UpdatingStatusModal
-          syncStatus={walletState.walletStatus === 'LOADED' ? walletState.syncStatus : undefined}
+          syncStatus={walletState.syncStatus}
           onCancel={() => setActiveModal('none')}
         />
       )}
