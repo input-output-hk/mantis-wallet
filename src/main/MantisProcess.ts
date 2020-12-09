@@ -128,6 +128,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
           'mantis.datadir': mantisDataDir,
         },
         Object.entries,
+        array.map(([key, value]) => [key, isWin ? `"${value}"` : value]),
         array.map(([key, value]) => `-D${key}=${value}`),
       )
       mainLog.info(
@@ -136,7 +137,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
         }): ${executablePath} ${settingsAsArguments.join(' ')}`,
       )
       return new SpawnedMantisProcess(
-        spawn(executablePath, settingsAsArguments, {
+        spawn(executablePath, ['mantis', ...settingsAsArguments], {
           cwd: processConfig.packageDirectory,
           detached: false,
           shell: isWin,
