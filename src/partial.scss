@@ -72,7 +72,7 @@
   font-size: Max(12px, Min(26px, #{$title-font-size})); // "Min", because min() is a sass builtin
   font-weight: 500;
   letter-spacing: $letter-spacing-small;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 %dialog-info-link {
