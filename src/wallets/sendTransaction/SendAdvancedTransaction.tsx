@@ -53,7 +53,12 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'sendTransaction']),
-          onClick: onSend,
+          onClick: () => {
+            if (amount.length === 0) {
+              setTransactionParams({amount: '0'})
+            }
+            onSend()
+          },
         }}
         onSetLoading={modalLocker.setLocked}
         type="dark"

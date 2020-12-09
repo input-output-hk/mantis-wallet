@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import {ModalProps} from 'antd/lib/modal'
+import {pipe} from 'fp-ts/lib/function'
 import {ModalLocker} from '../../common/MantisModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput, DialogInputPassword} from '../../common/dialog/DialogInput'
@@ -43,7 +44,7 @@ const _ConfirmAdvancedTransaction = ({
         data,
         nonce: parseInt(nonce),
         password,
-        amount: asEther(amount),
+        amount: pipe(amount, (amount) => (amount.length === 0 ? '0' : amount), asEther),
       })
       setError(undefined)
       onClose()
