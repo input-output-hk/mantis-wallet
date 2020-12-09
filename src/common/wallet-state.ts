@@ -8,7 +8,7 @@ import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from
 import {option, readonlyArray, array} from 'fp-ts'
 import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
-import {usePersistedState} from './hook-utils'
+import {usePersistedState, useRecurringTimeout} from './hook-utils'
 import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
 import {ensure0x, toHex} from './util'
@@ -75,20 +75,6 @@ const DEPTH_FOR_PERSISTENCE = 12
 export const TRANSFER_GAS_LIMIT = 21000
 export const MIN_GAS_PRICE = asWei(1)
 
-// States
-
-export interface InitialState {
-  walletStatus: 'INITIAL'
-  error: Option<Error>
-  refreshSyncStatus: () => Promise<void>
-}
-
-export interface LoadingState {
-  walletStatus: 'LOADING'
-  refreshSyncStatus: () => Promise<void>
-  error: Option<Error>
-}
-
 interface SendTransactionParams {
   recipient: string
   amount: Wei
@@ -99,17 +85,32 @@ interface SendTransactionParams {
   nonce: number
 }
 
-export interface LoadedState {
+// States
+
+interface CommonState {
+  tncAccepted: boolean
+  setTncAccepted: (value: boolean) => void
+  syncStatus: SynchronizationStatus
+  error: Option<Error>
+}
+
+export interface InitialState extends CommonState {
+  walletStatus: 'INITIAL'
+}
+
+export interface LoadingState extends CommonState {
+  walletStatus: 'LOADING'
+}
+
+export interface LoadedState extends CommonState {
   walletStatus: 'LOADED'
   error: Option<Error>
-  syncStatus: SynchronizationStatus
   accounts: Account[]
   getOverviewProps: () => Overview
   reset: () => void
   remove: (password: string) => Promise<boolean>
   getPrivateKey: (password: string) => Promise<string>
   generateAccount: () => Promise<void>
-  refreshSyncStatus: () => Promise<void>
   getNextNonce: () => Promise<number>
   doTransfer: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
   sendTransaction: (params: SendTransactionParams) => Promise<void>
@@ -123,9 +124,8 @@ export interface LoadedState {
   deleteContact(address: string): void
 }
 
-export interface NoWalletState {
+export interface NoWalletState extends CommonState {
   walletStatus: 'NO_WALLET'
-  error: Option<Error>
   reset: () => void
   addAccount: (name: string, privateKey: string, password: string) => Promise<void>
 }
@@ -149,6 +149,7 @@ export interface StoreWalletData {
   wallet: {
     accounts: StoredAccount[]
     addressBook: Record<string, string>
+    tncAccepted: boolean
   }
 }
 
@@ -156,6 +157,7 @@ export const defaultWalletData: StoreWalletData = {
   wallet: {
     accounts: [],
     addressBook: {},
+    tncAccepted: false,
   },
 }
 
@@ -248,6 +250,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const [syncStatusOption, setSyncStatus] = useState<Option<SynchronizationStatus>>(
     _initialState.syncStatus,
   )
+
   const [error, setError] = useState<Option<Error>>(none)
 
   // balance
@@ -279,6 +282,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   // tokens
   const [trackedTokens, setTrackedTokens] = useState<string[]>([])
 
+  const [tncAccepted, setTncAccepted] = usePersistedState(_initialState.store, [
+    'wallet',
+    'tncAccepted',
+  ])
+
   const accounts = getOrElse((): Account[] => [])(accountsOption)
 
   const getOverviewProps = (): Overview => {
@@ -294,8 +302,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
   }
 
-  const isLoaded = (): boolean =>
-    isSome(transactionsOption) && isSome(accountsOption) && isSome(syncStatusOption)
+  const isLoaded = (): boolean => isSome(transactionsOption) && isSome(accountsOption)
 
   const walletStatus =
     walletStatus_ === 'LOADING' && (isMocked || isLoaded()) ? 'LOADED' : walletStatus_
@@ -303,7 +310,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const syncStatus = getOrElse(
     (): SynchronizationStatus => ({
       mode: 'offline',
-      currentBlock: -1,
+      currentBlock: 0,
       lastNewBlockTimestamp: 0,
     }),
   )(syncStatusOption)
@@ -314,7 +321,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTotalBalance(none)
     setAvailableBalance(none)
     setTransactions(none)
-    setSyncStatus(none)
   }
 
   const handleRefreshError = (e: Error): void => {
@@ -568,12 +574,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const refreshSyncStatus = async (): Promise<void> => {
     if (!isMocked) {
       if (isNone(currentAddressOption)) {
-        return setWalletStatus('NO_WALLET')
+        setWalletStatus('NO_WALLET')
       }
     }
 
     try {
-      await load()
+      if (isSome(currentAddressOption)) {
+        await load()
+      }
     } catch (e) {
       handleRefreshError(e)
     }
@@ -728,6 +736,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
   }
 
+  useRecurringTimeout(async () => {
+    await refreshSyncStatus()
+    rendererLog.debug(`sync status`, option.getOrElseW(() => null)(syncStatusOption))
+  }, 3000)
+
   return {
     walletStatus,
     error,
@@ -735,7 +748,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     getOverviewProps,
     reset,
     generateAccount,
-    refreshSyncStatus,
     getNextNonce,
     sendTransaction,
     doTransfer,
@@ -750,6 +762,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     addressBook,
     editContact,
     deleteContact,
+    tncAccepted,
+    setTncAccepted,
   }
 }
 
