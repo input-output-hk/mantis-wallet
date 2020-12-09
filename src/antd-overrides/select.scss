@@ -61,6 +61,12 @@
     color: themed('text-color');
   }
 
+  .ant-select-item-empty {
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+  }
+
   .ant-select-item-option {
     @include themify($themes) {
       background-color: themed('normal-color');
