@@ -24,12 +24,12 @@ const _ConfirmBasicTransaction = ({
   walletState,
 }: PropsWithWalletState<ConfirmBasicTransactionProps & ModalProps, LoadedState>): JSX.Element => {
   const {doTransfer} = walletState
-  const {t} = useTranslation()
+  const {t, translateError} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
   const {recipient, amount, fee} = transactionParams
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<undefined | string>(undefined)
+  const [error, setError] = useState<undefined | Error>(undefined)
 
   const tryDoTransfer = async (): Promise<void> => {
     try {
@@ -37,7 +37,7 @@ const _ConfirmBasicTransaction = ({
       setError(undefined)
       onClose()
     } catch (e) {
-      setError(String(e))
+      setError(e)
     }
   }
 
@@ -77,7 +77,7 @@ const _ConfirmBasicTransaction = ({
             rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
           }}
         />
-        {error !== undefined && <InlineError errorMessage={error} />}
+        {error !== undefined && <InlineError errorMessage={translateError(error)} />}
       </Dialog>
     </>
   )
