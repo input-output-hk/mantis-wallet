@@ -38,6 +38,7 @@ const store = createInMemoryStore<StoreWalletData>({
         },
       },
     ],
+    tncAccepted: false,
   },
 })
 
