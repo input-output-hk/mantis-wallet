@@ -302,8 +302,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
   }
 
-  const isLoaded = (): boolean =>
-    isSome(transactionsOption) && isSome(accountsOption) && isSome(syncStatusOption)
+  const isLoaded = (): boolean => isSome(transactionsOption) && isSome(accountsOption)
 
   const walletStatus =
     walletStatus_ === 'LOADING' && (isMocked || isLoaded()) ? 'LOADED' : walletStatus_
@@ -739,7 +738,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   useRecurringTimeout(async () => {
     await refreshSyncStatus()
-    rendererLog.debug(`sync status: ${syncStatusOption}`)
+    rendererLog.debug(`sync status`, option.getOrElseW(() => null)(syncStatusOption))
   }, 3000)
 
   return {
