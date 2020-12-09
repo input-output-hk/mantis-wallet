@@ -57,7 +57,7 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
       recipient: '',
     },
     [TransactionType.advanced]: {
-      amount: '',
+      amount: '0',
       gasLimit: String(TRANSFER_GAS_LIMIT),
       gasPrice: etherValue(MIN_GAS_PRICE).toFixed(),
       recipient: '',
