@@ -27,12 +27,12 @@ const _ConfirmAdvancedTransaction = ({
   LoadedState
 >): JSX.Element => {
   const {sendTransaction} = walletState
-  const {t} = useTranslation()
+  const {t, translateError} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
   const {recipient, amount, gasLimit, gasPrice, data, nonce} = transactionParams
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<undefined | string>(undefined)
+  const [error, setError] = useState<undefined | Error>(undefined)
 
   const trySendTransaction = async (): Promise<void> => {
     try {
@@ -48,7 +48,7 @@ const _ConfirmAdvancedTransaction = ({
       setError(undefined)
       onClose()
     } catch (e) {
-      setError(String(e))
+      setError(e)
     }
   }
 
@@ -91,7 +91,7 @@ const _ConfirmAdvancedTransaction = ({
             rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
           }}
         />
-        {error !== undefined && <InlineError errorMessage={error} />}
+        {error !== undefined && <InlineError errorMessage={translateError(error)} />}
       </Dialog>
     </>
   )
