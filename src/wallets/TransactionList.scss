@@ -13,7 +13,6 @@
     letter-spacing: $letter-spacing-large;
     line-height: 40px;
     text-align: left;
-    text-transform: uppercase;
 
     .sortable {
       @extend %disable-focus-outline;

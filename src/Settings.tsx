@@ -1,12 +1,11 @@
 import React, {useState, PropsWithChildren} from 'react'
-import _ from 'lodash/fp'
-import {Switch} from 'antd'
+import {Button, Select, Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
 import {SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './settings-state'
 import {WalletState, canResetWallet} from './common/wallet-state'
+import {BackendState} from './common/backend-state'
 import {fillActionHandlers} from './common/util'
 import {Header} from './common/Header'
-import {DialogDropdown} from './common/dialog/DialogDropdown'
 import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
 import {Trans} from './common/Trans'
 import {TKeyRenderer} from './common/i18n'
@@ -18,9 +17,9 @@ import {
   isDefinedNetworkName,
   displayNameOfNetwork,
 } from './config/type'
-import {BackendState} from './common/backend-state'
-
 import './Settings.scss'
+
+const {Option} = Select
 
 type ModalId = 'none' | 'ExportPrivateKey' | 'ChangeNetwork'
 
@@ -37,7 +36,7 @@ const SettingsWrapper = ({children}: PropsWithChildren<EmptyProps>): JSX.Element
   return (
     <div className="Settings">
       <Header>
-        <Trans k={['title', 'settings']} />
+        <Trans k={['wallet', 'title', 'mySettings']} />
       </Header>
       <div className="content">{children}</div>
     </div>
@@ -85,76 +84,88 @@ export const Settings = (): JSX.Element => {
 
   return (
     <SettingsWrapper>
-      {/* Theme */}
+      {/* theme */}
+      <div className="settings-item">
+        <div className="settings-switch-wrapper">
+          <div>
+            <Trans k={['settings', 'label', 'enableDarkMode']} />
+          </div>
+          <div>
+            <Switch
+              aria-label={t(['settings', 'label', 'enableDarkMode'])}
+              checked={theme === 'dark'}
+              onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* language */}
       <div className="settings-item">
         <div className="settings-label">
-          <Trans k={['settings', 'label', 'enableDarkMode']} />
+          <Trans k={['settings', 'label', 'language']} />
         </div>
         <div className="settings-input">
-          <Switch
-            aria-label={t(['settings', 'label', 'enableDarkMode'])}
-            checked={theme === 'dark'}
-            onChange={() => switchTheme(theme === 'dark' ? 'light' : 'dark')}
-          />
+          <Select placeholder="…" value={language} onChange={setLanguage} bordered={false}>
+            {LANGUAGES.map((lang) => (
+              <Option key={lang} value={lang}>
+                {LANGUAGES_DISPLAYED[lang]}
+              </Option>
+            ))}
+          </Select>
         </div>
       </div>
-      {/* l10n */}
+      {/* date format */}
       <div className="settings-item">
-        <DialogDropdown
-          label={t(['settings', 'label', 'language'])}
-          options={LANGUAGES.map((l) => ({key: l, label: LANGUAGES_DISPLAYED[l]}))}
-          defaultOptionIndex={_.indexOf(language)(LANGUAGES)}
-          onChange={setLanguage}
-        />
+        <div className="settings-label">
+          <Trans k={['settings', 'label', 'dateFormat']} />
+        </div>
+        <div className="settings-input">
+          <Select placeholder="…" value={dateFormat} onChange={setDateFormat} bordered={false}>
+            {DATE_FORMATS.map((v) => (
+              <Option key={v} value={v}>
+                {v}
+              </Option>
+            ))}
+          </Select>
+        </div>
       </div>
+      {/* time format */}
       <div className="settings-item">
-        <DialogDropdown
-          label={t(['settings', 'label', 'dateFormat'])}
-          options={DATE_FORMATS}
-          defaultOptionIndex={_.indexOf(dateFormat)(DATE_FORMATS)}
-          onChange={setDateFormat}
-        />
+        <div className="settings-label">
+          <Trans k={['settings', 'label', 'timeFormat']} />
+        </div>
+        <div className="settings-input">
+          <Select placeholder="…" value={timeFormat} onChange={setTimeFormat} bordered={false}>
+            {TIME_FORMATS.map((v) => (
+              <Option key={v} value={v}>
+                <Trans k={TIME_FORMAT_LABELS[v]} />
+              </Option>
+            ))}
+          </Select>
+        </div>
       </div>
-      <div className="settings-item">
-        <DialogDropdown
-          label={t(['settings', 'label', 'timeFormat'])}
-          options={TIME_FORMATS.map((key) => ({key, label: t(TIME_FORMAT_LABELS[key])}))}
-          defaultOptionIndex={_.indexOf(timeFormat)(TIME_FORMATS)}
-          onChange={setTimeFormat}
-        />
-      </div>
-      {walletState.walletStatus === 'LOADED' && (
-        <>
-          <div className="settings-item">
-            <div className="settings-label">
-              <Trans k={['settings', 'label', 'exportPrivateKey']} />
-            </div>
-            <div className="settings-input">
-              <span
-                className="export-private-key"
-                {...fillActionHandlers(() => setActiveModal('ExportPrivateKey'))}
-              >
-                <Trans k={['settings', 'button', 'exportPrivateKey']} />
-              </span>
-            </div>
-          </div>
-          <ExportPrivateKeyModal
-            visible={activeModal === 'ExportPrivateKey'}
-            getPrivateKey={walletState.getPrivateKey}
-            onCancel={() => setActiveModal('none')}
-          />
-        </>
-      )}
+      {/* network switcher */}
       {canResetWallet(walletState) && (
         <>
           <div className="settings-item">
-            <DialogDropdown
-              label="Network"
-              options={networkOptions}
-              //FIXME add ability to control selected option index from outside
-              selectedKey={isDefinedNetworkName(networkName) ? networkName : 'custom'}
-              onChange={changeNetwork}
-            />
+            <div className="settings-label">
+              <Trans k={['settings', 'label', 'network']} />
+            </div>
+            <div className="settings-input">
+              <Select
+                placeholder="…"
+                value={isDefinedNetworkName(networkName) ? networkName : 'custom'}
+                onChange={changeNetwork}
+                bordered={false}
+              >
+                {networkOptions.map(({key, label}) => (
+                  <Option key={key} value={key}>
+                    {label}
+                  </Option>
+                ))}
+              </Select>
+            </div>
           </div>
           <ChangeNetworkModal
             visible={activeModal === 'ChangeNetwork'}
@@ -163,6 +174,29 @@ export const Settings = (): JSX.Element => {
               setSelectedNetwork(networkName)
             }}
             newNetwork={selectedNetwork}
+            walletState={walletState}
+          />
+        </>
+      )}
+      {/* export private key */}
+      {walletState.walletStatus === 'LOADED' && (
+        <>
+          <div className="settings-item">
+            <div className="main-buttons">
+              <Button
+                className="export-private-key action right-diagonal"
+                type="primary"
+                size="large"
+                {...fillActionHandlers(() => setActiveModal('ExportPrivateKey'))}
+              >
+                <Trans k={['settings', 'button', 'exportPrivateKey']} />
+              </Button>
+            </div>
+          </div>
+          <ExportPrivateKeyModal
+            visible={activeModal === 'ExportPrivateKey'}
+            getPrivateKey={walletState.getPrivateKey}
+            onCancel={() => setActiveModal('none')}
           />
         </>
       )}

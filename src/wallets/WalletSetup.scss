@@ -1,11 +1,7 @@
-@import '../functions';
+@import '../sass-includes';
 
 .WalletSetup {
-  display: grid;
-  grid-template-rows: auto 1fr;
-
   .content {
-    margin: 0;
-    @include header-margin-top;
+    margin: 3rem 0 0 0;
   }
 }

@@ -141,8 +141,8 @@ const _DeleteContactModal = ({
   )
 }
 
-const DeleteContactModal = wrapWithModal(_DeleteContactModal)
-const EditContactModal = wrapWithModal(_EditContactModal)
+export const DeleteContactModal = wrapWithModal(_DeleteContactModal)
+export const EditContactModal = wrapWithModal(_EditContactModal)
 
 const _AddressBook = ({
   walletState: {addressBook, editContact, deleteContact},

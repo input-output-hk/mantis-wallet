@@ -83,4 +83,22 @@
       color: rgba(themed('text-color'), 0.9);
     }
   }
+
+  .switcher {
+    width: 250px;
+    margin-top: 10px;
+    animation: revealAnimation 5s;
+  }
+
+  @keyframes revealAnimation {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 }

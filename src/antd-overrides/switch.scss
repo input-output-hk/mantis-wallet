@@ -1,0 +1,30 @@
+@import './themify', './vars', '../partial', '../functions';
+
+$inner-square-padding: 2px;
+$skew-margin: 6px;
+
+@include app-scoped {
+  .ant-switch {
+    @extend %add-focus-outline;
+    margin-right: $skew-margin;
+    margin-left: $skew-margin;
+    transform: skew($button-skew, 0deg);
+    border-radius: 0;
+
+    @include themify($themes) {
+      background-color: themed('switch-bg');
+    }
+
+    .ant-switch-handle::before {
+      top: $inner-square-padding;
+      right: $inner-square-padding;
+      bottom: $inner-square-padding;
+      left: $inner-square-padding;
+      border-radius: 0;
+
+      @include themify($themes) {
+        background-color: themed('switch-square');
+      }
+    }
+  }
+}

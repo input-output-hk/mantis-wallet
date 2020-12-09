@@ -4,8 +4,8 @@ import {FeeEstimates, Account, Transaction} from '../common/wallet-state'
 import {Token} from '../tokens/tokens-state'
 import {asWei, asEther} from '../common/units'
 
-const address1 = '0x00112233445566778899aabbccddeeff00112233'
-const address2 = '0xffeeddccbbaa0011223344556677889988776655'
+export const address1 = '0x00112233445566778899aabbccddeeff00112233'
+export const address2 = '0xffeeddccbbaa0011223344556677889988776655'
 export const dummyTransactions: Transaction[] = [
   {
     hash: '1',
@@ -19,7 +19,7 @@ export const dummyTransactions: Transaction[] = [
     gasUsed: 21000,
     fee: asWei(0),
     direction: 'incoming',
-    status: 'persisted',
+    status: 'persisted_depth',
     contractAddress: null,
   },
   {
@@ -67,6 +67,21 @@ export const dummyTransactions: Transaction[] = [
     status: 'failed',
     contractAddress: null,
   },
+  {
+    hash: '5',
+    from: address1,
+    to: address2,
+    blockNumber: 1,
+    timestamp: new Date(1585118001),
+    value: asEther(123),
+    gasPrice: asWei(1e9),
+    gas: 21000,
+    gasUsed: 21000,
+    fee: asWei(0),
+    direction: 'incoming',
+    status: 'persisted_checkpoint',
+    contractAddress: null,
+  },
 ]
 
 export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEstimates> =>
@@ -77,6 +92,9 @@ export const estimateFeesWithRandomDelay = (amount?: BigNumber): Promise<FeeEsti
       high: asWei(new BigNumber(70000000000).times(amount && !amount.isEqualTo(0) ? amount : 1)),
     }),
   )
+
+export const getNextNonceWithRandomDelay = (): Promise<number> =>
+  wait(Math.floor(Math.random() * Math.floor(200))).then(() => Math.floor(Math.random() * 10))
 
 export const ADDRESS = '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a872'
 

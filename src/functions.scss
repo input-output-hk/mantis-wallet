@@ -12,6 +12,23 @@
   @return $result;
 }
 
+// Used for ANTD overrides
+@mixin app-scoped() {
+  #App,
+  .ant-modal-root {
+    @content;
+  }
+}
+
+// Used for Dialog[...] components
+@mixin dialog-scoped() {
+  #App,
+  .storybook-modal-root, // only for storybook
+  .ant-modal-root {
+    @content;
+  }
+}
+
 $height-breakpoint: 900px;
 
 @mixin header-margin-top() {
@@ -19,7 +36,7 @@ $height-breakpoint: 900px;
     margin-top: 4rem;
   }
   @media only screen and (min-height: $height-breakpoint) {
-    margin-top: 10rem;
+    margin-top: 15vh;
   }
 }
 
@@ -28,15 +45,6 @@ $height-breakpoint: 900px;
     padding-top: 4rem;
   }
   @media only screen and (min-height: $height-breakpoint) {
-    padding-top: 10rem;
-  }
-}
-
-@mixin sidebar-margin-bottom() {
-  @media only screen and (max-height: $height-breakpoint) {
-    margin-bottom: 4rem;
-  }
-  @media only screen and (min-height: $height-breakpoint) {
-    margin-bottom: 14rem;
+    padding-top: 15vh;
   }
 }

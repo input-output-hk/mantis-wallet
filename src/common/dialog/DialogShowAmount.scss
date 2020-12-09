@@ -1,57 +1,64 @@
-@import '../../themify', '../../vars', '../../partial';
+@import '../../sass-includes';
 
-.DialogShowAmount {
-  $height: 50px;
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogShowAmount {
+    $height: 50px;
+    margin-bottom: $dialog-component-spacing;
 
-  .svg {
-    @include themify($themes) {
-      stroke: themed('text-color');
-      fill: themed('text-color');
-    }
-  }
-
-  .label {
-    @extend %dialog-label;
-
-    .note {
-      opacity: $secondary-opacity;
-      text-transform: none;
-    }
-  }
-
-  .container {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    padding: 0 0.75rem;
-    border-radius: $dialog-component-border-radius;
-    cursor: not-allowed;
-
-    @include themify($themes) {
-      border: 1px solid themed('text-color');
-      background-color: themed('dialog-dark-input-bg');
-      color: themed('text-color');
-    }
-
-    .logo {
-      width: 27px;
-
-      .asset-icon {
-        @extend %asset-icon;
+    .svg {
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
       }
     }
 
-    .amount {
-      overflow: hidden;
-      line-height: $height;
-      text-overflow: ellipsis;
-      word-break: break-word;
-      white-space: nowrap;
+    .label {
+      @extend %dialog-label;
+
+      @include themify($themes) {
+        color: themed('dialog-label-color');
+      }
+
+      .note {
+        opacity: $secondary-opacity;
+        text-transform: none;
+      }
     }
 
-    &.invalid {
+    .container {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      padding: 0 0.75rem;
+      border-radius: $dialog-component-border-radius;
+      cursor: not-allowed;
+
       @include themify($themes) {
-        border: 1px solid themed('error-color');
+        border: 1px solid themed('text-color');
+        background-color: themed('dialog-dark-input-bg');
+        color: themed('text-color');
+      }
+
+      .logo {
+        width: 20px;
+
+        .asset-icon {
+          @extend %asset-icon;
+          top: 14px;
+        }
+      }
+
+      .amount {
+        overflow: hidden;
+        line-height: $height;
+        text-overflow: ellipsis;
+        word-break: break-word;
+        white-space: nowrap;
+      }
+
+      &.invalid {
+        @include themify($themes) {
+          border: 1px solid themed('error-color');
+        }
       }
     }
   }

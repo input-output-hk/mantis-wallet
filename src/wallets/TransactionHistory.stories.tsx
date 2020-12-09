@@ -9,6 +9,7 @@ import {
   ADDRESS,
   dummyTransactions,
   dummyAccounts,
+  getNextNonceWithRandomDelay,
 } from '../storybook-util/dummies'
 import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
@@ -34,6 +35,7 @@ export const withNoTransactions = (): JSX.Element => (
     accounts={dummyAccounts}
     availableBalance={some(asWei(0))}
     estimateTransactionFee={estimateFeesWithRandomDelay}
+    getNextNonce={getNextNonceWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
 )
@@ -44,6 +46,7 @@ export const withDemoTransactions = (): JSX.Element => (
     accounts={dummyAccounts}
     availableBalance={some(ether('Available Balance', 1000))}
     estimateTransactionFee={estimateFeesWithRandomDelay}
+    getNextNonce={getNextNonceWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
   />
 )
@@ -64,7 +67,7 @@ export const interactive = (): JSX.Element => {
           gasUsed: 21000,
           fee: asWei(0),
           direction: 'incoming',
-          status: 'persisted',
+          status: 'persisted_depth',
           contractAddress: null,
         }),
         object<Transaction>('Transaction 2', {
@@ -97,10 +100,26 @@ export const interactive = (): JSX.Element => {
           status: 'pending',
           contractAddress: null,
         }),
+        object<Transaction>('Transaction 4', {
+          hash: '4',
+          from: '0x00112233445566778899aabbccddeeff00112233',
+          to: '0xffeeddccbbaa0011223344556677889988776655',
+          blockNumber: 1,
+          timestamp: new Date(1585118001),
+          value: asEther(123),
+          gasPrice: asWei(1e9),
+          gas: 21000,
+          gasUsed: 21000,
+          fee: asWei(0),
+          direction: 'incoming',
+          status: 'persisted_checkpoint',
+          contractAddress: null,
+        }),
       ]}
       accounts={dummyAccounts}
       availableBalance={some(ether('Available Balance', 1000))}
       estimateTransactionFee={estimateFeesWithRandomDelay}
+      getNextNonce={getNextNonceWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
     />
   )
@@ -111,7 +130,7 @@ export const sendTransaction = (): JSX.Element => (
     availableAmount={ether('Available Amount', 123.456)}
     onCancel={action('send-transaction-cancelled')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
-    transactions={dummyTransactions}
+    getNextNonce={getNextNonceWithRandomDelay}
     visible
   />
 )

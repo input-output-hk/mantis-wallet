@@ -2,8 +2,8 @@
   "title": {
     "mantis": "Mantis",
     "mantisWallet": "Mantis Wallet",
-    "wallets": "Wallet",
-    "addressBook": "Address Book",
+    "transactions": "Transactions",
+    "addressBook": "Address book",
     "tokens": "Tokens",
     "settings": "Settings"
   },
@@ -17,7 +17,8 @@
       "language": "Language",
       "dateFormat": "Date Format",
       "timeFormat": "Time Format",
-      "exportPrivateKey": "Export"
+      "exportPrivateKey": "Export",
+      "network": "Network"
     },
     "timeFormat": {
       "12hour": "12-hour",
@@ -27,10 +28,12 @@
   "wallet": {
     "title": {
       "mantisWallet": "Mantis Wallet",
-      "transactionHistory": "Transaction History",
+      "myTransactions": "My transactions",
+      "mySettings": "My settings",
       "createNewWallet": "Create New Wallet",
       "restoreWallet": "Restore Wallet",
       "walletSetup": "Wallet Setup",
+      "termsAndConditions": "IOHK Terms of Service Agreement",
       "walletCreationFirstStep": "Create Wallet",
       "walletCreationRecoveryPhraseStep": "Recovery Phrase",
       "walletCreationSecurityStep": "Security",
@@ -58,7 +61,8 @@
       "removeWallet": "Remove Wallet",
       "copyAddress": "Copy Address",
       "back": "Back",
-      "confirm": "Confirm"
+      "confirm": "Confirm",
+      "getTestETC": "Get Sagano Test ETC"
     },
     "link": {
       "viewInExplorer": "View in Explorer"
@@ -140,7 +144,8 @@
       "removeWalletApproval1": "I understand that I won't be able to restore this wallet and access my funds if I didn't save my private key or seed phrase.",
       "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
       "noKnownAddresses": "No known addresses",
-      "walletIsNotSyncing": "Wallet is not syncing."
+      "walletIsNotSyncing": "Wallet is not syncing.",
+      "termsAndConditionsApproval": "I accept the terms and conditions."
     },
     "feeEstimateLevels": {
       "custom": "Custom",
@@ -153,17 +158,20 @@
       "fullySynced": "Fully Synced",
       "syncingBlocks": "Syncing Blocks {{percentage}}%",
       "syncingState": "Syncing State {{percentage}}%",
-      "currentBlock": "Current block: {{blockNumber}}",
-      "highestBlock": "Highest block: {{blockNumber}}"
+      "currentBlock": "Current block: <strong>{{blockNumber}}</strong>",
+      "highestBlock": "Highest block: <strong>{{blockNumber}}</strong>",
+      "networkName": "Network: <strong>{{networkName}}</strong>"
     },
     "transactionStatus": {
       "pending": "Pending",
       "confirmed": "Confirmed",
-      "persisted": "Persisted",
+      "persisted_depth": "Persisted",
+      "persisted_checkpoint": "Checkpointed",
       "failed": "Failed",
       "pendingDescription": "Transaction waiting to be added to a block in the chain",
       "confirmedDescription": "Transaction has been added to a block in the chain",
-      "persistedDescription": "Transaction cannot be rolled back",
+      "persistedDepthDescription": "Transaction cannot be rolled back - sufficient number of confirmations",
+      "persistedCheckpointDescription": "Transaction cannot be rolled back - block containing it has been checkpointed",
       "failedDescription": "Transaction has failed to reach the chain and wallet doesn’t expect it to proceed",
       "notPersistedDescription": "This transaction is not yet persisted"
     },
@@ -218,7 +226,7 @@
       "label": "Label"
     },
     "book": {
-      "title": "Address Book",
+      "title": "My contacts",
       "addNew": "Add new",
       "noData": "No saved contacts",
       "newContact": "New Contact",

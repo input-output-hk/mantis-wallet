@@ -1,87 +1,58 @@
-@import '../themify', '../vars', '../partial';
+@import '../sass-includes';
 
-.Dialog {
-  width: $dialog-width;
-  margin: auto;
-
-  form {
-    @include themify($themes) {
-      color: themed('text-color');
-    }
-  }
-
-  .title {
-    @extend %title;
-  }
-
-  .dialog-children {
-    display: grid;
-    margin-bottom: $dialog-spacing-before-buttons;
-  }
-
-  .actions {
-    &.grid {
-      @extend %two-col-grid-template;
-
-      %diagonal-template {
-        @extend %diagonal-before-after-common;
-        z-index: unset;
-        top: 0px;
-        height: 48px;
-        opacity: 1;
-      }
-
-      .ant-btn {
-        &.left {
-          margin-left: $diagonal-part-width;
-          padding: 0 $diagonal-part-width/2 0 0;
-
-          &::before {
-            @extend %diagonal-template;
-            left: -15px;
-            transform: skew(20deg);
-          }
-        }
-
-        &.right {
-          margin-right: $diagonal-part-width;
-          padding: 0 0 0 $diagonal-part-width/2;
-
-          &::after {
-            @extend %diagonal-template;
-            right: -15px;
-            transform: skew(-20deg);
-          }
-        }
-      }
-    }
-
-    &.natural > * {
-      margin-right: 8px;
-    }
-
-    &.wide {
-      display: grid;
-      grid-row-gap: 8px;
-      grid-template-rows: 1fr;
-
-      .ant-btn {
-        text-align: center;
-      }
-    }
-  }
-
-  .footer:not(:empty) {
-    margin-top: $dialog-component-spacing;
-
-    > *:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  .ant-form-item-explain {
-    @extend %dialog-input-inline-error;
-
+@include dialog-scoped {
+  .Dialog {
     width: $dialog-width;
+    margin: auto;
+
+    form {
+      @include themify($themes) {
+        color: themed('text-color');
+      }
+    }
+
+    .title {
+      @extend %title;
+    }
+
+    .dialog-children {
+      display: grid;
+      margin-bottom: $dialog-spacing-before-buttons;
+    }
+
+    .actions {
+      &.grid {
+        @extend %two-col-grid-template;
+        @extend %modal-diagonal-button;
+      }
+
+      &.natural > * {
+        margin-right: 8px;
+      }
+
+      &.wide {
+        display: grid;
+        grid-row-gap: 8px;
+        grid-template-rows: 1fr;
+
+        .ant-btn {
+          text-align: center;
+        }
+      }
+    }
+
+    .footer:not(:empty) {
+      margin-top: $dialog-component-spacing;
+
+      > *:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .ant-form-item-explain {
+      @extend %dialog-input-inline-error;
+
+      width: $dialog-width;
+    }
   }
 }

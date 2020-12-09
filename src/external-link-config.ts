@@ -9,5 +9,6 @@ type ExplorerLinks = Record<DefinedNetworkName, (hash: string) => string>
 export const EXPLORER_LINKS_FOR_TX: ExplorerLinks = {
   'etc': (txHash) => `https://blockexplorer.one/etc/mainnet/tx/${txHash}`,
   'mordor': (txHash) => `https://blockexplorer.one/etc/mordor/tx/${txHash}`,
-  'testnet-internal-nomad': (txHash) => `https://testnet-explorer.mantis.ws/transaction/${txHash}`,
+  'testnet-internal-nomad': (txHash) =>
+    `https://mantis-testnet-explorer.mantis.ws/transaction/${txHash}`,
 }

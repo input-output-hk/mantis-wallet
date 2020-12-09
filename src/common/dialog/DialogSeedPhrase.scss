@@ -1,41 +1,15 @@
-@import '../../themify', '../../vars';
+@import '../../sass-includes';
 
-.DialogSeedPhrase {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogSeedPhrase {
+    margin-bottom: $dialog-component-spacing;
 
-  .select {
-    width: 100%;
-  }
-
-  .select .ant-input {
-    height: $dialog-component-height;
-  }
-}
-
-.ant-select-item-option:hover:not(.ant-select-item-option-disabled) {
-  @include themify($themes) {
-    background-color: themed('secondary-background');
-    color: themed('text-color');
-  }
-}
-
-.ant-select-item-option-active {
-  @include themify($themes) {
-    background-color: themed('secondary-background');
-    color: themed('text-color');
-  }
-
-  &:not(.ant-select-item-option-disabled) {
-    @include themify($themes) {
-      background-color: themed('secondary-background');
-      color: themed('text-color');
+    .select {
+      width: 100%;
     }
 
-    &:hover {
-      @include themify($themes) {
-        background-color: themed('secondary-background');
-        color: themed('text-color');
-      }
+    .select .ant-input {
+      height: $dialog-component-height;
     }
   }
 }

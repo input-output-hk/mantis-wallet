@@ -70,11 +70,14 @@ const estimateFees = (): Promise<FeeEstimates> =>
     high: asWei(300),
   })
 
+const getNextNonce = (): Promise<number> => Promise.resolve(42)
+
 const defaultProps: TransactionHistoryProps = {
   transactions: [],
   accounts: accounts,
   availableBalance: some(asEther(1234)),
   estimateTransactionFee: estimateFees,
+  getNextNonce: getNextNonce,
   generateAddress: jest.fn(),
 }
 

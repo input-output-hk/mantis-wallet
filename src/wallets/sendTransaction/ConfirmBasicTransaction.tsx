@@ -9,6 +9,7 @@ import {LoadedState} from '../../common/wallet-state'
 import {useTranslation} from '../../settings-state'
 import {withStatusGuard, PropsWithWalletState} from '../../common/wallet-status-guard'
 import {BasicTransactionParams} from './common'
+import {InlineError} from '../../common/InlineError'
 
 interface ConfirmBasicTransactionProps {
   onClose: () => void
@@ -23,11 +24,22 @@ const _ConfirmBasicTransaction = ({
   walletState,
 }: PropsWithWalletState<ConfirmBasicTransactionProps & ModalProps, LoadedState>): JSX.Element => {
   const {doTransfer} = walletState
-  const {t} = useTranslation()
+  const {t, translateError} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
 
   const {recipient, amount, fee} = transactionParams
   const [password, setPassword] = useState('')
+  const [error, setError] = useState<undefined | Error>(undefined)
+
+  const tryDoTransfer = async (): Promise<void> => {
+    try {
+      await doTransfer(recipient, asEther(amount), asEther(fee), password)
+      setError(undefined)
+      onClose()
+    } catch (e) {
+      setError(e)
+    }
+  }
 
   return (
     <>
@@ -40,10 +52,7 @@ const _ConfirmBasicTransaction = ({
         }}
         rightButtonProps={{
           children: t(['wallet', 'button', 'confirm']),
-          onClick: (): void => {
-            doTransfer(recipient, asEther(amount), asEther(fee), password)
-            onClose()
-          },
+          onClick: tryDoTransfer,
         }}
         onSetLoading={modalLocker.setLocked}
         type="dark"
@@ -58,6 +67,7 @@ const _ConfirmBasicTransaction = ({
         </DialogShowAmount>
 
         <DialogInputPassword
+          autoFocus
           label={t(['wallet', 'label', 'password'])}
           id="tx-password"
           onChange={(e): void => setPassword(e.target.value)}
@@ -67,6 +77,7 @@ const _ConfirmBasicTransaction = ({
             rules: [{required: true, message: t(['wallet', 'error', 'passwordMustBeProvided'])}],
           }}
         />
+        {error !== undefined && <InlineError errorMessage={translateError(error)} />}
       </Dialog>
     </>
   )

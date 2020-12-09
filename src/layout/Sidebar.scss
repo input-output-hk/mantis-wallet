@@ -1,18 +1,27 @@
 @import '../themify', '../vars', '../partial', '../functions';
 
-.Sidebar {
+#App .Sidebar {
+  $small-font-size: Max($font-size-xs, Min(0.8vw, $font-size-m));
+
+  $balance-font-size: 5vw;
+  $balance-line-height: 0.8;
+
+  $link-font-size: Max(28px, Min(50px, #{$title-font-size}));
+  $link-line-height: 1;
   $link-letter-spacing: 0.96px;
 
-  width: 38vw;
+  $logo-height: 2.2vw;
+
+  width: 30vw;
   min-width: $sidebar-width;
   padding: $app-padding-vertical $app-padding-horizontal;
 
   .logo-wrapper {
-    @include sidebar-margin-bottom;
+    margin-bottom: $logo-height/2;
 
     .logo {
       display: inline-block;
-      height: $app-padding-horizontal;
+      height: $logo-height;
 
       .mantis-logo-left {
         @include themify($themes) {
@@ -37,60 +46,75 @@
         width: 90px;
         margin-left: 1rem;
         vertical-align: middle;
-
-        .wordmark {
-          @include themify($themes) {
-            fill: themed('text-color');
-          }
-        }
       }
     }
   }
 
   .sync-status-wrapper {
-    position: absolute;
-    top: $app-padding-vertical;
-    margin-top: 9px;
-    margin-left: 10rem;
+    .SyncStatus {
+      font-size: $small-font-size;
+    }
+  }
+
+  .flex-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+    padding-bottom: 150px;
   }
 
   .navigation {
+    margin-bottom: 0;
     padding: 0;
     list-style-type: none;
 
     .link {
+      $link-transition: transform 0.2s ease-out;
+      $active-item-offset: 0.1em;
+
       @extend %disable-focus-outline;
 
       display: block;
       z-index: $zindex-sidebar;
-      transform: scale(0.3);
+      transform: scale(0.4);
       transform-origin: center left;
-      transition: transform 0.3s ease-out;
+      transition: $link-transition;
       opacity: 0.6;
-      font-size: 40px;
+      font-size: $link-font-size;
       font-weight: 600;
       letter-spacing: $link-letter-spacing;
-      line-height: 70px;
+      line-height: $link-line-height;
       text-decoration: none;
       cursor: pointer;
       user-select: none;
 
       &.active {
+        transform: scale(1);
+        transition: $link-transition;
+        opacity: 1;
+
         @include themify($themes) {
           color: themed('sidebar-link-color');
         }
 
-        transform: scale(1);
-        opacity: 1;
+        &.txns {
+          transform: translateY(-1 * $active-item-offset);
+        }
+
+        &.settings {
+          transform: translateY($active-item-offset);
+        }
       }
 
       &:focus,
       &:hover {
+        transition: $link-transition;
+        opacity: 1;
+
         @include themify($themes) {
           color: themed('sidebar-link-color');
         }
-
-        opacity: 1;
       }
     }
 
@@ -100,7 +124,27 @@
   }
 
   .balance-wrapper {
-    margin-top: 15vh;
+    .faucet-button {
+      margin-top: 10px;
+    }
+
+    .BalanceDisplay {
+      .balances {
+        .label {
+          font-size: $small-font-size;
+        }
+
+        .available-balance {
+          margin-left: -4px;
+          font-size: $balance-font-size;
+          line-height: $balance-line-height;
+        }
+
+        .suffix {
+          font-size: $small-font-size;
+        }
+      }
+    }
   }
 
   .footer {
@@ -112,12 +156,16 @@
       @extend %disable-focus-outline;
 
       margin-right: 1.5rem;
-      font-size: $font-size-m;
+      font-size: $small-font-size;
       cursor: pointer;
+
+      @include themify($themes) {
+        color: themed('link-color');
+      }
 
       &:hover {
         @include themify($themes) {
-          color: themed('primary-color');
+          color: themed('link-hover-color');
         }
       }
 
@@ -144,5 +192,21 @@
     left: 0;
     width: 1rem;
     height: 1rem;
+  }
+
+  .beta-banner {
+    position: absolute;
+    right: -70px;
+    bottom: -70px;
+    width: 140px;
+    height: 140px;
+    transform: rotate(-45deg);
+    transform-origin: center;
+    background-color: $error-color;
+    color: #fff;
+    font-size: $font-size-xl;
+    font-weight: 500;
+    line-height: 50px;
+    text-align: center;
   }
 }

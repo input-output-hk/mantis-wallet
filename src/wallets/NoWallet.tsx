@@ -16,7 +16,7 @@ export const NoWallet: FunctionComponent<{}> = () => {
         rightButtonProps={{
           children: t(['wallet', 'button', 'goToWallets']),
           autoFocus: true,
-          onClick: () => routerState.navigate('WALLETS'),
+          onClick: () => routerState.navigate('TXNS'),
         }}
       />
     </div>

@@ -69,9 +69,10 @@
   margin-bottom: 2rem;
   margin-left: -3rem;
   overflow: hidden;
-  font-size: 26px;
+  font-size: Max(12px, Min(26px, #{$title-font-size})); // "Min", because min() is a sass builtin
   font-weight: 500;
   letter-spacing: $letter-spacing-small;
+  line-height: 1.15;
 }
 
 %dialog-info-link {
@@ -131,17 +132,54 @@
 }
 
 %diagonal-before-after-common {
-  content: '';
+  content: '' !important;
   display: inline-block;
   position: absolute;
   z-index: -1;
   width: $diagonal-part-width;
   height: $button-height;
-  transform: skew(20deg);
+  margin-top: -1px;
+  transform: skew($button-skew);
 }
 
 %asset-icon {
   position: relative;
-  top: 10px;
-  height: 30px;
+  top: 5px;
+  height: 20px;
+}
+
+%modal-diagonal-button {
+  %diagonal-template {
+    @extend %diagonal-before-after-common;
+    z-index: unset;
+    top: 0px;
+    height: 48px;
+    opacity: 1;
+  }
+
+  .ant-btn {
+    &.left {
+      margin-left: $diagonal-part-width;
+      padding: 0 $diagonal-part-width/2 0 0;
+
+      &::before {
+        @extend %diagonal-template;
+        left: -15px;
+        transform: skew($button-skew);
+        border-right: none !important;
+      }
+    }
+
+    &.right {
+      margin-right: $diagonal-part-width;
+      padding: 0 0 0 $diagonal-part-width/2;
+
+      &::after {
+        @extend %diagonal-template;
+        right: -15px;
+        transform: skew($button-skew * -1);
+        border-left: none !important;
+      }
+    }
+  }
 }

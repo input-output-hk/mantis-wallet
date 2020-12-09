@@ -1,0 +1,109 @@
+@import './themify', './vars', '../partial', '../functions';
+
+// Developer notes:
+//
+// Use the app-scoped mixin to properly override ANTD themes, even
+// in case of a different import order.
+// #Mantis doesn't work with themify, so it's only recommended
+// for elements not in scope of #App, e.g. dropdowns, tooltips.
+
+// Select input field
+
+@include app-scoped {
+  .ant-select {
+    width: 100%;
+    height: $dialog-component-height;
+    min-height: $dialog-component-height;
+    border: none;
+
+    @include themify($themes) {
+      color: themed('text-color');
+    }
+
+    svg {
+      @include themify($themes) {
+        stroke: themed('text-color');
+        fill: themed('text-color');
+      }
+    }
+
+    .ant-select-selector {
+      width: 100%;
+      height: $dialog-component-height;
+
+      .ant-select-selection-search-input {
+        line-height: 3;
+      }
+
+      .ant-select-selection-placeholder {
+        line-height: 3;
+      }
+
+      .ant-select-selection-item {
+        padding-top: 8px;
+        font-weight: 500;
+      }
+    }
+
+    &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+      @include themify($themes) {
+        border: 1px solid themed('text-color') !important;
+      }
+    }
+  }
+}
+
+// Dropdown
+
+.ant-select-dropdown {
+  @include themify($themes) {
+    background-color: themed('normal-color');
+    color: themed('text-color');
+  }
+
+  .ant-select-item-option {
+    @include themify($themes) {
+      background-color: themed('normal-color');
+      color: themed('text-color');
+    }
+  }
+
+  .ant-select-item-option:hover:not(.ant-select-item-option-disabled) {
+    @include themify($themes) {
+      background-color: themed('dropdown-selected-bg');
+      color: themed('dropdown-selected-text');
+    }
+  }
+
+  .ant-select-item-option-active {
+    @include themify($themes) {
+      background-color: themed('dropdown-selected-bg');
+      color: themed('dropdown-selected-text');
+    }
+
+    &:not(.ant-select-item-option-disabled) {
+      @include themify($themes) {
+        background-color: themed('dropdown-selected-bg');
+        color: themed('dropdown-selected-text');
+      }
+
+      &:hover {
+        @include themify($themes) {
+          background-color: themed('dropdown-selected-bg');
+          color: themed('dropdown-selected-text');
+        }
+      }
+    }
+  }
+}
+
+#Mantis {
+  .ant-select-dropdown {
+    border-radius: $dialog-component-border-radius;
+  }
+
+  .ant-dropdown-menu {
+    padding: ($dialog-component-border-radius / 2) 0;
+    border-radius: ($dialog-component-border-radius / 2);
+  }
+}

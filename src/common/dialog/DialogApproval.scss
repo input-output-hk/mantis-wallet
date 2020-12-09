@@ -1,54 +1,57 @@
-@import '../../themify', '../../vars';
+@import '../../sass-includes';
 
 $padding-v: 21px;
 $padding-h: 17px;
 
-.DialogApproval {
-  margin-bottom: $dialog-component-spacing;
+@include dialog-scoped {
+  .DialogApproval {
+    margin-bottom: $dialog-component-spacing;
 
-  .checkbox-wrapper {
-    border-radius: $dialog-component-border-radius;
+    .checkbox-wrapper {
+      border-radius: $dialog-component-border-radius;
 
-    @include themify($themes) {
-      border: 1px solid themed('text-color');
-      background-color: themed('input-bg');
-      color: themed('text-color');
-    }
-
-    .dark & {
       @include themify($themes) {
-        background-color: themed('dialog-dark-input-bg');
+        border: 1px solid themed('text-color');
+        background-color: themed('input-bg');
+        color: themed('text-color');
+      }
+
+      .dark & {
+        @include themify($themes) {
+          background-color: themed('dialog-dark-input-bg');
+        }
       }
     }
-  }
 
-  .checkbox {
-    display: grid;
-    grid-column-gap: 5px;
-    grid-template-columns: auto 1fr;
-    padding: $padding-v $padding-h;
-    font-size: $font-size-s;
+    .checkbox {
+      display: grid;
+      grid-column-gap: 5px;
+      grid-template-columns: auto 1fr;
+      padding: $padding-v $padding-h;
+      font-size: $font-size-s;
 
-    @include themify($themes) {
-      color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
+      @include themify($themes) {
+        color: rgba($color: themed('text-color'), $alpha: $unselected-opacity);
+      }
+
+      .ant-checkbox {
+        align-self: center;
+      }
     }
 
-    .ant-checkbox {
-      align-self: center;
+    .extra {
+      padding: $padding-v $padding-h 0;
     }
-  }
 
-  .extra {
-    padding: $padding-v $padding-h 0;
-  }
-
-  .ant-form-item-has-error .checkbox-wrapper {
-    @include themify($themes) {
-      border: 1px solid themed('error-color');
+    .ant-form-item-has-error .checkbox-wrapper .ant-checkbox-inner {
+      @include themify($themes) {
+        border: 1px solid themed('error-color');
+        background-color: themed('error-color');
+      }
     }
-  }
 
-  .approval-form-item .ant-form-item-explain {
-    display: none;
+    .approval-form-item .ant-form-item-explain {
+      display: none;
+    }
   }
 }

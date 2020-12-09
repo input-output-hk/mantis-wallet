@@ -6,46 +6,17 @@
   }
 
   .SelectContact {
-    svg {
-      @include themify($themes) {
-        stroke: themed('text-color');
-        fill: themed('text-color');
-      }
-    }
-
     .label {
       @extend %dialog-label;
       display: block;
-    }
-
-    .select-contact-field {
-      width: 100%;
-      height: $dialog-component-height;
-      min-height: $dialog-component-height;
-      border: none;
 
       @include themify($themes) {
-        color: themed('secondary-text-color');
+        color: themed('dialog-label-color');
       }
     }
 
-    .ant-select-selector {
-      width: 100%;
-      height: $dialog-component-height;
-
-      .ant-select-selection-search-input {
-        line-height: 3;
-      }
-
-      .ant-select-selection-placeholder {
-        line-height: 3;
-      }
-
-      .ant-select-selection-item {
-        max-width: 120px;
-        padding-top: 8px;
-        font-weight: 500;
-      }
+    .ant-select-selector .ant-select-selection-item {
+      max-width: 120px;
     }
   }
 }

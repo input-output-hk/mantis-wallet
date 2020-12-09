@@ -2,11 +2,11 @@ import React from 'react'
 import classnames from 'classnames'
 import SVG from 'react-inlinesvg'
 import {Popover} from 'antd'
-import {EmptyProps} from 'antd/lib/empty'
-import {SynchronizationStatus, LoadedState} from './wallet-state'
-import {useInterval} from './hook-utils'
-import {withStatusGuard, PropsWithWalletState} from './wallet-status-guard'
+import {SynchronizationStatus, WalletState} from './wallet-state'
+import {BackendState} from './backend-state'
+import {SettingsState} from '../settings-state'
 import {Trans} from './Trans'
+import {displayNameOfNetwork} from '../config/type'
 import refreshIcon from '../assets/icons/refresh.svg'
 import './SyncStatus.scss'
 
@@ -30,17 +30,21 @@ export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
 }
 
 export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
+  const {
+    translation: {t},
+  } = SettingsState.useContainer()
+  const {networkName} = BackendState.useContainer()
   const classes = classnames('SyncStatus', syncStatus.mode)
   const popoverContent = (
     <span>
-      <div>
+      <div className="syncStatusLine">
         <Trans
           k={['wallet', 'syncStatus', 'currentBlock']}
           values={{blockNumber: syncStatus.currentBlock}}
         />
       </div>
       {syncStatus.mode === 'online' && (
-        <div>
+        <div className="syncStatusLine">
           <Trans
             k={['wallet', 'syncStatus', 'highestBlock']}
             values={{blockNumber: syncStatus.highestKnownBlock}}
@@ -57,16 +61,13 @@ export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element =>
           <SVG src={refreshIcon} className="svg" />
         </span>
       </Popover>
+      <div className="network">{displayNameOfNetwork(networkName, t)}</div>
     </span>
   )
 }
 
-const _SyncStatus = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
-  useInterval(() => {
-    walletState.refreshSyncStatus()
-  }, 3000)
+export const SyncStatus = (): JSX.Element => {
+  const walletState = WalletState.useContainer()
 
   return <SyncStatusContent syncStatus={walletState.syncStatus} />
 }
-
-export const SyncStatus = withStatusGuard(_SyncStatus, 'LOADED', () => <></>)

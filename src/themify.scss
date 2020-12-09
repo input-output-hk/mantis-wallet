@@ -5,7 +5,7 @@ $theme-map: null;
 @mixin themify($themes: $themes) {
   // iterate over every defined theme
   @each $theme, $map in $themes {
-    .theme-#{$theme} & {
+    #Mantis.theme-#{$theme} & {
       // create global $theme-map to use in the scope of themed()
       $theme-map: () !global;
       @each $key, $submap in $map {
@@ -30,7 +30,7 @@ $theme-map: null;
 @function themed($key) {
   // throw error if $key is not defined in the theme
   @if not map-has-key($theme-map, $key) {
-    @error "Unknown theme key " + $key;
+    @error "Unknown themed variable " + $key;
   }
 
   @return map-get($theme-map, $key);
