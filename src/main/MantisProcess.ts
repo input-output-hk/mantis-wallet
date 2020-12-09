@@ -128,6 +128,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
           'mantis.datadir': mantisDataDir,
         },
         Object.entries,
+        array.map(([key, value]) => [key, isWin ? `"${value}"` : value]),
         array.map(([key, value]) => `-D${key}=${value}`),
       )
       mainLog.info(
