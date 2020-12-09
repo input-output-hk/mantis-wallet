@@ -15,7 +15,7 @@ const getContent = (
   setStep: React.Dispatch<React.SetStateAction<StepType>>,
 ): JSX.Element => {
   const walletState = WalletState.useContainer()
-  const [termsAccepted, acceptTerms] = useState<boolean>(false)
+  const {tncAccepted, setTncAccepted} = walletState
 
   const finish = (): void => {
     if (walletState.walletStatus !== 'INITIAL' && walletState.walletStatus !== 'LOADING') {
@@ -26,11 +26,11 @@ const getContent = (
 
   const cancel = (): void => setStep('PATH_CHOOSER')
 
-  if (!termsAccepted) {
+  if (!tncAccepted) {
     return (
       <TermsAndConditionsStep
         next={() => {
-          acceptTerms(true)
+          setTncAccepted(true)
           setStep('PATH_CHOOSER')
         }}
       />

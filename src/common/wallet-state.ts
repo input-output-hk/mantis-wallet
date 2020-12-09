@@ -75,20 +75,6 @@ const DEPTH_FOR_PERSISTENCE = 12
 export const TRANSFER_GAS_LIMIT = 21000
 export const MIN_GAS_PRICE = asWei(1)
 
-// States
-
-export interface InitialState {
-  walletStatus: 'INITIAL'
-  error: Option<Error>
-  refreshSyncStatus: () => Promise<void>
-}
-
-export interface LoadingState {
-  walletStatus: 'LOADING'
-  refreshSyncStatus: () => Promise<void>
-  error: Option<Error>
-}
-
 interface SendTransactionParams {
   recipient: string
   amount: Wei
@@ -99,7 +85,25 @@ interface SendTransactionParams {
   nonce: number
 }
 
-export interface LoadedState {
+// States
+
+interface CommonState {
+  tncAccepted: boolean
+  setTncAccepted: (value: boolean) => void
+  error: Option<Error>
+}
+
+export interface InitialState extends CommonState {
+  walletStatus: 'INITIAL'
+  refreshSyncStatus: () => Promise<void>
+}
+
+export interface LoadingState extends CommonState {
+  walletStatus: 'LOADING'
+  refreshSyncStatus: () => Promise<void>
+}
+
+export interface LoadedState extends CommonState {
   walletStatus: 'LOADED'
   error: Option<Error>
   syncStatus: SynchronizationStatus
@@ -123,9 +127,8 @@ export interface LoadedState {
   deleteContact(address: string): void
 }
 
-export interface NoWalletState {
+export interface NoWalletState extends CommonState {
   walletStatus: 'NO_WALLET'
-  error: Option<Error>
   reset: () => void
   addAccount: (name: string, privateKey: string, password: string) => Promise<void>
 }
@@ -149,6 +152,7 @@ export interface StoreWalletData {
   wallet: {
     accounts: StoredAccount[]
     addressBook: Record<string, string>
+    tncAccepted: boolean
   }
 }
 
@@ -156,6 +160,7 @@ export const defaultWalletData: StoreWalletData = {
   wallet: {
     accounts: [],
     addressBook: {},
+    tncAccepted: false,
   },
 }
 
@@ -278,6 +283,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   // tokens
   const [trackedTokens, setTrackedTokens] = useState<string[]>([])
+
+  const [tncAccepted, setTncAccepted] = usePersistedState(_initialState.store, [
+    'wallet',
+    'tncAccepted',
+  ])
 
   const accounts = getOrElse((): Account[] => [])(accountsOption)
 
@@ -750,6 +760,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     addressBook,
     editContact,
     deleteContact,
+    tncAccepted,
+    setTncAccepted,
   }
 }
 
