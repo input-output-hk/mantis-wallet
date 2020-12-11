@@ -59,8 +59,7 @@ export const SendBasicTransaction = ({
     totalAmount.isFinite() ? availableAmount.minus(totalAmount) : availableAmount,
   )
 
-  const disableSend =
-    feeValidationResult !== 'OK' || !feeEstimates || !remainingBalance.isPositive()
+  const disableSend = feeValidationResult !== 'OK' || !feeEstimates || remainingBalance.isNegative()
 
   return (
     <>

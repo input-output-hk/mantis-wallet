@@ -138,6 +138,7 @@ export const _SendTransactionFlow: FunctionComponent<SendTransactionFlowProps & 
             transactionParams={transactionParams[TransactionType.advanced]}
             setTransactionParams={setAdvancedTransactionParams}
             onSend={() => setStep('confirm')}
+            availableAmount={availableAmount}
             estimateTransactionFee={estimateTransactionFee}
             onCancel={onCancel}
           />
