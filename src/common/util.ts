@@ -276,13 +276,9 @@ export const useObservable = <T>(initialValue: T, observable: Observable<T>): T 
   const [value, setValue] = useState(initialValue)
 
   useEffect(() => {
-    console.log('subscribing')
     const subscription = observable.subscribe(setValue)
 
-    return () => {
-      console.log('unsubscribing')
-      subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, [observable])
 
   return value

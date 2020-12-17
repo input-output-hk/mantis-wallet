@@ -7,6 +7,7 @@ import {defaultWeb3} from '../web3'
 const web3 = defaultWeb3()
 const store = createInMemoryStore<StoreWalletData>({
   wallet: {
+    txHistory: {},
     addressBook: {
       '0x3b20f0bcc64671d8d758f3469ec5ce4c8484a872': 'My Address',
       '0xffffffffffffffffffffffffffffffffffffffff': 'Frank Foo',

@@ -2,9 +2,10 @@ import web3 from 'web3'
 import {pipe} from 'fp-ts/lib/function'
 import _ from 'lodash/fp'
 import {BlockHeader} from 'web3-eth'
-import {FetchedBatch, Transaction, TransactionHistory} from '../TransactionHistory'
+import {FetchedBatch, TransactionHistory} from '../TransactionHistory'
 import {asEther, asWei} from '../../../common/units'
 import {BatchRange} from '../BatchRange'
+import {Transaction} from '../Transaction'
 
 export const mkTransaction = (userData: Partial<Transaction>): Transaction => {
   const data: Omit<Transaction, 'hash'> = {
@@ -72,7 +73,7 @@ export const mkBatch = (
   history: TransactionHistory,
   partialBatch: Partial<FetchedBatch> = {},
 ): FetchedBatch => ({
-  blockRange: BatchRange.ofSize(history.lastCheckedBlock, 5, 'scan'),
+  blockRange: BatchRange.ofSize(history.lastCheckedBlock, 5),
   transactions: [],
   ...partialBatch,
 })

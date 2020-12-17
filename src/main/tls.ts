@@ -15,7 +15,7 @@ import {processEnv, processExecutablePath} from './MantisProcess'
 import {prop, through} from '../shared/utils'
 import {ClientSettings, MantisConfig} from '../config/type'
 import {createTErrorMain} from './i18n'
-import {OptionOps} from "../shared";
+import {OptionOps} from '../shared'
 
 const keyStoreFilename = 'mantisCA.p12'
 const passwordFilename = 'password'

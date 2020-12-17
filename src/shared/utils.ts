@@ -1,7 +1,4 @@
 import {pipe as rxPipe} from 'rxjs'
-import {Option} from 'fp-ts/lib/Option'
-import {pipe} from 'fp-ts/lib/pipeable'
-import {option} from 'fp-ts'
 import _ from 'lodash/fp'
 import log from 'electron-log'
 

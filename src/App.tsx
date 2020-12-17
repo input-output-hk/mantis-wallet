@@ -19,17 +19,18 @@ const web3 = createWeb3(config.rpcAddress)
 const store = createPersistentStore()
 
 const AppContent: React.FC = () => {
-  const {isBackendRunning} = BackendState.useContainer()
+  const backendState = BackendState.useContainer()
   const {
     currentRoute: {menu},
   } = RouterState.useContainer()
 
-  return isBackendRunning ? (
+  return backendState.isBackendRunning ? (
     <div className={classnames('loaded', menu.toLowerCase())}>
       <WalletState.Provider
         initialState={{
           web3,
           store,
+          backendState,
           txHistory: TransactionHistoryService.create(web3, store, rendererLog),
         }}
       >

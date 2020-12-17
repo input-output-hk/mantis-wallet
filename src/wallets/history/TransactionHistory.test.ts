@@ -1,9 +1,10 @@
 import _ from 'lodash/fp'
-import {mergeBatch, Transaction, TransactionHistory, transactionOrd} from './TransactionHistory'
+import {TransactionHistory} from './TransactionHistory'
 import {BatchRange} from './BatchRange'
 import {ArrayOps} from '../../shared'
 import {mkAddress, mkBatch, mkHistory, mkTransaction} from './test/historyTestUtils'
 import {asEther} from '../../common/units'
+import {Transaction} from './Transaction'
 
 const testAddress = mkAddress('foo')
 const testTransactions: Transaction[] = [
@@ -45,50 +46,28 @@ const pendingTransaction = mkTransaction({
 
 describe('TransactionHistory', () => {
   describe('merging fetched batches in', () => {
-    it('does advance last checked block if fetched "new" range follows it', () => {
+    it('does advance last checked block if fetched range follows it', () => {
       const history: TransactionHistory = mkHistory()
 
-      const result = mergeBatch(
+      const result = TransactionHistory.mergeBatch(
         history,
-        mkBatch(history, {blockRange: BatchRange.ofSize(43, 5, 'new')}),
+        mkBatch(history, {blockRange: BatchRange.ofSize(43, 5)}),
       )
 
       expect(result.lastCheckedBlock).toEqual(47)
     })
 
-    it('does advance last checked block if fetched "scan" range follows it', () => {
-      const history: TransactionHistory = mkHistory()
-
-      const result = mergeBatch(
-        history,
-        mkBatch(history, {blockRange: BatchRange.ofSize(43, 5, 'scan')}),
-      )
-
-      expect(result.lastCheckedBlock).toEqual(47)
-    })
-
-    it('does advance last checked block it belongs to fetched "new" range', () => {
+    it('does advance last checked block if it belongs to fetched range', () => {
       const history: TransactionHistory = mkHistory()
 
       const batchSize = 5
       _.range(history.lastCheckedBlock - batchSize + 1, history.lastCheckedBlock + 1).forEach(
         (startingNumber) => {
-          const range = BatchRange.ofSize(startingNumber, batchSize, 'new')
-          const result = mergeBatch(history, mkBatch(history, {blockRange: range}))
-
-          expect(result.lastCheckedBlock).toEqual(range.max)
-        },
-      )
-    })
-
-    it('does advance last checked block it belongs to fetched "scan" range', () => {
-      const history: TransactionHistory = mkHistory()
-
-      const batchSize = 5
-      _.range(history.lastCheckedBlock - batchSize + 1, history.lastCheckedBlock + 1).forEach(
-        (startingNumber) => {
-          const range = BatchRange.ofSize(startingNumber, batchSize, 'scan')
-          const result = mergeBatch(history, mkBatch(history, {blockRange: range}))
+          const range = BatchRange.ofSize(startingNumber, batchSize)
+          const result = TransactionHistory.mergeBatch(
+            history,
+            mkBatch(history, {blockRange: range}),
+          )
 
           expect(result.lastCheckedBlock).toEqual(range.max)
         },
@@ -98,26 +77,21 @@ describe('TransactionHistory', () => {
     it('does not advance last checked block if range is too new', () => {
       const history: TransactionHistory = mkHistory()
 
-      const result1 = mergeBatch(history, {
-        blockRange: BatchRange.ofSize(44, 5, 'new'),
-        transactions: [],
-      })
-      const result2 = mergeBatch(history, {
-        blockRange: BatchRange.ofSize(44, 5, 'scan'),
+      const result = TransactionHistory.mergeBatch(history, {
+        blockRange: BatchRange.ofSize(44, 5),
         transactions: [],
       })
 
-      expect(result1.lastCheckedBlock).toEqual(42)
-      expect(result2.lastCheckedBlock).toEqual(42)
+      expect(result.lastCheckedBlock).toEqual(42)
     })
 
     it('marks disappearing pending transactions as failed', () => {
       const history = mkHistory({transactions: [...testTransactions, pendingTransaction]})
       const batch = mkBatch(history, {transactions: testTransactions})
-      const result = mergeBatch(history, batch)
+      const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(
-        ArrayOps.sorted(transactionOrd)([
+        ArrayOps.sorted(Transaction)([
           {...pendingTransaction, status: 'failed'},
           ...testTransactions,
         ]),
@@ -129,20 +103,20 @@ describe('TransactionHistory', () => {
       const history = mkHistory({transactions: [...testTransactions, failed]})
       const batch = mkBatch(history, {transactions: testTransactions})
 
-      const result = mergeBatch(history, batch)
+      const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(
-        ArrayOps.sorted(transactionOrd)([failed, ...testTransactions]),
+        ArrayOps.sorted(Transaction)([failed, ...testTransactions]),
       )
     })
 
     it('keeps confirmed and persisted transactions which are not present in batch', () => {
       const history = mkHistory({
-        transactions: ArrayOps.sorted(transactionOrd)(testTransactions),
+        transactions: ArrayOps.sorted(Transaction)(testTransactions),
       })
       const batch = mkBatch(history)
 
-      const result = mergeBatch(history, batch)
+      const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(history.transactions)
     })
@@ -154,10 +128,10 @@ describe('TransactionHistory', () => {
         transactions: [confirmed, testTransactions[0], testTransactions[2]],
       })
 
-      const result = mergeBatch(history, batch)
+      const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(
-        ArrayOps.sorted(transactionOrd)([confirmed, ...testTransactions]),
+        ArrayOps.sorted(Transaction)([confirmed, ...testTransactions]),
       )
     })
   })

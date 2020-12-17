@@ -67,7 +67,12 @@ it('can add a new contact', async () => {
 it('can edit a contact', async () => {
   const {queryByText, getByLabelText, getByTestId, getByTitle} = render(<AddressBook />, {
     wrapper: createWithProviders({
-      wallet: {addressBook: {[VALID_ADDRESS_01]: 'Gandhi'}, accounts: [], tncAccepted: true},
+      wallet: {
+        addressBook: {[VALID_ADDRESS_01]: 'Gandhi'},
+        accounts: [],
+        tncAccepted: true,
+        txHistory: {},
+      },
     }),
   })
 
@@ -126,6 +131,7 @@ it('can delete a contact', async () => {
         addressBook: {[VALID_ADDRESS_01]: 'Gandhi', [VALID_ADDRESS_02]: 'Martin'},
         accounts: [],
         tncAccepted: true,
+        txHistory: {},
       },
     }),
   })

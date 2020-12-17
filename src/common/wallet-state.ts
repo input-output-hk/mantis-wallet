@@ -5,7 +5,7 @@ import {createContainer} from 'unstated-next'
 import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from 'web3-core'
-import {option, readonlyArray, array} from 'fp-ts'
+import {array, option} from 'fp-ts'
 import {Observable, of} from 'rxjs'
 import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
@@ -15,8 +15,13 @@ import {createTErrorRenderer} from './i18n'
 import {ensure0x, toHex, useObservable} from './util'
 import {asEther, asWei, Wei} from './units'
 import {CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
-import {TransactionHistoryService} from '../wallets/history/TransactionHistoryService'
-import {TxHistoryStoreData, Transaction, defaultTxHistoryStoreData} from '../wallets/history'
+import {
+  defaultTxHistoryStoreData,
+  Transaction,
+  TransactionHistoryService,
+  TxHistoryStoreData,
+} from '../wallets/history'
+import {BackendState} from './backend-state'
 
 const EXPECTED_LAST_BLOCK_CHANGE_SECONDS = 60
 
@@ -152,6 +157,7 @@ interface WalletStateParams {
   walletStatus: WalletStatus
   web3: MantisWeb3
   store: Store<StoreWalletData>
+  backendState: Pick<BackendState, 'networkName'>
   txHistory: TransactionHistoryService
   error: Option<Error>
   syncStatus: Option<SynchronizationStatus>
@@ -166,6 +172,7 @@ const DEFAULT_STATE: WalletStateParams = {
   walletStatus: 'INITIAL',
   web3: defaultWeb3(),
   store: createInMemoryStore(defaultWalletData),
+  backendState: {networkName: 'fake'},
   txHistory: TransactionHistoryService.fake,
   error: none,
   syncStatus: none,
@@ -227,18 +234,12 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     pipe(
       currentAddressOption,
       option.fold(
-        () => {
-          console.log('No account, returning empty observable')
-          return of([])
-        },
-        (account) => {
-          console.log('Started watching account', account)
-          return txHistory.watchAccount(account)
-        },
+        () => of([]),
+        (account) => txHistory.watchAccount(_initialState.backendState.networkName, account),
       ),
       setHistoryObservable,
     )
-  }, [currentAddressOption])
+  }, [currentAddressOption, _initialState.backendState.networkName])
   const transactions = useObservable([], historyObservable)
 
   // addresses / accounts
@@ -605,7 +606,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const remove = async (password: string): Promise<boolean> => {
-    console.log('removing wallet')
     const currentAddress = getCurrentAddress()
     decryptCurrentAccount(password)
 
