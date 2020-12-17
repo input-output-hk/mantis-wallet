@@ -12,9 +12,10 @@ import {array, option} from 'fp-ts'
 import * as T from 'io-ts'
 import {Option} from 'fp-ts/lib/Option'
 import {processEnv, processExecutablePath} from './MantisProcess'
-import {optionZip, prop, through} from '../shared/utils'
+import {prop, through} from '../shared/utils'
 import {ClientSettings, MantisConfig} from '../config/type'
 import {createTErrorMain} from './i18n'
+import {OptionOps} from "../shared";
 
 const keyStoreFilename = 'mantisCA.p12'
 const passwordFilename = 'password'
@@ -116,7 +117,7 @@ export const extractCertData = (password: string) => (
       const maybeIssuer: Option<string> = option.fromNullable(cert.issuer.getField('CN')?.value)
 
       return pipe(
-        optionZip(maybeFingerprint, maybeIssuer),
+        OptionOps.zip(maybeFingerprint)(maybeIssuer),
         option.map(([fingerprint, issuer]) => ({
           serialNumber: cert.serialNumber.toLowerCase(),
           fingerprint,

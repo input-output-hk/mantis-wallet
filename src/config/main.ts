@@ -12,8 +12,9 @@ import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
 import {Type} from 'io-ts'
 import {Config, NetworkName, MantisConfig} from './type'
-import {mapProp, optionZip, through} from '../shared/utils'
+import {mapProp, through} from '../shared/utils'
 import {TLSConfig} from '../main/tls'
+import {OptionOps} from '../shared'
 
 const tildeToHome = (path: string): string =>
   path.startsWith('~') ? path.replace('~', os.homedir()) : path
@@ -228,7 +229,7 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
         option.map(tildeToHome),
       )
       return pipe(
-        optionZip(handlePath(keyStorePath), handlePath(passwordPath)),
+        OptionOps.zip(handlePath(keyStorePath))(handlePath(passwordPath)),
         option.map(([keyStorePath, passwordPath]): TLSConfig => ({keyStorePath, passwordPath})),
       )
     }),

@@ -89,6 +89,7 @@
     "electron-log": "^4.2.2",
     "electron-store": "^5.1.1",
     "ethereumjs-wallet": "^1.0.0",
+    "fast-check": "^2.9.0",
     "filesize": "^6.1.0",
     "fp-ts": "^2.4.1",
     "generate-password": "^1.5.1",

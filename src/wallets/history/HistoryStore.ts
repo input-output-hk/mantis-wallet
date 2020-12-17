@@ -21,3 +21,17 @@ export const HistoryStore = (baseStore: Store<StoreWalletData>): HistoryStore =>
     return Promise.resolve()
   },
 })
+export const InMemoryHistoryStore = (
+  initialState: StoredHistory.StoredHistory = StoredHistory.empty,
+): HistoryStore => {
+  // eslint-disable-next-line fp/no-let
+  let state: StoredHistory.StoredHistory = initialState
+  return {
+    getStoredHistory: () => Promise.resolve(state),
+    storeHistory: (sh: StoredHistory.StoredHistory) => {
+      // eslint-disable-next-line fp/no-mutation
+      state = sh
+      return Promise.resolve()
+    },
+  }
+}

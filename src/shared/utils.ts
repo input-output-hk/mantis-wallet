@@ -34,19 +34,16 @@ export const mapProp = <Obj, Key extends keyof Obj, V>(key: Key, cb: (val: Obj[K
  */
 export const through = rxPipe
 
+export const uncurry = <A, B, C>(curried: (a: A) => (b: B) => C) => (a: A, b: B): C => curried(a)(b)
+
 /**
- * Zips 2 options together
+ * run given side-effecting callback on value and return that value further
+ * very useful for debugging/logging
  */
-export const optionZip = <A, B>(maybeA: Option<A>, maybeB: Option<B>): Option<[A, B]> =>
-  pipe(
-    maybeA,
-    option.chain((a) =>
-      pipe(
-        maybeB,
-        option.map((b) => [a, b]),
-      ),
-    ),
-  )
+export const tap = <A>(cb: (a: A) => void) => (a: A): A => {
+  cb(a)
+  return a
+}
 
 /**
  * A promise which waits for the given miliseconds

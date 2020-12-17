@@ -1,56 +1,22 @@
 import * as rx from 'rxjs'
 import {BehaviorSubject, Observable, Subject} from 'rxjs'
 import * as rxop from 'rxjs/operators'
-import {BlockHeader, TransactionReceipt} from 'web3-eth'
+import {BlockHeader} from 'web3-eth'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {readonlyArray} from 'fp-ts'
-import {tap} from 'rxjs/operators'
-import {ElectronLog, create} from 'electron-log'
+import {create, ElectronLog} from 'electron-log'
 import * as StoredHistory from './StoredHistory'
 import * as TransactionHistory from './TransactionHistory'
-import {through, prop} from '../../shared/utils'
+import {FetchedBatch} from './TransactionHistory'
+import {prop, tap, through, uncurry} from '../../shared/utils'
 import {HistoryStore} from './HistoryStore'
 import {MantisWeb3} from '../../web3'
 import {Store} from '../../common/store'
 import {StoreWalletData} from '../../common/wallet-state'
-import * as ArrayOps from '../../shared/ArrayOps'
+import {BatchRange} from './BatchRange'
+import {ArrayOps, RxOps} from '../../shared'
 
 export type Address = string
-
-type BatchRangeType = 'scan' | 'new'
-interface BatchRange {
-  min: number
-  max: number
-  //Type 'scan' is for indexing bast blocks while 'new' is for checking transactions near top independently from scanning
-  type: BatchRangeType
-}
-const BatchRange = {
-  ofSize: (min: number, size: number, type: BatchRangeType): BatchRange => ({
-    min,
-    max: min + size - 1,
-    type,
-  }),
-  ofSizeFromMax: (max: number, size: number, type: BatchRangeType): BatchRange => ({
-    min: max - size + 1,
-    max,
-    type,
-  }),
-  lower: (a: BatchRange, b: BatchRange): BatchRange => (a.min <= b.min ? a : b),
-  isEqual: (a: BatchRange, b: BatchRange): boolean => a.min == b.min && a.max == b.max,
-  miniMini: (a: BatchRange, b: BatchRange): BatchRange => ({
-    min: Math.min(a.min, b.min),
-    max: Math.min(a.max, b.max),
-    type: a.type
-  }),
-}
-
-interface FetchedBatch {
-  blockRange: BatchRange
-  transactions: readonly TransactionHistory.Transaction[]
-}
-
-const tapEval = <A>(evalCb: (a: A) => Promise<void>): rx.OperatorFunction<A, A> =>
-  rxop.concatMap((a: A) => evalCb(a).then(() => a))
 
 export type GetAccountTransactions = (
   account: Address,
@@ -60,13 +26,13 @@ export type GetAccountTransactions = (
 
 export class TransactionHistoryService {
   constructor(
-    public explicitChecks: Subject<void>,
-    private blocksBatchSize: number,
-    private smallBlocksBatchSize: number,
-    private fetchTransactions: GetAccountTransactions,
-    private store: HistoryStore,
-    private bestBlock$: Observable<BlockHeader>,
-    private logger: ElectronLog,
+    public readonly explicitChecks: Subject<void>,
+    private readonly blocksBatchSize: number,
+    private readonly smallBlocksBatchSize: number,
+    private readonly fetchTransactions: GetAccountTransactions,
+    private readonly store: HistoryStore,
+    private readonly bestBlock$: Observable<BlockHeader>,
+    private readonly logger: ElectronLog,
   ) {}
 
   static fake: TransactionHistoryService = new TransactionHistoryService(
@@ -82,12 +48,27 @@ export class TransactionHistoryService {
     create('fake'),
   )
 
-  static create(
+  static fetchTransactionsWithWeb3 = (
     web3: MantisWeb3,
-    store: Store<StoreWalletData>,
-    logger: ElectronLog,
-  ): TransactionHistoryService {
-    const bestBlock$ = rx.interval(1000).pipe(
+    bestBlock$: Observable<BlockHeader>,
+  ): GetAccountTransactions => (account, fromBlock, toBlock) =>
+    web3.mantis.getAccountTransactions(account, fromBlock, toBlock).then(async (transactions) => {
+      const currentBlock = await bestBlock$.pipe(rxop.take(1)).toPromise()
+      console.log('Making request for transactions', {currentBlock})
+      return pipe(
+        transactions,
+        TransactionHistory.deduplicatePending,
+        readonlyArray.map((tx) =>
+          TransactionHistory.transactionFromResponse(tx, currentBlock.number, (txHash) =>
+            web3.eth.getTransactionReceipt(txHash),
+          ),
+        ),
+        (arr) => Promise.all(arr),
+      )
+    })
+
+  static getBestBlockWithWeb3 = (web3: MantisWeb3): Observable<BlockHeader> =>
+    rx.interval(1000).pipe(
       rxop.concatMap(() => web3.eth.getBlock('latest')),
       rxop.distinctUntilChanged((a, b) => a.hash == b.hash),
       rxop.tap((block) =>
@@ -95,25 +76,15 @@ export class TransactionHistoryService {
       ),
       rxop.shareReplay(1),
     )
-    const getReceipt = (txHash: string): Promise<TransactionReceipt> =>
-      web3.eth.getTransactionReceipt(txHash)
-    const getTransactions: GetAccountTransactions = (
-      account: Address,
-      fromBlock: number,
-      toBlock: number,
-    ) =>
-      web3.mantis.getAccountTransactions(account, fromBlock, toBlock).then(async (transactions) => {
-        const currentBlock = await bestBlock$.pipe(rxop.take(1)).toPromise()
-        console.log('Making request for transactions', {currentBlock})
-        return pipe(
-          transactions,
-          TransactionHistory.deduplicatePending,
-          readonlyArray.map((tx) =>
-            TransactionHistory.transactionFromResponse(tx, currentBlock.number, getReceipt),
-          ),
-          (arr) => Promise.all(arr),
-        )
-      })
+
+  static create(
+    web3: MantisWeb3,
+    store: Store<StoreWalletData>,
+    logger: ElectronLog,
+    bestBlockParam$?: Observable<BlockHeader>,
+  ): TransactionHistoryService {
+    const bestBlock$ = bestBlockParam$ ?? TransactionHistoryService.getBestBlockWithWeb3(web3)
+    const getTransactions = TransactionHistoryService.fetchTransactionsWithWeb3(web3, bestBlock$)
     const txStore = HistoryStore(store)
 
     return new TransactionHistoryService(
@@ -131,18 +102,40 @@ export class TransactionHistoryService {
     return this.store.storeHistory(StoredHistory.empty)
   }
 
-  watchAccount = (account: Address): Observable<readonly TransactionHistory.Transaction[]> =>
-    rx.from(this.init(account)).pipe(
-      rxop.concatMap((initialHistory) =>
-        rx.concat(rx.of(initialHistory), this.fetchMissingTransactions(account, initialHistory)),
+  watchAccount = (account: Address): Observable<readonly TransactionHistory.Transaction[]> => {
+    return rx.from(this.init(account)).pipe(
+      rxop.concatMap(
+        (initialHistory): Observable<TransactionHistory.TransactionHistory> => {
+          console.log({initialHistory})
+          // Usage of Subject allows us to recurse over fetched tx history
+          const historySubject = new rx.BehaviorSubject(initialHistory)
+
+          return rx
+            .merge(
+              this.watchForNewTransactions(account),
+              this.scanBlockchain(account, historySubject),
+            )
+            .pipe(
+              rxop.scan(TransactionHistory.mergeBatch, initialHistory),
+              rxop.tap((val) => historySubject.next(val)),
+              rxop.startWith(initialHistory),
+            )
+        },
       ),
-      tapEval(through(StoredHistory.fromHistory, this.store.storeHistory)),
+      RxOps.tapEval(
+        through(
+          StoredHistory.fromHistory,
+          tap((history) => console.log('Saving history', history)),
+          this.store.storeHistory,
+        ),
+      ),
       rxop.pluck('transactions'),
       rxop.catchError((error, _) => {
         this.logger.error(error)
         return this.watchAccount(account)
       }),
     )
+  }
 
   private async init(account: Address): Promise<TransactionHistory.TransactionHistory> {
     const storedHistory = await this.store.getStoredHistory()
@@ -158,7 +151,7 @@ export class TransactionHistoryService {
           })
           return this.fetchTransactions(account, blockToCheck, blockToCheck + 1)
         }, 5),
-        rxop.reduce<readonly TransactionHistory.Transaction[]>(ArrayOps.concat, []),
+        rxop.reduce<readonly TransactionHistory.Transaction[]>(uncurry(ArrayOps.concat), []),
       )
       .toPromise()
 
@@ -168,67 +161,78 @@ export class TransactionHistoryService {
     }
   }
 
-  private fetchMissingTransactions(
+  private scanBlockchain(
     account: Address,
-    initialHistory: TransactionHistory.TransactionHistory,
-  ): Observable<TransactionHistory.TransactionHistory> {
-    //Usage of BehaviorSubject gives us 2 things here:
-    // 1. It allows to recurse over fetched tx history
-    // 2. It always stores last value, so new subscriptions won't trigger many fetches
-    const historySubject = new rx.Subject<TransactionHistory.TransactionHistory>()
-
+    history$: Observable<TransactionHistory.TransactionHistory>,
+  ): Observable<TransactionHistory.FetchedBatch> {
     return rx
       .combineLatest([
-        rx.concat(rx.of(initialHistory), historySubject),
-        this.bestBlock$,
-        this.explicitChecks.pipe(
-          rxop.map(() => Date.now()),
-          rxop.distinctUntilChanged(),
-        ),
+        history$.pipe(rxop.tap((h) => console.log('[scanBlockchain][history]', h))),
+        this.bestBlock$.pipe(rxop.tap((b) => console.log('[scanBlockchain][bestBlock]', b))),
       ])
       .pipe(
-        rxop.distinctUntilChanged(
-          (
-            [previousHistory, previousBlock, previousCheckTime],
-            [currentHistory, currentBlock, currentCheckTime],
-          ) => {
-            return (
-              previousHistory.lastCheckedBlock == currentHistory.lastCheckedBlock &&
-              previousBlock.hash == currentBlock.hash &&
-              previousCheckTime == currentCheckTime
-            )
-          },
+        rxop.map(
+          ([lastHistory, bestBlock]) =>
+            [this.getScanRange(lastHistory.lastCheckedBlock), bestBlock] as [
+              BatchRange,
+              BlockHeader,
+            ],
         ),
-        rxop.map(([lastHistory, bestBlock]) => {
-          console.log(
-            account,
-            'Making next call for transactions',
-            {historyNr: lastHistory.lastCheckedBlock, blockNr: bestBlock.number},
-            {lastHistory, bestBlock},
-          )
-          const nextIterationBatch = BatchRange.ofSize(
-            lastHistory.lastCheckedBlock,
-            this.blocksBatchSize,
-          )
-          const bestBlockBatch = BatchRange.ofSizeFromMax(
-            bestBlock.number,
-            this.smallBlocksBatchSize,
-          )
+        rxop.filter(([range, bestBlock]) => {
+          const topRange = this.getNewRange(bestBlock.number)
 
-          return BatchRange.miniMini(nextIterationBatch, bestBlockBatch)
+          return range.max <= topRange.max
         }),
+        rxop.map(([range, _]) => range),
         rxop.distinctUntilChanged(BatchRange.isEqual),
-        rxop.concatMap((batchToPick) => this.fetchBatch(account, batchToPick)),
-        rxop.scan(
-          (prev, last) => TransactionHistory.mergeBatch(prev, last),
-          TransactionHistory.empty,
-        ),
-        tap((newHistory) => console.log(account, 'Got new history', newHistory)),
-        tap((newHistory) => historySubject.next(newHistory)),
+        rxop.concatMap((range) => this.fetchBatch(account, range)),
+        // rxop.map(([lastHistory, bestBlock]) => {
+        //   console.log(
+        //     account,
+        //     'Making next call for transactions',
+        //     {historyNr: lastHistory.lastCheckedBlock, blockNr: bestBlock.number},
+        //     {lastHistory, bestBlock},
+        //   )
+        //   const nextIterationBatch = BatchRange.ofSize(
+        //     lastHistory.lastCheckedBlock,
+        //     this.blocksBatchSize,
+        //   )
+        //   const bestBlockBatch = BatchRange.ofSizeFromMax(bestBlock.number, this.smallBlocksBatchSize)
+        //
+        //   return BatchRange.miniMini(nextIterationBatch, bestBlockBatch)
+        // }),
+        // rxop.distinctUntilChanged(BatchRange.isEqual),
+        // rxop.concatMap((batchToPick) => this.fetchBatch(account, batchToPick)),
+        // rxop.scan(TransactionHistory.mergeBatch, TransactionHistory.empty),
+        // rxop.tap((newHistory) => console.log(account, 'Got new history', newHistory)),
+        // rxop.tap((newHistory) => historySubject.next(newHistory)),
       )
   }
 
-  private fetchBatch(account: Address, range: BatchRange): Observable<FetchedBatch> {
+  private watchForNewTransactions(account: Address): Observable<TransactionHistory.FetchedBatch> {
+    return rx
+      .combineLatest([
+        this.bestBlock$,
+        this.explicitChecks.pipe(rxop.startWith<void, void>(void 0)),
+      ])
+      .pipe(
+        rxop.map(([bestBlock, _]) => this.getNewRange(bestBlock.number)),
+        rxop.concatMap((range) => this.fetchBatch(account, range)),
+      )
+  }
+
+  private getNewRange(bestBlockNumber: number): BatchRange {
+    return BatchRange.ofSizeFromMax(bestBlockNumber, this.smallBlocksBatchSize, 'new')
+  }
+
+  private getScanRange(lastCheckedBlockNumber: number): BatchRange {
+    return BatchRange.ofSize(lastCheckedBlockNumber + 1, this.blocksBatchSize, 'scan')
+  }
+
+  private fetchBatch(
+    account: Address,
+    range: BatchRange,
+  ): Observable<TransactionHistory.FetchedBatch> {
     return rx
       .defer(() => {
         console.log(account, 'making a request for transactions', range)

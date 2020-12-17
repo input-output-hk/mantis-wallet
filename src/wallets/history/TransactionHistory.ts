@@ -1,10 +1,14 @@
-import * as _ from 'lodash/fp'
 import BigNumber from 'bignumber.js'
 import {TransactionReceipt} from 'web3-eth'
-import {option, readonlyArray} from 'fp-ts'
+import {array, eq, map, option, ord, readonlyArray, set} from 'fp-ts'
 import {pipe} from 'fp-ts/lib/pipeable'
+import {Ord} from 'fp-ts/lib/Ord'
+import {Ordering} from 'fp-ts/lib/Ordering'
 import {AccountTransaction} from '../../web3'
 import {asWei, Wei} from '../../common/units'
+import {BatchRange} from './BatchRange'
+import {prop, through} from '../../shared/utils'
+import {ArrayOps, OptionOps, SetOps} from '../../shared'
 
 export interface Transaction {
   from: string
@@ -21,8 +25,58 @@ export interface Transaction {
   status: 'pending' | 'confirmed' | 'persisted_depth' | 'persisted_checkpoint' | 'failed'
   contractAddress: string | null
 }
+const isPending = (tx: Transaction): boolean => tx.status == 'pending'
+const fail = (tx: Transaction): Transaction => ({...tx, status: 'failed'})
+export const transactionOrd: Ord<Transaction> = (() => {
+  const nullToInfinity = (x: number | null): number =>
+    pipe(
+      x,
+      option.fromNullable,
+      option.getOrElse(() => Number.POSITIVE_INFINITY),
+    )
+
+  const byBlockNumberOrd: Ord<Transaction> = pipe(
+    ord.ordNumber,
+    ord.contramap(nullToInfinity),
+    ord.contramap(prop('blockNumber')),
+  )
+  const statusToNumber = (status: Transaction['status']): number => {
+    switch (status) {
+      case 'pending':
+        return 0
+      case 'failed':
+        return 1
+      case 'confirmed':
+        return 2
+      case 'persisted_depth':
+        return 3
+      case 'persisted_checkpoint':
+        return 4
+    }
+  }
+  const byTxStatusOrd: Ord<Transaction> = pipe(
+    ord.ordNumber,
+    ord.contramap(statusToNumber),
+    ord.contramap(prop('status')),
+  )
+  //These 2 are quite irrelevant, but quite useful for tests determinism
+  const byTxDirectionOrd: Ord<Transaction> = pipe(ord.ordString, ord.contramap(prop('direction')))
+  const byTxHashOrd: Ord<Transaction> = pipe(ord.ordString, ord.contramap(prop('hash')))
+
+  const ordMonoid = ord.getMonoid<Transaction>()
+  return pipe(
+    [byBlockNumberOrd, byTxStatusOrd, byTxDirectionOrd, byTxHashOrd],
+    array.reduce(ordMonoid.empty, ordMonoid.concat),
+  )
+})()
 
 const DEPTH_FOR_PERSISTENCE = 12
+
+export interface FetchedBatch {
+  blockRange: BatchRange
+  transactions: readonly Transaction[]
+}
+
 export interface TransactionHistory {
   lastCheckedBlock: number
   transactions: readonly Transaction[]
@@ -51,73 +105,79 @@ export const deduplicatePending = (
   return transactions.filter((tx) => !tx.isPending || !confirmedHashes.has(tx.hash))
 }
 
-const intersectionsAndDiffs = <T>(
-  a: Set<T>,
-  b: Set<T>,
-): {aOnly: Set<T>; common: Set<T>; bOnly: Set<T>} => {
-  const aOnly = new Set<T>()
-  const bOnly = new Set<T>()
-  const common = new Set<T>()
-
-  a.forEach((aItem) => {
-    if (b.has(aItem)) {
-      common.add(aItem)
-    } else {
-      aOnly.add(aItem)
-    }
-  })
-  b.forEach((bItem) => {
-    if (!common.has(bItem)) {
-      bOnly.add(bItem)
-    }
-  })
-
-  return {aOnly, bOnly, common}
-}
-
-type TxAndBatchBlock = {tx: Transaction; batchBestBlock: number}
-const resolveTxConflict = (a: TxAndBatchBlock, b: TxAndBatchBlock): Transaction => {
-  //If one of versions is pending and other not - let's pick non pending one, otherwise one with higher block
-  const nonPendingTx = [a.tx, b.tx].filter((tx) => tx.status != 'pending')
-  if (nonPendingTx.length == 1) {
-    return nonPendingTx[0]
-  }
-
-  return (a.batchBestBlock > b.batchBestBlock ? a : b).tx
-}
-
-export const mergeBatch = (history: TransactionHistory, transactions: readonly Transaction[]): TransactionHistory => {
-  const aMapByHash = new Map(a.transactions.map((tx) => [tx.hash, tx]))
-  const bMapByHash = new Map(b.transactions.map((tx) => [tx.hash, tx]))
-  const {aOnly, bOnly, common} = intersectionsAndDiffs(
-    new Set(aMapByHash.keys()),
-    new Set(bMapByHash.keys()),
+export const mergeBatch = (
+  history: TransactionHistory,
+  batch: FetchedBatch,
+): TransactionHistory => {
+  const historyMapByHash = new Map(history.transactions.map((tx) => [tx.hash, tx]))
+  const batchMapByHash = new Map(batch.transactions.map((tx) => [tx.hash, tx]))
+  const {aOnly: historyOnly, bOnly: batchOnly, common} = SetOps.intersectionsAndDiffs(
+    eq.eqString,
+    new Set(historyMapByHash.keys()),
+    new Set(batchMapByHash.keys()),
   )
 
-  // Non-null assertions are used only when getting elements from map that we know they exist there
-  /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  const aTransactions = [...aOnly].map((hash) => aMapByHash.get(hash)!)
-  const bTransactions = [...bOnly].map((hash) => bMapByHash.get(hash)!)
-  const commonResolved = [...common].map((hash) => {
-    const aWithBatchBlock: TxAndBatchBlock = {
-      tx: aMapByHash.get(hash)!,
-      batchBestBlock: a.lastCheckedBlock,
-    }
-    const bWithBatchBlock: TxAndBatchBlock = {
-      tx: bMapByHash.get(hash)!,
-      batchBestBlock: b.lastCheckedBlock,
-    }
+  const transactionsFromHistory: readonly Transaction[] = pipe(
+    historyOnly,
+    set.toArray(ord.ordString),
+    readonlyArray.chain(
+      through(
+        (hash) => map.lookup(eq.eqString)(hash, historyMapByHash),
+        option.map((tx) => (isPending(tx) ? fail(tx) : tx)),
+        OptionOps.toArray,
+      ),
+    ),
+  )
+  const transactionsFromBatch: readonly Transaction[] = pipe(
+    batchOnly,
+    set.union(eq.eqString)(common),
+    set.toArray(ord.ordString),
+    readonlyArray.chain(
+      through((hash) => map.lookup(eq.eqString)(hash, batchMapByHash), OptionOps.toArray),
+    ),
+  )
+  const finalTransactions = pipe(
+    transactionsFromBatch,
+    ArrayOps.concat(transactionsFromHistory),
+    ArrayOps.sorted(transactionOrd),
+  )
 
-    return resolveTxConflict(aWithBatchBlock, bWithBatchBlock)
-  })
-  /* eslint-enable @typescript-eslint/no-non-null-assertion */
+  //
+  // // Non-null assertions are used only when getting elements from map that we know they exist there
+  // /* eslint-disable @typescript-eslint/no-non-null-assertion */
+  // const aTransactions = [...aOnly].map((hash) => aMapByHash.get(hash)!)
+  // const bTransactions = [...bOnly].map((hash) => bMapByHash.get(hash)!)
+  // const commonResolved = [...common].map((hash) => {
+  //   const aWithBatchBlock: TxAndBatchBlock = {
+  //     tx: aMapByHash.get(hash)!,
+  //     batchBestBlock: a.lastCheckedBlock,
+  //   }
+  //   const bWithBatchBlock: TxAndBatchBlock = {
+  //     tx: bMapByHash.get(hash)!,
+  //     batchBestBlock: b.lastCheckedBlock,
+  //   }
+  //
+  //   return resolveTxConflict(aWithBatchBlock, bWithBatchBlock)
+  // })
+  // /* eslint-enable @typescript-eslint/no-non-null-assertion */
+  //
+  // return {
+  //   lastCheckedBlock: Math.max(a.lastCheckedBlock, b.lastCheckedBlock),
+  //   transactions: _.sortBy(
+  //     (tx) => tx.blockNumber,
+  //     aTransactions.concat(bTransactions).concat(commonResolved),
+  //   ),
+  // }
+
+  const lastCheckedBlock = [BatchRange.follows, BatchRange.contains]
+    .map((check) => check(history.lastCheckedBlock, batch.blockRange))
+    .includes(true)
+    ? batch.blockRange.max
+    : history.lastCheckedBlock
 
   return {
-    lastCheckedBlock: Math.max(a.lastCheckedBlock, b.lastCheckedBlock),
-    transactions: _.sortBy(
-      (tx) => tx.blockNumber,
-      aTransactions.concat(bTransactions).concat(commonResolved),
-    ),
+    lastCheckedBlock,
+    transactions: finalTransactions,
   }
 }
 

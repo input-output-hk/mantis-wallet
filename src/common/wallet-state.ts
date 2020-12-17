@@ -190,13 +190,6 @@ export const canResetWallet = (
 ): walletState is LoadedState | NoWalletState =>
   walletState.walletStatus === 'LOADED' || walletState.walletStatus === 'NO_WALLET'
 
-const getStatus = (tx: AccountTransaction, currentBlock: number): Transaction['status'] => {
-  if (tx.isPending || tx.blockNumber === null) return 'pending'
-  else if (tx.isCheckpointed) return 'persisted_checkpoint'
-  else if (currentBlock - tx.blockNumber >= DEPTH_FOR_PERSISTENCE) return 'persisted_depth'
-  else return 'confirmed'
-}
-
 function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const _initialState = _.merge(DEFAULT_STATE)(initialState)
   const {web3, isMocked, txHistory} = _initialState
