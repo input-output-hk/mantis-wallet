@@ -199,8 +199,9 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
   }
 
   .main-buttons {
-    $button-width: 125px;
+    $min-button-width: 125px;
     $space-between: 10px;
+    $vertical-padding: 15px;
 
     position: absolute;
     right: 0;
@@ -209,7 +210,7 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
       display: inline-block;
       position: relative;
       z-index: 1;
-      width: $button-width;
+      min-width: $min-button-width;
       height: $button-height;
       margin-right: $diagonal-part-width + $space-between;
       font-size: $font-size-s;
@@ -220,21 +221,21 @@ $transition: all $transition-duration cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
     .left-diagonal {
-      padding: 0 0 0 15px;
+      padding: 0 0 0 $vertical-padding;
 
       &::after {
         @extend %diagonal-before-after-common;
-        right: -15px;
+        right: -$vertical-padding;
         border-left: none !important;
       }
     }
 
     .right-diagonal {
-      padding: 0 15px 0 0;
+      padding: 0 $vertical-padding 0 0;
 
       &::before {
         @extend %diagonal-before-after-common;
-        left: -15px;
+        left: -$vertical-padding;
         border-right: none !important;
       }
     }
