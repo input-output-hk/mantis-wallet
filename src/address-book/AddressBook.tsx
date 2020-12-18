@@ -1,7 +1,7 @@
 import {Button, message, Popover} from 'antd'
 import React, {useState} from 'react'
 import {EmptyProps} from 'antd/lib/empty'
-import {CopyOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons'
+import SVG from 'react-inlinesvg'
 import {Trans} from '../common/Trans'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
 import {Dialog} from '../common/Dialog'
@@ -12,6 +12,9 @@ import {fillActionHandlers, toAntValidator, validateAddress} from '../common/uti
 import {LoadedState} from '../common/wallet-state'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {NoWallet} from '../wallets/NoWallet'
+import deleteIcon from '../assets/icons/delete.svg'
+import editIcon from '../assets/icons/edit.svg'
+import copyIcon from '../assets/icons/copy.svg'
 import './AddressBook.scss'
 
 const LABEL_MAX_LENGTH = 80
@@ -218,7 +221,12 @@ const _AddressBook = ({
                 <span className="address">
                   {address}{' '}
                   <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-                    <CopyOutlined className="clickable" onClick={() => copyToClipboard(address)} />
+                    <span
+                      className="clickable"
+                      {...fillActionHandlers(() => copyToClipboard(address))}
+                    >
+                      <SVG src={copyIcon} className="icon" title="Copy" />
+                    </span>
                   </Popover>
                 </span>
                 <span className="actions">
@@ -227,14 +235,14 @@ const _AddressBook = ({
                     title={t(['addressBook', 'book', 'deleteContact'])}
                     {...fillActionHandlers(onStartDelete(address))}
                   >
-                    <DeleteOutlined />
+                    <SVG src={deleteIcon} className="icon" title="Delete" />
                   </span>
                   <span
                     className="edit"
                     title={t(['addressBook', 'book', 'editContact'])}
                     {...fillActionHandlers(onStartEdit(address))}
                   >
-                    <EditOutlined />
+                    <SVG src={editIcon} className="icon" title="Edit" />
                   </span>
                 </span>
               </div>

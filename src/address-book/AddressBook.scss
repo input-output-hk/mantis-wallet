@@ -9,6 +9,17 @@
     line-height: 30px;
   }
 
+  .icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    stroke-width: 0;
+
+    @include themify($themes) {
+      fill: themed('text-color');
+    }
+  }
+
   .address-list {
     @extend %base-grid;
 
