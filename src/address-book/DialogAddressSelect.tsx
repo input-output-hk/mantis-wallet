@@ -39,7 +39,7 @@ const _DialogAddressSelect = ({
     <div className="DialogAddressSelect">
       <DialogColumns>
         <DialogInput
-          label={t(['wallet', 'label', 'recipient'])}
+          label={t(['wallet', 'label', 'receivingAddress'])}
           id={RECIPIENT_FIELD}
           onChange={({target: {value}}): void => {
             setRecipient(value)
