@@ -78,7 +78,7 @@ export const TransactionHistory = (() => {
     const finalTransactions = pipe(
       transactionsFromBatch,
       ArrayOps.concat(transactionsFromHistory),
-      ArrayOps.sorted(Transaction),
+      readonlyArray.sort(Transaction),
     )
 
     const lastCheckedBlock = [BatchRange.follows, BatchRange.contains]

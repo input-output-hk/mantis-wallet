@@ -35,6 +35,8 @@ export const historyStoreFactory = (baseStore: Store<StoreWalletData>): HistoryS
     return Promise.resolve()
   },
 })
+
+// To be used in tests
 export const inMemoryHistoryStoreFactory = (
   initialState: Record<NetworkName, StoredHistory.StoredHistory | undefined> = {},
 ): HistoryStoreFactory => {

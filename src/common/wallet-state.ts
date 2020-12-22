@@ -6,7 +6,7 @@ import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from 'web3-core'
 import {array, option} from 'fp-ts'
-import {Observable, of} from 'rxjs'
+import * as rx from 'rxjs'
 import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
 import {usePersistedState, useRecurringTimeout} from './hook-utils'
@@ -227,14 +227,14 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   )
 
   // transactions
-  const [historyObservable, setHistoryObservable] = useState<Observable<readonly Transaction[]>>(
-    of([]),
+  const [historyObservable, setHistoryObservable] = useState<rx.Observable<readonly Transaction[]>>(
+    rx.of([]),
   )
   useEffect(() => {
     pipe(
       currentAddressOption,
       option.fold(
-        () => of([]),
+        () => rx.of([]),
         (account) => txHistory.watchAccount(_initialState.backendState.networkName, account),
       ),
       setHistoryObservable,
@@ -409,9 +409,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     setTotalBalance(balance)
   }
 
-  const load = (
-    loadFns: Array<() => Promise<void>> = [() => loadBalance(transactions), loadAccounts],
-  ): Promise<void> => {
+  const load = (): Promise<void> => {
+    const loadFns = [() => loadBalance(transactions), loadAccounts]
     setWalletStatus('LOADING')
     setError(option.none)
     return pipe(

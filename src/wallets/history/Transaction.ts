@@ -11,7 +11,7 @@ export type TransactionStatus =
   | 'persisted_checkpoint'
   | 'failed'
 const TransactionStatus = (() => {
-  const statusToNumber = (status: Transaction['status']): number => {
+  const statusToNumber = (status: TransactionStatus): number => {
     switch (status) {
       case 'pending':
         return 0

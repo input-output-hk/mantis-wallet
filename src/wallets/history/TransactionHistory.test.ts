@@ -1,7 +1,7 @@
 import _ from 'lodash/fp'
+import {readonlyArray} from 'fp-ts'
 import {TransactionHistory} from './TransactionHistory'
 import {BatchRange} from './BatchRange'
-import {ArrayOps} from '../../shared'
 import {mkAddress, mkBatch, mkHistory, mkTransaction} from './test/historyTestUtils'
 import {asEther} from '../../common/units'
 import {Transaction} from './Transaction'
@@ -91,7 +91,7 @@ describe('TransactionHistory', () => {
       const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(
-        ArrayOps.sorted(Transaction)([
+        readonlyArray.sort(Transaction)([
           {...pendingTransaction, status: 'failed'},
           ...testTransactions,
         ]),
@@ -106,13 +106,13 @@ describe('TransactionHistory', () => {
       const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(
-        ArrayOps.sorted(Transaction)([failed, ...testTransactions]),
+        readonlyArray.sort(Transaction)([failed, ...testTransactions]),
       )
     })
 
     it('keeps confirmed and persisted transactions which are not present in batch', () => {
       const history = mkHistory({
-        transactions: ArrayOps.sorted(Transaction)(testTransactions),
+        transactions: readonlyArray.sort(Transaction)(testTransactions),
       })
       const batch = mkBatch(history)
 
@@ -131,7 +131,7 @@ describe('TransactionHistory', () => {
       const result = TransactionHistory.mergeBatch(history, batch)
 
       expect(result.transactions).toEqual(
-        ArrayOps.sorted(Transaction)([confirmed, ...testTransactions]),
+        readonlyArray.sort(Transaction)([confirmed, ...testTransactions]),
       )
     })
   })
