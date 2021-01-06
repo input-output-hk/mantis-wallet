@@ -11,7 +11,7 @@ import {createInMemoryStore, Store} from './store'
 import {usePersistedState, useRecurringTimeout} from './hook-utils'
 import {prop} from '../shared/utils'
 import {createTErrorRenderer} from './i18n'
-import {ensure0x, toHex} from './util'
+import {ensure0x, padPrivateKey, toHex} from './util'
 import {asEther, asWei, Wei} from './units'
 import {AccountTransaction, CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
 
@@ -612,11 +612,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const generateAccount = (): Promise<void> => Promise.resolve()
 
   const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
-
-  const padPrivateKey = (privateKey: string): string => {
-    const pkWithoutPrefix = privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey
-    return `0x${pkWithoutPrefix.padStart(64, '0')}`
-  }
 
   const sendTransaction = async ({
     recipient,

@@ -20,6 +20,11 @@ export const toHex = (n: number | BigNumber): string => {
 export const ensure0x = (hexStr: string): string =>
   hexStr.startsWith('0x') ? hexStr : `0x${hexStr}`
 
+export const padPrivateKey = (privateKey: string): string => {
+  const pkWithoutPrefix = privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey
+  return `0x${pkWithoutPrefix.padStart(64, '0')}`
+}
+
 export const isGreater = (minValue = 0) => (b: BigNumber): ValidationResult =>
   !b.isFinite() || !b.isGreaterThan(new BigNumber(minValue))
     ? {tKey: ['common', 'error', 'mustBeANumberGreaterThan'], options: {replace: {minValue}}}

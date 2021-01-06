@@ -12,6 +12,7 @@ import {
   areFundsEnough,
   returnDataToHumanReadable,
   optionHasValue,
+  padPrivateKey,
 } from './util'
 import {asEther} from './units'
 
@@ -119,4 +120,15 @@ it('optionHasValue works correctly', () => {
   assert.equal(optionHasValue(some(2), 1), false)
   assert.equal(optionHasValue(some({foo: {bar: 'wrong'}}), {foo: {bar: 'baz'}}), false)
   assert.equal(optionHasValue(none, 1), false)
+})
+
+it('pads short private key to the correct length', () => {
+  const expectedResult = '0x0000000000000000000000000000000000000000000000000000000123456789'
+  assert.equal(padPrivateKey('0x123456789'), expectedResult)
+  assert.equal(padPrivateKey('123456789'), expectedResult)
+})
+
+it("doesn't change private key with the correct length", () => {
+  const examplePk = '0x8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f'
+  assert.equal(padPrivateKey(examplePk), examplePk)
 })
