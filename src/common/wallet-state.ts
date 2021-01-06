@@ -613,6 +613,11 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
 
+  const padPrivateKey = (privateKey: string): string => {
+    const pkWithoutPrefix = privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey
+    return `0x${pkWithoutPrefix.padStart(64, '0')}`
+  }
+
   const sendTransaction = async ({
     recipient,
     amount,
@@ -638,7 +643,8 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     }
 
     const privateKey = getCurrentPrivateKey(password)
-    const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
+
+    const tx = await web3.eth.accounts.signTransaction(txConfig, padPrivateKey(privateKey))
     if (tx.rawTransaction === undefined) {
       throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
     }
