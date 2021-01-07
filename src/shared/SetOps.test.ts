@@ -1,6 +1,6 @@
 import * as fc from 'fast-check'
 import {eq, set} from 'fp-ts'
-import {intersectionsAndDiffs} from './SetOps'
+import {intersectionAndDiffs} from './SetOps'
 
 describe('SetOps', () => {
   describe('intersectionsAndDiffs', () => {
@@ -10,7 +10,7 @@ describe('SetOps', () => {
           fc.set(fc.string()).map((s) => new Set(s)),
           fc.set(fc.string()).map((s) => new Set(s)),
           (a, b) => {
-            const {aOnly, bOnly, common} = intersectionsAndDiffs(eq.eqString, a, b)
+            const {aOnly, bOnly, common} = intersectionAndDiffs(eq.eqString, a, b)
 
             expect(aOnly).toEqual(set.difference(eq.eqString)(a, b))
             expect(bOnly).toEqual(set.difference(eq.eqString)(b, a))

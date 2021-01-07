@@ -1,7 +1,7 @@
 import {Eq} from 'fp-ts/Eq'
 import {set} from 'fp-ts'
 
-export const intersectionsAndDiffs = <T>(
+export const intersectionAndDiffs = <T>(
   eq: Eq<T>,
   a: Set<T>,
   b: Set<T>,

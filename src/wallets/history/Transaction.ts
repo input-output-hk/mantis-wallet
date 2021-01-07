@@ -1,8 +1,8 @@
 import {Ord} from 'fp-ts/Ord'
 import {pipe} from 'fp-ts/pipeable'
-import {array, option, ord} from 'fp-ts'
+import {array, ord} from 'fp-ts'
 import {Wei} from '../../common/units'
-import {prop} from '../../shared/utils'
+import {nullToInfinity, prop} from '../../shared/utils'
 
 export type TransactionStatus =
   | 'pending'
@@ -53,13 +53,6 @@ export const Transaction = (() => {
   const isPending = (tx: Transaction): boolean => tx.status == 'pending'
   const fail = (tx: Transaction): Transaction => ({...tx, status: 'failed'})
   const transactionOrd: Ord<Transaction> = (() => {
-    const nullToInfinity = (x: number | null): number =>
-      pipe(
-        x,
-        option.fromNullable,
-        option.getOrElse(() => Number.POSITIVE_INFINITY),
-      )
-
     const byBlockNumberOrd: Ord<Transaction> = pipe(
       ord.ordNumber,
       ord.contramap(nullToInfinity),

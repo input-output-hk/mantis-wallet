@@ -50,7 +50,7 @@ export const TransactionHistory = (() => {
   const mergeBatch = (history: TransactionHistory, batch: FetchedBatch): TransactionHistory => {
     const historyMapByHash = new Map(history.transactions.map((tx) => [tx.hash, tx]))
     const batchMapByHash = new Map(batch.transactions.map((tx) => [tx.hash, tx]))
-    const {aOnly: historyOnly, bOnly: batchOnly, common} = SetOps.intersectionsAndDiffs(
+    const {aOnly: historyOnly, bOnly: batchOnly, common} = SetOps.intersectionAndDiffs(
       eq.eqString,
       new Set(historyMapByHash.keys()),
       new Set(batchMapByHash.keys()),

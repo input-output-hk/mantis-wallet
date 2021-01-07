@@ -42,6 +42,8 @@ export const tap = <A>(cb: (a: A) => void) => (a: A): A => {
   return a
 }
 
+export const nullToInfinity = (x: number | null): number => x ?? Number.POSITIVE_INFINITY
+
 /**
  * A promise which waits for the given miliseconds
  */
