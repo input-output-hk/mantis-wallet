@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js'
 import {wait} from '../shared/utils'
-import {FeeEstimates, Account, Transaction} from '../common/wallet-state'
+import {FeeEstimates, Account} from '../common/wallet-state'
 import {Token} from '../tokens/tokens-state'
 import {asWei, asEther} from '../common/units'
+import {Transaction} from '../wallets/history'
 
 export const address1 = '0x00112233445566778899aabbccddeeff00112233'
 export const address2 = '0xffeeddccbbaa0011223344556677889988776655'

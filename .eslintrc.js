@@ -160,7 +160,7 @@ module.exports = {
     'fp/no-let': 'error',
     'fp/no-loops': 'error',
     'fp/no-mutating-assign': 'error',
-    'fp/no-mutating-methods': 'error',
+    'fp/no-mutating-methods': ['error', {allowedObjects: ['readonlyArray']}],
     'fp/no-mutation': 'error',
     'fp/no-proxy': 'error',
     'fp/no-valueof-field': 'error',

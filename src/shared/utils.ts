@@ -1,7 +1,4 @@
 import {pipe as rxPipe} from 'rxjs'
-import {Option} from 'fp-ts/lib/Option'
-import {pipe} from 'fp-ts/lib/pipeable'
-import {option} from 'fp-ts'
 import _ from 'lodash/fp'
 import log from 'electron-log'
 
@@ -34,19 +31,18 @@ export const mapProp = <Obj, Key extends keyof Obj, V>(key: Key, cb: (val: Obj[K
  */
 export const through = rxPipe
 
+export const uncurry = <A, B, C>(curried: (a: A) => (b: B) => C) => (a: A, b: B): C => curried(a)(b)
+
 /**
- * Zips 2 options together
+ * run given side-effecting callback on value and return that value further
+ * very useful for debugging/logging
  */
-export const optionZip = <A, B>(maybeA: Option<A>, maybeB: Option<B>): Option<[A, B]> =>
-  pipe(
-    maybeA,
-    option.chain((a) =>
-      pipe(
-        maybeB,
-        option.map((b) => [a, b]),
-      ),
-    ),
-  )
+export const tap = <A>(cb: (a: A) => void) => (a: A): A => {
+  cb(a)
+  return a
+}
+
+export const nullToInfinity = (x: number | null): number => x ?? Number.POSITIVE_INFINITY
 
 /**
  * A promise which waits for the given miliseconds
