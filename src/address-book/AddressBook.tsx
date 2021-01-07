@@ -2,6 +2,7 @@ import {Button, message, Popover} from 'antd'
 import React, {useState} from 'react'
 import {EmptyProps} from 'antd/lib/empty'
 import SVG from 'react-inlinesvg'
+import classNames from 'classnames'
 import {Trans} from '../common/Trans'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
 import {Dialog} from '../common/Dialog'
@@ -222,7 +223,7 @@ const _AddressBook = ({
                   {address}{' '}
                   <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
                     <span
-                      className="clickable"
+                      className={classNames('action')}
                       {...fillActionHandlers(() => copyToClipboard(address))}
                     >
                       <SVG src={copyIcon} className="icon" title="Copy" />
@@ -231,14 +232,14 @@ const _AddressBook = ({
                 </span>
                 <span className="actions">
                   <span
-                    className="delete"
+                    className={classNames('delete', 'action')}
                     title={t(['addressBook', 'book', 'deleteContact'])}
                     {...fillActionHandlers(onStartDelete(address))}
                   >
                     <SVG src={deleteIcon} className="icon" title="Delete" />
                   </span>
                   <span
-                    className="edit"
+                    className={classNames('edit', 'action')}
                     title={t(['addressBook', 'book', 'editContact'])}
                     {...fillActionHandlers(onStartEdit(address))}
                   >

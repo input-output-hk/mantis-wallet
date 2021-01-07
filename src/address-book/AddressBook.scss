@@ -28,6 +28,14 @@
     .row {
       display: contents;
 
+      .action:focus {
+        box-shadow: none;
+        @include themify($themes) {
+          -webkit-filter: drop-shadow( 2px 2px 1px themed('text-shadow'));
+          filter: drop-shadow( 2px 2px 1px themed('text-shadow'));
+        }
+      }
+
       .address {
         @extend %monospace;
       }
