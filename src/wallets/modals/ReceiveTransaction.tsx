@@ -4,9 +4,9 @@ import {ModalProps} from 'antd/lib/modal'
 import {MantisModal, ModalLocker} from '../../common/MantisModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
-import {useLocalizedUtilities} from '../../settings-state'
+import {useLocalizedUtilities} from '../../common/store/settings'
 import {Trans} from '../../common/Trans'
-import {Account} from '../../common/wallet-state'
+import {Account} from '../../common/store/wallet'
 import './ReceiveTransaction.scss'
 
 type OnGenerateNewCallback = () => Promise<void>

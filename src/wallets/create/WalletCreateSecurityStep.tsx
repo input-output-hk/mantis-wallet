@@ -3,7 +3,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 import {Trans} from '../../common/Trans'
 
 interface WalletCreateSecurityStepProps {

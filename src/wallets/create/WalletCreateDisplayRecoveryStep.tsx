@@ -3,7 +3,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
 import {DialogDisplayWords} from '../../common/dialog/DialogDisplayWords'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 import {Trans} from '../../common/Trans'
 
 interface WalletCreateDisplayRecoveryStepProps {

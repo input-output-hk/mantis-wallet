@@ -3,7 +3,7 @@ import {ModalProps} from 'antd/lib/modal'
 import {wrapWithModal} from '../../common/MantisModal'
 import {etherValue, Wei} from '../../common/units'
 import {DialogTextSwitch} from '../../common/dialog/DialogTextSwitch'
-import {FeeEstimates, MIN_GAS_PRICE, TRANSFER_GAS_LIMIT} from '../../common/wallet-state'
+import {FeeEstimates, MIN_GAS_PRICE, TRANSFER_GAS_LIMIT} from '../../common/store/wallet'
 import './SendTransaction.scss'
 import {
   ConfirmAdvancedTransaction,

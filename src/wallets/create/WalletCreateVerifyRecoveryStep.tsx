@@ -3,7 +3,7 @@ import _ from 'lodash/fp'
 import {Dialog} from '../../common/Dialog'
 import {DialogRecoveryPhrase} from '../../common/dialog/DialogRecoveryPhrase'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 
 interface WalletCreateVerifyRecoveryStepProps {
   back: () => void

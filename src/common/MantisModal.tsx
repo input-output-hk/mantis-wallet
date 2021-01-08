@@ -4,7 +4,7 @@ import {Modal, message} from 'antd'
 import {ModalProps} from 'antd/lib/modal'
 import {EmptyProps} from 'antd/lib/empty'
 import {createContainer} from 'unstated-next'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from './store/settings'
 import './MantisModal.scss'
 
 export type ModalOnCancel = Required<Pick<ModalProps, 'onCancel'>>

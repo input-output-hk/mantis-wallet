@@ -2,39 +2,9 @@ import _ from 'lodash/fp'
 import {set as mutatingSet} from 'lodash'
 import ElectronStore from 'electron-store'
 import {gt} from 'semver'
-import {StoreWalletData, defaultWalletData} from './wallet-state'
-import {StoreSettingsData, defaultSettingsData} from '../settings-state'
-import {config} from '../config/renderer'
-import {StoreTokensData, defaultTokensData} from '../tokens/tokens-state'
-import {defaultBackendData, StoreBackendData, migrationsForBackendData} from './backend-state'
-import {DATADIR_VERSION} from '../shared/version'
-
-export type StoreData = StoreWalletData & StoreSettingsData & StoreTokensData & StoreBackendData
-
-const defaultData: StoreData = _.mergeAll([
-  defaultWalletData,
-  defaultSettingsData,
-  defaultTokensData,
-  defaultBackendData,
-])
-
-const mergeMigrations = _.mergeAllWith(
-  (
-    objValue: undefined | ((store: Store<StoreData>) => void),
-    srcValue: (store: Store<StoreData>) => void,
-  ) => {
-    if (objValue === undefined) {
-      return srcValue
-    } else {
-      return (store: Store<StoreData>): void => {
-        objValue.call(undefined, store)
-        srcValue.call(undefined, store)
-      }
-    }
-  },
-)
-
-const migrations = mergeMigrations([migrationsForBackendData])
+import {config} from '../../config/renderer'
+import {DATADIR_VERSION} from '../../shared/version'
+import {defaultData, migrations, StoreData} from './data'
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]
@@ -77,7 +47,7 @@ export function createPersistentStore(): Store<StoreData> {
   const store = new ElectronStore({
     defaults: defaultData,
     cwd: config.dataDir,
-    migrations,
+    migrations: migrations,
     // See https://github.com/sindresorhus/electron-store/issues/123
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

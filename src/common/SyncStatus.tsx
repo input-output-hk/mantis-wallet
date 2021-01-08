@@ -2,9 +2,9 @@ import React from 'react'
 import classnames from 'classnames'
 import SVG from 'react-inlinesvg'
 import {Popover} from 'antd'
-import {SynchronizationStatus, WalletState} from './wallet-state'
-import {BackendState} from './backend-state'
-import {SettingsState} from '../settings-state'
+import {SynchronizationStatus, WalletState} from './store/wallet'
+import {_BackendState} from './store/backend'
+import {_SettingsState} from './store/settings'
 import {Trans} from './Trans'
 import {displayNameOfNetwork} from '../config/type'
 import refreshIcon from '../assets/icons/refresh.svg'
@@ -32,8 +32,8 @@ export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
 export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
   const {
     translation: {t},
-  } = SettingsState.useContainer()
-  const {networkName} = BackendState.useContainer()
+  } = _SettingsState.useContainer()
+  const {networkName} = _BackendState.useContainer()
   const classes = classnames('SyncStatus', syncStatus.mode)
   const popoverContent = (
     <span>

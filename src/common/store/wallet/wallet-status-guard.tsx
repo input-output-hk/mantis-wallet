@@ -1,6 +1,6 @@
 import React, {ComponentType} from 'react'
-import {WalletState, WalletData, WalletStatus} from './wallet-state'
-import {Filter} from '../shared/typeUtils'
+import {Filter} from '../../../shared/typeUtils'
+import {WalletState, WalletData, WalletStatus} from '.'
 
 export type PropsWithWalletState<TProps extends object, TState extends WalletData> = {
   walletState: TState

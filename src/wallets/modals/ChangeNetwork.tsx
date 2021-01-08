@@ -3,10 +3,10 @@ import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/MantisModa
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {NetworkName} from '../../config/type'
-import {BackendState} from '../../common/backend-state'
-import {canResetWallet, WalletData} from '../../common/wallet-state'
+import {_BackendState} from '../../common/store/backend'
+import {canResetWallet, WalletData} from '../../common/store/wallet'
 import {Trans} from '../../common/Trans'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {EDITION} from '../../shared/version'
 
@@ -21,7 +21,7 @@ const ChangeNetworkDialog: FunctionComponent<ChangeNetworkModalProps> = ({
   walletState,
 }: ChangeNetworkModalProps) => {
   const modalLocker = ModalLocker.useContainer()
-  const {setNetworkName} = BackendState.useContainer()
+  const {setNetworkName} = _BackendState.useContainer()
   const {t} = useTranslation()
 
   const [customNetworkName, setCustomNetworkName] = useState('')

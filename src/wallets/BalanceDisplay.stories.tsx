@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import {some} from 'fp-ts/lib/Option'
 import {ether} from '../storybook-util/custom-knobs'
 import {SyncStatusContent} from '../common/SyncStatus'
-import {SynchronizationStatus} from '../common/wallet-state'
+import {SynchronizationStatus} from '../common/store/wallet'
 import {BalanceDisplay} from './BalanceDisplay'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
 

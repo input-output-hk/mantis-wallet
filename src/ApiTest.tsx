@@ -1,10 +1,10 @@
 import React from 'react'
 import {Switch} from 'antd'
-import {SettingsState} from './settings-state'
+import {_SettingsState} from './common/store/settings'
 import './ApiTest.scss'
 
 export const ApiTest = (): JSX.Element => {
-  const settingState = SettingsState.useContainer()
+  const settingState = _SettingsState.useContainer()
 
   return (
     <div className="ApiTest">

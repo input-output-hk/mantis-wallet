@@ -5,8 +5,8 @@ import {Dialog} from '../../common/Dialog'
 import {DialogInput, DialogTextArea} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
-import {FeeEstimates} from '../../common/wallet-state'
-import {useTranslation} from '../../settings-state'
+import {FeeEstimates} from '../../common/store/wallet'
+import {useTranslation} from '../../common/store/settings'
 import {AdvancedTransactionParams} from './common'
 import {
   createAdvancedTxAmountValidator,

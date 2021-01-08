@@ -1,6 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {Form} from 'antd'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../store/settings'
 import {BorderlessInputPassword} from '../BorderlessInput'
 import {DialogState} from '../Dialog'
 import {DialogColumns} from './DialogColumns'

@@ -3,7 +3,7 @@ import SVG from 'react-inlinesvg'
 import {InlineError} from '../InlineError'
 import {fillActionHandlers} from '../util'
 import {Trans} from '../Trans'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../store/settings'
 import checkIcon from '../../assets/icons/check.svg'
 import './DialogRecoveryPhrase.scss'
 

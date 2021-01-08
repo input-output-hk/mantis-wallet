@@ -3,11 +3,11 @@ import {Modal} from 'antd'
 import classnames from 'classnames'
 import {ModalProps} from 'antd/lib/modal'
 import {Config, displayNameOfNetwork} from '../config/type'
-import {SynchronizationStatus} from './wallet-state'
+import {SynchronizationStatus} from './store/wallet'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
-import {BackendState} from './backend-state'
-import {useTranslation, useFormatters} from '../settings-state'
+import {_BackendState} from './store/backend'
+import {useTranslation, useFormatters} from './store/settings'
 import {TKeyRenderer} from './i18n'
 import {Trans} from './Trans'
 import './StatusModal.scss'
@@ -47,7 +47,7 @@ export const StatusModal = ({
   syncStatus,
   ...props
 }: StatusModalProps): JSX.Element => {
-  const {networkName} = BackendState.useContainer()
+  const {networkName} = _BackendState.useContainer()
   const {t} = useTranslation()
   const {formatFileSize} = useFormatters()
 

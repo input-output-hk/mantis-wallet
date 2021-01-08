@@ -17,7 +17,7 @@ import {
 } from './TransactionRow'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
-import {Transaction} from '../common/wallet-state'
+import {Transaction} from '../common/store/wallet'
 import './TransactionList.scss'
 
 type SortableProperty = 'amount' | 'time' | 'status'

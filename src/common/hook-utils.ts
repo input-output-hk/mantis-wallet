@@ -7,7 +7,7 @@ import {
   SetStateAction,
   DependencyList,
 } from 'react'
-import {Store} from './store'
+import {Store} from './store/store'
 import {rendererLog} from './logger'
 import {wait} from '../shared/utils'
 

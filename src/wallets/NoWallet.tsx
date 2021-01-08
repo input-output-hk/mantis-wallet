@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import {Dialog} from '../common/Dialog'
 import {RouterState} from '../router-state'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from '../common/store/settings'
 import './NoWallet.scss'
 
 export const NoWallet: FunctionComponent<{}> = () => {

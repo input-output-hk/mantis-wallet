@@ -4,12 +4,12 @@ import React, {FunctionComponent} from 'react'
 import BigNumber from 'bignumber.js'
 import {act, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {SettingsState} from '../settings-state'
-import {defaultWalletData, StoreWalletData, WalletState, WalletStatus} from './wallet-state'
-import {BackendState} from './backend-state'
+import {_SettingsState} from './store/settings'
+import {defaultWalletData, StoreWalletData, WalletState, WalletStatus} from './store/wallet'
+import {_BackendState} from './store/backend'
 import {abbreviateAmount} from './formatters'
 import {EN_US_BIG_NUMBER_FORMAT} from './i18n'
-import {createInMemoryStore} from './store'
+import {createInMemoryStore} from './store/store'
 import {defaultWeb3} from '../web3'
 
 const web3 = defaultWeb3()
@@ -18,7 +18,7 @@ export const WithSettingsProvider: FunctionComponent = ({
   children,
 }: {
   children?: React.ReactNode
-}) => <SettingsState.Provider>{children}</SettingsState.Provider>
+}) => <_SettingsState.Provider>{children}</_SettingsState.Provider>
 
 export const createWithProviders = (
   walletData: StoreWalletData | null = null,
@@ -31,11 +31,11 @@ export const createWithProviders = (
   }
 
   return (
-    <SettingsState.Provider>
-      <BackendState.Provider initialState={{web3}}>
+    <_SettingsState.Provider>
+      <_BackendState.Provider initialState={{web3}}>
         <WalletState.Provider initialState={initialState}>{children}</WalletState.Provider>
-      </BackendState.Provider>
-    </SettingsState.Provider>
+      </_BackendState.Provider>
+    </_SettingsState.Provider>
   )
 }
 

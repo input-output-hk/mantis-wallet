@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import {wait} from '../shared/utils'
-import {FeeEstimates, Account, Transaction} from '../common/wallet-state'
-import {Token} from '../tokens/tokens-state'
+import {FeeEstimates, Account, Transaction} from '../common/store/wallet'
 import {asWei, asEther} from '../common/units'
 
 export const address1 = '0x00112233445566778899aabbccddeeff00112233'
@@ -142,20 +141,5 @@ export const dummyAccounts: Account[] = [
     index: 0,
     tokens: {},
     balance: asWei(0),
-  },
-]
-
-export const dummyERC20Tokens: Token[] = [
-  {
-    symbol: 'SYM',
-    name: 'Awesome ERC20 token',
-    decimals: 4,
-    address: FIRST_ERC20_TOKEN_ADDRESS,
-  },
-  {
-    symbol: 'SY2',
-    name: 'Second awesome ERC20 token',
-    decimals: 8,
-    address: '0x0000111122223333444455556666777788889999',
   },
 ]

@@ -1,13 +1,13 @@
 import React, {useState} from 'react'
 import _ from 'lodash'
 import {RouterState} from '../router-state'
-import {WalletState} from '../common/wallet-state'
+import {WalletState} from '../common/store/wallet'
 import {DialogError} from '../common/dialog/DialogError'
 import {WalletCreateDefineStep} from './create/WalletCreateDefineStep'
 import {WalletCreateSecurityStep} from './create/WalletCreateSecurityStep'
 import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecoveryStep'
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from '../common/store/settings'
 import {createNewAccount} from '../common/mnemonic'
 
 interface WalletCreateProps {

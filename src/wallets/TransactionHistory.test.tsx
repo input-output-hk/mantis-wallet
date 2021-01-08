@@ -4,7 +4,7 @@ import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import {some} from 'fp-ts/lib/Option'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {Account, FeeEstimates, Transaction} from '../common/wallet-state'
+import {Account, FeeEstimates, Transaction} from '../common/store/wallet'
 import {abbreviateAmountForEnUS, createWithProviders} from '../common/test-helpers'
 import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.setup'

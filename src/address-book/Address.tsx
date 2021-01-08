@@ -1,9 +1,9 @@
 import {CopyOutlined, EditOutlined} from '@ant-design/icons'
 import {Input, Popover} from 'antd'
 import React, {useEffect, useState} from 'react'
-import {useLocalizedUtilities, useTranslation} from '../settings-state'
-import {LoadedState} from '../common/wallet-state'
-import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
+import {useLocalizedUtilities, useTranslation} from '../common/store/settings'
+import {LoadedState} from '../common/store/wallet'
+import {withStatusGuard, PropsWithWalletState} from '../common/store/wallet/wallet-status-guard'
 import './Address.scss'
 
 interface AddressProps {

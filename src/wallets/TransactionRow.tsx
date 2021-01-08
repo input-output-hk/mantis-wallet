@@ -3,14 +3,14 @@ import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {RightOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
-import {useFormatters} from '../settings-state'
+import {useFormatters} from '../common/store/settings'
 import {ETC_CHAIN} from '../common/chains'
 import {ShortNumber} from '../common/ShortNumber'
 import {EXPLORER_LINKS_FOR_TX} from '../external-link-config'
 import {isDefinedNetworkName} from '../config/type'
 import {Link} from '../common/Link'
-import {WalletState, Transaction} from '../common/wallet-state'
-import {BackendState} from '../common/backend-state'
+import {WalletState, Transaction} from '../common/store/wallet'
+import {_BackendState} from '../common/store/backend'
 import {TKeyRenderer} from '../common/i18n'
 import {Trans} from '../common/Trans'
 import {Address} from '../address-book/Address'
@@ -173,7 +173,7 @@ const Confirmations = ({transaction: {blockNumber}}: TransactionCellProps): JSX.
 }
 
 export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element => {
-  const {networkName} = BackendState.useContainer()
+  const {networkName} = _BackendState.useContainer()
   const {hash, from, to, gas, gasPrice, gasUsed, contractAddress} = transaction
   return (
     <>

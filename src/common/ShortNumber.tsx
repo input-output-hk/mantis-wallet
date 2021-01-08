@@ -1,7 +1,7 @@
 import React from 'react'
 import {Popover} from 'antd'
 import BigNumber from 'bignumber.js'
-import {useFormatters} from '../settings-state'
+import {useFormatters} from './store/settings'
 import {ETC_CHAIN} from './chains'
 
 interface ShortNumberProps {

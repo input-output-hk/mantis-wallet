@@ -4,174 +4,36 @@ import _ from 'lodash/fp'
 import {createContainer} from 'unstated-next'
 import {getOrElse, isNone, isSome, none, Option, some} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {Account as Web3Account, EncryptedKeystoreV3Json, TransactionConfig} from 'web3-core'
+import {Account as Web3Account, TransactionConfig} from 'web3-core'
 import {option, readonlyArray, array} from 'fp-ts'
-import {rendererLog} from './logger'
-import {createInMemoryStore, Store} from './store'
-import {usePersistedState, useRecurringTimeout} from './hook-utils'
-import {prop} from '../shared/utils'
-import {createTErrorRenderer} from './i18n'
-import {ensure0x, toHex} from './util'
-import {asEther, asWei, Wei} from './units'
-import {AccountTransaction, CustomErrors, defaultWeb3, MantisWeb3} from '../web3'
+import {rendererLog} from '../../logger'
+import {usePersistedState, useRecurringTimeout} from '../../hook-utils'
+import {prop} from '../../../shared/utils'
+import {createTErrorRenderer} from '../../i18n'
+import {ensure0x, toHex} from '../../util'
+import {asEther, asWei, Wei} from '../../units'
+import {AccountTransaction, CustomErrors, defaultWeb3} from '../../../web3'
+import {createInMemoryStore} from '../store'
+import {
+  Account,
+  Transaction,
+  WalletStateParams,
+  WalletData,
+  LoadedState,
+  NoWalletState,
+  WalletStatus,
+  SynchronizationStatus,
+  FeeEstimates,
+  Overview,
+  SendTransactionParams,
+} from './types'
+import {defaultWalletData} from './data'
 
 const EXPECTED_LAST_BLOCK_CHANGE_SECONDS = 60
-
-interface SynchronizationStatusOffline {
-  mode: 'offline'
-  currentBlock: number
-  lastNewBlockTimestamp: number
-}
-
-interface SynchronizationStatusOnline {
-  mode: 'online'
-  currentBlock: number
-  highestKnownBlock: number
-  pulledStates: number
-  knownStates: number
-  percentage: number
-  lastNewBlockTimestamp: number
-}
-
-interface SynchronizationStatusSynced {
-  mode: 'synced'
-  currentBlock: number
-  lastNewBlockTimestamp: number
-}
-
-export type SynchronizationStatus =
-  | SynchronizationStatusOffline
-  | SynchronizationStatusOnline
-  | SynchronizationStatusSynced
-
-export interface Account {
-  address: string
-  index: number
-  balance: Wei
-  tokens: Record<string, BigNumber>
-}
-
-export const allFeeLevels = ['low', 'medium', 'high'] as const
-export type FeeLevel = typeof allFeeLevels[number]
-export type FeeEstimates = Record<FeeLevel, Wei>
-
-export interface Transaction {
-  from: string
-  to: string | null
-  hash: string
-  blockNumber: number | null
-  timestamp: Date | null
-  value: Wei
-  gasPrice: Wei
-  gasUsed: number | null
-  fee: Wei
-  gas: number
-  direction: 'outgoing' | 'incoming'
-  status: 'pending' | 'confirmed' | 'persisted_depth' | 'persisted_checkpoint' | 'failed'
-  contractAddress: string | null
-}
 
 const DEPTH_FOR_PERSISTENCE = 12
 export const TRANSFER_GAS_LIMIT = 21000
 export const MIN_GAS_PRICE = asWei(1)
-
-interface SendTransactionParams {
-  recipient: string
-  amount: Wei
-  gasPrice: Wei
-  gasLimit: number
-  password: string
-  data?: string
-  nonce: number
-}
-
-// States
-
-interface CommonState {
-  tncAccepted: boolean
-  setTncAccepted: (value: boolean) => void
-  syncStatus: SynchronizationStatus
-  error: Option<Error>
-}
-
-export interface InitialState extends CommonState {
-  walletStatus: 'INITIAL'
-}
-
-export interface LoadingState extends CommonState {
-  walletStatus: 'LOADING'
-}
-
-export interface LoadedState extends CommonState {
-  walletStatus: 'LOADED'
-  error: Option<Error>
-  accounts: Account[]
-  getOverviewProps: () => Overview
-  reset: () => void
-  remove: (password: string) => Promise<boolean>
-  getPrivateKey: (password: string) => Promise<string>
-  generateAccount: () => Promise<void>
-  getNextNonce: () => Promise<number>
-  doTransfer: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
-  sendTransaction: (params: SendTransactionParams) => Promise<void>
-  estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
-  estimateTransactionFee(): Promise<FeeEstimates>
-  addTokenToTrack: (tokenAddress: string) => void
-  addTokensToTrack: (tokenAddresses: string[]) => void
-  // address book methods:
-  addressBook: Record<string, string>
-  editContact(address: string, label: string): void
-  deleteContact(address: string): void
-}
-
-export interface NoWalletState extends CommonState {
-  walletStatus: 'NO_WALLET'
-  reset: () => void
-  addAccount: (name: string, privateKey: string, password: string) => Promise<void>
-}
-
-export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'NO_WALLET'
-export type WalletData = InitialState | LoadingState | LoadedState | NoWalletState
-
-interface Overview {
-  availableBalance: Option<Wei>
-  pendingBalance: Wei
-  transactions: Transaction[]
-}
-
-interface StoredAccount {
-  name: string
-  address: string
-  keystore: EncryptedKeystoreV3Json
-}
-
-export interface StoreWalletData {
-  wallet: {
-    accounts: StoredAccount[]
-    addressBook: Record<string, string>
-    tncAccepted: boolean
-  }
-}
-
-export const defaultWalletData: StoreWalletData = {
-  wallet: {
-    accounts: [],
-    addressBook: {},
-    tncAccepted: false,
-  },
-}
-
-interface WalletStateParams {
-  walletStatus: WalletStatus
-  web3: MantisWeb3
-  store: Store<StoreWalletData>
-  syncStatus: Option<SynchronizationStatus>
-  totalBalance: Option<Wei>
-  availableBalance: Option<Wei>
-  accounts: Option<Account[]>
-  transactions: Option<Transaction[]>
-  isMocked: boolean
-}
 
 const DEFAULT_STATE: WalletStateParams = {
   walletStatus: 'INITIAL',

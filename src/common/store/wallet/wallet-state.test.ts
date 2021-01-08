@@ -1,7 +1,7 @@
 import {assert} from 'chai'
 import web3 from 'web3'
-import {asEther, asWei} from './units'
-import {getPendingBalance, mergeTransactions, Transaction} from './wallet-state'
+import {asEther, asWei} from '../../units'
+import {getPendingBalance, mergeTransactions, Transaction} from '.'
 
 const createTestTx = (
   direction: Transaction['direction'],

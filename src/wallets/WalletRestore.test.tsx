@@ -7,7 +7,7 @@ import {
   findExactlyOneByTag,
   WithSettingsProvider,
 } from '../common/test-helpers'
-import {WalletState, WalletStatus} from '../common/wallet-state'
+import {WalletState, WalletStatus} from '../common/store/wallet'
 import {WalletRestore} from './WalletRestore'
 import {defaultWeb3} from '../web3'
 

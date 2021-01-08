@@ -1,8 +1,8 @@
 import React from 'react'
 import {EmptyProps} from 'antd/lib/empty'
 import {TransactionHistory} from './TransactionHistory'
-import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
-import {LoadedState} from '../common/wallet-state'
+import {withStatusGuard, PropsWithWalletState} from '../common/store/wallet/wallet-status-guard'
+import {LoadedState} from '../common/store/wallet'
 import './Wallet.scss'
 
 const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {

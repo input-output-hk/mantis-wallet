@@ -11,7 +11,7 @@ import {DialogMessage} from './dialog/DialogMessage'
 import {wrapWithModal, ModalLocker} from './MantisModal'
 import {Dialog} from './Dialog'
 import {Trans} from './Trans'
-import {useTranslation, useLocalizedUtilities} from '../settings-state'
+import {useTranslation, useLocalizedUtilities} from './store/settings'
 import {TFunctionRenderer} from './i18n'
 
 const CHANNELS: IPCToRendererChannelName[] = [

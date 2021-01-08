@@ -1,6 +1,6 @@
 import React from 'react'
 import {WalletActionBox} from './WalletActionBox'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from '../common/store/settings'
 import walletIcon from '../assets/icons/wallet.svg'
 import walletRestoreIcon from '../assets/icons/wallet-restore.svg'
 import './WalletPathChooser.scss'

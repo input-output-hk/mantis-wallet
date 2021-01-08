@@ -15,7 +15,7 @@ import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
 import {TransactionHistory} from './TransactionHistory'
 import {asWei, asEther} from '../common/units'
-import {Transaction} from '../common/wallet-state'
+import {Transaction} from '../common/store/wallet'
 import {
   SendBasicTransaction,
   SendAdvancedTransaction,

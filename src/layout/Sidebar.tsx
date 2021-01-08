@@ -3,20 +3,19 @@ import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {Button} from 'antd'
 import {shell} from 'electron'
-import {SettingsState} from '../settings-state'
+import {_SettingsState} from '../common/store/settings'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
 import {loadMantisWalletStatus, loadConfig} from '../config/renderer'
 import {useInterval} from '../common/hook-utils'
-import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/wallet-state'
+import {WalletState, canRemoveWallet, SynchronizationStatus} from '../common/store/wallet'
 import {SyncStatus} from '../common/SyncStatus'
 import {StatusModal} from '../common/StatusModal'
 import {SupportModal} from '../common/SupportModal'
 import {fillActionHandlers} from '../common/util'
 import {BalanceDisplay} from '../wallets/BalanceDisplay'
 import {RemoveWalletModal} from '../wallets/modals/RemoveWalletModal'
-import {BackendState} from '../common/backend-state'
-import {TokensState} from '../tokens/tokens-state'
+import {_BackendState} from '../common/store/backend'
 import {Trans} from '../common/Trans'
 import {createTErrorRenderer} from '../common/i18n'
 import logoDark from '../assets/logo-lockup-dark.svg'
@@ -53,12 +52,11 @@ export const Sidebar = (): JSX.Element => {
   const {
     translation: {t},
     theme,
-  } = SettingsState.useContainer()
+  } = _SettingsState.useContainer()
 
   const walletState = WalletState.useContainer()
   const routerState = RouterState.useContainer()
-  const tokensState = TokensState.useContainer()
-  const {networkName} = BackendState.useContainer()
+  const {networkName} = _BackendState.useContainer()
 
   const [activeModal, setActiveModal] = useState<ModalId>('none')
 
@@ -173,7 +171,6 @@ export const Sidebar = (): JSX.Element => {
             if (!removed) {
               throw createTErrorRenderer(['wallet', 'error', 'couldNotRemoveWallet'])
             }
-            tokensState.reset()
             setActiveModal('none')
           }}
           onCancel={() => setActiveModal('none')}

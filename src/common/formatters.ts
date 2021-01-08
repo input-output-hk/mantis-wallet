@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import formatDistance from 'date-fns/formatDistance'
 import {format, Locale} from 'date-fns'
-import {DateFormat, TimeFormat} from '../settings-state'
+import {DateFormat, TimeFormat} from './store/settings'
 
 type FormatAmountMode = 'relaxed' | 'strict'
 

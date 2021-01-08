@@ -1,8 +1,8 @@
 import url from 'url'
 import React, {PropsWithChildren, useEffect, FunctionComponent, useState} from 'react'
 import addons, {makeDecorator, StoryContext, StoryGetter} from '@storybook/addons'
-import {createInMemoryStore} from '../common/store'
-import {SettingsState, defaultSettingsData} from '../settings-state'
+import {createInMemoryStore} from '../common/store/store'
+import {_SettingsState, defaultSettingsData} from '../common/store/settings'
 import {THEME_SWITCHER_CHANGE, LANGUAGE_CHANGER_PSEUDO_SWITCH} from './shared-constants'
 
 const store = createInMemoryStore(defaultSettingsData)
@@ -14,7 +14,7 @@ const storybookStore: {
 }
 
 const ThemeSwitcher: FunctionComponent<{}> = ({children}: PropsWithChildren<{}>) => {
-  const themeState = SettingsState.useContainer()
+  const themeState = _SettingsState.useContainer()
   const channel = addons.getChannel()
 
   useEffect(() => {
@@ -49,12 +49,12 @@ const WithSettings = (storyFn: StoryGetter, context: StoryContext): JSX.Element 
   }
 
   return (
-    <SettingsState.Provider
+    <_SettingsState.Provider
       key={isPseudoLanguageUsed ? 'on' : 'off'}
       initialState={{store, isPseudoLanguageUsedDefault: isPseudoLanguageUsed}}
     >
       <ThemeSwitcher>{content}</ThemeSwitcher>
-    </SettingsState.Provider>
+    </_SettingsState.Provider>
   )
 }
 

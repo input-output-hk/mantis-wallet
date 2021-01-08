@@ -1,7 +1,7 @@
 import React from 'react'
 import {Dialog} from '../common/Dialog'
 import {DialogApproval} from '../common/dialog/DialogApproval'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from '../common/store/settings'
 import {TermsAndConditions} from './TermsAndConditions'
 import './TermsAndConditions.scss'
 

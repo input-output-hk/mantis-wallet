@@ -1,103 +1,36 @@
 import {useEffect, useState, useMemo} from 'react'
-import i18next from 'i18next'
 import {createContainer} from 'unstated-next'
 import BigNumber from 'bignumber.js'
 import filesize from 'filesize'
-import {usePersistedState} from './common/hook-utils'
-import {Store, createInMemoryStore} from './common/store'
-import {Language, DEFAULT_LANGUAGE} from './shared/i18n'
-import {updateLanguage} from './common/ipc-util'
+import {usePersistedState} from '../../hook-utils'
+import {Store, createInMemoryStore} from '../store'
+import {Language, DEFAULT_LANGUAGE} from '../../../shared/i18n'
+import {updateLanguage} from '../../ipc-util'
 import {
   createAndInitI18nForRenderer,
-  TFunctionRenderer,
   LANGUAGE_SETTINGS,
   createTFunctionRenderer,
   TErrorRenderer,
-} from './common/i18n'
-import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from './common/formatters'
-import {rendererLog} from './common/logger'
-import {makeDesktopNotification} from './common/notify'
-import {copyToClipboard} from './common/clipboard'
+} from '../../i18n'
+import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from '../../formatters'
+import {rendererLog} from '../../logger'
+import {makeDesktopNotification} from '../../notify'
+import {copyToClipboard} from '../../clipboard'
+import {defaultSettingsData} from './data'
 import {
-  DismissFunction,
-  DismissableConfig,
-  MsgContent,
+  StoreSettingsData,
+  Formatters,
+  HASHRATE_SUFFIX,
+  LocalizedUtilities,
+  Translation,
+  SettingsState,
+} from './types'
+import {
   NoticeType,
+  MsgContent,
+  DismissableConfig,
   makeDismissableMessage,
-} from './common/dismissable-message'
-
-export type Theme = 'dark' | 'light'
-
-export const DATE_FORMATS = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY'] as const
-export const TIME_FORMATS = ['24-hour', '12-hour'] as const
-
-export type DateFormat = typeof DATE_FORMATS[number]
-export type TimeFormat = typeof TIME_FORMATS[number]
-
-const HASHRATE_SUFFIX = ['hash/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s', 'EH/s', 'ZH/s', 'YH/s']
-
-export interface Formatters {
-  formatDate: (date: Date) => string
-  toDurationString: (seconds: number) => string
-
-  formatPercentage: (ratio: number | BigNumber) => string
-  abbreviateAmount: (bg: BigNumber) => ReturnType<typeof abbreviateAmount>
-  formatFileSize: (bytes: number) => string
-  formatHashrate: (hashrate: number) => string
-}
-
-interface Translation {
-  i18n: typeof i18next
-  t: TFunctionRenderer
-  translateError: (e: Error) => string
-}
-
-interface LocalizedUtilities {
-  makeDesktopNotification: (body: string, title?: string, options?: NotificationOptions) => void
-  copyToClipboard: (text: string) => Promise<void>
-  makeDismissableMessage: (
-    type: NoticeType,
-    Content: MsgContent,
-    config?: Partial<DismissableConfig>,
-  ) => DismissFunction
-}
-
-export interface SettingsState {
-  // Theme settings
-  theme: Theme
-  switchTheme(newTheme: Theme): void
-  // Locale settings
-  dateFormat: DateFormat
-  setDateFormat(dateFormat: DateFormat): void
-  timeFormat: TimeFormat
-  setTimeFormat(timeFormat: TimeFormat): void
-  language: Language
-  setLanguage(language: Language): void
-  isPseudoLanguageUsed: boolean
-  usePseudoLanguage(on: boolean): void
-  // Localized helpers
-  formatters: Formatters
-  translation: Translation
-  localizedUtilities: LocalizedUtilities
-}
-
-export type StoreSettingsData = {
-  settings: {
-    theme: Theme
-    dateFormat: DateFormat
-    timeFormat: TimeFormat
-    language: Language
-  }
-}
-
-export const defaultSettingsData: StoreSettingsData = {
-  settings: {
-    theme: 'dark',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: '12-hour',
-    language: DEFAULT_LANGUAGE,
-  },
-}
+} from '../../dismissable-message'
 
 interface SettingsStateParams {
   store: Store<StoreSettingsData>
@@ -207,11 +140,11 @@ function useSettingsState({
   }
 }
 
-export const SettingsState = createContainer(useSettingsState)
+export const _SettingsState = createContainer(useSettingsState)
 
-export const useFormatters = (): Formatters => SettingsState.useContainer().formatters
+export const useFormatters = (): Formatters => _SettingsState.useContainer().formatters
 
-export const useTranslation = (): Translation => SettingsState.useContainer().translation
+export const useTranslation = (): Translation => _SettingsState.useContainer().translation
 
 export const useLocalizedUtilities = (): LocalizedUtilities =>
-  SettingsState.useContainer().localizedUtilities
+  _SettingsState.useContainer().localizedUtilities

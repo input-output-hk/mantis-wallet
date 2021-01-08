@@ -1,9 +1,9 @@
 import React, {useState, PropsWithChildren} from 'react'
 import {Button, Select, Switch} from 'antd'
 import {EmptyProps} from 'antd/lib/empty'
-import {SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './settings-state'
-import {WalletState, canResetWallet} from './common/wallet-state'
-import {BackendState} from './common/backend-state'
+import {_SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './common/store/settings'
+import {WalletState, canResetWallet} from './common/store/wallet'
+import {_BackendState} from './common/store/backend'
 import {fillActionHandlers} from './common/util'
 import {Header} from './common/Header'
 import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
@@ -54,9 +54,9 @@ export const Settings = (): JSX.Element => {
     language,
     setLanguage,
     translation: {t},
-  } = SettingsState.useContainer()
+  } = _SettingsState.useContainer()
 
-  const {networkName} = BackendState.useContainer()
+  const {networkName} = _BackendState.useContainer()
 
   const walletState = WalletState.useContainer()
 

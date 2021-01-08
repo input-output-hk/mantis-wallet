@@ -10,7 +10,7 @@ import {useIsMounted} from './hook-utils'
 import {DialogError} from './dialog/DialogError'
 import {waitUntil} from '../shared/utils'
 import {rendererLog} from './logger'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from './store/settings'
 import {createTErrorRenderer, TKeyRenderer} from './i18n'
 import './Dialog.scss'
 

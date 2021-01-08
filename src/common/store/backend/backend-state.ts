@@ -1,33 +1,14 @@
-import {Dispatch, SetStateAction, useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
 import {createContainer} from 'unstated-next'
 import _ from 'lodash/fp'
-import {updateNetworkName} from './ipc-util'
-import {rendererLog} from './logger'
-import {createInMemoryStore, Store} from './store'
-import {NetworkName} from '../config/type'
-import {usePersistedState} from './hook-utils'
-import {config} from '../config/renderer'
-import {defaultWeb3, MantisWeb3} from '../web3'
-
-export interface BackendState {
-  isBackendRunning: boolean
-  setBackendRunning: Dispatch<SetStateAction<boolean>>
-  networkName: NetworkName
-  setNetworkName: (networkName: NetworkName) => void
-}
-
-export interface StoreBackendData {
-  networkName: NetworkName
-}
-
-interface BackendStateParams {
-  web3: MantisWeb3
-  store: Store<StoreBackendData>
-}
-
-export const defaultBackendData: StoreBackendData = {
-  networkName: config.networkName,
-}
+import {updateNetworkName} from '../../ipc-util'
+import {rendererLog} from '../../logger'
+import {NetworkName} from '../../../config/type'
+import {usePersistedState} from '../../hook-utils'
+import {defaultWeb3} from '../../../web3'
+import {createInMemoryStore} from '../store'
+import {BackendStateParams, BackendState} from './types'
+import {defaultBackendData} from './data'
 
 const DEFAULT_PARAMS: BackendStateParams = {
   store: createInMemoryStore(defaultBackendData),
@@ -69,10 +50,4 @@ function useBackendState(params?: Partial<BackendStateParams>): BackendState {
   }
 }
 
-export const BackendState = createContainer(useBackendState)
-
-export const migrationsForBackendData = {
-  '0.1.2-mantis-wallet': (store: Store<StoreBackendData>): void => {
-    store.set('networkName', config.networkName)
-  },
-}
+export const _BackendState = createContainer(useBackendState)

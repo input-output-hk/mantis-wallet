@@ -4,7 +4,7 @@ import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
 import {DialogInputPassword} from '../../common/dialog/DialogInput'
 import {DialogApproval} from '../../common/dialog/DialogApproval'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 
 interface RemoveWalletModalProps extends ModalOnCancel {
   onRemoveWallet: (password: string) => Promise<void>

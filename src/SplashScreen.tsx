@@ -15,8 +15,8 @@ import wordmark from './assets/wordmark.svg'
 import './SplashScreen.scss'
 import {ChangeNetworkModal} from './wallets/modals/ChangeNetwork'
 import {DEFINED_NETWORK_NAMES, displayNameOfNetwork, NetworkName} from './config/type'
-import {BackendState} from './common/backend-state'
-import {SettingsState} from './settings-state'
+import {_BackendState} from './common/store/backend'
+import {_SettingsState} from './common/store/settings'
 
 const {Option} = Select
 
@@ -46,9 +46,9 @@ export const SplashScreen: FunctionComponent<{}> = () => {
 
   const {
     translation: {t},
-  } = SettingsState.useContainer()
+  } = _SettingsState.useContainer()
 
-  const {networkName} = BackendState.useContainer()
+  const {networkName} = _BackendState.useContainer()
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkName>(networkName)
 
   const definedNetworkOptions = DEFINED_NETWORK_NAMES.map((network) => ({

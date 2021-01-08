@@ -15,7 +15,7 @@ import {
 } from './TransactionList'
 import {Trans} from '../common/Trans'
 import {Wei, asWei} from '../common/units'
-import {Transaction, FeeEstimates, Account} from '../common/wallet-state'
+import {Transaction, FeeEstimates, Account} from '../common/store/wallet'
 
 import './TransactionHistory.scss'
 

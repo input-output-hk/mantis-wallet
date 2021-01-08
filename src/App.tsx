@@ -1,23 +1,22 @@
 import React from 'react'
 import classnames from 'classnames'
-import {createPersistentStore} from './common/store'
-import {WalletState} from './common/wallet-state'
-import {BackendState} from './common/backend-state'
-import {SettingsState} from './settings-state'
 import {RouterState} from './router-state'
-import {TokensState} from './tokens/tokens-state'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
 import {SplashScreen} from './SplashScreen'
 import {config} from './config/renderer'
 import {createWeb3} from './web3'
 import './App.scss'
+import {createPersistentStore} from './common/store/store'
+import {WalletState} from './common/store/wallet'
+import {_BackendState} from './common/store/backend'
+import {_SettingsState} from './common/store/settings'
 
 const web3 = createWeb3(config.rpcAddress)
 const store = createPersistentStore()
 
 const AppContent: React.FC = () => {
-  const {isBackendRunning} = BackendState.useContainer()
+  const {isBackendRunning} = _BackendState.useContainer()
   const {
     currentRoute: {menu},
   } = RouterState.useContainer()
@@ -25,11 +24,9 @@ const AppContent: React.FC = () => {
   return isBackendRunning ? (
     <div className={classnames('loaded', menu.toLowerCase())}>
       <WalletState.Provider initialState={{web3, store}}>
-        <TokensState.Provider initialState={{web3, store}}>
-          <Sidebar />
-          {/* FIXME: ETCM-404 version={MANTIS_WALLET_VERSION} /> */}
-          <Router />
-        </TokensState.Provider>
+        <Sidebar />
+        {/* FIXME: ETCM-404 version={MANTIS_WALLET_VERSION} /> */}
+        <Router />
       </WalletState.Provider>
     </div>
   ) : (
@@ -40,13 +37,13 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <div id="App">
-      <BackendState.Provider initialState={{web3, store}}>
-        <SettingsState.Provider initialState={{store}}>
+      <_BackendState.Provider initialState={{web3, store}}>
+        <_SettingsState.Provider initialState={{store}}>
           <RouterState.Provider>
             <AppContent />
           </RouterState.Provider>
-        </SettingsState.Provider>
-      </BackendState.Provider>
+        </_SettingsState.Provider>
+      </_BackendState.Provider>
     </div>
   )
 }

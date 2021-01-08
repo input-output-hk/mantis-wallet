@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
-import {NoWalletState} from '../common/wallet-state'
-import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
+import {NoWalletState} from '../common/store/wallet/types'
+import {PropsWithWalletState, withStatusGuard} from '../common/store/wallet/wallet-status-guard'
 import {Dialog} from '../common/Dialog'
 import {DialogPassword} from '../common/dialog/DialogPassword'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogSecrets, RecoveryMethod} from '../common/dialog/DialogSecrets'
-import {useTranslation} from '../settings-state'
+import {useTranslation} from '../common/store/settings'
 import {generatePrivateKeyFromSeedPhrase} from '../common/mnemonic'
 
 interface WalletRestoreProps {

@@ -1,7 +1,7 @@
 import React, {useState, FunctionComponent} from 'react'
 import {Option, none, isSome, some, isNone} from 'fp-ts/lib/Option'
 import {CheckCircleFilled} from '@ant-design/icons'
-import {LoadedState} from '../../common/wallet-state'
+import {LoadedState} from '../../common/store/wallet'
 import {wrapWithModal, ModalLocker, ModalOnCancel} from '../../common/MantisModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogMessage} from '../../common/dialog/DialogMessage'
@@ -9,7 +9,7 @@ import {DialogInputPassword} from '../../common/dialog/DialogInput'
 import {DialogSwitch} from '../../common/dialog/DialogSwitch'
 import {DialogQRCode} from '../../common/dialog/DialogQRCode'
 import {Trans} from '../../common/Trans'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 import './ExportPrivateKey.scss'
 
 const PasswordStep = ({

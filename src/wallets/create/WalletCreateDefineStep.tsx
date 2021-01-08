@@ -2,7 +2,7 @@ import React, {useState, FunctionComponent} from 'react'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput} from '../../common/dialog/DialogInput'
 import {DialogPassword} from '../../common/dialog/DialogPassword'
-import {useTranslation} from '../../settings-state'
+import {useTranslation} from '../../common/store/settings'
 
 interface WalletCreateDefineStepProps {
   cancel: () => void

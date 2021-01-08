@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {WalletState} from '../common/wallet-state'
+import {WalletState} from '../common/store/wallet'
 import {Navigate} from '../layout/Router'
 import {TermsAndConditionsStep} from './TermsAndConditionsStep'
 import {WalletPathChooser} from './WalletPathChooser'

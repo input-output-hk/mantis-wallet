@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import {CopyOutlined, QrcodeOutlined} from '@ant-design/icons'
 import {Popover} from 'antd'
 import QRCode from 'qrcode.react'
-import {useTranslation, useLocalizedUtilities} from '../settings-state'
+import {useTranslation, useLocalizedUtilities} from './store/settings'
 import './CopyableLongText.scss'
 
 interface CopyableLongTextProps {
