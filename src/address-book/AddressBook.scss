@@ -9,17 +9,6 @@
     line-height: 30px;
   }
 
-  .icon {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-    stroke-width: 0;
-
-    @include themify($themes) {
-      fill: themed('text-color');
-    }
-  }
-
   .address-list {
     @extend %base-grid;
 
@@ -27,14 +16,6 @@
 
     .row {
       display: contents;
-
-      .action:focus {
-        box-shadow: none;
-        @include themify($themes) {
-          -webkit-filter: drop-shadow( 2px 2px 1px themed('text-shadow'));
-          filter: drop-shadow( 2px 2px 1px themed('text-shadow'));
-        }
-      }
 
       .address {
         @extend %monospace;

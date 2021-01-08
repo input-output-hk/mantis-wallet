@@ -1,22 +1,18 @@
 import {Button, message, Popover} from 'antd'
 import React, {useState} from 'react'
 import {EmptyProps} from 'antd/lib/empty'
-import SVG from 'react-inlinesvg'
-import classNames from 'classnames'
 import {Trans} from '../common/Trans'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
 import {Dialog} from '../common/Dialog'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {ModalLocker, wrapWithModal} from '../common/MantisModal'
-import {fillActionHandlers, toAntValidator, validateAddress} from '../common/util'
+import {toAntValidator, validateAddress} from '../common/util'
 import {LoadedState} from '../common/wallet-state'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {NoWallet} from '../wallets/NoWallet'
-import deleteIcon from '../assets/icons/delete.svg'
-import editIcon from '../assets/icons/edit.svg'
-import copyIcon from '../assets/icons/copy.svg'
 import './AddressBook.scss'
+import {IconButton} from '../common/IconButton'
 
 const LABEL_MAX_LENGTH = 80
 const LABEL_FIELD_NAME = 'contact-label'
@@ -222,28 +218,15 @@ const _AddressBook = ({
                 <span className="address">
                   {address}{' '}
                   <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-                    <span
-                      className={classNames('action')}
-                      {...fillActionHandlers(() => copyToClipboard(address))}
-                    >
-                      <SVG src={copyIcon} className="icon" title="Copy" />
-                    </span>
+                    <IconButton icon="copy" title="Copy" onClick={() => copyToClipboard(address)} />
                   </Popover>
                 </span>
                 <span className="actions">
-                  <span
-                    className={classNames('delete', 'action')}
-                    title={t(['addressBook', 'book', 'deleteContact'])}
-                    {...fillActionHandlers(onStartDelete(address))}
-                  >
-                    <SVG src={deleteIcon} className="icon" title="Delete" />
+                  <span className="delete">
+                    <IconButton icon="delete" title="Delete" onClick={onStartDelete(address)} />
                   </span>
-                  <span
-                    className={classNames('edit', 'action')}
-                    title={t(['addressBook', 'book', 'editContact'])}
-                    {...fillActionHandlers(onStartEdit(address))}
-                  >
-                    <SVG src={editIcon} className="icon" title="Edit" />
+                  <span className="edit">
+                    <IconButton icon="edit" title="Edit" onClick={onStartEdit(address)} />
                   </span>
                 </span>
               </div>
