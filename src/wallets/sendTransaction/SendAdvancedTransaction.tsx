@@ -21,6 +21,7 @@ import {PropsWithWalletState, withStatusGuard} from '../../common/wallet-status-
 import {getSendTransactionParams} from './ConfirmAdvancedTransaction'
 import {asEther, asWei, Wei} from '../../common/units'
 import {rendererLog} from '../../common/logger'
+import {InlineError} from '../../common/InlineError'
 
 interface SendAdvancedTransactionProps {
   onSend: () => void
@@ -73,7 +74,7 @@ const _SendAdvancedTransaction = ({
     totalAmount.isFinite() ? availableAmount.minus(totalAmount) : availableAmount,
   )
 
-  const disableSend = remainingBalance.isNegative()
+  const hasInsufficientBalance = remainingBalance.isLessThan(0)
 
   return (
     <>
@@ -91,7 +92,7 @@ const _SendAdvancedTransaction = ({
             }
             onSend()
           },
-          disabled: disableSend,
+          disabled: hasInsufficientBalance,
         }}
         onSetLoading={modalLocker.setLocked}
         type="dark"
@@ -111,6 +112,9 @@ const _SendAdvancedTransaction = ({
             rules: [txAmountValidator],
           }}
         />
+        {hasInsufficientBalance && (
+          <InlineError errorMessage={t(['wallet', 'error', 'insufficientFunds'])} />
+        )}
         <DialogColumns>
           <DialogInput
             label={t(['wallet', 'label', 'gasLimit'])}
