@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import SVG from 'react-inlinesvg'
 import {Popover} from 'antd'
-import {SynchronizationStatus, WalletState} from './wallet-state'
+import {SynchronizationStatus, WalletState, SynchronizationStatusOnline} from './wallet-state'
 import {BackendState} from './backend-state'
 import {SettingsState} from '../settings-state'
 import {Trans} from './Trans'
@@ -14,19 +14,30 @@ interface SyncStatusProps {
   syncStatus: SynchronizationStatus
 }
 
+const getSyncBlocksProgress = (syncStatus: SynchronizationStatusOnline): number => {
+  if (syncStatus.highestKnownBlock === 0) return 0
+  return (syncStatus.currentBlock / syncStatus.highestKnownBlock) * 100
+}
+
 export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
-  if (syncStatus.mode === 'offline') return <Trans k={['wallet', 'syncStatus', 'syncConnecting']} />
-  if (syncStatus.mode === 'synced') return <Trans k={['wallet', 'syncStatus', 'fullySynced']} />
-  return (
-    <Trans
-      k={
-        syncStatus.currentBlock === syncStatus.highestKnownBlock
-          ? ['wallet', 'syncStatus', 'syncingState']
-          : ['wallet', 'syncStatus', 'syncingBlocks']
-      }
-      values={{percentage: syncStatus.percentage.toFixed(2)}}
-    />
-  )
+  switch (syncStatus.mode) {
+    case 'offline':
+      return <Trans k={['wallet', 'syncStatus', 'syncConnecting']} />
+    case 'synced':
+      return <Trans k={['wallet', 'syncStatus', 'fullySynced']} />
+    case 'online':
+      return syncStatus.type === 'blocks' ? (
+        <Trans
+          k={['wallet', 'syncStatus', 'syncingBlocks']}
+          values={{percentage: getSyncBlocksProgress(syncStatus)}}
+        />
+      ) : (
+        <Trans
+          k={['wallet', 'syncStatus', 'syncingState']}
+          values={{processed: syncStatus.pulledStates, total: syncStatus.knownStates}}
+        />
+      )
+  }
 }
 
 export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element => {
@@ -43,12 +54,17 @@ export const SyncStatusContent = ({syncStatus}: SyncStatusProps): JSX.Element =>
           values={{blockNumber: syncStatus.currentBlock}}
         />
       </div>
-      {syncStatus.mode === 'online' && (
+      {syncStatus.mode === 'online' && syncStatus.type === 'blocks' && (
         <div className="syncStatusLine">
           <Trans
             k={['wallet', 'syncStatus', 'highestBlock']}
             values={{blockNumber: syncStatus.highestKnownBlock}}
           />
+        </div>
+      )}
+      {syncStatus.mode === 'online' && syncStatus.type === 'state' && (
+        <div className="syncStatusLine">
+          <Trans k={['wallet', 'syncStatus', 'syncingStateDescription']} />
         </div>
       )}
     </span>
