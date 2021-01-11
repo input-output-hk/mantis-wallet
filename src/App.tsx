@@ -23,7 +23,7 @@ import './App.scss'
 
 const web3 = createWeb3(config.rpcAddress)
 
-// TODO: move migrations and default data related code after restructuring store/state related code
+// TODO(ETCM-515): move migrations and default data related code after restructuring store/state related code
 
 export type StoreData = StoreWalletData & StoreSettingsData & StoreTokensData & StoreBackendData
 

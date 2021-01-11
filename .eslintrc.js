@@ -112,6 +112,7 @@ module.exports = {
     // prettier
     'prettier/prettier': 'error',
     // import
+    'import/no-cycle': 'warn',
     'import/order': [
       'error',
       {
