@@ -2,39 +2,8 @@ import _ from 'lodash/fp'
 import {set as mutatingSet} from 'lodash'
 import ElectronStore from 'electron-store'
 import {gt} from 'semver'
-import {defaultWalletData, StoreWalletData} from './wallet-state'
-import {defaultSettingsData, StoreSettingsData} from '../settings-state'
 import {config} from '../config/renderer'
-import {defaultTokensData, StoreTokensData} from '../tokens/tokens-state'
-import {defaultBackendData, migrationsForBackendData, StoreBackendData} from './backend-state'
 import {DATADIR_VERSION} from '../shared/version'
-
-export type StoreData = StoreWalletData & StoreSettingsData & StoreTokensData & StoreBackendData
-
-const defaultData: StoreData = _.mergeAll([
-  defaultWalletData,
-  defaultSettingsData,
-  defaultTokensData,
-  defaultBackendData,
-])
-
-const mergeMigrations = _.mergeAllWith(
-  (
-    objValue: undefined | ((store: Store<StoreData>) => void),
-    srcValue: (store: Store<StoreData>) => void,
-  ) => {
-    if (objValue === undefined) {
-      return srcValue
-    } else {
-      return (store: Store<StoreData>): void => {
-        objValue.call(undefined, store)
-        srcValue.call(undefined, store)
-      }
-    }
-  },
-)
-
-const migrations = mergeMigrations([migrationsForBackendData])
 
 export interface Store<TObject extends object> {
   get<K extends keyof TObject>(key: K): TObject[K]
@@ -86,24 +55,24 @@ const getMaxVersion = (v1: string, v2: string): string => (gt(v1, v2) ? v1 : v2)
 
 const projectVersion = getMaxVersion('0.1.3-mantis-wallet', DATADIR_VERSION)
 
-export function createPersistentStore(): Store<StoreData> {
+export function createPersistentStore<T extends object>(
+  options?: ElectronStore.Options<T>,
+): Store<T> {
   const store = new ElectronStore({
-    defaults: defaultData,
     cwd: config.dataDir,
-    migrations,
     // See https://github.com/sindresorhus/electron-store/issues/123
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     projectVersion,
     deserialize: (text: string) => JSON.parse(text),
     watch: true,
-  })
+    ...options,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }) as ElectronStore<any>
 
-  function get<
-    K1 extends keyof StoreData,
-    K2 extends keyof StoreData[K1],
-    K3 extends keyof StoreData[K1][K2]
-  >(key: K1 | [K1, K2] | [K1, K2, K3]): StoreData[K1] | StoreData[K1][K2] {
+  function get<K1 extends keyof T, K2 extends keyof T[K1], K3 extends keyof T[K1][K2]>(
+    key: K1 | [K1, K2] | [K1, K2, K3],
+  ): T[K1] | T[K1][K2] | T[K1][K2][K3] {
     if (_.isArray(key)) {
       return store.get(key.join('.'))
     } else {
@@ -111,13 +80,9 @@ export function createPersistentStore(): Store<StoreData> {
     }
   }
 
-  function set<
-    K1 extends keyof StoreData,
-    K2 extends keyof StoreData[K1],
-    K3 extends keyof StoreData[K1][K2]
-  >(
+  function set<K1 extends keyof T, K2 extends keyof T[K1], K3 extends keyof T[K1][K2]>(
     key: K1 | [K1, K2] | [K1, K2, K3],
-    value: StoreData[K1] | StoreData[K1][K2] | StoreData[K1][K2][K3],
+    value: T[K1] | T[K1][K2] | T[K1][K2][K3],
   ): void {
     if (_.isArray(key)) {
       store.set(key.join('.'), value)
