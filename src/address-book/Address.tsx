@@ -1,10 +1,10 @@
-import {CopyOutlined, EditOutlined} from '@ant-design/icons'
 import {Input, Popover} from 'antd'
 import React, {useEffect, useState} from 'react'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
 import {LoadedState} from '../common/wallet-state'
 import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-guard'
 import './Address.scss'
+import {IconButton} from '../common/IconButton'
 
 interface AddressProps {
   address: string
@@ -35,7 +35,6 @@ const _Address = ({
       <Input
         size="small"
         placeholder={t(['addressBook', 'address', 'enterLabel'])}
-        prefix={<EditOutlined />}
         value={inputContent}
         onChange={(event) => setInputContent(event.target.value)}
         onBlur={() => finishEditing()}
@@ -52,7 +51,13 @@ const _Address = ({
 
   const copyButton = (
     <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-      <CopyOutlined className="clickable" onClick={() => copyToClipboard(lowerAddress)} />
+      <IconButton
+        icon="copy"
+        title="Copy"
+        width={12}
+        height={12}
+        onClick={() => copyToClipboard(address)}
+      />
     </Popover>
   )
 
@@ -62,14 +67,29 @@ const _Address = ({
         <Popover content={lowerAddress}>
           <span>{addressBook[lowerAddress]}</span>
         </Popover>{' '}
-        <EditOutlined onClick={() => setEditing(true)} /> {copyButton}
+        <IconButton
+          icon="edit"
+          title="Edit"
+          onClick={() => setEditing(true)}
+          width={12}
+          height={12}
+        />{' '}
+        {copyButton}
       </span>
     )
   }
 
   return (
     <span className="Address">
-      {lowerAddress} <EditOutlined onClick={() => setEditing(true)} /> {copyButton}
+      {lowerAddress}{' '}
+      <IconButton
+        icon="edit"
+        title="Edit"
+        width={12}
+        height={12}
+        onClick={() => setEditing(true)}
+      />{' '}
+      {copyButton}
     </span>
   )
 }
