@@ -26,7 +26,7 @@ type Icon =
 
 interface IconButtonProps {
   icon: Icon
-  title: string
+  title?: string
   onClick: () => void
   width?: number
   height?: number
@@ -39,7 +39,7 @@ export const IconButton = ({
   width = 16,
   height = 16,
 }: IconButtonProps): JSX.Element => (
-  <span className="iconContainer" {...fillActionHandlers(onClick)}>
+  <span className="iconContainer" data-testid={`${icon}-button`} {...fillActionHandlers(onClick)}>
     <SVG src={`icons/${icon}.svg`} className="icon" width={width} height={height} title={title} />
   </span>
 )

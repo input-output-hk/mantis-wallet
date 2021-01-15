@@ -51,13 +51,7 @@ const _Address = ({
 
   const copyButton = (
     <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-      <IconButton
-        icon="copy"
-        title="Copy"
-        width={12}
-        height={12}
-        onClick={() => copyToClipboard(address)}
-      />
+      <IconButton icon="copy" width={12} height={12} onClick={() => copyToClipboard(address)} />
     </Popover>
   )
 
@@ -69,7 +63,7 @@ const _Address = ({
         </Popover>{' '}
         <IconButton
           icon="edit"
-          title="Edit"
+          title={t(['addressBook', 'book', 'editContact'])}
           onClick={() => setEditing(true)}
           width={12}
           height={12}
@@ -84,7 +78,7 @@ const _Address = ({
       {lowerAddress}{' '}
       <IconButton
         icon="edit"
-        title="Edit"
+        title={t(['addressBook', 'book', 'editContact'])}
         width={12}
         height={12}
         onClick={() => setEditing(true)}

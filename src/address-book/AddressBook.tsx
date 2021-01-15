@@ -101,6 +101,7 @@ const _EditContactModal = ({
         }}
         id={LABEL_FIELD_NAME}
       />
+      <div className="test" data-testid={`modal-${editMode}`} />
     </Dialog>
   )
 }
@@ -218,15 +219,23 @@ const _AddressBook = ({
                 <span className="address">
                   {address}{' '}
                   <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-                    <IconButton icon="copy" title="Copy" onClick={() => copyToClipboard(address)} />
+                    <IconButton icon="copy" onClick={() => copyToClipboard(address)} />
                   </Popover>
                 </span>
                 <span className="actions">
                   <span className="delete">
-                    <IconButton icon="delete" title="Delete" onClick={onStartDelete(address)} />
+                    <IconButton
+                      icon="delete"
+                      title={t(['addressBook', 'book', 'deleteContact'])}
+                      onClick={onStartDelete(address)}
+                    />
                   </span>
                   <span className="edit">
-                    <IconButton icon="edit" title="Edit" onClick={onStartEdit(address)} />
+                    <IconButton
+                      icon="edit"
+                      title={t(['addressBook', 'book', 'editContact'])}
+                      onClick={onStartEdit(address)}
+                    />
                   </span>
                 </span>
               </div>
