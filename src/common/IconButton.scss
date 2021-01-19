@@ -1,0 +1,30 @@
+@import '../sass-includes';
+
+.icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  stroke-width: 0;
+
+  @include themify($themes) {
+    fill: themed('text-color');
+  }
+}
+
+.iconContainer {
+  cursor: pointer;
+
+  &:focus {
+    box-shadow: none;
+    @include themify($themes) {
+      -webkit-filter: drop-shadow(2px 2px 1px themed('text-shadow'));
+      filter: drop-shadow(2px 2px 1px themed('text-shadow'));
+    }
+
+    .icon {
+      @include themify($themes) {
+        fill: themed('primary-color');
+      }
+    }
+  }
+}

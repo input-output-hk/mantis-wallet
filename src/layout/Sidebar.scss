@@ -124,10 +124,6 @@
   }
 
   .balance-wrapper {
-    .faucet-button {
-      margin-top: 10px;
-    }
-
     .BalanceDisplay {
       .balances {
         .label {
@@ -144,6 +140,15 @@
           font-size: $small-font-size;
         }
       }
+    }
+  }
+
+  .main-buttons {
+    position: relative;
+    margin-top: 50px;
+
+    .faucet-button {
+      width: 220px;
     }
   }
 

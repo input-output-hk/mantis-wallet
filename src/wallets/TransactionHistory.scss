@@ -18,17 +18,6 @@
     display: grid;
     grid-template-columns: 1fr auto;
     line-height: 30px;
-
-    .sort-by {
-      display: inline-block;
-      font-size: $font-size-s;
-      font-weight: bold;
-      letter-spacing: $letter-spacing-small;
-      text-align: left;
-      text-transform: uppercase;
-      vertical-align: middle;
-      cursor: pointer;
-    }
   }
 
   .no-transactions {
@@ -37,15 +26,5 @@
 
   .transactions-container {
     margin-top: 30px;
-  }
-}
-
-.SortByDropdown {
-  .ant-dropdown-menu-item {
-    &:hover {
-      @include themify($themes) {
-        background-color: themed('primary-color');
-      }
-    }
   }
 }

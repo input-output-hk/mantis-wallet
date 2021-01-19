@@ -23,6 +23,7 @@ $themes: (
   dark: (
     text-color: $dark-text-color,
     inactive-text-color: darken($dark-text-color, 20%),
+    text-shadow: rgba($dark-text-color, 0.5),
     normal-color: $dark-normal-color,
     secondary-background: $dark-secondary-background,
     primary-color: $primary-color,
@@ -70,6 +71,7 @@ $themes: (
   light: (
     text-color: $light-text-color,
     inactive-text-color: lighten($light-text-color, 20%),
+    text-shadow: rgba($light-text-color, 0.5),
     normal-color: $light-normal-color,
     secondary-background: $light-secondary-background,
     primary-color: $primary-color,
