@@ -5,7 +5,7 @@ import {StoreWalletData} from '../../common/wallet-state'
 import {NetworkName} from '../../config/type'
 
 export interface TxHistoryStoreData {
-  txHistory: Record<NetworkName, StoredHistory.StoredHistory | undefined>
+  txHistory: Record<NetworkName, StoredHistory.StoredHistory>
 }
 export const defaultTxHistoryStoreData: TxHistoryStoreData = {
   txHistory: {},

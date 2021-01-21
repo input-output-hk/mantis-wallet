@@ -70,9 +70,3 @@ function useBackendState(params?: Partial<BackendStateParams>): BackendState {
 }
 
 export const BackendState = createContainer(useBackendState)
-
-export const migrationsForBackendData = {
-  '0.1.2-mantis-wallet': (store: Store<StoreBackendData>): void => {
-    store.set('networkName', config.networkName)
-  },
-}
