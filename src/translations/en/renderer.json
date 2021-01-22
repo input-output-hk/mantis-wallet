@@ -156,8 +156,9 @@
     "syncStatus": {
       "syncConnecting": "Connecting",
       "fullySynced": "Fully Synced",
-      "syncingBlocks": "Syncing Blocks {{percentage}}%",
-      "syncingState": "Syncing State {{percentage}}%",
+      "syncingBlocks": "Syncing Blocks: {{percentage}}%",
+      "syncingState": "Syncing State: {{processed}} of {{total}}",
+      "syncingStateDescription": "Mantis Wallet is fetching all accounts state, including balances and smart contract codes",
       "currentBlock": "Current block: <strong>{{blockNumber}}</strong>",
       "highestBlock": "Highest block: <strong>{{blockNumber}}</strong>",
       "networkName": "Network: <strong>{{networkName}}</strong>"

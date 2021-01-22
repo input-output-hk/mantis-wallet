@@ -30,9 +30,7 @@
         text-align: right;
 
         > span {
-          @extend %disable-focus-outline;
           padding: 0.25em;
-          cursor: pointer;
         }
 
         .delete {
@@ -41,4 +39,8 @@
       }
     }
   }
+}
+
+.test {
+  display: none;
 }

@@ -24,6 +24,7 @@ import {
 import {BackendState} from './backend-state'
 
 const EXPECTED_LAST_BLOCK_CHANGE_SECONDS = 60
+const SYNC_STATUS_REFRESH_INTERVAL = 500
 
 interface SynchronizationStatusOffline {
   mode: 'offline'
@@ -31,13 +32,13 @@ interface SynchronizationStatusOffline {
   lastNewBlockTimestamp: number
 }
 
-interface SynchronizationStatusOnline {
+export interface SynchronizationStatusOnline {
   mode: 'online'
+  type: 'blocks' | 'state'
   currentBlock: number
   highestKnownBlock: number
   pulledStates: number
   knownStates: number
-  percentage: number
   lastNewBlockTimestamp: number
 }
 
@@ -469,21 +470,13 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
       }
     }
 
-    const allBlocks = syncing.highestBlock
-    const syncedBlocks = syncing.currentBlock
-
-    const syncedRatio =
-      allBlocks + syncing.knownStates === 0
-        ? 0
-        : (syncedBlocks + syncing.pulledStates) / (allBlocks + syncing.knownStates)
-
     return {
       mode: 'online',
+      type: syncing.currentBlock === syncing.highestBlock ? 'state' : 'blocks',
       currentBlock: syncing.currentBlock,
       highestKnownBlock: syncing.highestBlock,
       pulledStates: syncing.pulledStates,
       knownStates: syncing.knownStates,
-      percentage: syncedRatio * 100,
       lastNewBlockTimestamp,
     }
   }
@@ -658,7 +651,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   useRecurringTimeout(async () => {
     await refreshSyncStatus()
     rendererLog.debug(`sync status`, option.getOrElseW(() => null)(syncStatusOption))
-  }, 3000)
+  }, SYNC_STATUS_REFRESH_INTERVAL)
 
   return {
     walletStatus,

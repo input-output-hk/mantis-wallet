@@ -40,9 +40,15 @@
   }
 }
 
-.ant-popover .syncStatusLine > strong {
-  @extend %monospace;
-  font-weight: 700;
+.ant-popover {
+  .ant-popover-inner-content {
+    max-width: 250px;
+  }
+
+  .syncStatusLine > strong {
+    @extend %monospace;
+    font-weight: 700;
+  }
 }
 
 @keyframes spin {

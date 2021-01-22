@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import React from 'react'
+import React, {useEffect} from 'react'
 import _ from 'lodash/fp'
 import {SplashScreen} from './SplashScreen'
 import {BackendState, defaultBackendData, StoreBackendData} from './common/backend-state'
@@ -54,6 +54,10 @@ const migrations = mergeMigrations([migrationsForWalletData])
 const store = createPersistentStore({defaults: defaultData, migrations})
 
 const AppContent: React.FC = () => {
+  useEffect(() => {
+    rendererLog.info('Mantis Wallet renderer started')
+  })
+
   const backendState = BackendState.useContainer()
   const {
     currentRoute: {menu},

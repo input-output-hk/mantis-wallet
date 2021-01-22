@@ -1,18 +1,18 @@
 import {Button, message, Popover} from 'antd'
 import React, {useState} from 'react'
 import {EmptyProps} from 'antd/lib/empty'
-import {CopyOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons'
 import {Trans} from '../common/Trans'
 import {useLocalizedUtilities, useTranslation} from '../settings-state'
 import {Dialog} from '../common/Dialog'
 import {DialogInput} from '../common/dialog/DialogInput'
 import {DialogMessage} from '../common/dialog/DialogMessage'
 import {ModalLocker, wrapWithModal} from '../common/MantisModal'
-import {fillActionHandlers, toAntValidator, validateAddress} from '../common/util'
+import {toAntValidator, validateAddress} from '../common/util'
 import {LoadedState} from '../common/wallet-state'
 import {PropsWithWalletState, withStatusGuard} from '../common/wallet-status-guard'
 import {NoWallet} from '../wallets/NoWallet'
 import './AddressBook.scss'
+import {IconButton} from '../common/IconButton'
 
 const LABEL_MAX_LENGTH = 80
 const LABEL_FIELD_NAME = 'contact-label'
@@ -101,6 +101,7 @@ const _EditContactModal = ({
         }}
         id={LABEL_FIELD_NAME}
       />
+      <div className="test" data-testid={`modal-${editMode}`} />
     </Dialog>
   )
 }
@@ -218,23 +219,23 @@ const _AddressBook = ({
                 <span className="address">
                   {address}{' '}
                   <Popover content={t(['addressBook', 'address', 'clickToCopy'])} placement="top">
-                    <CopyOutlined className="clickable" onClick={() => copyToClipboard(address)} />
+                    <IconButton icon="copy" onClick={() => copyToClipboard(address)} />
                   </Popover>
                 </span>
                 <span className="actions">
-                  <span
-                    className="delete"
-                    title={t(['addressBook', 'book', 'deleteContact'])}
-                    {...fillActionHandlers(onStartDelete(address))}
-                  >
-                    <DeleteOutlined />
+                  <span className="delete">
+                    <IconButton
+                      icon="delete"
+                      title={t(['addressBook', 'book', 'deleteContact'])}
+                      onClick={onStartDelete(address)}
+                    />
                   </span>
-                  <span
-                    className="edit"
-                    title={t(['addressBook', 'book', 'editContact'])}
-                    {...fillActionHandlers(onStartEdit(address))}
-                  >
-                    <EditOutlined />
+                  <span className="edit">
+                    <IconButton
+                      icon="edit"
+                      title={t(['addressBook', 'book', 'editContact'])}
+                      onClick={onStartEdit(address)}
+                    />
                   </span>
                 </span>
               </div>

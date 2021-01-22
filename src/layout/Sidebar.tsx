@@ -129,12 +129,12 @@ export const Sidebar = (): JSX.Element => {
           {walletState.walletStatus === 'LOADED' && (
             <>
               <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
-              <div className="faucet-button">
+              <div className="main-buttons">
                 {networkName === 'testnet-internal-nomad' && (
                   <Button
                     data-testid="faucet-button"
-                    type="default"
-                    className="action"
+                    type="primary"
+                    className="faucet-button action left-diagonal"
                     {...fillActionHandlers((): void => {
                       shell.openExternal(FAUCET_URL)
                     })}
