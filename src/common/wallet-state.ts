@@ -679,4 +679,10 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 }
 
+export const migrationsForWalletData = {
+  '0.1.0-mantis-wallet': (store: Store<StoreWalletData>): void => {
+    store.set(['wallet', 'txHistory'], {})
+  },
+}
+
 export const WalletState = createContainer(useWalletState)

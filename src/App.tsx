@@ -2,15 +2,15 @@ import classnames from 'classnames'
 import React, {useEffect} from 'react'
 import _ from 'lodash/fp'
 import {SplashScreen} from './SplashScreen'
-import {
-  BackendState,
-  defaultBackendData,
-  migrationsForBackendData,
-  StoreBackendData,
-} from './common/backend-state'
+import {BackendState, defaultBackendData, StoreBackendData} from './common/backend-state'
 import {rendererLog} from './common/logger'
 import {createPersistentStore, Store} from './common/store'
-import {WalletState, defaultWalletData, StoreWalletData} from './common/wallet-state'
+import {
+  WalletState,
+  defaultWalletData,
+  StoreWalletData,
+  migrationsForWalletData,
+} from './common/wallet-state'
 import {config} from './config/renderer'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
@@ -50,7 +50,7 @@ const mergeMigrations = _.mergeAllWith(
   },
 )
 
-const migrations = mergeMigrations([migrationsForBackendData])
+const migrations = mergeMigrations([migrationsForWalletData])
 const store = createPersistentStore({defaults: defaultData, migrations})
 
 const AppContent: React.FC = () => {

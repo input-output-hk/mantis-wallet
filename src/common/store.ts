@@ -84,10 +84,11 @@ export function createPersistentStore<T extends object>(
     key: K1 | [K1, K2] | [K1, K2, K3],
     value: T[K1] | T[K1][K2] | T[K1][K2][K3],
   ): void {
-    if (_.isArray(key)) {
-      store.set(key.join('.'), value)
+    const path = _.isArray(key) ? key.join('.') : key
+    if (value === undefined) {
+      store.delete(path)
     } else {
-      store.set(key, value)
+      store.set(path, value)
     }
   }
 
