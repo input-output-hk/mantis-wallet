@@ -18,7 +18,8 @@
       "dateFormat": "Date Format",
       "timeFormat": "Time Format",
       "exportPrivateKey": "Export",
-      "network": "Network"
+      "network": "Network",
+      "dataDir": "Mantis data directory"
     },
     "timeFormat": {
       "12hour": "12-hour",
@@ -339,7 +340,7 @@
       "waitUntilActionFinish": "You will have to wait for your action to finish.",
       "debugLogsSaved": "Debug logs saved successfully! Click here to open the containing folder.",
       "saveDebugLogsCancelled": "Operation cancelled.",
-      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team in IOHK.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in thebug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
+      "supportModalMessage": "<p>If you encounter a bug, don't hesitate to contact our support team in IOHK.</p><p>To make it easier for us to diagnose your problem, please, include your debug logs in the bug report.</p><p>You can save your logs easily by clicking the <strong>Export Logs</strong> button below.</p>",
       "chooseFromDropdownList": "Choose from list…",
       "iUnderstandApproval": "I understand"
     },

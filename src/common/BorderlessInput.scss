@@ -1,45 +1,48 @@
-@import '../themify';
+@import '../sass-includes';
 
-.BorderlessInput {
-  position: relative;
+@include dialog-scoped {
+  .BorderlessInput {
+    position: relative;
 
-  .ant-input {
-    padding: 0 0.75rem;
-    border: 0;
-    border-radius: $dialog-component-border-radius;
-    opacity: 1;
-    resize: none;
+    .ant-input {
+      width: 100%;
+      height: $dialog-component-height;
+      border: 0;
+      border-radius: $dialog-component-border-radius;
+      opacity: 1;
+      resize: none;
 
-    @include themify($themes) {
-      border: 1px solid themed('text-color');
-      background-color: themed('dialog-dark-input-bg');
-      color: themed('text-color');
-    }
-
-    &:focus {
-      box-shadow: none;
-    }
-
-    &:hover,
-    &:focus {
       @include themify($themes) {
+        border: 1px solid themed('text-color');
         background-color: themed('dialog-dark-input-bg');
         color: themed('text-color');
       }
-    }
 
-    &::placeholder {
-      @include themify($themes) {
-        color: themed('secondary-text-color');
+      &:focus {
+        box-shadow: none;
+      }
+
+      &:hover,
+      &:focus {
+        @include themify($themes) {
+          background-color: themed('dialog-dark-input-bg');
+          color: themed('text-color');
+        }
+      }
+
+      &::placeholder {
+        @include themify($themes) {
+          color: themed('secondary-text-color');
+        }
       }
     }
-  }
 
-  &.invalid,
-  .ant-form-item-has-error & {
-    .ant-input {
-      @include themify($themes) {
-        border: 1px solid themed('error-color') !important;
+    &.invalid,
+    .ant-form-item-has-error & {
+      .ant-input {
+        @include themify($themes) {
+          border: 1px solid themed('error-color') !important;
+        }
       }
     }
   }

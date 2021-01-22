@@ -15,7 +15,7 @@ export const Wallets = (): JSX.Element => {
   useEffect(() => {
     pipe(
       walletState.error,
-      option.map((error) => translateError(error)),
+      option.map(translateError),
       option.fold(
         () => void 0,
         (error) => {

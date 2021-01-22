@@ -1,6 +1,7 @@
 // Typed wrapper for listening to IPC events
+import {promises as fs} from 'fs'
 import {app, ipcMain, dialog} from 'electron'
-import {IPCFromRendererChannelName} from '../shared/ipc-types'
+import {IPCFromRendererChannelName, IPCToRendererChannelName} from '../shared/ipc-types'
 import {EDITION, MANTIS_WALLET_VERSION} from '../shared/version'
 import {TFunctionMain} from './i18n'
 import {displayNameOfNetworkMain} from '../config/type'
@@ -10,6 +11,11 @@ export function ipcListenToRenderer(
   listener: Parameters<typeof ipcMain.on>[1],
 ): void {
   ipcMain.on(channel, listener)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function emitToRenderer(channel: IPCToRendererChannelName, ...args: any[]): void {
+  ipcMain.emit(channel, ...args)
 }
 
 export function getTitle(t: TFunctionMain, networkType?: string): string {
@@ -30,3 +36,6 @@ export function showErrorBox(t: TFunctionMain, title: string, content: string): 
     dialog.showErrorBox(title, content)
   }
 }
+
+export const isDirEmpty = (dir: string): Promise<boolean> =>
+  fs.readdir(dir).then((files) => files.length === 0)

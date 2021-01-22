@@ -7,7 +7,7 @@ import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {Account, FeeEstimates} from '../common/wallet-state'
 import {abbreviateAmountForEnUS, createWithProviders} from '../common/test-helpers'
 import {ADDRESS} from '../storybook-util/dummies'
-import {mockedCopyToClipboard} from '../jest.setup'
+import {mockedCopyToClipboard} from '../jest.config'
 import {asWei, asEther, etherValue} from '../common/units'
 import {Transaction} from './history'
 

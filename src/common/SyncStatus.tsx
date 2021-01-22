@@ -10,6 +10,8 @@ import {displayNameOfNetwork} from '../config/type'
 import refreshIcon from '../assets/icons/refresh.svg'
 import './SyncStatus.scss'
 
+const PERCENTAGE_DECIMAL_PLACES = 4
+
 interface SyncStatusProps {
   syncStatus: SynchronizationStatus
 }
@@ -29,7 +31,9 @@ export const SyncMessage = ({syncStatus}: SyncStatusProps): JSX.Element => {
       return syncStatus.type === 'blocks' ? (
         <Trans
           k={['wallet', 'syncStatus', 'syncingBlocks']}
-          values={{percentage: getSyncBlocksProgress(syncStatus)}}
+          values={{
+            percentage: getSyncBlocksProgress(syncStatus).toFixed(PERCENTAGE_DECIMAL_PLACES),
+          }}
         />
       ) : (
         <Trans

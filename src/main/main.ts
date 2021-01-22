@@ -23,7 +23,12 @@ import {config} from '../config/main'
 import {buildMenu} from './menu'
 import {getTitle, ipcListenToRenderer, showErrorBox} from './util'
 import {status} from './status'
-import {checkDatadirCompatibility, CheckedDatadir} from './data-dir'
+import {
+  checkNodeDatadir,
+  selectDatadirLocation,
+  CheckedDatadir,
+  getMantisDatadirPath,
+} from './data-dir'
 import {createLogExporter} from './log-exporter'
 import {createMainLog} from './logger'
 import {
@@ -64,7 +69,7 @@ function lockAspectRatioOnMacOS(window: BrowserWindow): void {
   window.setAspectRatio(ASPECT_RATIO)
 }
 
-function createWindow(t: TFunctionMain): void {
+function createWindow(t: TFunctionMain): BrowserWindow {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
   const mainWindow = new BrowserWindow({
@@ -107,12 +112,14 @@ function createWindow(t: TFunctionMain): void {
   })
 
   mainWindowHandle = mainWindow
+
+  return mainWindow
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-const openMantisWallet = (t: TFunctionMain): Promise<void> =>
+const openMantisWallet = (t: TFunctionMain): Promise<BrowserWindow> =>
   app.whenReady().then(() => createWindow(t))
 
 //
@@ -147,28 +154,39 @@ interface DatadirDependants {
   mainLog: ElectronLog
   store: MainStore
   i18n: i18n
+  t: TFunctionMain
   exportLogs: ReturnType<typeof createLogExporter>
+  mainWindow: BrowserWindow
 }
 
-const datadirInit = (): Promise<DatadirDependants> =>
-  checkDatadirCompatibility(config.dataDir).then(
-    (checkedDatadir: CheckedDatadir): DatadirDependants => {
-      const store = createStore(checkedDatadir, config.networkName)
-      const mainLog = createMainLog(checkedDatadir, store)
+const walletInit = async (): Promise<DatadirDependants> => {
+  await app.whenReady()
+  const store = createStore(config.walletDataDir, config.mantis.dataDir, config.networkName)
+  const i18n = createAndInitI18nForMain(store.get('settings.language'))
+  const t = createTFunctionMain(i18n)
+  const mainWindow = await openMantisWallet(t)
+
+  // Select initial Mantis datadir path
+  if (!getMantisDatadirPath(config, store)) {
+    const newMantisDatadirPath = await selectDatadirLocation(mainWindow, t, config.walletDataDir)
+    store.set('settings.mantisDatadir', newMantisDatadirPath)
+  }
+
+  return checkNodeDatadir(mainWindow, t, getMantisDatadirPath(config, store)).then(
+    async (checkedDatadir: CheckedDatadir): Promise<DatadirDependants> => {
+      const mainLog = createMainLog(checkedDatadir, store, config)
       mainLog.info({
         versions: process.versions,
         config,
       })
-      const i18n = createAndInitI18nForMain(store.get('settings.language'))
       const exportLogs = createLogExporter(checkedDatadir)
-      return {mainLog, store, i18n, exportLogs}
+      return {mainLog, store, i18n, exportLogs, t, mainWindow}
     },
   )
+}
 
-datadirInit()
-  .then(({mainLog, store, i18n, exportLogs}) => {
-    const t = createTFunctionMain(i18n)
-
+walletInit()
+  .then(({mainLog, store, i18n, exportLogs, t, mainWindow}) => {
     if (!config.runNode) {
       // Handle TLS from external config
       pipe(
@@ -187,7 +205,6 @@ datadirInit()
                 app.exit(1)
               }),
         ),
-        () => openMantisWallet(t),
       )
     }
 
@@ -196,7 +213,6 @@ datadirInit()
     //
     if (config.runNode) {
       const initializationPromise = checkPortUsage(config)
-        .then(() => openMantisWallet(t))
         .then(() => setupOwnTLS(config.mantis))
         .then((tlsData) => ({
           tlsData,
@@ -237,9 +253,12 @@ datadirInit()
           store.set('networkName', config.networkName)
         }
         const newNetworkName = store.get('networkName')
-        mainWindowHandle?.setTitle(getTitle(t, newNetworkName))
+        mainWindow.setTitle(getTitle(t, newNetworkName))
+
+        const mantisDatadirPath = getMantisDatadirPath(config, store)
+
         const mantisProcess = MantisProcess(spawn)(
-          config.dataDir,
+          mantisDatadirPath,
           newNetworkName,
           config.mantis,
           mainLog,
@@ -301,7 +320,19 @@ datadirInit()
 
       ipcListenToRenderer('update-network-name', (_event, networkName: string) => {
         killMantis()
-        mainWindowHandle?.setTitle(getTitle(t, networkName))
+        mainWindow.setTitle(getTitle(t, networkName))
+      })
+
+      ipcListenToRenderer('update-datadir-location', async (_event) => {
+        const currentMantisDatadirPath = store.get('settings.mantisDatadir')
+        const newMantisDatadirPath = await selectDatadirLocation(
+          mainWindow,
+          t,
+          currentMantisDatadirPath,
+        )
+        store.set('settings.mantisDatadir', newMantisDatadirPath)
+        await checkNodeDatadir(mainWindow, t, newMantisDatadirPath)
+        killMantis()
       })
     }
 
@@ -314,7 +345,7 @@ datadirInit()
         filters: [{name: t(['dialog', 'fileFilter', 'zipArchives']), extensions: ['zip']}],
       }
 
-      const {canceled, filePath: outputFilePath} = await dialog.showSaveDialog(options)
+      const {canceled, filePath: outputFilePath} = await dialog.showSaveDialog(mainWindow, options)
       if (canceled || !outputFilePath) {
         return event.reply('save-debug-logs-cancel')
       }
@@ -330,13 +361,11 @@ datadirInit()
 
     // Setup language handling
     ipcListenToRenderer('update-language', (_event, language: Language) => {
-      if (mainWindowHandle) {
-        i18n.changeLanguage(language).then(() => {
-          const t = createTFunctionMain(i18n)
-          Menu.setApplicationMenu(buildMenu(t))
-          mainWindowHandle?.setTitle(getTitle(t, store.get('networkName')))
-        })
-      }
+      i18n.changeLanguage(language).then(() => {
+        const t = createTFunctionMain(i18n)
+        Menu.setApplicationMenu(buildMenu(t))
+        mainWindow.setTitle(getTitle(t, store.get('networkName')))
+      })
     })
   })
 

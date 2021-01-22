@@ -1,7 +1,9 @@
 import React, {useState, PropsWithChildren} from 'react'
 import {Button, Select, Switch} from 'antd'
+import {FolderOpenOutlined} from '@ant-design/icons'
 import {EmptyProps} from 'antd/lib/empty'
-import {SettingsState, TIME_FORMATS, DATE_FORMATS, TimeFormat} from './settings-state'
+import {DATE_FORMATS, TimeFormat, TIME_FORMATS} from './common/formatters'
+import {SettingsState} from './settings-state'
 import {WalletState, canResetWallet} from './common/wallet-state'
 import {BackendState} from './common/backend-state'
 import {fillActionHandlers} from './common/util'
@@ -9,6 +11,8 @@ import {Header} from './common/Header'
 import {ExportPrivateKeyModal} from './wallets/modals/ExportPrivateKey'
 import {Trans} from './common/Trans'
 import {TKeyRenderer} from './common/i18n'
+import {updateDatadirLocation} from './common/ipc-util'
+import {BorderlessInput} from './common/BorderlessInput'
 import {LANGUAGES, Language} from './shared/i18n'
 import {ChangeNetworkModal} from './wallets/modals/ChangeNetwork'
 import {
@@ -17,6 +21,7 @@ import {
   isDefinedNetworkName,
   displayNameOfNetwork,
 } from './config/type'
+import {config} from './config/renderer'
 import './Settings.scss'
 
 const {Option} = Select
@@ -53,8 +58,12 @@ export const Settings = (): JSX.Element => {
     setDateFormat,
     language,
     setLanguage,
+    mantisDatadir,
     translation: {t},
   } = SettingsState.useContainer()
+
+  const isMantisDatadirSetInConfig = !!config.mantis.dataDir
+  const mantisDatadirInUse = config.mantis.dataDir ?? mantisDatadir
 
   const {networkName} = BackendState.useContainer()
 
@@ -178,6 +187,28 @@ export const Settings = (): JSX.Element => {
           />
         </>
       )}
+      {/* mantis data directory */}
+      <div className="settings-item">
+        <div className="settings-label">
+          <Trans k={['settings', 'label', 'dataDir']} />
+        </div>
+        <div className="settings-input select-folder">
+          <BorderlessInput
+            disabled
+            value={mantisDatadirInUse}
+            style={{fontSize: Math.max(8, Math.min(12, 12 - (mantisDatadirInUse.length - 40) / 5))}}
+          />
+          <Button
+            className="edit-button"
+            type="primary"
+            size="large"
+            disabled={isMantisDatadirSetInConfig}
+            {...fillActionHandlers(() => updateDatadirLocation())}
+          >
+            <FolderOpenOutlined />
+          </Button>
+        </div>
+      </div>
       {/* export private key */}
       {walletState.walletStatus === 'LOADED' && (
         <>

@@ -5,8 +5,11 @@
   "dialog": {
     "button": {
       "cancel": "Cancel",
+      "abort": "Abort",
       "ok": "OK",
-      "saveDebugLogs": "Save Debug logs"
+      "saveDebugLogs": "Save Debug logs",
+      "selectDirectory": "Select Directory",
+      "selectOtherLocation": "Select other location"
     },
     "checkboxLabel": {
       "deleteCurrentDataDir": "Delete my current data directory instead"
@@ -17,7 +20,7 @@
     "message": {
       "incompatibleDataDir": "Your current data directory is incompatible with this version of Mantis Wallet.",
       "incompatibleDataDirAction": "We'll rename your old data directory from \"{{oldDirName}}\" to \"{{newDirName}}\".",
-      "deleteDirectoryQuestion": "Are you sure you want to delete \"{{directory}}\"?",
+      "deleteDatadirConfirmation": "Are you sure you want to delete \"{{directory}}\"?",
       "operationComplete": "Operation complete"
     },
     "title": {
@@ -25,6 +28,19 @@
       "saveDebugLogs": "Save Debug logs",
       "startupError": "Mantis Wallet startup error",
       "error": "Error"
+    },
+    "noVersionTxt": {
+      "title": "Unversioned datadir",
+      "addVersionTxt": "Add version.txt",
+      "moveDelete": "Move / delete",
+      "message": "The selected Mantis datadir doesn't have a version.txt",
+      "detail": "If it's an old datadir, choose the \"Move / delete\" option.\n\nIf you created this datadir with the current Mantis node CLI (on the command line), select the \"Add version.txt\" option.\n"
+    },
+    "selectDatadir": {
+      "freeSpaceWarning": "Recommended free space:\n    5gb+ for testnets\n    50gb+ for Mainnet (FastSync)",
+      "openDialogTitle": "Select the directory where the Mantis datadir should be placed",
+      "selectMantisDatadir": "Select the Mantis datadir location",
+      "newPathConfirmation": "New datadir path will be:"
     }
   },
   "error": {

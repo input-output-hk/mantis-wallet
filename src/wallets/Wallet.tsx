@@ -5,18 +5,25 @@ import {withStatusGuard, PropsWithWalletState} from '../common/wallet-status-gua
 import {LoadedState} from '../common/wallet-state'
 import './Wallet.scss'
 
-const _Wallet = ({walletState}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
-  const {transactions, availableBalance} = walletState.getOverviewProps()
-
+const _Wallet = ({
+  walletState: {
+    transactions,
+    availableBalance,
+    accounts,
+    estimateTransactionFee,
+    getNextNonce,
+    generateAccount,
+  },
+}: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   return (
     <div className="Wallet invisible-scrollbar">
       <TransactionHistory
         transactions={transactions}
-        accounts={walletState.accounts}
+        accounts={accounts}
         availableBalance={availableBalance}
-        estimateTransactionFee={walletState.estimateTransactionFee}
-        getNextNonce={walletState.getNextNonce}
-        generateAddress={walletState.generateAccount}
+        estimateTransactionFee={estimateTransactionFee}
+        getNextNonce={getNextNonce}
+        generateAddress={generateAccount}
       />
     </div>
   )

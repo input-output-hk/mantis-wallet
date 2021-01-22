@@ -1,6 +1,9 @@
 const mockedGlobal = {
   mantisWalletConfig: {
     rpcAddress: 'localhost:1234',
+    mantis: {
+      dataDir: null,
+    },
   },
   mantisWalletStatus: {
     fetchParams: {

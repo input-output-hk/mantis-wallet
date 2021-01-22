@@ -98,7 +98,9 @@ export interface LoadedState extends CommonState {
   walletStatus: 'LOADED'
   error: Option<Error>
   accounts: Account[]
-  getOverviewProps: () => Overview
+  availableBalance: Option<Wei>
+  pendingBalance: Wei
+  transactions: readonly Transaction[]
   reset: () => void
   remove: (password: string) => Promise<boolean>
   getPrivateKey: (password: string) => Promise<string>
@@ -125,12 +127,6 @@ export interface NoWalletState extends CommonState {
 export type WalletStatus = 'INITIAL' | 'LOADING' | 'LOADED' | 'NO_WALLET'
 export type WalletData = InitialState | LoadingState | LoadedState | NoWalletState
 
-interface Overview {
-  availableBalance: Option<Wei>
-  pendingBalance: Wei
-  transactions: readonly Transaction[]
-}
-
 interface StoredAccount {
   name: string
   address: string
@@ -154,7 +150,7 @@ export const defaultWalletData: StoreWalletData = {
   },
 }
 
-interface WalletStateParams {
+export interface WalletStateParams {
   walletStatus: WalletStatus
   web3: MantisWeb3
   store: Store<StoreWalletData>
@@ -267,18 +263,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   ])
 
   const accounts = getOrElse((): Account[] => [])(accountsOption)
-
-  const getOverviewProps = (): Overview => {
-    const totalBalance = getOrElse(() => asWei(0))(totalBalanceOption)
-    const availableBalance = getOrElse(() => asWei(0))(availableBalanceOption)
-    const pendingBalance = asWei(totalBalance.minus(availableBalance))
-
-    return {
-      availableBalance: availableBalanceOption,
-      pendingBalance,
-      transactions,
-    }
-  }
 
   const isLoaded = (): boolean => isSome(accountsOption)
 
@@ -411,7 +395,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   }
 
   const load = (): Promise<void> => {
-    const loadFns = [() => loadBalance(transactions), loadAccounts]
+    const loadFns = isMocked ? [] : [() => loadBalance(transactions), loadAccounts]
     setWalletStatus('LOADING')
     setError(option.none)
     return pipe(
@@ -434,10 +418,6 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
     const previousSyncStatus = syncStatus
     const syncing = await web3.eth.isSyncing()
-
-    if (syncing === true) {
-      throw Error('Unexpected')
-    }
 
     const currentBlock = await web3.eth.getBlockNumber()
     if (initialBlockNumber === undefined) {
@@ -653,11 +633,17 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     rendererLog.debug(`sync status`, option.getOrElseW(() => null)(syncStatusOption))
   }, SYNC_STATUS_REFRESH_INTERVAL)
 
+  const totalBalance = getOrElse(() => asWei(0))(totalBalanceOption)
+  const availableBalance = getOrElse(() => asWei(0))(availableBalanceOption)
+  const pendingBalance = asWei(totalBalance.minus(availableBalance))
+
   return {
     walletStatus,
     error,
     syncStatus,
-    getOverviewProps,
+    availableBalance: availableBalanceOption,
+    pendingBalance,
+    transactions,
     reset,
     generateAccount,
     getNextNonce,

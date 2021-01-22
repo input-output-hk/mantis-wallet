@@ -6,6 +6,8 @@ const mockedLogger = (): log.ElectronLog => {
 
   // eslint-disable-next-line fp/no-mutation
   mockedLogger.transports.file.level = false
+  // eslint-disable-next-line fp/no-mutation
+  mockedLogger.transports.console.level = false
 
   return mockedLogger
 }
@@ -14,6 +16,7 @@ jest.mock('./common/clipboard', () => ({copyToClipboard: jest.fn()}))
 jest.mock('./common/logger', () => ({rendererLog: mockedLogger()}))
 jest.mock('./main/logger', () => ({createMainLog: () => mockedLogger()}))
 jest.mock('./config/renderer.ts')
+jest.mock('./common/ipc-util.ts')
 
 // Workaround suggested by the official manual
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom

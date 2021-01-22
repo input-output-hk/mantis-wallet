@@ -70,7 +70,7 @@
       "jest-canvas-mock"
     ],
     "setupFilesAfterEnv": [
-      "./src/jest.setup.ts"
+      "./src/jest.config.ts"
     ]
   },
   "dependencies": {

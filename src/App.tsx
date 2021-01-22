@@ -11,6 +11,7 @@ import {
   StoreWalletData,
   migrationsForWalletData,
 } from './common/wallet-state'
+import {ipcListenToMain, ipcRemoveAllListeners} from './common/ipc-util'
 import {config} from './config/renderer'
 import {Router} from './layout/Router'
 import {Sidebar} from './layout/Sidebar'
@@ -62,6 +63,17 @@ const AppContent: React.FC = () => {
   const {
     currentRoute: {menu},
   } = RouterState.useContainer()
+
+  useEffect(() => {
+    ipcListenToMain('store-changed', () => {
+      rendererLog.debug('store-changed event')
+      // FIXME: "watch" option is mostly broken, see: https://github.com/sindresorhus/conf/issues/108
+      // This is a hack to force electron store to update its contents
+      store.set('networkName', store.get('networkName'))
+    })
+
+    return () => ipcRemoveAllListeners('store-changed')
+  })
 
   return backendState.isBackendRunning ? (
     <div className={classnames('loaded', menu.toLowerCase())}>
