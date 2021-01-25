@@ -1,3 +1,5 @@
+# Just a test
+
 # Mantis Wallet
 
 Wallet for ETC Mantis.
