@@ -1,7 +1,6 @@
 import _ from 'lodash/fp'
 import * as StoredHistory from './StoredHistory'
 import {Store} from '../../common/store'
-import {StoreWalletData} from '../../common/wallet-state'
 import {NetworkName} from '../../config/type'
 
 export interface TxHistoryStoreData {
@@ -10,6 +9,11 @@ export interface TxHistoryStoreData {
 export const defaultTxHistoryStoreData: TxHistoryStoreData = {
   txHistory: {},
 }
+
+export interface GenericWalletStoreWithTxHistory {
+  wallet: TxHistoryStoreData
+}
+
 export interface HistoryStore {
   getStoredHistory(): Promise<StoredHistory.StoredHistory>
   storeHistory(sh: StoredHistory.StoredHistory): Promise<void>
@@ -19,7 +23,9 @@ export interface HistoryStoreFactory {
   clean(): Promise<void>
 }
 
-export const historyStoreFactory = (baseStore: Store<StoreWalletData>): HistoryStoreFactory => ({
+export const historyStoreFactory = (
+  baseStore: Store<GenericWalletStoreWithTxHistory>,
+): HistoryStoreFactory => ({
   getStore: (networkName): HistoryStore => ({
     getStoredHistory: async () =>
       Promise.resolve(baseStore.get(['wallet', 'txHistory', networkName])).then((value) =>
