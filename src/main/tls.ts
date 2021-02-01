@@ -9,23 +9,15 @@ import {ElectronLog} from 'electron-log'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as forge from 'node-forge'
 import {array, option} from 'fp-ts'
-import * as T from 'io-ts'
 import {Option} from 'fp-ts/lib/Option'
 import {processEnv, processExecutablePath} from './MantisProcess'
 import {prop, through} from '../shared/utils'
-import {ClientSettings, MantisConfig} from '../config/type'
+import {ClientSettings, MantisConfig, TLSConfig} from '../config/type'
 import {createTErrorMain} from './i18n'
 import {OptionOps} from '../shared'
 
 const keyStoreFilename = 'mantisCA.p12'
 const passwordFilename = 'password'
-
-export const tlsConfig = T.type({
-  keyStorePath: T.string,
-  passwordPath: T.string,
-})
-
-export type TLSConfig = T.TypeOf<typeof tlsConfig>
 
 export interface TLSCertificateData {
   fingerprint: string
