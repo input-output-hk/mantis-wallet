@@ -1,11 +1,12 @@
-import React, {FunctionComponent} from 'react'
+import React, {useState, useEffect} from 'react'
 import {ModalProps} from 'antd/lib/modal'
+import BigNumber from 'bignumber.js'
 import {ModalLocker} from '../../common/MantisModal'
 import {Dialog} from '../../common/Dialog'
 import {DialogInput, DialogTextArea} from '../../common/dialog/DialogInput'
 import {DialogColumns} from '../../common/dialog/DialogColumns'
 import {DialogAddressSelect} from '../../address-book/DialogAddressSelect'
-import {FeeEstimates} from '../../common/wallet-state'
+import {FeeEstimates, LoadedState} from '../../common/wallet-state'
 import {useTranslation} from '../../settings-state'
 import {AdvancedTransactionParams} from './common'
 import {
@@ -16,32 +17,64 @@ import {
   toAntValidator,
   validateAddressOrEmpty,
 } from '../../common/util'
+import {PropsWithWalletState, withStatusGuard} from '../../common/wallet-status-guard'
+import {getSendTransactionParams} from './ConfirmAdvancedTransaction'
+import {asEther, asWei, Wei} from '../../common/units'
+import {rendererLog} from '../../common/logger'
+import {InlineError} from '../../common/InlineError'
 
 interface SendAdvancedTransactionProps {
   onSend: () => void
+  availableAmount: Wei
   transactionParams: AdvancedTransactionParams
   setTransactionParams: (advancedParams: Partial<AdvancedTransactionParams>) => void
   estimateTransactionFee: () => Promise<FeeEstimates>
   onCancel: () => void
 }
 
-export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionProps &
-  ModalProps> = ({
+const _SendAdvancedTransaction = ({
+  availableAmount,
   transactionParams,
   setTransactionParams,
   onCancel,
   onSend,
-}: SendAdvancedTransactionProps & ModalProps) => {
+  walletState,
+}: PropsWithWalletState<SendAdvancedTransactionProps & ModalProps, LoadedState>): JSX.Element => {
   const {t} = useTranslation()
   const modalLocker = ModalLocker.useContainer()
+  const {estimateGas} = walletState
 
   const {amount, recipient, gasLimit, gasPrice, data, nonce} = transactionParams
+
+  const [gasEstimate, setGasEstimate] = useState<undefined | number>(undefined)
+
+  useEffect(() => {
+    async function doGasEstimate(): Promise<void> {
+      try {
+        const estimatedGas = await estimateGas(getSendTransactionParams(transactionParams))
+        setGasEstimate(estimatedGas)
+      } catch (e) {
+        rendererLog.error(e)
+        setGasEstimate(undefined)
+      }
+    }
+    doGasEstimate()
+  }, [transactionParams])
 
   const addressValidator = toAntValidator(t, validateAddressOrEmpty)
   const txAmountValidator = createAdvancedTxAmountValidator(t)
   const gasAmountValidator = createGasAmountValidator(t)
   const feeValidator = createFeeValidator(t)
   const hexValidator = createHexValidator(t)
+
+  const feeLimit = new BigNumber(gasLimit).times(gasPrice)
+  const totalAmount = asEther(new BigNumber(amount).plus(feeLimit))
+
+  const remainingBalance = asWei(
+    totalAmount.isFinite() ? availableAmount.minus(totalAmount) : availableAmount,
+  )
+
+  const hasInsufficientBalance = remainingBalance.isLessThan(0)
 
   return (
     <>
@@ -59,6 +92,7 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             }
             onSend()
           },
+          disabled: hasInsufficientBalance,
         }}
         onSetLoading={modalLocker.setLocked}
         type="dark"
@@ -78,6 +112,9 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             rules: [txAmountValidator],
           }}
         />
+        {hasInsufficientBalance && (
+          <InlineError errorMessage={t(['wallet', 'error', 'insufficientFunds'])} />
+        )}
         <DialogColumns>
           <DialogInput
             label={t(['wallet', 'label', 'gasLimit'])}
@@ -90,16 +127,22 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
             }}
           />
           <DialogInput
-            label={t(['wallet', 'label', 'gasPrice'])}
-            id="tx-gas-price"
-            onChange={(e): void => setTransactionParams({gasPrice: e.target.value})}
-            formItem={{
-              name: 'tx-gas-price',
-              initialValue: gasPrice,
-              rules: [feeValidator],
-            }}
+            label="Estimated gas amount"
+            id="tx-gas-estimate"
+            value={gasEstimate}
+            disabled={true}
           />
         </DialogColumns>
+        <DialogInput
+          label={t(['wallet', 'label', 'gasPrice'])}
+          id="tx-gas-price"
+          onChange={(e): void => setTransactionParams({gasPrice: e.target.value})}
+          formItem={{
+            name: 'tx-gas-price',
+            initialValue: gasPrice,
+            rules: [feeValidator],
+          }}
+        />
         <DialogTextArea
           label={t(['wallet', 'label', 'data'])}
           id="tx-data"
@@ -124,3 +167,5 @@ export const SendAdvancedTransaction: FunctionComponent<SendAdvancedTransactionP
     </>
   )
 }
+
+export const SendAdvancedTransaction = withStatusGuard(_SendAdvancedTransaction, 'LOADED')
