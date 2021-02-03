@@ -1,8 +1,4 @@
-import {WalletSetup} from './wallets/WalletSetup'
-import {ApiTest} from './ApiTest'
-import {Wallets} from './wallets/Wallets'
-import {Settings} from './Settings'
-import {AddressBook} from './address-book/AddressBook'
+import React from 'react'
 import {TKeyRenderer} from './common/i18n'
 
 // Menu
@@ -48,23 +44,31 @@ export type Routes = {
 
 export const ROUTES: Routes = {
   TXNS: {
-    component: Wallets,
+    component: React.lazy(() =>
+      import('./wallets/Wallets').then((module) => ({default: module.Wallets})),
+    ),
     menu: 'TXNS',
   },
   WALLET_SETUP: {
-    component: WalletSetup,
+    component: React.lazy(() =>
+      import('./wallets/WalletSetup').then((module) => ({default: module.WalletSetup})),
+    ),
     menu: 'TXNS',
   },
   SETTINGS: {
-    component: Settings,
+    component: React.lazy(() =>
+      import('./Settings').then((module) => ({default: module.Settings})),
+    ),
     menu: 'SETTINGS',
   },
   ADDRESS_BOOK: {
-    component: AddressBook,
+    component: React.lazy(() =>
+      import('./address-book/AddressBook').then((module) => ({default: module.AddressBook})),
+    ),
     menu: 'ADDRESS_BOOK',
   },
   API_TEST: {
-    component: ApiTest,
+    component: React.lazy(() => import('./ApiTest').then((module) => ({default: module.ApiTest}))),
     menu: 'SETTINGS',
   },
 }

@@ -1,7 +1,6 @@
 import {URL} from 'url'
 import {Option} from 'fp-ts/lib/Option'
 import * as T from 'io-ts'
-import {TLSConfig} from '../main/tls'
 import {TFunctionRenderer} from '../common/i18n'
 import {TFunctionMain} from '../main/i18n'
 
@@ -13,6 +12,13 @@ export interface MantisConfig {
   additionalSettings: ClientSettings
   dataDir: string | null
 }
+
+export const tlsConfig = T.type({
+  keyStorePath: T.string,
+  passwordPath: T.string,
+})
+
+export type TLSConfig = T.TypeOf<typeof tlsConfig>
 
 // Known predefined networks + anything else if user configures it on its own
 export const NetworkName = T.union(

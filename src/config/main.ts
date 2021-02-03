@@ -11,9 +11,8 @@ import * as _ from 'lodash/fp'
 import {option} from 'fp-ts'
 import {Option} from 'fp-ts/lib/Option'
 import {Type} from 'io-ts'
-import {Config, NetworkName, MantisConfig} from './type'
+import {Config, NetworkName, MantisConfig, TLSConfig} from './type'
 import {mapProp, through} from '../shared/utils'
-import {TLSConfig} from '../main/tls'
 import {OptionOps} from '../shared'
 
 const tildeToHome = (path: string): string =>

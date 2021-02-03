@@ -1,4 +1,5 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, Suspense} from 'react'
+import ErrorBoundary from 'antd/lib/alert/ErrorBoundary'
 import {RouterState} from '../router-state'
 import {RouteId} from '../routes-config'
 import './Router.scss'
@@ -15,7 +16,11 @@ export const Router = (): JSX.Element => {
 
   return (
     <main id="main" className="Router" ref={mainRef}>
-      <Component />
+      <ErrorBoundary>
+        <Suspense fallback={<div />}>
+          <Component />
+        </Suspense>
+      </ErrorBoundary>
     </main>
   )
 }

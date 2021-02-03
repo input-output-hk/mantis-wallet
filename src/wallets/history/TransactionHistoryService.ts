@@ -8,10 +8,14 @@ import {create, ElectronLog} from 'electron-log'
 import * as StoredHistory from './StoredHistory'
 import {FetchedBatch, TransactionHistory} from './TransactionHistory'
 import {through, uncurry} from '../../shared/utils'
-import {HistoryStore, historyStoreFactory, HistoryStoreFactory} from './HistoryStore'
+import {
+  HistoryStore,
+  historyStoreFactory,
+  HistoryStoreFactory,
+  GenericWalletStoreWithTxHistory,
+} from './HistoryStore'
 import {MantisWeb3} from '../../web3'
 import {Store} from '../../common/store'
-import {StoreWalletData} from '../../common/wallet-state'
 import {BatchRange} from './BatchRange'
 import {ArrayOps, RxOps} from '../../shared'
 import {NetworkName} from '../../config/type'
@@ -78,7 +82,7 @@ export class TransactionHistoryService {
 
   static create(
     web3: MantisWeb3,
-    store: Store<StoreWalletData>,
+    store: Store<GenericWalletStoreWithTxHistory>,
     logger: ElectronLog,
     bestBlockParam$?: Observable<BlockHeader>,
   ): TransactionHistoryService {
