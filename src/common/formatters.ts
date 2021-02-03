@@ -1,7 +1,12 @@
 import BigNumber from 'bignumber.js'
 import formatDistance from 'date-fns/formatDistance'
 import {format, Locale} from 'date-fns'
-import {DateFormat, TimeFormat} from '../settings-state'
+
+export const DATE_FORMATS = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY'] as const
+export const TIME_FORMATS = ['24-hour', '12-hour'] as const
+
+export type DateFormat = typeof DATE_FORMATS[number]
+export type TimeFormat = typeof TIME_FORMATS[number]
 
 type FormatAmountMode = 'relaxed' | 'strict'
 

@@ -8,7 +8,7 @@ import {Theme} from './settings-state'
 
 jest.mock('./config/renderer.ts')
 
-const WAIT_TIME = 750 as const
+const WAIT_TIME = 1000 as const
 
 const getCustomBrowser = (): Promise<Browser> =>
   puppeteer.launch({
@@ -33,7 +33,7 @@ const getMatchOptions = (theme: Theme) => ({
 }): MatchImageSnapshotOptions => ({
   customSnapshotsDir: path.resolve(__dirname, '../image-snapshots'),
   customSnapshotIdentifier: `${theme}-${_.kebabCase(context.kind)}--${_.kebabCase(context.story)}`,
-  customDiffConfig: {threshold: 0.1},
+  customDiffConfig: {threshold: 0.2},
   blur: 2,
 })
 

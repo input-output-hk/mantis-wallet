@@ -12,11 +12,11 @@ import {Trans} from './common/Trans'
 import {TKeyRenderer} from './common/i18n'
 import logo from './assets/logoCrop.svg'
 import wordmark from './assets/wordmark.svg'
-import './SplashScreen.scss'
 import {ChangeNetworkModal} from './wallets/modals/ChangeNetwork'
 import {DEFINED_NETWORK_NAMES, displayNameOfNetwork, NetworkName} from './config/type'
 import {BackendState} from './common/backend-state'
 import {SettingsState} from './settings-state'
+import './SplashScreen.scss'
 
 const {Option} = Select
 

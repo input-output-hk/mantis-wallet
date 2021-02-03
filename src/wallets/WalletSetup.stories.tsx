@@ -2,6 +2,7 @@ import React from 'react'
 import {text, array} from '@storybook/addon-knobs'
 import {action} from '@storybook/addon-actions'
 import {ESSENTIAL_DECORATORS} from '../storybook-util/essential-decorators'
+import {WithWalletStateParameters} from '../storybook-util/wallet-state-decorator'
 import {WalletPathChooser} from './WalletPathChooser'
 import {WalletRestore} from './WalletRestore'
 import {WalletCreate} from './WalletCreate'
@@ -11,10 +12,15 @@ import {WalletCreateDisplayRecoveryStep} from './create/WalletCreateDisplayRecov
 import {WalletCreateVerifyRecoveryStep} from './create/WalletCreateVerifyRecoveryStep'
 import {TermsAndConditionsStep} from './TermsAndConditionsStep'
 
+const withWalletStateParams: WithWalletStateParameters = {
+  extraWalletStateParams: {walletStatus: 'NO_WALLET'},
+  walletData: {accounts: []},
+}
+
 export default {
   title: 'Wallet Setup',
   decorators: ESSENTIAL_DECORATORS,
-  parameters: {withWalletState: {walletStatus: 'NO_WALLET'}},
+  parameters: {withWalletState: withWalletStateParams},
 }
 
 export const termsAndConditions = (): JSX.Element => (

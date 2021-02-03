@@ -10,8 +10,8 @@ export type ClientSettings = Record<string, string | boolean | number | null>
 export interface MantisConfig {
   packageDirectory: string
   executableName: string
-  dataDirName: string
   additionalSettings: ClientSettings
+  dataDir: string | null
 }
 
 // Known predefined networks + anything else if user configures it on its own
@@ -51,7 +51,7 @@ export const displayNameOfNetworkMain = (networkName: NetworkName, t: TFunctionM
 export interface Config {
   rpcAddress: URL
   networkName: NetworkName
-  dataDir: string
+  walletDataDir: string
   distPackagesDir: string
   runNode: boolean
   mantis: MantisConfig

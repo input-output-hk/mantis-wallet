@@ -5,7 +5,9 @@ import {createInMemoryStore} from '../common/store'
 import {SettingsState, defaultSettingsData} from '../settings-state'
 import {THEME_SWITCHER_CHANGE, LANGUAGE_CHANGER_PSEUDO_SWITCH} from './shared-constants'
 
-const store = createInMemoryStore(defaultSettingsData)
+const store = createInMemoryStore({
+  settings: {...defaultSettingsData['settings'], mantisDatadir: '~/.mantis-wallet-dev/mantis'},
+})
 
 const storybookStore: {
   isPseudoLanguageUsed: boolean

@@ -104,7 +104,7 @@ convict.addFormats({
   })(),
 })
 
-const defaultDataDir = path.resolve(homedir(), '.mantis-wallet')
+const defaultWalletDataDir = path.resolve(homedir(), '.mantis-wallet')
 const defaultDistPackagesDir = path.resolve(__dirname, '..', '..', '..', 'mantis-dist')
 
 const mantisConfig = (defaults: MantisConfig): convict.Schema<MantisConfig> => ({
@@ -121,11 +121,11 @@ const mantisConfig = (defaults: MantisConfig): convict.Schema<MantisConfig> => (
     env: `MANTIS_EXECUTABLE_NAME`,
     doc: `Name of executable to run mantis`,
   },
-  dataDirName: {
-    default: defaults.dataDirName,
+  dataDir: {
+    default: defaults.dataDir,
     arg: `mantis-data-dir`,
     env: `MANTIS_DATA_DIR`,
-    doc: `Directory name under Mantis Wallet datadir, where mantis contents are stored`,
+    doc: `Path to the Mantis node data directory`,
   },
   additionalSettings: {
     default: defaults.additionalSettings,
@@ -157,8 +157,8 @@ const configGetter = convict({
     env: 'MANTIS_WALLET_OPEN_DEVTOOLS',
     doc: 'Whether to open developer tools or not',
   },
-  dataDir: {
-    default: defaultDataDir,
+  walletDataDir: {
+    default: defaultWalletDataDir,
     arg: 'data-dir',
     env: 'MANTIS_WALLET_DATA_DIR',
     doc: 'Directory, where Mantis Wallet stores its all data',
@@ -186,7 +186,7 @@ const configGetter = convict({
   mantis: mantisConfig({
     packageDirectory: path.resolve(defaultDistPackagesDir, 'mantis'),
     executableName: 'mantis',
-    dataDirName: 'mantis',
+    dataDir: null,
     additionalSettings: {
       'mantis.network.rpc.http.cors-allowed-origins': '*',
       'akka.http.server.request-timeout': '60.seconds',
@@ -234,7 +234,7 @@ export const loadConfigs = (sources: ConfigSource[] = []): Config => {
       )
     }),
     (config) => ({...config, rpcAddress: new URL(config.rpcAddress)} as Config),
-    mapProp('dataDir', tildeToHome),
+    mapProp('walletDataDir', tildeToHome),
   )
 }
 
