@@ -1,18 +1,11 @@
 import React, {useState} from 'react'
-import {CaretDownFilled, CaretUpFilled} from '@ant-design/icons'
-import {Button, Dropdown, Menu} from 'antd'
+import {Button} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
 import {fold, getOrElse, Option} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/function'
 import {SendTransactionFlow} from './modals/SendTransaction'
 import {ReceiveTransaction} from './modals/ReceiveTransaction'
-import {
-  columns,
-  SortableColumnConfig,
-  SortBy,
-  TransactionList,
-  updateSorting,
-} from './TransactionList'
+import {SortBy, TransactionList} from './TransactionList'
 import {Trans} from '../common/Trans'
 import {asWei, Wei} from '../common/units'
 import {Account, FeeEstimates} from '../common/wallet-state'
@@ -45,22 +38,6 @@ export const TransactionHistory = ({
     property: 'time',
     direction: 'desc',
   })
-
-  const sortByMenu = (
-    <Menu>
-      {columns
-        .filter((column): column is SortableColumnConfig => column.sortable)
-        .map(({property, label}) => {
-          return (
-            <Menu.Item key={property} onClick={() => setSortBy(updateSorting(sortBy, property))}>
-              {sortBy.property === property &&
-                (sortBy.direction === 'asc' ? <CaretUpFilled /> : <CaretDownFilled />)}
-              <Trans k={label} />
-            </Menu.Item>
-          )
-        })}
-    </Menu>
-  )
 
   const isSendDisabled = pipe(
     availableBalance,
@@ -96,11 +73,6 @@ export const TransactionHistory = ({
           <Trans k={['wallet', 'title', 'myTransactions']} />
         </div>
         <div>
-          <Dropdown overlay={sortByMenu} overlayClassName="SortByDropdown">
-            <span className="sort-by">
-              <Trans k={['wallet', 'button', 'sortByDropdown']} /> ▼{' '}
-            </span>
-          </Dropdown>
           <SendTransactionFlow
             visible={showSendModal}
             availableAmount={pipe(

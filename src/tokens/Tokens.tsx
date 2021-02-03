@@ -25,9 +25,7 @@ export const _Tokens = ({
     isValidContract,
     getTokenInfo,
   } = TokensState.useContainer()
-  const {addTokensToTrack, addTokenToTrack, estimateCallFee, getOverviewProps} = walletState
-
-  const {availableBalance} = getOverviewProps()
+  const {addTokensToTrack, addTokenToTrack, estimateCallFee, availableBalance} = walletState
 
   const [showAddToken, setShowAddToken] = useState(false)
 

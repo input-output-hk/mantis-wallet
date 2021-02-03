@@ -1,80 +1,84 @@
-@import './partial', './themify', './vars', './functions';
+@import './sass-includes';
 
 $content-width: 350px;
 
-#App .Settings {
-  @include header-margin-top;
+@include app-scoped {
+  .Settings {
+    @include header-margin-top;
 
-  .main-title {
-    margin-bottom: 3rem;
-  }
+    .main-title {
+      margin-bottom: 3rem;
+    }
 
-  .content {
-    width: $content-width;
-    margin: 0 auto;
+    .content {
+      width: $content-width;
+      margin: 0 auto;
 
-    .settings-item {
-      margin-bottom: 2rem;
+      .settings-item {
+        margin-bottom: 2rem;
 
-      .settings-label {
-        margin-bottom: 0.5rem;
-        font-size: $font-size-s;
-      }
-
-      .settings-note {
-        margin-bottom: 0.6rem;
-        font-size: $font-size-s;
-
-        @include themify($themes) {
-          color: themed('inactive-text-color');
-        }
-      }
-
-      .settings-input {
-        max-width: $content-width;
-
-        .ant-btn {
-          margin: 1px;
-          float: right;
+        .settings-label {
+          margin-bottom: 0.5rem;
+          font-size: $font-size-s;
         }
 
-        .BorderlessInput {
-          padding-right: 0.5rem;
-          overflow: hidden;
+        .settings-note {
+          margin-bottom: 0.6rem;
+          font-size: $font-size-s;
 
-          input {
-            font-size: $font-size-input;
+          @include themify($themes) {
+            color: themed('inactive-text-color');
+          }
+        }
+
+        .settings-input {
+          max-width: $content-width;
+        }
+
+        .select-folder {
+          display: grid;
+          grid-column-gap: 0;
+          grid-template-columns: 1fr auto;
+
+          .BorderlessInput .ant-input {
+            @extend %ellipsize;
+            overflow: hidden;
+            border-right: 0px solid transparent !important;
+          }
+
+          .edit-button {
+            font-size: $font-size-xl;
           }
         }
       }
     }
-  }
 
-  .settings-switch-wrapper {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    margin-bottom: 22px;
-    padding-bottom: 22px;
+    .settings-switch-wrapper {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      margin-bottom: 22px;
+      padding-bottom: 22px;
 
-    @include themify($themes) {
-      border-bottom: 1px solid themed('inactive-text-color');
+      @include themify($themes) {
+        border-bottom: 1px solid themed('inactive-text-color');
+      }
     }
-  }
 
-  .DialogDropdown {
-    .active-option {
-      padding: 0.5rem 0 0;
+    .DialogDropdown {
+      .active-option {
+        padding: 0.5rem 0 0;
+      }
     }
-  }
 
-  .main-buttons {
-    position: unset;
-    right: unset;
-    float: right;
+    .main-buttons {
+      position: unset;
+      right: unset;
+      float: right;
 
-    .export-private-key {
-      width: 220px;
-      margin-right: 0px;
+      .export-private-key {
+        width: 220px;
+        margin-right: 0px;
+      }
     }
   }
 }

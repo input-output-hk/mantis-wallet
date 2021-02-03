@@ -2,6 +2,9 @@ import {Config} from '../type'
 
 export const config: Config = {
   rpcAddress: new URL('localhost:1234'),
+  mantis: {
+    dataDir: null,
+  },
 } as Config
 
 export const loadConfig = (): Config => config

@@ -3,6 +3,7 @@ import SVG from 'react-inlinesvg'
 import classnames from 'classnames'
 import {Button} from 'antd'
 import {shell} from 'electron'
+import {isSome} from 'fp-ts/lib/Option'
 import {SettingsState} from '../settings-state'
 import {RouterState} from '../router-state'
 import {MENU, MenuId, MenuItem} from '../routes-config'
@@ -128,20 +129,23 @@ export const Sidebar = (): JSX.Element => {
         <div className="balance-wrapper flex-item">
           {walletState.walletStatus === 'LOADED' && (
             <>
-              <BalanceDisplay availableBalance={walletState.getOverviewProps().availableBalance} />
-              <div className="faucet-button">
-                {networkName === 'testnet-internal-nomad' && (
-                  <Button
-                    data-testid="faucet-button"
-                    type="default"
-                    className="action"
-                    {...fillActionHandlers((): void => {
-                      shell.openExternal(FAUCET_URL)
-                    })}
-                  >
-                    {t(['wallet', 'button', 'getTestETC'])}
-                  </Button>
-                )}
+              <BalanceDisplay availableBalance={walletState.availableBalance} />
+              {/* Faucet button */}
+              <div className="main-buttons">
+                {networkName === 'testnet-internal-nomad' &&
+                  isSome(walletState.availableBalance) &&
+                  walletState.availableBalance.value.isLessThan(1) && (
+                    <Button
+                      data-testid="faucet-button"
+                      type="primary"
+                      className="faucet-button action left-diagonal"
+                      {...fillActionHandlers((): void => {
+                        shell.openExternal(FAUCET_URL)
+                      })}
+                    >
+                      {t(['wallet', 'button', 'getTestETC'])}
+                    </Button>
+                  )}
               </div>
             </>
           )}

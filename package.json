@@ -30,7 +30,7 @@
     "storyshots": "cross-env EXTEND_ESLINT=true react-app-rewired test \"storyshots.*\"",
     "storyshots:update": "yarn storyshots --updateSnapshot && echo -ne '\\007'",
     "lint": "yarn prettier-check && yarn eslint && yarn stylelint && yarn tsc",
-    "eslint": "eslint src bin --ext .js,.ts,.tsx --max-warnings 0",
+    "eslint": "eslint src bin --ext .js,.ts,.tsx --max-warnings 24",
     "stylelint": "stylelint \"**/*.scss\"",
     "prettier-check": "prettier --no-editorconfig --check \"**/*.{js,ts,tsx,scss}\"",
     "prettier": "prettier --no-editorconfig --write \"**/*.{js,ts,tsx,scss}\"",
@@ -70,7 +70,7 @@
       "jest-canvas-mock"
     ],
     "setupFilesAfterEnv": [
-      "./src/jest.setup.ts"
+      "./src/jest.config.ts"
     ]
   },
   "dependencies": {

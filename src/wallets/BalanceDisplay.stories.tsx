@@ -30,20 +30,20 @@ export const syncStatus = (): JSX.Element => {
     },
     syncing: {
       mode: 'online',
+      type: 'blocks',
       currentBlock: 0,
       highestKnownBlock: 0,
       pulledStates: 0,
       knownStates: 0,
-      percentage: 50,
       lastNewBlockTimestamp: 0,
     },
     synced: {
       mode: 'online',
+      type: 'blocks',
       currentBlock: 0,
       highestKnownBlock: 0,
       pulledStates: 0,
       knownStates: 0,
-      percentage: 100,
       lastNewBlockTimestamp: 0,
     },
   }

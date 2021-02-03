@@ -7,7 +7,7 @@ import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
 import {Account, FeeEstimates} from '../common/wallet-state'
 import {abbreviateAmountForEnUS, createWithProviders} from '../common/test-helpers'
 import {ADDRESS} from '../storybook-util/dummies'
-import {mockedCopyToClipboard} from '../jest.setup'
+import {mockedCopyToClipboard} from '../jest.config'
 import {asWei, asEther, etherValue} from '../common/units'
 import {Transaction} from './history'
 
@@ -177,8 +177,8 @@ test('Send modal shows up', async () => {
   await waitFor(() => expect(queryByText('Fast')).toBeInTheDocument())
   await waitFor(() => expect(queryByText('Custom')).toBeInTheDocument())
 
-  // 'Recipient' and 'Amount' fields are two times in the document
-  expect(getByText('Recipient')).toBeInTheDocument()
+  // 'Receiving Address' and 'Amount' fields are two times in the document
+  expect(getByText('Receiving Address')).toBeInTheDocument()
   expect(getByText('Amount')).toBeInTheDocument()
 
   // Send button appeared (plus the one in TxHistory)
@@ -213,7 +213,7 @@ test('Send transaction works', async () => {
   await act(async () => userEvent.click(openSendModalButton))
 
   // Set recipient to a invalid address, error pops up
-  const recipient = getByLabelText('Recipient')
+  const recipient = getByLabelText('Receiving Address')
   fireEvent.change(recipient, {target: {value: 'not-an-address'}})
   await waitFor(() => expect(queryByText('Invalid address')).toBeInTheDocument())
 

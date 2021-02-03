@@ -111,7 +111,7 @@ export const MantisProcess = (spawn: typeof childProcess.spawn) => (
   mainLog: ElectronLog,
 ): {spawn: (additionalConfig: ClientSettings) => SpawnedMantisProcess} => {
   const executablePath = processExecutablePath(processConfig)
-  const mantisDataDir = resolve(dataDir, processConfig.dataDirName, networkName)
+  const mantisDataDir = resolve(dataDir, networkName)
   const networkConfigFile = path.resolve(
     processConfig.packageDirectory,
     'conf',

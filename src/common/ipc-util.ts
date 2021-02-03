@@ -34,3 +34,7 @@ export const saveDebugLogs = (): void => {
 export const updateNetworkName = (networkName: NetworkName): void => {
   ipcSend('update-network-name', networkName)
 }
+
+export const updateDatadirLocation = (): void => {
+  ipcSend('update-datadir-location')
+}

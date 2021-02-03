@@ -65,24 +65,25 @@ it('can add a new contact', async () => {
 })
 
 it('can edit a contact', async () => {
-  const {queryByText, getByLabelText, getByTestId, getByTitle} = render(<AddressBook />, {
-    wrapper: createWithProviders({
-      wallet: {
-        addressBook: {[VALID_ADDRESS_01]: 'Gandhi'},
-        accounts: [],
-        tncAccepted: true,
-        txHistory: {},
-      },
-    }),
-  })
+  const {queryByText, getByLabelText, getByTestId, getAllByTestId, queryByTestId} = render(
+    <AddressBook />,
+    {
+      wrapper: createWithProviders({
+        wallet: {
+          addressBook: {[VALID_ADDRESS_01]: 'Gandhi'},
+          accounts: [],
+          tncAccepted: true,
+          txHistory: {},
+        },
+      }),
+    },
+  )
 
-  const modalTitle = 'Edit Contact'
-
-  const startEditButton = getByTitle(modalTitle)
-  userEvent.click(startEditButton)
+  const startEditButton = getAllByTestId('edit-button')
+  userEvent.click(startEditButton[0])
 
   // modal opened
-  await waitFor(() => expect(queryByText(modalTitle)).toBeInTheDocument())
+  await waitFor(() => expect(queryByTestId('modal-Edit')).toBeInTheDocument())
 
   const saveButton = getByTestId('right-button')
   expect(saveButton).toBeEnabled()
@@ -111,7 +112,7 @@ it('can edit a contact', async () => {
   await expectNoValidationErrorOnSubmit(queryByText, saveButton)
 
   // modal closed
-  await waitFor(() => expect(queryByText(modalTitle)).not.toBeInTheDocument())
+  await waitFor(() => expect(queryByTestId('modal-Edit')).not.toBeInTheDocument())
 
   // new contact shows up
   await waitFor(() => {
@@ -125,7 +126,7 @@ it('can edit a contact', async () => {
 })
 
 it('can delete a contact', async () => {
-  const {queryByText, getByTestId, getAllByTitle} = render(<AddressBook />, {
+  const {queryByText, getByTestId, getAllByTestId} = render(<AddressBook />, {
     wrapper: createWithProviders({
       wallet: {
         addressBook: {[VALID_ADDRESS_01]: 'Gandhi', [VALID_ADDRESS_02]: 'Martin'},
@@ -136,17 +137,16 @@ it('can delete a contact', async () => {
     }),
   })
 
-  const modalTitle = 'Delete Contact'
+  const modalText = 'Are you sure you want to delete this contact?'
 
   const expectModalOpenedWithCorrectData = (label: string, address: string) => (): void => {
-    expect(queryByText(modalTitle)).toBeInTheDocument()
-    expect(queryByText('Are you sure you want to delete this contact?')).toBeInTheDocument()
+    expect(queryByText(modalText)).toBeInTheDocument()
     expect(queryByText(`${label} (${address})`)).toBeInTheDocument()
   }
 
-  const expectModalClosed = (): void => expect(queryByText(modalTitle)).not.toBeInTheDocument()
+  const expectModalClosed = (): void => expect(queryByText(modalText)).not.toBeInTheDocument()
 
-  const startDeleteButtons = getAllByTitle('Delete Contact')
+  const startDeleteButtons = getAllByTestId('delete-button')
   const startDeleteButtonGandhi = startDeleteButtons[0]
   const startDeleteButtonMartin = startDeleteButtons[1]
 

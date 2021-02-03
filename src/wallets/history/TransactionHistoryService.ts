@@ -108,7 +108,6 @@ export class TransactionHistoryService {
     return rx.from(this.init(store, account)).pipe(
       rxop.concatMap(
         (initialHistory): Observable<TransactionHistory> => {
-          // console.log({initialHistory})
           // Usage of Subject allows us to recurse over fetched tx history
           const historySubject = new rx.BehaviorSubject(initialHistory)
 

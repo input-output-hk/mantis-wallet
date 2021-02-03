@@ -7,6 +7,7 @@ import {
   SetStateAction,
   DependencyList,
 } from 'react'
+import {isNil} from 'lodash'
 import {Store} from './store'
 import {rendererLog} from './logger'
 import {wait} from '../shared/utils'
@@ -151,6 +152,17 @@ export function usePersistedState<
   path: [K1, K2],
 ): [TObject[K1][K2], Dispatch<SetStateAction<TObject[K1][K2]>>] {
   const [value, setValue] = useState(store.get(path))
+
+  useEffect(() => {
+    if (!isNil(store.onDidChange)) {
+      const subscription = store.onDidChange(path).subscribe(({oldVal, newVal}) => {
+        if (oldVal != newVal) {
+          setValue(newVal)
+        }
+      })
+      return () => subscription.unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     store.set(path, value)

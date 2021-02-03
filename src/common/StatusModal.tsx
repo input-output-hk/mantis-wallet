@@ -37,7 +37,7 @@ const DisplaySyncStatus = ({syncStatus}: {syncStatus: SynchronizationStatus}): J
 
 interface StatusModalProps extends Pick<ModalProps, 'visible' | 'onCancel'> {
   status: MantisWalletStatus
-  config: Pick<Config, 'dataDir' | 'rpcAddress'>
+  config: Pick<Config, 'walletDataDir' | 'rpcAddress'>
   syncStatus?: SynchronizationStatus
 }
 
@@ -97,7 +97,7 @@ export const StatusModal = ({
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'mantisWalletLocalDirectory'])}</div>
             <div className="info-value">
-              <CopyableLongText content={config.dataDir} />
+              <CopyableLongText content={config.walletDataDir} />
             </div>
           </div>
         </div>

@@ -11,6 +11,6 @@ declare module 'web3-eth' {
   interface Eth {
     isSyncing(
       callback?: (error: Error, syncing: SyncingFixed) => void,
-    ): Promise<SyncingFixed | boolean>
+    ): Promise<SyncingFixed | false>
   }
 }

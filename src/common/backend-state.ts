@@ -1,13 +1,14 @@
-import {Dispatch, SetStateAction, useEffect, useState} from 'react'
+import {Dispatch, SetStateAction, useState} from 'react'
 import {createContainer} from 'unstated-next'
 import _ from 'lodash/fp'
 import {updateNetworkName} from './ipc-util'
-import {rendererLog} from './logger'
 import {createInMemoryStore, Store} from './store'
 import {NetworkName} from '../config/type'
-import {usePersistedState} from './hook-utils'
+import {usePersistedState, useRecurringTimeout} from './hook-utils'
 import {config} from '../config/renderer'
 import {defaultWeb3, MantisWeb3} from '../web3'
+
+const BACKEND_CHECK_INTERVAL = 1000
 
 export interface BackendState {
   isBackendRunning: boolean
@@ -39,21 +40,14 @@ function useBackendState(params?: Partial<BackendStateParams>): BackendState {
   const [isBackendRunning, setBackendRunning] = useState(false)
   const [networkName, _setNetworkName] = usePersistedState(store, 'networkName')
 
-  useEffect(() => {
-    const checkBackend = async (): Promise<void> => {
-      try {
-        await web3.eth.getProtocolVersion()
-        setBackendRunning(true)
-        setTimeout(checkBackend, 5000)
-      } catch (e) {
-        setBackendRunning(false)
-        setTimeout(checkBackend, 1000)
-      }
+  useRecurringTimeout(async () => {
+    try {
+      await web3.eth.getProtocolVersion()
+      setBackendRunning(true)
+    } catch (e) {
+      setBackendRunning(false)
     }
-
-    rendererLog.info('Mantis Wallet renderer started')
-    checkBackend()
-  }, [])
+  }, BACKEND_CHECK_INTERVAL)
 
   const setNetworkName = (networkName: NetworkName): void => {
     _setNetworkName(networkName)
@@ -70,9 +64,3 @@ function useBackendState(params?: Partial<BackendStateParams>): BackendState {
 }
 
 export const BackendState = createContainer(useBackendState)
-
-export const migrationsForBackendData = {
-  '0.1.2-mantis-wallet': (store: Store<StoreBackendData>): void => {
-    store.set('networkName', config.networkName)
-  },
-}

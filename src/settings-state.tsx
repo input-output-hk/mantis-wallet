@@ -14,7 +14,14 @@ import {
   createTFunctionRenderer,
   TErrorRenderer,
 } from './common/i18n'
-import {formatDate, toDurationString, formatPercentage, abbreviateAmount} from './common/formatters'
+import {
+  formatDate,
+  toDurationString,
+  formatPercentage,
+  abbreviateAmount,
+  DateFormat,
+  TimeFormat,
+} from './common/formatters'
 import {rendererLog} from './common/logger'
 import {makeDesktopNotification} from './common/notify'
 import {copyToClipboard} from './common/clipboard'
@@ -27,12 +34,6 @@ import {
 } from './common/dismissable-message'
 
 export type Theme = 'dark' | 'light'
-
-export const DATE_FORMATS = ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD-MM-YYYY', 'DD/MM/YYYY'] as const
-export const TIME_FORMATS = ['24-hour', '12-hour'] as const
-
-export type DateFormat = typeof DATE_FORMATS[number]
-export type TimeFormat = typeof TIME_FORMATS[number]
 
 const HASHRATE_SUFFIX = ['hash/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s', 'EH/s', 'ZH/s', 'YH/s']
 
@@ -75,6 +76,9 @@ export interface SettingsState {
   setLanguage(language: Language): void
   isPseudoLanguageUsed: boolean
   usePseudoLanguage(on: boolean): void
+  // Mantis Node settings
+  mantisDatadir: string
+  setMantisDatadir(mantisDatadir: string): void
   // Localized helpers
   formatters: Formatters
   translation: Translation
@@ -87,6 +91,7 @@ export type StoreSettingsData = {
     dateFormat: DateFormat
     timeFormat: TimeFormat
     language: Language
+    mantisDatadir: string
   }
 }
 
@@ -96,6 +101,7 @@ export const defaultSettingsData: StoreSettingsData = {
     dateFormat: 'MM/DD/YYYY',
     timeFormat: '12-hour',
     language: DEFAULT_LANGUAGE,
+    mantisDatadir: '',
   },
 }
 
@@ -120,6 +126,7 @@ function useSettingsState({
   const [dateFormat, setDateFormat] = usePersistedState(store, ['settings', 'dateFormat'])
   const [timeFormat, setTimeFormat] = usePersistedState(store, ['settings', 'timeFormat'])
   const [language, _setLanguage] = usePersistedState(store, ['settings', 'language'])
+  const [mantisDatadir, setMantisDatadir] = usePersistedState(store, ['settings', 'mantisDatadir'])
   const [isPseudoLanguageUsed, usePseudoLanguage] = useState(isPseudoLanguageUsedDefault || false)
 
   useEffect(() => {
@@ -201,6 +208,8 @@ function useSettingsState({
     setLanguage,
     isPseudoLanguageUsed,
     usePseudoLanguage,
+    mantisDatadir,
+    setMantisDatadir,
     formatters,
     translation,
     localizedUtilities,
