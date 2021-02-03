@@ -160,6 +160,7 @@ const _SendAdvancedTransaction = wrapWithModal(() => (
   <SendAdvancedTransaction
     onCancel={action('send-transaction-cancelled')}
     estimateTransactionFee={estimateFeesWithRandomDelay}
+    availableAmount={ether('Available Amount', 123.456)}
     transactionParams={{
       amount: '123',
       gasLimit: '21000',

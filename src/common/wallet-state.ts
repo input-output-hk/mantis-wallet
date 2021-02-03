@@ -67,7 +67,7 @@ export type FeeEstimates = Record<FeeLevel, Wei>
 export const TRANSFER_GAS_LIMIT = 21000
 export const MIN_GAS_PRICE = asWei(1)
 
-interface SendTransactionParams {
+export interface SendTransactionParams {
   recipient: string
   amount: Wei
   gasPrice: Wei
@@ -76,7 +76,6 @@ interface SendTransactionParams {
   data?: string
   nonce: number
 }
-
 // States
 
 interface CommonState {
@@ -108,6 +107,7 @@ export interface LoadedState extends CommonState {
   getNextNonce: () => Promise<number>
   doTransfer: (recipient: string, amount: Wei, fee: Wei, password: string) => Promise<void>
   sendTransaction: (params: SendTransactionParams) => Promise<void>
+  estimateGas: (params: Omit<SendTransactionParams, 'password'>) => Promise<number>
   estimateCallFee(txConfig: TransactionConfig): Promise<FeeEstimates>
   estimateTransactionFee(): Promise<FeeEstimates>
   addTokenToTrack: (tokenAddress: string) => void
@@ -503,31 +503,37 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
 
   const getGasPrice = async (): Promise<Wei> => asWei(await web3.eth.getGasPrice())
 
-  const sendTransaction = async ({
+  const transactionParamsToTxConfig = ({
     recipient,
     amount,
     gasPrice,
     gasLimit,
-    password,
     data,
     nonce,
-  }: SendTransactionParams): Promise<void> => {
-    const txConfig: TransactionConfig = {
-      nonce,
-      to: recipient.length == 0 ? undefined : ensure0x(recipient),
-      from: getCurrentAddress(),
-      value: toHex(amount),
-      gas: gasLimit,
-      gasPrice: toHex(gasPrice),
-      data: pipe(
-        data,
-        option.fromNullable,
-        option.filter((str) => str.length > 0),
-        option.toUndefined,
-      ),
-    }
+  }: Omit<SendTransactionParams, 'password'>): TransactionConfig => ({
+    nonce,
+    to: recipient.length == 0 ? undefined : ensure0x(recipient),
+    from: getCurrentAddress(),
+    value: toHex(amount),
+    gas: gasLimit,
+    gasPrice: toHex(gasPrice),
+    data: pipe(
+      data,
+      option.fromNullable,
+      option.filter((str) => str.length > 0),
+      option.toUndefined,
+    ),
+  })
 
-    const privateKey = getCurrentPrivateKey(password)
+  const estimateGas = async (params: Omit<SendTransactionParams, 'password'>): Promise<number> => {
+    const txConfig = transactionParamsToTxConfig(params)
+    return web3.eth.estimateGas({...txConfig, gas: undefined})
+  }
+
+  const sendTransaction = async (params: SendTransactionParams): Promise<void> => {
+    const txConfig = transactionParamsToTxConfig(params)
+
+    const privateKey = getCurrentPrivateKey(params.password)
     const tx = await web3.eth.accounts.signTransaction(txConfig, privateKey)
     if (tx.rawTransaction === undefined) {
       throw createTErrorRenderer(['wallet', 'error', 'couldNotSignTransaction'])
@@ -649,6 +655,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     getNextNonce,
     sendTransaction,
     doTransfer,
+    estimateGas,
     estimateCallFee,
     estimateTransactionFee,
     remove,

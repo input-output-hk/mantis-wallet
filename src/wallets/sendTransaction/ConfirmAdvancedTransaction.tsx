@@ -6,11 +6,25 @@ import {Dialog} from '../../common/Dialog'
 import {DialogInput, DialogInputPassword} from '../../common/dialog/DialogInput'
 import {asEther} from '../../common/units'
 import {DialogShowAmount} from '../../common/dialog/DialogShowAmount'
-import {LoadedState} from '../../common/wallet-state'
+import {LoadedState, SendTransactionParams} from '../../common/wallet-state'
 import {useTranslation} from '../../settings-state'
 import {withStatusGuard, PropsWithWalletState} from '../../common/wallet-status-guard'
 import {AdvancedTransactionParams} from './common'
 import {InlineError} from '../../common/InlineError'
+
+export const getSendTransactionParams = (
+  params: AdvancedTransactionParams,
+): Omit<SendTransactionParams, 'password'> => {
+  const {recipient, amount, gasLimit, gasPrice, data, nonce} = params
+  return {
+    recipient,
+    gasLimit: parseInt(gasLimit),
+    gasPrice: asEther(gasPrice),
+    data,
+    nonce: parseInt(nonce),
+    amount: pipe(amount, (amount) => (amount.length === 0 ? '0' : amount), asEther),
+  }
+}
 
 interface ConfirmAdvancedTransactionProps {
   onClose: () => void
@@ -38,13 +52,8 @@ const _ConfirmAdvancedTransaction = ({
   const trySendTransaction = async (): Promise<void> => {
     try {
       await sendTransaction({
-        recipient,
-        gasLimit: parseInt(gasLimit),
-        gasPrice: asEther(gasPrice),
-        data,
-        nonce: parseInt(nonce),
+        ...getSendTransactionParams(transactionParams),
         password,
-        amount: pipe(amount, (amount) => (amount.length === 0 ? '0' : amount), asEther),
       })
       setError(undefined)
       onClose()
