@@ -13,5 +13,5 @@ it('shows properly formatted balance', async () => {
     wrapper: createWithProviders(),
   })
 
-  await waitFor(() => expect(queryByText('12345.00')).toBeInTheDocument(), {timeout: 2500})
+  await waitFor(() => expect(queryByText('12.35k')).toBeInTheDocument(), {timeout: 2500})
 })
