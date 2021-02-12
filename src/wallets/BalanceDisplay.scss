@@ -5,19 +5,21 @@
 
   .balances {
     .label {
+      margin-bottom: 0.5vw;
       font-size: 0.8vw;
       font-weight: 600;
     }
 
     .available-balance {
-      @extend %monospace;
-      margin-left: -4px;
       font-size: 5vw;
+      font-weight: 400;
+      letter-spacing: -0.2vw;
       line-height: 4vw;
+      font-variant-numeric: tabular-nums;
     }
 
     .suffix {
-      font-size: 0.8vw;
+      font-size: 1vw;
       font-weight: 600;
     }
   }

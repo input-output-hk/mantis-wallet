@@ -2,12 +2,23 @@ import React, {useEffect, useState} from 'react'
 import {isNone, Option} from 'fp-ts/lib/Option'
 import BigNumber from 'bignumber.js'
 import CountUp from 'react-countup'
+import numbro from 'numbro'
+import {Popover} from 'antd'
 import {ETC_CHAIN} from '../common/chains'
 import {Trans} from '../common/Trans'
 import './BalanceDisplay.scss'
 
 interface BalanceDisplayProps {
   availableBalance: Option<BigNumber>
+}
+
+const formatBalance = (value: number): string => {
+  return numbro(value)
+    .format({
+      average: true,
+      totalLength: 4,
+    })
+    .toString()
 }
 
 export const BalanceDisplay = ({availableBalance}: BalanceDisplayProps): JSX.Element => {
@@ -31,14 +42,26 @@ export const BalanceDisplay = ({availableBalance}: BalanceDisplayProps): JSX.Ele
         <div className="label">
           <Trans k={['wallet', 'label', 'availableBalance']} />
         </div>
-        <CountUp
-          start={availableBalanceHistory[0]}
-          end={availableBalanceHistory[1]}
-          duration={2}
-          decimals={2}
-          className="available-balance"
-        />
-        <span className="suffix">{ETC_CHAIN.symbol}</span>
+        <Popover
+          content={
+            <div>
+              {availableBalanceHistory[1]} {ETC_CHAIN.symbol}
+            </div>
+          }
+          placement="bottomLeft"
+        >
+          <span>
+            <CountUp
+              start={availableBalanceHistory[0]}
+              end={availableBalanceHistory[1]}
+              duration={2}
+              decimals={3}
+              formattingFn={formatBalance}
+              className="available-balance"
+            />
+            <span className="suffix">{ETC_CHAIN.symbol}</span>
+          </span>
+        </Popover>
       </div>
     </div>
   )
