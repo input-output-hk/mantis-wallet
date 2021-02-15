@@ -58,10 +58,7 @@ const calculateFingerprint = (cert: forge.pki.Certificate): Option<string> => {
     )
 
   const sha256 = (der: forge.util.ByteStringBuffer): forge.util.ByteStringBuffer =>
-    forge.md.sha256
-      .create()
-      .update(der.getBytes(), 'raw')
-      .digest()
+    forge.md.sha256.create().update(der.getBytes(), 'raw').digest()
 
   return pipe(
     cert,

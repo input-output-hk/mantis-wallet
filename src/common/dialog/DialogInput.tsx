@@ -3,8 +3,8 @@ import React, {
   forwardRef,
   FunctionComponent,
   PropsWithChildren,
-  RefForwardingComponent,
   ReactNode,
+  ForwardRefRenderFunction,
 } from 'react'
 import classnames from 'classnames'
 import {Input, Form} from 'antd'
@@ -58,12 +58,12 @@ const AbstractDialogInput: FunctionComponent<DialogInputProps> = ({
   )
 }
 
-const _DialogInputPassword: RefForwardingComponent<
-  Password,
+const _DialogInputPassword: ForwardRefRenderFunction<
+  typeof Password,
   BorderlessInputPasswordProps & DialogInputProps
 > = (
   {label, onChange, formItem, optional, ...props}: BorderlessInputPasswordProps & DialogInputProps,
-  ref: Ref<Password>,
+  ref: Ref<typeof Password>,
 ) => {
   const {setErrorMessage} = DialogState.useContainer()
 
@@ -84,7 +84,7 @@ const _DialogInputPassword: RefForwardingComponent<
   )
 }
 
-const _DialogInput: RefForwardingComponent<Input, BorderlessInputProps & DialogInputProps> = (
+const _DialogInput: ForwardRefRenderFunction<Input, BorderlessInputProps & DialogInputProps> = (
   {label, onChange, formItem, optional, ...props}: BorderlessInputProps & DialogInputProps,
   ref: Ref<Input>,
 ) => {
@@ -102,7 +102,7 @@ const _DialogInput: RefForwardingComponent<Input, BorderlessInputProps & DialogI
   )
 }
 
-const _DialogTextArea: RefForwardingComponent<
+const _DialogTextArea: ForwardRefRenderFunction<
   TextArea,
   BorderlessTextAreaProps & DialogInputProps
 > = (

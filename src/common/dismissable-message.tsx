@@ -35,9 +35,7 @@ export const makeDismissableMessage = (
 ): DismissFunction => {
   const {duration, onClose} = _.merge(DEFAULT_CONFIG)(config)
 
-  const randomKey = Math.random()
-    .toString(36)
-    .substring(2, 15)
+  const randomKey = Math.random().toString(36).substring(2, 15)
 
   const partialOptions = {
     type,

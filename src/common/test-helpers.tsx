@@ -46,8 +46,10 @@ export const expectCalledOnClick = async (
   expect(toBeCalledFn).not.toBeCalled()
   const button = getter()
   expect(button).toBeEnabled()
-  await act(async () => userEvent.click(button))
-  await waitFor(() => expect(toBeCalledFn).toBeCalled())
+  await act(async () => {
+    userEvent.click(button)
+    waitFor(() => expect(toBeCalledFn).toBeCalled())
+  })
 }
 
 export const findExactlyOneByTag = (element: HTMLElement, tagName: string): Element => {

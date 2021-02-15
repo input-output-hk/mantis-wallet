@@ -32,7 +32,7 @@ type Prev = [
   18,
   19,
   20,
-  ...0[], // eslint-disable-line @typescript-eslint/array-type
+  ...0[] // eslint-disable-line @typescript-eslint/array-type
 ]
 
 /**

@@ -604,11 +604,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     return {
       low: asWei(useMinGasPrice(gasPrice.times(0.75)).times(TRANSFER_GAS_LIMIT)),
       medium: asWei(useMinGasPrice(gasPrice).times(TRANSFER_GAS_LIMIT)),
-      high: asWei(
-        useMinGasPrice(gasPrice)
-          .times(TRANSFER_GAS_LIMIT)
-          .times(1.25),
-      ),
+      high: asWei(useMinGasPrice(gasPrice).times(TRANSFER_GAS_LIMIT).times(1.25)),
     }
   }
 

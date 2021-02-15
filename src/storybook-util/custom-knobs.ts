@@ -11,7 +11,7 @@ export const asyncAction = (
   // eslint-disable-next-line
 ): ((...args: any[]) => Promise<void>) => {
   return (...args) =>
-    new Promise(function(resolve) {
+    new Promise(function (resolve) {
       setTimeout(resolve, delay)
     }).then(() => action(name, options)(args))
 }
