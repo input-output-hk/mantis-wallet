@@ -30,7 +30,7 @@ const ThemeSwitch = ({api}) => {
   )
 }
 
-addons.register(THEME_SWITCHER_ADDON_ID, (api) => {
+export const registerThemeSwitcher = () => addons.register(THEME_SWITCHER_ADDON_ID, (api) => {
   addons.add(THEME_SWITCHER_ADDON_ID, {
     title: 'Themes',
     type: types.TOOL,

@@ -21,7 +21,7 @@ const LanguageChanger = ({ api }) => {
   )
 }
 
-addons.register(LANGUAGE_CHANGER_ADDON_ID, (api) => {
+export const registerLanguageChanger = () => addons.register(LANGUAGE_CHANGER_ADDON_ID, (api) => {
   addons.add(LANGUAGE_CHANGER_PSEUDO_SWITCH, {
     title: 'Language',
     type: types.TOOL,

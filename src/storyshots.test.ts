@@ -10,8 +10,18 @@ jest.mock('./config/renderer.ts')
 
 const WAIT_TIME = 1000 as const
 
-const getCustomBrowser = (): Promise<Browser> =>
-  puppeteer.launch({
+interface Globals {
+  browser: Browser | null
+}
+
+const globals: Globals = {browser: null}
+
+const getCustomBrowser = async (): Promise<Browser> => {
+  if (globals['browser']) {
+    return globals['browser']
+  }
+  // eslint-disable-next-line fp/no-mutation
+  globals['browser'] = await puppeteer.launch({
     args: [
       '--font-render-hinting=none',
       // rest of the arguments where inspired from
@@ -25,6 +35,8 @@ const getCustomBrowser = (): Promise<Browser> =>
       height: 1080,
     },
   })
+  return globals['browser']
+}
 
 const getMatchOptions = (theme: Theme) => ({
   context,
@@ -43,19 +55,35 @@ const beforeScreenshot = (theme: Theme) => (page: Page): Promise<void> => {
     .then(() => new Promise((resolve) => setTimeout(resolve, WAIT_TIME)))
 }
 
+const afterAll = async (): Promise<void> => {
+  const {browser} = globals
+  if (browser) {
+    await browser.close()
+    // eslint-disable-next-line fp/no-mutation
+    globals['browser'] = null
+    // eslint-disable-next-line no-console
+    console.log('Browser closed')
+  }
+}
+
 const initStoryshotsByTheme = (theme: Theme): void => {
-  initStoryshots({
-    suite: `Storyshots ${theme}`,
-    test: imageSnapshot({
-      getScreenshotOptions: (): Base64ScreenShotOptions => ({
-        encoding: 'base64',
-        fullPage: true,
-      }),
-      beforeScreenshot: beforeScreenshot(theme),
-      getMatchOptions: getMatchOptions(theme),
-      getCustomBrowser,
+  const test = imageSnapshot({
+    getScreenshotOptions: (): Base64ScreenShotOptions => ({
+      encoding: 'base64',
+      fullPage: true,
     }),
+    beforeScreenshot: beforeScreenshot(theme),
+    getMatchOptions: getMatchOptions(theme),
+    getCustomBrowser,
+  })
+
+  // eslint-disable-next-line fp/no-mutation
+  test.afterAll = afterAll
+
+  return initStoryshots({
+    suite: `Storyshots ${theme}`,
     storyNameRegex: /^((?!Splash Screen).)*$/,
+    test,
   })
 }
 

@@ -198,8 +198,11 @@
     "ts-loader": "^8.0.16",
     "ts-node": "^9.1.1",
     "wait-on": "^5.2.1",
-    "webpack-cli": "^3.3.11",
+    "webpack-cli": "^4.5.0",
     "worker-plugin": "^5.0.0"
+  },
+  "resolutions": {
+    "babel-loader": "8.1.0"
   },
   "browserslist": {
     "production": [
