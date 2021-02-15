@@ -14,11 +14,7 @@ export async function generatePrivateKeyFromSeedPhrase(seedPhrase: string): Prom
 
   const seed = await mnemonicToSeed(seedPhrase)
 
-  return hdkey
-    .fromMasterSeed(seed)
-    .derivePath("m/44'/60'/0/0/0")
-    .getWallet()
-    .getPrivateKeyString()
+  return hdkey.fromMasterSeed(seed).derivePath("m/44'/60'/0/0/0").getWallet().getPrivateKeyString()
 }
 
 export async function createNewAccount(): Promise<RecoverySecrets> {

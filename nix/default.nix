@@ -15,7 +15,7 @@ let
   };
   inherit (import gitignore { inherit (pkgs) lib; }) gitignoreSource;
 
-  nodejs = pkgs.nodejs-12_x;
+  nodejs = pkgs.nodejs-14_x;
   yarn = pkgs.yarn.override { inherit nodejs; };
 
 in

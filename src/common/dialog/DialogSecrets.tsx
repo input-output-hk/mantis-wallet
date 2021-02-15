@@ -2,7 +2,6 @@
 import React, {useState, useRef, useEffect, FunctionComponent} from 'react'
 import classnames from 'classnames'
 import {Input, Select} from 'antd'
-import {SelectValue} from 'antd/lib/select'
 import {DialogInput} from './DialogInput'
 import {DialogSeedPhrase} from './DialogSeedPhrase'
 import {fillActionHandlers, toAntValidator, validateEthPrivateKey} from '../util'
@@ -40,7 +39,7 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
   const isInitialMount = useRef(true)
   const inputRefs = {
     privateKey: useRef<Input>(null),
-    seedPhrase: useRef<Select<SelectValue>>(null),
+    seedPhrase: useRef<typeof Select>(null),
   }
 
   useEffect(() => {
@@ -49,7 +48,7 @@ export const DialogSecrets: FunctionComponent<DialogSecrets> = ({
       isInitialMount.current = false
     } else {
       const inputRef = inputRefs[recoveryMethod]
-      if (inputRef.current) inputRef.current.focus()
+      if (inputRef.current && 'focus' in inputRef.current) inputRef.current.focus()
     }
   }, [recoveryMethod])
 

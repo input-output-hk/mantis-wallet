@@ -20,10 +20,10 @@ const filterResults = (searchValue: string, results = 5, fromIndex = 0): string[
   return i < 0 ? [] : [wordlist[i], ...filterResults(searchValue, results - 1, i + 1)]
 }
 
-const _DialogSeedPhrase: React.RefForwardingComponent<
-  Select<SelectValue>,
-  DialogSeedPhraseProps
-> = ({onChange}: DialogSeedPhraseProps, ref: Ref<Select<SelectValue>>) => {
+const _DialogSeedPhrase: React.ForwardRefRenderFunction<typeof Select, DialogSeedPhraseProps> = (
+  {onChange}: DialogSeedPhraseProps,
+  ref: Ref<typeof Select>,
+) => {
   const [phrase, setPhrase] = useState<string>('')
   const [options, setOptions] = useState<Array<{value: string}>>(FIRST_FIVE_WORDS)
 

@@ -15,10 +15,10 @@ interface TestObj2Type {
   }
 }
 
-// $ExpectType ["a"] | ["b", "c"]
+// $ExpectType [h: "a"] | [h: "b", h: "c"]
 type TestPathForObj1 = Path<TestObj1Type>
 
-// $ExpectType ["a"] | ["b", "c"] | ["b", "d"]
+// $ExpectType [h: "a"] | [h: "b", h: "c"] | [h: "b", h: "d"]
 type TestPathForObj2 = Path<TestObj2Type>
 
 // $ExpectType TestObj1Type
