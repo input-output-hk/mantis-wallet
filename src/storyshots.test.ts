@@ -45,7 +45,7 @@ const getMatchOptions = (theme: Theme) => ({
 }): MatchImageSnapshotOptions => ({
   customSnapshotsDir: path.resolve(__dirname, '../image-snapshots'),
   customSnapshotIdentifier: `${theme}-${_.kebabCase(context.kind)}--${_.kebabCase(context.story)}`,
-  customDiffConfig: {threshold: 0.2},
+  customDiffConfig: {threshold: 0.1},
   blur: 2,
 })
 
