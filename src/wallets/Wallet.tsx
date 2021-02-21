@@ -13,6 +13,7 @@ const _Wallet = ({
     estimateTransactionFee,
     getNextNonce,
     generateAccount,
+    syncStatus,
   },
 }: PropsWithWalletState<EmptyProps, LoadedState>): JSX.Element => {
   return (
@@ -24,6 +25,7 @@ const _Wallet = ({
         estimateTransactionFee={estimateTransactionFee}
         getNextNonce={getNextNonce}
         generateAddress={generateAccount}
+        syncStatus={syncStatus}
       />
     </div>
   )

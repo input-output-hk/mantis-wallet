@@ -4,12 +4,22 @@ import {render, RenderResult, waitFor, act, fireEvent} from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import {some} from 'fp-ts/lib/Option'
 import {TransactionHistory, TransactionHistoryProps} from './TransactionHistory'
-import {Account, FeeEstimates} from '../common/wallet-state'
+import {Account, FeeEstimates, SynchronizationStatusOnline} from '../common/wallet-state'
 import {abbreviateAmountForEnUS, createWithProviders} from '../common/test-helpers'
 import {ADDRESS} from '../storybook-util/dummies'
 import {mockedCopyToClipboard} from '../jest.config'
 import {asWei, asEther, etherValue} from '../common/units'
 import {Transaction} from './history'
+
+export const mockSyncStatus: SynchronizationStatusOnline = {
+  mode: 'online',
+  type: 'blocks',
+  currentBlock: 0,
+  highestKnownBlock: 0,
+  pulledStates: 0,
+  knownStates: 0,
+  lastNewBlockTimestamp: 0,
+}
 
 const tx1: Transaction = {
   hash: '1',
@@ -79,6 +89,7 @@ const defaultProps: TransactionHistoryProps = {
   availableBalance: some(asEther(1234)),
   estimateTransactionFee: estimateFees,
   getNextNonce: getNextNonce,
+  syncStatus: mockSyncStatus,
   generateAddress: jest.fn(),
 }
 
@@ -163,6 +174,11 @@ test('Send modal shows up', async () => {
 
   const {getByTestId, getAllByText, getByText, queryByText} = renderTransactionHistory({
     availableBalance: availableAmount,
+    syncStatus: {
+      mode: 'synced',
+      currentBlock: 0,
+      lastNewBlockTimestamp: 0,
+    },
   })
   const sendButton = getByTestId('send-button')
   await act(async () => userEvent.click(sendButton))
