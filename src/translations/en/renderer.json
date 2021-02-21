@@ -146,7 +146,8 @@
       "removeWalletApproval2": "I understand that all of my wallet data will be deleted from this machine.",
       "noKnownAddresses": "No known addresses",
       "walletIsNotSyncing": "Wallet is not syncing.",
-      "termsAndConditionsApproval": "I accept the terms and conditions."
+      "termsAndConditionsApproval": "I accept the terms and conditions.",
+      "outOfSync": "Wallet is out of sync."
     },
     "feeEstimateLevels": {
       "custom": "Custom",
