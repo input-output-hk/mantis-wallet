@@ -47,7 +47,6 @@ export const statusModal = (): JSX.Element => (
       },
     }}
     config={{
-      walletDataDir: text('data dir', '~/.mantis-wallet'),
       rpcAddress: new URL(text('RPC address', 'https://127.0.0.1:8546')),
     }}
     visible
