@@ -9,7 +9,8 @@
       "ok": "OK",
       "saveDebugLogs": "Save Debug logs",
       "selectDirectory": "Select Directory",
-      "selectOtherLocation": "Select other location"
+      "selectOtherLocation": "Select other location",
+      "openDocs": "Open Docs"
     },
     "checkboxLabel": {
       "deleteCurrentDataDir": "Delete my current data directory instead"
@@ -21,13 +22,15 @@
       "incompatibleDataDir": "Your current data directory is incompatible with this version of Mantis Wallet.",
       "incompatibleDataDirAction": "We'll rename your old data directory from \"{{oldDirName}}\" to \"{{newDirName}}\".",
       "deleteDatadirConfirmation": "Are you sure you want to delete \"{{directory}}\"?",
-      "operationComplete": "Operation complete"
+      "operationComplete": "Operation complete",
+      "mantisFailedToStart": "Please check whether you have all prerequisites installed. For more info, see https://docs.mantisclient.io/"
     },
     "title": {
       "incompatibleDataDir": "Incompatible data directory",
       "saveDebugLogs": "Save Debug logs",
       "startupError": "Mantis Wallet startup error",
-      "error": "Error"
+      "error": "Error",
+      "mantisFailedToStart": "Mantis client failed to start!"
     },
     "noVersionTxt": {
       "title": "Unversioned datadir",
