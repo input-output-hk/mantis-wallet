@@ -76,7 +76,7 @@ $themes: (
     secondary-background: $light-secondary-background,
     primary-color: $primary-color,
     secondary-color: $secondary-color,
-    success-color: $primary-color,
+    success-color: $light-text-color,
     tx-success-color: #000,
     success-text: darken($primary-color, 20%),
     error-color: $error-background-color,
