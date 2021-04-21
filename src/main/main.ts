@@ -61,14 +61,6 @@ if (!app.requestSingleInstanceLock()) {
   app.quit()
 }
 
-function lockAspectRatioOnMacOS(window: BrowserWindow): void {
-  // Lock the aspect ratio to 16:9 so the user can scale,
-  // but not change the height and width independently.
-  // When fullscreen, it's ignored. Works only on macOS.
-  // Win support: https://github.com/electron/electron/pull/18306
-  window.setAspectRatio(ASPECT_RATIO)
-}
-
 function createWindow(t: TFunctionMain): BrowserWindow {
   // Create the browser window.
   const {width, height} = screen.getPrimaryDisplay().workAreaSize
@@ -86,8 +78,6 @@ function createWindow(t: TFunctionMain): BrowserWindow {
   })
 
   Menu.setApplicationMenu(buildMenu(t))
-
-  lockAspectRatioOnMacOS(mainWindow)
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
