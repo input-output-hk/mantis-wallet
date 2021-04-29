@@ -157,14 +157,16 @@ const Confirmations = ({transaction: {blockNumber}}: TransactionCellProps): JSX.
   if (
     blockNumber === null ||
     walletState.walletStatus !== 'LOADED' ||
-    walletState.syncStatus.mode !== 'online'
+    walletState.syncStatus.mode === 'offline'
   )
     return <></>
 
-  const confirmations = walletState.syncStatus.highestKnownBlock - blockNumber
+  const highestBlock =
+    walletState.syncStatus.mode === 'synced'
+      ? walletState.syncStatus.currentBlock
+      : walletState.syncStatus.highestKnownBlock
+  const confirmations = highestBlock - blockNumber
 
-  // Didn't find exact conditions, but sometimes highest known block is not there?
-  // TODO: ETCM-450
   return Number.isNaN(confirmations) ? (
     <></>
   ) : (
