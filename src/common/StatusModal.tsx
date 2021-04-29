@@ -7,7 +7,7 @@ import {SynchronizationStatus} from './wallet-state'
 import {CopyableLongText} from './CopyableLongText'
 import {SyncMessage} from './SyncStatus'
 import {BackendState} from './backend-state'
-import {useTranslation, useFormatters} from '../settings-state'
+import {useTranslation, useFormatters, SettingsState} from '../settings-state'
 import {TKeyRenderer} from './i18n'
 import {Trans} from './Trans'
 import './StatusModal.scss'
@@ -37,7 +37,7 @@ const DisplaySyncStatus = ({syncStatus}: {syncStatus: SynchronizationStatus}): J
 
 interface StatusModalProps extends Pick<ModalProps, 'visible' | 'onCancel'> {
   status: MantisWalletStatus
-  config: Pick<Config, 'walletDataDir' | 'rpcAddress'>
+  config: Pick<Config, 'rpcAddress'>
   syncStatus?: SynchronizationStatus
 }
 
@@ -48,6 +48,7 @@ export const StatusModal = ({
   ...props
 }: StatusModalProps): JSX.Element => {
   const {networkName} = BackendState.useContainer()
+  const {mantisDatadir} = SettingsState.useContainer()
   const {t} = useTranslation()
   const {formatFileSize} = useFormatters()
 
@@ -97,7 +98,7 @@ export const StatusModal = ({
           <div className="info-item">
             <div>{getLabel(['status', 'label', 'mantisWalletLocalDirectory'])}</div>
             <div className="info-value">
-              <CopyableLongText content={config.walletDataDir} />
+              <CopyableLongText content={mantisDatadir} />
             </div>
           </div>
         </div>
