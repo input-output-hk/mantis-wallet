@@ -74,6 +74,9 @@ export const Settings = (): JSX.Element => {
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkName>(networkName)
 
   const changeNetwork = (newNetwork: NetworkName): void => {
+    if (selectedNetwork === newNetwork && isDefinedNetworkName(newNetwork)) {
+      return
+    }
     setSelectedNetwork(newNetwork)
     setActiveModal('ChangeNetwork')
   }
@@ -165,7 +168,7 @@ export const Settings = (): JSX.Element => {
               <Select
                 placeholder="…"
                 value={isDefinedNetworkName(networkName) ? networkName : 'custom'}
-                onChange={changeNetwork}
+                onSelect={changeNetwork}
                 bordered={false}
               >
                 {networkOptions.map(({key, label}) => (
