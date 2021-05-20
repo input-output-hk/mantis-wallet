@@ -1,0 +1,17 @@
+This is Mantis Wallet V0.2.0
+
+Changes
+
+* Mantis client upgraded to v3.2.3
+* Allow changing from custom network to another custom network (#88)
+* Fix confirmations calculation in synced state (#83)
+* Remove aspect ratio lock (#68)
+* Display datadir properly (#84)
+* Upgrade packages (#78)
+* Improve balance formatting (#77)
+
+Note that mantis datadir is not compatible with previous versions. Prior to client v3.2.3 release, the Sagano testnet was reset to the genesis block. To request funds on sagano, you can use faucet: https://mantis-testnet-faucet-web.mantis.ws/ Accounts on other networks are not affected.
+
+Known issues
+
+In the current version of mantis client, there is this issue: If an RPC request involving the “latest block” is underway at the exact same time a new block is imported, the request may fail. It may cause errors to pop up in the wallet either during sync process or during fetching transaction history. Those errors do not limit functionality of the wallet. The RPC request can be retried.
