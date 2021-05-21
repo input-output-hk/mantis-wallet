@@ -10,7 +10,13 @@ Changes
 * Upgrade packages (#78)
 * Improve balance formatting (#77)
 
-Note that mantis datadir is not compatible with previous versions. Prior to client v3.2.3 release, the Sagano testnet was reset to the genesis block. To request funds on sagano, you can use faucet: https://mantis-testnet-faucet-web.mantis.ws/ Accounts on other networks are not affected.
+Note that mantis datadir is not compatible with previous versions. Prior to client v3.2.3 release, the Sagano testnet was reset to the genesis block. To request funds on sagano, you can use faucet: https://mantis-testnet-faucet-web.mantis.ws/ Accounts on other networks are not affected.  
+
+On recent Debian distributions, every time you run the AppImage file you need to add the no-sandbox switch like this:
+ ./mantis.appimage --no-sandbox 
+For more information, see this Reddit discussion: 
+https://www.reddit.com/r/debian/comments/hkyeft/unable_to_run_appimage_applications_without/
+
 
 Known issues
 
