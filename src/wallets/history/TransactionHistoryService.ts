@@ -74,7 +74,7 @@ export class TransactionHistoryService {
     })
 
   static getBestBlockWithWeb3 = (web3: MantisWeb3): Observable<BlockHeader> =>
-    rx.interval(1000).pipe(
+    rx.interval(2000).pipe(
       rxop.concatMap(() => web3.eth.getBlock('latest')),
       rxop.distinctUntilChanged((a, b) => a.hash == b.hash),
       rxop.shareReplay(1),
@@ -93,7 +93,7 @@ export class TransactionHistoryService {
     return new TransactionHistoryService(
       new BehaviorSubject<void>(void 0),
       500,
-      100,
+      500,
       getTransactions,
       storeFactory,
       bestBlock$,
@@ -144,7 +144,7 @@ export class TransactionHistoryService {
       .from(storedHistory.blocksWithKnownTransactions)
       .pipe(
         rxop.mergeMap(
-          (blockToCheck) => this.fetchTransactions(account, blockToCheck, blockToCheck + 1),
+          (blockToCheck) => this.fetchTransactions(account, blockToCheck, blockToCheck),
           5,
         ),
         rxop.reduce<readonly Transaction[]>(uncurry(ArrayOps.concat), []),
