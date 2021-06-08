@@ -27,8 +27,8 @@ export const updateLanguage = (language: Language): void => {
   ipcSend('update-language', language)
 }
 
-export const saveDebugLogs = (): void => {
-  ipcSend('save-debug-logs')
+export const saveDebugLogs = (rendererStoreData: string): void => {
+  ipcSend('save-debug-logs', rendererStoreData)
 }
 
 export const updateNetworkName = (networkName: NetworkName): void => {

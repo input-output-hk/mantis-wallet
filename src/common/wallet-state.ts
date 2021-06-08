@@ -83,6 +83,7 @@ interface CommonState {
   setTncAccepted: (value: boolean) => void
   syncStatus: SynchronizationStatus
   error: Option<Error>
+  exportState(): string
 }
 
 export interface InitialState extends CommonState {
@@ -639,6 +640,19 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
   const availableBalance = getOrElse(() => asWei(0))(availableBalanceOption)
   const pendingBalance = asWei(totalBalance.minus(availableBalance))
 
+  const exportState = (): string =>
+    JSON.stringify({
+      totalBalance,
+      availableBalance,
+      pendingBalance,
+      transactions,
+      tncAccepted,
+      accounts,
+      error,
+      walletStatus,
+      syncStatus,
+    })
+
   return {
     walletStatus,
     error,
@@ -665,6 +679,7 @@ function useWalletState(initialState?: Partial<WalletStateParams>): WalletData {
     deleteContact,
     tncAccepted,
     setTncAccepted,
+    exportState,
   }
 }
 
