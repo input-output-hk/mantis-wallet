@@ -326,7 +326,7 @@ walletInit()
       })
     }
 
-    ipcListenToRenderer('save-debug-logs', async (event) => {
+    ipcListenToRenderer('save-debug-logs', async (event, rendererStoreData: string) => {
       const t = createTFunctionMain(i18n)
       const options = {
         title: t(['dialog', 'title', 'saveDebugLogs']),
@@ -341,7 +341,7 @@ walletInit()
       }
 
       try {
-        await exportLogs(config, store, outputFilePath)
+        await exportLogs(config, store, rendererStoreData, outputFilePath)
         event.reply('save-debug-logs-success', outputFilePath)
       } catch (e) {
         mainLog.error(e)

@@ -12,6 +12,7 @@ import {wrapWithModal, ModalLocker} from './MantisModal'
 import {Dialog} from './Dialog'
 import {Trans} from './Trans'
 import {useTranslation, useLocalizedUtilities} from '../settings-state'
+import {WalletState} from './wallet-state'
 import {TFunctionRenderer} from './i18n'
 
 const CHANNELS: IPCToRendererChannelName[] = [
@@ -37,6 +38,7 @@ function createMessage(t: TFunctionRenderer, path: string) {
 export const SupportDialog = (): JSX.Element => {
   const {t} = useTranslation()
   const {makeDismissableMessage} = useLocalizedUtilities()
+  const {exportState} = WalletState.useContainer()
   const {setLocked, isLocked} = ModalLocker.useContainer()
   const [isDone, setDone] = useState(false)
 
@@ -68,7 +70,8 @@ export const SupportDialog = (): JSX.Element => {
       className="SupportModal"
       leftButtonProps={{
         onClick: () => {
-          saveDebugLogs()
+          const walletState = exportState()
+          saveDebugLogs(walletState)
           setLocked(true)
         },
         children: t(['common', 'button', 'exportDebugLogs']),

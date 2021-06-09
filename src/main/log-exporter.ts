@@ -9,6 +9,7 @@ import {CheckedDatadir, getMantisDatadirPath} from './data-dir'
 export const createLogExporter = (_checkedDatadir: CheckedDatadir) => async (
   config: Config,
   store: MainStore,
+  rendererStoreData: string,
   outputFilePath: string,
 ): Promise<void> => {
   // Create and save archive
@@ -22,11 +23,13 @@ export const createLogExporter = (_checkedDatadir: CheckedDatadir) => async (
   const backendLogPath = path.join(mantisDatadirPath, store.get('networkName'), 'logs')
   const walletLogPath = path.join(config.walletDataDir, 'logs')
   const configAndStatusText = JSON.stringify({config, status}, null, 2)
+  const rendererStore = JSON.stringify(JSON.parse(rendererStoreData), null, 2)
 
   archive
     .directory(backendLogPath, false)
     .directory(walletLogPath, false)
     .append(configAndStatusText, {name: 'wallet-config-and-status.json'})
+    .append(rendererStore, {name: 'renderer-store.json'})
 
   const output = fs.createWriteStream(outputFilePath)
   archive.pipe(output)
