@@ -23,6 +23,7 @@ import {
 } from './sendTransaction'
 import {wrapWithModal} from '../common/MantisModal'
 import {Transaction} from './history'
+import {mockSyncStatus} from './TransactionHistory.test'
 
 export default {
   title: 'Transaction History',
@@ -37,6 +38,7 @@ export const withNoTransactions = (): JSX.Element => (
     estimateTransactionFee={estimateFeesWithRandomDelay}
     getNextNonce={getNextNonceWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
+    syncStatus={mockSyncStatus}
   />
 )
 
@@ -48,6 +50,7 @@ export const withDemoTransactions = (): JSX.Element => (
     estimateTransactionFee={estimateFeesWithRandomDelay}
     getNextNonce={getNextNonceWithRandomDelay}
     generateAddress={asyncAction('on-generate-address')}
+    syncStatus={mockSyncStatus}
   />
 )
 
@@ -121,6 +124,7 @@ export const interactive = (): JSX.Element => {
       estimateTransactionFee={estimateFeesWithRandomDelay}
       getNextNonce={getNextNonceWithRandomDelay}
       generateAddress={asyncAction('on-generate-address')}
+      syncStatus={mockSyncStatus}
     />
   )
 }
