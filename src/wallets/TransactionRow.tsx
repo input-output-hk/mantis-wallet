@@ -181,7 +181,7 @@ export const TxDetailsCell = ({transaction}: TransactionCellProps): JSX.Element 
   const {hash, from, to, gas, gasPrice, gasUsed, contractAddress} = transaction
   return (
     <>
-      <div className="call-details two-col-table">
+      <div className="two-col-table">
         <div>
           <Trans k={['wallet', 'label', 'sendingAddress']} />:
         </div>
