@@ -19,7 +19,7 @@ export const Wallets = (): JSX.Element => {
       option.fold(
         () => void 0,
         (error) => {
-          message.error(error, 5)
+          message.error({content: error, duration: 5, key: 'walletError'})
         },
       ),
     )
