@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import {Button, Tooltip} from 'antd'
-import InfiniteScroll from 'react-infinite-scroller'
 import {fold, getOrElse, Option} from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/function'
 import {SendTransactionFlow} from './modals/SendTransaction'
@@ -53,7 +52,6 @@ export const TransactionHistory = ({
   syncStatus,
 }: TransactionHistoryProps): JSX.Element => {
   const {t} = useTranslation()
-  const [shownTxNumber, setShownTxNumber] = useState(20)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
 
@@ -131,20 +129,11 @@ export const TransactionHistory = ({
         </div>
       ) : (
         <div className="transactions-container">
-          <InfiniteScroll
-            initialLoad={false}
-            loadMore={() => setShownTxNumber(shownTxNumber + 10)}
-            hasMore={transactions.length > shownTxNumber}
-            useWindow={false}
-            getScrollParent={() => document.getElementById('main')}
-          >
-            <TransactionList
-              transactions={transactions}
-              shownTxNumber={shownTxNumber}
-              onSortChange={(sortBy) => setSortBy(sortBy)}
-              sortBy={sortBy}
-            />
-          </InfiniteScroll>
+          <TransactionList
+            transactions={transactions}
+            onSortChange={(sortBy) => setSortBy(sortBy)}
+            sortBy={sortBy}
+          />
         </div>
       )}
     </div>

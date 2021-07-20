@@ -3,8 +3,7 @@ import _ from 'lodash/fp'
 import classnames from 'classnames'
 import {CaretDownFilled, CaretUpFilled} from '@ant-design/icons'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {map} from 'fp-ts/lib/Array'
-import {sort} from 'fp-ts/lib/ReadonlyArray'
+import {sort, map} from 'fp-ts/lib/ReadonlyArray'
 import {getDualOrd, ord, Ord, ordNumber} from 'fp-ts/lib/Ord'
 import {fillActionHandlers} from '../common/util'
 import {
@@ -33,7 +32,6 @@ export interface SortBy {
 
 interface TransactionListProps {
   transactions: readonly Transaction[]
-  shownTxNumber?: number
   onSortChange?: (sortBy: SortBy) => void
   initialSortBy?: SortBy
   sortBy?: SortBy
@@ -153,7 +151,6 @@ const getOrd = ({direction, property}: SortBy): Ord<Transaction> => {
 
 export const TransactionList = ({
   transactions,
-  shownTxNumber,
   onSortChange,
   initialSortBy = {
     property: 'time',
@@ -207,7 +204,6 @@ export const TransactionList = ({
         {pipe(
           transactions,
           sort(getOrd(_sortBy)),
-          _.take(shownTxNumber || transactions.length),
           map((tx) => <TransactionRow transaction={tx} key={tx.hash} />),
         )}
       </div>
