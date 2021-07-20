@@ -2,11 +2,11 @@
 
 .TransactionList {
   @extend %base-grid;
+  height: 55vh;
+  overflow-y: scroll;
 
   .header {
     display: contents;
-    position: sticky;
-    top: 0;
     padding-left: 1em;
     font-size: $font-size-s;
     font-weight: bold;
