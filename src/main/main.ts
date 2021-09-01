@@ -74,6 +74,8 @@ function createWindow(t: TFunctionMain): BrowserWindow {
     minHeight: MIN_HEIGHT,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
     },
   })
 
