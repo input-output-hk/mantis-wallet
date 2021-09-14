@@ -42,7 +42,7 @@ function useBackendState(params?: Partial<BackendStateParams>): BackendState {
 
   useRecurringTimeout(async () => {
     try {
-      await web3.eth.getProtocolVersion()
+      await web3.eth.getBlock('latest')
       setBackendRunning(true)
     } catch (e) {
       setBackendRunning(false)

@@ -83,7 +83,7 @@ const AppContent: React.FC = () => {
     return () => ipcRemoveAllListeners('store-changed')
   })
 
-  return backendState.isBackendRunning && txHistory ? (
+  return backendState.isBackendRunning && txHistory !== undefined ? (
     <div className={classnames('loaded', menu.toLowerCase())}>
       <WalletState.Provider
         initialState={{
