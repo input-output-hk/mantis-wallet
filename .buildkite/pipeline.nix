@@ -9,15 +9,18 @@ let
           build.branch == "develop" ||
           build.branch == "master"
       '';
+  shouldRunE2E = ''
+      build.message =~ /e2e/
+    '';
 in
 
 {
   steps.commands = {
     mantis-dist = {
       label = ":clock12::darwin::linux::windows:";
-      "if" = shouldBuild "all";
+      "if" = shouldRunE2E;
       command = ''
-        (cd mantis; nix-shell --run 'sbt -v -mem 2048 -J-Xmx4g dist')
+        (cd mantis; nix-shell --run 'sbt -v -d -mem 2048 -J-Xmx4g dist')
 
         mkdir mantis-dist
         cp mantis/target/universal/mantis-*.zip mantis-dist/mantis.zip
@@ -29,7 +32,10 @@ in
         )
         tar czf mantis-dist.tgz mantis-dist
       '';
-      artifactPaths = [ "mantis-dist.tgz" ];
+      artifactPaths = [
+        "mantis-dist.tgz"
+        "/var/lib/buildkite-agent/.sbt/boot/update.log"
+        ];
       agents.queue = "project42";
     };
 
@@ -125,7 +131,7 @@ in
     electron-linux = {
       dependsOn = [ build mantis-dist node_modules ];
       label = ":electron::linux:";
-      "if" = shouldBuild "linux";
+      "if" = shouldRunE2E;
       command = ''
         buildkite-agent artifact download node_modules.tgz .
         buildkite-agent artifact download build.tgz .
@@ -148,6 +154,20 @@ in
 
       artifactPaths = [ "dist/*.AppImage" ];
 
+      agents.queue = "project42";
+    };
+
+    e2e_test = {
+      dependsOn = [ electron-linux ];
+      label = ":test_tube:";
+      "if" = shouldRunE2E;
+      command = ''
+        buildkite-agent artifact download "dist/*.AppImage" .
+        cd e2e
+        nix-shell --pure --keep SSH_AUTH_SOCK --run yarn
+        nix-shell --pure --run 'ENV=LINUX xvfb-run ./node_modules/.bin/cucumber-js -r ./steps  --format html:./reports/cucumber-html-report.html --tags "@Sagano and @Smoke" --exit --fail-fast'
+      '';
+      artifactPaths = [ "e2e/reports/cucumber-html-report.html" ];
       agents.queue = "project42";
     };
 

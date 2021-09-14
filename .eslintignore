@@ -4,4 +4,5 @@ build
 dist
 storybook-static
 docs
+e2e
 
