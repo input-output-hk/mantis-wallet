@@ -5,6 +5,7 @@ import {BlockHeader} from 'web3-eth'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {readonlyArray} from 'fp-ts'
 import {create, ElectronLog} from 'electron-log'
+import _ from 'lodash'
 import * as StoredHistory from './StoredHistory'
 import {FetchedBatch, TransactionHistory} from './TransactionHistory'
 import {through, uncurry} from '../../shared/utils'
@@ -20,6 +21,7 @@ import {BatchRange} from './BatchRange'
 import {ArrayOps, RxOps} from '../../shared'
 import {NetworkName} from '../../config/type'
 import {Transaction} from './Transaction'
+import {asWei} from '../../common/units'
 
 export type Address = string
 
@@ -73,22 +75,61 @@ export class TransactionHistoryService {
       )
     })
 
+  static fetchTransactionsWithoutMantis = (web3: MantisWeb3): GetAccountTransactions => async (
+    account,
+    fromBlock,
+    toBlock,
+  ) => {
+    const accountTransactions: Transaction[] = []
+    await Promise.all(
+      _.range(fromBlock, toBlock + 1).map(async (blockNumber) => {
+        const {transactions, timestamp, gasUsed} = await web3.eth.getBlock(blockNumber)
+        await Promise.all(
+          transactions.map(async (txHash) => {
+            const tx = await web3.eth.getTransaction(txHash)
+            const isIncoming = tx.from === account
+            const isOutgoing = tx.to === account
+            if (isIncoming || isOutgoing) {
+              // eslint-disable-next-line fp/no-mutating-methods
+              accountTransactions.push({
+                ...tx,
+                value: asWei(tx.value),
+                gasPrice: asWei(tx.gasPrice),
+                timestamp: new Date(timestamp),
+                gasUsed,
+                fee: asWei(1),
+                direction: isIncoming ? 'incoming' : 'outgoing',
+                status: 'confirmed',
+                contractAddress: null,
+              })
+            }
+          }),
+        )
+      }),
+    )
+
+    return accountTransactions
+  }
+
   static getBestBlockWithWeb3 = (web3: MantisWeb3): Observable<BlockHeader> =>
     rx.interval(2000).pipe(
       rxop.concatMap(() => web3.eth.getBlock('latest')),
+      rxop.retry(),
       rxop.distinctUntilChanged((a, b) => a.hash == b.hash),
       rxop.shareReplay(1),
     )
 
-  static create(
+  static async create(
     web3: MantisWeb3,
     store: Store<GenericWalletStoreWithTxHistory>,
     logger: ElectronLog,
     bestBlockParam$?: Observable<BlockHeader>,
-  ): TransactionHistoryService {
+  ): Promise<TransactionHistoryService> {
     const bestBlock$ = bestBlockParam$ ?? TransactionHistoryService.getBestBlockWithWeb3(web3)
-    const getTransactions = TransactionHistoryService.fetchTransactionsWithWeb3(web3, bestBlock$)
+    const getTransactions = TransactionHistoryService.fetchTransactionsWithoutMantis(web3)
     const storeFactory = historyStoreFactory(store)
+
+    await bestBlock$.pipe(rxop.first()).toPromise()
 
     return new TransactionHistoryService(
       new BehaviorSubject<void>(void 0),
@@ -129,11 +170,11 @@ export class TransactionHistoryService {
       ),
       RxOps.tapEval(through(StoredHistory.fromHistory, store.storeHistory)),
       rxop.pluck('transactions'),
-      rxop.catchError((error) => {
+      rxop.retryWhen((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
         this.logger.error(error)
-        return this.watchAccount(networkName, account)
+        return error.pipe(rxop.delayWhen(() => rx.timer(2000)))
       }),
     )
   }

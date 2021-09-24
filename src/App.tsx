@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import _ from 'lodash/fp'
 import {SplashScreen} from './SplashScreen'
 import {BackendState, defaultBackendData, StoreBackendData} from './common/backend-state'
@@ -57,12 +57,20 @@ const store = createPersistentStore({defaults: defaultData, migrations})
 const AppContent: React.FC = () => {
   useEffect(() => {
     rendererLog.info('Mantis Wallet renderer started')
-  })
+  }, [])
 
   const backendState = BackendState.useContainer()
   const {
     currentRoute: {menu},
   } = RouterState.useContainer()
+
+  const [txHistory, setTxHistory] = useState<TransactionHistoryService | undefined>(undefined)
+
+  useEffect(() => {
+    TransactionHistoryService.create(web3, store, rendererLog).then((txHistory) => {
+      setTxHistory(txHistory)
+    })
+  }, [])
 
   useEffect(() => {
     ipcListenToMain('store-changed', () => {
@@ -75,14 +83,14 @@ const AppContent: React.FC = () => {
     return () => ipcRemoveAllListeners('store-changed')
   })
 
-  return backendState.isBackendRunning ? (
+  return backendState.isBackendRunning && txHistory !== undefined ? (
     <div className={classnames('loaded', menu.toLowerCase())}>
       <WalletState.Provider
         initialState={{
           web3,
           store,
           backendState,
-          txHistory: TransactionHistoryService.create(web3, store, rendererLog),
+          txHistory,
         }}
       >
         <TokensState.Provider initialState={{web3, store}}>
