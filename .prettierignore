@@ -6,6 +6,7 @@ dist
 storybook-static
 mantis
 .*
+e2e
 
 # general
 *.json

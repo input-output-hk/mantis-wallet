@@ -1,0 +1,139 @@
+{
+  "CreateWallet": {
+    "PVK": "",
+    "Phrases": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "WalletName": "TestWallet",
+    "WalletPass": "TestPass123!"
+  },
+  "RestoreWallet": {
+    "Password": "TestPass123!",
+    "PVTKey": "0xd238a17a8c2fabbcbf0346fea7c7910e96b5e3cf2fbe135584b670bb4e51daa6",
+    "IncorrectPVTKey": "0xd238a17a8c2fabbcbf0346fea7c7910456b5e3cf2fbert5584b670bbre51daa6",
+    "WalletName": "MantisWallet",
+    "Address": "0x103e4d6fe1667e99bb8cbf24498988b706b5830a",
+    "Phrases": [
+      "shell",
+      "squirrel",
+      "tent",
+      "dress",
+      "oyster",
+      "release",
+      "interest",
+      "bounce",
+      "lobster",
+      "host",
+      "lamp",
+      "stage"
+    ]
+  },
+  "BackupWallet": {
+  "Password": "TestPass123!",
+  "PVTKey": "0x33385a9edc8b6315778a43b41a3582573a51eaf0463f039f938e147bb537b5a2",
+  "WalletName": "MantisWalletBackup",
+  "Address": "0xec49c61786376007494af082b02fac4adb4e4292"
+},
+  "TransactionWallet": {
+  "Password": "TestPass123!",
+  "PVTKey": "0x9d3f0463f74a7c29e556952afb67a1566d70e3e5896e5e04055e2aaf5d16353d",
+  "WalletName": "MantisWalletTransaction",
+  "Address": "0x8b6b9fd2a8446fc1fe979426323bd273b94de827"
+}, 
+ "PVKBlurred": {
+    "True":"DialogQRCode blurred",
+    "False": "DialogQRCode"
+  },
+  "Addresses": {
+    "WalletName": "My address",
+    "EditedWalletName": "Edited address",
+    "WalletAddress": "0xec49c61786376007494af082b02fac4adb4e4292",
+    "EmptyWalletName": "",
+    "EmptyWalletAddress": "",
+    "InvalidWalletAddress": "invalidAddress123",
+    "NewContactError": "Some fields require additional action before you can continue.",
+    "InvalidAddressError": "Invalid address",
+    "DeleteContactText": "Delete Contact",
+    "AreYouSureText": "Are you sure you want to delete this contact?",
+    "NoSavedContactText": "No saved contacts",
+    "NeedWalletToSeeAddressBookText": "You need a wallet to continue"
+  },
+  "TOS": {
+    "TOSTitle": "IOHK Terms of Service Agreement"
+  },
+  "TransactionType": [
+    "Sent",
+    "Received",
+    "Sent",
+    "Received",
+    "Sent"
+  ],
+  "TransactionAmount": [
+    "-1.100140",
+    "+1.00",
+    "-1.150000",
+    "+1.35",
+    "-0.750000"
+  ],
+  "TransactionTime": [
+    "06/16/2021, 10:34 AM",
+    "06/16/2021, 10:33 AM",
+    "06/16/2021, 10:32 AM",
+    "06/16/2021, 10:26 AM",
+    "06/16/2021, 10:13 AM"
+  ],
+  "DateFormat": [
+    "MM/DD/YYYY",
+    "YYYY-MM-DD",
+    "DD-MM-YYYY",
+    "DD/MM/YYYY"
+  ],
+  "TimeFormat": [
+    "12-hour",
+    "24-hour"
+  ],
+  "LanguageFormat": [
+    "English"
+  ],
+  "StatusInfo": [
+    "Platform:",
+    "Platform version:",
+    "CPU:",
+    "Memory:",
+    "Mantis Wallet version:",
+    "Mantis Wallet main process ID:",
+    "Mantis Wallet renderer process ID:",
+    "Mantis Wallet local directory:",
+    "Network:",
+    "Node status:",
+    "Node process ID:",
+    "Wallet RPC address:",
+    "Synchronization:",
+    "Current block:",
+    "Highest known block:"
+  ],
+  "SupportDescription": "If you encounter a bug, don't hesitate to contact our support team in IOHK.\nTo make it easier for us to diagnose your problem, please, include your debug logs in the bug report.\nYou can save your logs easily by clicking the Export Logs button below.",
+  "ErrorColor": "rgba(255,0,0,1)",
+  "AdditionalActionError": "Some fields require additional action before you can continue.",
+  "ErrorPhrases":"The phrase is incorrect",
+  "WalletNameErrorMessage": "Name shouldn't be empty",
+  "PVKIncorrectPassError":"Key derivation failed - possibly wrong password",
+  "PVKErrorMessage": "Private key must be set",
+  "IncorrectPVKErrorMessage": "Invalid private key",
+  "InvalidSeedPhrase": "Invalid seed phrase",
+  "PassMustBeProvided": "Password must be provided",
+  "AddressNotSet": "Address must be set",
+  "InvalidAddress": "Invalid address",
+  "Amount0Error": "Must be a number greater than 0"
+}

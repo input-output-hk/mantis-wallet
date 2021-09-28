@@ -1,0 +1,28 @@
+{
+  "0": "wallet",
+  "1": "txHistory",
+  "wallet": {
+    "txHistory": {},
+    "accounts": [],
+    "addressBook": {},
+    "tncAccepted": false
+  },
+  "settings": {
+    "theme": "dark",
+    "dateFormat": "MM/DD/YYYY",
+    "timeFormat": "12-hour",
+    "language": "en",
+    "mantisDatadir": "/home/ubuntu/.mantis-wallet/mantis"
+  },
+  "tokens": {
+    "watched": {}
+  },
+  "networkName": "testnet-internal-nomad",
+  "settings.language": "en",
+  "settings.mantisDatadir": "",
+  "__internal__": {
+    "migrations": {
+      "version": "0.1.3-mantis-wallet"
+    }
+  }
+}
