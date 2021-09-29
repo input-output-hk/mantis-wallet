@@ -1,8 +1,8 @@
 {
   "name": "mantis-wallet",
   "productName": "Mantis-Wallet",
-  "version": "0.2.2",
-  "compatibleDataDirVersions": "0.2.x",
+  "version": "0.2.3",
+  "compatibleDataDirVersions": "^0.2.3",
   "private": true,
   "engines": {
     "node": "^14.6.0"
