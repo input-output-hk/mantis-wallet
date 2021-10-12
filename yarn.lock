@@ -1583,11 +1583,6 @@
     global-agent "^2.0.2"
     global-tunnel-ng "^2.7.1"
 
-"@electron/remote@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-1.2.1.tgz#665b9fc2c6a60f9e5039bf235e2c60ccd0242c32"
-  integrity sha512-yKh60I8KjezQkZqeuN5Nu2O/Z72+tgNgzvAa8QQPLtQbsrCOaeIWdXZQqierz4jQ5jzTNUk6KIcK3V2kFeaxaQ==
-
 "@emotion/cache@^10.0.27", "@emotion/cache@^10.0.9":
   version "10.0.29"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-10.0.29.tgz#87e7e64f412c060102d589fe7c6dc042e6f9d1e0"
@@ -3227,10 +3222,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^14.14.25":
-  version "14.14.28"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.28.tgz#cade4b64f8438f588951a6b35843ce536853f25b"
-  integrity sha512-lg55ArB+ZiHHbBBttLpzD07akz0QPrZgUODNakeC09i62dnrywr9mFErHuaPlB6I7z+sEbK+IYmplahvplCj2g==
+"@types/node@*", "@types/node@^14.14.25", "@types/node@^14.6.2":
+  version "14.17.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.12.tgz#7a31f720b85a617e54e42d24c4ace136601656c7"
+  integrity sha512-vhUqgjJR1qxwTWV5Ps5txuy2XMdf7Fw+OrdChRboy8BmWUPkckOhphaohzFG6b8DW7CrxaBMdrdJ47SYFq1okw==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -3241,11 +3236,6 @@
   version "12.20.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.1.tgz#63d36c10e162666f0107f247cdca76542c3c7472"
   integrity sha512-tCkE96/ZTO+cWbln2xfyvd6ngHLanvVlJ3e5BeirJ3BYI5GbAyubIrmV4JjjugDly5D9fHjOL5MNsqsCnqwW6g==
-
-"@types/node@^14.6.2":
-  version "14.17.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.12.tgz#7a31f720b85a617e54e42d24c4ace136601656c7"
-  integrity sha512-vhUqgjJR1qxwTWV5Ps5txuy2XMdf7Fw+OrdChRboy8BmWUPkckOhphaohzFG6b8DW7CrxaBMdrdJ47SYFq1okw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -7906,10 +7896,10 @@ electron-winstaller@^4.0.1:
     lodash.template "^4.2.2"
     temp "^0.9.0"
 
-electron@13.2.3:
-  version "13.2.3"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-13.2.3.tgz#a0fd80a011ba1549147777c9d72e881577904509"
-  integrity sha512-FzWhbKHjq7ZTpPQFaYiLPL64erC8/BOsu5NlNN9nQ6f7rIP8ygKlNAlQit3vbOcksQAwItDUCIw4sW0mcaRpCA==
+electron@13.3.0:
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-13.3.0.tgz#5f4f245723dd50fcd2c3d386a1d66fe748af404f"
+  integrity sha512-d/BvOLDjI4i7yf9tqCuLL2fFGA2TrM/D9PyRpua+rJolG0qrwp/FohP02L0m+44kmPpofIo4l3NPwLmzyKKimA==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^14.6.2"
@@ -20067,10 +20057,8 @@ watchpack@^1.7.4:
   resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.7.5.tgz#1267e6c55e0b9b5be44c2023aed5437a2c26c453"
   integrity sha512-9P3MWk6SrKjHsGkLT2KHXdQ/9SNkyoJbabxnKOoJepsvJjJG8uYTR3yTPxPQvNDI3w4Nz1xnE0TLHK4RIVe/MQ==
   dependencies:
-    chokidar "^3.4.1"
     graceful-fs "^4.1.2"
     neo-async "^2.5.0"
-    watchpack-chokidar2 "^2.0.1"
   optionalDependencies:
     chokidar "^3.4.1"
     watchpack-chokidar2 "^2.0.1"
